@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              android:layout_width="fill_parent"
+              android:layout_height="fill_parent"
+              android:background="@android:color/white"
+              android:gravity="center_horizontal"
+              android:orientation="vertical"
+              android:padding="10dp" >
+
+    <ImageView
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:src="@drawable/ga_logo" />
+
+    <EditText
+            android:id="@+id/forgot_pass2_code"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:hint="Code"
+            android:inputType="phone" >
+    </EditText>
+
+    <EditText
+            android:id="@+id/forgot_pass2_new_pas1"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:hint="New password"
+            android:inputType="textEmailAddress" >
+    </EditText>
+    <EditText
+            android:id="@+id/forgot_pass2_new_pass2"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:hint="Repeat new password"
+            android:inputType="textEmailAddress" >
+    </EditText>
+
+    <Button
+            android:id="@+id/forgot_pass2_login_save"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:layout_marginTop="5dp"
+            android:text="Login and save new password" android:layout_marginBottom="0dp" />
+
+</LinearLayout>

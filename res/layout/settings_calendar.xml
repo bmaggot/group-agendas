@@ -1,0 +1,189 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+	android:layout_width="fill_parent"
+	android:layout_height="fill_parent"
+	android:background="@android:color/white"
+	android:orientation="vertical" >
+
+	<RelativeLayout
+		android:id="@+id/topBar"
+		android:layout_width="fill_parent"
+		android:layout_height="50dp"
+		android:background="@drawable/top_bar_background" >
+
+		<TextView
+			android:id="@+id/topText"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:layout_centerInParent="true"
+			android:text="@string/calendar_settings"
+			android:textColor="@android:color/white"
+			android:textSize="20dp"
+			android:textStyle="bold" />
+
+		<ProgressBar
+			android:id="@+id/progress"
+			style="@android:style/Widget.ProgressBar.Small"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:layout_alignParentRight="true"
+			android:layout_centerInParent="true"
+			android:layout_marginRight="20dp"
+			android:visibility="gone" />
+	</RelativeLayout>
+
+	<ScrollView
+		android:layout_width="fill_parent"
+		android:layout_height="wrap_content"
+		android:layout_below="@id/topBar" >
+
+		<LinearLayout
+			android:layout_width="fill_parent"
+			android:layout_height="wrap_content"
+			android:focusableInTouchMode="true"
+			android:gravity="center_vertical"
+			android:orientation="vertical"
+			android:padding="15dp" >
+
+			<LinearLayout
+				android:layout_width="fill_parent"
+				android:layout_height="wrap_content"
+				android:orientation="horizontal" >
+
+				<TextView
+					android:layout_width="140dp"
+					android:layout_height="fill_parent"
+					android:gravity="center_vertical"
+					android:text="@string/use_am_pm"
+					android:textColor="@android:color/black"
+					android:textStyle="bold" />
+
+				<ToggleButton
+					android:id="@+id/am_pm"
+					android:layout_width="wrap_content"
+					android:layout_height="wrap_content"
+					android:text="@string/use_am_pm" />
+			</LinearLayout>
+
+			<LinearLayout
+				android:layout_width="fill_parent"
+				android:layout_height="wrap_content"
+				android:orientation="vertical" >
+
+				<TextView
+					android:layout_width="fill_parent"
+					android:layout_height="wrap_content"
+					android:gravity="center_horizontal"
+					android:paddingBottom="5dp"
+					android:paddingLeft="35dp"
+					android:paddingRight="35dp"
+					android:paddingTop="5dp"
+					android:text="@string/use_am_pm_desc"
+					android:textColor="@android:color/black" />
+
+				<View
+					android:layout_width="fill_parent"
+					android:layout_height="1dp"
+					android:background="#FF909090" />
+			</LinearLayout>
+
+			<LinearLayout
+				android:layout_width="fill_parent"
+				android:layout_height="wrap_content"
+				android:layout_marginTop="5dp"
+				android:orientation="horizontal" >
+
+				<TextView
+					android:layout_width="140dp"
+					android:layout_height="fill_parent"
+					android:gravity="center_vertical"
+					android:text="@string/default_view"
+					android:textColor="@android:color/black"
+					android:textStyle="bold" />
+
+				<Spinner
+					android:id="@+id/defaultviewSpinner"
+					android:layout_width="fill_parent"
+					android:layout_height="wrap_content" />
+			</LinearLayout>
+
+			<LinearLayout
+				android:layout_width="fill_parent"
+				android:layout_height="wrap_content"
+				android:orientation="vertical" >
+
+				<TextView
+					android:layout_width="fill_parent"
+					android:layout_height="wrap_content"
+					android:gravity="center_horizontal"
+					android:paddingBottom="5dp"
+					android:paddingLeft="35dp"
+					android:paddingRight="35dp"
+					android:paddingTop="5dp"
+					android:text="@string/default_view_desc"
+					android:textColor="@android:color/black" />
+
+				<View
+					android:layout_width="fill_parent"
+					android:layout_height="1dp"
+					android:background="#FF909090" />
+			</LinearLayout>
+
+			<LinearLayout
+				android:layout_width="fill_parent"
+				android:layout_height="wrap_content"
+				android:layout_marginTop="5dp"
+				android:orientation="horizontal" >
+
+				<TextView
+					android:layout_width="140dp"
+					android:layout_height="fill_parent"
+					android:gravity="center_vertical"
+					android:text="@string/date_format"
+					android:textColor="@android:color/black"
+					android:textStyle="bold" />
+
+				<Spinner
+					android:id="@+id/dateformatSpinner"
+					android:layout_width="fill_parent"
+					android:layout_height="wrap_content" />
+			</LinearLayout>
+
+			<LinearLayout
+				android:layout_width="fill_parent"
+				android:layout_height="wrap_content"
+				android:orientation="vertical" >
+
+				<TextView
+					android:layout_width="fill_parent"
+					android:layout_height="wrap_content"
+					android:gravity="center_horizontal"
+					android:paddingBottom="5dp"
+					android:paddingLeft="35dp"
+					android:paddingRight="35dp"
+					android:paddingTop="5dp"
+					android:text="@string/date_format_desc"
+					android:textColor="@android:color/black" />
+
+				<View
+					android:layout_width="fill_parent"
+					android:layout_height="1dp"
+					android:background="#FF909090" />
+			</LinearLayout>
+
+			<LinearLayout
+				android:layout_width="fill_parent"
+				android:layout_height="wrap_content"
+				android:layout_marginTop="10dp"
+				android:gravity="center_horizontal" >
+
+				<Button
+					android:id="@+id/save"
+					android:layout_width="100dp"
+					android:layout_height="wrap_content"
+					android:text="@string/save" />
+			</LinearLayout>
+		</LinearLayout>
+	</ScrollView>
+
+</LinearLayout>
