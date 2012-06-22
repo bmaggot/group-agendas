@@ -11,7 +11,9 @@ import android.util.Log;
 
 import com.google.android.c2dm.C2DMBaseReceiver;
 import com.groupagendas.groupagenda.events.EventActivity;
+import com.groupagendas.groupagenda.timezone.TimezoneProvider;
 import com.groupagendas.groupagenda.utils.AgendaUtils;
+import com.groupagendas.groupagenda.utils.DBUtils;
 
 public class C2DMReceiver extends C2DMBaseReceiver {
 	public C2DMReceiver() {
@@ -79,6 +81,7 @@ public class C2DMReceiver extends C2DMBaseReceiver {
 			if(getEventById(rel_id, context) == null){
 				
 			}
+			DataManagement.getInstance(context).getEventList("");
 			com.groupagendas.groupagenda.events.Event event = DataManagement.getInstance(context).getEventFromDb(Integer.parseInt(rel_id));
 			if (event != null) {
 				notificationIntent.putExtra("event_id", event.event_id);
