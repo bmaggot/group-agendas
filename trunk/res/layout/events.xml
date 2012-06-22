@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+	android:layout_width="fill_parent"
+	android:layout_height="fill_parent"
+	android:background="@android:color/white" >
+
+	<RelativeLayout
+		android:id="@+id/topBar"
+		android:layout_width="fill_parent"
+		android:layout_height="50dp"
+		android:layout_alignParentTop="true"
+		android:layout_centerHorizontal="true"
+		android:layout_centerVertical="true"
+		android:background="@drawable/top_bar_background" >
+
+		<TextView
+			android:id="@+id/topText"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:layout_centerInParent="true"
+			android:text="@string/events"
+			android:textColor="@android:color/white"
+			android:textSize="20dp"
+			android:textStyle="bold" />
+
+		<ProgressBar
+			android:id="@+id/progress"
+			style="@android:style/Widget.ProgressBar.Small"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:layout_alignParentRight="true"
+			android:layout_centerInParent="true"
+			android:layout_marginRight="20dp"
+			android:visibility="gone" />
+	</RelativeLayout>
+
+	<ListView
+		android:id="@android:id/list"
+		android:layout_width="fill_parent"
+		android:layout_height="fill_parent"
+		android:layout_above="@+id/radiogroup"
+		android:layout_below="@id/topBar"
+		android:cacheColorHint="#00000000"
+		android:fadingEdgeLength="0px"
+		android:paddingLeft="5dp"
+		android:paddingRight="5dp"
+		android:smoothScrollbar="false" >
+	</ListView>
+
+	<RadioGroup
+		android:id="@+id/radiogroup"
+		android:layout_width="fill_parent"
+		android:layout_height="45dp"
+		android:layout_alignParentBottom="true"
+		android:background="@drawable/navbar_background"
+		android:orientation="horizontal" >
+
+		<RadioButton
+			android:id="@+id/btnStatus"
+			style="@style/navbar_button"
+			android:drawableTop="@drawable/navbar_category" />
+
+		<RadioButton
+			android:id="@+id/btnType"
+			style="@style/navbar_button"
+			android:layout_marginLeft="5dp"
+			android:drawableTop="@drawable/navbar_type" />
+
+		<RadioButton
+			android:id="@+id/btnSettings"
+			style="@style/navbar_button"
+			android:layout_marginLeft="5dp"
+			android:drawableTop="@drawable/navbar_settings" />
+
+		<RadioButton
+			android:id="@+id/btnNewevent"
+			style="@style/navbar_button"
+			android:layout_marginLeft="5dp"
+			android:drawableTop="@drawable/navbar_newevent" />
+	</RadioGroup>
+
+</RelativeLayout>

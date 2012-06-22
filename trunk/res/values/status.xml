@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+	<string name="status_4">New invites (%1$d)</string>
+	<string name="new_invite">New invite</string>
+	<string name="status_0">Rejected</string>
+	<string name="status_1">Attending</string>
+	<string name="status_2">Pending</string>
+
+</resources>
