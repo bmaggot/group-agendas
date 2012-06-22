@@ -53,14 +53,6 @@ public class C2DMReceiver extends C2DMBaseReceiver {
 		}
 		if (data != null) {
 			Log.e("C2DMReceiver", "C2DMReceiver: " + data);
-
-			/*
-			 * Intent intent = new Intent(this, Main.class);
-			 * intent.putExtra("message", data);
-			 * intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-			 * this.startActivity(intent);
-			 */
-
 			showNotification(this, "Group Agenda", "Group Agenda", data,
 					17301620, "", rel_id, type, isNative);
 		}
