@@ -37,6 +37,7 @@ import com.groupagendas.groupagenda.contacts.ContactsActivity;
 import com.groupagendas.groupagenda.contacts.ContactsProvider;
 import com.groupagendas.groupagenda.events.Event;
 import com.groupagendas.groupagenda.events.EventsActivity;
+import com.groupagendas.groupagenda.events.EventsAdapter;
 import com.groupagendas.groupagenda.events.EventsProvider;
 import com.groupagendas.groupagenda.events.NewEventActivity;
 import com.groupagendas.groupagenda.utils.AgendaUtils;
@@ -70,6 +71,7 @@ public class NavbarActivity extends Activity {
 	private EntryAdapter entryAdapter;
 	
 	private Prefs prefs;
+	public static boolean showInvites = false;
     
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -313,6 +315,7 @@ public class NavbarActivity extends Activity {
 					startActivity(new Intent(NavbarActivity.this, ContactsActivity.class));
 					break;
 				case R.id.btnEvents:
+					showInvites = true; 
 					startActivity(new Intent(NavbarActivity.this, EventsActivity.class));
 					break;
 				case R.id.btnNewevent:
@@ -397,6 +400,7 @@ public class NavbarActivity extends Activity {
             getContentResolver().delete(ContactsProvider.CMetaData.ContactsMetaData.CONTENT_URI, "", null);
             getContentResolver().delete(ContactsProvider.CMetaData.GroupsMetaData.CONTENT_URI, "", null);
             getContentResolver().delete(EventsProvider.EMetaData.EventsMetaData.CONTENT_URI, "", null);
+            getContentResolver().getType(EventsProvider.EMetaData.EventsMetaData.CONTENT_URI);
             total = 20;
             Message msg = mHandler.obtainMessage();
             msg.arg1 = total;
