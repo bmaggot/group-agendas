@@ -17,11 +17,12 @@ import az.mecid.android.ActionItem;
 import az.mecid.android.QuickAction;
 
 import com.groupagendas.groupagenda.DataManagement;
+import com.groupagendas.groupagenda.NavbarActivity;
 import com.groupagendas.groupagenda.R;
 import com.groupagendas.groupagenda.settings.SettingsActivity;
 import com.groupagendas.groupagenda.utils.AgendaUtils;
 
-public class EventsActivity extends ListActivity{
+public class EventsActivity extends ListActivity {
 
 	private DataManagement dm;
 
@@ -76,24 +77,34 @@ public class EventsActivity extends ListActivity{
 		topView = (TextView) findViewById(R.id.topText);
 
 	}
-	
+
 	@Override
 	protected void onListItemClick(ListView l, View v, int pos, long id) {
 		super.onListItemClick(l, v, pos, id);
 		Intent intent = new Intent(EventsActivity.this, EventActivity.class);
-		Event event = (Event)getListAdapter().getItem(pos);
+		Event event = (Event) getListAdapter().getItem(pos);
 		intent.putExtra("event_id", event.event_id);
 		intent.putExtra("type", event.type);
 		intent.putExtra("isNative", event.isNative);
 		startActivity(intent);
 	}
-	
+
+	public void openNewInvites() {
+		changeTitle(getString(R.string.status_4, AgendaUtils.newInvites));
+		if (qa != null || !NavbarActivity.showInvites) {
+			qa.dismiss();
+			NavbarActivity.showInvites = false;
+		}
+		eventsAdapter.getFilter().filter("4");
+		eventsAdapter.setFilter("4");
+	}
+
 	private CompoundButton.OnCheckedChangeListener btnNavBarOnCheckedChangeListener = new CompoundButton.OnCheckedChangeListener() {
 		public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
 			if (isChecked) {
 				switch (buttonView.getId()) {
 				case R.id.btnStatus:
-					
+
 					// status
 					new_invites = new ActionItem();
 					new_invites.setTitle(getString(R.string.status_4, AgendaUtils.newInvites));
@@ -101,13 +112,10 @@ public class EventsActivity extends ListActivity{
 
 						@Override
 						public void onClick(View v) {
-							changeTitle(getString(R.string.status_4, AgendaUtils.newInvites));
-							qa.dismiss();
-							eventsAdapter.getFilter().filter("4");
-							eventsAdapter.setFilter("4");
+							openNewInvites();
 						}
 					});
-					
+
 					rejected = new ActionItem();
 					rejected.setTitle(getString(R.string.status_0));
 					rejected.setOnClickListener(new OnClickListener() {
@@ -120,7 +128,7 @@ public class EventsActivity extends ListActivity{
 							eventsAdapter.setFilter("0");
 						}
 					});
-					
+
 					attending = new ActionItem();
 					attending.setTitle(getString(R.string.status_1));
 					attending.setOnClickListener(new OnClickListener() {
@@ -146,7 +154,7 @@ public class EventsActivity extends ListActivity{
 							eventsAdapter.setFilter("2");
 						}
 					});
-					
+
 					qa = new QuickAction(buttonView);
 					qa.addActionItem(new_invites);
 					qa.addActionItem(rejected);
@@ -156,7 +164,7 @@ public class EventsActivity extends ListActivity{
 					buttonView.setChecked(false);
 					break;
 				case R.id.btnType:
-					
+
 					// types
 					shared_event = new ActionItem();
 					shared_event.setTitle(getString(R.string.r_type));
@@ -168,7 +176,7 @@ public class EventsActivity extends ListActivity{
 							qa.dismiss();
 							eventsAdapter.getFilter().filter(getString(R.string.r_type));
 							eventsAdapter.setFilter(getString(R.string.r_type));
-							
+
 						}
 					});
 
@@ -223,7 +231,7 @@ public class EventsActivity extends ListActivity{
 							eventsAdapter.setFilter(getString(R.string.p_type));
 						}
 					});
-					
+
 					qa = new QuickAction(buttonView);
 					qa.addActionItem(shared_event);
 					qa.addActionItem(telephone);
@@ -256,10 +264,22 @@ public class EventsActivity extends ListActivity{
 		}
 
 		protected void onPostExecute(ArrayList<Event> result) {
-			eventsList = result;
+			if (!NavbarActivity.showInvites) {
+				eventsList = result;
+			} else {
+				eventsList = new ArrayList<Event>();
+				for (Event event : result) {
+					if (event.status == 4) {
+						eventsList.add(event);
+					}
+				}
+			}
 			eventsAdapter = new EventsAdapter(eventsList, EventsActivity.this);
 			setListAdapter(eventsAdapter);
 			new GetEventsTask().execute();
+			if (NavbarActivity.showInvites) {
+				openNewInvites();
+			}
 			super.onPostExecute(result);
 		}
 	}
@@ -276,7 +296,7 @@ public class EventsActivity extends ListActivity{
 		}
 
 		protected void onPostExecute(ArrayList<Event> result) {
-			if(result.size() > 0){
+			if (result.size() > 0) {
 				eventsAdapter.setItems(result);
 				eventsAdapter.notifyDataSetChanged();
 			}
@@ -285,7 +305,7 @@ public class EventsActivity extends ListActivity{
 		}
 
 	}
-	
+
 	private void changeTitle(String text) {
 		topView.setText(text);
 	}
