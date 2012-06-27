@@ -3281,7 +3281,7 @@ public class DataManagement {
 						ERROR = errObj.getString("reason");
 						Log.e("removeEvent - error: ", ERROR);
 					} else {
-						// event_id = object.getInt("event_id");
+						this.getEventList("");
 					}
 				}
 			}
