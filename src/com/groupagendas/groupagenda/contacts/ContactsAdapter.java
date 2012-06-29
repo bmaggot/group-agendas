@@ -49,7 +49,12 @@ public class ContactsAdapter extends BaseAdapter implements Filterable {
 		StringBuilder sb = new StringBuilder(contact.name);
 		if(contact.lastname != null && !contact.lastname.equals("null"))	sb.append(" ").append(contact.lastname);
 		holder.name.setText(sb.toString());
-		if(contact.email != null && !contact.email.equals("null"))	holder.email.setText(contact.email);
+
+		/*
+		 * This section of code is disabled in order not to display contact's email address.
+		 */
+		
+//		if(contact.email != null && !contact.email.equals("null"))	holder.email.setText(contact.email);
 
 		if (contact.image) {
 			Bitmap bitmap = Utils.getResizedBitmap(BitmapFactory.decodeByteArray(contact.image_bytes, 0, contact.image_bytes.length), 72, 72);
