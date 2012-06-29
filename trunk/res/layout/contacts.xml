@@ -1,17 +1,12 @@
-<?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-	android:layout_width="fill_parent"
+<?xml version="1.0" encoding="utf-8" ?>
+<LinearLayout android:layout_width="fill_parent"
 	android:layout_height="fill_parent"
-	android:background="#FFFFFF"
-	android:focusableInTouchMode="true"
-	android:orientation="vertical" >
+	android:background="#FFFFFF" xmlns:android="http://schemas.android.com/apk/res/android" android:focusableInTouchMode="true" android:orientation="vertical">
 
 	<RelativeLayout
 		android:layout_width="fill_parent"
 		android:layout_height="50dp"
-		android:layout_centerHorizontal="true"
-		android:layout_centerVertical="true"
-		android:background="@drawable/top_bar_background" >
+		android:background="@drawable/top_bar_background">
 
 		<com.makeramen.segmented.SegmentedRadioGroup
 			android:id="@+id/segmentedButtons"
@@ -56,21 +51,23 @@
 			android:visibility="gone" />
 	</RelativeLayout>
 
-	<EditText
-		android:id="@+id/search"
+	<RelativeLayout
 		android:layout_width="fill_parent"
-		android:layout_height="wrap_content"
-		android:hint="@string/search"
-		android:singleLine="true" />
+		android:layout_height="50dp" android:background="@drawable/top_bar_background">
+		
+		<EditText
+			android:id="@+id/search"
+			android:layout_width="fill_parent"
+			android:layout_height="wrap_content"
+			android:layout_marginLeft="10dp"
+			android:layout_marginRight="10dp" android:layout_marginTop="4dp" android:hint="@string/search" android:singleLine="true"/>
+		
+	</RelativeLayout>
 
 	<ListView
 		android:id="@android:id/list"
 		android:layout_width="fill_parent"
-		android:layout_height="wrap_content"
-		android:cacheColorHint="#00000000"
-		android:longClickable="true"
-		android:padding="5dp"
-		android:textFilterEnabled="true" >
+		android:layout_height="wrap_content" android:layout_marginTop="1dp" android:background="#FFFFFF" android:cacheColorHint="#00000000" android:longClickable="true" android:padding="5dp" android:textFilterEnabled="true">
 	</ListView>
 
 </LinearLayout>
