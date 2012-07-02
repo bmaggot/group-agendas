@@ -174,6 +174,12 @@ public class AccountActivity extends Activity implements OnClickListener{
 		removeImage = (CheckBox) findViewById(R.id.removeImage);
 		
 	}
+	
+	@Override
+	public void onResume() {
+		super.onResume();
+		new GetAccountFromDBTask().execute();
+	}
 
 	private void feelFields(Account account) {
 		mAccount = account;
