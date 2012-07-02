@@ -1,29 +1,19 @@
 package com.groupagendas.groupagenda;
 
-import android.app.Activity;
-import android.content.ContentValues;
-import android.content.Context;
-import android.content.SharedPreferences;
-import android.database.Cursor;
-import android.net.Uri;
-import android.telephony.TelephonyManager;
-import android.util.Log;
-import com.bog.calendar.app.model.CEvent;
-import com.bog.calendar.app.model.EventsHelper;
-import com.google.android.c2dm.C2DMessaging;
-import com.groupagendas.groupagenda.account.Account;
-import com.groupagendas.groupagenda.account.AccountProvider;
-import com.groupagendas.groupagenda.contacts.Contact;
-import com.groupagendas.groupagenda.contacts.ContactsProvider;
-import com.groupagendas.groupagenda.contacts.Group;
-import com.groupagendas.groupagenda.events.Event;
-import com.groupagendas.groupagenda.events.EventsProvider;
-import com.groupagendas.groupagenda.events.Invited;
-import com.groupagendas.groupagenda.settings.AutoColorItem;
-import com.groupagendas.groupagenda.settings.AutoIconItem;
-import com.groupagendas.groupagenda.utils.MapUtils;
-import com.groupagendas.groupagenda.utils.Prefs;
-import com.groupagendas.groupagenda.utils.Utils;
+import java.io.DataOutputStream;
+import java.io.IOException;
+import java.net.HttpURLConnection;
+import java.net.URL;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.HttpStatus;
@@ -43,12 +33,31 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.io.DataOutputStream;
-import java.io.IOException;
-import java.net.HttpURLConnection;
-import java.net.URL;
-import java.text.SimpleDateFormat;
-import java.util.*;
+import android.app.Activity;
+import android.content.ContentValues;
+import android.content.Context;
+import android.content.SharedPreferences;
+import android.database.Cursor;
+import android.net.Uri;
+import android.telephony.TelephonyManager;
+import android.util.Log;
+
+import com.bog.calendar.app.model.CEvent;
+import com.bog.calendar.app.model.EventsHelper;
+import com.google.android.c2dm.C2DMessaging;
+import com.groupagendas.groupagenda.account.Account;
+import com.groupagendas.groupagenda.account.AccountProvider;
+import com.groupagendas.groupagenda.contacts.Contact;
+import com.groupagendas.groupagenda.contacts.ContactsProvider;
+import com.groupagendas.groupagenda.contacts.Group;
+import com.groupagendas.groupagenda.events.Event;
+import com.groupagendas.groupagenda.events.EventsProvider;
+import com.groupagendas.groupagenda.events.Invited;
+import com.groupagendas.groupagenda.settings.AutoColorItem;
+import com.groupagendas.groupagenda.settings.AutoIconItem;
+import com.groupagendas.groupagenda.utils.MapUtils;
+import com.groupagendas.groupagenda.utils.Prefs;
+import com.groupagendas.groupagenda.utils.Utils;
 
 public class DataManagement {
 	private String pushId;
@@ -96,132 +105,60 @@ public class DataManagement {
 	public Account getAccountFromDb() {
 		Account u = null;
 
-		Cursor result = mContext.getContentResolver().query(
-				AccountProvider.AMetaData.AccountMetaData.CONTENT_URI, null,
-				null, null, null);
+		Cursor result = mContext.getContentResolver().query(AccountProvider.AMetaData.AccountMetaData.CONTENT_URI, null, null, null, null);
 
 		if (result.moveToFirst()) {
 			u = new Account();
 
-			u.user_id = result
-					.getInt(result
-							.getColumnIndex(AccountProvider.AMetaData.AccountMetaData.A_ID));
+			u.user_id = result.getInt(result.getColumnIndex(AccountProvider.AMetaData.AccountMetaData.A_ID));
 
-			u.name = result
-					.getString(result
-							.getColumnIndex(AccountProvider.AMetaData.AccountMetaData.NAME));
-			u.fullname = result
-					.getString(result
-							.getColumnIndex(AccountProvider.AMetaData.AccountMetaData.FULLNAME));
+			u.name = result.getString(result.getColumnIndex(AccountProvider.AMetaData.AccountMetaData.NAME));
+			u.fullname = result.getString(result.getColumnIndex(AccountProvider.AMetaData.AccountMetaData.FULLNAME));
 
-			u.birthdate = result
-					.getString(result
-							.getColumnIndex(AccountProvider.AMetaData.AccountMetaData.BIRTHDATE));
-			u.sex = result
-					.getString(result
-							.getColumnIndex(AccountProvider.AMetaData.AccountMetaData.SEX));
+			u.birthdate = result.getString(result.getColumnIndex(AccountProvider.AMetaData.AccountMetaData.BIRTHDATE));
+			u.sex = result.getString(result.getColumnIndex(AccountProvider.AMetaData.AccountMetaData.SEX));
 
-			u.email = result
-					.getString(result
-							.getColumnIndex(AccountProvider.AMetaData.AccountMetaData.EMAIL));
-			u.email2 = result
-					.getString(result
-							.getColumnIndex(AccountProvider.AMetaData.AccountMetaData.EMAIL2));
-			u.email3 = result
-					.getString(result
-							.getColumnIndex(AccountProvider.AMetaData.AccountMetaData.EMAIL3));
-			u.email4 = result
-					.getString(result
-							.getColumnIndex(AccountProvider.AMetaData.AccountMetaData.EMAIL4));
-			u.phone1 = result
-					.getString(result
-							.getColumnIndex(AccountProvider.AMetaData.AccountMetaData.PHONE1));
-			u.phone2 = result
-					.getString(result
-							.getColumnIndex(AccountProvider.AMetaData.AccountMetaData.PHONE2));
-			u.phone3 = result
-					.getString(result
-							.getColumnIndex(AccountProvider.AMetaData.AccountMetaData.PHONE3));
+			u.email = result.getString(result.getColumnIndex(AccountProvider.AMetaData.AccountMetaData.EMAIL));
+			u.email2 = result.getString(result.getColumnIndex(AccountProvider.AMetaData.AccountMetaData.EMAIL2));
+			u.email3 = result.getString(result.getColumnIndex(AccountProvider.AMetaData.AccountMetaData.EMAIL3));
+			u.email4 = result.getString(result.getColumnIndex(AccountProvider.AMetaData.AccountMetaData.EMAIL4));
+			u.phone1 = result.getString(result.getColumnIndex(AccountProvider.AMetaData.AccountMetaData.PHONE1));
+			u.phone2 = result.getString(result.getColumnIndex(AccountProvider.AMetaData.AccountMetaData.PHONE2));
+			u.phone3 = result.getString(result.getColumnIndex(AccountProvider.AMetaData.AccountMetaData.PHONE3));
 
-			final int image = result
-					.getInt(result
-							.getColumnIndex(AccountProvider.AMetaData.AccountMetaData.IMAGE));
+			final int image = result.getInt(result.getColumnIndex(AccountProvider.AMetaData.AccountMetaData.IMAGE));
 			u.image = image == 1;
-			u.image_url = result
-					.getString(result
-							.getColumnIndex(AccountProvider.AMetaData.AccountMetaData.IMAGE_URL));
-			u.image_thumb_url = result
-					.getString(result
-							.getColumnIndex(AccountProvider.AMetaData.AccountMetaData.IMAGE_THUMB_URL));
-			u.image_bytes = result
-					.getBlob(result
-							.getColumnIndex(AccountProvider.AMetaData.AccountMetaData.IMAGE_BYTES));
-			u.remove_image = result
-					.getInt(result
-							.getColumnIndex(AccountProvider.AMetaData.AccountMetaData.REMOVE_IMAGE));
+			u.image_url = result.getString(result.getColumnIndex(AccountProvider.AMetaData.AccountMetaData.IMAGE_URL));
+			u.image_thumb_url = result.getString(result.getColumnIndex(AccountProvider.AMetaData.AccountMetaData.IMAGE_THUMB_URL));
+			u.image_bytes = result.getBlob(result.getColumnIndex(AccountProvider.AMetaData.AccountMetaData.IMAGE_BYTES));
+			u.remove_image = result.getInt(result.getColumnIndex(AccountProvider.AMetaData.AccountMetaData.REMOVE_IMAGE));
 
-			u.country = result
-					.getString(result
-							.getColumnIndex(AccountProvider.AMetaData.AccountMetaData.COUNTRY));
-			u.city = result
-					.getString(result
-							.getColumnIndex(AccountProvider.AMetaData.AccountMetaData.CITY));
-			u.street = result
-					.getString(result
-							.getColumnIndex(AccountProvider.AMetaData.AccountMetaData.STREET));
-			u.zip = result
-					.getString(result
-							.getColumnIndex(AccountProvider.AMetaData.AccountMetaData.ZIP));
+			u.country = result.getString(result.getColumnIndex(AccountProvider.AMetaData.AccountMetaData.COUNTRY));
+			u.city = result.getString(result.getColumnIndex(AccountProvider.AMetaData.AccountMetaData.CITY));
+			u.street = result.getString(result.getColumnIndex(AccountProvider.AMetaData.AccountMetaData.STREET));
+			u.zip = result.getString(result.getColumnIndex(AccountProvider.AMetaData.AccountMetaData.ZIP));
 
-			u.timezone = result
-					.getString(result
-							.getColumnIndex(AccountProvider.AMetaData.AccountMetaData.TIMEZONE));
-			u.local_time = result
-					.getString(result
-							.getColumnIndex(AccountProvider.AMetaData.AccountMetaData.LOCAL_TIME));
-			u.language = result
-					.getString(result
-							.getColumnIndex(AccountProvider.AMetaData.AccountMetaData.LANGUAGE));
+			u.timezone = result.getString(result.getColumnIndex(AccountProvider.AMetaData.AccountMetaData.TIMEZONE));
+			u.local_time = result.getString(result.getColumnIndex(AccountProvider.AMetaData.AccountMetaData.LOCAL_TIME));
+			u.language = result.getString(result.getColumnIndex(AccountProvider.AMetaData.AccountMetaData.LANGUAGE));
 
 			u.setting_default_view = result
-					.getString(result
-							.getColumnIndex(AccountProvider.AMetaData.AccountMetaData.SETTING_DEFAULT_VIEW));
-			u.setting_date_format = result
-					.getString(result
-							.getColumnIndex(AccountProvider.AMetaData.AccountMetaData.SETTING_DATE_FORMAT));
-			u.setting_ampm = result
-					.getInt(result
-							.getColumnIndex(AccountProvider.AMetaData.AccountMetaData.SETTING_AMPM));
+					.getString(result.getColumnIndex(AccountProvider.AMetaData.AccountMetaData.SETTING_DEFAULT_VIEW));
+			u.setting_date_format = result.getString(result.getColumnIndex(AccountProvider.AMetaData.AccountMetaData.SETTING_DATE_FORMAT));
+			u.setting_ampm = result.getInt(result.getColumnIndex(AccountProvider.AMetaData.AccountMetaData.SETTING_AMPM));
 
 			u.google_calendar_link = result
-					.getString(result
-							.getColumnIndex(AccountProvider.AMetaData.AccountMetaData.GOOGLE_CALENDAR_LINK));
+					.getString(result.getColumnIndex(AccountProvider.AMetaData.AccountMetaData.GOOGLE_CALENDAR_LINK));
 
-			u.color_my_event = result
-					.getString(result
-							.getColumnIndex(AccountProvider.AMetaData.AccountMetaData.COLOR_MY_EVENT));
-			u.color_attending = result
-					.getString(result
-							.getColumnIndex(AccountProvider.AMetaData.AccountMetaData.COLOR_ATTENDING));
-			u.color_pending = result
-					.getString(result
-							.getColumnIndex(AccountProvider.AMetaData.AccountMetaData.COLOR_PENDING));
-			u.color_invitation = result
-					.getString(result
-							.getColumnIndex(AccountProvider.AMetaData.AccountMetaData.COLOR_INVINTATION));
-			u.color_notes = result
-					.getString(result
-							.getColumnIndex(AccountProvider.AMetaData.AccountMetaData.COLOR_NOTES));
-			u.color_birthday = result
-					.getString(result
-							.getColumnIndex(AccountProvider.AMetaData.AccountMetaData.COLOR_BIRTHDAY));
+			u.color_my_event = result.getString(result.getColumnIndex(AccountProvider.AMetaData.AccountMetaData.COLOR_MY_EVENT));
+			u.color_attending = result.getString(result.getColumnIndex(AccountProvider.AMetaData.AccountMetaData.COLOR_ATTENDING));
+			u.color_pending = result.getString(result.getColumnIndex(AccountProvider.AMetaData.AccountMetaData.COLOR_PENDING));
+			u.color_invitation = result.getString(result.getColumnIndex(AccountProvider.AMetaData.AccountMetaData.COLOR_INVINTATION));
+			u.color_notes = result.getString(result.getColumnIndex(AccountProvider.AMetaData.AccountMetaData.COLOR_NOTES));
+			u.color_birthday = result.getString(result.getColumnIndex(AccountProvider.AMetaData.AccountMetaData.COLOR_BIRTHDAY));
 
-			u.created = result
-					.getString(result
-							.getColumnIndex(AccountProvider.AMetaData.AccountMetaData.CREATED));
-			u.modified = result
-					.getString(result
-							.getColumnIndex(AccountProvider.AMetaData.AccountMetaData.MODIFIED));
+			u.created = result.getString(result.getColumnIndex(AccountProvider.AMetaData.AccountMetaData.CREATED));
+			u.modified = result.getString(result.getColumnIndex(AccountProvider.AMetaData.AccountMetaData.MODIFIED));
 		}
 		result.close();
 
@@ -233,17 +170,12 @@ public class DataManagement {
 
 		try {
 			HttpClient hc = new DefaultHttpClient();
-			HttpPost post = new HttpPost(prefs.getServerUrl()
-					+ "mobile/account_edit");
+			HttpPost post = new HttpPost(prefs.getServerUrl() + "mobile/account_edit");
 
-			MultipartEntity reqEntity = new MultipartEntity(
-					HttpMultipartMode.BROWSER_COMPATIBLE);
+			MultipartEntity reqEntity = new MultipartEntity(HttpMultipartMode.BROWSER_COMPATIBLE);
 			reqEntity.addPart("token", new StringBody(prefs.getToken()));
 
-			reqEntity.addPart(
-					"lastname",
-					new StringBody(account.fullname.replace(account.name + " ",
-							"")));
+			reqEntity.addPart("lastname", new StringBody(account.fullname.replace(account.name + " ", "")));
 			reqEntity.addPart("name", new StringBody(account.name));
 
 			reqEntity.addPart("birthdate", new StringBody(account.birthdate));
@@ -270,9 +202,7 @@ public class DataManagement {
 					JSONObject object = new JSONObject(resp);
 					success = object.getBoolean("success");
 					if (!success) {
-						Log.e("Change account ERROR",
-								object.getJSONObject("error").getString(
-										"reason"));
+						Log.e("Change account ERROR", object.getJSONObject("error").getString("reason"));
 					}
 				}
 			}
@@ -284,24 +214,19 @@ public class DataManagement {
 		// image
 		try {
 			HttpClient hc = new DefaultHttpClient();
-			HttpPost post = new HttpPost(prefs.getServerUrl()
-					+ "mobile/account_image");
+			HttpPost post = new HttpPost(prefs.getServerUrl() + "mobile/account_image");
 
-			MultipartEntity reqEntity = new MultipartEntity(
-					HttpMultipartMode.BROWSER_COMPATIBLE);
+			MultipartEntity reqEntity = new MultipartEntity(HttpMultipartMode.BROWSER_COMPATIBLE);
 			reqEntity.addPart("token", new StringBody(prefs.getToken()));
 
 			if (removeImage == false) {
 				if (account.image_bytes != null) {
-					ByteArrayBody bab = new ByteArrayBody(account.image_bytes,
-							"image");
+					ByteArrayBody bab = new ByteArrayBody(account.image_bytes, "image");
 					reqEntity.addPart("image", bab);
 				}
-				reqEntity.addPart("remove_image",
-						new StringBody(String.valueOf("0")));
+				reqEntity.addPart("remove_image", new StringBody(String.valueOf("0")));
 			} else {
-				reqEntity.addPart("remove_image",
-						new StringBody(String.valueOf("1")));
+				reqEntity.addPart("remove_image", new StringBody(String.valueOf("1")));
 			}
 
 			post.setEntity(reqEntity);
@@ -313,8 +238,7 @@ public class DataManagement {
 					JSONObject object = new JSONObject(resp);
 					success = object.getBoolean("success");
 					if (!success) {
-						Log.e("Change account image ERROR", object
-								.getJSONObject("error").getString("reason"));
+						Log.e("Change account image ERROR", object.getJSONObject("error").getString("reason"));
 					}
 				}
 			}
@@ -331,11 +255,9 @@ public class DataManagement {
 
 		try {
 			HttpClient hc = new DefaultHttpClient();
-			HttpPost post = new HttpPost(prefs.getServerUrl()
-					+ "mobile/account_get");
+			HttpPost post = new HttpPost(prefs.getServerUrl() + "mobile/account_get");
 
-			MultipartEntity reqEntity = new MultipartEntity(
-					HttpMultipartMode.BROWSER_COMPATIBLE);
+			MultipartEntity reqEntity = new MultipartEntity(HttpMultipartMode.BROWSER_COMPATIBLE);
 
 			reqEntity.addPart("token", new StringBody(prefs.getToken()));
 			post.setEntity(reqEntity);
@@ -356,239 +278,192 @@ public class DataManagement {
 
 						try {
 							u.user_id = profile.getInt("user_id");
-							cv.put(AccountProvider.AMetaData.AccountMetaData.A_ID,
-									u.user_id);
+							cv.put(AccountProvider.AMetaData.AccountMetaData.A_ID, u.user_id);
 						} catch (JSONException e) {
 						}
 
 						try {
 							u.name = profile.getString("name");
-							cv.put(AccountProvider.AMetaData.AccountMetaData.NAME,
-									u.name);
+							cv.put(AccountProvider.AMetaData.AccountMetaData.NAME, u.name);
 						} catch (JSONException e) {
 						}
 						try {
 							u.fullname = profile.getString("fullname");
-							cv.put(AccountProvider.AMetaData.AccountMetaData.FULLNAME,
-									u.fullname);
+							cv.put(AccountProvider.AMetaData.AccountMetaData.FULLNAME, u.fullname);
 						} catch (JSONException e) {
 						}
 
 						try {
 							u.birthdate = profile.getString("birthdate");
-							cv.put(AccountProvider.AMetaData.AccountMetaData.BIRTHDATE,
-									u.birthdate);
+							cv.put(AccountProvider.AMetaData.AccountMetaData.BIRTHDATE, u.birthdate);
 						} catch (JSONException e) {
 						}
 						try {
 							u.sex = profile.getString("sex");
-							cv.put(AccountProvider.AMetaData.AccountMetaData.SEX,
-									u.sex);
+							cv.put(AccountProvider.AMetaData.AccountMetaData.SEX, u.sex);
 						} catch (JSONException e) {
 						}
 
 						try {
 							u.email = profile.getString("email");
-							cv.put(AccountProvider.AMetaData.AccountMetaData.EMAIL,
-									u.email);
+							cv.put(AccountProvider.AMetaData.AccountMetaData.EMAIL, u.email);
 						} catch (JSONException e) {
 						}
 						try {
 							u.email2 = profile.getString("email2");
-							cv.put(AccountProvider.AMetaData.AccountMetaData.EMAIL2,
-									u.email2);
+							cv.put(AccountProvider.AMetaData.AccountMetaData.EMAIL2, u.email2);
 						} catch (JSONException e) {
 						}
 						try {
 							u.email3 = profile.getString("email3");
-							cv.put(AccountProvider.AMetaData.AccountMetaData.EMAIL3,
-									u.email3);
+							cv.put(AccountProvider.AMetaData.AccountMetaData.EMAIL3, u.email3);
 						} catch (JSONException e) {
 						}
 						try {
 							u.email4 = profile.getString("email4");
-							cv.put(AccountProvider.AMetaData.AccountMetaData.EMAIL4,
-									u.email4);
+							cv.put(AccountProvider.AMetaData.AccountMetaData.EMAIL4, u.email4);
 						} catch (JSONException e) {
 						}
 						try {
 							u.phone1 = profile.getString("phone1");
-							cv.put(AccountProvider.AMetaData.AccountMetaData.PHONE1,
-									u.phone1);
+							cv.put(AccountProvider.AMetaData.AccountMetaData.PHONE1, u.phone1);
 						} catch (JSONException e) {
 						}
 						try {
 							u.phone2 = profile.getString("phone2");
-							cv.put(AccountProvider.AMetaData.AccountMetaData.PHONE2,
-									u.phone2);
+							cv.put(AccountProvider.AMetaData.AccountMetaData.PHONE2, u.phone2);
 						} catch (JSONException e) {
 						}
 						try {
 							u.phone3 = profile.getString("phone3");
-							cv.put(AccountProvider.AMetaData.AccountMetaData.PHONE3,
-									u.phone3);
+							cv.put(AccountProvider.AMetaData.AccountMetaData.PHONE3, u.phone3);
 						} catch (JSONException e) {
 						}
 
 						try {
 							u.image = profile.getBoolean("image");
-							cv.put(AccountProvider.AMetaData.AccountMetaData.IMAGE,
-									u.image);
+							cv.put(AccountProvider.AMetaData.AccountMetaData.IMAGE, u.image);
 						} catch (JSONException e) {
 						}
 						try {
 							u.image_url = profile.getString("image_url");
-							cv.put(AccountProvider.AMetaData.AccountMetaData.IMAGE_URL,
-									u.image_url);
+							cv.put(AccountProvider.AMetaData.AccountMetaData.IMAGE_URL, u.image_url);
 
 							u.image_bytes = imageToBytes(u.image_url);
-							cv.put(AccountProvider.AMetaData.AccountMetaData.IMAGE_BYTES,
-									u.image_bytes);
+							cv.put(AccountProvider.AMetaData.AccountMetaData.IMAGE_BYTES, u.image_bytes);
 						} catch (JSONException e) {
 						}
 						try {
-							u.image_thumb_url = profile
-									.getString("image_thumb_url");
-							cv.put(AccountProvider.AMetaData.AccountMetaData.IMAGE_THUMB_URL,
-									u.image_thumb_url);
+							u.image_thumb_url = profile.getString("image_thumb_url");
+							cv.put(AccountProvider.AMetaData.AccountMetaData.IMAGE_THUMB_URL, u.image_thumb_url);
 						} catch (JSONException e) {
 						}
 
 						try {
 							u.country = profile.getString("country");
-							cv.put(AccountProvider.AMetaData.AccountMetaData.COUNTRY,
-									u.country);
+							cv.put(AccountProvider.AMetaData.AccountMetaData.COUNTRY, u.country);
 						} catch (JSONException e) {
 						}
 						try {
 							u.city = profile.getString("city");
-							cv.put(AccountProvider.AMetaData.AccountMetaData.CITY,
-									u.city);
+							cv.put(AccountProvider.AMetaData.AccountMetaData.CITY, u.city);
 						} catch (JSONException e) {
 						}
 						try {
 							u.street = profile.getString("street");
-							cv.put(AccountProvider.AMetaData.AccountMetaData.STREET,
-									u.street);
+							cv.put(AccountProvider.AMetaData.AccountMetaData.STREET, u.street);
 						} catch (JSONException e) {
 						}
 						try {
 							u.zip = profile.getString("zip");
-							cv.put(AccountProvider.AMetaData.AccountMetaData.ZIP,
-									u.zip);
+							cv.put(AccountProvider.AMetaData.AccountMetaData.ZIP, u.zip);
 						} catch (JSONException e) {
 						}
 
 						try {
 							u.timezone = profile.getString("timezone");
-							cv.put(AccountProvider.AMetaData.AccountMetaData.TIMEZONE,
-									u.timezone);
+							cv.put(AccountProvider.AMetaData.AccountMetaData.TIMEZONE, u.timezone);
 						} catch (JSONException e) {
 						}
 						try {
 							u.local_time = profile.getString("local_time");
-							cv.put(AccountProvider.AMetaData.AccountMetaData.LOCAL_TIME,
-									u.local_time);
+							cv.put(AccountProvider.AMetaData.AccountMetaData.LOCAL_TIME, u.local_time);
 						} catch (JSONException e) {
 						}
 						try {
 							u.language = profile.getString("language");
-							cv.put(AccountProvider.AMetaData.AccountMetaData.LANGUAGE,
-									u.language);
+							cv.put(AccountProvider.AMetaData.AccountMetaData.LANGUAGE, u.language);
 						} catch (JSONException e) {
 						}
 
 						try {
-							u.setting_default_view = profile
-									.getString("setting_default_view");
-							cv.put(AccountProvider.AMetaData.AccountMetaData.SETTING_DEFAULT_VIEW,
-									u.setting_default_view);
+							u.setting_default_view = profile.getString("setting_default_view");
+							cv.put(AccountProvider.AMetaData.AccountMetaData.SETTING_DEFAULT_VIEW, u.setting_default_view);
 						} catch (JSONException e) {
 						}
 						try {
-							u.setting_date_format = profile
-									.getString("setting_date_format");
-							cv.put(AccountProvider.AMetaData.AccountMetaData.SETTING_DATE_FORMAT,
-									u.setting_date_format);
+							u.setting_date_format = profile.getString("setting_date_format");
+							cv.put(AccountProvider.AMetaData.AccountMetaData.SETTING_DATE_FORMAT, u.setting_date_format);
 						} catch (JSONException e) {
 						}
 						try {
 							u.setting_ampm = profile.getInt("setting_ampm");
-							cv.put(AccountProvider.AMetaData.AccountMetaData.SETTING_AMPM,
-									u.setting_ampm);
+							cv.put(AccountProvider.AMetaData.AccountMetaData.SETTING_AMPM, u.setting_ampm);
 						} catch (JSONException e) {
 						}
 
 						try {
-							u.google_calendar_link = profile
-									.getString("google_calendar_link");
-							cv.put(AccountProvider.AMetaData.AccountMetaData.GOOGLE_CALENDAR_LINK,
-									u.google_calendar_link);
+							u.google_calendar_link = profile.getString("google_calendar_link");
+							cv.put(AccountProvider.AMetaData.AccountMetaData.GOOGLE_CALENDAR_LINK, u.google_calendar_link);
 						} catch (JSONException e) {
 						}
 
 						try {
-							u.color_my_event = profile
-									.getString("color_my_event");
-							cv.put(AccountProvider.AMetaData.AccountMetaData.COLOR_MY_EVENT,
-									u.color_my_event);
+							u.color_my_event = profile.getString("color_my_event");
+							cv.put(AccountProvider.AMetaData.AccountMetaData.COLOR_MY_EVENT, u.color_my_event);
 						} catch (JSONException e) {
 						}
 						try {
-							u.color_attending = profile
-									.getString("color_attending");
-							cv.put(AccountProvider.AMetaData.AccountMetaData.COLOR_ATTENDING,
-									u.color_attending);
+							u.color_attending = profile.getString("color_attending");
+							cv.put(AccountProvider.AMetaData.AccountMetaData.COLOR_ATTENDING, u.color_attending);
 						} catch (JSONException e) {
 						}
 						try {
-							u.color_pending = profile
-									.getString("color_pending");
-							cv.put(AccountProvider.AMetaData.AccountMetaData.COLOR_PENDING,
-									u.color_pending);
+							u.color_pending = profile.getString("color_pending");
+							cv.put(AccountProvider.AMetaData.AccountMetaData.COLOR_PENDING, u.color_pending);
 						} catch (JSONException e) {
 						}
 						try {
-							u.color_invitation = profile
-									.getString("color_invitation");
-							cv.put(AccountProvider.AMetaData.AccountMetaData.COLOR_INVINTATION,
-									u.color_invitation);
+							u.color_invitation = profile.getString("color_invitation");
+							cv.put(AccountProvider.AMetaData.AccountMetaData.COLOR_INVINTATION, u.color_invitation);
 						} catch (JSONException e) {
 						}
 						try {
 							u.color_notes = profile.getString("color_notes");
-							cv.put(AccountProvider.AMetaData.AccountMetaData.COLOR_NOTES,
-									u.color_notes);
+							cv.put(AccountProvider.AMetaData.AccountMetaData.COLOR_NOTES, u.color_notes);
 						} catch (JSONException e) {
 						}
 						try {
-							u.color_birthday = profile
-									.getString("color_birthday");
-							cv.put(AccountProvider.AMetaData.AccountMetaData.COLOR_BIRTHDAY,
-									u.color_birthday);
+							u.color_birthday = profile.getString("color_birthday");
+							cv.put(AccountProvider.AMetaData.AccountMetaData.COLOR_BIRTHDAY, u.color_birthday);
 						} catch (JSONException e) {
 						}
 
 						try {
 							u.created = profile.getString("created");
-							cv.put(AccountProvider.AMetaData.AccountMetaData.CREATED,
-									u.created);
+							cv.put(AccountProvider.AMetaData.AccountMetaData.CREATED, u.created);
 						} catch (JSONException e) {
 						}
 						try {
 							u.modified = profile.getString("modified");
-							cv.put(AccountProvider.AMetaData.AccountMetaData.MODIFIED,
-									u.modified);
+							cv.put(AccountProvider.AMetaData.AccountMetaData.MODIFIED, u.modified);
 						} catch (JSONException e) {
 						}
 
-						mContext.getContentResolver()
-								.insert(AccountProvider.AMetaData.AccountMetaData.CONTENT_URI,
-										cv);
+						mContext.getContentResolver().insert(AccountProvider.AMetaData.AccountMetaData.CONTENT_URI, cv);
 
 					} else {
-						ERROR = object.getJSONObject("error").getString(
-								"reason");
+						ERROR = object.getJSONObject("error").getString("reason");
 					}
 				}
 			}
@@ -598,18 +473,15 @@ public class DataManagement {
 		return u;
 	}
 
-	public boolean registerAccount(String language, String country,
-			String timezone, String sex, String name, String lastname,
+	public boolean registerAccount(String language, String country, String timezone, String sex, String name, String lastname,
 			String email, String phonecode, String phone, String password) {
 		boolean success = false;
 
 		try {
 			HttpClient hc = new DefaultHttpClient();
-			HttpPost post = new HttpPost(prefs.getServerUrl()
-					+ "mobile/account_register");
+			HttpPost post = new HttpPost(prefs.getServerUrl() + "mobile/account_register");
 
-			MultipartEntity reqEntity = new MultipartEntity(
-					HttpMultipartMode.BROWSER_COMPATIBLE);
+			MultipartEntity reqEntity = new MultipartEntity(HttpMultipartMode.BROWSER_COMPATIBLE);
 
 			reqEntity.addPart("language", new StringBody(language));
 			reqEntity.addPart("country", new StringBody(country));
@@ -634,8 +506,7 @@ public class DataManagement {
 					success = object.getBoolean("success");
 
 					if (success == false) {
-						ERROR = object.getJSONObject("error").getString(
-								"reason");
+						ERROR = object.getJSONObject("error").getString("reason");
 					}
 				}
 			}
@@ -652,17 +523,14 @@ public class DataManagement {
 
 		try {
 			HttpClient hc = new DefaultHttpClient();
-			HttpPost post = new HttpPost(prefs.getServerUrl()
-					+ "mobile/account_email_change");
+			HttpPost post = new HttpPost(prefs.getServerUrl() + "mobile/account_email_change");
 
-			MultipartEntity reqEntity = new MultipartEntity(
-					HttpMultipartMode.BROWSER_COMPATIBLE);
+			MultipartEntity reqEntity = new MultipartEntity(HttpMultipartMode.BROWSER_COMPATIBLE);
 			reqEntity.addPart("token", new StringBody(prefs.getToken()));
 			reqEntity.addPart("password", new StringBody(prefs.getPassword()));
 			reqEntity.addPart("email", new StringBody(email));
 			if (email_id > 1)
-				reqEntity.addPart("email_id",
-						new StringBody(String.valueOf(email_id)));
+				reqEntity.addPart("email_id", new StringBody(String.valueOf(email_id)));
 
 			post.setEntity(reqEntity);
 			HttpResponse rp = hc.execute(post);
@@ -674,9 +542,7 @@ public class DataManagement {
 					JSONObject object = new JSONObject(resp);
 					success = object.getBoolean("success");
 					if (!success) {
-						Log.e("Change email ERROR",
-								object.getJSONObject("error").getString(
-										"reason"));
+						Log.e("Change email ERROR", object.getJSONObject("error").getString("reason"));
 					}
 				}
 			}
@@ -688,26 +554,20 @@ public class DataManagement {
 		return success;
 	}
 
-	public boolean changeCalendarSettings(int am_pm, String defaultview,
-			String dateformat) {
+	public boolean changeCalendarSettings(int am_pm, String defaultview, String dateformat) {
 		boolean success = false;
 
 		try {
 			HttpClient hc = new DefaultHttpClient();
-			HttpPost post = new HttpPost(prefs.getServerUrl()
-					+ "mobile/settings_update");
+			HttpPost post = new HttpPost(prefs.getServerUrl() + "mobile/settings_update");
 
-			MultipartEntity reqEntity = new MultipartEntity(
-					HttpMultipartMode.BROWSER_COMPATIBLE);
+			MultipartEntity reqEntity = new MultipartEntity(HttpMultipartMode.BROWSER_COMPATIBLE);
 
 			reqEntity.addPart("token", new StringBody(prefs.getToken()));
 
-			reqEntity.addPart("setting_ampm",
-					new StringBody(String.valueOf(am_pm)));
-			reqEntity.addPart("setting_default_view", new StringBody(
-					defaultview));
-			reqEntity
-					.addPart("setting_date_format", new StringBody(dateformat));
+			reqEntity.addPart("setting_ampm", new StringBody(String.valueOf(am_pm)));
+			reqEntity.addPart("setting_default_view", new StringBody(defaultview));
+			reqEntity.addPart("setting_date_format", new StringBody(dateformat));
 
 			post.setEntity(reqEntity);
 			HttpResponse rp = hc.execute(post);
@@ -718,9 +578,7 @@ public class DataManagement {
 					JSONObject object = new JSONObject(resp);
 					success = object.getBoolean("success");
 					if (!success) {
-						Log.e("Edit settings ERROR",
-								object.getJSONObject("error").getString(
-										"reason"));
+						Log.e("Edit settings ERROR", object.getJSONObject("error").getString("reason"));
 					}
 				}
 			}
@@ -740,8 +598,7 @@ public class DataManagement {
 			HttpClient hc = new DefaultHttpClient();
 			HttpPost post = new HttpPost(prefs.getServerUrl() + "mobile/login");
 
-			MultipartEntity reqEntity = new MultipartEntity(
-					HttpMultipartMode.BROWSER_COMPATIBLE);
+			MultipartEntity reqEntity = new MultipartEntity(HttpMultipartMode.BROWSER_COMPATIBLE);
 
 			reqEntity.addPart("email", new StringBody(email));
 			reqEntity.addPart("password", new StringBody(password));
@@ -770,57 +627,32 @@ public class DataManagement {
 						DataManagement.prefs.save();
 
 						// autoicons and autocolors
-						mContext.getContentResolver()
-								.delete(AccountProvider.AMetaData.AutoiconMetaData.CONTENT_URI,
-										"", null);
-						JSONArray autoicons = object
-								.getJSONArray("custom_icons");
+						mContext.getContentResolver().delete(AccountProvider.AMetaData.AutoiconMetaData.CONTENT_URI, "", null);
+						JSONArray autoicons = object.getJSONArray("custom_icons");
 						for (int i = 0, l = autoicons.length(); i < l; i++) {
-							final JSONObject autoicon = autoicons
-									.getJSONObject(i);
+							final JSONObject autoicon = autoicons.getJSONObject(i);
 							ContentValues values = new ContentValues();
-							values.put(
-									AccountProvider.AMetaData.AutoiconMetaData.ICON,
-									autoicon.getString("icon"));
-							values.put(
-									AccountProvider.AMetaData.AutoiconMetaData.KEYWORD,
-									autoicon.getString("keyword"));
-							values.put(
-									AccountProvider.AMetaData.AutoiconMetaData.CONTEXT,
-									autoicon.getString("context"));
+							values.put(AccountProvider.AMetaData.AutoiconMetaData.ICON, autoicon.getString("icon"));
+							values.put(AccountProvider.AMetaData.AutoiconMetaData.KEYWORD, autoicon.getString("keyword"));
+							values.put(AccountProvider.AMetaData.AutoiconMetaData.CONTEXT, autoicon.getString("context"));
 
-							mContext.getContentResolver()
-									.insert(AccountProvider.AMetaData.AutoiconMetaData.CONTENT_URI,
-											values);
+							mContext.getContentResolver().insert(AccountProvider.AMetaData.AutoiconMetaData.CONTENT_URI, values);
 						}
 
-						mContext.getContentResolver()
-								.delete(AccountProvider.AMetaData.AutocolorMetaData.CONTENT_URI,
-										"", null);
-						JSONArray autocolors = object
-								.getJSONArray("custom_colors");
+						mContext.getContentResolver().delete(AccountProvider.AMetaData.AutocolorMetaData.CONTENT_URI, "", null);
+						JSONArray autocolors = object.getJSONArray("custom_colors");
 						for (int i = 0, l = autocolors.length(); i < l; i++) {
-							final JSONObject autocolor = autocolors
-									.getJSONObject(i);
+							final JSONObject autocolor = autocolors.getJSONObject(i);
 							ContentValues values = new ContentValues();
-							values.put(
-									AccountProvider.AMetaData.AutocolorMetaData.COLOR,
-									autocolor.getString("color"));
-							values.put(
-									AccountProvider.AMetaData.AutocolorMetaData.KEYWORD,
-									autocolor.getString("keyword"));
-							values.put(
-									AccountProvider.AMetaData.AutocolorMetaData.CONTEXT,
-									autocolor.getString("context"));
+							values.put(AccountProvider.AMetaData.AutocolorMetaData.COLOR, autocolor.getString("color"));
+							values.put(AccountProvider.AMetaData.AutocolorMetaData.KEYWORD, autocolor.getString("keyword"));
+							values.put(AccountProvider.AMetaData.AutocolorMetaData.CONTEXT, autocolor.getString("context"));
 
-							mContext.getContentResolver()
-									.insert(AccountProvider.AMetaData.AutocolorMetaData.CONTENT_URI,
-											values);
+							mContext.getContentResolver().insert(AccountProvider.AMetaData.AutocolorMetaData.CONTENT_URI, values);
 						}
 						registerPhone();
 					} else {
-						ERROR = object.getJSONObject("error").getString(
-								"reason");
+						ERROR = object.getJSONObject("error").getString("reason");
 						Log.e("login", ERROR + "!!!");
 					}
 				}
@@ -852,8 +684,7 @@ public class DataManagement {
 	public static String getImei(Context context) {
 
 		try {
-			TelephonyManager telephonyManager = (TelephonyManager) context
-					.getSystemService(Context.TELEPHONY_SERVICE);
+			TelephonyManager telephonyManager = (TelephonyManager) context.getSystemService(Context.TELEPHONY_SERVICE);
 
 			if (telephonyManager == null) {
 				return "";
@@ -867,8 +698,8 @@ public class DataManagement {
 		return "";
 	}
 
-	public static HttpURLConnection sendHttpRequest(String path, String method,
-			List<NameValuePair> paramsList, List<NameValuePair> propertyList) {
+	public static HttpURLConnection sendHttpRequest(String path, String method, List<NameValuePair> paramsList,
+			List<NameValuePair> propertyList) {
 		HttpURLConnection connection = null;
 
 		String KContentType = "multipart/form-data; boundary=AaB03x";
@@ -881,8 +712,7 @@ public class DataManagement {
 			if (method.equals("POST")) {
 				url = new URL(path);
 			} else if (method.equals("GET")) {
-				url = new URL(path + "?"
-						+ URLEncodedUtils.format(paramsList, "utf-8"));
+				url = new URL(path + "?" + URLEncodedUtils.format(paramsList, "utf-8"));
 			}
 			connection = (HttpURLConnection) url.openConnection();
 
@@ -898,13 +728,11 @@ public class DataManagement {
 
 			for (int i = 0; i < propertyList.size(); i++) {
 				NameValuePair param = paramsList.get(i);
-				connection
-						.setRequestProperty(param.getName(), param.getValue());
+				connection.setRequestProperty(param.getName(), param.getValue());
 			}
 
 			if (method.equals("POST")) {
-				DataOutputStream outputStream = new DataOutputStream(
-						connection.getOutputStream());
+				DataOutputStream outputStream = new DataOutputStream(connection.getOutputStream());
 
 				for (int i = 0; i < paramsList.size(); i++) {
 					NameValuePair param = paramsList.get(i);
@@ -918,9 +746,7 @@ public class DataManagement {
 
 					outputStream.writeBytes(KStartContent);
 					outputStream.writeBytes(KCrlf);
-					outputStream
-							.writeBytes("Content-Disposition: form-data; name=\""
-									+ param.getName() + "\"");
+					outputStream.writeBytes("Content-Disposition: form-data; name=\"" + param.getName() + "\"");
 					outputStream.writeBytes(KCrlf);
 					outputStream.writeBytes(KCrlf);
 					outputStream.write(param.getValue().getBytes("utf-8"));
@@ -957,11 +783,9 @@ public class DataManagement {
 		try {
 
 			HttpClient hc = new DefaultHttpClient();
-			HttpPost post = new HttpPost(prefs.getServerUrl()
-					+ "mobile/register_android");
+			HttpPost post = new HttpPost(prefs.getServerUrl() + "mobile/register_android");
 
-			MultipartEntity reqEntity = new MultipartEntity(
-					HttpMultipartMode.BROWSER_COMPATIBLE);
+			MultipartEntity reqEntity = new MultipartEntity(HttpMultipartMode.BROWSER_COMPATIBLE);
 
 			reqEntity.addPart("token", new StringBody(prefs.getToken()));
 			reqEntity.addPart("android_id", new StringBody(pushId));
@@ -992,39 +816,24 @@ public class DataManagement {
 
 		try {
 			HttpClient hc = new DefaultHttpClient();
-			HttpPost post = new HttpPost(prefs.getServerUrl()
-					+ "mobile/settings_set_autoicons");
+			HttpPost post = new HttpPost(prefs.getServerUrl() + "mobile/settings_set_autoicons");
 
-			MultipartEntity reqEntity = new MultipartEntity(
-					HttpMultipartMode.BROWSER_COMPATIBLE);
+			MultipartEntity reqEntity = new MultipartEntity(HttpMultipartMode.BROWSER_COMPATIBLE);
 			reqEntity.addPart("token", new StringBody(prefs.getToken()));
 
-			Cursor result = mContext.getContentResolver().query(
-					AccountProvider.AMetaData.AutoiconMetaData.CONTENT_URI,
-					null, null, null, null);
+			Cursor result = mContext.getContentResolver().query(AccountProvider.AMetaData.AutoiconMetaData.CONTENT_URI, null, null, null,
+					null);
 			result.moveToFirst();
 
 			int i = 1;
 			while (!result.isAfterLast()) {
 
-				reqEntity
-						.addPart(
-								"autoicon[" + i + "][icon]",
-								new StringBody(
-										result.getString(result
-												.getColumnIndex(AccountProvider.AMetaData.AutoiconMetaData.ICON))));
-				reqEntity
-						.addPart(
-								"autoicon[" + i + "][keyword]",
-								new StringBody(
-										result.getString(result
-												.getColumnIndex(AccountProvider.AMetaData.AutoiconMetaData.KEYWORD))));
-				reqEntity
-						.addPart(
-								"autoicon[" + i + "][context]",
-								new StringBody(
-										result.getString(result
-												.getColumnIndex(AccountProvider.AMetaData.AutoiconMetaData.CONTEXT))));
+				reqEntity.addPart("autoicon[" + i + "][icon]",
+						new StringBody(result.getString(result.getColumnIndex(AccountProvider.AMetaData.AutoiconMetaData.ICON))));
+				reqEntity.addPart("autoicon[" + i + "][keyword]",
+						new StringBody(result.getString(result.getColumnIndex(AccountProvider.AMetaData.AutoiconMetaData.KEYWORD))));
+				reqEntity.addPart("autoicon[" + i + "][context]",
+						new StringBody(result.getString(result.getColumnIndex(AccountProvider.AMetaData.AutoiconMetaData.CONTEXT))));
 
 				i++;
 				result.moveToNext();
@@ -1040,8 +849,7 @@ public class DataManagement {
 					success = object.getBoolean("success");
 
 					if (success == false) {
-						ERROR = object.getJSONObject("error").getString(
-								"reason");
+						ERROR = object.getJSONObject("error").getString("reason");
 						Log.e("set autoicon - error: ", ERROR);
 					}
 				}
@@ -1058,27 +866,17 @@ public class DataManagement {
 	public ArrayList<AutoIconItem> getAutoIcons() {
 		ArrayList<AutoIconItem> Items = new ArrayList<AutoIconItem>();
 
-		Cursor result = mContext.getContentResolver().query(
-				AccountProvider.AMetaData.AutoiconMetaData.CONTENT_URI, null,
-				null, null, null);
+		Cursor result = mContext.getContentResolver().query(AccountProvider.AMetaData.AutoiconMetaData.CONTENT_URI, null, null, null, null);
 		result.moveToFirst();
 
 		while (!result.isAfterLast()) {
 
 			final AutoIconItem item = new AutoIconItem();
 
-			item.id = result
-					.getInt(result
-							.getColumnIndex(AccountProvider.AMetaData.AutoiconMetaData.I_ID));
-			item.icon = result
-					.getString(result
-							.getColumnIndex(AccountProvider.AMetaData.AutoiconMetaData.ICON));
-			item.keyword = result
-					.getString(result
-							.getColumnIndex(AccountProvider.AMetaData.AutoiconMetaData.KEYWORD));
-			item.context = result
-					.getString(result
-							.getColumnIndex(AccountProvider.AMetaData.AutoiconMetaData.CONTEXT));
+			item.id = result.getInt(result.getColumnIndex(AccountProvider.AMetaData.AutoiconMetaData.I_ID));
+			item.icon = result.getString(result.getColumnIndex(AccountProvider.AMetaData.AutoiconMetaData.ICON));
+			item.keyword = result.getString(result.getColumnIndex(AccountProvider.AMetaData.AutoiconMetaData.KEYWORD));
+			item.context = result.getString(result.getColumnIndex(AccountProvider.AMetaData.AutoiconMetaData.CONTEXT));
 
 			result.moveToNext();
 
@@ -1093,39 +891,24 @@ public class DataManagement {
 
 		try {
 			HttpClient hc = new DefaultHttpClient();
-			HttpPost post = new HttpPost(prefs.getServerUrl()
-					+ "mobile/settings_set_autocolors");
+			HttpPost post = new HttpPost(prefs.getServerUrl() + "mobile/settings_set_autocolors");
 
-			MultipartEntity reqEntity = new MultipartEntity(
-					HttpMultipartMode.BROWSER_COMPATIBLE);
+			MultipartEntity reqEntity = new MultipartEntity(HttpMultipartMode.BROWSER_COMPATIBLE);
 			reqEntity.addPart("token", new StringBody(prefs.getToken()));
 
-			Cursor result = mContext.getContentResolver().query(
-					AccountProvider.AMetaData.AutocolorMetaData.CONTENT_URI,
-					null, null, null, null);
+			Cursor result = mContext.getContentResolver().query(AccountProvider.AMetaData.AutocolorMetaData.CONTENT_URI, null, null, null,
+					null);
 			result.moveToFirst();
 
 			int i = 1;
 			while (!result.isAfterLast()) {
 
-				reqEntity
-						.addPart(
-								"autocolor[" + i + "][color]",
-								new StringBody(
-										result.getString(result
-												.getColumnIndex(AccountProvider.AMetaData.AutocolorMetaData.COLOR))));
-				reqEntity
-						.addPart(
-								"autocolor[" + i + "][keyword]",
-								new StringBody(
-										result.getString(result
-												.getColumnIndex(AccountProvider.AMetaData.AutocolorMetaData.KEYWORD))));
-				reqEntity
-						.addPart(
-								"autocolor[" + i + "][context]",
-								new StringBody(
-										result.getString(result
-												.getColumnIndex(AccountProvider.AMetaData.AutocolorMetaData.CONTEXT))));
+				reqEntity.addPart("autocolor[" + i + "][color]",
+						new StringBody(result.getString(result.getColumnIndex(AccountProvider.AMetaData.AutocolorMetaData.COLOR))));
+				reqEntity.addPart("autocolor[" + i + "][keyword]",
+						new StringBody(result.getString(result.getColumnIndex(AccountProvider.AMetaData.AutocolorMetaData.KEYWORD))));
+				reqEntity.addPart("autocolor[" + i + "][context]",
+						new StringBody(result.getString(result.getColumnIndex(AccountProvider.AMetaData.AutocolorMetaData.CONTEXT))));
 
 				i++;
 				result.moveToNext();
@@ -1141,8 +924,7 @@ public class DataManagement {
 					success = object.getBoolean("success");
 
 					if (success == false) {
-						ERROR = object.getJSONObject("error").getString(
-								"reason");
+						ERROR = object.getJSONObject("error").getString("reason");
 						Log.e("set autocolor - error: ", ERROR);
 					}
 				}
@@ -1159,27 +941,18 @@ public class DataManagement {
 	public ArrayList<AutoColorItem> getAutoColors() {
 		ArrayList<AutoColorItem> Items = new ArrayList<AutoColorItem>();
 
-		Cursor result = mContext.getContentResolver().query(
-				AccountProvider.AMetaData.AutocolorMetaData.CONTENT_URI, null,
-				null, null, null);
+		Cursor result = mContext.getContentResolver()
+				.query(AccountProvider.AMetaData.AutocolorMetaData.CONTENT_URI, null, null, null, null);
 		result.moveToFirst();
 
 		while (!result.isAfterLast()) {
 
 			final AutoColorItem item = new AutoColorItem();
 
-			item.id = result
-					.getInt(result
-							.getColumnIndex(AccountProvider.AMetaData.AutocolorMetaData.C_ID));
-			item.color = result
-					.getString(result
-							.getColumnIndex(AccountProvider.AMetaData.AutocolorMetaData.COLOR));
-			item.keyword = result
-					.getString(result
-							.getColumnIndex(AccountProvider.AMetaData.AutocolorMetaData.KEYWORD));
-			item.context = result
-					.getString(result
-							.getColumnIndex(AccountProvider.AMetaData.AutocolorMetaData.CONTEXT));
+			item.id = result.getInt(result.getColumnIndex(AccountProvider.AMetaData.AutocolorMetaData.C_ID));
+			item.color = result.getString(result.getColumnIndex(AccountProvider.AMetaData.AutocolorMetaData.COLOR));
+			item.keyword = result.getString(result.getColumnIndex(AccountProvider.AMetaData.AutocolorMetaData.KEYWORD));
+			item.context = result.getString(result.getColumnIndex(AccountProvider.AMetaData.AutocolorMetaData.CONTEXT));
 
 			Items.add(item);
 
@@ -1197,82 +970,38 @@ public class DataManagement {
 		if (where.length() > 0)
 			where += " AND ";
 
-		where += ContactsProvider.CMetaData.ContactsMetaData.NEED_UPDATE
-				+ "!=3";
+		where += ContactsProvider.CMetaData.ContactsMetaData.NEED_UPDATE + "!=3";
 
-		Cursor result = mContext.getContentResolver().query(
-				ContactsProvider.CMetaData.ContactsMetaData.CONTENT_URI, null,
-				where, null, null);
+		Cursor result = mContext.getContentResolver().query(ContactsProvider.CMetaData.ContactsMetaData.CONTENT_URI, null, where, null,
+				null);
 
 		result.moveToFirst();
 
 		while (!result.isAfterLast()) {
 			item = new Contact();
 
-			item.contact_id = result
-					.getInt(result
-							.getColumnIndex(ContactsProvider.CMetaData.ContactsMetaData.C_ID));
-			item.name = result
-					.getString(result
-							.getColumnIndex(ContactsProvider.CMetaData.ContactsMetaData.NAME));
-			item.lastname = result
-					.getString(result
-							.getColumnIndex(ContactsProvider.CMetaData.ContactsMetaData.LASTNAME));
-			item.email = result
-					.getString(result
-							.getColumnIndex(ContactsProvider.CMetaData.ContactsMetaData.EMAIL));
-			item.phone1 = result
-					.getString(result
-							.getColumnIndex(ContactsProvider.CMetaData.ContactsMetaData.PHONE));
-			item.birthdate = result
-					.getString(result
-							.getColumnIndex(ContactsProvider.CMetaData.ContactsMetaData.BIRTHDATE));
-			item.country = result
-					.getString(result
-							.getColumnIndex(ContactsProvider.CMetaData.ContactsMetaData.COUNTRY));
-			item.city = result
-					.getString(result
-							.getColumnIndex(ContactsProvider.CMetaData.ContactsMetaData.CITY));
-			item.street = result
-					.getString(result
-							.getColumnIndex(ContactsProvider.CMetaData.ContactsMetaData.STREET));
-			item.zip = result
-					.getString(result
-							.getColumnIndex(ContactsProvider.CMetaData.ContactsMetaData.ZIP));
-			item.visibility = result
-					.getString(result
-							.getColumnIndex(ContactsProvider.CMetaData.ContactsMetaData.VISIBILITY));
-			item.zip = result
-					.getString(result
-							.getColumnIndex(ContactsProvider.CMetaData.ContactsMetaData.ZIP));
-			final int image = result
-					.getInt(result
-							.getColumnIndex(ContactsProvider.CMetaData.ContactsMetaData.IMAGE));
+			item.contact_id = result.getInt(result.getColumnIndex(ContactsProvider.CMetaData.ContactsMetaData.C_ID));
+			item.name = result.getString(result.getColumnIndex(ContactsProvider.CMetaData.ContactsMetaData.NAME));
+			item.lastname = result.getString(result.getColumnIndex(ContactsProvider.CMetaData.ContactsMetaData.LASTNAME));
+			item.email = result.getString(result.getColumnIndex(ContactsProvider.CMetaData.ContactsMetaData.EMAIL));
+			item.phone1 = result.getString(result.getColumnIndex(ContactsProvider.CMetaData.ContactsMetaData.PHONE));
+			item.birthdate = result.getString(result.getColumnIndex(ContactsProvider.CMetaData.ContactsMetaData.BIRTHDATE));
+			item.country = result.getString(result.getColumnIndex(ContactsProvider.CMetaData.ContactsMetaData.COUNTRY));
+			item.city = result.getString(result.getColumnIndex(ContactsProvider.CMetaData.ContactsMetaData.CITY));
+			item.street = result.getString(result.getColumnIndex(ContactsProvider.CMetaData.ContactsMetaData.STREET));
+			item.zip = result.getString(result.getColumnIndex(ContactsProvider.CMetaData.ContactsMetaData.ZIP));
+			item.visibility = result.getString(result.getColumnIndex(ContactsProvider.CMetaData.ContactsMetaData.VISIBILITY));
+			item.zip = result.getString(result.getColumnIndex(ContactsProvider.CMetaData.ContactsMetaData.ZIP));
+			final int image = result.getInt(result.getColumnIndex(ContactsProvider.CMetaData.ContactsMetaData.IMAGE));
 			item.image = image == 1;
-			item.image_url = result
-					.getString(result
-							.getColumnIndex(ContactsProvider.CMetaData.ContactsMetaData.IMAGE_URL));
-			item.image_thumb_url = result
-					.getString(result
-							.getColumnIndex(ContactsProvider.CMetaData.ContactsMetaData.IMAGE_THUMB_URL));
-			item.image_bytes = result
-					.getBlob(result
-							.getColumnIndex(ContactsProvider.CMetaData.ContactsMetaData.IMAGE_BYTES));
-			item.created = result
-					.getString(result
-							.getColumnIndex(ContactsProvider.CMetaData.ContactsMetaData.CREATED));
-			item.modified = result
-					.getString(result
-							.getColumnIndex(ContactsProvider.CMetaData.ContactsMetaData.MODOFIED));
-			item.agenda_view = result
-					.getString(result
-							.getColumnIndex(ContactsProvider.CMetaData.ContactsMetaData.AGENDA_VIEW));
-			item.registered = result
-					.getString(result
-							.getColumnIndex(ContactsProvider.CMetaData.ContactsMetaData.REGISTERED));
-			final String groups = result
-					.getString(result
-							.getColumnIndex(ContactsProvider.CMetaData.ContactsMetaData.GROUPS));
+			item.image_url = result.getString(result.getColumnIndex(ContactsProvider.CMetaData.ContactsMetaData.IMAGE_URL));
+			item.image_thumb_url = result.getString(result.getColumnIndex(ContactsProvider.CMetaData.ContactsMetaData.IMAGE_THUMB_URL));
+			item.image_bytes = result.getBlob(result.getColumnIndex(ContactsProvider.CMetaData.ContactsMetaData.IMAGE_BYTES));
+			item.created = result.getString(result.getColumnIndex(ContactsProvider.CMetaData.ContactsMetaData.CREATED));
+			item.modified = result.getString(result.getColumnIndex(ContactsProvider.CMetaData.ContactsMetaData.MODOFIED));
+			item.agenda_view = result.getString(result.getColumnIndex(ContactsProvider.CMetaData.ContactsMetaData.AGENDA_VIEW));
+			item.registered = result.getString(result.getColumnIndex(ContactsProvider.CMetaData.ContactsMetaData.REGISTERED));
+			final String groups = result.getString(result.getColumnIndex(ContactsProvider.CMetaData.ContactsMetaData.GROUPS));
 			if (groups != null) {
 				item.groups = MapUtils.stringToMap(groups);
 			}
@@ -1292,17 +1021,14 @@ public class DataManagement {
 
 		try {
 			HttpClient hc = new DefaultHttpClient();
-			HttpPost post = new HttpPost(DataManagement.prefs.getServerUrl()
-					+ "mobile/contact_list");
-			MultipartEntity reqEntity = new MultipartEntity(
-					HttpMultipartMode.BROWSER_COMPATIBLE);
+			HttpPost post = new HttpPost(DataManagement.prefs.getServerUrl() + "mobile/contact_list");
+			MultipartEntity reqEntity = new MultipartEntity(HttpMultipartMode.BROWSER_COMPATIBLE);
 
 			reqEntity.addPart("token", new StringBody(prefs.getToken()));
 			if (groupIds != null) {
 				Iterator<Integer> it = groupIds.iterator();
 				while (it.hasNext()) {
-					reqEntity.addPart("group_id[]",
-							new StringBody(String.valueOf(it.next())));
+					reqEntity.addPart("group_id[]", new StringBody(String.valueOf(it.next())));
 				}
 			}
 
@@ -1329,167 +1055,120 @@ public class DataManagement {
 								ContentValues cv = new ContentValues();
 
 								try {
-									contact.contact_id = c
-											.getInt(ContactsProvider.CMetaData.ContactsMetaData.C_ID);
-									cv.put(ContactsProvider.CMetaData.ContactsMetaData.C_ID,
-											contact.contact_id);
+									contact.contact_id = c.getInt(ContactsProvider.CMetaData.ContactsMetaData.C_ID);
+									cv.put(ContactsProvider.CMetaData.ContactsMetaData.C_ID, contact.contact_id);
 								} catch (JSONException e) {
 								}
 
 								try {
-									contact.name = c
-											.getString(ContactsProvider.CMetaData.ContactsMetaData.NAME);
-									cv.put(ContactsProvider.CMetaData.ContactsMetaData.NAME,
-											contact.name);
+									contact.name = c.getString(ContactsProvider.CMetaData.ContactsMetaData.NAME);
+									cv.put(ContactsProvider.CMetaData.ContactsMetaData.NAME, contact.name);
 								} catch (JSONException e) {
 								}
 
 								try {
-									contact.lastname = c
-											.getString(ContactsProvider.CMetaData.ContactsMetaData.LASTNAME);
-									cv.put(ContactsProvider.CMetaData.ContactsMetaData.LASTNAME,
-											contact.lastname);
+									contact.lastname = c.getString(ContactsProvider.CMetaData.ContactsMetaData.LASTNAME);
+									cv.put(ContactsProvider.CMetaData.ContactsMetaData.LASTNAME, contact.lastname);
 								} catch (JSONException e) {
 								}
 								try {
-									contact.email = c
-											.getString(ContactsProvider.CMetaData.ContactsMetaData.EMAIL);
-									cv.put(ContactsProvider.CMetaData.ContactsMetaData.EMAIL,
-											contact.email);
+									contact.email = c.getString(ContactsProvider.CMetaData.ContactsMetaData.EMAIL);
+									cv.put(ContactsProvider.CMetaData.ContactsMetaData.EMAIL, contact.email);
 								} catch (JSONException e) {
 								}
 								try {
-									contact.phone1 = c
-											.getString(ContactsProvider.CMetaData.ContactsMetaData.PHONE);
-									cv.put(ContactsProvider.CMetaData.ContactsMetaData.PHONE,
-											contact.phone1);
+									contact.phone1 = c.getString(ContactsProvider.CMetaData.ContactsMetaData.PHONE);
+									cv.put(ContactsProvider.CMetaData.ContactsMetaData.PHONE, contact.phone1);
 								} catch (JSONException e) {
 								}
 								try {
-									contact.birthdate = c
-											.getString(ContactsProvider.CMetaData.ContactsMetaData.BIRTHDATE);
-									cv.put(ContactsProvider.CMetaData.ContactsMetaData.BIRTHDATE,
-											contact.birthdate);
+									contact.birthdate = c.getString(ContactsProvider.CMetaData.ContactsMetaData.BIRTHDATE);
+									cv.put(ContactsProvider.CMetaData.ContactsMetaData.BIRTHDATE, contact.birthdate);
 								} catch (JSONException e) {
 								}
 								try {
-									contact.country = c
-											.getString(ContactsProvider.CMetaData.ContactsMetaData.COUNTRY);
-									cv.put(ContactsProvider.CMetaData.ContactsMetaData.COUNTRY,
-											contact.country);
+									contact.country = c.getString(ContactsProvider.CMetaData.ContactsMetaData.COUNTRY);
+									cv.put(ContactsProvider.CMetaData.ContactsMetaData.COUNTRY, contact.country);
 								} catch (JSONException e) {
 								}
 								try {
-									contact.city = c
-											.getString(ContactsProvider.CMetaData.ContactsMetaData.CITY);
-									cv.put(ContactsProvider.CMetaData.ContactsMetaData.CITY,
-											contact.city);
+									contact.city = c.getString(ContactsProvider.CMetaData.ContactsMetaData.CITY);
+									cv.put(ContactsProvider.CMetaData.ContactsMetaData.CITY, contact.city);
 								} catch (JSONException e) {
 								}
 								try {
-									contact.street = c
-											.getString(ContactsProvider.CMetaData.ContactsMetaData.STREET);
-									cv.put(ContactsProvider.CMetaData.ContactsMetaData.STREET,
-											contact.street);
+									contact.street = c.getString(ContactsProvider.CMetaData.ContactsMetaData.STREET);
+									cv.put(ContactsProvider.CMetaData.ContactsMetaData.STREET, contact.street);
 								} catch (JSONException e) {
 								}
 								try {
-									contact.zip = c
-											.getString(ContactsProvider.CMetaData.ContactsMetaData.ZIP);
-									cv.put(ContactsProvider.CMetaData.ContactsMetaData.ZIP,
-											contact.zip);
+									contact.zip = c.getString(ContactsProvider.CMetaData.ContactsMetaData.ZIP);
+									cv.put(ContactsProvider.CMetaData.ContactsMetaData.ZIP, contact.zip);
 								} catch (JSONException e) {
 								}
 								try {
-									contact.visibility = c
-											.getString(ContactsProvider.CMetaData.ContactsMetaData.VISIBILITY);
-									cv.put(ContactsProvider.CMetaData.ContactsMetaData.VISIBILITY,
-											contact.visibility);
+									contact.visibility = c.getString(ContactsProvider.CMetaData.ContactsMetaData.VISIBILITY);
+									cv.put(ContactsProvider.CMetaData.ContactsMetaData.VISIBILITY, contact.visibility);
 								} catch (JSONException e) {
 								}
 
 								try {
-									contact.image = c
-											.getBoolean(ContactsProvider.CMetaData.ContactsMetaData.IMAGE);
-									cv.put(ContactsProvider.CMetaData.ContactsMetaData.IMAGE,
-											contact.image);
+									contact.image = c.getBoolean(ContactsProvider.CMetaData.ContactsMetaData.IMAGE);
+									cv.put(ContactsProvider.CMetaData.ContactsMetaData.IMAGE, contact.image);
 								} catch (JSONException e) {
 									contact.image = false;
 								}
 								try {
-									contact.image_thumb_url = c
-											.getString(ContactsProvider.CMetaData.ContactsMetaData.IMAGE_THUMB_URL);
-									cv.put(ContactsProvider.CMetaData.ContactsMetaData.IMAGE_THUMB_URL,
-											contact.image_thumb_url);
+									contact.image_thumb_url = c.getString(ContactsProvider.CMetaData.ContactsMetaData.IMAGE_THUMB_URL);
+									cv.put(ContactsProvider.CMetaData.ContactsMetaData.IMAGE_THUMB_URL, contact.image_thumb_url);
 								} catch (JSONException e) {
 									contact.image_thumb_url = "false";
 								}
 								try {
-									contact.image_url = c
-											.getString(ContactsProvider.CMetaData.ContactsMetaData.IMAGE_URL);
-									cv.put(ContactsProvider.CMetaData.ContactsMetaData.IMAGE_URL,
-											contact.image_url);
-									if (contact.image_url != null
-											&& !contact.image_url
-													.equals("null")) {
-										contact.image_bytes = imageToBytes(prefs
-												.getServerUrl()
-												+ contact.image_url);
-										cv.put(ContactsProvider.CMetaData.ContactsMetaData.IMAGE_BYTES,
-												contact.image_bytes);
+									contact.image_url = c.getString(ContactsProvider.CMetaData.ContactsMetaData.IMAGE_URL);
+									cv.put(ContactsProvider.CMetaData.ContactsMetaData.IMAGE_URL, contact.image_url);
+									if (contact.image_url != null && !contact.image_url.equals("null")) {
+										contact.image_bytes = imageToBytes(prefs.getServerUrl() + contact.image_url);
+										cv.put(ContactsProvider.CMetaData.ContactsMetaData.IMAGE_BYTES, contact.image_bytes);
 									}
 								} catch (JSONException e) {
 									contact.image_url = "false";
 								}
 
 								try {
-									contact.created = c
-											.getString(ContactsProvider.CMetaData.ContactsMetaData.CREATED);
-									cv.put(ContactsProvider.CMetaData.ContactsMetaData.CREATED,
-											contact.created);
+									contact.created = c.getString(ContactsProvider.CMetaData.ContactsMetaData.CREATED);
+									cv.put(ContactsProvider.CMetaData.ContactsMetaData.CREATED, contact.created);
 								} catch (JSONException e) {
 								}
 								try {
-									contact.modified = c
-											.getString(ContactsProvider.CMetaData.ContactsMetaData.MODOFIED);
-									cv.put(ContactsProvider.CMetaData.ContactsMetaData.MODOFIED,
-											contact.modified);
+									contact.modified = c.getString(ContactsProvider.CMetaData.ContactsMetaData.MODOFIED);
+									cv.put(ContactsProvider.CMetaData.ContactsMetaData.MODOFIED, contact.modified);
 								} catch (JSONException e) {
 								}
 								try {
-									contact.agenda_view = c
-											.getString(ContactsProvider.CMetaData.ContactsMetaData.AGENDA_VIEW);
-									cv.put(ContactsProvider.CMetaData.ContactsMetaData.AGENDA_VIEW,
-											contact.agenda_view);
+									contact.agenda_view = c.getString(ContactsProvider.CMetaData.ContactsMetaData.AGENDA_VIEW);
+									cv.put(ContactsProvider.CMetaData.ContactsMetaData.AGENDA_VIEW, contact.agenda_view);
 								} catch (JSONException e) {
 								}
 								try {
-									contact.registered = c
-											.getString(ContactsProvider.CMetaData.ContactsMetaData.REGISTERED);
-									cv.put(ContactsProvider.CMetaData.ContactsMetaData.REGISTERED,
-											contact.registered);
+									contact.registered = c.getString(ContactsProvider.CMetaData.ContactsMetaData.REGISTERED);
+									cv.put(ContactsProvider.CMetaData.ContactsMetaData.REGISTERED, contact.registered);
 								} catch (JSONException e) {
 								}
 								try {
-									contact.email = c
-											.getString(ContactsProvider.CMetaData.ContactsMetaData.EMAIL);
-									cv.put(ContactsProvider.CMetaData.ContactsMetaData.EMAIL,
-											contact.email);
+									contact.email = c.getString(ContactsProvider.CMetaData.ContactsMetaData.EMAIL);
+									cv.put(ContactsProvider.CMetaData.ContactsMetaData.EMAIL, contact.email);
 								} catch (JSONException e) {
 								}
 
 								try {
-									if (!c.getString("groups").equals("null")
-											&& c.getString("groups") != null) {
+									if (!c.getString("groups").equals("null") && c.getString("groups") != null) {
 										try {
-											JSONArray groups = c
-													.getJSONArray("groups");
+											JSONArray groups = c.getJSONArray("groups");
 											if (groups != null) {
 												Map<String, String> set = new HashMap<String, String>();
-												for (int j = 0, l = groups
-														.length(); j < l; j++) {
-													set.put(String.valueOf(j),
-															groups.getString(j));
+												for (int j = 0, l = groups.length(); j < l; j++) {
+													set.put(String.valueOf(j), groups.getString(j));
 												}
 												contact.groups = set;
 												cv.put(ContactsProvider.CMetaData.ContactsMetaData.GROUPS,
@@ -1501,9 +1180,7 @@ public class DataManagement {
 								} catch (JSONException e) {
 								}
 								contacts.add(contact);
-								mContext.getContentResolver()
-										.insert(ContactsProvider.CMetaData.ContactsMetaData.CONTENT_URI,
-												cv);
+								mContext.getContentResolver().insert(ContactsProvider.CMetaData.ContactsMetaData.CONTENT_URI, cv);
 							}
 						}
 					}
@@ -1519,77 +1196,32 @@ public class DataManagement {
 
 	public Contact getContact(int id) {
 		Contact item = new Contact();
-		Uri uri = Uri
-				.parse(ContactsProvider.CMetaData.ContactsMetaData.CONTENT_URI
-						+ "/" + id);
-		Cursor result = mContext.getContentResolver().query(uri, null, null,
-				null, null);
+		Uri uri = Uri.parse(ContactsProvider.CMetaData.ContactsMetaData.CONTENT_URI + "/" + id);
+		Cursor result = mContext.getContentResolver().query(uri, null, null, null, null);
 
 		if (result.moveToFirst()) {
-			item.contact_id = result
-					.getInt(result
-							.getColumnIndex(ContactsProvider.CMetaData.ContactsMetaData.C_ID));
-			item.name = result
-					.getString(result
-							.getColumnIndex(ContactsProvider.CMetaData.ContactsMetaData.NAME));
-			item.lastname = result
-					.getString(result
-							.getColumnIndex(ContactsProvider.CMetaData.ContactsMetaData.LASTNAME));
-			item.email = result
-					.getString(result
-							.getColumnIndex(ContactsProvider.CMetaData.ContactsMetaData.EMAIL));
-			item.phone1 = result
-					.getString(result
-							.getColumnIndex(ContactsProvider.CMetaData.ContactsMetaData.PHONE));
-			item.birthdate = result
-					.getString(result
-							.getColumnIndex(ContactsProvider.CMetaData.ContactsMetaData.BIRTHDATE));
-			item.country = result
-					.getString(result
-							.getColumnIndex(ContactsProvider.CMetaData.ContactsMetaData.COUNTRY));
-			item.city = result
-					.getString(result
-							.getColumnIndex(ContactsProvider.CMetaData.ContactsMetaData.CITY));
-			item.street = result
-					.getString(result
-							.getColumnIndex(ContactsProvider.CMetaData.ContactsMetaData.STREET));
-			item.zip = result
-					.getString(result
-							.getColumnIndex(ContactsProvider.CMetaData.ContactsMetaData.ZIP));
-			item.visibility = result
-					.getString(result
-							.getColumnIndex(ContactsProvider.CMetaData.ContactsMetaData.VISIBILITY));
-			item.zip = result
-					.getString(result
-							.getColumnIndex(ContactsProvider.CMetaData.ContactsMetaData.ZIP));
-			final int image = result
-					.getInt(result
-							.getColumnIndex(ContactsProvider.CMetaData.ContactsMetaData.IMAGE));
+			item.contact_id = result.getInt(result.getColumnIndex(ContactsProvider.CMetaData.ContactsMetaData.C_ID));
+			item.name = result.getString(result.getColumnIndex(ContactsProvider.CMetaData.ContactsMetaData.NAME));
+			item.lastname = result.getString(result.getColumnIndex(ContactsProvider.CMetaData.ContactsMetaData.LASTNAME));
+			item.email = result.getString(result.getColumnIndex(ContactsProvider.CMetaData.ContactsMetaData.EMAIL));
+			item.phone1 = result.getString(result.getColumnIndex(ContactsProvider.CMetaData.ContactsMetaData.PHONE));
+			item.birthdate = result.getString(result.getColumnIndex(ContactsProvider.CMetaData.ContactsMetaData.BIRTHDATE));
+			item.country = result.getString(result.getColumnIndex(ContactsProvider.CMetaData.ContactsMetaData.COUNTRY));
+			item.city = result.getString(result.getColumnIndex(ContactsProvider.CMetaData.ContactsMetaData.CITY));
+			item.street = result.getString(result.getColumnIndex(ContactsProvider.CMetaData.ContactsMetaData.STREET));
+			item.zip = result.getString(result.getColumnIndex(ContactsProvider.CMetaData.ContactsMetaData.ZIP));
+			item.visibility = result.getString(result.getColumnIndex(ContactsProvider.CMetaData.ContactsMetaData.VISIBILITY));
+			item.zip = result.getString(result.getColumnIndex(ContactsProvider.CMetaData.ContactsMetaData.ZIP));
+			final int image = result.getInt(result.getColumnIndex(ContactsProvider.CMetaData.ContactsMetaData.IMAGE));
 			item.image = image == 1;
-			item.image_url = result
-					.getString(result
-							.getColumnIndex(ContactsProvider.CMetaData.ContactsMetaData.IMAGE_URL));
-			item.image_thumb_url = result
-					.getString(result
-							.getColumnIndex(ContactsProvider.CMetaData.ContactsMetaData.IMAGE_THUMB_URL));
-			item.image_bytes = result
-					.getBlob(result
-							.getColumnIndex(ContactsProvider.CMetaData.ContactsMetaData.IMAGE_BYTES));
-			item.created = result
-					.getString(result
-							.getColumnIndex(ContactsProvider.CMetaData.ContactsMetaData.CREATED));
-			item.modified = result
-					.getString(result
-							.getColumnIndex(ContactsProvider.CMetaData.ContactsMetaData.MODOFIED));
-			item.agenda_view = result
-					.getString(result
-							.getColumnIndex(ContactsProvider.CMetaData.ContactsMetaData.AGENDA_VIEW));
-			item.registered = result
-					.getString(result
-							.getColumnIndex(ContactsProvider.CMetaData.ContactsMetaData.REGISTERED));
-			final String groups = result
-					.getString(result
-							.getColumnIndex(ContactsProvider.CMetaData.ContactsMetaData.GROUPS));
+			item.image_url = result.getString(result.getColumnIndex(ContactsProvider.CMetaData.ContactsMetaData.IMAGE_URL));
+			item.image_thumb_url = result.getString(result.getColumnIndex(ContactsProvider.CMetaData.ContactsMetaData.IMAGE_THUMB_URL));
+			item.image_bytes = result.getBlob(result.getColumnIndex(ContactsProvider.CMetaData.ContactsMetaData.IMAGE_BYTES));
+			item.created = result.getString(result.getColumnIndex(ContactsProvider.CMetaData.ContactsMetaData.CREATED));
+			item.modified = result.getString(result.getColumnIndex(ContactsProvider.CMetaData.ContactsMetaData.MODOFIED));
+			item.agenda_view = result.getString(result.getColumnIndex(ContactsProvider.CMetaData.ContactsMetaData.AGENDA_VIEW));
+			item.registered = result.getString(result.getColumnIndex(ContactsProvider.CMetaData.ContactsMetaData.REGISTERED));
+			final String groups = result.getString(result.getColumnIndex(ContactsProvider.CMetaData.ContactsMetaData.GROUPS));
 			if (groups != null) {
 				item.groups = MapUtils.stringToMap(groups);
 			}
@@ -1604,11 +1236,9 @@ public class DataManagement {
 
 		try {
 			HttpClient hc = new DefaultHttpClient();
-			HttpPost post = new HttpPost(prefs.getServerUrl()
-					+ "mobile/contact_remove");
+			HttpPost post = new HttpPost(prefs.getServerUrl() + "mobile/contact_remove");
 
-			MultipartEntity reqEntity = new MultipartEntity(
-					HttpMultipartMode.BROWSER_COMPATIBLE);
+			MultipartEntity reqEntity = new MultipartEntity(HttpMultipartMode.BROWSER_COMPATIBLE);
 
 			reqEntity.addPart("contact_id", new StringBody(String.valueOf(id)));
 			reqEntity.addPart("token", new StringBody(prefs.getToken()));
@@ -1642,29 +1272,23 @@ public class DataManagement {
 
 		try {
 			HttpClient hc = new DefaultHttpClient();
-			HttpPost post = new HttpPost(prefs.getServerUrl()
-					+ "mobile/contact_edit");
+			HttpPost post = new HttpPost(prefs.getServerUrl() + "mobile/contact_edit");
 
-			MultipartEntity reqEntity = new MultipartEntity(
-					HttpMultipartMode.BROWSER_COMPATIBLE);
+			MultipartEntity reqEntity = new MultipartEntity(HttpMultipartMode.BROWSER_COMPATIBLE);
 
 			if (c.remove_image == false) {
 				if (c.image_bytes != null) {
-					ByteArrayBody bab = new ByteArrayBody(c.image_bytes,
-							"image");
+					ByteArrayBody bab = new ByteArrayBody(c.image_bytes, "image");
 					reqEntity.addPart("image", bab);
 				}
-				reqEntity.addPart("remove_image",
-						new StringBody(String.valueOf("0")));
+				reqEntity.addPart("remove_image", new StringBody(String.valueOf("0")));
 			} else {
-				reqEntity.addPart("remove_image",
-						new StringBody(String.valueOf("1")));
+				reqEntity.addPart("remove_image", new StringBody(String.valueOf("1")));
 			}
 
 			reqEntity.addPart("token", new StringBody(prefs.getToken()));
 
-			reqEntity.addPart("contact_id",
-					new StringBody(String.valueOf(c.contact_id)));
+			reqEntity.addPart("contact_id", new StringBody(String.valueOf(c.contact_id)));
 			reqEntity.addPart("name", new StringBody(c.name));
 			reqEntity.addPart("lastname", new StringBody(c.lastname));
 			reqEntity.addPart("email", new StringBody(c.email));
@@ -1679,8 +1303,7 @@ public class DataManagement {
 			Map<String, String> groups = c.groups;
 			if (groups != null) {
 				for (int i = 0, l = groups.size(); i < l; i++) {
-					reqEntity.addPart("groups[]",
-							new StringBody(String.valueOf(groups.get(i))));
+					reqEntity.addPart("groups[]", new StringBody(String.valueOf(groups.get(i))));
 				}
 			} else {
 				reqEntity.addPart("groups[]", new StringBody(""));
@@ -1700,8 +1323,7 @@ public class DataManagement {
 					Log.e("editContact - success", "" + success);
 
 					if (success == false) {
-						ERROR = object.getJSONObject("error").getString(
-								"reason");
+						ERROR = object.getJSONObject("error").getString("reason");
 						Log.e("editContact - error: ", ERROR);
 					}
 				}
@@ -1718,16 +1340,13 @@ public class DataManagement {
 
 		try {
 			HttpClient hc = new DefaultHttpClient();
-			HttpPost post = new HttpPost(prefs.getServerUrl()
-					+ "mobile/contact_create");
+			HttpPost post = new HttpPost(prefs.getServerUrl() + "mobile/contact_create");
 
-			MultipartEntity reqEntity = new MultipartEntity(
-					HttpMultipartMode.BROWSER_COMPATIBLE);
+			MultipartEntity reqEntity = new MultipartEntity(HttpMultipartMode.BROWSER_COMPATIBLE);
 
 			if (c.image_bytes != null) {
 				try {
-					ByteArrayBody bab = new ByteArrayBody(c.image_bytes,
-							"image");
+					ByteArrayBody bab = new ByteArrayBody(c.image_bytes, "image");
 					reqEntity.addPart("image", bab);
 				} catch (Exception e) {
 					Log.e("IMAGE ERROR", e.getMessage());
@@ -1750,8 +1369,7 @@ public class DataManagement {
 			Map<String, String> groups = c.groups;
 			if (groups != null) {
 				for (int i = 0, l = groups.size(); i < l; i++) {
-					reqEntity.addPart("groups[]",
-							new StringBody(String.valueOf(groups.get(i))));
+					reqEntity.addPart("groups[]", new StringBody(String.valueOf(groups.get(i))));
 				}
 			} else {
 				reqEntity.addPart("groups[]", new StringBody(""));
@@ -1770,8 +1388,7 @@ public class DataManagement {
 					Log.e("createContact - success", "" + success);
 
 					if (success == false) {
-						ERROR = object.getJSONObject("error").getString(
-								"reason");
+						ERROR = object.getJSONObject("error").getString("reason");
 						Log.e("createContact - error: ", ERROR);
 					}
 				}
@@ -1787,52 +1404,27 @@ public class DataManagement {
 		Group item;
 		ArrayList<Group> items = new ArrayList<Group>();
 
-		String where = ContactsProvider.CMetaData.GroupsMetaData.NEED_UPDATE
-				+ "!=3";
+		String where = ContactsProvider.CMetaData.GroupsMetaData.NEED_UPDATE + "!=3";
 
-		Cursor result = mContext.getContentResolver().query(
-				ContactsProvider.CMetaData.GroupsMetaData.CONTENT_URI, null,
-				where, null, null);
+		Cursor result = mContext.getContentResolver().query(ContactsProvider.CMetaData.GroupsMetaData.CONTENT_URI, null, where, null, null);
 
 		result.moveToFirst();
 
 		while (!result.isAfterLast()) {
 			item = new Group();
 
-			item.group_id = result
-					.getInt(result
-							.getColumnIndex(ContactsProvider.CMetaData.GroupsMetaData.G_ID));
-			item.title = result
-					.getString(result
-							.getColumnIndex(ContactsProvider.CMetaData.GroupsMetaData.TITLE));
-			item.created = result
-					.getString(result
-							.getColumnIndex(ContactsProvider.CMetaData.GroupsMetaData.CREATED));
-			item.modified = result
-					.getString(result
-							.getColumnIndex(ContactsProvider.CMetaData.GroupsMetaData.MODIFIED));
-			item.deleted = result
-					.getString(result
-							.getColumnIndex(ContactsProvider.CMetaData.GroupsMetaData.DELETED));
-			final int image = result
-					.getInt(result
-							.getColumnIndex(ContactsProvider.CMetaData.GroupsMetaData.IMAGE));
+			item.group_id = result.getInt(result.getColumnIndex(ContactsProvider.CMetaData.GroupsMetaData.G_ID));
+			item.title = result.getString(result.getColumnIndex(ContactsProvider.CMetaData.GroupsMetaData.TITLE));
+			item.created = result.getString(result.getColumnIndex(ContactsProvider.CMetaData.GroupsMetaData.CREATED));
+			item.modified = result.getString(result.getColumnIndex(ContactsProvider.CMetaData.GroupsMetaData.MODIFIED));
+			item.deleted = result.getString(result.getColumnIndex(ContactsProvider.CMetaData.GroupsMetaData.DELETED));
+			final int image = result.getInt(result.getColumnIndex(ContactsProvider.CMetaData.GroupsMetaData.IMAGE));
 			item.image = image == 1;
-			item.image_url = result
-					.getString(result
-							.getColumnIndex(ContactsProvider.CMetaData.GroupsMetaData.IMAGE_URL));
-			item.image_thumb_url = result
-					.getString(result
-							.getColumnIndex(ContactsProvider.CMetaData.GroupsMetaData.IMAGE_THUMB_URL));
-			item.image_bytes = result
-					.getBlob(result
-							.getColumnIndex(ContactsProvider.CMetaData.GroupsMetaData.IMAGE_BYTES));
-			item.contact_count = result
-					.getInt(result
-							.getColumnIndex(ContactsProvider.CMetaData.GroupsMetaData.CONTACTS_COUNT));
-			final String contacts = result
-					.getString(result
-							.getColumnIndex(ContactsProvider.CMetaData.GroupsMetaData.CONTACTS));
+			item.image_url = result.getString(result.getColumnIndex(ContactsProvider.CMetaData.GroupsMetaData.IMAGE_URL));
+			item.image_thumb_url = result.getString(result.getColumnIndex(ContactsProvider.CMetaData.GroupsMetaData.IMAGE_THUMB_URL));
+			item.image_bytes = result.getBlob(result.getColumnIndex(ContactsProvider.CMetaData.GroupsMetaData.IMAGE_BYTES));
+			item.contact_count = result.getInt(result.getColumnIndex(ContactsProvider.CMetaData.GroupsMetaData.CONTACTS_COUNT));
+			final String contacts = result.getString(result.getColumnIndex(ContactsProvider.CMetaData.GroupsMetaData.CONTACTS));
 			if (contacts != null) {
 				item.contacts = MapUtils.stringToMap(contacts);
 			}
@@ -1852,10 +1444,8 @@ public class DataManagement {
 
 		try {
 			HttpClient hc = new DefaultHttpClient();
-			HttpPost post = new HttpPost(DataManagement.prefs.getServerUrl()
-					+ "mobile/groups_list");
-			MultipartEntity reqEntity = new MultipartEntity(
-					HttpMultipartMode.BROWSER_COMPATIBLE);
+			HttpPost post = new HttpPost(DataManagement.prefs.getServerUrl() + "mobile/groups_list");
+			MultipartEntity reqEntity = new MultipartEntity(HttpMultipartMode.BROWSER_COMPATIBLE);
 
 			reqEntity.addPart("token", new StringBody(prefs.getToken()));
 
@@ -1885,83 +1475,67 @@ public class DataManagement {
 
 								try {
 									group.group_id = g.getInt("group_id");
-									cv.put(ContactsProvider.CMetaData.GroupsMetaData.G_ID,
-											group.group_id);
+									cv.put(ContactsProvider.CMetaData.GroupsMetaData.G_ID, group.group_id);
 								} catch (JSONException e) {
 								}
 								try {
 									group.title = g.getString("title");
-									cv.put(ContactsProvider.CMetaData.GroupsMetaData.TITLE,
-											group.title);
+									cv.put(ContactsProvider.CMetaData.GroupsMetaData.TITLE, group.title);
 								} catch (JSONException e) {
 								}
 								try {
 									group.created = g.getString("created");
-									cv.put(ContactsProvider.CMetaData.GroupsMetaData.CREATED,
-											group.created);
+									cv.put(ContactsProvider.CMetaData.GroupsMetaData.CREATED, group.created);
 								} catch (JSONException e) {
 								}
 
 								try {
 									group.modified = g.getString("modified");
-									cv.put(ContactsProvider.CMetaData.GroupsMetaData.MODIFIED,
-											group.modified);
+									cv.put(ContactsProvider.CMetaData.GroupsMetaData.MODIFIED, group.modified);
 								} catch (JSONException e) {
 								}
 								try {
 									group.deleted = g.getString("deleted");
-									cv.put(ContactsProvider.CMetaData.GroupsMetaData.DELETED,
-											group.deleted);
+									cv.put(ContactsProvider.CMetaData.GroupsMetaData.DELETED, group.deleted);
 								} catch (JSONException e) {
 								}
 
 								try {
 									group.image = g.getBoolean("image");
-									cv.put(ContactsProvider.CMetaData.GroupsMetaData.IMAGE,
-											group.image);
-									cv.put(ContactsProvider.CMetaData.GroupsMetaData.REMOVE_IMAGE,
-											false);
+									cv.put(ContactsProvider.CMetaData.GroupsMetaData.IMAGE, group.image);
+									cv.put(ContactsProvider.CMetaData.GroupsMetaData.REMOVE_IMAGE, false);
 								} catch (JSONException e) {
 								}
 								try {
-									group.image_thumb_url = g
-											.getString("image_thumb_url");
-									cv.put(ContactsProvider.CMetaData.GroupsMetaData.IMAGE_THUMB_URL,
-											group.image_thumb_url);
+									group.image_thumb_url = g.getString("image_thumb_url");
+									cv.put(ContactsProvider.CMetaData.GroupsMetaData.IMAGE_THUMB_URL, group.image_thumb_url);
 								} catch (JSONException e) {
 								}
 								try {
 									group.image_url = g.getString("image_url");
-									cv.put(ContactsProvider.CMetaData.GroupsMetaData.IMAGE_URL,
-											group.image_url);
+									cv.put(ContactsProvider.CMetaData.GroupsMetaData.IMAGE_URL, group.image_url);
 
 									group.image_bytes = imageToBytes(group.image_url);
-									cv.put(ContactsProvider.CMetaData.GroupsMetaData.IMAGE_BYTES,
-											group.image_bytes);
+									cv.put(ContactsProvider.CMetaData.GroupsMetaData.IMAGE_BYTES, group.image_bytes);
 								} catch (JSONException e) {
 								}
 
 								try {
-									group.contact_count = g
-											.getInt("contact_count");
-									cv.put(ContactsProvider.CMetaData.GroupsMetaData.CONTACTS_COUNT,
-											group.contact_count);
+									group.contact_count = g.getInt("contact_count");
+									cv.put(ContactsProvider.CMetaData.GroupsMetaData.CONTACTS_COUNT, group.contact_count);
 								} catch (JSONException e) {
 									group.contact_count = 0;
 								}
 								try {
-									if (!g.getString("contacts").equals("null")
-											&& g.getString("contacts") != null) {
+									if (!g.getString("contacts").equals("null") && g.getString("contacts") != null) {
 										try {
-											JSONArray contacts = g
-													.getJSONArray("contacts");
+											JSONArray contacts = g.getJSONArray("contacts");
 											if (contacts != null) {
 												Map<String, String> set = null;
 												for (int j = 0; j < group.contact_count; j++) {
 													if (set == null)
 														set = new HashMap<String, String>();
-													set.put(String.valueOf(j),
-															contacts.getString(j));
+													set.put(String.valueOf(j), contacts.getString(j));
 												}
 												group.contacts = set;
 												cv.put(ContactsProvider.CMetaData.GroupsMetaData.CONTACTS,
@@ -1973,12 +1547,9 @@ public class DataManagement {
 								} catch (JSONException e) {
 								}
 
-								if (group.deleted == null
-										|| group.deleted.equals("null")) {
+								if (group.deleted == null || group.deleted.equals("null")) {
 									groups.add(group);
-									mContext.getContentResolver()
-											.insert(ContactsProvider.CMetaData.GroupsMetaData.CONTENT_URI,
-													cv);
+									mContext.getContentResolver().insert(ContactsProvider.CMetaData.GroupsMetaData.CONTENT_URI, cv);
 								}
 							}
 						}
@@ -1995,51 +1566,24 @@ public class DataManagement {
 
 	public Group getGroup(Context context, int id) {
 		Group group = new Group();
-		Uri uri = Uri
-				.parse(ContactsProvider.CMetaData.GroupsMetaData.CONTENT_URI
-						+ "/" + id);
-		Cursor result = context.getContentResolver().query(uri, null, null,
-				null, null);
+		Uri uri = Uri.parse(ContactsProvider.CMetaData.GroupsMetaData.CONTENT_URI + "/" + id);
+		Cursor result = context.getContentResolver().query(uri, null, null, null, null);
 
 		if (result.moveToFirst()) {
-			group.group_id = result
-					.getInt(result
-							.getColumnIndex(ContactsProvider.CMetaData.GroupsMetaData.G_ID));
-			group.title = result
-					.getString(result
-							.getColumnIndex(ContactsProvider.CMetaData.GroupsMetaData.TITLE));
-			group.created = result
-					.getString(result
-							.getColumnIndex(ContactsProvider.CMetaData.GroupsMetaData.CREATED));
-			group.modified = result
-					.getString(result
-							.getColumnIndex(ContactsProvider.CMetaData.GroupsMetaData.MODIFIED));
-			group.deleted = result
-					.getString(result
-							.getColumnIndex(ContactsProvider.CMetaData.GroupsMetaData.DELETED));
-			final int image = result
-					.getInt(result
-							.getColumnIndex(ContactsProvider.CMetaData.GroupsMetaData.IMAGE));
+			group.group_id = result.getInt(result.getColumnIndex(ContactsProvider.CMetaData.GroupsMetaData.G_ID));
+			group.title = result.getString(result.getColumnIndex(ContactsProvider.CMetaData.GroupsMetaData.TITLE));
+			group.created = result.getString(result.getColumnIndex(ContactsProvider.CMetaData.GroupsMetaData.CREATED));
+			group.modified = result.getString(result.getColumnIndex(ContactsProvider.CMetaData.GroupsMetaData.MODIFIED));
+			group.deleted = result.getString(result.getColumnIndex(ContactsProvider.CMetaData.GroupsMetaData.DELETED));
+			final int image = result.getInt(result.getColumnIndex(ContactsProvider.CMetaData.GroupsMetaData.IMAGE));
 			group.image = image == 1;
-			group.image_url = result
-					.getString(result
-							.getColumnIndex(ContactsProvider.CMetaData.GroupsMetaData.IMAGE_URL));
-			group.image_thumb_url = result
-					.getString(result
-							.getColumnIndex(ContactsProvider.CMetaData.GroupsMetaData.IMAGE_THUMB_URL));
-			group.image_bytes = result
-					.getBlob(result
-							.getColumnIndex(ContactsProvider.CMetaData.GroupsMetaData.IMAGE_BYTES));
-			final int remove_image = result
-					.getInt(result
-							.getColumnIndex(ContactsProvider.CMetaData.GroupsMetaData.REMOVE_IMAGE));
+			group.image_url = result.getString(result.getColumnIndex(ContactsProvider.CMetaData.GroupsMetaData.IMAGE_URL));
+			group.image_thumb_url = result.getString(result.getColumnIndex(ContactsProvider.CMetaData.GroupsMetaData.IMAGE_THUMB_URL));
+			group.image_bytes = result.getBlob(result.getColumnIndex(ContactsProvider.CMetaData.GroupsMetaData.IMAGE_BYTES));
+			final int remove_image = result.getInt(result.getColumnIndex(ContactsProvider.CMetaData.GroupsMetaData.REMOVE_IMAGE));
 			group.remove_image = remove_image == 1;
-			group.contact_count = result
-					.getInt(result
-							.getColumnIndex(ContactsProvider.CMetaData.GroupsMetaData.CONTACTS_COUNT));
-			final String contacts = result
-					.getString(result
-							.getColumnIndex(ContactsProvider.CMetaData.GroupsMetaData.CONTACTS));
+			group.contact_count = result.getInt(result.getColumnIndex(ContactsProvider.CMetaData.GroupsMetaData.CONTACTS_COUNT));
+			final String contacts = result.getString(result.getColumnIndex(ContactsProvider.CMetaData.GroupsMetaData.CONTACTS));
 			if (contacts != null) {
 				group.contacts = MapUtils.stringToMap(contacts);
 			}
@@ -2054,14 +1598,11 @@ public class DataManagement {
 
 		try {
 			HttpClient hc = new DefaultHttpClient();
-			HttpPost post = new HttpPost(prefs.getServerUrl()
-					+ "mobile/group_remove");
+			HttpPost post = new HttpPost(prefs.getServerUrl() + "mobile/group_remove");
 
-			MultipartEntity reqEntity = new MultipartEntity(
-					HttpMultipartMode.BROWSER_COMPATIBLE);
+			MultipartEntity reqEntity = new MultipartEntity(HttpMultipartMode.BROWSER_COMPATIBLE);
 
-			reqEntity.addPart("group_id",
-					new StringBody(String.valueOf(group_id)));
+			reqEntity.addPart("group_id", new StringBody(String.valueOf(group_id)));
 			reqEntity.addPart("token", new StringBody(prefs.getToken()));
 
 			post.setEntity(reqEntity);
@@ -2091,35 +1632,28 @@ public class DataManagement {
 
 		try {
 			HttpClient hc = new DefaultHttpClient();
-			HttpPost post = new HttpPost(prefs.getServerUrl()
-					+ "mobile/groups_edit");
+			HttpPost post = new HttpPost(prefs.getServerUrl() + "mobile/groups_edit");
 
-			MultipartEntity reqEntity = new MultipartEntity(
-					HttpMultipartMode.BROWSER_COMPATIBLE);
+			MultipartEntity reqEntity = new MultipartEntity(HttpMultipartMode.BROWSER_COMPATIBLE);
 
 			if (g.remove_image == false) {
 				if (g.image_bytes != null) {
-					ByteArrayBody bab = new ByteArrayBody(g.image_bytes,
-							"image");
+					ByteArrayBody bab = new ByteArrayBody(g.image_bytes, "image");
 					reqEntity.addPart("image", bab);
 				}
-				reqEntity.addPart("remove_image",
-						new StringBody(String.valueOf("0")));
+				reqEntity.addPart("remove_image", new StringBody(String.valueOf("0")));
 			} else {
-				reqEntity.addPart("remove_image",
-						new StringBody(String.valueOf("1")));
+				reqEntity.addPart("remove_image", new StringBody(String.valueOf("1")));
 			}
 
-			reqEntity.addPart("group_id",
-					new StringBody(String.valueOf(g.group_id)));
+			reqEntity.addPart("group_id", new StringBody(String.valueOf(g.group_id)));
 			reqEntity.addPart("token", new StringBody(prefs.getToken()));
 			reqEntity.addPart("title", new StringBody(g.title));
 
 			Map<String, String> contacts = g.contacts;
 			if (contacts != null) {
 				for (int i = 0, l = contacts.size(); i < l; i++) {
-					reqEntity.addPart("contacts[]",
-							new StringBody(contacts.get(String.valueOf(i))));
+					reqEntity.addPart("contacts[]", new StringBody(contacts.get(String.valueOf(i))));
 				}
 			} else {
 				reqEntity.addPart("contacts[]", new StringBody(""));
@@ -2140,8 +1674,7 @@ public class DataManagement {
 					Log.e("editGroup - success", "" + success);
 
 					if (success == false) {
-						ERROR = object.getJSONObject("error").getString(
-								"reason");
+						ERROR = object.getJSONObject("error").getString("reason");
 						Log.e("editGroup - error: ", ERROR);
 					}
 				}
@@ -2159,16 +1692,13 @@ public class DataManagement {
 
 		try {
 			HttpClient hc = new DefaultHttpClient();
-			HttpPost post = new HttpPost(prefs.getServerUrl()
-					+ "mobile/groups_create");
+			HttpPost post = new HttpPost(prefs.getServerUrl() + "mobile/groups_create");
 
-			MultipartEntity reqEntity = new MultipartEntity(
-					HttpMultipartMode.BROWSER_COMPATIBLE);
+			MultipartEntity reqEntity = new MultipartEntity(HttpMultipartMode.BROWSER_COMPATIBLE);
 
 			if (g.image_bytes != null) {
 				try {
-					ByteArrayBody bab = new ByteArrayBody(g.image_bytes,
-							"image");
+					ByteArrayBody bab = new ByteArrayBody(g.image_bytes, "image");
 					reqEntity.addPart("image", bab);
 				} catch (Exception e) {
 					Log.e("IMAGE ERROR", e.getMessage());
@@ -2181,8 +1711,7 @@ public class DataManagement {
 			Map<String, String> contacts = g.contacts;
 			if (contacts != null) {
 				for (int i = 0, l = contacts.size(); i < l; i++) {
-					reqEntity.addPart("contacts[]",
-							new StringBody(contacts.get(String.valueOf(i))));
+					reqEntity.addPart("contacts[]", new StringBody(contacts.get(String.valueOf(i))));
 				}
 			} else {
 				reqEntity.addPart("contacts[]", new StringBody(""));
@@ -2201,8 +1730,7 @@ public class DataManagement {
 					Log.e("createGroup - success", "" + success);
 
 					if (success == false) {
-						ERROR = object.getJSONObject("error").getString(
-								"reason");
+						ERROR = object.getJSONObject("error").getString("reason");
 						Log.e("createGroup - error: ", error);
 					}
 				}
@@ -2219,143 +1747,67 @@ public class DataManagement {
 		Event item;
 		ArrayList<Event> items = new ArrayList<Event>();
 		if (_prefs.getBoolean("isAgenda", true)) {
-			String where = EventsProvider.EMetaData.EventsMetaData.NEED_UPDATE
-					+ " < 3";
-			Cursor result = mContext.getContentResolver().query(
-					EventsProvider.EMetaData.EventsMetaData.CONTENT_URI, null,
-					where, null, null);
+			String where = EventsProvider.EMetaData.EventsMetaData.NEED_UPDATE + " < 3";
+			Cursor result = mContext.getContentResolver().query(EventsProvider.EMetaData.EventsMetaData.CONTENT_URI, null, where, null,
+					null);
 
 			result.moveToFirst();
 
 			while (!result.isAfterLast()) {
 				item = new Event();
 
-				item.event_id = result
-						.getInt(result
-								.getColumnIndex(EventsProvider.EMetaData.EventsMetaData.E_ID));
-				item.user_id = result
-						.getInt(result
-								.getColumnIndex(EventsProvider.EMetaData.EventsMetaData.USER_ID));
+				item.event_id = result.getInt(result.getColumnIndex(EventsProvider.EMetaData.EventsMetaData.E_ID));
+				item.user_id = result.getInt(result.getColumnIndex(EventsProvider.EMetaData.EventsMetaData.USER_ID));
 
-				final int is_sport_event = result
-						.getInt(result
-								.getColumnIndex(EventsProvider.EMetaData.EventsMetaData.IS_SPORTS_EVENT));
+				final int is_sport_event = result.getInt(result.getColumnIndex(EventsProvider.EMetaData.EventsMetaData.IS_SPORTS_EVENT));
 				item.is_sports_event = is_sport_event == 1;
-				item.status = result
-						.getInt(result
-								.getColumnIndex(EventsProvider.EMetaData.EventsMetaData.STATUS));
-				final int is_owner = result
-						.getInt(result
-								.getColumnIndex(EventsProvider.EMetaData.EventsMetaData.IS_OWNER));
+				item.status = result.getInt(result.getColumnIndex(EventsProvider.EMetaData.EventsMetaData.STATUS));
+				final int is_owner = result.getInt(result.getColumnIndex(EventsProvider.EMetaData.EventsMetaData.IS_OWNER));
 				item.is_owner = is_owner == 1;
-				item.type = result
-						.getString(result
-								.getColumnIndex(EventsProvider.EMetaData.EventsMetaData.TYPE));
+				item.type = result.getString(result.getColumnIndex(EventsProvider.EMetaData.EventsMetaData.TYPE));
 
-				item.creator_fullname = result
-						.getString(result
-								.getColumnIndex(EventsProvider.EMetaData.EventsMetaData.CREATOR_FULLNAME));
-				item.creator_contact_id = result
-						.getInt(result
-								.getColumnIndex(EventsProvider.EMetaData.EventsMetaData.CREATOR_CONTACT_ID));
+				item.creator_fullname = result.getString(result.getColumnIndex(EventsProvider.EMetaData.EventsMetaData.CREATOR_FULLNAME));
+				item.creator_contact_id = result.getInt(result.getColumnIndex(EventsProvider.EMetaData.EventsMetaData.CREATOR_CONTACT_ID));
 
-				item.title = result
-						.getString(result
-								.getColumnIndex(EventsProvider.EMetaData.EventsMetaData.TITLE));
-				item.icon = result
-						.getString(result
-								.getColumnIndex(EventsProvider.EMetaData.EventsMetaData.ICON));
-				item.color = result
-						.getString(result
-								.getColumnIndex(EventsProvider.EMetaData.EventsMetaData.COLOR));
-				item.description_ = result
-						.getString(result
-								.getColumnIndex(EventsProvider.EMetaData.EventsMetaData.DESC));
+				item.title = result.getString(result.getColumnIndex(EventsProvider.EMetaData.EventsMetaData.TITLE));
+				item.icon = result.getString(result.getColumnIndex(EventsProvider.EMetaData.EventsMetaData.ICON));
+				item.color = result.getString(result.getColumnIndex(EventsProvider.EMetaData.EventsMetaData.COLOR));
+				item.description_ = result.getString(result.getColumnIndex(EventsProvider.EMetaData.EventsMetaData.DESC));
 
-				item.location = result
-						.getString(result
-								.getColumnIndex(EventsProvider.EMetaData.EventsMetaData.LOCATION));
-				item.accomodation = result
-						.getString(result
-								.getColumnIndex(EventsProvider.EMetaData.EventsMetaData.ACCOMODATION));
+				item.location = result.getString(result.getColumnIndex(EventsProvider.EMetaData.EventsMetaData.LOCATION));
+				item.accomodation = result.getString(result.getColumnIndex(EventsProvider.EMetaData.EventsMetaData.ACCOMODATION));
 
-				item.cost = result
-						.getString(result
-								.getColumnIndex(EventsProvider.EMetaData.EventsMetaData.COST));
-				item.take_with_you = result
-						.getString(result
-								.getColumnIndex(EventsProvider.EMetaData.EventsMetaData.TAKE_WITH_YOU));
-				item.go_by = result
-						.getString(result
-								.getColumnIndex(EventsProvider.EMetaData.EventsMetaData.GO_BY));
+				item.cost = result.getString(result.getColumnIndex(EventsProvider.EMetaData.EventsMetaData.COST));
+				item.take_with_you = result.getString(result.getColumnIndex(EventsProvider.EMetaData.EventsMetaData.TAKE_WITH_YOU));
+				item.go_by = result.getString(result.getColumnIndex(EventsProvider.EMetaData.EventsMetaData.GO_BY));
 
-				item.country = result
-						.getString(result
-								.getColumnIndex(EventsProvider.EMetaData.EventsMetaData.COUNTRY));
-				item.city = result
-						.getString(result
-								.getColumnIndex(EventsProvider.EMetaData.EventsMetaData.CITY));
-				item.street = result
-						.getString(result
-								.getColumnIndex(EventsProvider.EMetaData.EventsMetaData.STREET));
-				item.zip = result
-						.getString(result
-								.getColumnIndex(EventsProvider.EMetaData.EventsMetaData.ZIP));
+				item.country = result.getString(result.getColumnIndex(EventsProvider.EMetaData.EventsMetaData.COUNTRY));
+				item.city = result.getString(result.getColumnIndex(EventsProvider.EMetaData.EventsMetaData.CITY));
+				item.street = result.getString(result.getColumnIndex(EventsProvider.EMetaData.EventsMetaData.STREET));
+				item.zip = result.getString(result.getColumnIndex(EventsProvider.EMetaData.EventsMetaData.ZIP));
 
-				item.timezone = result
-						.getString(result
-								.getColumnIndex(EventsProvider.EMetaData.EventsMetaData.TIMEZONE));
-				item.time_start = result
-						.getString(result
-								.getColumnIndex(EventsProvider.EMetaData.EventsMetaData.TIME_START));
-				item.time_end = result
-						.getString(result
-								.getColumnIndex(EventsProvider.EMetaData.EventsMetaData.TIME_END));
-				item.time = result
-						.getString(result
-								.getColumnIndex(EventsProvider.EMetaData.EventsMetaData.TIME));
-				item.my_time_start = result
-						.getString(result
-								.getColumnIndex(EventsProvider.EMetaData.EventsMetaData.MY_TIME_START));
-				item.startCalendar = Utils.stringToCalendar(item.my_time_start,
-						Utils.date_format);
+				item.timezone = result.getString(result.getColumnIndex(EventsProvider.EMetaData.EventsMetaData.TIMEZONE));
+				item.time_start = result.getString(result.getColumnIndex(EventsProvider.EMetaData.EventsMetaData.TIME_START));
+				item.time_end = result.getString(result.getColumnIndex(EventsProvider.EMetaData.EventsMetaData.TIME_END));
+				item.time = result.getString(result.getColumnIndex(EventsProvider.EMetaData.EventsMetaData.TIME));
+				item.my_time_start = result.getString(result.getColumnIndex(EventsProvider.EMetaData.EventsMetaData.MY_TIME_START));
+				item.startCalendar = Utils.stringToCalendar(item.my_time_start, Utils.date_format);
 				item.startCalendar.add(Calendar.DATE, -1);
-				item.my_time_end = result
-						.getString(result
-								.getColumnIndex(EventsProvider.EMetaData.EventsMetaData.MY_TIME_END));
-				item.endCalendar = Utils.stringToCalendar(item.my_time_end,
-						Utils.date_format);
+				item.my_time_end = result.getString(result.getColumnIndex(EventsProvider.EMetaData.EventsMetaData.MY_TIME_END));
+				item.endCalendar = Utils.stringToCalendar(item.my_time_end, Utils.date_format);
 				item.endCalendar.add(Calendar.DATE, 1);
 
-				item.reminder1 = result
-						.getString(result
-								.getColumnIndex(EventsProvider.EMetaData.EventsMetaData.REMINDER1));
-				item.reminder2 = result
-						.getString(result
-								.getColumnIndex(EventsProvider.EMetaData.EventsMetaData.REMINDER2));
-				item.reminder3 = result
-						.getString(result
-								.getColumnIndex(EventsProvider.EMetaData.EventsMetaData.REMINDER3));
+				item.reminder1 = result.getString(result.getColumnIndex(EventsProvider.EMetaData.EventsMetaData.REMINDER1));
+				item.reminder2 = result.getString(result.getColumnIndex(EventsProvider.EMetaData.EventsMetaData.REMINDER2));
+				item.reminder3 = result.getString(result.getColumnIndex(EventsProvider.EMetaData.EventsMetaData.REMINDER3));
 
-				item.created = result
-						.getString(result
-								.getColumnIndex(EventsProvider.EMetaData.EventsMetaData.CREATED));
-				item.modified = result
-						.getString(result
-								.getColumnIndex(EventsProvider.EMetaData.EventsMetaData.MODIFIED));
+				item.created = result.getString(result.getColumnIndex(EventsProvider.EMetaData.EventsMetaData.CREATED));
+				item.modified = result.getString(result.getColumnIndex(EventsProvider.EMetaData.EventsMetaData.MODIFIED));
 
-				item.attendant_1_count = result
-						.getInt(result
-								.getColumnIndex(EventsProvider.EMetaData.EventsMetaData.ATTENDANT_1_COUNT));
-				item.attendant_2_count = result
-						.getInt(result
-								.getColumnIndex(EventsProvider.EMetaData.EventsMetaData.ATTENDANT_2_COUNT));
-				item.attendant_0_count = result
-						.getInt(result
-								.getColumnIndex(EventsProvider.EMetaData.EventsMetaData.ATTENDANT_0_COUNT));
-				item.attendant_4_count = result
-						.getInt(result
-								.getColumnIndex(EventsProvider.EMetaData.EventsMetaData.ATTENDANT_4_COUNT));
+				item.attendant_1_count = result.getInt(result.getColumnIndex(EventsProvider.EMetaData.EventsMetaData.ATTENDANT_1_COUNT));
+				item.attendant_2_count = result.getInt(result.getColumnIndex(EventsProvider.EMetaData.EventsMetaData.ATTENDANT_2_COUNT));
+				item.attendant_0_count = result.getInt(result.getColumnIndex(EventsProvider.EMetaData.EventsMetaData.ATTENDANT_0_COUNT));
+				item.attendant_4_count = result.getInt(result.getColumnIndex(EventsProvider.EMetaData.EventsMetaData.ATTENDANT_4_COUNT));
 
 				items.add(item);
 				result.moveToNext();
@@ -2370,11 +1822,9 @@ public class DataManagement {
 		SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 		Event item = new Event();
 
-		Cursor cursor = mContext.getContentResolver().query(
-				Uri.parse("content://com.android.calendar/events"),
-				new String[] { "_id", "title", "description", "dtstart",
-						"dtend", "eventLocation", "eventTimezone" },
-				"_id=" + id, null, null);
+		Cursor cursor = mContext.getContentResolver().query(Uri.parse("content://com.android.calendar/events"),
+				new String[] { "_id", "title", "description", "dtstart", "dtend", "eventLocation", "eventTimezone" }, "_id=" + id, null,
+				null);
 
 		if (cursor.moveToFirst()) {
 			item.isNative = true;
@@ -2399,8 +1849,7 @@ public class DataManagement {
 	}
 
 	public Cursor getNativeCalendars() {
-		Cursor cursor = mContext.getContentResolver().query(
-				Uri.parse("content://com.android.calendar/calendars"),
+		Cursor cursor = mContext.getContentResolver().query(Uri.parse("content://com.android.calendar/calendars"),
 				(new String[] { "_id", "displayName" }), null, null, null);
 		if (cursor != null) {
 			cursor.moveToFirst();
@@ -2415,16 +1864,13 @@ public class DataManagement {
 		if (calendars != null) {
 			while (!calendars.isAfterLast()) {
 				String calendar_id = calendars.getString(0);
-				boolean isNative = _prefs.getBoolean("isNative_" + calendar_id,
-						false);
+				boolean isNative = _prefs.getBoolean("isNative_" + calendar_id, false);
 
 				if (isNative) {
 					String where = "calendar_id=" + calendar_id;
-					Cursor cursor = mContext.getContentResolver().query(
-							Uri.parse("content://com.android.calendar/events"),
-							new String[] { "_id", "title", "description",
-									"dtstart", "dtend", "eventLocation",
-									"eventTimezone" }, where, null, null);
+					Cursor cursor = mContext.getContentResolver().query(Uri.parse("content://com.android.calendar/events"),
+							new String[] { "_id", "title", "description", "dtstart", "dtend", "eventLocation", "eventTimezone" }, where,
+							null, null);
 
 					cursor.moveToFirst();
 					while (!cursor.isAfterLast()) {
@@ -2494,11 +1940,9 @@ public class DataManagement {
 
 		try {
 			HttpClient hc = new DefaultHttpClient();
-			HttpPost post = new HttpPost(prefs.getServerUrl()
-					+ "mobile/events_list");
+			HttpPost post = new HttpPost(prefs.getServerUrl() + "mobile/events_list");
 
-			MultipartEntity reqEntity = new MultipartEntity(
-					HttpMultipartMode.BROWSER_COMPATIBLE);
+			MultipartEntity reqEntity = new MultipartEntity(HttpMultipartMode.BROWSER_COMPATIBLE);
 
 			reqEntity.addPart("token", new StringBody(prefs.getToken()));
 
@@ -2526,270 +1970,217 @@ public class DataManagement {
 
 							try {
 								event.event_id = e.getInt("event_id");
-								cv.put(EventsProvider.EMetaData.EventsMetaData.E_ID,
-										event.event_id);
+								cv.put(EventsProvider.EMetaData.EventsMetaData.E_ID, event.event_id);
 							} catch (JSONException ex) {
 							}
 							try {
 								event.user_id = e.getInt("user_id");
-								cv.put(EventsProvider.EMetaData.EventsMetaData.USER_ID,
-										event.user_id);
+								cv.put(EventsProvider.EMetaData.EventsMetaData.USER_ID, event.user_id);
 							} catch (JSONException ex) {
 							}
 
 							try {
 								event.status = e.getInt("status");
-								cv.put(EventsProvider.EMetaData.EventsMetaData.STATUS,
-										event.status);
+								cv.put(EventsProvider.EMetaData.EventsMetaData.STATUS, event.status);
 							} catch (JSONException ex) {
 							}
 							try {
 								int is_owner = e.getInt("is_owner");
 								event.is_owner = is_owner == 1;
-								cv.put(EventsProvider.EMetaData.EventsMetaData.IS_OWNER,
-										event.is_owner);
+								cv.put(EventsProvider.EMetaData.EventsMetaData.IS_OWNER, event.is_owner);
 							} catch (JSONException ex) {
 							}
 							try {
 								event.type = e.getString("type");
-								cv.put(EventsProvider.EMetaData.EventsMetaData.TYPE,
-										event.type);
+								cv.put(EventsProvider.EMetaData.EventsMetaData.TYPE, event.type);
 							} catch (JSONException ex) {
 							}
 
 							try {
 								event.title = e.getString("title");
-								cv.put(EventsProvider.EMetaData.EventsMetaData.TITLE,
-										event.title);
+								cv.put(EventsProvider.EMetaData.EventsMetaData.TITLE, event.title);
 							} catch (JSONException ex) {
 							}
 							try {
 								event.icon = e.getString("icon");
-								cv.put(EventsProvider.EMetaData.EventsMetaData.ICON,
-										event.icon);
+								cv.put(EventsProvider.EMetaData.EventsMetaData.ICON, event.icon);
 							} catch (JSONException ex) {
 							}
 							try {
 								event.color = e.getString("color");
-								cv.put(EventsProvider.EMetaData.EventsMetaData.COLOR,
-										event.color);
+								cv.put(EventsProvider.EMetaData.EventsMetaData.COLOR, event.color);
 							} catch (JSONException ex) {
 							}
 							try {
 								event.description_ = e.getString("description");
-								cv.put(EventsProvider.EMetaData.EventsMetaData.DESC,
-										event.description_);
+								cv.put(EventsProvider.EMetaData.EventsMetaData.DESC, event.description_);
 							} catch (JSONException ex) {
 							}
 
 							try {
 								event.location = e.getString("location");
-								cv.put(EventsProvider.EMetaData.EventsMetaData.LOCATION,
-										event.location);
+								cv.put(EventsProvider.EMetaData.EventsMetaData.LOCATION, event.location);
 							} catch (JSONException ex) {
 							}
 							try {
-								event.accomodation = e
-										.getString("accomodation");
-								cv.put(EventsProvider.EMetaData.EventsMetaData.ACCOMODATION,
-										event.accomodation);
+								event.accomodation = e.getString("accomodation");
+								cv.put(EventsProvider.EMetaData.EventsMetaData.ACCOMODATION, event.accomodation);
 							} catch (JSONException ex) {
 							}
 
 							try {
 								event.cost = e.getString("cost");
-								cv.put(EventsProvider.EMetaData.EventsMetaData.COST,
-										event.cost);
+								cv.put(EventsProvider.EMetaData.EventsMetaData.COST, event.cost);
 							} catch (JSONException ex) {
 							}
 							try {
-								event.take_with_you = e
-										.getString("take_with_you");
-								cv.put(EventsProvider.EMetaData.EventsMetaData.TAKE_WITH_YOU,
-										event.take_with_you);
+								event.take_with_you = e.getString("take_with_you");
+								cv.put(EventsProvider.EMetaData.EventsMetaData.TAKE_WITH_YOU, event.take_with_you);
 							} catch (JSONException ex) {
 							}
 							try {
 								event.go_by = e.getString("go_by");
-								cv.put(EventsProvider.EMetaData.EventsMetaData.GO_BY,
-										event.go_by);
+								cv.put(EventsProvider.EMetaData.EventsMetaData.GO_BY, event.go_by);
 							} catch (JSONException ex) {
 							}
 
 							try {
 								event.country = e.getString("country");
-								cv.put(EventsProvider.EMetaData.EventsMetaData.COUNTRY,
-										event.country);
+								cv.put(EventsProvider.EMetaData.EventsMetaData.COUNTRY, event.country);
 							} catch (JSONException ex) {
 							}
 							try {
 								event.city = e.getString("city");
-								cv.put(EventsProvider.EMetaData.EventsMetaData.CITY,
-										event.city);
+								cv.put(EventsProvider.EMetaData.EventsMetaData.CITY, event.city);
 							} catch (JSONException ex) {
 							}
 							try {
 								event.street = e.getString("street");
-								cv.put(EventsProvider.EMetaData.EventsMetaData.STREET,
-										event.street);
+								cv.put(EventsProvider.EMetaData.EventsMetaData.STREET, event.street);
 							} catch (JSONException ex) {
 							}
 							try {
 								event.zip = e.getString("zip");
-								cv.put(EventsProvider.EMetaData.EventsMetaData.ZIP,
-										event.zip);
+								cv.put(EventsProvider.EMetaData.EventsMetaData.ZIP, event.zip);
 							} catch (JSONException ex) {
 							}
 
 							try {
 								event.timezone = e.getString("timezone");
-								cv.put(EventsProvider.EMetaData.EventsMetaData.TIMEZONE,
-										event.timezone);
+								cv.put(EventsProvider.EMetaData.EventsMetaData.TIMEZONE, event.timezone);
 							} catch (JSONException ex) {
 							}
 							try {
 								event.time_start = e.getString("time_start");
-								cv.put(EventsProvider.EMetaData.EventsMetaData.TIME_START,
-										event.time_start);
+								cv.put(EventsProvider.EMetaData.EventsMetaData.TIME_START, event.time_start);
 							} catch (JSONException ex) {
 							}
 							try {
 								event.time_end = e.getString("time_end");
-								cv.put(EventsProvider.EMetaData.EventsMetaData.TIME_END,
-										event.time_end);
+								cv.put(EventsProvider.EMetaData.EventsMetaData.TIME_END, event.time_end);
 							} catch (JSONException ex) {
 							}
 							try {
 								event.time = e.getString("time");
-								cv.put(EventsProvider.EMetaData.EventsMetaData.TIME,
-										event.time);
+								cv.put(EventsProvider.EMetaData.EventsMetaData.TIME, event.time);
 							} catch (JSONException ex) {
 							}
 							try {
-								event.my_time_start = e
-										.getString("my_time_start");
-								cv.put(EventsProvider.EMetaData.EventsMetaData.MY_TIME_START,
-										event.my_time_start);
+								event.my_time_start = e.getString("my_time_start");
+								cv.put(EventsProvider.EMetaData.EventsMetaData.MY_TIME_START, event.my_time_start);
 							} catch (JSONException ex) {
 							}
 							try {
 								event.my_time_end = e.getString("my_time_end");
-								cv.put(EventsProvider.EMetaData.EventsMetaData.MY_TIME_END,
-										event.my_time_end);
+								cv.put(EventsProvider.EMetaData.EventsMetaData.MY_TIME_END, event.my_time_end);
 							} catch (JSONException ex) {
 							}
 
 							try {
 								event.reminder1 = e.getString("reminder1");
-								cv.put(EventsProvider.EMetaData.EventsMetaData.REMINDER1,
-										event.reminder1);
+								cv.put(EventsProvider.EMetaData.EventsMetaData.REMINDER1, event.reminder1);
 							} catch (JSONException ex) {
 							}
 							try {
 								event.reminder2 = e.getString("reminder2");
-								cv.put(EventsProvider.EMetaData.EventsMetaData.REMINDER2,
-										event.reminder2);
+								cv.put(EventsProvider.EMetaData.EventsMetaData.REMINDER2, event.reminder2);
 							} catch (JSONException ex) {
 							}
 							try {
 								event.reminder3 = e.getString("reminder3");
-								cv.put(EventsProvider.EMetaData.EventsMetaData.REMINDER3,
-										event.reminder3);
+								cv.put(EventsProvider.EMetaData.EventsMetaData.REMINDER3, event.reminder3);
 							} catch (JSONException ex) {
 							}
 
 							try {
 								event.created = e.getString("created");
-								cv.put(EventsProvider.EMetaData.EventsMetaData.CREATED,
-										event.created);
+								cv.put(EventsProvider.EMetaData.EventsMetaData.CREATED, event.created);
 							} catch (JSONException ex) {
 							}
 							try {
 								event.modified = e.getString("modified");
-								cv.put(EventsProvider.EMetaData.EventsMetaData.MODIFIED,
-										event.modified);
+								cv.put(EventsProvider.EMetaData.EventsMetaData.MODIFIED, event.modified);
 							} catch (JSONException ex) {
 							}
 
 							try {
-								event.attendant_1_count = e
-										.getInt("attendant_1_count");
-								cv.put(EventsProvider.EMetaData.EventsMetaData.ATTENDANT_1_COUNT,
-										event.attendant_1_count);
+								event.attendant_1_count = e.getInt("attendant_1_count");
+								cv.put(EventsProvider.EMetaData.EventsMetaData.ATTENDANT_1_COUNT, event.attendant_1_count);
 							} catch (JSONException ex) {
 							}
 							try {
-								event.attendant_2_count = e
-										.getInt("attendant_2_count");
-								cv.put(EventsProvider.EMetaData.EventsMetaData.ATTENDANT_2_COUNT,
-										event.attendant_2_count);
+								event.attendant_2_count = e.getInt("attendant_2_count");
+								cv.put(EventsProvider.EMetaData.EventsMetaData.ATTENDANT_2_COUNT, event.attendant_2_count);
 							} catch (JSONException ex) {
 							}
 							try {
-								event.attendant_0_count = e
-										.getInt("attendant_0_count");
-								cv.put(EventsProvider.EMetaData.EventsMetaData.ATTENDANT_0_COUNT,
-										event.attendant_0_count);
+								event.attendant_0_count = e.getInt("attendant_0_count");
+								cv.put(EventsProvider.EMetaData.EventsMetaData.ATTENDANT_0_COUNT, event.attendant_0_count);
 							} catch (JSONException ex) {
 							}
 							try {
-								event.attendant_4_count = e
-										.getInt("attendant_4_count");
-								cv.put(EventsProvider.EMetaData.EventsMetaData.ATTENDANT_4_COUNT,
-										event.attendant_4_count);
+								event.attendant_4_count = e.getInt("attendant_4_count");
+								cv.put(EventsProvider.EMetaData.EventsMetaData.ATTENDANT_4_COUNT, event.attendant_4_count);
 							} catch (JSONException ex) {
 							}
 
 							try {
-								int is_sports_event = e
-										.getInt("is_sports_event");
+								int is_sports_event = e.getInt("is_sports_event");
 								event.is_sports_event = is_sports_event == 1;
-								cv.put(EventsProvider.EMetaData.EventsMetaData.IS_SPORTS_EVENT,
-										event.is_sports_event);
+								cv.put(EventsProvider.EMetaData.EventsMetaData.IS_SPORTS_EVENT, event.is_sports_event);
 							} catch (JSONException ex) {
 							}
 							try {
-								event.creator_fullname = e
-										.getString("creator_fullname");
-								cv.put(EventsProvider.EMetaData.EventsMetaData.CREATOR_FULLNAME,
-										event.creator_fullname);
+								event.creator_fullname = e.getString("creator_fullname");
+								cv.put(EventsProvider.EMetaData.EventsMetaData.CREATOR_FULLNAME, event.creator_fullname);
 							} catch (JSONException ex) {
 							}
 							try {
-								event.creator_contact_id = e
-										.getInt("creator_contact_id");
-								cv.put(EventsProvider.EMetaData.EventsMetaData.CREATOR_CONTACT_ID,
-										event.creator_contact_id);
+								event.creator_contact_id = e.getInt("creator_contact_id");
+								cv.put(EventsProvider.EMetaData.EventsMetaData.CREATOR_CONTACT_ID, event.creator_contact_id);
 							} catch (JSONException ex) {
 							}
 
 							try {
-								String assigned_contacts = e
-										.getString("assigned_contacts");
-								cv.put(EventsProvider.EMetaData.EventsMetaData.ASSIGNED_CONTACTS,
-										assigned_contacts);
+								String assigned_contacts = e.getString("assigned_contacts");
+								cv.put(EventsProvider.EMetaData.EventsMetaData.ASSIGNED_CONTACTS, assigned_contacts);
 							} catch (JSONException ex) {
 							}
 
 							try {
-								String assigned_groups = e
-										.getString("assigned_groups");
-								cv.put(EventsProvider.EMetaData.EventsMetaData.ASSIGNED_GROUPS,
-										assigned_groups);
+								String assigned_groups = e.getString("assigned_groups");
+								cv.put(EventsProvider.EMetaData.EventsMetaData.ASSIGNED_GROUPS, assigned_groups);
 							} catch (JSONException ex) {
 							}
 
 							try {
 								String invited = e.getString("invited");
-								cv.put(EventsProvider.EMetaData.EventsMetaData.INVITED,
-										invited);
+								cv.put(EventsProvider.EMetaData.EventsMetaData.INVITED, invited);
 							} catch (JSONException ex) {
 							}
 
 							// //
-							mContext.getContentResolver()
-									.insert(EventsProvider.EMetaData.EventsMetaData.CONTENT_URI,
-											cv);
+							mContext.getContentResolver().insert(EventsProvider.EMetaData.EventsMetaData.CONTENT_URI, cv);
 							events.add(event);
 						}
 					}
@@ -2803,159 +2194,77 @@ public class DataManagement {
 
 	public Event getEventFromDb(int event_id) {
 		Event item = new Event();
-		Uri uri = Uri.parse(EventsProvider.EMetaData.EventsMetaData.CONTENT_URI
-				+ "/" + event_id);
-		Cursor result = mContext.getContentResolver().query(uri, null, null,
-				null, null);
+		Uri uri = Uri.parse(EventsProvider.EMetaData.EventsMetaData.CONTENT_URI + "/" + event_id);
+		Cursor result = mContext.getContentResolver().query(uri, null, null, null, null);
 		if (result.moveToFirst()) {
-			item.event_id = result
-					.getInt(result
-							.getColumnIndex(EventsProvider.EMetaData.EventsMetaData.E_ID));
-			item.user_id = result
-					.getInt(result
-							.getColumnIndex(EventsProvider.EMetaData.EventsMetaData.USER_ID));
+			item.event_id = result.getInt(result.getColumnIndex(EventsProvider.EMetaData.EventsMetaData.E_ID));
+			item.user_id = result.getInt(result.getColumnIndex(EventsProvider.EMetaData.EventsMetaData.USER_ID));
 
-			final int is_sport_event = result
-					.getInt(result
-							.getColumnIndex(EventsProvider.EMetaData.EventsMetaData.IS_SPORTS_EVENT));
+			final int is_sport_event = result.getInt(result.getColumnIndex(EventsProvider.EMetaData.EventsMetaData.IS_SPORTS_EVENT));
 			item.is_sports_event = is_sport_event == 1;
-			item.status = result
-					.getInt(result
-							.getColumnIndex(EventsProvider.EMetaData.EventsMetaData.STATUS));
-			final int is_owner = result
-					.getInt(result
-							.getColumnIndex(EventsProvider.EMetaData.EventsMetaData.IS_OWNER));
+			item.status = result.getInt(result.getColumnIndex(EventsProvider.EMetaData.EventsMetaData.STATUS));
+			final int is_owner = result.getInt(result.getColumnIndex(EventsProvider.EMetaData.EventsMetaData.IS_OWNER));
 			item.is_owner = is_owner == 1;
-			item.type = result
-					.getString(result
-							.getColumnIndex(EventsProvider.EMetaData.EventsMetaData.TYPE));
+			item.type = result.getString(result.getColumnIndex(EventsProvider.EMetaData.EventsMetaData.TYPE));
 
-			item.creator_fullname = result
-					.getString(result
-							.getColumnIndex(EventsProvider.EMetaData.EventsMetaData.CREATOR_FULLNAME));
-			item.creator_contact_id = result
-					.getInt(result
-							.getColumnIndex(EventsProvider.EMetaData.EventsMetaData.CREATOR_CONTACT_ID));
+			item.creator_fullname = result.getString(result.getColumnIndex(EventsProvider.EMetaData.EventsMetaData.CREATOR_FULLNAME));
+			item.creator_contact_id = result.getInt(result.getColumnIndex(EventsProvider.EMetaData.EventsMetaData.CREATOR_CONTACT_ID));
 
-			item.title = result
-					.getString(result
-							.getColumnIndex(EventsProvider.EMetaData.EventsMetaData.TITLE));
-			item.icon = result
-					.getString(result
-							.getColumnIndex(EventsProvider.EMetaData.EventsMetaData.ICON));
-			item.color = result
-					.getString(result
-							.getColumnIndex(EventsProvider.EMetaData.EventsMetaData.COLOR));
-			item.description_ = result
-					.getString(result
-							.getColumnIndex(EventsProvider.EMetaData.EventsMetaData.DESC));
+			item.title = result.getString(result.getColumnIndex(EventsProvider.EMetaData.EventsMetaData.TITLE));
+			item.icon = result.getString(result.getColumnIndex(EventsProvider.EMetaData.EventsMetaData.ICON));
+			item.color = result.getString(result.getColumnIndex(EventsProvider.EMetaData.EventsMetaData.COLOR));
+			item.description_ = result.getString(result.getColumnIndex(EventsProvider.EMetaData.EventsMetaData.DESC));
 
-			item.location = result
-					.getString(result
-							.getColumnIndex(EventsProvider.EMetaData.EventsMetaData.LOCATION));
-			item.accomodation = result
-					.getString(result
-							.getColumnIndex(EventsProvider.EMetaData.EventsMetaData.ACCOMODATION));
+			item.location = result.getString(result.getColumnIndex(EventsProvider.EMetaData.EventsMetaData.LOCATION));
+			item.accomodation = result.getString(result.getColumnIndex(EventsProvider.EMetaData.EventsMetaData.ACCOMODATION));
 
-			item.cost = result
-					.getString(result
-							.getColumnIndex(EventsProvider.EMetaData.EventsMetaData.COST));
-			item.take_with_you = result
-					.getString(result
-							.getColumnIndex(EventsProvider.EMetaData.EventsMetaData.TAKE_WITH_YOU));
-			item.go_by = result
-					.getString(result
-							.getColumnIndex(EventsProvider.EMetaData.EventsMetaData.GO_BY));
+			item.cost = result.getString(result.getColumnIndex(EventsProvider.EMetaData.EventsMetaData.COST));
+			item.take_with_you = result.getString(result.getColumnIndex(EventsProvider.EMetaData.EventsMetaData.TAKE_WITH_YOU));
+			item.go_by = result.getString(result.getColumnIndex(EventsProvider.EMetaData.EventsMetaData.GO_BY));
 
-			item.country = result
-					.getString(result
-							.getColumnIndex(EventsProvider.EMetaData.EventsMetaData.COUNTRY));
-			item.city = result
-					.getString(result
-							.getColumnIndex(EventsProvider.EMetaData.EventsMetaData.CITY));
-			item.street = result
-					.getString(result
-							.getColumnIndex(EventsProvider.EMetaData.EventsMetaData.STREET));
-			item.zip = result
-					.getString(result
-							.getColumnIndex(EventsProvider.EMetaData.EventsMetaData.ZIP));
+			item.country = result.getString(result.getColumnIndex(EventsProvider.EMetaData.EventsMetaData.COUNTRY));
+			item.city = result.getString(result.getColumnIndex(EventsProvider.EMetaData.EventsMetaData.CITY));
+			item.street = result.getString(result.getColumnIndex(EventsProvider.EMetaData.EventsMetaData.STREET));
+			item.zip = result.getString(result.getColumnIndex(EventsProvider.EMetaData.EventsMetaData.ZIP));
 
-			item.timezone = result
-					.getString(result
-							.getColumnIndex(EventsProvider.EMetaData.EventsMetaData.TIMEZONE));
-			item.time_start = result
-					.getString(result
-							.getColumnIndex(EventsProvider.EMetaData.EventsMetaData.TIME_START));
-			item.time_end = result
-					.getString(result
-							.getColumnIndex(EventsProvider.EMetaData.EventsMetaData.TIME_END));
-			item.time = result
-					.getString(result
-							.getColumnIndex(EventsProvider.EMetaData.EventsMetaData.TIME));
-			item.my_time_start = result
-					.getString(result
-							.getColumnIndex(EventsProvider.EMetaData.EventsMetaData.MY_TIME_START));
-			item.my_time_end = result
-					.getString(result
-							.getColumnIndex(EventsProvider.EMetaData.EventsMetaData.MY_TIME_END));
+			item.timezone = result.getString(result.getColumnIndex(EventsProvider.EMetaData.EventsMetaData.TIMEZONE));
+			item.time_start = result.getString(result.getColumnIndex(EventsProvider.EMetaData.EventsMetaData.TIME_START));
+			item.time_end = result.getString(result.getColumnIndex(EventsProvider.EMetaData.EventsMetaData.TIME_END));
+			item.time = result.getString(result.getColumnIndex(EventsProvider.EMetaData.EventsMetaData.TIME));
+			item.my_time_start = result.getString(result.getColumnIndex(EventsProvider.EMetaData.EventsMetaData.MY_TIME_START));
+			item.my_time_end = result.getString(result.getColumnIndex(EventsProvider.EMetaData.EventsMetaData.MY_TIME_END));
 
-			item.reminder1 = result
-					.getString(result
-							.getColumnIndex(EventsProvider.EMetaData.EventsMetaData.REMINDER1));
-			item.reminder2 = result
-					.getString(result
-							.getColumnIndex(EventsProvider.EMetaData.EventsMetaData.REMINDER2));
-			item.reminder3 = result
-					.getString(result
-							.getColumnIndex(EventsProvider.EMetaData.EventsMetaData.REMINDER3));
+			item.reminder1 = result.getString(result.getColumnIndex(EventsProvider.EMetaData.EventsMetaData.REMINDER1));
+			item.reminder2 = result.getString(result.getColumnIndex(EventsProvider.EMetaData.EventsMetaData.REMINDER2));
+			item.reminder3 = result.getString(result.getColumnIndex(EventsProvider.EMetaData.EventsMetaData.REMINDER3));
 
-			item.created = result
-					.getString(result
-							.getColumnIndex(EventsProvider.EMetaData.EventsMetaData.CREATED));
-			item.modified = result
-					.getString(result
-							.getColumnIndex(EventsProvider.EMetaData.EventsMetaData.MODIFIED));
+			item.created = result.getString(result.getColumnIndex(EventsProvider.EMetaData.EventsMetaData.CREATED));
+			item.modified = result.getString(result.getColumnIndex(EventsProvider.EMetaData.EventsMetaData.MODIFIED));
 
-			item.attendant_1_count = result
-					.getInt(result
-							.getColumnIndex(EventsProvider.EMetaData.EventsMetaData.ATTENDANT_1_COUNT));
-			item.attendant_2_count = result
-					.getInt(result
-							.getColumnIndex(EventsProvider.EMetaData.EventsMetaData.ATTENDANT_2_COUNT));
-			item.attendant_0_count = result
-					.getInt(result
-							.getColumnIndex(EventsProvider.EMetaData.EventsMetaData.ATTENDANT_0_COUNT));
-			item.attendant_4_count = result
-					.getInt(result
-							.getColumnIndex(EventsProvider.EMetaData.EventsMetaData.ATTENDANT_4_COUNT));
+			item.attendant_1_count = result.getInt(result.getColumnIndex(EventsProvider.EMetaData.EventsMetaData.ATTENDANT_1_COUNT));
+			item.attendant_2_count = result.getInt(result.getColumnIndex(EventsProvider.EMetaData.EventsMetaData.ATTENDANT_2_COUNT));
+			item.attendant_0_count = result.getInt(result.getColumnIndex(EventsProvider.EMetaData.EventsMetaData.ATTENDANT_0_COUNT));
+			item.attendant_4_count = result.getInt(result.getColumnIndex(EventsProvider.EMetaData.EventsMetaData.ATTENDANT_4_COUNT));
 
-			String assigned_contacts = result
-					.getString(result
-							.getColumnIndex(EventsProvider.EMetaData.EventsMetaData.ASSIGNED_CONTACTS));
+			String assigned_contacts = result.getString(result.getColumnIndex(EventsProvider.EMetaData.EventsMetaData.ASSIGNED_CONTACTS));
 			if (assigned_contacts != null && !assigned_contacts.equals("null")) {
 				try {
-					item.assigned_contacts = Utils
-							.jsonStringToArray(assigned_contacts);
+					item.assigned_contacts = Utils.jsonStringToArray(assigned_contacts);
 				} catch (JSONException e) {
 					item.assigned_contacts = null;
 				}
 			}
 
-			String assigned_groups = result
-					.getString(result
-							.getColumnIndex(EventsProvider.EMetaData.EventsMetaData.ASSIGNED_GROUPS));
+			String assigned_groups = result.getString(result.getColumnIndex(EventsProvider.EMetaData.EventsMetaData.ASSIGNED_GROUPS));
 			if (assigned_groups != null && !assigned_groups.equals("null")) {
 				try {
-					item.assigned_groups = Utils
-							.jsonStringToArray(assigned_groups);
+					item.assigned_groups = Utils.jsonStringToArray(assigned_groups);
 				} catch (JSONException e) {
 					item.assigned_groups = null;
 				}
 			}
 
-			String invitedJson = result
-					.getString(result
-							.getColumnIndex(EventsProvider.EMetaData.EventsMetaData.INVITED));
+			String invitedJson = result.getString(result.getColumnIndex(EventsProvider.EMetaData.EventsMetaData.INVITED));
 			if (invitedJson != null && !invitedJson.equals("null")) {
 				try {
 					JSONArray arr = new JSONArray(invitedJson);
@@ -2971,14 +2280,10 @@ public class DataManagement {
 							invited.status_id = obj.getInt("status");
 
 							if (invited.status_id == 4) {
-								invited.status = mContext
-										.getString(R.string.new_invite);
+								invited.status = mContext.getString(R.string.new_invite);
 							} else {
-								String statusStr = new StringBuilder("status_")
-										.append(invited.status_id).toString();
-								int statusId = mContext.getResources()
-										.getIdentifier(statusStr, "string",
-												"com.groupagendas.groupagenda");
+								String statusStr = new StringBuilder("status_").append(invited.status_id).toString();
+								int statusId = mContext.getResources().getIdentifier(statusStr, "string", "com.groupagendas.groupagenda");
 
 								invited.status = mContext.getString(statusId);
 							}
@@ -2989,8 +2294,7 @@ public class DataManagement {
 							invited.my_contact_id = obj.getInt("my_contact_id");
 							Contact contact = getContact(invited.my_contact_id);
 							invited.email = contact.email;
-							invited.name = contact.name + " "
-									+ contact.lastname;
+							invited.name = contact.name + " " + contact.lastname;
 						} catch (JSONException ex) {
 						}
 
@@ -3008,15 +2312,12 @@ public class DataManagement {
 		boolean success = false;
 		try {
 			HttpClient hc = new DefaultHttpClient();
-			HttpPost post = new HttpPost(prefs.getServerUrl()
-					+ "mobile/events_get");
+			HttpPost post = new HttpPost(prefs.getServerUrl() + "mobile/events_get");
 
-			MultipartEntity reqEntity = new MultipartEntity(
-					HttpMultipartMode.BROWSER_COMPATIBLE);
+			MultipartEntity reqEntity = new MultipartEntity(HttpMultipartMode.BROWSER_COMPATIBLE);
 
 			reqEntity.addPart("token", new StringBody(prefs.getToken()));
-			reqEntity.addPart("event_id",
-					new StringBody(String.valueOf(event.event_id)));
+			reqEntity.addPart("event_id", new StringBody(String.valueOf(event.event_id)));
 
 			post.setEntity(reqEntity);
 			HttpResponse rp = hc.execute(post);
@@ -3038,13 +2339,11 @@ public class DataManagement {
 						} catch (JSONException ex) {
 						}
 						try {
-							event.creator_fullname = e
-									.getString("creator_fullname");
+							event.creator_fullname = e.getString("creator_fullname");
 						} catch (JSONException ex) {
 						}
 						try {
-							event.creator_contact_id = e
-									.getInt("creator_contact_id");
+							event.creator_contact_id = e.getInt("creator_contact_id");
 						} catch (JSONException ex) {
 						}
 					}
@@ -3061,15 +2360,12 @@ public class DataManagement {
 
 		try {
 			HttpClient hc = new DefaultHttpClient();
-			HttpPost post = new HttpPost(prefs.getServerUrl()
-					+ "mobile/events_edit");
+			HttpPost post = new HttpPost(prefs.getServerUrl() + "mobile/events_edit");
 
-			MultipartEntity reqEntity = new MultipartEntity(
-					HttpMultipartMode.BROWSER_COMPATIBLE);
+			MultipartEntity reqEntity = new MultipartEntity(HttpMultipartMode.BROWSER_COMPATIBLE);
 
 			reqEntity.addPart("token", new StringBody(prefs.getToken()));
-			reqEntity.addPart("event_id",
-					new StringBody(String.valueOf(e.event_id)));
+			reqEntity.addPart("event_id", new StringBody(String.valueOf(e.event_id)));
 
 			reqEntity.addPart("event_type", new StringBody(e.type));
 
@@ -3102,21 +2398,14 @@ public class DataManagement {
 
 			if (e.assigned_contacts != null) {
 				for (int i = 0, l = e.assigned_contacts.length; i < l; i++) {
-					reqEntity.addPart(
-							"contacts[]",
-							new StringBody(String
-									.valueOf(e.assigned_contacts[i])));
+					reqEntity.addPart("contacts[]", new StringBody(String.valueOf(e.assigned_contacts[i])));
 				}
 			} else {
 				reqEntity.addPart("contacts[]", new StringBody(""));
 			}
 			if (e.assigned_groups != null) {
 				for (int i = 0, l = e.assigned_groups.length; i < l; i++) {
-					reqEntity
-							.addPart(
-									"groups[]",
-									new StringBody(String
-											.valueOf(e.assigned_groups[i])));
+					reqEntity.addPart("groups[]", new StringBody(String.valueOf(e.assigned_groups[i])));
 				}
 			} else {
 				reqEntity.addPart("groups[]", new StringBody(""));
@@ -3132,8 +2421,7 @@ public class DataManagement {
 					JSONObject object = new JSONObject(resp);
 					success = object.getBoolean("success");
 					if (!success) {
-						Log.e("Edit event ERROR", object.getJSONObject("error")
-								.getString("reason"));
+						Log.e("Edit event ERROR", object.getJSONObject("error").getString("reason"));
 					}
 				}
 			}
@@ -3149,11 +2437,9 @@ public class DataManagement {
 
 		try {
 			HttpClient hc = new DefaultHttpClient();
-			HttpPost post = new HttpPost(prefs.getServerUrl()
-					+ "mobile/events_create");
+			HttpPost post = new HttpPost(prefs.getServerUrl() + "mobile/events_create");
 
-			MultipartEntity reqEntity = new MultipartEntity(
-					HttpMultipartMode.BROWSER_COMPATIBLE);
+			MultipartEntity reqEntity = new MultipartEntity(HttpMultipartMode.BROWSER_COMPATIBLE);
 
 			reqEntity.addPart("token", new StringBody(prefs.getToken()));
 
@@ -3186,31 +2472,22 @@ public class DataManagement {
 			if (e.go_by.length() > 0)
 				reqEntity.addPart("go_by", new StringBody(e.go_by));
 			if (e.take_with_you.length() > 0)
-				reqEntity.addPart("take_with_you", new StringBody(
-						e.take_with_you));
+				reqEntity.addPart("take_with_you", new StringBody(e.take_with_you));
 			if (e.cost.length() > 0)
 				reqEntity.addPart("cost", new StringBody(e.cost));
 			if (e.accomodation.length() > 0)
-				reqEntity.addPart("accomodation",
-						new StringBody(e.accomodation));
+				reqEntity.addPart("accomodation", new StringBody(e.accomodation));
 
 			if (e.assigned_contacts != null) {
 				for (int i = 0, l = e.assigned_contacts.length; i < l; i++) {
-					reqEntity.addPart(
-							"contacts[]",
-							new StringBody(String
-									.valueOf(e.assigned_contacts[i])));
+					reqEntity.addPart("contacts[]", new StringBody(String.valueOf(e.assigned_contacts[i])));
 				}
 			} else {
 				reqEntity.addPart("contacts[]", new StringBody(""));
 			}
 			if (e.assigned_groups != null) {
 				for (int i = 0, l = e.assigned_groups.length; i < l; i++) {
-					reqEntity
-							.addPart(
-									"groups[]",
-									new StringBody(String
-											.valueOf(e.assigned_groups[i])));
+					reqEntity.addPart("groups[]", new StringBody(String.valueOf(e.assigned_groups[i])));
 				}
 			} else {
 				reqEntity.addPart("groups[]", new StringBody(""));
@@ -3228,14 +2505,11 @@ public class DataManagement {
 					Log.e("createEvent - success", "" + success);
 
 					if (success == false) {
-						Log.e("Create event error",
-								object.getJSONObject("error").getString(
-										"reason"));
+						Log.e("Create event error", object.getJSONObject("error").getString("reason"));
 					}
 				}
 			} else {
-				Log.e("createEvent - status", rp.getStatusLine()
-						.getStatusCode() + "");
+				Log.e("createEvent - status", rp.getStatusLine().getStatusCode() + "");
 			}
 		} catch (Exception ex) {
 			Log.e("createEvent ex", ex.getMessage() + "!!!");
@@ -3249,11 +2523,9 @@ public class DataManagement {
 
 		try {
 			HttpClient hc = new DefaultHttpClient();
-			HttpPost post = new HttpPost(prefs.getServerUrl()
-					+ "mobile/events_remove");
+			HttpPost post = new HttpPost(prefs.getServerUrl() + "mobile/events_remove");
 
-			MultipartEntity reqEntity = new MultipartEntity(
-					HttpMultipartMode.BROWSER_COMPATIBLE);
+			MultipartEntity reqEntity = new MultipartEntity(HttpMultipartMode.BROWSER_COMPATIBLE);
 
 			reqEntity.addPart("token", new StringBody(prefs.getToken()));
 			reqEntity.addPart("event_id", new StringBody(String.valueOf(id)));
@@ -3297,15 +2569,12 @@ public class DataManagement {
 
 		try {
 			HttpClient hc = new DefaultHttpClient();
-			HttpPost post = new HttpPost(prefs.getServerUrl()
-					+ "mobile/set_event_status");
+			HttpPost post = new HttpPost(prefs.getServerUrl() + "mobile/set_event_status");
 
-			MultipartEntity reqEntity = new MultipartEntity(
-					HttpMultipartMode.BROWSER_COMPATIBLE);
+			MultipartEntity reqEntity = new MultipartEntity(HttpMultipartMode.BROWSER_COMPATIBLE);
 
 			reqEntity.addPart("token", new StringBody(prefs.getToken()));
-			reqEntity.addPart("event_id",
-					new StringBody(String.valueOf(event_id)));
+			reqEntity.addPart("event_id", new StringBody(String.valueOf(event_id)));
 			reqEntity.addPart("status", new StringBody(status));
 
 			post.setEntity(reqEntity);
@@ -3318,9 +2587,7 @@ public class DataManagement {
 					JSONObject object = new JSONObject(resp);
 					success = object.getBoolean("success");
 					if (!success) {
-						Log.e("Edit event status ERROR",
-								object.getJSONObject("error").getString(
-										"reason"));
+						Log.e("Edit event status ERROR", object.getJSONObject("error").getString("reason"));
 					}
 				}
 			}
@@ -3353,4 +2620,31 @@ public class DataManagement {
 		return new byte[0];
 	}
 
+	public void updateAppData(String data){
+		if(data != null){
+			switch (Integer.parseInt(data)) {
+			case 1:
+//				this.getAccountInfo();
+				break;
+			case 2:
+//				this.getContactList(null);
+				break;
+			case 3:
+				this.getGroupList();
+				break;
+			case 4:
+				this.getEventList("");
+				break;
+			default:
+				System.out.println("UpdateAppData(): Bad number");
+				break;
+			}
+		} else {
+//			getAccountInfo();
+//			getContactList(null);
+//			getGroupList();
+//			getEventList("");
+		}
+
+	}
 }
