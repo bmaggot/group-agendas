@@ -2,7 +2,7 @@
 <resources>
 
 	<string-array name="sex_labels">
-		<item></item>
+		<item>None</item>
 		<item>Male</item>
 		<item>Female</item>
 	</string-array>
