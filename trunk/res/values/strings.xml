@@ -162,7 +162,8 @@
 	<string name="add_color">Add color</string>
 	<string name="add_color_text">This color will be automaticly be displayed based on the description mentioned in the title</string>
 	<string name="add_icon_text">This icon will be automaticly be displayed based on the description mentioned in the title</string>
-
+	<string name="privacy_statement">Privacy statement</string>
+	<string name="chk_statement">I agree with \nprivacy statement</string>
     <string name="forgot_pass">Forgot password</string>
     <string name="email_address_4_retrieve">Enter your email </string>
     <string name="get_code_2_retrieve_pass">Send Request</string>
