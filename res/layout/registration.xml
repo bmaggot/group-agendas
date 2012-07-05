@@ -150,43 +150,49 @@
                     android:inputType="textEmailAddress"
                     android:singleLine="true" />
             </LinearLayout>
-
+
             <LinearLayout
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
+                android:gravity="center_horizontal"
                 android:orientation="horizontal" >
 
                 <TextView
-                    android:layout_width="180dp"
+                    android:layout_width="80dp"
                     android:layout_height="wrap_content"
                     android:text="@string/phone_code"
                     android:textColor="@android:color/black" />
 
-                <EditText
-                    android:id="@+id/phonecodeView"
+                <TextView
                     android:layout_width="fill_parent"
-                    android:layout_height="wrap_content"
-                    android:inputType="phone"
-                    android:singleLine="true" />
+                    android:layout_height="fill_parent"
+                    android:gravity="center_horizontal|center_vertical"
+                    android:text="@string/phone"
+                    android:textColor="@android:color/black" />
+
             </LinearLayout>
 
             <LinearLayout
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal" >
-
-                <TextView
+
+                <EditText
+                    android:id="@+id/phonecodeView"
                     android:layout_width="80dp"
                     android:layout_height="wrap_content"
-                    android:text="@string/phone"
-                    android:textColor="@android:color/black" />
-
-                <EditText
-                    android:id="@+id/phoneView"
-                    android:layout_width="fill_parent"
-                    android:layout_height="wrap_content"
+                    android:ems="10"
                     android:inputType="phone"
                     android:singleLine="true" />
+
+                <EditText
+                    android:id="@+id/phoneView"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:ems="10"
+                    android:inputType="phone"
+                    android:singleLine="true" />
+
             </LinearLayout>
 
             <LinearLayout
