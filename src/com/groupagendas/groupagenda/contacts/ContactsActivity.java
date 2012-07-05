@@ -1,6 +1,7 @@
 package com.groupagendas.groupagenda.contacts;
 
 import java.util.ArrayList;
+import java.util.TreeMap;
 
 import android.app.ListActivity;
 import android.content.Intent;
@@ -10,15 +11,23 @@ import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.view.GestureDetector;
+import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.view.MotionEvent;
 import android.view.View;
+import android.view.View.OnTouchListener;
 import android.widget.EditText;
+import android.widget.LinearLayout;
+import android.widget.LinearLayout.LayoutParams;
 import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.RadioGroup;
 import android.widget.RadioGroup.OnCheckedChangeListener;
+import android.widget.TextView;
+
 
 import com.groupagendas.groupagenda.DataManagement;
 import com.groupagendas.groupagenda.R;
@@ -45,6 +54,15 @@ public class ContactsActivity extends ListActivity implements OnCheckedChangeLis
 	private ArrayList<Group> groups = null;
 
 	private ProgressBar pb;
+	
+	private GestureDetector mGestureDetector;
+
+    private static float sideIndexX;				// Side index coordinates within
+    private static float sideIndexY;				//
+    private int sideIndexHeight;					// height of side index
+    private int indexListSize;						// number of items in the side index
+    private int displayedIndexListSize;				// number of visible items in the SI
+    private TreeMap<Integer, String> indexList = null;	// list with items for side index
 
 	private SharedPreferences.Editor editor;
 	private SharedPreferences preferences;
@@ -53,16 +71,107 @@ public class ContactsActivity extends ListActivity implements OnCheckedChangeLis
 	
 	private ContactsAdapter cAdapter;
 	private GroupsAdapter gAdapter;
+	
+	
+	
+    @Override
+    public void onWindowFocusChanged(boolean hasFocus)
+    {
+        super.onWindowFocusChanged(hasFocus);
+        
+        final ListView listView = (ListView) findViewById(R.id.list);
+        LinearLayout sideIndex = (LinearLayout) findViewById(R.id.sideIndex);
+        sideIndexHeight = sideIndex.getHeight();
+        sideIndex.removeAllViews();
 
+        if (indexList != null)
+        {
+	        indexListSize = indexList.size();
+	        
+	        TextView tmpTV = null;
+	
+	        int indexMaxSize = (int) Math.floor(sideIndex.getHeight() / 20);
+	        int tmpIndexListSize = indexListSize;
+	
+	        while (tmpIndexListSize > indexMaxSize)
+	        {
+	            tmpIndexListSize = tmpIndexListSize / 2;
+	        }
+	
+	        double delta = indexListSize / tmpIndexListSize;
+	
+	        String tmpLetter = null;
+
+	        for (double i = 1; i <= indexListSize - 1; i = i + delta)
+	        {
+	        	int raidytesSk = Integer.parseInt(indexList.keySet().toArray()[(int) i - 1].toString());
+	        	
+	        	tmpLetter = indexList.get(raidytesSk);
+	            tmpTV = new TextView(this);
+	            tmpTV.setText(tmpLetter);
+	            tmpTV.setGravity(Gravity.CENTER);
+	            tmpTV.setPadding(5, 0, 0, 0);
+	            tmpTV.setTextSize(20);
+	            LayoutParams params = new LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT, 1);
+	            tmpTV.setLayoutParams(params);
+	            sideIndex.addView(tmpTV);
+	        }
+	        
+	        displayedIndexListSize = tmpIndexListSize;
+	        
+	        sideIndex.setOnTouchListener(new OnTouchListener()
+	        {
+	            @Override
+	            public boolean onTouch(View v, MotionEvent event)
+	            {
+	                // now you know coordinates of touch
+	                sideIndexX = event.getX();
+	                sideIndexY = event.getY();
+	
+	                // and can display a proper item it country list
+	                displayListItem();
+	
+	                return false;
+	            }
+	        });
+        }
+
+    }
+
+    @Override
+    public boolean onTouchEvent(MotionEvent event)
+    {
+    	if (event != null) {
+	        if (mGestureDetector.onTouchEvent(event)) {
+	            return true;
+	        } else {
+	            return false;
+	        }
+    	}
+    	return false;
+    }
+	
+    
+    
 	public void onResume() {
 		super.onResume();
+
+		GetContactsFromDBTask currentTask = new GetContactsFromDBTask();
+		
 		CURRENT_LIST = preferences.getInt("ContactsActivityList", CURRENT_LIST);
 		CURRENT_TASK = preferences.getString("ContactsActivityTask", CONTACTS_TASK);
+		
+		currentTask.execute(CURRENT_TASK);
 
-		new GetContactsFromDBTask().execute(CURRENT_TASK);
-
+		if (contacts != null){
+				indexList = createIndex(contacts);
+			} else {
+				DataManagement dm = DataManagement.getInstance(this);
+				contacts = dm.getContactsFromDb("");
+				indexList = createIndex(contacts);
+			}
 	}
-
+	
 	public void onPause() {
 		super.onPause();
 		editor.putString("ContactsActivityTask", CURRENT_TASK);
@@ -90,6 +199,8 @@ public class ContactsActivity extends ListActivity implements OnCheckedChangeLis
 		
 		searchView = (EditText) findViewById(R.id.search);
 		searchView.addTextChangedListener(filterTextWatcher);
+		
+		mGestureDetector = new GestureDetector(this, new SideIndexGestureListener());
 	}
 
 	@Override
@@ -100,7 +211,6 @@ public class ContactsActivity extends ListActivity implements OnCheckedChangeLis
 	}
 
 	private TextWatcher filterTextWatcher = new TextWatcher() {
-
 		public void afterTextChanged(Editable s) {
 		}
 
@@ -122,6 +232,32 @@ public class ContactsActivity extends ListActivity implements OnCheckedChangeLis
 		}
 
 	};
+
+    private TreeMap<Integer, String> createIndex(ArrayList<Contact> contactList) {
+    	if (contactList != null) {
+    		TreeMap<Integer, String> tmpIndexList = new TreeMap<Integer, String>();
+
+	        String currentLetter = null;
+	        String strItem = null;
+	
+	        for (int j = 0; j < contactList.size(); j++)
+	        {
+	            strItem = contactList.get(j).name.toUpperCase();
+	            if (Character.isLetter(strItem.charAt(0))) {
+		            currentLetter = strItem.substring(0, 1);
+		
+		            if (!tmpIndexList.containsValue(currentLetter))
+		            {
+		            	tmpIndexList.put(j, currentLetter);
+		            }
+	            }
+	        }
+	
+	        return tmpIndexList;
+    	} else {
+    		return null;
+    	}
+    }
 	
 	@Override
 	protected void onDestroy() {
@@ -175,6 +311,7 @@ public class ContactsActivity extends ListActivity implements OnCheckedChangeLis
 					new GetContactsTask().execute(CONTACTS_TASK);
 				} else {
 					new GetContactsFromDBTask().execute(CONTACTS_TASK);
+					
 				}
 				editor.putString("ContactsActivityTask", CONTACTS_TASK);
 				editor.putInt("ContactsActivityList", CONTACTS_LIST);
@@ -199,6 +336,7 @@ public class ContactsActivity extends ListActivity implements OnCheckedChangeLis
 
 	class GetContactsFromDBTask extends AsyncTask<String, String, String> {
 
+		@Override
 		protected void onPreExecute() {
 
 			pb.setVisibility(View.VISIBLE);
@@ -206,6 +344,7 @@ public class ContactsActivity extends ListActivity implements OnCheckedChangeLis
 			super.onPreExecute();
 		}
 
+		@Override
 		protected String doInBackground(String... type) {
 			CURRENT_TASK = type[0];
 			if (type[0].equals(CONTACTS_TASK)) {
@@ -216,7 +355,8 @@ public class ContactsActivity extends ListActivity implements OnCheckedChangeLis
 
 			return type[0];
 		}
-
+		
+		@Override
 		protected void onPostExecute(String result) {
 			if (result.equals(CONTACTS_TASK)) {
 				if (contacts != null) {
@@ -277,4 +417,51 @@ public class ContactsActivity extends ListActivity implements OnCheckedChangeLis
 		}
 
 	}
+	
+class SideIndexGestureListener extends GestureDetector.SimpleOnGestureListener
+{
+    	
+	@Override
+	public boolean onScroll(MotionEvent e1, MotionEvent e2,
+							float distanceX, float distanceY)
+	{
+	    // we know already coordinates of first touch
+	    // we know as well a scroll distance
+	    sideIndexX = sideIndexX - distanceX;
+	    sideIndexY = sideIndexY - distanceY;
+	
+	    // when the user scrolls within our side index
+	    // we can show for every position in it a proper
+	    // item in the country list
+	    if (sideIndexX >= 0 && sideIndexY >= 0) {
+	        displayListItem();
+	    }
+	
+	    return super.onScroll(e1, e2, distanceX, distanceY);
+	}
+}
+
+public void displayListItem()
+{
+	int itemPosition = 0;
+	
+    // compute number of pixels for every side index item
+    double pixelPerDisplayedItem = (double) sideIndexHeight / displayedIndexListSize;
+    
+    // compute the item index for given event position belongs to
+    if ((sideIndexY % pixelPerDisplayedItem) > 0)
+    	itemPosition = (int) (sideIndexY / pixelPerDisplayedItem) + 1;
+    else
+    	itemPosition = (int) (sideIndexY / pixelPerDisplayedItem);
+    
+    int factor = 0;
+    
+    factor = indexListSize / displayedIndexListSize;
+
+    int indexMin = Integer.parseInt(indexList.keySet().toArray()[(itemPosition - 1)*factor].toString());
+
+    ListView listView = (ListView) getListView();
+    listView.setSelection(indexMin);
+}
+
 }
