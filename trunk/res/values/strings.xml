@@ -152,7 +152,7 @@
 	<string name="add_auto_color">Add auto color</string>
 	<string name="delete_auto_color">Delete auto color</string>
 	<string name="timezone_required">The Timezone field is required.</string>
-	<string name="phone_code">Internation calling code</string>
+	<string name="phone_code">Internation \ncalling code</string>
 	<string name="show_calendar">Show calendar</string>
 	<string name="native_calendars">Native calendars</string>
 	<string name="select_calendars_to_display">Select calendars to display</string>
