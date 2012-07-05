@@ -1,5 +1,15 @@
 package com.groupagendas.groupagenda.registration;
 
+import java.io.IOException;
+import java.io.UnsupportedEncodingException;
+
+import org.apache.http.client.ClientProtocolException;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.entity.mime.HttpMultipartMode;
+import org.apache.http.entity.mime.MultipartEntity;
+import org.apache.http.entity.mime.content.StringBody;
+import org.json.JSONException;
+
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
@@ -54,6 +64,7 @@ public class RegisterationActivity extends Activity {
 	private ProgressBar pb;
 	private CheckBox chkStatement;
 	private AlertDialog mDialog;
+	private String phonePrefix = null;
 
 	private final int DIALOG_SUCCESS = 0;
 	private final int DIALOG_ERROR = 1;
@@ -93,6 +104,7 @@ public class RegisterationActivity extends Activity {
 					timezoneSpinner.setAdapter(adapterTimezone);
 					timezoneSpinner.setEnabled(false);
 					timezoneArray = null;
+					phonePrefix = null;
 				} else {
 					timezoneSpinner.setEnabled(true);
 					String[] timezoneLabels = TimezoneManager.getTimezones(RegisterationActivity.this, countryArray[pos]);
@@ -102,6 +114,20 @@ public class RegisterationActivity extends Activity {
 					timezoneSpinner.setAdapter(adapterTimezone);
 
 					timezoneArray = TimezoneManager.getTimezonesValues(RegisterationActivity.this, countryArray[pos]);
+
+					try {
+						phonePrefix = dm.getPhonePrefix(countryArray[pos]);
+					} catch (ClientProtocolException e) {
+						e.printStackTrace();
+					} catch (IOException e) {
+						e.printStackTrace();
+					} catch (JSONException e) {
+						e.printStackTrace();
+					}
+					if (phonePrefix != null) {
+						phonecodeView.setText("+" + phonePrefix);
+					}
+
 				}
 			}
 
@@ -126,7 +152,7 @@ public class RegisterationActivity extends Activity {
 		confirmView = (EditText) findViewById(R.id.confirmView);
 
 		chkStatement = (CheckBox) findViewById(R.id.chk_statement);
-		
+
 		statementsButton = (Button) findViewById(R.id.statementButton);
 		statementsButton.setOnClickListener(new OnClickListener() {
 
@@ -146,7 +172,7 @@ public class RegisterationActivity extends Activity {
 
 							}
 						}).setNegativeButton(negativeButtonText, new DialogInterface.OnClickListener() {
-							
+
 							@Override
 							public void onClick(DialogInterface dialog, int which) {
 								statement = false;
@@ -161,8 +187,6 @@ public class RegisterationActivity extends Activity {
 			}
 		});
 
-		
-		
 		registerButton = (Button) findViewById(R.id.registerButton);
 		registerButton.setOnClickListener(new OnClickListener() {
 			@Override

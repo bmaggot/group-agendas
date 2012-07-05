@@ -2,6 +2,7 @@ package com.groupagendas.groupagenda;
 
 import java.io.DataOutputStream;
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.text.SimpleDateFormat;
@@ -2620,14 +2621,33 @@ public class DataManagement {
 		return new byte[0];
 	}
 
-	public void updateAppData(String data){
-		if(data != null){
+	public String getPhonePrefix(String country) throws ClientProtocolException, IOException, JSONException {
+		HttpClient hc = new DefaultHttpClient();
+		HttpPost post = new HttpPost(prefs.getServerUrl() + "mobile/get_country_code");
+		MultipartEntity reqEntity = new MultipartEntity(HttpMultipartMode.BROWSER_COMPATIBLE);
+		String phonePrefix = null;
+			reqEntity.addPart("country_name", new StringBody(country));
+			post.setEntity(reqEntity);
+			HttpResponse rp = hc.execute(post);
+			if (rp.getStatusLine().getStatusCode() == HttpStatus.SC_OK) {
+				String response = EntityUtils.toString(rp.getEntity());
+				JSONObject js = new JSONObject(response);
+				if (js.getBoolean("success")) {
+					phonePrefix = js.getString("country_code");
+				}
+			}
+			return phonePrefix;
+		}
+
+
+	public void updateAppData(String data) {
+		if (data != null) {
 			switch (Integer.parseInt(data)) {
 			case 1:
-//				this.getAccountInfo();
+				// this.getAccountInfo();
 				break;
 			case 2:
-//				this.getContactList(null);
+				// this.getContactList(null);
 				break;
 			case 3:
 				this.getGroupList();
@@ -2640,10 +2660,10 @@ public class DataManagement {
 				break;
 			}
 		} else {
-//			getAccountInfo();
-//			getContactList(null);
-//			getGroupList();
-//			getEventList("");
+			// getAccountInfo();
+			// getContactList(null);
+			// getGroupList();
+			// getEventList("");
 		}
 
 	}
