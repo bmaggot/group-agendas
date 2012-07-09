@@ -2664,7 +2664,7 @@ public class DataManagement {
 			loadEventsData = true;
 			loadGroupsData = true;
 		default:
-			System.out.println("UpdateAppData(): Bad number");
+			System.out.println("UpdateAppData():" + data);
 			break;
 		}
 	}

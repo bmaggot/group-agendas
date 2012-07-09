@@ -86,7 +86,7 @@ public class NavbarActivity extends Activity {
 		
 		Intent intent = getIntent();
 		if(intent.getBooleanExtra("load_data", false)){
-			showDialog(PROGRESS_DIALOG);
+			dm.updateAppData(5);
 		}
 		
 		list_search = new ActionItem();
@@ -326,18 +326,18 @@ public class NavbarActivity extends Activity {
 		}
 	};
 	
-	protected Dialog onCreateDialog(int id) {
-        switch(id) {
-        case PROGRESS_DIALOG:
-            progressDialog = new ProgressDialog(NavbarActivity.this);
-            progressDialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
-            progressDialog.setMessage(getString(R.string.loading_data));
-            progressDialog.setCancelable(false);
-            return progressDialog;
-        default:
-            return null;
-        }
-    }
+//	protected Dialog onCreateDialog(int id) {
+//        switch(id) {
+//        case PROGRESS_DIALOG:
+//            progressDialog = new ProgressDialog(NavbarActivity.this);
+//            progressDialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
+//            progressDialog.setMessage(getString(R.string.loading_data));
+//            progressDialog.setCancelable(false);
+//            return progressDialog;
+//        default:
+//            return null;
+//        }
+//    }
 
     @Override
     protected void onPrepareDialog(int id, Dialog dialog) {

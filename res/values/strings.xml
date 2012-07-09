@@ -168,6 +168,10 @@
     <string name="email_address_4_retrieve">Enter your email </string>
     <string name="get_code_2_retrieve_pass">Send Request</string>
     <string name="enter_email" >Please enter your email address with which you have registered and an activation code will be send.\nEnter the code in the next screen and a new password can be created. </string>
+    <string name="update_account_data">Updating Your account data</string>
+    <string name="update_contacts_list">Updating Your contacts list</string>
+    <string name="update_groups_list">Updating Your groups list</string>
+    <string name="update_events_list">Updating Your events list</string>
 
 
 </resources>
