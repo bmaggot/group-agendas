@@ -11,6 +11,7 @@ import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.TypedValue;
 import android.view.GestureDetector;
 import android.view.Gravity;
 import android.view.Menu;
@@ -72,6 +73,7 @@ public class ContactsActivity extends ListActivity implements OnCheckedChangeLis
 	private ContactsAdapter cAdapter;
 	private GroupsAdapter gAdapter;
 	
+	private boolean contactsLoaded = false;
 	
 	
     @Override
@@ -97,8 +99,14 @@ public class ContactsActivity extends ListActivity implements OnCheckedChangeLis
 	        {
 	            tmpIndexListSize = tmpIndexListSize / 2;
 	        }
+	        
+	        double delta = 0;
 	
-	        double delta = indexListSize / tmpIndexListSize;
+	        if (tmpIndexListSize == 0)
+	        	delta = indexListSize / tmpIndexListSize;
+	        else	
+	        	delta = 0;
+	        
 	
 	        String tmpLetter = null;
 
@@ -111,7 +119,7 @@ public class ContactsActivity extends ListActivity implements OnCheckedChangeLis
 	            tmpTV.setText(tmpLetter);
 	            tmpTV.setGravity(Gravity.CENTER);
 	            tmpTV.setPadding(5, 0, 0, 0);
-	            tmpTV.setTextSize(20);
+	            tmpTV.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 16);
 	            LayoutParams params = new LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT, 1);
 	            tmpTV.setLayoutParams(params);
 	            sideIndex.addView(tmpTV);
@@ -169,6 +177,7 @@ public class ContactsActivity extends ListActivity implements OnCheckedChangeLis
 				DataManagement dm = DataManagement.getInstance(this);
 				contacts = dm.getContactsFromDb("");
 				indexList = createIndex(contacts);
+//				contactsLoaded = true;
 			}
 	}
 	
@@ -372,6 +381,7 @@ public class ContactsActivity extends ListActivity implements OnCheckedChangeLis
 				}
 			}
 			super.onPostExecute(result);
+			contactsLoaded = true;
 		}
 
 	}
@@ -413,6 +423,7 @@ public class ContactsActivity extends ListActivity implements OnCheckedChangeLis
 				}
 			}
 			pb.setVisibility(View.GONE);
+			contactsLoaded = true;
 			super.onPostExecute(result);
 		}
 
