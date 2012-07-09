@@ -129,7 +129,7 @@ public class ContactsActivity extends ListActivity implements OnCheckedChangeLis
 	                sideIndexY = event.getY();
 	
 	                // and can display a proper item it country list
-	                displayListItem();
+	                displayListItem(0);
 	
 	                return false;
 	            }
@@ -434,31 +434,41 @@ class SideIndexGestureListener extends GestureDetector.SimpleOnGestureListener
 	    // we can show for every position in it a proper
 	    // item in the country list
 	    if (sideIndexX >= 0 && sideIndexY >= 0) {
-	        displayListItem();
+	        displayListItem(1);
 	    }
 	
 	    return super.onScroll(e1, e2, distanceX, distanceY);
 	}
 }
 
-public void displayListItem()
+public void displayListItem(int state)
 {
 	int itemPosition = 0;
 	
     // compute number of pixels for every side index item
-    double pixelPerDisplayedItem = (double) sideIndexHeight / displayedIndexListSize;
+	double pixelPerDisplayedItem = 0;
+    int factor = 0;
+
+    switch (state) {
+	case 0:
+	    factor = indexListSize / displayedIndexListSize;
+	    pixelPerDisplayedItem = (double) sideIndexHeight / displayedIndexListSize;
+		break;
+	case 1:
+	    factor = indexListSize / indexListSize;
+	    pixelPerDisplayedItem = (double) sideIndexHeight / indexListSize;
+		break;
+	}
     
     // compute the item index for given event position belongs to
     if ((sideIndexY % pixelPerDisplayedItem) > 0)
     	itemPosition = (int) (sideIndexY / pixelPerDisplayedItem) + 1;
     else
     	itemPosition = (int) (sideIndexY / pixelPerDisplayedItem);
-    
-    int factor = 0;
-    
-    factor = indexListSize / displayedIndexListSize;
 
-    int indexMin = Integer.parseInt(indexList.keySet().toArray()[(itemPosition - 1)*factor].toString());
+    int indexMin = 0;
+    if (itemPosition <= indexListSize)
+    	 indexMin = Integer.parseInt(indexList.keySet().toArray()[(itemPosition - 1)*factor].toString());
 
     ListView listView = (ListView) getListView();
     listView.setSelection(indexMin);
