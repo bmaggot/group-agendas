@@ -71,6 +71,11 @@ public class DataManagement {
 	private String ERROR = null;
 	public final static String CONNECTION_ERROR = "Connection refused";
 
+	private boolean loadAccountData = false;
+	private boolean loadContactsData = false;
+	private boolean loadGroupsData = false;
+	private boolean loadEventsData = false;
+
 	public String getError() {
 		if (ERROR == null)
 			return "Error!";
@@ -2626,45 +2631,73 @@ public class DataManagement {
 		HttpPost post = new HttpPost(prefs.getServerUrl() + "mobile/get_country_code");
 		MultipartEntity reqEntity = new MultipartEntity(HttpMultipartMode.BROWSER_COMPATIBLE);
 		String phonePrefix = null;
-			reqEntity.addPart("country_name", new StringBody(country));
-			post.setEntity(reqEntity);
-			HttpResponse rp = hc.execute(post);
-			if (rp.getStatusLine().getStatusCode() == HttpStatus.SC_OK) {
-				String response = EntityUtils.toString(rp.getEntity());
-				JSONObject js = new JSONObject(response);
-				if (js.getBoolean("success")) {
-					phonePrefix = js.getString("country_code");
-				}
+		reqEntity.addPart("country_name", new StringBody(country));
+		post.setEntity(reqEntity);
+		HttpResponse rp = hc.execute(post);
+		if (rp.getStatusLine().getStatusCode() == HttpStatus.SC_OK) {
+			String response = EntityUtils.toString(rp.getEntity());
+			JSONObject js = new JSONObject(response);
+			if (js.getBoolean("success")) {
+				phonePrefix = js.getString("country_code");
 			}
-			return phonePrefix;
 		}
+		return phonePrefix;
+	}
 
-
-	public void updateAppData(String data) {
-		if (data != null) {
-			switch (Integer.parseInt(data)) {
-			case 1:
-				// this.getAccountInfo();
-				break;
-			case 2:
-				// this.getContactList(null);
-				break;
-			case 3:
-				this.getGroupList();
-				break;
-			case 4:
-				this.getEventList("");
-				break;
-			default:
-				System.out.println("UpdateAppData(): Bad number");
-				break;
-			}
-		} else {
-			// getAccountInfo();
-			// getContactList(null);
-			// getGroupList();
-			// getEventList("");
+	public void updateAppData(int data) {
+		switch (data) {
+		case 1:
+			loadAccountData = true;
+			break;
+		case 2:
+			loadContactsData = true;
+			break;
+		case 3:
+			loadEventsData = true;
+			break;
+		case 4:
+			loadGroupsData = true;
+			break;
+		case 5:
+			loadAccountData = true;
+			loadContactsData = true;
+			loadEventsData = true;
+			loadGroupsData = true;
+		default:
+			System.out.println("UpdateAppData(): Bad number");
+			break;
 		}
+	}
 
+	public boolean isLoadAccountData() {
+		return loadAccountData;
+	}
+
+	public void setLoadAccountData(boolean loadAccountData) {
+		this.loadAccountData = loadAccountData;
+	}
+
+	public boolean isLoadContactsData() {
+		return loadContactsData;
+	}
+
+	public void setLoadContactsData(boolean loadContactsData) {
+		this.loadContactsData = loadContactsData;
+	}
+
+	public boolean isLoadGroupsData() {
+		return loadGroupsData;
+	}
+
+	public void setLoadGroupsData(boolean loadGroupsData) {
+		this.loadGroupsData = loadGroupsData;
+	}
+
+	public boolean isLoadEventsData() {
+		return loadEventsData;
+	}
+
+	public void setLoadEventsData(boolean loadEventsData) {
+		this.loadEventsData = loadEventsData;
 	}
 }
