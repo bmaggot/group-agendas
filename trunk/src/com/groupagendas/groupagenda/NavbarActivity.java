@@ -401,38 +401,41 @@ public class NavbarActivity extends Activity {
             getContentResolver().delete(ContactsProvider.CMetaData.GroupsMetaData.CONTENT_URI, "", null);
             getContentResolver().delete(EventsProvider.EMetaData.EventsMetaData.CONTENT_URI, "", null);
             getContentResolver().getType(EventsProvider.EMetaData.EventsMetaData.CONTENT_URI);
-            total = 20;
-            Message msg = mHandler.obtainMessage();
-            msg.arg1 = total;
-            mHandler.sendMessage(msg);
+//            total = 20;
+//            Message msg = mHandler.obtainMessage();
+//            msg.arg1 = total;
+//            mHandler.sendMessage(msg);
+//            
+//            // Load account
+//            dm.getAccountInfo();
+//            total = 40;
+//            msg = mHandler.obtainMessage();
+//            msg.arg1 = total;
+//            mHandler.sendMessage(msg);
+//            
+//            // Load contacts
+//            dm.getContactList(null);
+//            total = 60;
+//            msg = mHandler.obtainMessage();
+//            msg.arg1 = total;
+//            mHandler.sendMessage(msg);
+//            
+//            // Load groups
+//            dm.getGroupList();
+//            total = 80;
+//            msg = mHandler.obtainMessage();
+//            msg.arg1 = total;
+//            mHandler.sendMessage(msg);
+//            
+//            // Load events
+//            dm.getEventList("");
+//            total = 100;
+//            msg = mHandler.obtainMessage();
+//            msg.arg1 = total;
+//            mHandler.sendMessage(msg);
             
-            // Load account
-            dm.getAccountInfo();
-            total = 40;
-            msg = mHandler.obtainMessage();
-            msg.arg1 = total;
-            mHandler.sendMessage(msg);
             
-            // Load contacts
-            dm.getContactList(null);
-            total = 60;
-            msg = mHandler.obtainMessage();
-            msg.arg1 = total;
-            mHandler.sendMessage(msg);
-            
-            // Load groups
-            dm.getGroupList();
-            total = 80;
-            msg = mHandler.obtainMessage();
-            msg.arg1 = total;
-            mHandler.sendMessage(msg);
-            
-            // Load events
-            dm.getEventList("");
-            total = 100;
-            msg = mHandler.obtainMessage();
-            msg.arg1 = total;
-            mHandler.sendMessage(msg);
+            dm.updateAppData(5);
 
         }
         
