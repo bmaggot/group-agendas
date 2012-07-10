@@ -116,7 +116,7 @@ public class DataManagement {
 	 * @return request state (successful or not)
 	 * @see MultipartEntity
 	 */
-	public boolean connect(String path, HashMap<String, String> parts) {
+	public boolean connect(String path, HashMap<String, String> parts, Integer email_id) {
 
 		boolean success = false;
 		HttpClient hc = new DefaultHttpClient();
@@ -130,6 +130,13 @@ public class DataManagement {
 			if (parts.containsKey("email") && parts.containsKey("password")) {
 				Data.setEmail(parts.get("email"));
 				Data.setPassword(parts.get("password"));
+			}
+			if(email_id != null && email_id > 1){
+				try {
+					reqEntity.addPart("email_id", new StringBody(String.valueOf(email_id)));
+				} catch (UnsupportedEncodingException e) {
+					e.printStackTrace();
+				}
 			}
 			for (int i = 0; i < parts.size() - 1; i++) {
 				try {
@@ -172,6 +179,8 @@ public class DataManagement {
 			break;
 		case 2:
 			getAccountTask();
+			break;
+		case 4:
 			break;
 		case 37:
 			break;
@@ -266,7 +275,7 @@ public class DataManagement {
 	private static void sendPushIdToServer(Context context, String pushId) {
 
 		try {
-			DataManagement._instance.connect("mobile/register_android", null);
+			DataManagement._instance.connect("mobile/register_android", null, null);
 		} catch (Exception ex) {
 			ex.printStackTrace();
 		}
@@ -399,7 +408,6 @@ public class DataManagement {
 		result.close();
 		Data.setAccount(u);
 	}
-
 	public void updateAccountTask(HttpClient client, MultipartEntity reqEntity,
 			HttpPost post, HttpResponse response)
 			throws UnsupportedEncodingException {
