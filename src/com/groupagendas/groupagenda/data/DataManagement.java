@@ -34,14 +34,12 @@ public class DataManagement {
 	private static final HashMap<String, Integer> states = new HashMap<String, Integer>();
 
 	private DataManagement(Activity c) {
-		Data.set_prefs(c.getSharedPreferences("PREFS_PRIVATE",
-				Context.MODE_PRIVATE));
+		Data.set_prefs(c.getSharedPreferences("PREFS_PRIVATE", Context.MODE_PRIVATE));
 		Data.setmContext(c);
 	}
 
 	private DataManagement(Context c) {
-		Data.set_prefs(c.getSharedPreferences("PREFS_PRIVATE",
-				Context.MODE_PRIVATE));
+		Data.set_prefs(c.getSharedPreferences("PREFS_PRIVATE", Context.MODE_PRIVATE));
 		Data.setmContext(c);
 	}
 
@@ -131,7 +129,7 @@ public class DataManagement {
 				Data.setEmail(parts.get("email"));
 				Data.setPassword(parts.get("password"));
 			}
-			if(email_id != null && email_id > 1){
+			if (email_id != null && email_id > 1) {
 				try {
 					reqEntity.addPart("email_id", new StringBody(String.valueOf(email_id)));
 				} catch (UnsupportedEncodingException e) {
@@ -171,8 +169,7 @@ public class DataManagement {
 		return success;
 	}
 
-	private void executeTask(String path, HttpClient client, HttpPost post,
-			MultipartEntity entity, HttpResponse response) throws Exception {
+	private void executeTask(String path, HttpClient client, HttpPost post, MultipartEntity entity, HttpResponse response) throws Exception {
 		switch (states.get(path)) {
 		case 1:
 			loginTask(response);
@@ -180,6 +177,8 @@ public class DataManagement {
 		case 2:
 			getAccountTask();
 			break;
+		case 3:
+			updateAccountTask(client, entity, post, response);
 		case 4:
 			break;
 		case 37:
@@ -289,138 +288,66 @@ public class DataManagement {
 		if (result.moveToFirst()) {
 			u = new Account();
 
-			u.name = result
-					.getString(result
-							.getColumnIndex(AccountProvider.AMetaData.AccountMetaData.NAME));
-			u.fullname = result
-					.getString(result
-							.getColumnIndex(AccountProvider.AMetaData.AccountMetaData.FULLNAME));
+			u.name = result.getString(result.getColumnIndex(AccountProvider.AMetaData.AccountMetaData.NAME));
+			u.fullname = result.getString(result.getColumnIndex(AccountProvider.AMetaData.AccountMetaData.FULLNAME));
 
-			u.birthdate = result
-					.getString(result
-							.getColumnIndex(AccountProvider.AMetaData.AccountMetaData.BIRTHDATE));
-			u.sex = result
-					.getString(result
-							.getColumnIndex(AccountProvider.AMetaData.AccountMetaData.SEX));
+			u.birthdate = result.getString(result.getColumnIndex(AccountProvider.AMetaData.AccountMetaData.BIRTHDATE));
+			u.sex = result.getString(result.getColumnIndex(AccountProvider.AMetaData.AccountMetaData.SEX));
 
-			u.email = result
-					.getString(result
-							.getColumnIndex(AccountProvider.AMetaData.AccountMetaData.EMAIL));
-			u.email2 = result
-					.getString(result
-							.getColumnIndex(AccountProvider.AMetaData.AccountMetaData.EMAIL2));
-			u.email3 = result
-					.getString(result
-							.getColumnIndex(AccountProvider.AMetaData.AccountMetaData.EMAIL3));
-			u.email4 = result
-					.getString(result
-							.getColumnIndex(AccountProvider.AMetaData.AccountMetaData.EMAIL4));
-			u.phone1 = result
-					.getString(result
-							.getColumnIndex(AccountProvider.AMetaData.AccountMetaData.PHONE1));
-			u.phone2 = result
-					.getString(result
-							.getColumnIndex(AccountProvider.AMetaData.AccountMetaData.PHONE2));
-			u.phone3 = result
-					.getString(result
-							.getColumnIndex(AccountProvider.AMetaData.AccountMetaData.PHONE3));
+			u.email = result.getString(result.getColumnIndex(AccountProvider.AMetaData.AccountMetaData.EMAIL));
+			u.email2 = result.getString(result.getColumnIndex(AccountProvider.AMetaData.AccountMetaData.EMAIL2));
+			u.email3 = result.getString(result.getColumnIndex(AccountProvider.AMetaData.AccountMetaData.EMAIL3));
+			u.email4 = result.getString(result.getColumnIndex(AccountProvider.AMetaData.AccountMetaData.EMAIL4));
+			u.phone1 = result.getString(result.getColumnIndex(AccountProvider.AMetaData.AccountMetaData.PHONE1));
+			u.phone2 = result.getString(result.getColumnIndex(AccountProvider.AMetaData.AccountMetaData.PHONE2));
+			u.phone3 = result.getString(result.getColumnIndex(AccountProvider.AMetaData.AccountMetaData.PHONE3));
 
-			final int image = result
-					.getInt(result
-							.getColumnIndex(AccountProvider.AMetaData.AccountMetaData.IMAGE));
+			final int image = result.getInt(result.getColumnIndex(AccountProvider.AMetaData.AccountMetaData.IMAGE));
 			u.image = image == 1;
-			u.image_url = result
-					.getString(result
-							.getColumnIndex(AccountProvider.AMetaData.AccountMetaData.IMAGE_URL));
-			u.image_thumb_url = result
-					.getString(result
-							.getColumnIndex(AccountProvider.AMetaData.AccountMetaData.IMAGE_THUMB_URL));
-			u.image_bytes = result
-					.getBlob(result
-							.getColumnIndex(AccountProvider.AMetaData.AccountMetaData.IMAGE_BYTES));
-			u.remove_image = result
-					.getInt(result
-							.getColumnIndex(AccountProvider.AMetaData.AccountMetaData.REMOVE_IMAGE));
+			u.image_url = result.getString(result.getColumnIndex(AccountProvider.AMetaData.AccountMetaData.IMAGE_URL));
+			u.image_thumb_url = result.getString(result.getColumnIndex(AccountProvider.AMetaData.AccountMetaData.IMAGE_THUMB_URL));
+			u.image_bytes = result.getBlob(result.getColumnIndex(AccountProvider.AMetaData.AccountMetaData.IMAGE_BYTES));
+			u.remove_image = result.getInt(result.getColumnIndex(AccountProvider.AMetaData.AccountMetaData.REMOVE_IMAGE));
 
-			u.country = result
-					.getString(result
-							.getColumnIndex(AccountProvider.AMetaData.AccountMetaData.COUNTRY));
-			u.city = result
-					.getString(result
-							.getColumnIndex(AccountProvider.AMetaData.AccountMetaData.CITY));
-			u.street = result
-					.getString(result
-							.getColumnIndex(AccountProvider.AMetaData.AccountMetaData.STREET));
-			u.zip = result
-					.getString(result
-							.getColumnIndex(AccountProvider.AMetaData.AccountMetaData.ZIP));
+			u.country = result.getString(result.getColumnIndex(AccountProvider.AMetaData.AccountMetaData.COUNTRY));
+			u.city = result.getString(result.getColumnIndex(AccountProvider.AMetaData.AccountMetaData.CITY));
+			u.street = result.getString(result.getColumnIndex(AccountProvider.AMetaData.AccountMetaData.STREET));
+			u.zip = result.getString(result.getColumnIndex(AccountProvider.AMetaData.AccountMetaData.ZIP));
 
-			u.timezone = result
-					.getString(result
-							.getColumnIndex(AccountProvider.AMetaData.AccountMetaData.TIMEZONE));
-			u.local_time = result
-					.getString(result
-							.getColumnIndex(AccountProvider.AMetaData.AccountMetaData.LOCAL_TIME));
-			u.language = result
-					.getString(result
-							.getColumnIndex(AccountProvider.AMetaData.AccountMetaData.LANGUAGE));
+			u.timezone = result.getString(result.getColumnIndex(AccountProvider.AMetaData.AccountMetaData.TIMEZONE));
+			u.local_time = result.getString(result.getColumnIndex(AccountProvider.AMetaData.AccountMetaData.LOCAL_TIME));
+			u.language = result.getString(result.getColumnIndex(AccountProvider.AMetaData.AccountMetaData.LANGUAGE));
 
 			u.setting_default_view = result
-					.getString(result
-							.getColumnIndex(AccountProvider.AMetaData.AccountMetaData.SETTING_DEFAULT_VIEW));
-			u.setting_date_format = result
-					.getString(result
-							.getColumnIndex(AccountProvider.AMetaData.AccountMetaData.SETTING_DATE_FORMAT));
-			u.setting_ampm = result
-					.getInt(result
-							.getColumnIndex(AccountProvider.AMetaData.AccountMetaData.SETTING_AMPM));
+					.getString(result.getColumnIndex(AccountProvider.AMetaData.AccountMetaData.SETTING_DEFAULT_VIEW));
+			u.setting_date_format = result.getString(result.getColumnIndex(AccountProvider.AMetaData.AccountMetaData.SETTING_DATE_FORMAT));
+			u.setting_ampm = result.getInt(result.getColumnIndex(AccountProvider.AMetaData.AccountMetaData.SETTING_AMPM));
 
 			u.google_calendar_link = result
-					.getString(result
-							.getColumnIndex(AccountProvider.AMetaData.AccountMetaData.GOOGLE_CALENDAR_LINK));
+					.getString(result.getColumnIndex(AccountProvider.AMetaData.AccountMetaData.GOOGLE_CALENDAR_LINK));
 
-			u.color_my_event = result
-					.getString(result
-							.getColumnIndex(AccountProvider.AMetaData.AccountMetaData.COLOR_MY_EVENT));
-			u.color_attending = result
-					.getString(result
-							.getColumnIndex(AccountProvider.AMetaData.AccountMetaData.COLOR_ATTENDING));
-			u.color_pending = result
-					.getString(result
-							.getColumnIndex(AccountProvider.AMetaData.AccountMetaData.COLOR_PENDING));
-			u.color_invitation = result
-					.getString(result
-							.getColumnIndex(AccountProvider.AMetaData.AccountMetaData.COLOR_INVINTATION));
-			u.color_notes = result
-					.getString(result
-							.getColumnIndex(AccountProvider.AMetaData.AccountMetaData.COLOR_NOTES));
-			u.color_birthday = result
-					.getString(result
-							.getColumnIndex(AccountProvider.AMetaData.AccountMetaData.COLOR_BIRTHDAY));
+			u.color_my_event = result.getString(result.getColumnIndex(AccountProvider.AMetaData.AccountMetaData.COLOR_MY_EVENT));
+			u.color_attending = result.getString(result.getColumnIndex(AccountProvider.AMetaData.AccountMetaData.COLOR_ATTENDING));
+			u.color_pending = result.getString(result.getColumnIndex(AccountProvider.AMetaData.AccountMetaData.COLOR_PENDING));
+			u.color_invitation = result.getString(result.getColumnIndex(AccountProvider.AMetaData.AccountMetaData.COLOR_INVINTATION));
+			u.color_notes = result.getString(result.getColumnIndex(AccountProvider.AMetaData.AccountMetaData.COLOR_NOTES));
+			u.color_birthday = result.getString(result.getColumnIndex(AccountProvider.AMetaData.AccountMetaData.COLOR_BIRTHDAY));
 
-			u.created = result
-					.getString(result
-							.getColumnIndex(AccountProvider.AMetaData.AccountMetaData.CREATED));
-			u.modified = result
-					.getString(result
-							.getColumnIndex(AccountProvider.AMetaData.AccountMetaData.MODIFIED));
+			u.created = result.getString(result.getColumnIndex(AccountProvider.AMetaData.AccountMetaData.CREATED));
+			u.modified = result.getString(result.getColumnIndex(AccountProvider.AMetaData.AccountMetaData.MODIFIED));
 		}
 		result.close();
 		Data.setAccount(u);
 	}
-	public void updateAccountTask(HttpClient client, MultipartEntity reqEntity,
-			HttpPost post, HttpResponse response)
+
+	public void updateAccountTask(HttpClient client, MultipartEntity reqEntity, HttpPost post, HttpResponse response)
 			throws UnsupportedEncodingException {
 		reqEntity.addPart("token", new StringBody(Data.getToken()));
 
-		reqEntity.addPart(
-				"lastname",
-				new StringBody(Data.getAccount().fullname.replace(
-						Data.getAccount().name + " ", "")));
+		reqEntity.addPart("lastname", new StringBody(Data.getAccount().fullname.replace(Data.getAccount().name + " ", "")));
 		reqEntity.addPart("name", new StringBody(Data.getAccount().name));
 
-		reqEntity.addPart("birthdate", new StringBody(
-				Data.getAccount().birthdate));
+		reqEntity.addPart("birthdate", new StringBody(Data.getAccount().birthdate));
 		reqEntity.addPart("sex", new StringBody(Data.getAccount().sex));
 
 		reqEntity.addPart("country", new StringBody(Data.getAccount().country));
@@ -428,8 +355,7 @@ public class DataManagement {
 		reqEntity.addPart("street", new StringBody(Data.getAccount().street));
 		reqEntity.addPart("zip", new StringBody(Data.getAccount().zip));
 
-		reqEntity.addPart("timezone",
-				new StringBody(Data.getAccount().timezone));
+		reqEntity.addPart("timezone", new StringBody(Data.getAccount().timezone));
 
 		reqEntity.addPart("phone1", new StringBody(Data.getAccount().phone1));
 		reqEntity.addPart("phone2", new StringBody(Data.getAccount().phone2));
@@ -441,7 +367,7 @@ public class DataManagement {
 
 		try {
 			response = client.execute(post);
-			
+
 			if (response.getStatusLine().getStatusCode() == HttpStatus.SC_OK) {
 				String resp = EntityUtils.toString(response.getEntity());
 				if (resp != null) {
@@ -452,7 +378,7 @@ public class DataManagement {
 					}
 				}
 			}
-			
+
 		} catch (Exception ex) {
 			// ERROR = ex.getMessage();
 		}
