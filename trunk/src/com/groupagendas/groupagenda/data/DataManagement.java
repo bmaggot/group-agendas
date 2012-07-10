@@ -20,6 +20,19 @@ public class DataManagement {
 		
 	}
 	
+	/**
+	 * Returns an boolean that determines if connection to server was successful. 
+	 * The path argument must specify a relative link to project's API. The parts
+	 * argument contains request data. 
+	 * 
+	 * This method always returns immediately, whether or not the 
+	 * connection was successful.
+	 * 
+	 * @param  path  an absolute URL giving the base location of the image
+	 * @param  parts the location of the image, relative to the url argument
+	 * @return      request state (successful or not)
+	 * @see         MultipartEntity
+	 */
 	public boolean connect(String path, ArrayList<String[]> parts){
 		
 		boolean success = false;
