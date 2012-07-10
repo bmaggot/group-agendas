@@ -268,4 +268,14 @@ class Data {
 	protected static void setEvents(ArrayList<Event> events) {
 		Data.events = events;
 	}
+	protected static void setUserId(int id){
+		if (_editor == null)
+			return;
+		_editor.putInt("userid", id);
+	}
+	public static void save() {
+		if (_editor == null)
+			return;
+		_editor.commit();
+	}
 }
