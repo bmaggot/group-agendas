@@ -50,6 +50,7 @@ class Data {
 	private static boolean logged;
 	private static int user_id;
 	private static String colorMyEvent, colorAttending, colorPending, colorInvitation, colorNotes;
+	private static Integer email_id = null;
 	
 	private static Account account;
 	private static ArrayList<Contact> contacts;
@@ -243,6 +244,12 @@ class Data {
 	}
 	protected static void setColorNotes(String colorNotes) {
 		Data.colorNotes = colorNotes;
+	}
+	protected static Integer getEmail_id() {
+		return email_id;
+	}
+	protected static void setEmail_id(Integer email_id) {
+		Data.email_id = email_id;
 	}
 	protected static Account getAccount() {
 		return account;
