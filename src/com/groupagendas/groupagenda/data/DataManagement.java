@@ -2,16 +2,12 @@ package com.groupagendas.groupagenda.data;
 
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Map;
 
-import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.HttpStatus;
 import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.HttpClient;
-import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.entity.mime.HttpMultipartMode;
 import org.apache.http.entity.mime.MultipartEntity;
@@ -25,16 +21,12 @@ import org.json.JSONObject;
 import android.app.Activity;
 import android.content.ContentValues;
 import android.content.Context;
-import android.database.Cursor;
 import android.telephony.TelephonyManager;
 import android.util.Log;
 
 import com.google.android.c2dm.C2DMessaging;
 import com.groupagendas.groupagenda.account.Account;
 import com.groupagendas.groupagenda.account.AccountProvider;
-import com.groupagendas.groupagenda.contacts.ContactsProvider;
-import com.groupagendas.groupagenda.contacts.Group;
-import com.groupagendas.groupagenda.utils.MapUtils;
 
 public class DataManagement {
 
@@ -122,7 +114,7 @@ public class DataManagement {
 	 * @return request state (successful or not)
 	 * @see MultipartEntity
 	 */
-	public boolean connect(String path, HashMap<String, String> parts) {
+	public boolean connect(String path, HashMap<String, String> parts, Integer email_id) {
 
 		boolean success = false;
 		HttpClient hc = new DefaultHttpClient();
@@ -137,10 +129,9 @@ public class DataManagement {
 				Data.setEmail(parts.get("email"));
 				Data.setPassword(parts.get("password"));
 			}
-			if (Data.getEmail_id() != null && Data.getEmail_id() > 1) {
+			if (email_id != null && email_id > 1) {
 				try {
-					reqEntity.addPart("email_id", new StringBody(String.valueOf(Data.getEmail_id())));
-					Data.setEmail_id(null);
+					reqEntity.addPart("email_id", new StringBody(String.valueOf(email_id)));
 				} catch (UnsupportedEncodingException e) {
 					e.printStackTrace();
 				}
@@ -178,36 +169,36 @@ public class DataManagement {
 		return success;
 	}
 
+
 	private void executeTask(String path, HttpClient client, HttpPost post, MultipartEntity entity, HttpResponse response) throws Exception {
 		switch (states.get(path)) {
 		case 1:
 			loginTask(response);
 			break;
 		case 2:
-			getAccountTask();
+			getAccountTask(client, entity, post, response);
 			break;
 		case 3:
 			updateAccountTask(client, entity, post, response);
 		case 4:
-			break; // no impl
+			break; //no impl
 		case 5:
-			break; // no impl
+			break; //no impl
 		case 6:
 			break;
 		case 7:
-			break; // no impl
+			break; //no impl
 		case 8:
-			getGroupList(response);
 			break;
 		case 9:
 			break;
 		case 10:
 			break;
 		case 37:
-			break; // no impl
-
+			break;  //no impl
 		}
 	}
+	
 
 	private void loginTask(HttpResponse rp) {
 		boolean success = false;
@@ -296,74 +287,248 @@ public class DataManagement {
 	private static void sendPushIdToServer(Context context, String pushId) {
 
 		try {
-			DataManagement._instance.connect("mobile/register_android", null);
+			DataManagement._instance.connect("mobile/register_android", null, null);
 		} catch (Exception ex) {
 			ex.printStackTrace();
 		}
 	}
 
-	private void getAccountTask() {
-		Account u = null;
-		Cursor result = Data.getmContext().getContentResolver()
-				.query(AccountProvider.AMetaData.AccountMetaData.CONTENT_URI, null, null, null, null);
+	private void getAccountTask(HttpClient client, MultipartEntity reqEntity, HttpPost post, HttpResponse response) throws Exception {
+		Account u = new Account();
 
-		if (result.moveToFirst()) {
-			u = new Account();
+		// FINDOUTWTFLOLWUT
+		reqEntity.addPart("token", new StringBody(Data.getToken()));
 
-			u.name = result.getString(result.getColumnIndex(AccountProvider.AMetaData.AccountMetaData.NAME));
-			u.fullname = result.getString(result.getColumnIndex(AccountProvider.AMetaData.AccountMetaData.FULLNAME));
+		String resp = EntityUtils.toString(response.getEntity());
+		if (resp != null) {
+			JSONObject object = new JSONObject(resp);
+			boolean success = object.getBoolean("success");
 
-			u.birthdate = result.getString(result.getColumnIndex(AccountProvider.AMetaData.AccountMetaData.BIRTHDATE));
-			u.sex = result.getString(result.getColumnIndex(AccountProvider.AMetaData.AccountMetaData.SEX));
+			if (success == true) {
+				JSONObject profile = object.getJSONObject("profile");
+				ContentValues cv = new ContentValues();
 
-			u.email = result.getString(result.getColumnIndex(AccountProvider.AMetaData.AccountMetaData.EMAIL));
-			u.email2 = result.getString(result.getColumnIndex(AccountProvider.AMetaData.AccountMetaData.EMAIL2));
-			u.email3 = result.getString(result.getColumnIndex(AccountProvider.AMetaData.AccountMetaData.EMAIL3));
-			u.email4 = result.getString(result.getColumnIndex(AccountProvider.AMetaData.AccountMetaData.EMAIL4));
-			u.phone1 = result.getString(result.getColumnIndex(AccountProvider.AMetaData.AccountMetaData.PHONE1));
-			u.phone2 = result.getString(result.getColumnIndex(AccountProvider.AMetaData.AccountMetaData.PHONE2));
-			u.phone3 = result.getString(result.getColumnIndex(AccountProvider.AMetaData.AccountMetaData.PHONE3));
+				try {
+					u.user_id = profile.getInt("user_id");
+					cv.put(AccountProvider.AMetaData.AccountMetaData.A_ID, u.user_id);
+				} catch (JSONException e) {
+				}
 
-			final int image = result.getInt(result.getColumnIndex(AccountProvider.AMetaData.AccountMetaData.IMAGE));
-			u.image = image == 1;
-			u.image_url = result.getString(result.getColumnIndex(AccountProvider.AMetaData.AccountMetaData.IMAGE_URL));
-			u.image_thumb_url = result.getString(result.getColumnIndex(AccountProvider.AMetaData.AccountMetaData.IMAGE_THUMB_URL));
-			u.image_bytes = result.getBlob(result.getColumnIndex(AccountProvider.AMetaData.AccountMetaData.IMAGE_BYTES));
-			u.remove_image = result.getInt(result.getColumnIndex(AccountProvider.AMetaData.AccountMetaData.REMOVE_IMAGE));
+				try {
+					u.name = profile.getString("name");
+					cv.put(AccountProvider.AMetaData.AccountMetaData.NAME, u.name);
+				} catch (JSONException e) {
+				}
+				
+				try {
+					u.fullname = profile.getString("fullname");
+					cv.put(AccountProvider.AMetaData.AccountMetaData.FULLNAME, u.fullname);
+				} catch (JSONException e) {
+				}
 
-			u.country = result.getString(result.getColumnIndex(AccountProvider.AMetaData.AccountMetaData.COUNTRY));
-			u.city = result.getString(result.getColumnIndex(AccountProvider.AMetaData.AccountMetaData.CITY));
-			u.street = result.getString(result.getColumnIndex(AccountProvider.AMetaData.AccountMetaData.STREET));
-			u.zip = result.getString(result.getColumnIndex(AccountProvider.AMetaData.AccountMetaData.ZIP));
+				try {
+					u.birthdate = profile.getString("birthdate");
+					cv.put(AccountProvider.AMetaData.AccountMetaData.BIRTHDATE, u.birthdate);
+				} catch (JSONException e) {
+				}
+				
+				try {
+					u.sex = profile.getString("sex");
+					cv.put(AccountProvider.AMetaData.AccountMetaData.SEX, u.sex);
+				} catch (JSONException e) {
+				}
 
-			u.timezone = result.getString(result.getColumnIndex(AccountProvider.AMetaData.AccountMetaData.TIMEZONE));
-			u.local_time = result.getString(result.getColumnIndex(AccountProvider.AMetaData.AccountMetaData.LOCAL_TIME));
-			u.language = result.getString(result.getColumnIndex(AccountProvider.AMetaData.AccountMetaData.LANGUAGE));
+				try {
+					u.email = profile.getString("email");
+					cv.put(AccountProvider.AMetaData.AccountMetaData.EMAIL, u.email);
+				} catch (JSONException e) {
+				}
+				
+				try {
+					u.email2 = profile.getString("email2");
+					cv.put(AccountProvider.AMetaData.AccountMetaData.EMAIL2, u.email2);
+				} catch (JSONException e) {
+				}
+				
+				try {
+					u.email3 = profile.getString("email3");
+					cv.put(AccountProvider.AMetaData.AccountMetaData.EMAIL3, u.email3);
+				} catch (JSONException e) {
+				}
+				
+				try {
+					u.email4 = profile.getString("email4");
+					cv.put(AccountProvider.AMetaData.AccountMetaData.EMAIL4, u.email4);
+				} catch (JSONException e) {
+				}
+				
+				try {
+					u.phone1 = profile.getString("phone1");
+					cv.put(AccountProvider.AMetaData.AccountMetaData.PHONE1, u.phone1);
+				} catch (JSONException e) {
+				}
+				
+				try {
+					u.phone2 = profile.getString("phone2");
+					cv.put(AccountProvider.AMetaData.AccountMetaData.PHONE2, u.phone2);
+				} catch (JSONException e) {
+				}
+				
+				try {
+					u.phone3 = profile.getString("phone3");
+					cv.put(AccountProvider.AMetaData.AccountMetaData.PHONE3, u.phone3);
+				} catch (JSONException e) {
+				}
 
-			u.setting_default_view = result
-					.getString(result.getColumnIndex(AccountProvider.AMetaData.AccountMetaData.SETTING_DEFAULT_VIEW));
-			u.setting_date_format = result.getString(result.getColumnIndex(AccountProvider.AMetaData.AccountMetaData.SETTING_DATE_FORMAT));
-			u.setting_ampm = result.getInt(result.getColumnIndex(AccountProvider.AMetaData.AccountMetaData.SETTING_AMPM));
+				try {
+					u.image = profile.getBoolean("image");
+					cv.put(AccountProvider.AMetaData.AccountMetaData.IMAGE, u.image);
+				} catch (JSONException e) {
+				}
+				
+				try {
+					u.image_url = profile.getString("image_url");
+					cv.put(AccountProvider.AMetaData.AccountMetaData.IMAGE_URL, u.image_url);
 
-			u.google_calendar_link = result
-					.getString(result.getColumnIndex(AccountProvider.AMetaData.AccountMetaData.GOOGLE_CALENDAR_LINK));
+//					u.image_bytes = imageToBytes(u.image_url);
+//					cv.put(AccountProvider.AMetaData.AccountMetaData.IMAGE_BYTES, u.image_bytes);
+				} catch (JSONException e) {
+				}
+				
+				try {
+					u.image_thumb_url = profile.getString("image_thumb_url");
+					cv.put(AccountProvider.AMetaData.AccountMetaData.IMAGE_THUMB_URL, u.image_thumb_url);
+				} catch (JSONException e) {
+				}
 
-			u.color_my_event = result.getString(result.getColumnIndex(AccountProvider.AMetaData.AccountMetaData.COLOR_MY_EVENT));
-			u.color_attending = result.getString(result.getColumnIndex(AccountProvider.AMetaData.AccountMetaData.COLOR_ATTENDING));
-			u.color_pending = result.getString(result.getColumnIndex(AccountProvider.AMetaData.AccountMetaData.COLOR_PENDING));
-			u.color_invitation = result.getString(result.getColumnIndex(AccountProvider.AMetaData.AccountMetaData.COLOR_INVINTATION));
-			u.color_notes = result.getString(result.getColumnIndex(AccountProvider.AMetaData.AccountMetaData.COLOR_NOTES));
-			u.color_birthday = result.getString(result.getColumnIndex(AccountProvider.AMetaData.AccountMetaData.COLOR_BIRTHDAY));
+				try {
+					u.country = profile.getString("country");
+					cv.put(AccountProvider.AMetaData.AccountMetaData.COUNTRY, u.country);
+				} catch (JSONException e) {
+				}
+				
+				try {
+					u.city = profile.getString("city");
+					cv.put(AccountProvider.AMetaData.AccountMetaData.CITY, u.city);
+				} catch (JSONException e) {
+				}
+				
+				try {
+					u.street = profile.getString("street");
+					cv.put(AccountProvider.AMetaData.AccountMetaData.STREET, u.street);
+				} catch (JSONException e) {
+				}
+				
+				try {
+					u.zip = profile.getString("zip");
+					cv.put(AccountProvider.AMetaData.AccountMetaData.ZIP, u.zip);
+				} catch (JSONException e) {
+				}
 
-			u.created = result.getString(result.getColumnIndex(AccountProvider.AMetaData.AccountMetaData.CREATED));
-			u.modified = result.getString(result.getColumnIndex(AccountProvider.AMetaData.AccountMetaData.MODIFIED));
+				try {
+					u.timezone = profile.getString("timezone");
+					cv.put(AccountProvider.AMetaData.AccountMetaData.TIMEZONE, u.timezone);
+				} catch (JSONException e) {
+				}
+				
+				try {
+					u.local_time = profile.getString("local_time");
+					cv.put(AccountProvider.AMetaData.AccountMetaData.LOCAL_TIME, u.local_time);
+				} catch (JSONException e) {
+				}
+				
+				try {
+					u.language = profile.getString("language");
+					cv.put(AccountProvider.AMetaData.AccountMetaData.LANGUAGE, u.language);
+				} catch (JSONException e) {
+				}
+
+				try {
+					u.setting_default_view = profile.getString("setting_default_view");
+					cv.put(AccountProvider.AMetaData.AccountMetaData.SETTING_DEFAULT_VIEW, u.setting_default_view);
+				} catch (JSONException e) {
+				}
+				
+				try {
+					u.setting_date_format = profile.getString("setting_date_format");
+					cv.put(AccountProvider.AMetaData.AccountMetaData.SETTING_DATE_FORMAT, u.setting_date_format);
+				} catch (JSONException e) {
+				}
+				
+				try {
+					u.setting_ampm = profile.getInt("setting_ampm");
+					cv.put(AccountProvider.AMetaData.AccountMetaData.SETTING_AMPM, u.setting_ampm);
+				} catch (JSONException e) {
+				}
+
+				try {
+					u.google_calendar_link = profile.getString("google_calendar_link");
+					cv.put(AccountProvider.AMetaData.AccountMetaData.GOOGLE_CALENDAR_LINK, u.google_calendar_link);
+				} catch (JSONException e) {
+				}
+
+				try {
+					u.color_my_event = profile.getString("color_my_event");
+					cv.put(AccountProvider.AMetaData.AccountMetaData.COLOR_MY_EVENT, u.color_my_event);
+				} catch (JSONException e) {
+				}
+				
+				try {
+					u.color_attending = profile.getString("color_attending");
+					cv.put(AccountProvider.AMetaData.AccountMetaData.COLOR_ATTENDING, u.color_attending);
+				} catch (JSONException e) {
+				}
+				
+				try {
+					u.color_pending = profile.getString("color_pending");
+					cv.put(AccountProvider.AMetaData.AccountMetaData.COLOR_PENDING, u.color_pending);
+				} catch (JSONException e) {
+				}
+				
+				try {
+					u.color_invitation = profile.getString("color_invitation");
+					cv.put(AccountProvider.AMetaData.AccountMetaData.COLOR_INVINTATION, u.color_invitation);
+				} catch (JSONException e) {
+				}
+				
+				try {
+					u.color_notes = profile.getString("color_notes");
+					cv.put(AccountProvider.AMetaData.AccountMetaData.COLOR_NOTES, u.color_notes);
+				} catch (JSONException e) {
+				}
+				
+				try {
+					u.color_birthday = profile.getString("color_birthday");
+					cv.put(AccountProvider.AMetaData.AccountMetaData.COLOR_BIRTHDAY, u.color_birthday);
+				} catch (JSONException e) {
+				}
+
+				try {
+					u.created = profile.getString("created");
+					cv.put(AccountProvider.AMetaData.AccountMetaData.CREATED, u.created);
+				} catch (JSONException e) {
+				}
+				
+				try {
+					u.modified = profile.getString("modified");
+					cv.put(AccountProvider.AMetaData.AccountMetaData.MODIFIED, u.modified);
+				} catch (JSONException e) {
+				}
+
+				Data.getmContext().getContentResolver().insert(AccountProvider.AMetaData.AccountMetaData.CONTENT_URI, cv);
+				
+				Data.setAccount(u);
+			} else {
+				//
+			}	
+		} else {
+			//
 		}
-		result.close();
-		Data.setAccount(u);
 	}
 
-	public void updateAccountTask(HttpClient client, MultipartEntity reqEntity, HttpPost post, HttpResponse response)
-			throws UnsupportedEncodingException {
+	public void updateAccountTask (HttpClient client, MultipartEntity reqEntity, HttpPost post, HttpResponse response) throws UnsupportedEncodingException {
+
+		reqEntity = new MultipartEntity(HttpMultipartMode.BROWSER_COMPATIBLE);
 		reqEntity.addPart("token", new StringBody(Data.getToken()));
 
 		reqEntity.addPart("lastname", new StringBody(Data.getAccount().fullname.replace(Data.getAccount().name + " ", "")));
@@ -407,152 +572,4 @@ public class DataManagement {
 
 	}
 
-	public void getGroupList(HttpResponse rp) {
-		boolean success = false;
-		String error = null;
-		ArrayList<Group> groups = null;
-		Group group = null;
-
-		try {
-			HttpClient hc = new DefaultHttpClient();
-			HttpPost post = new HttpPost(Data.getServerUrl() + "mobile/groups_list");
-			MultipartEntity reqEntity = new MultipartEntity(HttpMultipartMode.BROWSER_COMPATIBLE);
-
-			reqEntity.addPart("token", new StringBody(Data.getToken()));
-
-			post.setEntity(reqEntity);
-			rp = hc.execute(post);
-
-			if (rp.getStatusLine().getStatusCode() == HttpStatus.SC_OK) {
-				String resp = EntityUtils.toString(rp.getEntity());
-				if (resp != null) {
-					JSONObject object = new JSONObject(resp);
-					success = object.getBoolean("success");
-
-					if (success == false) {
-						error = object.getString("error");
-						Log.e("getGroupList - error: ", error);
-					} else {
-						JSONArray gs = object.getJSONArray("groups");
-						int count = gs.length();
-						if (count > 0) {
-							groups = new ArrayList<Group>(count);
-
-							for (int i = 0; i < count; i++) {
-								JSONObject g = gs.getJSONObject(i);
-								group = new Group();
-
-								ContentValues cv = new ContentValues();
-
-								try {
-									group.group_id = g.getInt("group_id");
-									cv.put(ContactsProvider.CMetaData.GroupsMetaData.G_ID, group.group_id);
-								} catch (JSONException e) {
-								}
-								try {
-									group.title = g.getString("title");
-									cv.put(ContactsProvider.CMetaData.GroupsMetaData.TITLE, group.title);
-								} catch (JSONException e) {
-								}
-								try {
-									group.created = g.getString("created");
-									cv.put(ContactsProvider.CMetaData.GroupsMetaData.CREATED, group.created);
-								} catch (JSONException e) {
-								}
-
-								try {
-									group.modified = g.getString("modified");
-									cv.put(ContactsProvider.CMetaData.GroupsMetaData.MODIFIED, group.modified);
-								} catch (JSONException e) {
-								}
-								try {
-									group.deleted = g.getString("deleted");
-									cv.put(ContactsProvider.CMetaData.GroupsMetaData.DELETED, group.deleted);
-								} catch (JSONException e) {
-								}
-
-								try {
-									group.image = g.getBoolean("image");
-									cv.put(ContactsProvider.CMetaData.GroupsMetaData.IMAGE, group.image);
-									cv.put(ContactsProvider.CMetaData.GroupsMetaData.REMOVE_IMAGE, false);
-								} catch (JSONException e) {
-								}
-								try {
-									group.image_thumb_url = g.getString("image_thumb_url");
-									cv.put(ContactsProvider.CMetaData.GroupsMetaData.IMAGE_THUMB_URL, group.image_thumb_url);
-								} catch (JSONException e) {
-								}
-								try {
-									group.image_url = g.getString("image_url");
-									cv.put(ContactsProvider.CMetaData.GroupsMetaData.IMAGE_URL, group.image_url);
-
-									group.image_bytes = imageToBytes(group.image_url);
-									cv.put(ContactsProvider.CMetaData.GroupsMetaData.IMAGE_BYTES, group.image_bytes);
-								} catch (JSONException e) {
-								}
-
-								try {
-									group.contact_count = g.getInt("contact_count");
-									cv.put(ContactsProvider.CMetaData.GroupsMetaData.CONTACTS_COUNT, group.contact_count);
-								} catch (JSONException e) {
-									group.contact_count = 0;
-								}
-								try {
-									if (!g.getString("contacts").equals("null") && g.getString("contacts") != null) {
-										try {
-											JSONArray contacts = g.getJSONArray("contacts");
-											if (contacts != null) {
-												Map<String, String> set = null;
-												for (int j = 0; j < group.contact_count; j++) {
-													if (set == null)
-														set = new HashMap<String, String>();
-													set.put(String.valueOf(j), contacts.getString(j));
-												}
-												group.contacts = set;
-												cv.put(ContactsProvider.CMetaData.GroupsMetaData.CONTACTS,
-														MapUtils.mapToString(group.contacts));
-											}
-										} catch (JSONException e) {
-										}
-									}
-								} catch (JSONException e) {
-								}
-
-								if (group.deleted == null || group.deleted.equals("null")) {
-									groups.add(group);
-									Data.getmContext().getContentResolver()
-											.insert(ContactsProvider.CMetaData.GroupsMetaData.CONTENT_URI, cv);
-								}
-							}
-						}
-					}
-				}
-
-			}
-		} catch (Exception ex) {
-			Log.e("getGroupList", ex.getMessage() + " !!!");
-		}
-
-		Data.setGroups(groups);
-	}
-
-	private byte[] imageToBytes(String image_url) {
-		DefaultHttpClient mHttpClient = new DefaultHttpClient();
-		HttpGet mHttpGet = new HttpGet(image_url);
-		HttpResponse mHttpResponse;
-		try {
-			mHttpResponse = mHttpClient.execute(mHttpGet);
-			if (mHttpResponse.getStatusLine().getStatusCode() == HttpStatus.SC_OK) {
-				HttpEntity entity = mHttpResponse.getEntity();
-				if (entity != null) {
-					return EntityUtils.toByteArray(entity);
-				}
-			}
-		} catch (ClientProtocolException e) {
-			e.printStackTrace();
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-		return new byte[0];
-	}
 }
