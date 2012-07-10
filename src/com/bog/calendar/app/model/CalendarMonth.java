@@ -46,7 +46,7 @@ public class CalendarMonth {
 
 		currentDate = Calendar.getInstance();
 		calendarView = (CalendarView) activity.findViewById(R.id.calendar_view);
-		calendarView.setShowWeekNumber(false);
+		calendarView.setShowWeekNumber(true);
 		calendarView.setSelectedDate(today);
 
 		initCalendarView(currentDate, false);
@@ -56,7 +56,7 @@ public class CalendarMonth {
 
 	private void initCalendarView(Calendar calendar, boolean events) {
 		calendarView.setDate(calendar.getTimeInMillis(), events, selectedDayEventsList);
-		calendarView.setFirstDayOfWeek(Calendar.SUNDAY);
+		calendarView.setFirstDayOfWeek(Calendar.MONDAY);
 	}
 
 	protected final View.OnClickListener nextButtonClickListener = new View.OnClickListener() {

@@ -92,7 +92,7 @@ public class MonthView extends View {
     }
 
     /**
-     * Set new current mont.
+     * Set new current month.
      *
      * @param year  year
      * @param month month
