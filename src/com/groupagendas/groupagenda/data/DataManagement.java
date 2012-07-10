@@ -180,9 +180,21 @@ public class DataManagement {
 		case 3:
 			updateAccountTask(client, entity, post, response);
 		case 4:
+			break; //no impl
+		case 5:
+			break; //no impl
+		case 6:
+			break;
+		case 7:
+			break; //no impl
+		case 8:
+			break;
+		case 9:
+			break;
+		case 10:
 			break;
 		case 37:
-			break;
+			break;  //no impl
 
 		}
 	}
@@ -380,7 +392,7 @@ public class DataManagement {
 			}
 
 		} catch (Exception ex) {
-			// ERROR = ex.getMessage();
+			ex.printStackTrace();
 		}
 
 	}
