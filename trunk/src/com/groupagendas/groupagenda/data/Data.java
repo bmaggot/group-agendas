@@ -1,14 +1,20 @@
 package com.groupagendas.groupagenda.data;
 
+import java.util.ArrayList;
+
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
 
 import com.groupagendas.groupagenda.DataManagement;
+import com.groupagendas.groupagenda.account.Account;
+import com.groupagendas.groupagenda.contacts.Contact;
+import com.groupagendas.groupagenda.contacts.Group;
+import com.groupagendas.groupagenda.events.Event;
 import com.groupagendas.groupagenda.utils.Prefs;
 
-@SuppressWarnings("unused")
-public class Data {
+@SuppressWarnings("unused") 
+class Data {
 
 	private static String pushId;
 	private static Prefs prefs;
@@ -18,7 +24,6 @@ public class Data {
 	private static Context mContext;
 
 	private static String ERROR = null;
-	public final static String CONNECTION_ERROR = "Connection refused";
 
 	private boolean loadAccountData = false;
 	private boolean loadContactsData = false;
@@ -46,4 +51,9 @@ public class Data {
 	private static boolean logged;
 	private static int user_id;
 	private static String colorMyEvent, colorAttending, colorPending, colorInvitation, colorNotes;
+	
+	private static Account account;
+	private static ArrayList<Contact> contacts;
+	private static ArrayList<Group> groups;
+	private static ArrayList<Event> events;
 }
