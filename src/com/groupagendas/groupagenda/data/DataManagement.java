@@ -2,12 +2,16 @@ package com.groupagendas.groupagenda.data;
 
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Map;
 
+import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.HttpStatus;
 import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.HttpClient;
+import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.entity.mime.HttpMultipartMode;
 import org.apache.http.entity.mime.MultipartEntity;
@@ -15,6 +19,7 @@ import org.apache.http.entity.mime.content.StringBody;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.util.EntityUtils;
 import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import android.app.Activity;
@@ -27,6 +32,9 @@ import android.util.Log;
 import com.google.android.c2dm.C2DMessaging;
 import com.groupagendas.groupagenda.account.Account;
 import com.groupagendas.groupagenda.account.AccountProvider;
+import com.groupagendas.groupagenda.contacts.ContactsProvider;
+import com.groupagendas.groupagenda.contacts.Group;
+import com.groupagendas.groupagenda.utils.MapUtils;
 
 public class DataManagement {
 
@@ -114,7 +122,7 @@ public class DataManagement {
 	 * @return request state (successful or not)
 	 * @see MultipartEntity
 	 */
-	public boolean connect(String path, HashMap<String, String> parts, Integer email_id) {
+	public boolean connect(String path, HashMap<String, String> parts) {
 
 		boolean success = false;
 		HttpClient hc = new DefaultHttpClient();
@@ -129,9 +137,10 @@ public class DataManagement {
 				Data.setEmail(parts.get("email"));
 				Data.setPassword(parts.get("password"));
 			}
-			if (email_id != null && email_id > 1) {
+			if (Data.getEmail_id() != null && Data.getEmail_id() > 1) {
 				try {
-					reqEntity.addPart("email_id", new StringBody(String.valueOf(email_id)));
+					reqEntity.addPart("email_id", new StringBody(String.valueOf(Data.getEmail_id())));
+					Data.setEmail_id(null);
 				} catch (UnsupportedEncodingException e) {
 					e.printStackTrace();
 				}
@@ -180,21 +189,22 @@ public class DataManagement {
 		case 3:
 			updateAccountTask(client, entity, post, response);
 		case 4:
-			break; //no impl
+			break; // no impl
 		case 5:
-			break; //no impl
+			break; // no impl
 		case 6:
 			break;
 		case 7:
-			break; //no impl
+			break; // no impl
 		case 8:
+			getGroupList(response);
 			break;
 		case 9:
 			break;
 		case 10:
 			break;
 		case 37:
-			break;  //no impl
+			break; // no impl
 
 		}
 	}
@@ -286,7 +296,7 @@ public class DataManagement {
 	private static void sendPushIdToServer(Context context, String pushId) {
 
 		try {
-			DataManagement._instance.connect("mobile/register_android", null, null);
+			DataManagement._instance.connect("mobile/register_android", null);
 		} catch (Exception ex) {
 			ex.printStackTrace();
 		}
@@ -397,4 +407,152 @@ public class DataManagement {
 
 	}
 
+	public void getGroupList(HttpResponse rp) {
+		boolean success = false;
+		String error = null;
+		ArrayList<Group> groups = null;
+		Group group = null;
+
+		try {
+			HttpClient hc = new DefaultHttpClient();
+			HttpPost post = new HttpPost(Data.getServerUrl() + "mobile/groups_list");
+			MultipartEntity reqEntity = new MultipartEntity(HttpMultipartMode.BROWSER_COMPATIBLE);
+
+			reqEntity.addPart("token", new StringBody(Data.getToken()));
+
+			post.setEntity(reqEntity);
+			rp = hc.execute(post);
+
+			if (rp.getStatusLine().getStatusCode() == HttpStatus.SC_OK) {
+				String resp = EntityUtils.toString(rp.getEntity());
+				if (resp != null) {
+					JSONObject object = new JSONObject(resp);
+					success = object.getBoolean("success");
+
+					if (success == false) {
+						error = object.getString("error");
+						Log.e("getGroupList - error: ", error);
+					} else {
+						JSONArray gs = object.getJSONArray("groups");
+						int count = gs.length();
+						if (count > 0) {
+							groups = new ArrayList<Group>(count);
+
+							for (int i = 0; i < count; i++) {
+								JSONObject g = gs.getJSONObject(i);
+								group = new Group();
+
+								ContentValues cv = new ContentValues();
+
+								try {
+									group.group_id = g.getInt("group_id");
+									cv.put(ContactsProvider.CMetaData.GroupsMetaData.G_ID, group.group_id);
+								} catch (JSONException e) {
+								}
+								try {
+									group.title = g.getString("title");
+									cv.put(ContactsProvider.CMetaData.GroupsMetaData.TITLE, group.title);
+								} catch (JSONException e) {
+								}
+								try {
+									group.created = g.getString("created");
+									cv.put(ContactsProvider.CMetaData.GroupsMetaData.CREATED, group.created);
+								} catch (JSONException e) {
+								}
+
+								try {
+									group.modified = g.getString("modified");
+									cv.put(ContactsProvider.CMetaData.GroupsMetaData.MODIFIED, group.modified);
+								} catch (JSONException e) {
+								}
+								try {
+									group.deleted = g.getString("deleted");
+									cv.put(ContactsProvider.CMetaData.GroupsMetaData.DELETED, group.deleted);
+								} catch (JSONException e) {
+								}
+
+								try {
+									group.image = g.getBoolean("image");
+									cv.put(ContactsProvider.CMetaData.GroupsMetaData.IMAGE, group.image);
+									cv.put(ContactsProvider.CMetaData.GroupsMetaData.REMOVE_IMAGE, false);
+								} catch (JSONException e) {
+								}
+								try {
+									group.image_thumb_url = g.getString("image_thumb_url");
+									cv.put(ContactsProvider.CMetaData.GroupsMetaData.IMAGE_THUMB_URL, group.image_thumb_url);
+								} catch (JSONException e) {
+								}
+								try {
+									group.image_url = g.getString("image_url");
+									cv.put(ContactsProvider.CMetaData.GroupsMetaData.IMAGE_URL, group.image_url);
+
+									group.image_bytes = imageToBytes(group.image_url);
+									cv.put(ContactsProvider.CMetaData.GroupsMetaData.IMAGE_BYTES, group.image_bytes);
+								} catch (JSONException e) {
+								}
+
+								try {
+									group.contact_count = g.getInt("contact_count");
+									cv.put(ContactsProvider.CMetaData.GroupsMetaData.CONTACTS_COUNT, group.contact_count);
+								} catch (JSONException e) {
+									group.contact_count = 0;
+								}
+								try {
+									if (!g.getString("contacts").equals("null") && g.getString("contacts") != null) {
+										try {
+											JSONArray contacts = g.getJSONArray("contacts");
+											if (contacts != null) {
+												Map<String, String> set = null;
+												for (int j = 0; j < group.contact_count; j++) {
+													if (set == null)
+														set = new HashMap<String, String>();
+													set.put(String.valueOf(j), contacts.getString(j));
+												}
+												group.contacts = set;
+												cv.put(ContactsProvider.CMetaData.GroupsMetaData.CONTACTS,
+														MapUtils.mapToString(group.contacts));
+											}
+										} catch (JSONException e) {
+										}
+									}
+								} catch (JSONException e) {
+								}
+
+								if (group.deleted == null || group.deleted.equals("null")) {
+									groups.add(group);
+									Data.getmContext().getContentResolver()
+											.insert(ContactsProvider.CMetaData.GroupsMetaData.CONTENT_URI, cv);
+								}
+							}
+						}
+					}
+				}
+
+			}
+		} catch (Exception ex) {
+			Log.e("getGroupList", ex.getMessage() + " !!!");
+		}
+
+		Data.setGroups(groups);
+	}
+
+	private byte[] imageToBytes(String image_url) {
+		DefaultHttpClient mHttpClient = new DefaultHttpClient();
+		HttpGet mHttpGet = new HttpGet(image_url);
+		HttpResponse mHttpResponse;
+		try {
+			mHttpResponse = mHttpClient.execute(mHttpGet);
+			if (mHttpResponse.getStatusLine().getStatusCode() == HttpStatus.SC_OK) {
+				HttpEntity entity = mHttpResponse.getEntity();
+				if (entity != null) {
+					return EntityUtils.toByteArray(entity);
+				}
+			}
+		} catch (ClientProtocolException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		return new byte[0];
+	}
 }
