@@ -434,9 +434,6 @@ public class NavbarActivity extends Activity {
             msg = mHandler.obtainMessage();
             msg.arg1 = total;
             mHandler.sendMessage(msg);
-            
-            
-//            dm.updateAppData(5);
 
         }
         

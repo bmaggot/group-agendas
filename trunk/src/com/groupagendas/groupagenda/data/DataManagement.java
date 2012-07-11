@@ -2631,7 +2631,7 @@ public class DataManagement {
 		return Data.getConnectionError();
 	}
 
-	public void updateAppData(int data) {
+	public static void updateAppData(int data) {
 		switch (data) {
 		case 1:
 			Data.setLoadAccountData(true);
