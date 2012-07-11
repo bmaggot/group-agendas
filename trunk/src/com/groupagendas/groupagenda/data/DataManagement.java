@@ -2,7 +2,6 @@ package com.groupagendas.groupagenda.data;
 
 import java.io.DataOutputStream;
 import java.io.IOException;
-import java.io.UnsupportedEncodingException;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.text.SimpleDateFormat;
@@ -35,9 +34,9 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import android.app.Activity;
+import android.app.ListActivity;
 import android.content.ContentValues;
 import android.content.Context;
-import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.net.Uri;
 import android.telephony.TelephonyManager;
@@ -47,12 +46,14 @@ import com.bog.calendar.app.model.CEvent;
 import com.bog.calendar.app.model.EventsHelper;
 import com.google.android.c2dm.C2DMessaging;
 import com.groupagendas.groupagenda.R;
-import com.groupagendas.groupagenda.R.string;
 import com.groupagendas.groupagenda.account.Account;
 import com.groupagendas.groupagenda.account.AccountProvider;
 import com.groupagendas.groupagenda.contacts.Contact;
+import com.groupagendas.groupagenda.contacts.ContactsActivity;
+import com.groupagendas.groupagenda.contacts.ContactsAdapter;
 import com.groupagendas.groupagenda.contacts.ContactsProvider;
 import com.groupagendas.groupagenda.contacts.Group;
+import com.groupagendas.groupagenda.contacts.GroupsAdapter;
 import com.groupagendas.groupagenda.events.Event;
 import com.groupagendas.groupagenda.events.EventsProvider;
 import com.groupagendas.groupagenda.events.Invited;
@@ -63,20 +64,6 @@ import com.groupagendas.groupagenda.utils.Prefs;
 import com.groupagendas.groupagenda.utils.Utils;
 
 public class DataManagement {
-//	private String pushId;
-//	private static Prefs prefs;
-//	private SharedPreferences _prefs;
-//	private static DataManagement _instance = null;
-//
-//	private Context mContext;
-//
-//	private String ERROR = null;
-//	public final static String CONNECTION_ERROR = "Connection refused";
-//
-//	private boolean loadAccountData = false;
-//	private boolean loadContactsData = false;
-//	private boolean loadGroupsData = false;
-//	private boolean loadEventsData = false;
 
 	private DataManagement(Activity c) {
 		Data.setPrefs(new Prefs(c));
@@ -945,7 +932,7 @@ public class DataManagement {
 	}
 
 	// Contacts
-	public ArrayList<Contact> getContactsFromDb(String where) {
+	public ArrayList<Contact> getContactsFromLocalDb(String where) {
 		Contact item;
 		ArrayList<Contact> items = new ArrayList<Contact>();
 
@@ -995,7 +982,7 @@ public class DataManagement {
 		return items;
 	}
 
-	public ArrayList<Contact> getContactList(HashSet<Integer> groupIds) {
+	public ArrayList<Contact> getContactsFromRemoteDb(HashSet<Integer> groupIds) {
 		boolean success = false;
 		String error = null;
 		ArrayList<Contact> contacts = null;
@@ -1670,7 +1657,6 @@ public class DataManagement {
 
 	public boolean createGroup(Group g) {
 		boolean success = false;
-		String error = null;
 
 		try {
 			HttpClient hc = new DefaultHttpClient();
@@ -2686,5 +2672,15 @@ public class DataManagement {
 
 	public void setLoadEventsData(boolean loadEventsData) {
 		Data.setLoadEventsData(loadEventsData);
+	}
+	
+	protected void updateContactsAdapter(ArrayList<Contact> contacts, ContactsAdapter cAdapter) {
+		cAdapter.setItems(contacts);
+		cAdapter.notifyDataSetChanged();
+	}
+	
+	protected void updateGroupsAdapter(ArrayList<Group> contacts, GroupsAdapter gAdapter) {
+		gAdapter.setItems(contacts);
+		gAdapter.notifyDataSetChanged();
 	}
 }
