@@ -22,13 +22,14 @@ class Data {
 	private static Context mContext;
 
 	private static String ERROR = null;
+	public final static String CONNECTION_ERROR = "Connection refused";
 
 	private boolean loadAccountData = false;
 	private boolean loadContactsData = false;
 	private boolean loadGroupsData = false;
 	private boolean loadEventsData = false;
 
-	private static String DEFAULT_SERVER_URL = "http://159.253.136.156/";
+	private static final String DEFAULT_SERVER_URL = "http://159.253.136.156/";
 
 	private static String DEFAULT_EMAIL = "";
 	private static String DEFAULT_PASSWORD = "";
@@ -93,6 +94,9 @@ class Data {
 	protected static void setERROR(String eRROR) {
 		ERROR = eRROR;
 	}
+	protected static String getConnectionError() {
+		return CONNECTION_ERROR;
+	}
 	protected boolean isLoadAccountData() {
 		return loadAccountData;
 	}
@@ -116,12 +120,6 @@ class Data {
 	}
 	protected void setLoadEventsData(boolean loadEventsData) {
 		this.loadEventsData = loadEventsData;
-	}
-	protected static String getDEFAULT_SERVER_URL() {
-		return DEFAULT_SERVER_URL;
-	}
-	protected static void setDEFAULT_SERVER_URL(String dEFAULT_SERVER_URL) {
-		DEFAULT_SERVER_URL = dEFAULT_SERVER_URL;
 	}
 	protected static String getDEFAULT_EMAIL() {
 		return DEFAULT_EMAIL;
