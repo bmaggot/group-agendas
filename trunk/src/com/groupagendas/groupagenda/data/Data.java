@@ -244,18 +244,6 @@ class Data {
 	protected static void setColorNotes(String colorNotes) {
 		Data.colorNotes = colorNotes;
 	}
-	public static Integer getEmail_id() {
-		return email_id;
-	}
-	public static void setEmail_id(Integer email_id) {
-		Data.email_id = email_id;
-	}
-	public static Group getGroup() {
-		return group;
-	}
-	public static void setGroup(Group group) {
-		Data.group = group;
-	}
 	protected static Account getAccount() {
 		return account;
 	}
