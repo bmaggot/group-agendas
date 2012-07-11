@@ -161,9 +161,9 @@ public class ContactsActivity extends ListActivity implements OnCheckedChangeLis
 			currentTask.doInBackground(CURRENT_TASK);
 		}
 
-		if (dm.isLoadContactsData()) {
+//		if (dm.isLoadContactsData()) {
 			currentTask.doInBackground(CURRENT_TASK);
-		}
+//		}
 
 		if (contacts != null) {
 			indexList = createIndex(contacts);
@@ -308,16 +308,16 @@ public class ContactsActivity extends ListActivity implements OnCheckedChangeLis
 					if (contacts != null) {
 						cAdapter = new ContactsAdapter(contacts, ContactsActivity.this);
 						setListAdapter(cAdapter);
-						if (dm.isLoadContactsData()) {
+//						if (dm.isLoadContactsData()) {
 							Toast.makeText(this, "Loading contacts... wait", Toast.LENGTH_SHORT).show();
 							new GetPhoneContactsTask().doInBackground(CONTACTS_TASK);
-						}
+//						}
 					} else {
 						Toast.makeText(this, "Loading contacts... wait", Toast.LENGTH_LONG).show();
 						new GetDbContactsTask().doInBackground(CONTACTS_TASK);
-						if (dm.isLoadContactsData()) {
+//						if (dm.isLoadContactsData()) {
 							new GetPhoneContactsTask().doInBackground(CONTACTS_TASK);
-						}
+//						}
 					}
 
 					editor.putString("ContactsActivityTask", CONTACTS_TASK);
@@ -333,16 +333,16 @@ public class ContactsActivity extends ListActivity implements OnCheckedChangeLis
 					if (groups != null) {
 						gAdapter = new GroupsAdapter(groups, ContactsActivity.this);
 						setListAdapter(gAdapter);
-						if (dm.isLoadGroupsData()) {
+//						if (dm.isLoadGroupsData()) {
 							Toast.makeText(this, "Loading groups... wait", Toast.LENGTH_SHORT).show();
 							new GetPhoneContactsTask().doInBackground(GROUPS_TASK);
-						}
+//						}
 					} else {
 						Toast.makeText(this, "Loading groups... wait", Toast.LENGTH_LONG).show();
 						new GetDbContactsTask().doInBackground(GROUPS_TASK);
-						if (dm.isLoadGroupsData()) {
+//						if (dm.isLoadGroupsData()) {
 							new GetPhoneContactsTask().doInBackground(GROUPS_TASK);
-						}
+//						}
 					}
 
 					editor.putString("ContactsActivityTask", GROUPS_TASK);
@@ -361,7 +361,7 @@ public class ContactsActivity extends ListActivity implements OnCheckedChangeLis
 			
 			if (currentTask.equals(CONTACTS_TASK)) {
 				contacts = dm.getContactsFromDb("");
-				dm.setLoadContactsData(false);
+//				dm.setLoadContactsData(false);
 				if (contacts != null) {
 					cAdapter = new ContactsAdapter(contacts, ContactsActivity.this);
 					setListAdapter(cAdapter);
@@ -369,7 +369,7 @@ public class ContactsActivity extends ListActivity implements OnCheckedChangeLis
 				}
 			} else if (currentTask.equals(GROUPS_TASK)) {
 				groups = dm.getGroupsFromDb();
-				dm.setLoadGroupsData(false);
+//				dm.setLoadGroupsData(false);
 				if (groups != null) {
 					gAdapter = new GroupsAdapter(groups, ContactsActivity.this);
 					setListAdapter(gAdapter);
