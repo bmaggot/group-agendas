@@ -659,7 +659,7 @@ public class EventActivity extends Activity {
 				
 				if(result){
 					getContentResolver().delete(uri, null, null);
-				}else if(DataManagement.CONNECTION_ERROR.equals(dm.getError())){
+				}else if(DataManagement.getCONNECTION_ERROR().equals(dm.getError())){
 					result = true;
 					ContentValues values = new ContentValues();
 					values.put(EventsProvider.EMetaData.EventsMetaData.NEED_UPDATE, 3);

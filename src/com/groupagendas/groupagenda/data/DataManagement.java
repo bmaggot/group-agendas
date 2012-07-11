@@ -63,57 +63,49 @@ import com.groupagendas.groupagenda.utils.Prefs;
 import com.groupagendas.groupagenda.utils.Utils;
 
 public class DataManagement {
-	private String pushId;
-	private static Prefs prefs;
-	private SharedPreferences _prefs;
-	private static DataManagement _instance = null;
-
-	private Context mContext;
-
-	private String ERROR = null;
-	public final static String CONNECTION_ERROR = "Connection refused";
-
-	private boolean loadAccountData = false;
-	private boolean loadContactsData = false;
-	private boolean loadGroupsData = false;
-	private boolean loadEventsData = false;
-
-	public String getError() {
-		if (ERROR == null)
-			return "Error!";
-		if (ERROR.length() < 3)
-			return "Error!";
-		return ERROR;
-	}
+//	private String pushId;
+//	private static Prefs prefs;
+//	private SharedPreferences _prefs;
+//	private static DataManagement _instance = null;
+//
+//	private Context mContext;
+//
+//	private String ERROR = null;
+//	public final static String CONNECTION_ERROR = "Connection refused";
+//
+//	private boolean loadAccountData = false;
+//	private boolean loadContactsData = false;
+//	private boolean loadGroupsData = false;
+//	private boolean loadEventsData = false;
 
 	private DataManagement(Activity c) {
-		prefs = new Prefs(c);
-		_prefs = c.getSharedPreferences("PREFS_PRIVATE", Context.MODE_PRIVATE);
-		mContext = c;
+		Data.setPrefs(new Prefs(c));
+		Data.set_prefs(c.getSharedPreferences("PREFS_PRIVATE", Context.MODE_PRIVATE));
+		Data.setmContext(c);
 	}
 
 	private DataManagement(Context c) {
-		prefs = new Prefs(c);
-		_prefs = c.getSharedPreferences("PREFS_PRIVATE", Context.MODE_PRIVATE);
-		mContext = c;
+		Data.setPrefs(new Prefs(c));
+		Data.set_prefs(c.getSharedPreferences("PREFS_PRIVATE", Context.MODE_PRIVATE));
+		Data.setmContext(c);
 	}
 
 	public static synchronized DataManagement getInstance(Activity c) {
-		if (_instance == null)
-			_instance = new DataManagement(c);
-		return _instance;
+		if (Data.get_instance() == null)
+			Data.set_instance(new DataManagement(c));
+		return Data.get_instance();
 	}
 
 	public static synchronized DataManagement getInstance(Context c) {
-		if (_instance == null)
-			_instance = new DataManagement(c);
-		return _instance;
+		if (Data.get_instance() == null)
+			Data.set_instance(new DataManagement(c));
+		return Data.get_instance();
 	}
 
 	public Account getAccountFromDb() {
 		Account u = null;
 
-		Cursor result = mContext.getContentResolver().query(AccountProvider.AMetaData.AccountMetaData.CONTENT_URI, null, null, null, null);
+		Cursor result = Data.getmContext().getContentResolver().query(AccountProvider.AMetaData.AccountMetaData.CONTENT_URI, null, null, null, null);
 
 		if (result.moveToFirst()) {
 			u = new Account();
@@ -178,10 +170,10 @@ public class DataManagement {
 
 		try {
 			HttpClient hc = new DefaultHttpClient();
-			HttpPost post = new HttpPost(prefs.getServerUrl() + "mobile/account_edit");
+			HttpPost post = new HttpPost(Data.getServerUrl() + "mobile/account_edit");
 
 			MultipartEntity reqEntity = new MultipartEntity(HttpMultipartMode.BROWSER_COMPATIBLE);
-			reqEntity.addPart("token", new StringBody(prefs.getToken()));
+			reqEntity.addPart("token", new StringBody(Data.getToken()));
 
 			reqEntity.addPart("lastname", new StringBody(account.fullname.replace(account.name + " ", "")));
 			reqEntity.addPart("name", new StringBody(account.name));
@@ -216,16 +208,16 @@ public class DataManagement {
 			}
 
 		} catch (Exception ex) {
-			ERROR = ex.getMessage();
+			Data.setERROR(ex.getMessage());
 		}
 
 		// image
 		try {
 			HttpClient hc = new DefaultHttpClient();
-			HttpPost post = new HttpPost(prefs.getServerUrl() + "mobile/account_image");
+			HttpPost post = new HttpPost(Data.getServerUrl() + "mobile/account_image");
 
 			MultipartEntity reqEntity = new MultipartEntity(HttpMultipartMode.BROWSER_COMPATIBLE);
-			reqEntity.addPart("token", new StringBody(prefs.getToken()));
+			reqEntity.addPart("token", new StringBody(Data.getToken()));
 
 			if (removeImage == false) {
 				if (account.image_bytes != null) {
@@ -252,7 +244,7 @@ public class DataManagement {
 			}
 
 		} catch (Exception ex) {
-			ERROR = ex.getMessage();
+			Data.setERROR(ex.getMessage());
 		}
 		return success;
 	}
@@ -263,11 +255,11 @@ public class DataManagement {
 
 		try {
 			HttpClient hc = new DefaultHttpClient();
-			HttpPost post = new HttpPost(prefs.getServerUrl() + "mobile/account_get");
+			HttpPost post = new HttpPost(Data.getServerUrl() + "mobile/account_get");
 
 			MultipartEntity reqEntity = new MultipartEntity(HttpMultipartMode.BROWSER_COMPATIBLE);
 
-			reqEntity.addPart("token", new StringBody(prefs.getToken()));
+			reqEntity.addPart("token", new StringBody(Data.getToken()));
 			post.setEntity(reqEntity);
 
 			HttpResponse rp = hc.execute(post);
@@ -468,16 +460,17 @@ public class DataManagement {
 						} catch (JSONException e) {
 						}
 
-						mContext.getContentResolver().insert(AccountProvider.AMetaData.AccountMetaData.CONTENT_URI, cv);
+						Data.getmContext().getContentResolver().insert(AccountProvider.AMetaData.AccountMetaData.CONTENT_URI, cv);
 
 					} else {
-						ERROR = object.getJSONObject("error").getString("reason");
+						Data.setERROR(object.getJSONObject("error").getString("reason"));
 					}
 				}
 			}
 		} catch (Exception ex) {
 			Log.e("getAccountInfo", ex.getMessage() + "!!!");
 		}
+		Data.setAccount(u);
 		return u;
 	}
 
@@ -487,7 +480,7 @@ public class DataManagement {
 
 		try {
 			HttpClient hc = new DefaultHttpClient();
-			HttpPost post = new HttpPost(prefs.getServerUrl() + "mobile/account_register");
+			HttpPost post = new HttpPost(Data.getServerUrl() + "mobile/account_register");
 
 			MultipartEntity reqEntity = new MultipartEntity(HttpMultipartMode.BROWSER_COMPATIBLE);
 
@@ -514,7 +507,7 @@ public class DataManagement {
 					success = object.getBoolean("success");
 
 					if (success == false) {
-						ERROR = object.getJSONObject("error").getString("reason");
+						Data.setERROR(object.getJSONObject("error").getString("reason"));
 					}
 				}
 			}
@@ -531,11 +524,11 @@ public class DataManagement {
 
 		try {
 			HttpClient hc = new DefaultHttpClient();
-			HttpPost post = new HttpPost(prefs.getServerUrl() + "mobile/account_email_change");
+			HttpPost post = new HttpPost(Data.getServerUrl() + "mobile/account_email_change");
 
 			MultipartEntity reqEntity = new MultipartEntity(HttpMultipartMode.BROWSER_COMPATIBLE);
-			reqEntity.addPart("token", new StringBody(prefs.getToken()));
-			reqEntity.addPart("password", new StringBody(prefs.getPassword()));
+			reqEntity.addPart("token", new StringBody(Data.getToken()));
+			reqEntity.addPart("password", new StringBody(Data.getPassword()));
 			reqEntity.addPart("email", new StringBody(email));
 			if (email_id > 1)
 				reqEntity.addPart("email_id", new StringBody(String.valueOf(email_id)));
@@ -556,7 +549,7 @@ public class DataManagement {
 			}
 
 		} catch (Exception ex) {
-			ERROR = ex.getMessage();
+			Data.setERROR(ex.getMessage());
 		}
 
 		return success;
@@ -567,11 +560,11 @@ public class DataManagement {
 
 		try {
 			HttpClient hc = new DefaultHttpClient();
-			HttpPost post = new HttpPost(prefs.getServerUrl() + "mobile/settings_update");
+			HttpPost post = new HttpPost(Data.getServerUrl() + "mobile/settings_update");
 
 			MultipartEntity reqEntity = new MultipartEntity(HttpMultipartMode.BROWSER_COMPATIBLE);
 
-			reqEntity.addPart("token", new StringBody(prefs.getToken()));
+			reqEntity.addPart("token", new StringBody(Data.getToken()));
 
 			reqEntity.addPart("setting_ampm", new StringBody(String.valueOf(am_pm)));
 			reqEntity.addPart("setting_default_view", new StringBody(defaultview));
@@ -604,7 +597,7 @@ public class DataManagement {
 
 		try {
 			HttpClient hc = new DefaultHttpClient();
-			HttpPost post = new HttpPost(prefs.getServerUrl() + "mobile/login");
+			HttpPost post = new HttpPost(Data.getServerUrl() + "mobile/login");
 
 			MultipartEntity reqEntity = new MultipartEntity(HttpMultipartMode.BROWSER_COMPATIBLE);
 
@@ -625,17 +618,17 @@ public class DataManagement {
 						token = object.getString("token");
 						JSONObject profile = object.getJSONObject("profile");
 						int id = Integer.parseInt(profile.getString("user_id"));
-						DataManagement.prefs.setToken(token);
-						DataManagement.prefs.setUserId(id);
+						Data.setToken(token);
+						Data.setUserId(id);
 						//
-						DataManagement.prefs.setEmail(email);
-						DataManagement.prefs.setPassword(password);
-						DataManagement.prefs.setLogged(true);
+						Data.setEmail(email);
+						Data.setPassword(password);
+						Data.setLogged(true);
 						//
-						DataManagement.prefs.save();
+						Data.save();
 
 						// autoicons and autocolors
-						mContext.getContentResolver().delete(AccountProvider.AMetaData.AutoiconMetaData.CONTENT_URI, "", null);
+						Data.getmContext().getContentResolver().delete(AccountProvider.AMetaData.AutoiconMetaData.CONTENT_URI, "", null);
 						JSONArray autoicons = object.getJSONArray("custom_icons");
 						for (int i = 0, l = autoicons.length(); i < l; i++) {
 							final JSONObject autoicon = autoicons.getJSONObject(i);
@@ -644,10 +637,10 @@ public class DataManagement {
 							values.put(AccountProvider.AMetaData.AutoiconMetaData.KEYWORD, autoicon.getString("keyword"));
 							values.put(AccountProvider.AMetaData.AutoiconMetaData.CONTEXT, autoicon.getString("context"));
 
-							mContext.getContentResolver().insert(AccountProvider.AMetaData.AutoiconMetaData.CONTENT_URI, values);
+							Data.getmContext().getContentResolver().insert(AccountProvider.AMetaData.AutoiconMetaData.CONTENT_URI, values);
 						}
 
-						mContext.getContentResolver().delete(AccountProvider.AMetaData.AutocolorMetaData.CONTENT_URI, "", null);
+						Data.getmContext().getContentResolver().delete(AccountProvider.AMetaData.AutocolorMetaData.CONTENT_URI, "", null);
 						JSONArray autocolors = object.getJSONArray("custom_colors");
 						for (int i = 0, l = autocolors.length(); i < l; i++) {
 							final JSONObject autocolor = autocolors.getJSONObject(i);
@@ -656,33 +649,33 @@ public class DataManagement {
 							values.put(AccountProvider.AMetaData.AutocolorMetaData.KEYWORD, autocolor.getString("keyword"));
 							values.put(AccountProvider.AMetaData.AutocolorMetaData.CONTEXT, autocolor.getString("context"));
 
-							mContext.getContentResolver().insert(AccountProvider.AMetaData.AutocolorMetaData.CONTENT_URI, values);
+							Data.getmContext().getContentResolver().insert(AccountProvider.AMetaData.AutocolorMetaData.CONTENT_URI, values);
 						}
 						registerPhone();
 					} else {
-						ERROR = object.getJSONObject("error").getString("reason");
-						Log.e("login", ERROR + "!!!");
+						Data.setERROR(object.getJSONObject("error").getString("reason"));
+						Log.e("login", Data.getERROR() + "!!!");
 					}
 				}
 			}
 
 		} catch (Exception ex) {
-			ERROR = ex.getMessage();
-			Log.e("login2", ERROR + "!!!");
+			Data.setERROR(ex.getMessage());
+			Log.e("login2", Data.getERROR() + "!!!");
 		}
 		return success;
 	}
 
 	public void registerPhone() {
 		try {
-			getImei(mContext);
-			pushId = C2DMessaging.getRegistrationId(mContext);
-			if (pushId == "") {
+			getImei(Data.getmContext());
+			Data.setPushId(C2DMessaging.getRegistrationId(Data.getmContext()));
+			if (Data.getPushId() == "") {
 				System.out.println("C2DMessaging.register()");
 
-				C2DMessaging.register(mContext, "group.agenda.c2dm@gmail.com");
+				C2DMessaging.register(Data.getmContext(), "group.agenda.c2dm@gmail.com");
 			} else {
-				sendPushIdToServer(mContext, pushId);
+				sendPushIdToServer(Data.getmContext(), Data.getPushId());
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -780,40 +773,21 @@ public class DataManagement {
 	}
 
 	public static void sendPushIdToServer(Context context, String pushId) {
-		// List<NameValuePair> params = new LinkedList<NameValuePair>();
-		// params.add(new BasicNameValuePair("imei", imei));
-		// params.add(new BasicNameValuePair("push_id", pushId));
-		// params.add(new BasicNameValuePair("time",
-		// String.valueOf(System.currentTimeMillis())));
-		// params.add(new BasicNameValuePair("token", token));
-		// params.add(new BasicNameValuePair("android_id", pushId));
 
 		try {
 
 			HttpClient hc = new DefaultHttpClient();
-			HttpPost post = new HttpPost(prefs.getServerUrl() + "mobile/register_android");
+			HttpPost post = new HttpPost(Data.getServerUrl() + "mobile/register_android");
 
 			MultipartEntity reqEntity = new MultipartEntity(HttpMultipartMode.BROWSER_COMPATIBLE);
 
-			reqEntity.addPart("token", new StringBody(prefs.getToken()));
+			reqEntity.addPart("token", new StringBody(Data.getToken()));
 			reqEntity.addPart("android_id", new StringBody(pushId));
 
 			post.setEntity(reqEntity);
 
 			HttpResponse rp = hc.execute(post);
 
-			// HttpURLConnection connection =
-			// sendHttpRequest(prefs.getServerUrl() + "mobile/register_android",
-			// "GET", params, new LinkedList<NameValuePair>());
-			// if(connection != null)
-			// {
-			// int code = connection.getResponseCode();
-			// System.out.println("getResponseCode: " + code);
-			// if(code == 200)
-			// {
-			// System.out.println("OK");
-			// }
-			// }
 		} catch (Exception ex) {
 			ex.printStackTrace();
 		}
@@ -824,12 +798,12 @@ public class DataManagement {
 
 		try {
 			HttpClient hc = new DefaultHttpClient();
-			HttpPost post = new HttpPost(prefs.getServerUrl() + "mobile/settings_set_autoicons");
+			HttpPost post = new HttpPost(Data.getServerUrl() + "mobile/settings_set_autoicons");
 
 			MultipartEntity reqEntity = new MultipartEntity(HttpMultipartMode.BROWSER_COMPATIBLE);
-			reqEntity.addPart("token", new StringBody(prefs.getToken()));
+			reqEntity.addPart("token", new StringBody(Data.getToken()));
 
-			Cursor result = mContext.getContentResolver().query(AccountProvider.AMetaData.AutoiconMetaData.CONTENT_URI, null, null, null,
+			Cursor result = Data.getmContext().getContentResolver().query(AccountProvider.AMetaData.AutoiconMetaData.CONTENT_URI, null, null, null,
 					null);
 			result.moveToFirst();
 
@@ -857,8 +831,8 @@ public class DataManagement {
 					success = object.getBoolean("success");
 
 					if (success == false) {
-						ERROR = object.getJSONObject("error").getString("reason");
-						Log.e("set autoicon - error: ", ERROR);
+						Data.setERROR(object.getJSONObject("error").getString("reason"));
+						Log.e("set autoicon - error: ", Data.getERROR());
 					}
 				}
 			}
@@ -874,7 +848,7 @@ public class DataManagement {
 	public ArrayList<AutoIconItem> getAutoIcons() {
 		ArrayList<AutoIconItem> Items = new ArrayList<AutoIconItem>();
 
-		Cursor result = mContext.getContentResolver().query(AccountProvider.AMetaData.AutoiconMetaData.CONTENT_URI, null, null, null, null);
+		Cursor result = Data.getmContext().getContentResolver().query(AccountProvider.AMetaData.AutoiconMetaData.CONTENT_URI, null, null, null, null);
 		result.moveToFirst();
 
 		while (!result.isAfterLast()) {
@@ -899,12 +873,12 @@ public class DataManagement {
 
 		try {
 			HttpClient hc = new DefaultHttpClient();
-			HttpPost post = new HttpPost(prefs.getServerUrl() + "mobile/settings_set_autocolors");
+			HttpPost post = new HttpPost(Data.getServerUrl() + "mobile/settings_set_autocolors");
 
 			MultipartEntity reqEntity = new MultipartEntity(HttpMultipartMode.BROWSER_COMPATIBLE);
-			reqEntity.addPart("token", new StringBody(prefs.getToken()));
+			reqEntity.addPart("token", new StringBody(Data.getToken()));
 
-			Cursor result = mContext.getContentResolver().query(AccountProvider.AMetaData.AutocolorMetaData.CONTENT_URI, null, null, null,
+			Cursor result = Data.getmContext().getContentResolver().query(AccountProvider.AMetaData.AutocolorMetaData.CONTENT_URI, null, null, null,
 					null);
 			result.moveToFirst();
 
@@ -932,8 +906,8 @@ public class DataManagement {
 					success = object.getBoolean("success");
 
 					if (success == false) {
-						ERROR = object.getJSONObject("error").getString("reason");
-						Log.e("set autocolor - error: ", ERROR);
+						Data.setERROR(object.getJSONObject("error").getString("reason"));
+						Log.e("set autocolor - error: ", Data.getERROR());
 					}
 				}
 			}
@@ -949,7 +923,7 @@ public class DataManagement {
 	public ArrayList<AutoColorItem> getAutoColors() {
 		ArrayList<AutoColorItem> Items = new ArrayList<AutoColorItem>();
 
-		Cursor result = mContext.getContentResolver()
+		Cursor result = Data.getmContext().getContentResolver()
 				.query(AccountProvider.AMetaData.AutocolorMetaData.CONTENT_URI, null, null, null, null);
 		result.moveToFirst();
 
@@ -980,7 +954,7 @@ public class DataManagement {
 
 		where += ContactsProvider.CMetaData.ContactsMetaData.NEED_UPDATE + "!=3";
 
-		Cursor result = mContext.getContentResolver().query(ContactsProvider.CMetaData.ContactsMetaData.CONTENT_URI, null, where, null,
+		Cursor result = Data.getmContext().getContentResolver().query(ContactsProvider.CMetaData.ContactsMetaData.CONTENT_URI, null, where, null,
 				null);
 
 		result.moveToFirst();
@@ -1029,10 +1003,10 @@ public class DataManagement {
 
 		try {
 			HttpClient hc = new DefaultHttpClient();
-			HttpPost post = new HttpPost(DataManagement.prefs.getServerUrl() + "mobile/contact_list");
+			HttpPost post = new HttpPost(Data.getServerUrl() + "mobile/contact_list");
 			MultipartEntity reqEntity = new MultipartEntity(HttpMultipartMode.BROWSER_COMPATIBLE);
 
-			reqEntity.addPart("token", new StringBody(prefs.getToken()));
+			reqEntity.addPart("token", new StringBody(Data.getToken()));
 			if (groupIds != null) {
 				Iterator<Integer> it = groupIds.iterator();
 				while (it.hasNext()) {
@@ -1136,7 +1110,7 @@ public class DataManagement {
 									contact.image_url = c.getString(ContactsProvider.CMetaData.ContactsMetaData.IMAGE_URL);
 									cv.put(ContactsProvider.CMetaData.ContactsMetaData.IMAGE_URL, contact.image_url);
 									if (contact.image_url != null && !contact.image_url.equals("null")) {
-										contact.image_bytes = imageToBytes(prefs.getServerUrl() + contact.image_url);
+										contact.image_bytes = imageToBytes(Data.getServerUrl() + contact.image_url);
 										cv.put(ContactsProvider.CMetaData.ContactsMetaData.IMAGE_BYTES, contact.image_bytes);
 									}
 								} catch (JSONException e) {
@@ -1188,7 +1162,7 @@ public class DataManagement {
 								} catch (JSONException e) {
 								}
 								contacts.add(contact);
-								mContext.getContentResolver().insert(ContactsProvider.CMetaData.ContactsMetaData.CONTENT_URI, cv);
+								Data.getmContext().getContentResolver().insert(ContactsProvider.CMetaData.ContactsMetaData.CONTENT_URI, cv);
 							}
 						}
 					}
@@ -1198,14 +1172,14 @@ public class DataManagement {
 		} catch (Exception ex) {
 			Log.e("getContactList", ex.getMessage() + " !!!");
 		}
-
+		Data.setContacts(contacts);
 		return contacts;
 	}
 
 	public Contact getContact(int id) {
 		Contact item = new Contact();
 		Uri uri = Uri.parse(ContactsProvider.CMetaData.ContactsMetaData.CONTENT_URI + "/" + id);
-		Cursor result = mContext.getContentResolver().query(uri, null, null, null, null);
+		Cursor result = Data.getmContext().getContentResolver().query(uri, null, null, null, null);
 
 		if (result.moveToFirst()) {
 			item.contact_id = result.getInt(result.getColumnIndex(ContactsProvider.CMetaData.ContactsMetaData.C_ID));
@@ -1244,12 +1218,12 @@ public class DataManagement {
 
 		try {
 			HttpClient hc = new DefaultHttpClient();
-			HttpPost post = new HttpPost(prefs.getServerUrl() + "mobile/contact_remove");
+			HttpPost post = new HttpPost(Data.getServerUrl() + "mobile/contact_remove");
 
 			MultipartEntity reqEntity = new MultipartEntity(HttpMultipartMode.BROWSER_COMPATIBLE);
 
 			reqEntity.addPart("contact_id", new StringBody(String.valueOf(id)));
-			reqEntity.addPart("token", new StringBody(prefs.getToken()));
+			reqEntity.addPart("token", new StringBody(Data.getToken()));
 
 			post.setEntity(reqEntity);
 			HttpResponse rp = hc.execute(post);
@@ -1280,7 +1254,7 @@ public class DataManagement {
 
 		try {
 			HttpClient hc = new DefaultHttpClient();
-			HttpPost post = new HttpPost(prefs.getServerUrl() + "mobile/contact_edit");
+			HttpPost post = new HttpPost(Data.getServerUrl() + "mobile/contact_edit");
 
 			MultipartEntity reqEntity = new MultipartEntity(HttpMultipartMode.BROWSER_COMPATIBLE);
 
@@ -1294,7 +1268,7 @@ public class DataManagement {
 				reqEntity.addPart("remove_image", new StringBody(String.valueOf("1")));
 			}
 
-			reqEntity.addPart("token", new StringBody(prefs.getToken()));
+			reqEntity.addPart("token", new StringBody(Data.getToken()));
 
 			reqEntity.addPart("contact_id", new StringBody(String.valueOf(c.contact_id)));
 			reqEntity.addPart("name", new StringBody(c.name));
@@ -1331,8 +1305,8 @@ public class DataManagement {
 					Log.e("editContact - success", "" + success);
 
 					if (success == false) {
-						ERROR = object.getJSONObject("error").getString("reason");
-						Log.e("editContact - error: ", ERROR);
+						Data.setERROR(object.getJSONObject("error").getString("reason"));
+						Log.e("editContact - error: ", Data.getERROR());
 					}
 				}
 			}
@@ -1348,7 +1322,7 @@ public class DataManagement {
 
 		try {
 			HttpClient hc = new DefaultHttpClient();
-			HttpPost post = new HttpPost(prefs.getServerUrl() + "mobile/contact_create");
+			HttpPost post = new HttpPost(Data.getServerUrl() + "mobile/contact_create");
 
 			MultipartEntity reqEntity = new MultipartEntity(HttpMultipartMode.BROWSER_COMPATIBLE);
 
@@ -1361,7 +1335,7 @@ public class DataManagement {
 				}
 			}
 
-			reqEntity.addPart("token", new StringBody(prefs.getToken()));
+			reqEntity.addPart("token", new StringBody(Data.getToken()));
 
 			reqEntity.addPart("name", new StringBody(c.name));
 			reqEntity.addPart("lastname", new StringBody(c.lastname));
@@ -1396,8 +1370,8 @@ public class DataManagement {
 					Log.e("createContact - success", "" + success);
 
 					if (success == false) {
-						ERROR = object.getJSONObject("error").getString("reason");
-						Log.e("createContact - error: ", ERROR);
+						Data.setERROR(object.getJSONObject("error").getString("reason"));
+						Log.e("createContact - error: ", Data.getERROR());
 					}
 				}
 			}
@@ -1414,7 +1388,7 @@ public class DataManagement {
 
 		String where = ContactsProvider.CMetaData.GroupsMetaData.NEED_UPDATE + "!=3";
 
-		Cursor result = mContext.getContentResolver().query(ContactsProvider.CMetaData.GroupsMetaData.CONTENT_URI, null, where, null, null);
+		Cursor result = Data.getmContext().getContentResolver().query(ContactsProvider.CMetaData.GroupsMetaData.CONTENT_URI, null, where, null, null);
 
 		result.moveToFirst();
 
@@ -1452,10 +1426,10 @@ public class DataManagement {
 
 		try {
 			HttpClient hc = new DefaultHttpClient();
-			HttpPost post = new HttpPost(DataManagement.prefs.getServerUrl() + "mobile/groups_list");
+			HttpPost post = new HttpPost(Data.getServerUrl() + "mobile/groups_list");
 			MultipartEntity reqEntity = new MultipartEntity(HttpMultipartMode.BROWSER_COMPATIBLE);
 
-			reqEntity.addPart("token", new StringBody(prefs.getToken()));
+			reqEntity.addPart("token", new StringBody(Data.getToken()));
 
 			post.setEntity(reqEntity);
 			HttpResponse rp = hc.execute(post);
@@ -1557,7 +1531,7 @@ public class DataManagement {
 
 								if (group.deleted == null || group.deleted.equals("null")) {
 									groups.add(group);
-									mContext.getContentResolver().insert(ContactsProvider.CMetaData.GroupsMetaData.CONTENT_URI, cv);
+									Data.getmContext().getContentResolver().insert(ContactsProvider.CMetaData.GroupsMetaData.CONTENT_URI, cv);
 								}
 							}
 						}
@@ -1568,7 +1542,7 @@ public class DataManagement {
 		} catch (Exception ex) {
 			Log.e("getGroupList", ex.getMessage() + " !!!");
 		}
-
+		Data.setGroups(groups);
 		return groups;
 	}
 
@@ -1606,12 +1580,12 @@ public class DataManagement {
 
 		try {
 			HttpClient hc = new DefaultHttpClient();
-			HttpPost post = new HttpPost(prefs.getServerUrl() + "mobile/group_remove");
+			HttpPost post = new HttpPost(Data.getServerUrl() + "mobile/group_remove");
 
 			MultipartEntity reqEntity = new MultipartEntity(HttpMultipartMode.BROWSER_COMPATIBLE);
 
 			reqEntity.addPart("group_id", new StringBody(String.valueOf(group_id)));
-			reqEntity.addPart("token", new StringBody(prefs.getToken()));
+			reqEntity.addPart("token", new StringBody(Data.getToken()));
 
 			post.setEntity(reqEntity);
 			HttpResponse rp = hc.execute(post);
@@ -1640,7 +1614,7 @@ public class DataManagement {
 
 		try {
 			HttpClient hc = new DefaultHttpClient();
-			HttpPost post = new HttpPost(prefs.getServerUrl() + "mobile/groups_edit");
+			HttpPost post = new HttpPost(Data.getServerUrl() + "mobile/groups_edit");
 
 			MultipartEntity reqEntity = new MultipartEntity(HttpMultipartMode.BROWSER_COMPATIBLE);
 
@@ -1655,7 +1629,7 @@ public class DataManagement {
 			}
 
 			reqEntity.addPart("group_id", new StringBody(String.valueOf(g.group_id)));
-			reqEntity.addPart("token", new StringBody(prefs.getToken()));
+			reqEntity.addPart("token", new StringBody(Data.getToken()));
 			reqEntity.addPart("title", new StringBody(g.title));
 
 			Map<String, String> contacts = g.contacts;
@@ -1682,8 +1656,8 @@ public class DataManagement {
 					Log.e("editGroup - success", "" + success);
 
 					if (success == false) {
-						ERROR = object.getJSONObject("error").getString("reason");
-						Log.e("editGroup - error: ", ERROR);
+						Data.setERROR(object.getJSONObject("error").getString("reason"));
+						Log.e("editGroup - error: ", Data.getERROR());
 					}
 				}
 			}
@@ -1700,7 +1674,7 @@ public class DataManagement {
 
 		try {
 			HttpClient hc = new DefaultHttpClient();
-			HttpPost post = new HttpPost(prefs.getServerUrl() + "mobile/groups_create");
+			HttpPost post = new HttpPost(Data.getServerUrl() + "mobile/groups_create");
 
 			MultipartEntity reqEntity = new MultipartEntity(HttpMultipartMode.BROWSER_COMPATIBLE);
 
@@ -1713,7 +1687,7 @@ public class DataManagement {
 				}
 			}
 
-			reqEntity.addPart("token", new StringBody(prefs.getToken()));
+			reqEntity.addPart("token", new StringBody(Data.getToken()));
 			reqEntity.addPart("title", new StringBody(g.title));
 
 			Map<String, String> contacts = g.contacts;
@@ -1738,8 +1712,8 @@ public class DataManagement {
 					Log.e("createGroup - success", "" + success);
 
 					if (success == false) {
-						ERROR = object.getJSONObject("error").getString("reason");
-						Log.e("createGroup - error: ", error);
+						Data.setERROR(object.getJSONObject("error").getString("reason"));
+						Log.e("createGroup - error: ", Data.getERROR());
 					}
 				}
 			}
@@ -1754,9 +1728,9 @@ public class DataManagement {
 	public ArrayList<Event> getEventsFromDb() {
 		Event item;
 		ArrayList<Event> items = new ArrayList<Event>();
-		if (_prefs.getBoolean("isAgenda", true)) {
+		if (Data.get_prefs().getBoolean("isAgenda", true)) {
 			String where = EventsProvider.EMetaData.EventsMetaData.NEED_UPDATE + " < 3";
-			Cursor result = mContext.getContentResolver().query(EventsProvider.EMetaData.EventsMetaData.CONTENT_URI, null, where, null,
+			Cursor result = Data.getmContext().getContentResolver().query(EventsProvider.EMetaData.EventsMetaData.CONTENT_URI, null, where, null,
 					null);
 
 			result.moveToFirst();
@@ -1830,7 +1804,7 @@ public class DataManagement {
 		SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 		Event item = new Event();
 
-		Cursor cursor = mContext.getContentResolver().query(Uri.parse("content://com.android.calendar/events"),
+		Cursor cursor = Data.getmContext().getContentResolver().query(Uri.parse("content://com.android.calendar/events"),
 				new String[] { "_id", "title", "description", "dtstart", "dtend", "eventLocation", "eventTimezone" }, "_id=" + id, null,
 				null);
 
@@ -1857,7 +1831,7 @@ public class DataManagement {
 	}
 
 	public Cursor getNativeCalendars() {
-		Cursor cursor = mContext.getContentResolver().query(Uri.parse("content://com.android.calendar/calendars"),
+		Cursor cursor = Data.getmContext().getContentResolver().query(Uri.parse("content://com.android.calendar/calendars"),
 				(new String[] { "_id", "displayName" }), null, null, null);
 		if (cursor != null) {
 			cursor.moveToFirst();
@@ -1872,11 +1846,11 @@ public class DataManagement {
 		if (calendars != null) {
 			while (!calendars.isAfterLast()) {
 				String calendar_id = calendars.getString(0);
-				boolean isNative = _prefs.getBoolean("isNative_" + calendar_id, false);
+				boolean isNative = Data.get_prefs().getBoolean("isNative_" + calendar_id, false);
 
 				if (isNative) {
 					String where = "calendar_id=" + calendar_id;
-					Cursor cursor = mContext.getContentResolver().query(Uri.parse("content://com.android.calendar/events"),
+					Cursor cursor = Data.getmContext().getContentResolver().query(Uri.parse("content://com.android.calendar/events"),
 							new String[] { "_id", "title", "description", "dtstart", "dtend", "eventLocation", "eventTimezone" }, where,
 							null, null);
 
@@ -1920,7 +1894,7 @@ public class DataManagement {
 				calendars.moveToNext();
 			}
 		}
-
+		Data.setEvents(events);
 		return events;
 	}
 
@@ -1948,11 +1922,11 @@ public class DataManagement {
 
 		try {
 			HttpClient hc = new DefaultHttpClient();
-			HttpPost post = new HttpPost(prefs.getServerUrl() + "mobile/events_list");
+			HttpPost post = new HttpPost(Data.getServerUrl() + "mobile/events_list");
 
 			MultipartEntity reqEntity = new MultipartEntity(HttpMultipartMode.BROWSER_COMPATIBLE);
 
-			reqEntity.addPart("token", new StringBody(prefs.getToken()));
+			reqEntity.addPart("token", new StringBody(Data.getToken()));
 
 			reqEntity.addPart("category", new StringBody(eventCategory));
 
@@ -2188,7 +2162,7 @@ public class DataManagement {
 							}
 
 							// //
-							mContext.getContentResolver().insert(EventsProvider.EMetaData.EventsMetaData.CONTENT_URI, cv);
+							Data.getmContext().getContentResolver().insert(EventsProvider.EMetaData.EventsMetaData.CONTENT_URI, cv);
 							events.add(event);
 						}
 					}
@@ -2203,7 +2177,7 @@ public class DataManagement {
 	public Event getEventFromDb(int event_id) {
 		Event item = new Event();
 		Uri uri = Uri.parse(EventsProvider.EMetaData.EventsMetaData.CONTENT_URI + "/" + event_id);
-		Cursor result = mContext.getContentResolver().query(uri, null, null, null, null);
+		Cursor result = Data.getmContext().getContentResolver().query(uri, null, null, null, null);
 		if (result.moveToFirst()) {
 			item.event_id = result.getInt(result.getColumnIndex(EventsProvider.EMetaData.EventsMetaData.E_ID));
 			item.user_id = result.getInt(result.getColumnIndex(EventsProvider.EMetaData.EventsMetaData.USER_ID));
@@ -2288,12 +2262,12 @@ public class DataManagement {
 							invited.status_id = obj.getInt("status");
 
 							if (invited.status_id == 4) {
-								invited.status = mContext.getString(R.string.new_invite);
+								invited.status = Data.getmContext().getString(R.string.new_invite);
 							} else {
 								String statusStr = new StringBuilder("status_").append(invited.status_id).toString();
-								int statusId = mContext.getResources().getIdentifier(statusStr, "string", "com.groupagendas.groupagenda");
+								int statusId = Data.getmContext().getResources().getIdentifier(statusStr, "string", "com.groupagendas.groupagenda");
 
-								invited.status = mContext.getString(statusId);
+								invited.status = Data.getmContext().getString(statusId);
 							}
 						} catch (JSONException ex) {
 						}
@@ -2320,11 +2294,11 @@ public class DataManagement {
 		boolean success = false;
 		try {
 			HttpClient hc = new DefaultHttpClient();
-			HttpPost post = new HttpPost(prefs.getServerUrl() + "mobile/events_get");
+			HttpPost post = new HttpPost(Data.getServerUrl() + "mobile/events_get");
 
 			MultipartEntity reqEntity = new MultipartEntity(HttpMultipartMode.BROWSER_COMPATIBLE);
 
-			reqEntity.addPart("token", new StringBody(prefs.getToken()));
+			reqEntity.addPart("token", new StringBody(Data.getToken()));
 			reqEntity.addPart("event_id", new StringBody(String.valueOf(event.event_id)));
 
 			post.setEntity(reqEntity);
@@ -2368,11 +2342,11 @@ public class DataManagement {
 
 		try {
 			HttpClient hc = new DefaultHttpClient();
-			HttpPost post = new HttpPost(prefs.getServerUrl() + "mobile/events_edit");
+			HttpPost post = new HttpPost(Data.getServerUrl() + "mobile/events_edit");
 
 			MultipartEntity reqEntity = new MultipartEntity(HttpMultipartMode.BROWSER_COMPATIBLE);
 
-			reqEntity.addPart("token", new StringBody(prefs.getToken()));
+			reqEntity.addPart("token", new StringBody(Data.getToken()));
 			reqEntity.addPart("event_id", new StringBody(String.valueOf(e.event_id)));
 
 			reqEntity.addPart("event_type", new StringBody(e.type));
@@ -2445,11 +2419,11 @@ public class DataManagement {
 
 		try {
 			HttpClient hc = new DefaultHttpClient();
-			HttpPost post = new HttpPost(prefs.getServerUrl() + "mobile/events_create");
+			HttpPost post = new HttpPost(Data.getServerUrl() + "mobile/events_create");
 
 			MultipartEntity reqEntity = new MultipartEntity(HttpMultipartMode.BROWSER_COMPATIBLE);
 
-			reqEntity.addPart("token", new StringBody(prefs.getToken()));
+			reqEntity.addPart("token", new StringBody(Data.getToken()));
 
 			reqEntity.addPart("event_type", new StringBody(e.type));
 
@@ -2531,11 +2505,11 @@ public class DataManagement {
 
 		try {
 			HttpClient hc = new DefaultHttpClient();
-			HttpPost post = new HttpPost(prefs.getServerUrl() + "mobile/events_remove");
+			HttpPost post = new HttpPost(Data.getServerUrl() + "mobile/events_remove");
 
 			MultipartEntity reqEntity = new MultipartEntity(HttpMultipartMode.BROWSER_COMPATIBLE);
 
-			reqEntity.addPart("token", new StringBody(prefs.getToken()));
+			reqEntity.addPart("token", new StringBody(Data.getToken()));
 			reqEntity.addPart("event_id", new StringBody(String.valueOf(id)));
 
 			post.setEntity(reqEntity);
@@ -2558,15 +2532,14 @@ public class DataManagement {
 					if (success == false) {
 						// array of errors!!!
 						JSONObject errObj = object.getJSONObject("error");
-						ERROR = errObj.getString("reason");
-						Log.e("removeEvent - error: ", ERROR);
+						Data.setERROR(errObj.getString("reason"));
+						Log.e("removeEvent - error: ", Data.getERROR());
 					} else {
 						this.getEventList("");
 					}
 				}
 			}
 		} catch (Exception ex) {
-			ERROR = CONNECTION_ERROR;
 			Log.e("removeEvent ex", ex.getMessage());
 		}
 		return success;
@@ -2577,11 +2550,11 @@ public class DataManagement {
 
 		try {
 			HttpClient hc = new DefaultHttpClient();
-			HttpPost post = new HttpPost(prefs.getServerUrl() + "mobile/set_event_status");
+			HttpPost post = new HttpPost(Data.getServerUrl() + "mobile/set_event_status");
 
 			MultipartEntity reqEntity = new MultipartEntity(HttpMultipartMode.BROWSER_COMPATIBLE);
 
-			reqEntity.addPart("token", new StringBody(prefs.getToken()));
+			reqEntity.addPart("token", new StringBody(Data.getToken()));
 			reqEntity.addPart("event_id", new StringBody(String.valueOf(event_id)));
 			reqEntity.addPart("status", new StringBody(status));
 
@@ -2630,7 +2603,7 @@ public class DataManagement {
 
 	public String getPhonePrefix(String country) throws ClientProtocolException, IOException, JSONException {
 		HttpClient hc = new DefaultHttpClient();
-		HttpPost post = new HttpPost(prefs.getServerUrl() + "mobile/get_country_code");
+		HttpPost post = new HttpPost(Data.getServerUrl() + "mobile/get_country_code");
 		MultipartEntity reqEntity = new MultipartEntity(HttpMultipartMode.BROWSER_COMPATIBLE);
 		String phonePrefix = null;
 		reqEntity.addPart("country_name", new StringBody(country));
@@ -2645,61 +2618,73 @@ public class DataManagement {
 		}
 		return phonePrefix;
 	}
-
-	public void updateAppData(int data) {
-		switch (data) {
-		case 1:
-			loadAccountData = true;
-			break;
-		case 2:
-			loadContactsData = true;
-			break;
-		case 3:
-			loadEventsData = true;
-			break;
-		case 4:
-			loadGroupsData = true;
-			break;
-		case 5:
-			loadAccountData = true;
-			loadContactsData = true;
-			loadEventsData = true;
-			loadGroupsData = true;
-		default:
-			System.out.println("UpdateAppData():" + data);
-			break;
-		}
+	
+	public String getError(){
+		return Data.getERROR();
+	}
+	
+	public void setError(String error){
+		Data.setERROR(error);
+	}
+	
+	public static String getCONNECTION_ERROR(){
+		return Data.getConnectionError();
 	}
 
-	public boolean isLoadAccountData() {
-		return loadAccountData;
-	}
-
-	public void setLoadAccountData(boolean loadAccountData) {
-		this.loadAccountData = loadAccountData;
-	}
-
-	public boolean isLoadContactsData() {
-		return loadContactsData;
-	}
-
-	public void setLoadContactsData(boolean loadContactsData) {
-		this.loadContactsData = loadContactsData;
-	}
-
-	public boolean isLoadGroupsData() {
-		return loadGroupsData;
-	}
-
-	public void setLoadGroupsData(boolean loadGroupsData) {
-		this.loadGroupsData = loadGroupsData;
-	}
-
-	public boolean isLoadEventsData() {
-		return loadEventsData;
-	}
-
-	public void setLoadEventsData(boolean loadEventsData) {
-		this.loadEventsData = loadEventsData;
-	}
+//	public void updateAppData(int data) {
+//		switch (data) {
+//		case 1:
+//			loadAccountData = true;
+//			break;
+//		case 2:
+//			loadContactsData = true;
+//			break;
+//		case 3:
+//			loadEventsData = true;
+//			break;
+//		case 4:
+//			loadGroupsData = true;
+//			break;
+//		case 5:
+//			loadAccountData = true;
+//			loadContactsData = true;
+//			loadEventsData = true;
+//			loadGroupsData = true;
+//		default:
+//			System.out.println("UpdateAppData():" + data);
+//			break;
+//		}
+//	}
+//
+//	public boolean isLoadAccountData() {
+//		return loadAccountData;
+//	}
+//
+//	public void setLoadAccountData(boolean loadAccountData) {
+//		this.loadAccountData = loadAccountData;
+//	}
+//
+//	public boolean isLoadContactsData() {
+//		return loadContactsData;
+//	}
+//
+//	public void setLoadContactsData(boolean loadContactsData) {
+//		this.loadContactsData = loadContactsData;
+//	}
+//
+//	public boolean isLoadGroupsData() {
+//		return loadGroupsData;
+//	}
+//
+//	public void setLoadGroupsData(boolean loadGroupsData) {
+//		this.loadGroupsData = loadGroupsData;
+//	}
+//
+//	public boolean isLoadEventsData() {
+//		return loadEventsData;
+//	}
+//
+//	public void setLoadEventsData(boolean loadEventsData) {
+//		this.loadEventsData = loadEventsData;
+//	}
 }
