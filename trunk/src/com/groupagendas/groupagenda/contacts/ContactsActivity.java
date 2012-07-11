@@ -6,7 +6,6 @@ import java.util.TreeMap;
 import android.app.ListActivity;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.text.Editable;
@@ -73,8 +72,6 @@ public class ContactsActivity extends ListActivity implements OnCheckedChangeLis
 
 	private ContactsAdapter cAdapter;
 	private GroupsAdapter gAdapter;
-
-	private boolean contactsLoaded = false;
 
 	@Override
 	public void onWindowFocusChanged(boolean hasFocus) {
@@ -154,22 +151,22 @@ public class ContactsActivity extends ListActivity implements OnCheckedChangeLis
 	public void onResume() {
 		super.onResume();
 
-		GetContactsFromDBTask currentTask = new GetContactsFromDBTask();
+		GetDbContactsTask currentTask = new GetDbContactsTask();
+
 
 		CURRENT_LIST = preferences.getInt("ContactsActivityList", CURRENT_LIST);
 		CURRENT_TASK = preferences.getString("ContactsActivityTask", CONTACTS_TASK);
+		
+		if (contacts == null) {
+			currentTask.doInBackground(CURRENT_TASK);
+		}
 
 		if (dm.isLoadContactsData()) {
-			currentTask.execute(CURRENT_TASK);
+			currentTask.doInBackground(CURRENT_TASK);
 		}
 
 		if (contacts != null) {
 			indexList = createIndex(contacts);
-		} else {
-			DataManagement dm = DataManagement.getInstance(this);
-			contacts = dm.getContactsFromDb("");
-			indexList = createIndex(contacts);
-			// contactsLoaded = true;
 		}
 	}
 
@@ -202,6 +199,7 @@ public class ContactsActivity extends ListActivity implements OnCheckedChangeLis
 		searchView.addTextChangedListener(filterTextWatcher);
 
 		mGestureDetector = new GestureDetector(this, new SideIndexGestureListener());
+		Toast.makeText(this, "Loading contacts... wait", Toast.LENGTH_LONG).show();
 	}
 
 	@Override
@@ -300,128 +298,117 @@ public class ContactsActivity extends ListActivity implements OnCheckedChangeLis
 
 	@Override
 	public void onCheckedChanged(RadioGroup group, int checkedId) {
+		LinearLayout sideIndex = (LinearLayout) findViewById(R.id.sideIndex);
 		if (group == segmentedButtons) {
 			switch (checkedId) {
-			case R.id.contacts:
-				CURRENT_LIST = CONTACTS_LIST;
-				if (contacts != null) {
-					cAdapter = new ContactsAdapter(contacts, ContactsActivity.this);
-					setListAdapter(cAdapter);
-					if (dm.isLoadContactsData()) {
-						new GetContactsTask().execute(CONTACTS_TASK);
-					}
-				} else {
-					if (dm.isLoadContactsData()) {
-						new GetContactsTask().execute(CONTACTS_TASK);
+				case R.id.contacts:
+					sideIndex.setVisibility(View.VISIBLE);
+					CURRENT_LIST = CONTACTS_LIST;
+					
+					if (contacts != null) {
+						cAdapter = new ContactsAdapter(contacts, ContactsActivity.this);
+						setListAdapter(cAdapter);
+						if (dm.isLoadContactsData()) {
+							Toast.makeText(this, "Loading contacts... wait", Toast.LENGTH_SHORT).show();
+							new GetPhoneContactsTask().doInBackground(CONTACTS_TASK);
+						}
+					} else {
+						Toast.makeText(this, "Loading contacts... wait", Toast.LENGTH_LONG).show();
+						new GetDbContactsTask().doInBackground(CONTACTS_TASK);
+						if (dm.isLoadContactsData()) {
+							new GetPhoneContactsTask().doInBackground(CONTACTS_TASK);
+						}
 					}
 
-				}
-				editor.putString("ContactsActivityTask", CONTACTS_TASK);
-				editor.putInt("ContactsActivityList", CONTACTS_LIST);
-				editor.commit();
-				break;
-			case R.id.groups:
-				CURRENT_LIST = GROUPS_LIST;
-				if (groups != null) {
-					gAdapter = new GroupsAdapter(groups, ContactsActivity.this);
-					setListAdapter(gAdapter);
-					new GetContactsTask().execute(GROUPS_TASK);
-				} else {
-					new GetContactsFromDBTask().execute(GROUPS_TASK);
-				}
-				editor.putString("ContactsActivityTask", GROUPS_TASK);
-				editor.putInt("ContactsActivityList", GROUPS_LIST);
-				editor.commit();
-				break;
+					editor.putString("ContactsActivityTask", CONTACTS_TASK);
+					editor.putInt("ContactsActivityList", CONTACTS_LIST);
+					editor.commit();
+					break;
+				
+				case R.id.groups:
+					sideIndex.setVisibility(View.GONE);
+					
+					CURRENT_LIST = GROUPS_LIST;
+
+					if (groups != null) {
+						gAdapter = new GroupsAdapter(groups, ContactsActivity.this);
+						setListAdapter(gAdapter);
+						if (dm.isLoadGroupsData()) {
+							Toast.makeText(this, "Loading groups... wait", Toast.LENGTH_SHORT).show();
+							new GetPhoneContactsTask().doInBackground(GROUPS_TASK);
+						}
+					} else {
+						Toast.makeText(this, "Loading groups... wait", Toast.LENGTH_LONG).show();
+						new GetDbContactsTask().doInBackground(GROUPS_TASK);
+						if (dm.isLoadGroupsData()) {
+							new GetPhoneContactsTask().doInBackground(GROUPS_TASK);
+						}
+					}
+
+					editor.putString("ContactsActivityTask", GROUPS_TASK);
+					editor.putInt("ContactsActivityList", GROUPS_LIST);
+					editor.commit();
+					break;
 			}
 		}
 	}
 
-	class GetContactsFromDBTask extends AsyncTask<String, String, String> {
+	class GetDbContactsTask {
 
-		private Toast msg = null;
-		@Override
-		protected void onPreExecute() {
+		protected String doInBackground(String currentTask) {
 
 			pb.setVisibility(View.VISIBLE);
 			
-			super.onPreExecute();
-		}
-
-		@Override
-		protected String doInBackground(String... type) {
-			CURRENT_TASK = type[0];
-			if (type[0].equals(CONTACTS_TASK)) {
+			if (currentTask.equals(CONTACTS_TASK)) {
 				contacts = dm.getContactsFromDb("");
 				dm.setLoadContactsData(false);
-			} else if (type[0].equals(GROUPS_TASK)) {
-				groups = dm.getGroupsFromDb();
-				dm.setLoadGroupsData(false);
-			}
-
-			return type[0];
-		}
-
-		@Override
-		protected void onPostExecute(String result) {
-			if (result.equals(CONTACTS_TASK)) {
 				if (contacts != null) {
 					cAdapter = new ContactsAdapter(contacts, ContactsActivity.this);
 					setListAdapter(cAdapter);
-					new GetContactsTask().execute(CURRENT_TASK);
+					new GetPhoneContactsTask().doInBackground(CURRENT_TASK);
 				}
-			} else if (result.equals(GROUPS_TASK)) {
+			} else if (currentTask.equals(GROUPS_TASK)) {
+				groups = dm.getGroupsFromDb();
+				dm.setLoadGroupsData(false);
 				if (groups != null) {
 					gAdapter = new GroupsAdapter(groups, ContactsActivity.this);
 					setListAdapter(gAdapter);
-					new GetContactsTask().execute(CURRENT_TASK);
+					new GetPhoneContactsTask().doInBackground(CURRENT_TASK);
 				}
 			}
-			super.onPostExecute(result);
-			contactsLoaded = true;
+
+			pb.setVisibility(View.GONE);
+			return currentTask;
 		}
 
 	}
 
-	class GetContactsTask extends AsyncTask<String, String, String> {
+	class GetPhoneContactsTask {
 
-		protected void onPreExecute() {
-
+		protected String doInBackground(String currentTask) {
 			pb.setVisibility(View.VISIBLE);
-
-			super.onPreExecute();
-		}
-
-		protected String doInBackground(String... type) {
-			CURRENT_TASK = type[0];
-			if (type[0].equals(CONTACTS_TASK)) {
+			CURRENT_TASK = currentTask;
+			
+			if (currentTask.equals(CONTACTS_TASK)) {
 				ArrayList<Contact> contacts_ = dm.getContactList(null);
 				if (contacts_ != null)
 					contacts = contacts_;
-			} else if (type[0].equals(GROUPS_TASK)) {
-				ArrayList<Group> groups_ = dm.getGroupList();
-				if (groups_ != null)
-					groups = groups_;
-			}
-
-			return type[0];
-		}
-
-		protected void onPostExecute(String result) {
-			if (result.equals(CONTACTS_TASK)) {
-				if (contacts != null && CURRENT_LIST == CONTACTS_LIST) {
-					cAdapter.setItems(contacts);
-					cAdapter.notifyDataSetChanged();
+					if (contacts != null && CURRENT_LIST == CONTACTS_LIST) {
+						cAdapter.setItems(contacts);
+						cAdapter.notifyDataSetChanged();
+					}
+				} else if (currentTask.equals(GROUPS_TASK)) {
+					ArrayList<Group> groups_ = dm.getGroupList();
+					if (groups_ != null)
+						groups = groups_;
+					if (groups != null && CURRENT_LIST == GROUPS_LIST) {
+						gAdapter.setItems(groups);
+						gAdapter.notifyDataSetChanged();
+					}
 				}
-			} else if (result.equals(GROUPS_TASK)) {
-				if (groups != null && CURRENT_LIST == GROUPS_LIST) {
-					gAdapter.setItems(groups);
-					gAdapter.notifyDataSetChanged();
-				}
-			}
+
 			pb.setVisibility(View.GONE);
-			contactsLoaded = true;
-			super.onPostExecute(result);
+			return currentTask;
 		}
 
 	}
