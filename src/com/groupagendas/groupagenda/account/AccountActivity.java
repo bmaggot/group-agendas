@@ -105,9 +105,9 @@ public class AccountActivity extends Activity implements OnClickListener{
 		dm = DataManagement.getInstance(this);
 		pb = (ProgressBar) findViewById(R.id.progress);
 
-		if(dm.isLoadAccountData()){
+//		if(dm.isLoadAccountData()){
 			new GetAccountFromDBTask().execute();
-		}
+//		}
 		nameView = (EditText) findViewById(R.id.nameView);
 		lastnameView = (EditText) findViewById(R.id.lastnameView);
 
@@ -179,9 +179,9 @@ public class AccountActivity extends Activity implements OnClickListener{
 	@Override
 	public void onResume() {
 		super.onResume();
-		if(dm.isLoadAccountData()){
+//		if(dm.isLoadAccountData()){
 			new GetAccountFromDBTask().execute();
-		}
+//		}
 	}
 
 	private void feelFields(Account account) {
@@ -412,7 +412,7 @@ public class AccountActivity extends Activity implements OnClickListener{
 				feelFields(account);
 			new GetAccountTask().execute();
 			super.onPostExecute(account);
-			dm.setLoadAccountData(false);
+//			dm.setLoadAccountData(false);
 		}
 
 	}

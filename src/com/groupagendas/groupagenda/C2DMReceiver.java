@@ -51,7 +51,7 @@ public class C2DMReceiver extends C2DMBaseReceiver {
 		String type = null;;
 		String isNative = null;
 		if (receiveIntent.hasExtra("rel_obj") && receiveIntent.getStringExtra("rel_obj").equals("update")) {
-			DataManagement.getInstance(context).updateAppData(Integer.parseInt(data));
+//			DataManagement.getInstance(context).updateAppData(Integer.parseInt(data));
 			
 		}else if (receiveIntent.hasExtra("rel_id") && receiveIntent.getStringExtra("rel_id") != "" && data != null) {
 			rel_id = receiveIntent.getStringExtra("rel_id");
