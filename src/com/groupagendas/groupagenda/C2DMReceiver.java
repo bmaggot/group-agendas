@@ -10,6 +10,7 @@ import android.content.Intent;
 import android.util.Log;
 
 import com.google.android.c2dm.C2DMBaseReceiver;
+import com.groupagendas.groupagenda.data.DataManagement;
 import com.groupagendas.groupagenda.events.EventActivity;
 import com.groupagendas.groupagenda.events.EventsActivity;
 import com.groupagendas.groupagenda.timezone.TimezoneProvider;

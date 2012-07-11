@@ -16,9 +16,9 @@ import android.widget.TextView;
 import az.mecid.android.ActionItem;
 import az.mecid.android.QuickAction;
 
-import com.groupagendas.groupagenda.DataManagement;
 import com.groupagendas.groupagenda.NavbarActivity;
 import com.groupagendas.groupagenda.R;
+import com.groupagendas.groupagenda.data.DataManagement;
 import com.groupagendas.groupagenda.settings.SettingsActivity;
 import com.groupagendas.groupagenda.utils.AgendaUtils;
 
