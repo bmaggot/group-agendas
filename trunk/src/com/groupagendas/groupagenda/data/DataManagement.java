@@ -2642,35 +2642,35 @@ public class DataManagement {
 		}
 	}
 
-	public boolean isLoadAccountData() {
+	public static boolean isLoadAccountData() {
 		return Data.isLoadAccountData();
 	}
 
-	public void setLoadAccountData(boolean loadAccountData) {
+	public static void setLoadAccountData(boolean loadAccountData) {
 		Data.setLoadAccountData(loadAccountData);
 	}
 
-	public boolean isLoadContactsData() {
+	public static boolean isLoadContactsData() {
 		return Data.isLoadContactsData();
 	}
 
-	public void setLoadContactsData(boolean loadContactsData) {
+	public static void setLoadContactsData(boolean loadContactsData) {
 		Data.setLoadContactsData(loadContactsData);
 	}
 
-	public boolean isLoadGroupsData() {
+	public static boolean isLoadGroupsData() {
 		return Data.isLoadGroupsData();
 	}
 
-	public void setLoadGroupsData(boolean loadGroupsData) {
+	public static void setLoadGroupsData(boolean loadGroupsData) {
 		Data.setLoadGroupsData(loadGroupsData);
 	}
 
-	public boolean isLoadEventsData() {
+	public static boolean isLoadEventsData() {
 		return Data.isLoadEventsData();
 	}
 
-	public void setLoadEventsData(boolean loadEventsData) {
+	public static void setLoadEventsData(boolean loadEventsData) {
 		Data.setLoadEventsData(loadEventsData);
 	}
 	
