@@ -24,10 +24,10 @@ class Data {
 	private static String ERROR = null;
 	public final static String CONNECTION_ERROR = "Connection refused";
 
-	private boolean loadAccountData = false;
-	private boolean loadContactsData = false;
-	private boolean loadGroupsData = false;
-	private boolean loadEventsData = false;
+	private static boolean loadAccountData = false;
+	private static boolean loadContactsData = false;
+	private static boolean loadGroupsData = false;
+	private static boolean loadEventsData = false;
 
 	private static final String DEFAULT_SERVER_URL = "http://159.253.136.156/";
 
@@ -97,29 +97,29 @@ class Data {
 	protected static String getConnectionError() {
 		return CONNECTION_ERROR;
 	}
-	protected boolean isLoadAccountData() {
+	protected static boolean isLoadAccountData() {
 		return loadAccountData;
 	}
-	protected void setLoadAccountData(boolean loadAccountData) {
-		this.loadAccountData = loadAccountData;
+	protected static void setLoadAccountData(boolean loadAccountDataN) {
+		loadAccountData = loadAccountDataN;
 	}
-	protected boolean isLoadContactsData() {
+	protected static boolean isLoadContactsData() {
 		return loadContactsData;
 	}
-	protected void setLoadContactsData(boolean loadContactsData) {
-		this.loadContactsData = loadContactsData;
+	protected static void setLoadContactsData(boolean loadContactsDataN) {
+		loadContactsData = loadContactsDataN;
 	}
-	protected boolean isLoadGroupsData() {
+	protected static boolean isLoadGroupsData() {
 		return loadGroupsData;
 	}
-	protected void setLoadGroupsData(boolean loadGroupsData) {
-		this.loadGroupsData = loadGroupsData;
+	protected static void setLoadGroupsData(boolean loadGroupsDataN) {
+		loadGroupsData = loadGroupsDataN;
 	}
-	protected boolean isLoadEventsData() {
+	protected static boolean isLoadEventsData() {
 		return loadEventsData;
 	}
-	protected void setLoadEventsData(boolean loadEventsData) {
-		this.loadEventsData = loadEventsData;
+	protected static void setLoadEventsData(boolean loadEventsDataN) {
+		loadEventsData = loadEventsDataN;
 	}
 	protected static String getDEFAULT_EMAIL() {
 		return DEFAULT_EMAIL;
