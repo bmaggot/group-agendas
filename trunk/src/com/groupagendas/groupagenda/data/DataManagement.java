@@ -2631,60 +2631,60 @@ public class DataManagement {
 		return Data.getConnectionError();
 	}
 
-//	public void updateAppData(int data) {
-//		switch (data) {
-//		case 1:
-//			loadAccountData = true;
-//			break;
-//		case 2:
-//			loadContactsData = true;
-//			break;
-//		case 3:
-//			loadEventsData = true;
-//			break;
-//		case 4:
-//			loadGroupsData = true;
-//			break;
-//		case 5:
-//			loadAccountData = true;
-//			loadContactsData = true;
-//			loadEventsData = true;
-//			loadGroupsData = true;
-//		default:
-//			System.out.println("UpdateAppData():" + data);
-//			break;
-//		}
-//	}
-//
-//	public boolean isLoadAccountData() {
-//		return loadAccountData;
-//	}
-//
-//	public void setLoadAccountData(boolean loadAccountData) {
-//		this.loadAccountData = loadAccountData;
-//	}
-//
-//	public boolean isLoadContactsData() {
-//		return loadContactsData;
-//	}
-//
-//	public void setLoadContactsData(boolean loadContactsData) {
-//		this.loadContactsData = loadContactsData;
-//	}
-//
-//	public boolean isLoadGroupsData() {
-//		return loadGroupsData;
-//	}
-//
-//	public void setLoadGroupsData(boolean loadGroupsData) {
-//		this.loadGroupsData = loadGroupsData;
-//	}
-//
-//	public boolean isLoadEventsData() {
-//		return loadEventsData;
-//	}
-//
-//	public void setLoadEventsData(boolean loadEventsData) {
-//		this.loadEventsData = loadEventsData;
-//	}
+	public void updateAppData(int data) {
+		switch (data) {
+		case 1:
+			Data.setLoadAccountData(true);
+			break;
+		case 2:
+			Data.setLoadContactsData(true);
+			break;
+		case 3:
+			Data.setLoadEventsData(true);
+			break;
+		case 4:
+			Data.setLoadGroupsData(true);
+			break;
+		case 5:
+			Data.setLoadAccountData(true);
+			Data.setLoadContactsData(true);
+			Data.setLoadEventsData(true);
+			Data.setLoadGroupsData(true);
+		default:
+			System.out.println("UpdateAppData():" + data);
+			break;
+		}
+	}
+
+	public boolean isLoadAccountData() {
+		return Data.isLoadAccountData();
+	}
+
+	public void setLoadAccountData(boolean loadAccountData) {
+		Data.setLoadAccountData(loadAccountData);
+	}
+
+	public boolean isLoadContactsData() {
+		return Data.isLoadContactsData();
+	}
+
+	public void setLoadContactsData(boolean loadContactsData) {
+		Data.setLoadContactsData(loadContactsData);
+	}
+
+	public boolean isLoadGroupsData() {
+		return Data.isLoadGroupsData();
+	}
+
+	public void setLoadGroupsData(boolean loadGroupsData) {
+		Data.setLoadGroupsData(loadGroupsData);
+	}
+
+	public boolean isLoadEventsData() {
+		return Data.isLoadEventsData();
+	}
+
+	public void setLoadEventsData(boolean loadEventsData) {
+		Data.setLoadEventsData(loadEventsData);
+	}
 }
