@@ -17,6 +17,8 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ProgressBar;
 import android.widget.TextView;
+
+import com.groupagendas.groupagenda.data.DataManagement;
 import com.groupagendas.groupagenda.registration.RegisterationActivity;
 import com.pass_retrieve.forgot_pass1;
 

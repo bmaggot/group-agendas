@@ -15,8 +15,8 @@ import android.widget.Filter;
 import android.widget.Filterable;
 import android.widget.TextView;
 
-import com.groupagendas.groupagenda.DataManagement;
 import com.groupagendas.groupagenda.R;
+import com.groupagendas.groupagenda.data.DataManagement;
 import com.groupagendas.groupagenda.utils.DateTimeUtils;
 
 public class EventsAdapter extends BaseAdapter implements Filterable{

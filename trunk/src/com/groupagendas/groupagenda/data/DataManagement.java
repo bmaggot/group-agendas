@@ -1,4 +1,4 @@
-package com.groupagendas.groupagenda;
+package com.groupagendas.groupagenda.data;
 
 import java.io.DataOutputStream;
 import java.io.IOException;
@@ -46,6 +46,8 @@ import android.util.Log;
 import com.bog.calendar.app.model.CEvent;
 import com.bog.calendar.app.model.EventsHelper;
 import com.google.android.c2dm.C2DMessaging;
+import com.groupagendas.groupagenda.R;
+import com.groupagendas.groupagenda.R.string;
 import com.groupagendas.groupagenda.account.Account;
 import com.groupagendas.groupagenda.account.AccountProvider;
 import com.groupagendas.groupagenda.contacts.Contact;

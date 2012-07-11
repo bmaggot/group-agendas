@@ -14,9 +14,9 @@ import android.view.View;
 import android.widget.ListView;
 import android.widget.ProgressBar;
 
-import com.groupagendas.groupagenda.DataManagement;
 import com.groupagendas.groupagenda.R;
 import com.groupagendas.groupagenda.account.AccountProvider;
+import com.groupagendas.groupagenda.data.DataManagement;
 
 public class AutoIconActivity extends ListActivity{
 	private ProgressBar pb;

@@ -37,8 +37,8 @@ import android.widget.TableRow;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.groupagendas.groupagenda.DataManagement;
 import com.groupagendas.groupagenda.R;
+import com.groupagendas.groupagenda.data.DataManagement;
 import com.groupagendas.groupagenda.utils.MapUtils;
 import com.groupagendas.groupagenda.utils.Utils;
 

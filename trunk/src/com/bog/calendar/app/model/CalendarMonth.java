@@ -12,8 +12,8 @@ import android.widget.TextView;
 
 import com.bog.calendar.app.ui.CalendarView;
 import com.bog.calendar.app.ui.UIBuildHelper;
-import com.groupagendas.groupagenda.DataManagement;
 import com.groupagendas.groupagenda.R;
+import com.groupagendas.groupagenda.data.DataManagement;
 import com.groupagendas.groupagenda.events.Event;
 
 public class CalendarMonth {
