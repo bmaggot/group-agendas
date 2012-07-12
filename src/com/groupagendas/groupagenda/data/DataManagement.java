@@ -55,6 +55,7 @@ import com.groupagendas.groupagenda.contacts.ContactsProvider;
 import com.groupagendas.groupagenda.contacts.Group;
 import com.groupagendas.groupagenda.contacts.GroupsAdapter;
 import com.groupagendas.groupagenda.events.Event;
+import com.groupagendas.groupagenda.events.EventsAdapter;
 import com.groupagendas.groupagenda.events.EventsProvider;
 import com.groupagendas.groupagenda.events.Invited;
 import com.groupagendas.groupagenda.settings.AutoColorItem;
@@ -2686,5 +2687,10 @@ public class DataManagement {
 	public void updateGroupsAdapter(ArrayList<Group> groups, GroupsAdapter gAdapter) {
 		gAdapter.setItems(groups);
 		gAdapter.notifyDataSetChanged();
+	}
+	
+	public void updateEventsAdapter(ArrayList<Event> contacts, EventsAdapter eAdapter){
+		eAdapter.setItems(contacts);
+		eAdapter.notifyDataSetChanged();
 	}
 }
