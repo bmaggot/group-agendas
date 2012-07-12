@@ -27,7 +27,6 @@ import android.widget.ProgressBar;
 import android.widget.RadioGroup;
 import android.widget.RadioGroup.OnCheckedChangeListener;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.groupagendas.groupagenda.R;
 import com.groupagendas.groupagenda.data.DataManagement;
@@ -180,7 +179,7 @@ public class ContactsActivity extends ListActivity implements OnCheckedChangeLis
 		super.onCreate(savedInstanceState);
 		this.setContentView(R.layout.contacts);
 
-		Toast.makeText(this, "Loading contacts... wait", Toast.LENGTH_LONG).show();
+//		Toast.makeText(this, "Loading contacts... wait", Toast.LENGTH_LONG).show();
 		preferences = PreferenceManager.getDefaultSharedPreferences(this);
 		editor = preferences.edit();
 
@@ -308,7 +307,7 @@ public class ContactsActivity extends ListActivity implements OnCheckedChangeLis
 				case R.id.contacts:
 					sideIndex.setVisibility(View.VISIBLE);
 					CURRENT_LIST = CONTACTS_LIST;
-					Toast.makeText(this, getString(R.string.waiting_for_contacts_load), Toast.LENGTH_SHORT).show();
+//					Toast.makeText(this, getString(R.string.waiting_for_contacts_load), Toast.LENGTH_SHORT).show();
 					setListAdapter(cAdapter);
 					contacts = loadContacts(contacts, cAdapter);
 
@@ -320,7 +319,7 @@ public class ContactsActivity extends ListActivity implements OnCheckedChangeLis
 				case R.id.groups:
 					sideIndex.setVisibility(View.GONE);
 					CURRENT_LIST = GROUPS_LIST;
-					Toast.makeText(this, getString(R.string.waiting_for_groups_load), Toast.LENGTH_SHORT).show();
+//					Toast.makeText(this, getString(R.string.waiting_for_groups_load), Toast.LENGTH_SHORT).show();
 					setListAdapter(gAdapter);
 					groups = loadGroups(groups, gAdapter);
 
@@ -345,15 +344,15 @@ public class ContactsActivity extends ListActivity implements OnCheckedChangeLis
 	}
 	
 	protected ArrayList<Group> loadGroups(ArrayList<Group> groups, GroupsAdapter gAdapter) {
-//		if (DataManagement.isLoadGroupsData()) {
+		if (DataManagement.isLoadGroupsData()) {
 			groups = DataManagement.getInstance(this).getGroupsFromRemoteDb();
 			DataManagement.getInstance(this).updateGroupsAdapter(groups, gAdapter);
 			return groups;
-//		} else {
-//			groups = DataManagement.getInstance(this).getGroupsFromLocalDb();
-//			DataManagement.getInstance(this).updateGroupsAdapter(groups, gAdapter);
-//			return groups;
-//		}
+		} else {
+			groups = DataManagement.getInstance(this).getGroupsFromLocalDb();
+			DataManagement.getInstance(this).updateGroupsAdapter(groups, gAdapter);
+			return groups;
+		}
 	}
 	
 	class SideIndexGestureListener extends GestureDetector.SimpleOnGestureListener {
