@@ -87,7 +87,7 @@ public class NavbarActivity extends Activity {
 		
 		Intent intent = getIntent();
 		if(intent.getBooleanExtra("load_data", false)){
-//			dm.updateAppData(5);
+			DataManagement.updateAppData(5);
 		}
 		
 		list_search = new ActionItem();
@@ -402,6 +402,7 @@ public class NavbarActivity extends Activity {
             getContentResolver().delete(ContactsProvider.CMetaData.GroupsMetaData.CONTENT_URI, "", null);
             getContentResolver().delete(EventsProvider.EMetaData.EventsMetaData.CONTENT_URI, "", null);
             getContentResolver().getType(EventsProvider.EMetaData.EventsMetaData.CONTENT_URI);
+            
             total = 20;
             Message msg = mHandler.obtainMessage();
             msg.arg1 = total;
@@ -415,14 +416,14 @@ public class NavbarActivity extends Activity {
             mHandler.sendMessage(msg);
             
             // Load contacts
-            dm.getContactList(null);
+            dm.getContactsFromRemoteDb(null);
             total = 60;
             msg = mHandler.obtainMessage();
             msg.arg1 = total;
             mHandler.sendMessage(msg);
             
             // Load groups
-            dm.getGroupList();
+            dm.getGroupsFromRemoteDb();
             total = 80;
             msg = mHandler.obtainMessage();
             msg.arg1 = total;

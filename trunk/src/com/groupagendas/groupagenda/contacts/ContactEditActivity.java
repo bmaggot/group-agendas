@@ -256,7 +256,7 @@ public class ContactEditActivity extends Activity implements OnClickListener, On
 		protected Contact doInBackground(Integer... id) {
 			editedContact = dm.getContact(id[0]);
 
-			ArrayList<Group> groups = dm.getGroupsFromDb();
+			ArrayList<Group> groups = dm.getGroupsFromLocalDb();
 			getGroupsList(groups, false);
 
 			return editedContact;
@@ -489,7 +489,7 @@ public class ContactEditActivity extends Activity implements OnClickListener, On
 
 		@Override
 		protected Void doInBackground(Void... params) {
-			ArrayList<Group> groups = dm.getGroupsFromDb();
+			ArrayList<Group> groups = dm.getGroupsFromLocalDb();
 			getGroupsList(groups, true);
 			return null;
 		}

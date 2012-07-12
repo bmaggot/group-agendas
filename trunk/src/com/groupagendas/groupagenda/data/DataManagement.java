@@ -458,6 +458,7 @@ public class DataManagement {
 			Log.e("getAccountInfo", ex.getMessage() + "!!!");
 		}
 		Data.setAccount(u);
+		Data.setLoadAccountData(false);
 		return u;
 	}
 
@@ -1160,6 +1161,7 @@ public class DataManagement {
 			Log.e("getContactList", ex.getMessage() + " !!!");
 		}
 		Data.setContacts(contacts);
+		Data.setLoadContactsData(false);
 		return contacts;
 	}
 
@@ -1369,7 +1371,7 @@ public class DataManagement {
 		return success;
 	}
 
-	public ArrayList<Group> getGroupsFromDb() {
+	public ArrayList<Group> getGroupsFromLocalDb() {
 		Group item;
 		ArrayList<Group> items = new ArrayList<Group>();
 
@@ -1405,7 +1407,7 @@ public class DataManagement {
 		return items;
 	}
 
-	public ArrayList<Group> getGroupList() {
+	public ArrayList<Group> getGroupsFromRemoteDb() {
 		boolean success = false;
 		String error = null;
 		ArrayList<Group> groups = null;
@@ -1530,6 +1532,7 @@ public class DataManagement {
 			Log.e("getGroupList", ex.getMessage() + " !!!");
 		}
 		Data.setGroups(groups);
+		Data.setLoadGroupsData(false);
 		return groups;
 	}
 
@@ -2157,6 +2160,7 @@ public class DataManagement {
 		} catch (Exception ex) {
 			Log.e("getEventList", ex.getMessage() + " !!!");
 		}
+		Data.setLoadEventsData(false);
 		return getNaviveCalendarEvents(events);
 	}
 
@@ -2674,13 +2678,13 @@ public class DataManagement {
 		Data.setLoadEventsData(loadEventsData);
 	}
 	
-	protected void updateContactsAdapter(ArrayList<Contact> contacts, ContactsAdapter cAdapter) {
+	public void updateContactsAdapter(ArrayList<Contact> contacts, ContactsAdapter cAdapter) {
 		cAdapter.setItems(contacts);
 		cAdapter.notifyDataSetChanged();
 	}
 	
-	protected void updateGroupsAdapter(ArrayList<Group> contacts, GroupsAdapter gAdapter) {
-		gAdapter.setItems(contacts);
+	public void updateGroupsAdapter(ArrayList<Group> groups, GroupsAdapter gAdapter) {
+		gAdapter.setItems(groups);
 		gAdapter.notifyDataSetChanged();
 	}
 }

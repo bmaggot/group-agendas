@@ -536,7 +536,7 @@ public class NewEventActivity extends Activity {
 
 		@Override
 		protected Void doInBackground(Void... params) {
-			ArrayList<Contact> contacts = dm.getContactsFromDb("");
+			ArrayList<Contact> contacts = dm.getContactsFromLocalDb("");
 			int l = contacts.size();
 			titles = new CharSequence[l];
 			ids = new int[l];

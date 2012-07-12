@@ -151,23 +151,22 @@ public class ContactsActivity extends ListActivity implements OnCheckedChangeLis
 	public void onResume() {
 		super.onResume();
 
-		GetDbContactsTask currentTask = new GetDbContactsTask();
-
-
 		CURRENT_LIST = preferences.getInt("ContactsActivityList", CURRENT_LIST);
-		CURRENT_TASK = preferences.getString("ContactsActivityTask", CONTACTS_TASK);
+		CURRENT_TASK = preferences.getString("ContactsActivityTask", CURRENT_TASK);
 		
-		if (contacts == null) {
-			currentTask.doInBackground(CURRENT_TASK);
-		}
+		if (CURRENT_TASK.equals(CONTACTS_TASK)) {
+			setListAdapter(cAdapter);
+			contacts = loadContacts(contacts, cAdapter);
 
-//		if (dm.isLoadContactsData()) {
-			currentTask.doInBackground(CURRENT_TASK);
-//		}
-
-		if (contacts != null) {
-			indexList = createIndex(contacts);
+			//TO DO: put this shit into the right place. \m/
+			if ((contacts != null) && (contacts.size() > 10)) {
+				indexList = createIndex(contacts);
+			}
+		} else if (CURRENT_TASK.equals(GROUPS_TASK)) {
+			setListAdapter(gAdapter);
+			groups = loadGroups(groups, gAdapter);
 		}
+		
 	}
 
 	public void onPause() {
@@ -181,6 +180,7 @@ public class ContactsActivity extends ListActivity implements OnCheckedChangeLis
 		super.onCreate(savedInstanceState);
 		this.setContentView(R.layout.contacts);
 
+		Toast.makeText(this, "Loading contacts... wait", Toast.LENGTH_LONG).show();
 		preferences = PreferenceManager.getDefaultSharedPreferences(this);
 		editor = preferences.edit();
 
@@ -199,7 +199,12 @@ public class ContactsActivity extends ListActivity implements OnCheckedChangeLis
 		searchView.addTextChangedListener(filterTextWatcher);
 
 		mGestureDetector = new GestureDetector(this, new SideIndexGestureListener());
-		Toast.makeText(this, "Loading contacts... wait", Toast.LENGTH_LONG).show();
+		
+		contacts = new ArrayList<Contact>();
+		cAdapter = new ContactsAdapter(contacts, this);
+
+		groups = new ArrayList<Group>();
+		gAdapter = new GroupsAdapter(groups, this);
 	}
 
 	@Override
@@ -229,7 +234,6 @@ public class ContactsActivity extends ListActivity implements OnCheckedChangeLis
 				}
 			}
 		}
-
 	};
 
 	private TreeMap<Integer, String> createIndex(ArrayList<Contact> contactList) {
@@ -304,21 +308,9 @@ public class ContactsActivity extends ListActivity implements OnCheckedChangeLis
 				case R.id.contacts:
 					sideIndex.setVisibility(View.VISIBLE);
 					CURRENT_LIST = CONTACTS_LIST;
-					
-					if (contacts != null) {
-						cAdapter = new ContactsAdapter(contacts, ContactsActivity.this);
-						setListAdapter(cAdapter);
-//						if (dm.isLoadContactsData()) {
-							Toast.makeText(this, "Loading contacts... wait", Toast.LENGTH_SHORT).show();
-							new GetPhoneContactsTask().doInBackground(CONTACTS_TASK);
-//						}
-					} else {
-						Toast.makeText(this, "Loading contacts... wait", Toast.LENGTH_LONG).show();
-						new GetDbContactsTask().doInBackground(CONTACTS_TASK);
-//						if (dm.isLoadContactsData()) {
-							new GetPhoneContactsTask().doInBackground(CONTACTS_TASK);
-//						}
-					}
+					Toast.makeText(this, getString(R.string.waiting_for_contacts_load), Toast.LENGTH_SHORT).show();
+					setListAdapter(cAdapter);
+					contacts = loadContacts(contacts, cAdapter);
 
 					editor.putString("ContactsActivityTask", CONTACTS_TASK);
 					editor.putInt("ContactsActivityList", CONTACTS_LIST);
@@ -327,23 +319,10 @@ public class ContactsActivity extends ListActivity implements OnCheckedChangeLis
 				
 				case R.id.groups:
 					sideIndex.setVisibility(View.GONE);
-					
 					CURRENT_LIST = GROUPS_LIST;
-
-					if (groups != null) {
-						gAdapter = new GroupsAdapter(groups, ContactsActivity.this);
-						setListAdapter(gAdapter);
-//						if (dm.isLoadGroupsData()) {
-							Toast.makeText(this, "Loading groups... wait", Toast.LENGTH_SHORT).show();
-							new GetPhoneContactsTask().doInBackground(GROUPS_TASK);
-//						}
-					} else {
-						Toast.makeText(this, "Loading groups... wait", Toast.LENGTH_LONG).show();
-						new GetDbContactsTask().doInBackground(GROUPS_TASK);
-//						if (dm.isLoadGroupsData()) {
-							new GetPhoneContactsTask().doInBackground(GROUPS_TASK);
-//						}
-					}
+					Toast.makeText(this, getString(R.string.waiting_for_groups_load), Toast.LENGTH_SHORT).show();
+					setListAdapter(gAdapter);
+					groups = loadGroups(groups, gAdapter);
 
 					editor.putString("ContactsActivityTask", GROUPS_TASK);
 					editor.putInt("ContactsActivityList", GROUPS_LIST);
@@ -352,67 +331,31 @@ public class ContactsActivity extends ListActivity implements OnCheckedChangeLis
 			}
 		}
 	}
-
-	class GetDbContactsTask {
-
-		protected String doInBackground(String currentTask) {
-
-			pb.setVisibility(View.VISIBLE);
-			
-			if (currentTask.equals(CONTACTS_TASK)) {
-				contacts = dm.getContactsFromDb("");
-//				dm.setLoadContactsData(false);
-				if (contacts != null) {
-					cAdapter = new ContactsAdapter(contacts, ContactsActivity.this);
-					setListAdapter(cAdapter);
-					new GetPhoneContactsTask().doInBackground(CURRENT_TASK);
-				}
-			} else if (currentTask.equals(GROUPS_TASK)) {
-				groups = dm.getGroupsFromDb();
-//				dm.setLoadGroupsData(false);
-				if (groups != null) {
-					gAdapter = new GroupsAdapter(groups, ContactsActivity.this);
-					setListAdapter(gAdapter);
-					new GetPhoneContactsTask().doInBackground(CURRENT_TASK);
-				}
-			}
-
-			pb.setVisibility(View.GONE);
-			return currentTask;
+	
+	protected ArrayList<Contact> loadContacts(ArrayList<Contact> contacts, ContactsAdapter cAdapter) {
+		if (DataManagement.isLoadContactsData()) {
+			contacts = DataManagement.getInstance(this).getContactsFromRemoteDb(null);
+			DataManagement.getInstance(this).updateContactsAdapter(contacts, cAdapter);
+			return contacts;
+		} else {
+			contacts = DataManagement.getInstance(this).getContactsFromLocalDb("");
+			DataManagement.getInstance(this).updateContactsAdapter(contacts, cAdapter);
+			return contacts;
 		}
-
 	}
-
-	class GetPhoneContactsTask {
-
-		protected String doInBackground(String currentTask) {
-			pb.setVisibility(View.VISIBLE);
-			CURRENT_TASK = currentTask;
-			
-			if (currentTask.equals(CONTACTS_TASK)) {
-				ArrayList<Contact> contacts_ = dm.getContactList(null);
-				if (contacts_ != null)
-					contacts = contacts_;
-					if (contacts != null && CURRENT_LIST == CONTACTS_LIST) {
-						cAdapter.setItems(contacts);
-						cAdapter.notifyDataSetChanged();
-					}
-				} else if (currentTask.equals(GROUPS_TASK)) {
-					ArrayList<Group> groups_ = dm.getGroupList();
-					if (groups_ != null)
-						groups = groups_;
-					if (groups != null && CURRENT_LIST == GROUPS_LIST) {
-						gAdapter.setItems(groups);
-						gAdapter.notifyDataSetChanged();
-					}
-				}
-
-			pb.setVisibility(View.GONE);
-			return currentTask;
-		}
-
+	
+	protected ArrayList<Group> loadGroups(ArrayList<Group> groups, GroupsAdapter gAdapter) {
+//		if (DataManagement.isLoadGroupsData()) {
+			groups = DataManagement.getInstance(this).getGroupsFromRemoteDb();
+			DataManagement.getInstance(this).updateGroupsAdapter(groups, gAdapter);
+			return groups;
+//		} else {
+//			groups = DataManagement.getInstance(this).getGroupsFromLocalDb();
+//			DataManagement.getInstance(this).updateGroupsAdapter(groups, gAdapter);
+//			return groups;
+//		}
 	}
-
+	
 	class SideIndexGestureListener extends GestureDetector.SimpleOnGestureListener {
 
 		@Override
@@ -432,8 +375,9 @@ public class ContactsActivity extends ListActivity implements OnCheckedChangeLis
 			return super.onScroll(e1, e2, distanceX, distanceY);
 		}
 	}
+		
 
-	public void displayListItem(int state) {
+	public void displayListItem (int state) {
 		int itemPosition = 0;
 
 		// compute number of pixels for every side index item
