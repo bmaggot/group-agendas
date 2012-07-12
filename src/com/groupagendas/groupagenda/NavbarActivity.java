@@ -348,7 +348,7 @@ public class NavbarActivity extends Activity {
             progressDialog.setProgress(0);
             progressThread = new ProgressThread(handler);
             progressThread.start();
-    }
+        }
     }
 	
 	// Define the Handler that receives messages from the thread and update the progress
