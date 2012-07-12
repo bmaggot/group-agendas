@@ -70,7 +70,7 @@ public class GroupContactsActivity extends ListActivity {
 		protected ArrayList<Contact> doInBackground(Void... type) {
 			int id = intent.getIntExtra("groupId", 0);
 			String where = ContactsProvider.CMetaData.ContactsMetaData.GROUPS+" LIKE '%="+id+"&%' OR "+ContactsProvider.CMetaData.ContactsMetaData.GROUPS+" LIKE '%="+id+"'";
-			contacts = dm.getContactsFromDb(where);
+			contacts = dm.getContactsFromLocalDb(where);
 			return contacts;
 		}
 

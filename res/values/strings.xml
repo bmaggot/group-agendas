@@ -131,7 +131,7 @@
 	<string name="month">Month</string>
 	<string name="week">Week</string>
 	<string name="day">Day</string>
-	<string name="send_mail">Send mail...</string>
+	<string name="send_mail">Send mail…</string>
 	<string name="whats_new_text">Whats new text</string>
 	<string name="emails">Emails</string>
 	<string name="email1">Email 1</string>
@@ -172,6 +172,8 @@
     <string name="update_contacts_list">Updating Your contacts list</string>
     <string name="update_groups_list">Updating Your groups list</string>
     <string name="update_events_list">Updating Your events list</string>
+    <string name="waiting_for_contacts_load">Loading contacts… wait</string>
+    <string name="waiting_for_groups_load">Loading groups… wait</string>
 
 
 </resources>

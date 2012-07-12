@@ -274,7 +274,7 @@ public class GroupEditActivity extends Activity implements OnClickListener {
 		protected Group doInBackground(Integer... id) {
 			editedGroup = dm.getGroup(GroupEditActivity.this, id[0]);
 
-			ArrayList<Contact> contacts = dm.getContactsFromDb("");
+			ArrayList<Contact> contacts = dm.getContactsFromLocalDb("");
 			getContactsList(contacts, false);
 
 			return editedGroup;
@@ -300,7 +300,7 @@ public class GroupEditActivity extends Activity implements OnClickListener {
 		}
 		@Override
 		protected Void doInBackground(Void... params) {
-			ArrayList<Contact> contacts = dm.getContactsFromDb("");
+			ArrayList<Contact> contacts = dm.getContactsFromLocalDb("");
 			getContactsList(contacts, true);
 			return null;
 		}
