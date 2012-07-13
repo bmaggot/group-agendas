@@ -105,8 +105,6 @@ public class AccountActivity extends Activity implements OnClickListener{
 		dm = DataManagement.getInstance(this);
 		pb = (ProgressBar) findViewById(R.id.progress);
 
-		mAccount = loadAccount();
-		
 		nameView = (EditText) findViewById(R.id.nameView);
 		lastnameView = (EditText) findViewById(R.id.lastnameView);
 
@@ -117,6 +115,7 @@ public class AccountActivity extends Activity implements OnClickListener{
 		// Birthdate
 		birthdateView = (EditText) findViewById(R.id.birthdateView);
 		birthdateButton = (Button) findViewById(R.id.birthdateButton);
+
 		birthdateButton.setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View v) {
@@ -173,6 +172,7 @@ public class AccountActivity extends Activity implements OnClickListener{
 		accountImage.setOnClickListener(this);
 		removeImage = (CheckBox) findViewById(R.id.removeImage);
 		
+		mAccount = loadAccount();		
 	}
 	
 	@Override
@@ -183,7 +183,11 @@ public class AccountActivity extends Activity implements OnClickListener{
 
 	private void feelFields(Account account) {
 		mAccount = account;
-		nameView.setText(account.name);
+		if ((account.name != null) && (!account.name.equals("null"))) {
+			nameView.setText((CharSequence) account.name);
+		} else {
+			nameView.setText("");
+		}
 		lastnameView.setText(account.fullname.replace(account.name + " ", ""));
 
 		if (account.phone1 != null && !account.phone1.equals("null"))
