@@ -72,6 +72,8 @@ public class NavbarActivity extends Activity {
 	private EntryAdapter entryAdapter;
 	
 	private Prefs prefs;
+
+	private ActionItem test;
 	public static boolean showInvites = false;
     
 	@Override
@@ -196,6 +198,19 @@ public class NavbarActivity extends Activity {
 			}
 		});
 		
+		test = new ActionItem();
+		test.setTitle("test");
+		test.setOnClickListener(new OnClickListener() {
+
+			@Override
+			public void onClick(View v) {
+				qa.dismiss();
+				calendarContainer.removeAllViews();
+				mInflater.inflate(R.layout.month_rewrite, calendarContainer);
+				
+			}
+		});
+		
 	}
 	
 	public void onResume() {
@@ -306,6 +321,8 @@ public class NavbarActivity extends Activity {
 					qa.addActionItem(agenda);
 					qa.addActionItem(mini_month);
 					qa.addActionItem(today);
+					qa.addActionItem(test);
+					
 					
 					qa.show();
 					buttonView.setChecked(false);
