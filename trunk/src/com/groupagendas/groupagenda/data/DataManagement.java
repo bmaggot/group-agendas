@@ -90,7 +90,7 @@ public class DataManagement {
 		return Data.get_instance();
 	}
 
-	public Account getAccountFromDb() {
+	public Account getAccountFromLocalDb() {
 		Account u = null;
 
 		Cursor result = Data.getmContext().getContentResolver().query(AccountProvider.AMetaData.AccountMetaData.CONTENT_URI, null, null, null, null);
@@ -237,7 +237,7 @@ public class DataManagement {
 		return success;
 	}
 
-	public Account getAccountInfo() {
+	public Account getAccountFromRemoteDb() {
 		boolean success = false;
 		Account u = null;
 

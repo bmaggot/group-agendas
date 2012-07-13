@@ -214,7 +214,7 @@ public class UpdateService extends Service{
 			
 			switch(needUpdate){
 			case 1:
-				 Account acc = dm.getAccountFromDb();
+				 Account acc = dm.getAccountFromLocalDb();
 				 boolean removeImage = (acc.remove_image == 1)?true:false;
 				 dm.updateAccount(acc, removeImage);
 				break;
