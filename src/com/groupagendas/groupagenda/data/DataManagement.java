@@ -2693,9 +2693,9 @@ public class DataManagement {
 		}
 	}
 	
-	public void updateEventsAdapter(ArrayList<Event> contacts, EventsAdapter eAdapter){
+	public void updateEventsAdapter(ArrayList<Event> events, EventsAdapter eAdapter){
 		if(eAdapter != null){
-			eAdapter.setItems(contacts);
+			eAdapter.setItems(events);
 			eAdapter.notifyDataSetChanged();
 		}
 	}
