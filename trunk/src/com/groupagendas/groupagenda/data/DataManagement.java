@@ -609,6 +609,20 @@ public class DataManagement {
 						int id = Integer.parseInt(profile.getString("user_id"));
 						Data.setToken(token);
 						Data.setUserId(id);
+						
+						//Last login set
+						hc = new DefaultHttpClient();
+						post = new HttpPost(Data.getServerUrl() + "mobile/set_lastlogin");
+
+						reqEntity = new MultipartEntity(HttpMultipartMode.BROWSER_COMPATIBLE);
+
+						reqEntity.addPart("Token", new StringBody(token));
+						
+						post.setEntity(reqEntity);
+
+						rp = hc.execute(post);
+						//
+						
 						//
 						Data.setEmail(email);
 						Data.setPassword(password);
