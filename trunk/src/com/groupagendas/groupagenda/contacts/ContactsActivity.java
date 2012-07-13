@@ -149,9 +149,11 @@ public class ContactsActivity extends ListActivity implements OnCheckedChangeLis
 
 	public void onResume() {
 		super.onResume();
+		LinearLayout sideIndex = (LinearLayout) findViewById(R.id.sideIndex);
 
 		CURRENT_LIST = preferences.getInt("ContactsActivityList", CURRENT_LIST);
 		CURRENT_TASK = preferences.getString("ContactsActivityTask", CURRENT_TASK);
+		sideIndex.setVisibility(View.GONE);
 		
 		if (CURRENT_TASK.equals(CONTACTS_TASK)) {
 			setListAdapter(cAdapter);
@@ -160,6 +162,7 @@ public class ContactsActivity extends ListActivity implements OnCheckedChangeLis
 			//TO DO: put this shit into the right place. \m/
 			if ((contacts != null) && (contacts.size() > 10)) {
 				indexList = createIndex(contacts);
+				sideIndex.setVisibility(View.VISIBLE);
 			}
 		} else if (CURRENT_TASK.equals(GROUPS_TASK)) {
 			setListAdapter(gAdapter);
@@ -303,13 +306,15 @@ public class ContactsActivity extends ListActivity implements OnCheckedChangeLis
 	public void onCheckedChanged(RadioGroup group, int checkedId) {
 		LinearLayout sideIndex = (LinearLayout) findViewById(R.id.sideIndex);
 		if (group == segmentedButtons) {
+			sideIndex.setVisibility(View.GONE);
 			switch (checkedId) {
 				case R.id.contacts:
-					sideIndex.setVisibility(View.VISIBLE);
 					CURRENT_LIST = CONTACTS_LIST;
 //					Toast.makeText(this, getString(R.string.waiting_for_contacts_load), Toast.LENGTH_SHORT).show();
 					setListAdapter(cAdapter);
 					contacts = loadContacts(contacts, cAdapter);
+					if (contacts.size() > 10)
+						sideIndex.setVisibility(View.VISIBLE);
 
 					editor.putString("ContactsActivityTask", CONTACTS_TASK);
 					editor.putInt("ContactsActivityList", CONTACTS_LIST);
@@ -317,7 +322,6 @@ public class ContactsActivity extends ListActivity implements OnCheckedChangeLis
 					break;
 				
 				case R.id.groups:
-					sideIndex.setVisibility(View.GONE);
 					CURRENT_LIST = GROUPS_LIST;
 //					Toast.makeText(this, getString(R.string.waiting_for_groups_load), Toast.LENGTH_SHORT).show();
 					setListAdapter(gAdapter);
