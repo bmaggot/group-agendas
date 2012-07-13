@@ -2680,17 +2680,23 @@ public class DataManagement {
 	}
 	
 	public void updateContactsAdapter(ArrayList<Contact> contacts, ContactsAdapter cAdapter) {
-		cAdapter.setItems(contacts);
-		cAdapter.notifyDataSetChanged();
+		if(cAdapter != null){	
+			cAdapter.setItems(contacts);
+			cAdapter.notifyDataSetChanged();
+		}
 	}
 	
 	public void updateGroupsAdapter(ArrayList<Group> groups, GroupsAdapter gAdapter) {
-		gAdapter.setItems(groups);
-		gAdapter.notifyDataSetChanged();
+		if(gAdapter != null){
+			gAdapter.setItems(groups);
+			gAdapter.notifyDataSetChanged();
+		}
 	}
 	
 	public void updateEventsAdapter(ArrayList<Event> contacts, EventsAdapter eAdapter){
-		eAdapter.setItems(contacts);
-		eAdapter.notifyDataSetChanged();
+		if(eAdapter != null){
+			eAdapter.setItems(contacts);
+			eAdapter.notifyDataSetChanged();
+		}
 	}
 }
