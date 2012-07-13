@@ -90,69 +90,6 @@ public class DataManagement {
 		return Data.get_instance();
 	}
 
-	public Account getAccountFromLocalDb() {
-		Account u = null;
-
-		Cursor result = Data.getmContext().getContentResolver().query(AccountProvider.AMetaData.AccountMetaData.CONTENT_URI, null, null, null, null);
-
-		if (result.moveToFirst()) {
-			u = new Account();
-
-			u.user_id = result.getInt(result.getColumnIndex(AccountProvider.AMetaData.AccountMetaData.A_ID));
-
-			u.name = result.getString(result.getColumnIndex(AccountProvider.AMetaData.AccountMetaData.NAME));
-			u.fullname = result.getString(result.getColumnIndex(AccountProvider.AMetaData.AccountMetaData.FULLNAME));
-
-			u.birthdate = result.getString(result.getColumnIndex(AccountProvider.AMetaData.AccountMetaData.BIRTHDATE));
-			u.sex = result.getString(result.getColumnIndex(AccountProvider.AMetaData.AccountMetaData.SEX));
-
-			u.email = result.getString(result.getColumnIndex(AccountProvider.AMetaData.AccountMetaData.EMAIL));
-			u.email2 = result.getString(result.getColumnIndex(AccountProvider.AMetaData.AccountMetaData.EMAIL2));
-			u.email3 = result.getString(result.getColumnIndex(AccountProvider.AMetaData.AccountMetaData.EMAIL3));
-			u.email4 = result.getString(result.getColumnIndex(AccountProvider.AMetaData.AccountMetaData.EMAIL4));
-			u.phone1 = result.getString(result.getColumnIndex(AccountProvider.AMetaData.AccountMetaData.PHONE1));
-			u.phone2 = result.getString(result.getColumnIndex(AccountProvider.AMetaData.AccountMetaData.PHONE2));
-			u.phone3 = result.getString(result.getColumnIndex(AccountProvider.AMetaData.AccountMetaData.PHONE3));
-
-			final int image = result.getInt(result.getColumnIndex(AccountProvider.AMetaData.AccountMetaData.IMAGE));
-			u.image = image == 1;
-			u.image_url = result.getString(result.getColumnIndex(AccountProvider.AMetaData.AccountMetaData.IMAGE_URL));
-			u.image_thumb_url = result.getString(result.getColumnIndex(AccountProvider.AMetaData.AccountMetaData.IMAGE_THUMB_URL));
-			u.image_bytes = result.getBlob(result.getColumnIndex(AccountProvider.AMetaData.AccountMetaData.IMAGE_BYTES));
-			u.remove_image = result.getInt(result.getColumnIndex(AccountProvider.AMetaData.AccountMetaData.REMOVE_IMAGE));
-
-			u.country = result.getString(result.getColumnIndex(AccountProvider.AMetaData.AccountMetaData.COUNTRY));
-			u.city = result.getString(result.getColumnIndex(AccountProvider.AMetaData.AccountMetaData.CITY));
-			u.street = result.getString(result.getColumnIndex(AccountProvider.AMetaData.AccountMetaData.STREET));
-			u.zip = result.getString(result.getColumnIndex(AccountProvider.AMetaData.AccountMetaData.ZIP));
-
-			u.timezone = result.getString(result.getColumnIndex(AccountProvider.AMetaData.AccountMetaData.TIMEZONE));
-			u.local_time = result.getString(result.getColumnIndex(AccountProvider.AMetaData.AccountMetaData.LOCAL_TIME));
-			u.language = result.getString(result.getColumnIndex(AccountProvider.AMetaData.AccountMetaData.LANGUAGE));
-
-			u.setting_default_view = result
-					.getString(result.getColumnIndex(AccountProvider.AMetaData.AccountMetaData.SETTING_DEFAULT_VIEW));
-			u.setting_date_format = result.getString(result.getColumnIndex(AccountProvider.AMetaData.AccountMetaData.SETTING_DATE_FORMAT));
-			u.setting_ampm = result.getInt(result.getColumnIndex(AccountProvider.AMetaData.AccountMetaData.SETTING_AMPM));
-
-			u.google_calendar_link = result
-					.getString(result.getColumnIndex(AccountProvider.AMetaData.AccountMetaData.GOOGLE_CALENDAR_LINK));
-
-			u.color_my_event = result.getString(result.getColumnIndex(AccountProvider.AMetaData.AccountMetaData.COLOR_MY_EVENT));
-			u.color_attending = result.getString(result.getColumnIndex(AccountProvider.AMetaData.AccountMetaData.COLOR_ATTENDING));
-			u.color_pending = result.getString(result.getColumnIndex(AccountProvider.AMetaData.AccountMetaData.COLOR_PENDING));
-			u.color_invitation = result.getString(result.getColumnIndex(AccountProvider.AMetaData.AccountMetaData.COLOR_INVINTATION));
-			u.color_notes = result.getString(result.getColumnIndex(AccountProvider.AMetaData.AccountMetaData.COLOR_NOTES));
-			u.color_birthday = result.getString(result.getColumnIndex(AccountProvider.AMetaData.AccountMetaData.COLOR_BIRTHDAY));
-
-			u.created = result.getString(result.getColumnIndex(AccountProvider.AMetaData.AccountMetaData.CREATED));
-			u.modified = result.getString(result.getColumnIndex(AccountProvider.AMetaData.AccountMetaData.MODIFIED));
-		}
-		result.close();
-
-		return u;
-	}
-
 	public boolean updateAccount(Account account, boolean removeImage) {
 		boolean success = false;
 
@@ -460,6 +397,69 @@ public class DataManagement {
 		}
 		Data.setAccount(u);
 		Data.setLoadAccountData(false);
+		return u;
+	}
+
+	public Account getAccountFromLocalDb() {
+		Account u = null;
+
+		Cursor result = Data.getmContext().getContentResolver().query(AccountProvider.AMetaData.AccountMetaData.CONTENT_URI, null, null, null, null);
+
+		if (result.moveToFirst()) {
+			u = new Account();
+
+			u.user_id = result.getInt(result.getColumnIndex(AccountProvider.AMetaData.AccountMetaData.A_ID));
+
+			u.name = result.getString(result.getColumnIndex(AccountProvider.AMetaData.AccountMetaData.NAME));
+			u.fullname = result.getString(result.getColumnIndex(AccountProvider.AMetaData.AccountMetaData.FULLNAME));
+
+			u.birthdate = result.getString(result.getColumnIndex(AccountProvider.AMetaData.AccountMetaData.BIRTHDATE));
+			u.sex = result.getString(result.getColumnIndex(AccountProvider.AMetaData.AccountMetaData.SEX));
+
+			u.email = result.getString(result.getColumnIndex(AccountProvider.AMetaData.AccountMetaData.EMAIL));
+			u.email2 = result.getString(result.getColumnIndex(AccountProvider.AMetaData.AccountMetaData.EMAIL2));
+			u.email3 = result.getString(result.getColumnIndex(AccountProvider.AMetaData.AccountMetaData.EMAIL3));
+			u.email4 = result.getString(result.getColumnIndex(AccountProvider.AMetaData.AccountMetaData.EMAIL4));
+			u.phone1 = result.getString(result.getColumnIndex(AccountProvider.AMetaData.AccountMetaData.PHONE1));
+			u.phone2 = result.getString(result.getColumnIndex(AccountProvider.AMetaData.AccountMetaData.PHONE2));
+			u.phone3 = result.getString(result.getColumnIndex(AccountProvider.AMetaData.AccountMetaData.PHONE3));
+
+			final int image = result.getInt(result.getColumnIndex(AccountProvider.AMetaData.AccountMetaData.IMAGE));
+			u.image = image == 1;
+			u.image_url = result.getString(result.getColumnIndex(AccountProvider.AMetaData.AccountMetaData.IMAGE_URL));
+			u.image_thumb_url = result.getString(result.getColumnIndex(AccountProvider.AMetaData.AccountMetaData.IMAGE_THUMB_URL));
+			u.image_bytes = result.getBlob(result.getColumnIndex(AccountProvider.AMetaData.AccountMetaData.IMAGE_BYTES));
+			u.remove_image = result.getInt(result.getColumnIndex(AccountProvider.AMetaData.AccountMetaData.REMOVE_IMAGE));
+
+			u.country = result.getString(result.getColumnIndex(AccountProvider.AMetaData.AccountMetaData.COUNTRY));
+			u.city = result.getString(result.getColumnIndex(AccountProvider.AMetaData.AccountMetaData.CITY));
+			u.street = result.getString(result.getColumnIndex(AccountProvider.AMetaData.AccountMetaData.STREET));
+			u.zip = result.getString(result.getColumnIndex(AccountProvider.AMetaData.AccountMetaData.ZIP));
+
+			u.timezone = result.getString(result.getColumnIndex(AccountProvider.AMetaData.AccountMetaData.TIMEZONE));
+			u.local_time = result.getString(result.getColumnIndex(AccountProvider.AMetaData.AccountMetaData.LOCAL_TIME));
+			u.language = result.getString(result.getColumnIndex(AccountProvider.AMetaData.AccountMetaData.LANGUAGE));
+
+			u.setting_default_view = result
+					.getString(result.getColumnIndex(AccountProvider.AMetaData.AccountMetaData.SETTING_DEFAULT_VIEW));
+			u.setting_date_format = result.getString(result.getColumnIndex(AccountProvider.AMetaData.AccountMetaData.SETTING_DATE_FORMAT));
+			u.setting_ampm = result.getInt(result.getColumnIndex(AccountProvider.AMetaData.AccountMetaData.SETTING_AMPM));
+
+			u.google_calendar_link = result
+					.getString(result.getColumnIndex(AccountProvider.AMetaData.AccountMetaData.GOOGLE_CALENDAR_LINK));
+
+			u.color_my_event = result.getString(result.getColumnIndex(AccountProvider.AMetaData.AccountMetaData.COLOR_MY_EVENT));
+			u.color_attending = result.getString(result.getColumnIndex(AccountProvider.AMetaData.AccountMetaData.COLOR_ATTENDING));
+			u.color_pending = result.getString(result.getColumnIndex(AccountProvider.AMetaData.AccountMetaData.COLOR_PENDING));
+			u.color_invitation = result.getString(result.getColumnIndex(AccountProvider.AMetaData.AccountMetaData.COLOR_INVINTATION));
+			u.color_notes = result.getString(result.getColumnIndex(AccountProvider.AMetaData.AccountMetaData.COLOR_NOTES));
+			u.color_birthday = result.getString(result.getColumnIndex(AccountProvider.AMetaData.AccountMetaData.COLOR_BIRTHDAY));
+
+			u.created = result.getString(result.getColumnIndex(AccountProvider.AMetaData.AccountMetaData.CREATED));
+			u.modified = result.getString(result.getColumnIndex(AccountProvider.AMetaData.AccountMetaData.MODIFIED));
+		}
+		result.close();
+
 		return u;
 	}
 
@@ -1729,196 +1729,6 @@ public class DataManagement {
 	}
 
 	// Events
-	public ArrayList<Event> getEventsFromLocalDb() {
-		Event item;
-		ArrayList<Event> items = new ArrayList<Event>();
-		if (Data.get_prefs().getBoolean("isAgenda", true)) {
-			String where = EventsProvider.EMetaData.EventsMetaData.NEED_UPDATE + " < 3";
-			Cursor result = Data.getmContext().getContentResolver().query(EventsProvider.EMetaData.EventsMetaData.CONTENT_URI, null, where, null,
-					null);
-
-			result.moveToFirst();
-
-			while (!result.isAfterLast()) {
-				item = new Event();
-
-				item.event_id = result.getInt(result.getColumnIndex(EventsProvider.EMetaData.EventsMetaData.E_ID));
-				item.user_id = result.getInt(result.getColumnIndex(EventsProvider.EMetaData.EventsMetaData.USER_ID));
-
-				final int is_sport_event = result.getInt(result.getColumnIndex(EventsProvider.EMetaData.EventsMetaData.IS_SPORTS_EVENT));
-				item.is_sports_event = is_sport_event == 1;
-				item.status = result.getInt(result.getColumnIndex(EventsProvider.EMetaData.EventsMetaData.STATUS));
-				final int is_owner = result.getInt(result.getColumnIndex(EventsProvider.EMetaData.EventsMetaData.IS_OWNER));
-				item.is_owner = is_owner == 1;
-				item.type = result.getString(result.getColumnIndex(EventsProvider.EMetaData.EventsMetaData.TYPE));
-
-				item.creator_fullname = result.getString(result.getColumnIndex(EventsProvider.EMetaData.EventsMetaData.CREATOR_FULLNAME));
-				item.creator_contact_id = result.getInt(result.getColumnIndex(EventsProvider.EMetaData.EventsMetaData.CREATOR_CONTACT_ID));
-
-				item.title = result.getString(result.getColumnIndex(EventsProvider.EMetaData.EventsMetaData.TITLE));
-				item.icon = result.getString(result.getColumnIndex(EventsProvider.EMetaData.EventsMetaData.ICON));
-				item.color = result.getString(result.getColumnIndex(EventsProvider.EMetaData.EventsMetaData.COLOR));
-				item.description_ = result.getString(result.getColumnIndex(EventsProvider.EMetaData.EventsMetaData.DESC));
-
-				item.location = result.getString(result.getColumnIndex(EventsProvider.EMetaData.EventsMetaData.LOCATION));
-				item.accomodation = result.getString(result.getColumnIndex(EventsProvider.EMetaData.EventsMetaData.ACCOMODATION));
-
-				item.cost = result.getString(result.getColumnIndex(EventsProvider.EMetaData.EventsMetaData.COST));
-				item.take_with_you = result.getString(result.getColumnIndex(EventsProvider.EMetaData.EventsMetaData.TAKE_WITH_YOU));
-				item.go_by = result.getString(result.getColumnIndex(EventsProvider.EMetaData.EventsMetaData.GO_BY));
-
-				item.country = result.getString(result.getColumnIndex(EventsProvider.EMetaData.EventsMetaData.COUNTRY));
-				item.city = result.getString(result.getColumnIndex(EventsProvider.EMetaData.EventsMetaData.CITY));
-				item.street = result.getString(result.getColumnIndex(EventsProvider.EMetaData.EventsMetaData.STREET));
-				item.zip = result.getString(result.getColumnIndex(EventsProvider.EMetaData.EventsMetaData.ZIP));
-
-				item.timezone = result.getString(result.getColumnIndex(EventsProvider.EMetaData.EventsMetaData.TIMEZONE));
-				item.time_start = result.getString(result.getColumnIndex(EventsProvider.EMetaData.EventsMetaData.TIME_START));
-				item.time_end = result.getString(result.getColumnIndex(EventsProvider.EMetaData.EventsMetaData.TIME_END));
-				item.time = result.getString(result.getColumnIndex(EventsProvider.EMetaData.EventsMetaData.TIME));
-				item.my_time_start = result.getString(result.getColumnIndex(EventsProvider.EMetaData.EventsMetaData.MY_TIME_START));
-				item.startCalendar = Utils.stringToCalendar(item.my_time_start, Utils.date_format);
-				item.startCalendar.add(Calendar.DATE, -1);
-				item.my_time_end = result.getString(result.getColumnIndex(EventsProvider.EMetaData.EventsMetaData.MY_TIME_END));
-				item.endCalendar = Utils.stringToCalendar(item.my_time_end, Utils.date_format);
-				item.endCalendar.add(Calendar.DATE, 1);
-
-				item.reminder1 = result.getString(result.getColumnIndex(EventsProvider.EMetaData.EventsMetaData.REMINDER1));
-				item.reminder2 = result.getString(result.getColumnIndex(EventsProvider.EMetaData.EventsMetaData.REMINDER2));
-				item.reminder3 = result.getString(result.getColumnIndex(EventsProvider.EMetaData.EventsMetaData.REMINDER3));
-
-				item.created = result.getString(result.getColumnIndex(EventsProvider.EMetaData.EventsMetaData.CREATED));
-				item.modified = result.getString(result.getColumnIndex(EventsProvider.EMetaData.EventsMetaData.MODIFIED));
-
-				item.attendant_1_count = result.getInt(result.getColumnIndex(EventsProvider.EMetaData.EventsMetaData.ATTENDANT_1_COUNT));
-				item.attendant_2_count = result.getInt(result.getColumnIndex(EventsProvider.EMetaData.EventsMetaData.ATTENDANT_2_COUNT));
-				item.attendant_0_count = result.getInt(result.getColumnIndex(EventsProvider.EMetaData.EventsMetaData.ATTENDANT_0_COUNT));
-				item.attendant_4_count = result.getInt(result.getColumnIndex(EventsProvider.EMetaData.EventsMetaData.ATTENDANT_4_COUNT));
-
-				items.add(item);
-				result.moveToNext();
-			}
-			result.close();
-		}
-
-		return getNaviveCalendarEvents(items);
-	}
-
-	public Event getNativeCalendarEvent(int id) {
-		SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-		Event item = new Event();
-
-		Cursor cursor = Data.getmContext().getContentResolver().query(Uri.parse("content://com.android.calendar/events"),
-				new String[] { "_id", "title", "description", "dtstart", "dtend", "eventLocation", "eventTimezone" }, "_id=" + id, null,
-				null);
-
-		if (cursor.moveToFirst()) {
-			item.isNative = true;
-			item.is_owner = false;
-			item.type = "p";
-			item.status = 1;
-
-			item.event_id = cursor.getInt(0);
-			item.title = cursor.getString(1);
-			item.description_ = cursor.getString(2);
-			item.timezone = cursor.getString(6);
-
-			Date dt = new Date();
-			dt.setTime(cursor.getLong(3));
-			item.my_time_start = formatter.format(dt);
-
-			dt.setTime(cursor.getLong(4));
-			item.my_time_end = formatter.format(dt);
-		}
-
-		return item;
-	}
-
-	public Cursor getNativeCalendars() {
-		Cursor cursor = Data.getmContext().getContentResolver().query(Uri.parse("content://com.android.calendar/calendars"),
-				(new String[] { "_id", "displayName" }), null, null, null);
-		if (cursor != null) {
-			cursor.moveToFirst();
-		}
-		return cursor;
-	}
-
-	public ArrayList<Event> getNaviveCalendarEvents(ArrayList<Event> events) {
-		SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-		Cursor calendars = getNativeCalendars();
-
-		if (calendars != null) {
-			while (!calendars.isAfterLast()) {
-				String calendar_id = calendars.getString(0);
-				boolean isNative = Data.get_prefs().getBoolean("isNative_" + calendar_id, false);
-
-				if (isNative) {
-					String where = "calendar_id=" + calendar_id;
-					Cursor cursor = Data.getmContext().getContentResolver().query(Uri.parse("content://com.android.calendar/events"),
-							new String[] { "_id", "title", "description", "dtstart", "dtend", "eventLocation", "eventTimezone" }, where,
-							null, null);
-
-					cursor.moveToFirst();
-					while (!cursor.isAfterLast()) {
-						final Event item = new Event();
-
-						item.isNative = true;
-						item.is_owner = false;
-						item.type = "p";
-						item.status = 1;
-
-						item.event_id = cursor.getInt(0);
-						item.title = cursor.getString(1);
-						item.description_ = cursor.getString(2);
-						item.timezone = cursor.getString(6);
-
-						Date dt = new Date();
-						dt.setTime(cursor.getLong(3));
-						item.startCalendar = Calendar.getInstance();
-						item.startCalendar.setTime(dt);
-						item.my_time_start = formatter.format(dt);
-
-						long endLong = cursor.getLong(4);
-						item.endCalendar = Calendar.getInstance();
-						if (endLong > 0) {
-							dt.setTime(endLong);
-							item.endCalendar.setTime(dt);
-						} else {
-							dt.setTime(cursor.getLong(3));
-							item.endCalendar.setTime(dt);
-							item.endCalendar.add(Calendar.HOUR_OF_DAY, 1);
-						}
-						item.my_time_end = formatter.format(dt);
-
-						events.add(item);
-						cursor.moveToNext();
-					}
-				}
-
-				calendars.moveToNext();
-			}
-		}
-		Data.setEvents(events);
-		return events;
-	}
-
-	public ArrayList<CEvent> getCalendarEvents() {
-		CEvent citem;
-		ArrayList<CEvent> citems = new ArrayList<CEvent>();
-		ArrayList<Event> items = new ArrayList<Event>();
-
-		items = getEventsFromLocalDb();
-
-		for (int i = 0, l = items.size(); i < l; i++) {
-			final Event item = items.get(i);
-
-			citem = EventsHelper.generateEvent(item);
-			citems.add(citem);
-		}
-
-		return citems;
-	}
-
 	public ArrayList<Event> getEventsFromRemoteDb(String eventCategory) {
 		boolean success = false;
 		ArrayList<Event> events = new ArrayList<Event>();
@@ -2177,6 +1987,196 @@ public class DataManagement {
 		}
 		Data.setLoadEventsData(false);
 		return getNaviveCalendarEvents(events);
+	}
+
+	public ArrayList<Event> getEventsFromLocalDb() {
+		Event item;
+		ArrayList<Event> items = new ArrayList<Event>();
+		if (Data.get_prefs().getBoolean("isAgenda", true)) {
+			String where = EventsProvider.EMetaData.EventsMetaData.NEED_UPDATE + " < 3";
+			Cursor result = Data.getmContext().getContentResolver().query(EventsProvider.EMetaData.EventsMetaData.CONTENT_URI, null, where, null,
+					null);
+
+			result.moveToFirst();
+
+			while (!result.isAfterLast()) {
+				item = new Event();
+
+				item.event_id = result.getInt(result.getColumnIndex(EventsProvider.EMetaData.EventsMetaData.E_ID));
+				item.user_id = result.getInt(result.getColumnIndex(EventsProvider.EMetaData.EventsMetaData.USER_ID));
+
+				final int is_sport_event = result.getInt(result.getColumnIndex(EventsProvider.EMetaData.EventsMetaData.IS_SPORTS_EVENT));
+				item.is_sports_event = is_sport_event == 1;
+				item.status = result.getInt(result.getColumnIndex(EventsProvider.EMetaData.EventsMetaData.STATUS));
+				final int is_owner = result.getInt(result.getColumnIndex(EventsProvider.EMetaData.EventsMetaData.IS_OWNER));
+				item.is_owner = is_owner == 1;
+				item.type = result.getString(result.getColumnIndex(EventsProvider.EMetaData.EventsMetaData.TYPE));
+
+				item.creator_fullname = result.getString(result.getColumnIndex(EventsProvider.EMetaData.EventsMetaData.CREATOR_FULLNAME));
+				item.creator_contact_id = result.getInt(result.getColumnIndex(EventsProvider.EMetaData.EventsMetaData.CREATOR_CONTACT_ID));
+
+				item.title = result.getString(result.getColumnIndex(EventsProvider.EMetaData.EventsMetaData.TITLE));
+				item.icon = result.getString(result.getColumnIndex(EventsProvider.EMetaData.EventsMetaData.ICON));
+				item.color = result.getString(result.getColumnIndex(EventsProvider.EMetaData.EventsMetaData.COLOR));
+				item.description_ = result.getString(result.getColumnIndex(EventsProvider.EMetaData.EventsMetaData.DESC));
+
+				item.location = result.getString(result.getColumnIndex(EventsProvider.EMetaData.EventsMetaData.LOCATION));
+				item.accomodation = result.getString(result.getColumnIndex(EventsProvider.EMetaData.EventsMetaData.ACCOMODATION));
+
+				item.cost = result.getString(result.getColumnIndex(EventsProvider.EMetaData.EventsMetaData.COST));
+				item.take_with_you = result.getString(result.getColumnIndex(EventsProvider.EMetaData.EventsMetaData.TAKE_WITH_YOU));
+				item.go_by = result.getString(result.getColumnIndex(EventsProvider.EMetaData.EventsMetaData.GO_BY));
+
+				item.country = result.getString(result.getColumnIndex(EventsProvider.EMetaData.EventsMetaData.COUNTRY));
+				item.city = result.getString(result.getColumnIndex(EventsProvider.EMetaData.EventsMetaData.CITY));
+				item.street = result.getString(result.getColumnIndex(EventsProvider.EMetaData.EventsMetaData.STREET));
+				item.zip = result.getString(result.getColumnIndex(EventsProvider.EMetaData.EventsMetaData.ZIP));
+
+				item.timezone = result.getString(result.getColumnIndex(EventsProvider.EMetaData.EventsMetaData.TIMEZONE));
+				item.time_start = result.getString(result.getColumnIndex(EventsProvider.EMetaData.EventsMetaData.TIME_START));
+				item.time_end = result.getString(result.getColumnIndex(EventsProvider.EMetaData.EventsMetaData.TIME_END));
+				item.time = result.getString(result.getColumnIndex(EventsProvider.EMetaData.EventsMetaData.TIME));
+				item.my_time_start = result.getString(result.getColumnIndex(EventsProvider.EMetaData.EventsMetaData.MY_TIME_START));
+				item.startCalendar = Utils.stringToCalendar(item.my_time_start, Utils.date_format);
+				item.startCalendar.add(Calendar.DATE, -1);
+				item.my_time_end = result.getString(result.getColumnIndex(EventsProvider.EMetaData.EventsMetaData.MY_TIME_END));
+				item.endCalendar = Utils.stringToCalendar(item.my_time_end, Utils.date_format);
+				item.endCalendar.add(Calendar.DATE, 1);
+
+				item.reminder1 = result.getString(result.getColumnIndex(EventsProvider.EMetaData.EventsMetaData.REMINDER1));
+				item.reminder2 = result.getString(result.getColumnIndex(EventsProvider.EMetaData.EventsMetaData.REMINDER2));
+				item.reminder3 = result.getString(result.getColumnIndex(EventsProvider.EMetaData.EventsMetaData.REMINDER3));
+
+				item.created = result.getString(result.getColumnIndex(EventsProvider.EMetaData.EventsMetaData.CREATED));
+				item.modified = result.getString(result.getColumnIndex(EventsProvider.EMetaData.EventsMetaData.MODIFIED));
+
+				item.attendant_1_count = result.getInt(result.getColumnIndex(EventsProvider.EMetaData.EventsMetaData.ATTENDANT_1_COUNT));
+				item.attendant_2_count = result.getInt(result.getColumnIndex(EventsProvider.EMetaData.EventsMetaData.ATTENDANT_2_COUNT));
+				item.attendant_0_count = result.getInt(result.getColumnIndex(EventsProvider.EMetaData.EventsMetaData.ATTENDANT_0_COUNT));
+				item.attendant_4_count = result.getInt(result.getColumnIndex(EventsProvider.EMetaData.EventsMetaData.ATTENDANT_4_COUNT));
+
+				items.add(item);
+				result.moveToNext();
+			}
+			result.close();
+		}
+
+		return getNaviveCalendarEvents(items);
+	}
+
+	public Event getNativeCalendarEvent(int id) {
+		SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+		Event item = new Event();
+
+		Cursor cursor = Data.getmContext().getContentResolver().query(Uri.parse("content://com.android.calendar/events"),
+				new String[] { "_id", "title", "description", "dtstart", "dtend", "eventLocation", "eventTimezone" }, "_id=" + id, null,
+				null);
+
+		if (cursor.moveToFirst()) {
+			item.isNative = true;
+			item.is_owner = false;
+			item.type = "p";
+			item.status = 1;
+
+			item.event_id = cursor.getInt(0);
+			item.title = cursor.getString(1);
+			item.description_ = cursor.getString(2);
+			item.timezone = cursor.getString(6);
+
+			Date dt = new Date();
+			dt.setTime(cursor.getLong(3));
+			item.my_time_start = formatter.format(dt);
+
+			dt.setTime(cursor.getLong(4));
+			item.my_time_end = formatter.format(dt);
+		}
+
+		return item;
+	}
+
+	public Cursor getNativeCalendars() {
+		Cursor cursor = Data.getmContext().getContentResolver().query(Uri.parse("content://com.android.calendar/calendars"),
+				(new String[] { "_id", "displayName" }), null, null, null);
+		if (cursor != null) {
+			cursor.moveToFirst();
+		}
+		return cursor;
+	}
+
+	public ArrayList<Event> getNaviveCalendarEvents(ArrayList<Event> events) {
+		SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+		Cursor calendars = getNativeCalendars();
+
+		if (calendars != null) {
+			while (!calendars.isAfterLast()) {
+				String calendar_id = calendars.getString(0);
+				boolean isNative = Data.get_prefs().getBoolean("isNative_" + calendar_id, false);
+
+				if (isNative) {
+					String where = "calendar_id=" + calendar_id;
+					Cursor cursor = Data.getmContext().getContentResolver().query(Uri.parse("content://com.android.calendar/events"),
+							new String[] { "_id", "title", "description", "dtstart", "dtend", "eventLocation", "eventTimezone" }, where,
+							null, null);
+
+					cursor.moveToFirst();
+					while (!cursor.isAfterLast()) {
+						final Event item = new Event();
+
+						item.isNative = true;
+						item.is_owner = false;
+						item.type = "p";
+						item.status = 1;
+
+						item.event_id = cursor.getInt(0);
+						item.title = cursor.getString(1);
+						item.description_ = cursor.getString(2);
+						item.timezone = cursor.getString(6);
+
+						Date dt = new Date();
+						dt.setTime(cursor.getLong(3));
+						item.startCalendar = Calendar.getInstance();
+						item.startCalendar.setTime(dt);
+						item.my_time_start = formatter.format(dt);
+
+						long endLong = cursor.getLong(4);
+						item.endCalendar = Calendar.getInstance();
+						if (endLong > 0) {
+							dt.setTime(endLong);
+							item.endCalendar.setTime(dt);
+						} else {
+							dt.setTime(cursor.getLong(3));
+							item.endCalendar.setTime(dt);
+							item.endCalendar.add(Calendar.HOUR_OF_DAY, 1);
+						}
+						item.my_time_end = formatter.format(dt);
+
+						events.add(item);
+						cursor.moveToNext();
+					}
+				}
+
+				calendars.moveToNext();
+			}
+		}
+		Data.setEvents(events);
+		return events;
+	}
+
+	public ArrayList<CEvent> getCalendarEvents() {
+		CEvent citem;
+		ArrayList<CEvent> citems = new ArrayList<CEvent>();
+		ArrayList<Event> items = new ArrayList<Event>();
+
+		items = getEventsFromLocalDb();
+
+		for (int i = 0, l = items.size(); i < l; i++) {
+			final Event item = items.get(i);
+
+			citem = EventsHelper.generateEvent(item);
+			citems.add(citem);
+		}
+
+		return citems;
 	}
 
 	public Event getEventFromDb(int event_id) {
