@@ -18,6 +18,8 @@ import az.mecid.android.QuickAction;
 
 import com.groupagendas.groupagenda.NavbarActivity;
 import com.groupagendas.groupagenda.R;
+import com.groupagendas.groupagenda.contacts.Contact;
+import com.groupagendas.groupagenda.contacts.ContactsAdapter;
 import com.groupagendas.groupagenda.data.DataManagement;
 import com.groupagendas.groupagenda.settings.SettingsActivity;
 import com.groupagendas.groupagenda.utils.AgendaUtils;
@@ -62,7 +64,7 @@ public class EventsActivity extends ListActivity {
 		radioButton.setChecked(false);
 		radioButton.setOnCheckedChangeListener(btnNavBarOnCheckedChangeListener);
 
-		new GetEventsFromDBTask().execute();
+		eventsList = loadEvents(eventsList, eventsAdapter);
 	}
 
 	@Override
@@ -75,6 +77,9 @@ public class EventsActivity extends ListActivity {
 		dm = DataManagement.getInstance(this);
 
 		topView = (TextView) findViewById(R.id.topText);
+		
+		eventsList = new ArrayList<Event>();
+		setListAdapter(eventsAdapter);
 
 	}
 
@@ -252,60 +257,34 @@ public class EventsActivity extends ListActivity {
 		}
 	};
 
-	class GetEventsFromDBTask extends AsyncTask<Void, Void, ArrayList<Event>> {
-		protected void onPreExecute() {
-			pb.setVisibility(View.VISIBLE);
-			super.onPreExecute();
-		}
-
-		@Override
-		protected ArrayList<Event> doInBackground(Void... arg0) {
-			return AgendaUtils.getActualEvents(EventsActivity.this, dm.getEventsFromDb());
-		}
-
-		protected void onPostExecute(ArrayList<Event> result) {
+	protected ArrayList<Event> loadEvents(ArrayList<Event> events, EventsAdapter eAdapter) {
+		if (DataManagement.isLoadEventsData()) {
+			ArrayList<Event> result = DataManagement.getInstance(this).getEventsFromRemoteDb("");
 			if (!NavbarActivity.showInvites) {
-				eventsList = result;
+				events = result;
 			} else {
-				eventsList = new ArrayList<Event>();
+				events = new ArrayList<Event>();
 				for (Event event : result) {
 					if (event.status == 4) {
-						eventsList.add(event);
+						events.add(event);
 					}
 				}
 			}
-			eventsAdapter = new EventsAdapter(eventsList, EventsActivity.this);
-			setListAdapter(eventsAdapter);
-			new GetEventsTask().execute();
+
 			if (NavbarActivity.showInvites) {
 				openNewInvites();
 			}
-			super.onPostExecute(result);
+			
+			DataManagement.getInstance(this).updateEventsAdapter(events, eAdapter);
+			return events;
+		} else {
+			events = AgendaUtils.getActualEvents(EventsActivity.this, dm.getEventsFromLocalDb());
+			if (events.size() > 0)
+				DataManagement.getInstance(this).updateEventsAdapter(events, eAdapter);
+			return events;
 		}
 	}
-
-	class GetEventsTask extends AsyncTask<Void, Void, ArrayList<Event>> {
-
-		protected void onPreExecute() {
-			pb.setVisibility(View.VISIBLE);
-			super.onPreExecute();
-		}
-
-		protected ArrayList<Event> doInBackground(Void... type) {
-			return AgendaUtils.getActualEvents(EventsActivity.this, dm.getEventList(""));
-		}
-
-		protected void onPostExecute(ArrayList<Event> result) {
-			if (result.size() > 0) {
-				eventsAdapter.setItems(result);
-				eventsAdapter.notifyDataSetChanged();
-			}
-			pb.setVisibility(View.GONE);
-			super.onPostExecute(result);
-		}
-
-	}
-
+	
 	private void changeTitle(String text) {
 		topView.setText(text);
 	}

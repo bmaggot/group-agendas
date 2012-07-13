@@ -92,7 +92,7 @@ public class CalendarYear {
 		@Override
 		protected ArrayList<Event> doInBackground(Void... params) {
 			if (mEvents == null) {
-				mEvents = dm.getEventsFromDb();
+				mEvents = dm.getEventsFromLocalDb();
 			}
 			return mEvents;
 		}
