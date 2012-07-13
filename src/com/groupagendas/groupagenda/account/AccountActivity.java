@@ -395,11 +395,11 @@ public class AccountActivity extends Activity implements OnClickListener{
 		Account acc = new Account();
 		
 		if (DataManagement.isLoadAccountData()) {
-			acc = dm.getAccountInfo();
+			acc = dm.getAccountFromRemoteDb();
 			if (acc != null)
 				feelFields(acc);
 		} else {
-			acc = dm.getAccountFromDb();
+			acc = dm.getAccountFromLocalDb();
 			if (acc != null)
 				feelFields(acc);
 		}

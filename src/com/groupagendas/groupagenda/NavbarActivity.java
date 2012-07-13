@@ -427,7 +427,7 @@ public class NavbarActivity extends Activity {
             mHandler.sendMessage(msg);
             
             // Load account
-            dm.getAccountInfo();
+            dm.getAccountFromRemoteDb();
             total = 40;
             msg = mHandler.obtainMessage();
             msg.arg1 = total;

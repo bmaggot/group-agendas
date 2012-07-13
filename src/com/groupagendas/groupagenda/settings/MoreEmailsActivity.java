@@ -175,7 +175,7 @@ public class MoreEmailsActivity extends Activity{
 		}
 
 		protected Account doInBackground(Void... args) {
-			return dm.getAccountFromDb();
+			return dm.getAccountFromLocalDb();
 		}
 
 		protected void onPostExecute(Account account) {
@@ -195,7 +195,7 @@ public class MoreEmailsActivity extends Activity{
 		}
 
 		protected Account doInBackground(Void... args) {
-			return dm.getAccountInfo();
+			return dm.getAccountFromRemoteDb();
 		}
 
 		protected void onPostExecute(Account account) {
