@@ -1,6 +1,8 @@
 package com.groupagendas.groupagenda;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 
 import android.app.Activity;
 import android.app.Dialog;
@@ -16,11 +18,14 @@ import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.widget.Button;
 import android.widget.CompoundButton;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.RadioButton;
+import android.widget.TextView;
 import android.widget.Toast;
 import at.bartinger.list.item.EntryAdapter;
 import at.bartinger.list.item.EntryItem;
@@ -32,6 +37,9 @@ import az.mecid.android.QuickAction;
 import com.bog.calendar.app.model.CalendarDay;
 import com.bog.calendar.app.model.CalendarMonth;
 import com.bog.calendar.app.model.CalendarYear;
+import com.bog.calendar.app.model.MonthRewrite;
+import com.bog.calendar.app.ui.CalendarView;
+import com.bog.calendar.app.ui.CalendarViewRewrite;
 import com.groupagendas.groupagenda.account.AccountProvider;
 import com.groupagendas.groupagenda.contacts.ContactsActivity;
 import com.groupagendas.groupagenda.contacts.ContactsProvider;
@@ -46,6 +54,8 @@ import com.groupagendas.groupagenda.utils.Prefs;
 import com.groupagendas.groupagenda.utils.Utils;
 
 public class NavbarActivity extends Activity {
+	
+	private final int DEFAULT_FIRST_DAY_OF_WEEK = Calendar.MONDAY;
 	
 	private DataManagement dm;
 	
@@ -71,6 +81,11 @@ public class NavbarActivity extends Activity {
 	private EditText searchView;
 	private EntryAdapter entryAdapter;
 	
+	private Calendar currentDate = Calendar.getInstance();
+	private Calendar selectedDate = Calendar.getInstance();
+	
+	private String[] month_names;
+	
 	private Prefs prefs;
 
 	private ActionItem test;
@@ -84,6 +99,7 @@ public class NavbarActivity extends Activity {
 		mInflater = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 		
 		calendarContainer = (LinearLayout) findViewById(R.id.calendarContainer);
+		month_names = getResources().getStringArray(R.array.month_names);
 		
 		dm = DataManagement.getInstance(this);
 		
@@ -203,16 +219,55 @@ public class NavbarActivity extends Activity {
 		test.setOnClickListener(new OnClickListener() {
 
 			@Override
-			public void onClick(View v) {
+			public void onClick(View v) {				
 				qa.dismiss();
 				calendarContainer.removeAllViews();
-				mInflater.inflate(R.layout.month_rewrite, calendarContainer);
-				
+				initMonthView();
 			}
 		});
 		
 	}
 	
+	protected void initMonthView() {
+		mInflater.inflate(R.layout.month_rewrite, calendarContainer);
+		selectedDate.setTimeInMillis(currentDate.getTimeInMillis());
+		setMonthViewTitle(currentDate);
+		
+		ImageView prevButton = (ImageView) this.findViewById(R.id.prev_month_button);
+		ImageView nextButton = (ImageView) this.findViewById(R.id.next_month_button);
+		
+		prevButton.setOnClickListener(new OnClickListener() {
+			
+			@Override
+			public void onClick(View v) {
+				selectedDate.add(Calendar.MONTH, -1);
+				setMonthViewTitle(selectedDate);
+//				TODO get events
+//				TODO update calendar view
+				
+			}
+		});
+		nextButton.setOnClickListener(new OnClickListener() {
+			
+			@Override
+			public void onClick(View v) {
+				selectedDate.add(Calendar.MONTH, 1);
+				setMonthViewTitle(selectedDate);
+//				TODO get events
+//				TODO update calendar view
+			}
+		});
+		
+		CalendarViewRewrite calendarView = (CalendarViewRewrite)this.findViewById(R.id.calendar_view_rewrite);
+		
+	}
+
+	protected void setMonthViewTitle(Calendar date) {
+		TextView top_panel_title = (TextView) this.findViewById(R.id.top_panel_title);
+		top_panel_title.setText(month_names[date.get(Calendar.MONTH)] + " " + date.get(Calendar.YEAR));
+		
+	}
+
 	public void onResume() {
 		super.onResume();
 		RadioButton radioButton;
@@ -231,6 +286,8 @@ public class NavbarActivity extends Activity {
 		radioButton = (RadioButton) findViewById(R.id.btnNewevent);
 		radioButton.setChecked(false);
 		radioButton.setOnCheckedChangeListener(btnNavBarOnCheckedChangeListener);
+		
+		currentDate = Calendar.getInstance();
 		
 		// settings month view
 		prefs = new Prefs(this);
