@@ -65,7 +65,9 @@ public class EventsAdapter extends BaseAdapter implements Filterable{
 		holder.date.setText(dtUtils.formatDateTime(event.my_time_start));
 		// type
 		StringBuilder sb = new StringBuilder(event.type).append("_type");
-		holder.type.setText(mContext.getResources().getIdentifier(sb.toString(), "string", mContext.getPackageName()));
+		if(mContext.getResources().getIdentifier(sb.toString(), "string", mContext.getPackageName()) != 0){
+			holder.type.setText(mContext.getResources().getIdentifier(sb.toString(), "string", mContext.getPackageName()));
+		}
 		
 		if(event.is_owner){
 			holder.creator.setText(mContext.getString(R.string.you));
