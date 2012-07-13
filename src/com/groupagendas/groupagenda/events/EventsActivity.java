@@ -64,6 +64,7 @@ public class EventsActivity extends ListActivity {
 		radioButton.setChecked(false);
 		radioButton.setOnCheckedChangeListener(btnNavBarOnCheckedChangeListener);
 
+		setListAdapter(eventsAdapter);
 		eventsList = loadEvents(eventsList, eventsAdapter);
 	}
 
@@ -79,8 +80,7 @@ public class EventsActivity extends ListActivity {
 		topView = (TextView) findViewById(R.id.topText);
 		
 		eventsList = new ArrayList<Event>();
-		setListAdapter(eventsAdapter);
-
+		eventsAdapter = new EventsAdapter(eventsList, this);
 	}
 
 	@Override
