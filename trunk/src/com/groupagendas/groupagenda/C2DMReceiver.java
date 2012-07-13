@@ -77,7 +77,7 @@ public class C2DMReceiver extends C2DMBaseReceiver {
 			Intent notificationIntent = new Intent(context, EventsActivity.class);
 			NavbarActivity.showInvites = true;
 			if (getEventById(rel_id, context) == null) {
-				DataManagement.getInstance(context).getEventList("");
+				DataManagement.getInstance(context).getEventsFromRemoteDb("");
 			}
 
 			com.groupagendas.groupagenda.events.Event event = DataManagement.getInstance(context).getEventFromDb(Integer.parseInt(rel_id));
@@ -103,7 +103,7 @@ public class C2DMReceiver extends C2DMBaseReceiver {
 
 	public static com.groupagendas.groupagenda.events.Event getEventById(String rel_id, Context context) {
 		ArrayList<com.groupagendas.groupagenda.events.Event> allEvents = AgendaUtils.getActualEvents(context,
-				DataManagement.getInstance(context).getEventsFromDb());
+				DataManagement.getInstance(context).getEventsFromLocalDb());
 		for (com.groupagendas.groupagenda.events.Event event : allEvents) {
 			if (event.event_id == Integer.parseInt(rel_id)) {
 				return event;

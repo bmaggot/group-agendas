@@ -104,7 +104,7 @@ public class CalendarDay implements OnClickListener {
 		}
 		@Override
 		protected List<CEvent> doInBackground(Void... params) {
-			return getActualEvents(dm.getEventsFromDb());
+			return getActualEvents(dm.getEventsFromLocalDb());
 		}
 		
 		@Override

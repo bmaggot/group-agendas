@@ -241,7 +241,7 @@ public class NavbarActivity extends Activity {
 		@Override
 		protected ArrayList<Item> doInBackground(Void... arg0) {
 			ArrayList<Item> items = new ArrayList<Item>();
-			ArrayList<Event> events = AgendaUtils.getActualEvents(NavbarActivity.this, dm.getEventsFromDb());
+			ArrayList<Event> events = AgendaUtils.getActualEvents(NavbarActivity.this, dm.getEventsFromLocalDb());
 			
 			String time = "1970-01-01";
 			
@@ -431,7 +431,7 @@ public class NavbarActivity extends Activity {
             mHandler.sendMessage(msg);
             
             // Load events
-            dm.getEventList("");
+            dm.getEventsFromRemoteDb("");
             total = 100;
             msg = mHandler.obtainMessage();
             msg.arg1 = total;

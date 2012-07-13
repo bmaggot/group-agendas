@@ -1715,7 +1715,7 @@ public class DataManagement {
 	}
 
 	// Events
-	public ArrayList<Event> getEventsFromDb() {
+	public ArrayList<Event> getEventsFromLocalDb() {
 		Event item;
 		ArrayList<Event> items = new ArrayList<Event>();
 		if (Data.get_prefs().getBoolean("isAgenda", true)) {
@@ -1893,7 +1893,7 @@ public class DataManagement {
 		ArrayList<CEvent> citems = new ArrayList<CEvent>();
 		ArrayList<Event> items = new ArrayList<Event>();
 
-		items = getEventsFromDb();
+		items = getEventsFromLocalDb();
 
 		for (int i = 0, l = items.size(); i < l; i++) {
 			final Event item = items.get(i);
@@ -1905,7 +1905,7 @@ public class DataManagement {
 		return citems;
 	}
 
-	public ArrayList<Event> getEventList(String eventCategory) {
+	public ArrayList<Event> getEventsFromRemoteDb(String eventCategory) {
 		boolean success = false;
 		ArrayList<Event> events = new ArrayList<Event>();
 		Event event = null;
@@ -2526,7 +2526,7 @@ public class DataManagement {
 						Data.setERROR(errObj.getString("reason"));
 						Log.e("removeEvent - error: ", Data.getERROR());
 					} else {
-						this.getEventList("");
+						this.getEventsFromRemoteDb("");
 					}
 				}
 			}
