@@ -105,9 +105,8 @@ public class AccountActivity extends Activity implements OnClickListener{
 		dm = DataManagement.getInstance(this);
 		pb = (ProgressBar) findViewById(R.id.progress);
 
-//		if(dm.isLoadAccountData()){
-			new GetAccountFromDBTask().execute();
-//		}
+		mAccount = loadAccount();
+		
 		nameView = (EditText) findViewById(R.id.nameView);
 		lastnameView = (EditText) findViewById(R.id.lastnameView);
 
@@ -179,9 +178,7 @@ public class AccountActivity extends Activity implements OnClickListener{
 	@Override
 	public void onResume() {
 		super.onResume();
-//		if(dm.isLoadAccountData()){
-			new GetAccountFromDBTask().execute();
-//		}
+		mAccount = loadAccount();		
 	}
 
 	private void feelFields(Account account) {
@@ -394,51 +391,20 @@ public class AccountActivity extends Activity implements OnClickListener{
 		birthdateView.setText(new StringBuilder().append(mYear).append("-").append(mMonth + 1).append("-").append(mDay));
 	}
 	
-	class GetAccountFromDBTask extends AsyncTask<Void, Account, Account> {
-
-		protected void onPreExecute() {
-
-			pb.setVisibility(View.VISIBLE);
-
-			super.onPreExecute();
+	protected Account loadAccount () {
+		Account acc = new Account();
+		
+		if (DataManagement.isLoadAccountData()) {
+			acc = dm.getAccountInfo();
+			if (acc != null)
+				feelFields(acc);
+		} else {
+			acc = dm.getAccountFromDb();
+			if (acc != null)
+				feelFields(acc);
 		}
-
-		protected Account doInBackground(Void... args) {
-			return dm.getAccountFromDb();
-		}
-
-		protected void onPostExecute(Account account) {
-			if (account != null)
-				feelFields(account);
-			new GetAccountTask().execute();
-			super.onPostExecute(account);
-//			dm.setLoadAccountData(false);
-		}
-
-	}
-
-	class GetAccountTask extends AsyncTask<Void, Account, Account> {
-
-		protected void onPreExecute() {
-			pb.setVisibility(View.VISIBLE);
-			super.onPreExecute();
-		}
-
-		protected Account doInBackground(Void... args) {
-			return dm.getAccountInfo();
-		}
-
-		protected void onPostExecute(Account account) {
-			if (account != null) {
-				feelFields(account);
-			} else {
-				// TODO show error
-			}
-
-			pb.setVisibility(View.GONE);
-			super.onPostExecute(account);
-		}
-
+			
+		return acc;		
 	}
 	
 	class EditAccountTask extends AsyncTask<Void, Boolean, Boolean>{
@@ -465,6 +431,7 @@ public class AccountActivity extends Activity implements OnClickListener{
 			pb.setVisibility(View.GONE);
 		}
 	}
+	
 	
 	@Override
 	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
