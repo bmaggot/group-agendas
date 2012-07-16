@@ -590,7 +590,7 @@ public class DataManagement {
 		try {
 			HttpClient hc = new DefaultHttpClient();
 			HttpPost post = new HttpPost(Data.getServerUrl() + "mobile/login");
-			post.setHeader("User-Agent", "AndroidPhone "+android.os.Build.VERSION.RELEASE);
+			post.setHeader("User-Agent", "Linux; AndroidPhone "+android.os.Build.VERSION.RELEASE);
 			post.setHeader("Accept", "*/*");
 //			post.setHeader("Content-Type", "text/vnd.ms-sync.wbxml");
 
