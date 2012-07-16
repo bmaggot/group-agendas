@@ -57,8 +57,6 @@ public class AccountActivity extends Activity implements OnClickListener{
 	private DataManagement dm;
 	private ProgressBar pb;
 	
-	private Account mAccount;
-	
 	// Fields
 	private EditText nameView;
 	private EditText lastnameView;
@@ -172,17 +170,19 @@ public class AccountActivity extends Activity implements OnClickListener{
 		accountImage.setOnClickListener(this);
 		removeImage = (CheckBox) findViewById(R.id.removeImage);
 		
-		mAccount = loadAccount();		
+		if(dm.loadAccount() != null)
+			feelFields();
 	}
 	
 	@Override
 	public void onResume() {
 		super.onResume();
-		mAccount = loadAccount();		
+		if(dm.loadAccount() != null)
+			feelFields();
 	}
 
-	private void feelFields(Account account) {
-		mAccount = account;
+	private void feelFields() {
+		Account account = dm.getAccount();
 		if ((account.name != null) && (!account.name.equals("null"))) {
 			nameView.setText((CharSequence) account.name);
 		} else {
@@ -247,6 +247,7 @@ public class AccountActivity extends Activity implements OnClickListener{
 	}
 	
 	public void saveAccount(View view){
+		Account mAccount = dm.getAccount();
 		String temp;
 		ContentValues values = new ContentValues();
 		
@@ -394,23 +395,7 @@ public class AccountActivity extends Activity implements OnClickListener{
 	private void updateBirthdate() {
 		birthdateView.setText(new StringBuilder().append(mYear).append("-").append(mMonth + 1).append("-").append(mDay));
 	}
-	
-	protected Account loadAccount () {
-		Account acc = new Account();
-		
-		if (DataManagement.isLoadAccountData()) {
-			acc = dm.getAccountFromRemoteDb();
-			if (acc != null)
-				feelFields(acc);
-		} else {
-			acc = dm.getAccountFromLocalDb();
-			if (acc != null)
-				feelFields(acc);
-		}
-			
-		return acc;		
-	}
-	
+
 	class EditAccountTask extends AsyncTask<Void, Boolean, Boolean>{
 		protected void onPreExecute() {
 			pb.setVisibility(View.VISIBLE);
@@ -418,7 +403,7 @@ public class AccountActivity extends Activity implements OnClickListener{
 		}
 
 		protected Boolean doInBackground(Void... args) {
-			return dm.updateAccount(mAccount, removeImage.isChecked());
+			return dm.updateAccount(dm.getAccount(), removeImage.isChecked());
 		}
 
 		protected void onPostExecute(Boolean result) {
@@ -427,7 +412,7 @@ public class AccountActivity extends Activity implements OnClickListener{
 				ContentValues values = new ContentValues();
 				values.put(AccountProvider.AMetaData.AccountMetaData.NEED_UPDATE, 1);
 				
-				StringBuilder where = new StringBuilder(AccountProvider.AMetaData.AccountMetaData.A_ID).append(" = ").append(mAccount.user_id);
+				StringBuilder where = new StringBuilder(AccountProvider.AMetaData.AccountMetaData.A_ID).append(" = ").append(dm.getAccount().user_id);
 				getContentResolver().update(AccountProvider.AMetaData.AccountMetaData.CONTENT_URI, values, where.toString(), null);
 			}
 			
@@ -464,7 +449,7 @@ public class AccountActivity extends Activity implements OnClickListener{
 				
 				ByteArrayOutputStream baos = new ByteArrayOutputStream();  
 				photo.compress(Bitmap.CompressFormat.PNG, 100, baos);
-				mAccount.image_bytes = baos.toByteArray();
+				dm.getAccount().image_bytes = baos.toByteArray();
 			}
 
 			File f = new File(mImageCaptureUri.getPath());

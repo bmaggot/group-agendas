@@ -247,10 +247,10 @@ class Data {
 	protected static void setAccount(Account account) {
 		Data.account = account;
 	}
-	protected static ArrayList<Contact> getContacts() {
+	public static ArrayList<Contact> getContacts() {
 		return contacts;
 	}
-	protected static void setContacts(ArrayList<Contact> contacts) {
+	public static void setContacts(ArrayList<Contact> contacts) {
 		Data.contacts = contacts;
 	}
 	protected static ArrayList<Group> getGroups() {

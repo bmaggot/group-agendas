@@ -45,6 +45,7 @@ import android.util.Log;
 import com.bog.calendar.app.model.CEvent;
 import com.bog.calendar.app.model.EventsHelper;
 import com.google.android.c2dm.C2DMessaging;
+import com.groupagendas.groupagenda.NavbarActivity;
 import com.groupagendas.groupagenda.R;
 import com.groupagendas.groupagenda.account.Account;
 import com.groupagendas.groupagenda.account.AccountProvider;
@@ -55,11 +56,13 @@ import com.groupagendas.groupagenda.contacts.ContactsProvider;
 import com.groupagendas.groupagenda.contacts.Group;
 import com.groupagendas.groupagenda.contacts.GroupsAdapter;
 import com.groupagendas.groupagenda.events.Event;
+import com.groupagendas.groupagenda.events.EventsActivity;
 import com.groupagendas.groupagenda.events.EventsAdapter;
 import com.groupagendas.groupagenda.events.EventsProvider;
 import com.groupagendas.groupagenda.events.Invited;
 import com.groupagendas.groupagenda.settings.AutoColorItem;
 import com.groupagendas.groupagenda.settings.AutoIconItem;
+import com.groupagendas.groupagenda.utils.AgendaUtils;
 import com.groupagendas.groupagenda.utils.MapUtils;
 import com.groupagendas.groupagenda.utils.Prefs;
 import com.groupagendas.groupagenda.utils.Utils;
@@ -587,6 +590,10 @@ public class DataManagement {
 		try {
 			HttpClient hc = new DefaultHttpClient();
 			HttpPost post = new HttpPost(Data.getServerUrl() + "mobile/login");
+			post.setHeader("User-Agent", "AndroidPhone "+android.os.Build.VERSION.RELEASE);
+			post.setHeader("Accept", "*/*");
+//			post.setHeader("Content-Type", "text/vnd.ms-sync.wbxml");
+
 
 			MultipartEntity reqEntity = new MultipartEntity(HttpMultipartMode.BROWSER_COMPATIBLE);
 
@@ -948,6 +955,26 @@ public class DataManagement {
 	}
 
 	// Contacts
+	public ArrayList<Contact> getContacts() {
+		return Data.getContacts();
+	}
+	
+	public int loadContacts(Activity instance, ContactsAdapter cAdapter) {
+		int contactsSize = 0;
+		
+		if (isLoadContactsData()) {
+			Data.setContacts(getContactsFromRemoteDb(null));
+			updateContactsAdapter(Data.getContacts(), cAdapter);
+			contactsSize = Data.getContacts().size();
+		} else {
+			Data.setContacts(getContactsFromLocalDb(""));
+			updateContactsAdapter(Data.getContacts(), cAdapter);
+			contactsSize = Data.getContacts().size();
+		}
+		
+		return contactsSize;
+	}
+	
 	public ArrayList<Contact> getContactsFromLocalDb(String where) {
 		Contact item;
 		ArrayList<Contact> items = new ArrayList<Contact>();
@@ -1386,6 +1413,43 @@ public class DataManagement {
 		return success;
 	}
 
+	// GROUPS
+	public ArrayList<Group> getGroups() {
+		return Data.getGroups();
+	}
+	
+	public int loadGroups(Activity instance, GroupsAdapter gAdapter) {
+		int groupsSize = 0;
+
+		if (DataManagement.isLoadGroupsData()) {
+			Data.setGroups(getGroupsFromRemoteDb());
+			updateGroupsAdapter(Data.getGroups(), gAdapter);
+			groupsSize = Data.getGroups().size();
+		} else {
+			Data.setGroups(getGroupsFromLocalDb());
+			updateGroupsAdapter(Data.getGroups(), gAdapter);
+			groupsSize = Data.getGroups().size();
+		}
+		
+		return groupsSize;
+	}
+	
+	public Account getAccount() {
+		return Data.getAccount();
+	}
+	
+	public Account loadAccount () {
+		Account acc = new Account();
+		
+		if (DataManagement.isLoadAccountData()) {
+			acc = getAccountFromRemoteDb();
+		} else {
+			acc = getAccountFromLocalDb();
+		}
+			
+		return acc;		
+	}
+	
 	public ArrayList<Group> getGroupsFromLocalDb() {
 		Group item;
 		ArrayList<Group> items = new ArrayList<Group>();
@@ -1729,6 +1793,39 @@ public class DataManagement {
 	}
 
 	// Events
+	public ArrayList<Event> getEvents() {
+		return Data.getEvents();
+	}
+	
+	public int loadEvents(Activity instance, EventsAdapter eAdapter) {
+		int eventsSize = 0;
+		ArrayList<Event> events;
+		
+		if (DataManagement.isLoadEventsData()) {
+			ArrayList<Event> result = getEventsFromRemoteDb("");
+			if (!NavbarActivity.showInvites) {
+				events = result;
+			} else {
+				events = new ArrayList<Event>();
+				for (Event event : result) {
+					if (event.status == 4) {
+						events.add(event);
+					}
+				}
+			}
+
+			updateEventsAdapter(Data.getEvents(), eAdapter);
+			Data.setEvents(events);
+		} else {
+			events = AgendaUtils.getActualEvents(instance, getEventsFromLocalDb());
+			if (events.size() > 0)
+				updateEventsAdapter(Data.getEvents(), eAdapter);
+			Data.setEvents(events);
+		}
+		
+		return eventsSize;
+	}
+	
 	public ArrayList<Event> getEventsFromRemoteDb(String eventCategory) {
 		boolean success = false;
 		ArrayList<Event> events = new ArrayList<Event>();

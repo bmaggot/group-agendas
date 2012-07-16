@@ -3,6 +3,7 @@ package com.groupagendas.groupagenda.contacts;
 import java.util.ArrayList;
 import java.util.TreeMap;
 
+//import android.app.Activity;
 import android.app.ListActivity;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -23,7 +24,7 @@ import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.LinearLayout.LayoutParams;
 import android.widget.ListView;
-import android.widget.ProgressBar;
+//import android.widget.ProgressBar;
 import android.widget.RadioGroup;
 import android.widget.RadioGroup.OnCheckedChangeListener;
 import android.widget.TextView;
@@ -49,10 +50,7 @@ public class ContactsActivity extends ListActivity implements OnCheckedChangeLis
 	private int GROUPS_LIST = 1;
 	private int CURRENT_LIST = CONTACTS_LIST;
 
-	private ArrayList<Contact> contacts = null;
-	private ArrayList<Group> groups = null;
-
-	private ProgressBar pb;
+//	private ProgressBar pb;
 
 	private GestureDetector mGestureDetector;
 
@@ -157,16 +155,15 @@ public class ContactsActivity extends ListActivity implements OnCheckedChangeLis
 		
 		if (CURRENT_TASK.equals(CONTACTS_TASK)) {
 			setListAdapter(cAdapter);
-			contacts = loadContacts(contacts, cAdapter);
 
 			//TO DO: put this shit into the right place. \m/
-			if ((contacts != null) && (contacts.size() > 10)) {
-				indexList = createIndex(contacts);
+			if (dm.loadContacts(this, cAdapter) > 10) {
+				indexList = createIndex();
 				sideIndex.setVisibility(View.VISIBLE);
 			}
 		} else if (CURRENT_TASK.equals(GROUPS_TASK)) {
 			setListAdapter(gAdapter);
-			groups = loadGroups(groups, gAdapter);
+			dm.loadGroups(this, gAdapter);
 		}
 		
 	}
@@ -195,18 +192,15 @@ public class ContactsActivity extends ListActivity implements OnCheckedChangeLis
 		segmentedButtons = (SegmentedRadioGroup) findViewById(R.id.segmentedButtons);
 		segmentedButtons.setOnCheckedChangeListener(this);
 
-		pb = (ProgressBar) findViewById(R.id.progress);
+//		pb = (ProgressBar) findViewById(R.id.progress);
 
 		searchView = (EditText) findViewById(R.id.search);
 		searchView.addTextChangedListener(filterTextWatcher);
 
 		mGestureDetector = new GestureDetector(this, new SideIndexGestureListener());
 		
-		contacts = new ArrayList<Contact>();
-		cAdapter = new ContactsAdapter(contacts, this);
-
-		groups = new ArrayList<Group>();
-		gAdapter = new GroupsAdapter(groups, this);
+		cAdapter = new ContactsAdapter(dm.getContacts(), this);
+		gAdapter = new GroupsAdapter(dm.getGroups(), this);
 	}
 
 	@Override
@@ -238,7 +232,9 @@ public class ContactsActivity extends ListActivity implements OnCheckedChangeLis
 		}
 	};
 
-	private TreeMap<Integer, String> createIndex(ArrayList<Contact> contactList) {
+	private TreeMap<Integer, String> createIndex() {
+		ArrayList<Contact> contactList = dm.getContacts();
+		
 		if (contactList != null) {
 			TreeMap<Integer, String> tmpIndexList = new TreeMap<Integer, String>();
 
@@ -290,14 +286,14 @@ public class ContactsActivity extends ListActivity implements OnCheckedChangeLis
 
 		if (CURRENT_LIST == CONTACTS_LIST) {
 			Intent contactIntent = new Intent(ContactsActivity.this, ContactInfoActivity.class);
-			StringBuilder sb = new StringBuilder(contacts.get(position).name).append(" ").append(contacts.get(position).lastname);
+			StringBuilder sb = new StringBuilder(dm.getContacts().get(position).name).append(" ").append(dm.getContacts().get(position).lastname);
 			contactIntent.putExtra("contactName", sb.toString());
-			contactIntent.putExtra("contactId", contacts.get(position).contact_id);
+			contactIntent.putExtra("contactId", dm.getContacts().get(position).contact_id);
 			startActivity(contactIntent);
 		} else if (CURRENT_LIST == GROUPS_LIST) {
 			Intent groupIntent = new Intent(ContactsActivity.this, GroupContactsActivity.class);
-			groupIntent.putExtra("groupName", groups.get(position).title);
-			groupIntent.putExtra("groupId", groups.get(position).group_id);
+			groupIntent.putExtra("groupName", dm.getGroups().get(position).title);
+			groupIntent.putExtra("groupId", dm.getGroups().get(position).group_id);
 			startActivity(groupIntent);
 		}
 	}
@@ -312,8 +308,8 @@ public class ContactsActivity extends ListActivity implements OnCheckedChangeLis
 					CURRENT_LIST = CONTACTS_LIST;
 //					Toast.makeText(this, getString(R.string.waiting_for_contacts_load), Toast.LENGTH_SHORT).show();
 					setListAdapter(cAdapter);
-					contacts = loadContacts(contacts, cAdapter);
-					if (contacts.size() > 10)
+
+					if (dm.loadContacts(this, cAdapter) > 10)
 						sideIndex.setVisibility(View.VISIBLE);
 
 					editor.putString("ContactsActivityTask", CONTACTS_TASK);
@@ -325,37 +321,13 @@ public class ContactsActivity extends ListActivity implements OnCheckedChangeLis
 					CURRENT_LIST = GROUPS_LIST;
 //					Toast.makeText(this, getString(R.string.waiting_for_groups_load), Toast.LENGTH_SHORT).show();
 					setListAdapter(gAdapter);
-					groups = loadGroups(groups, gAdapter);
+					dm.loadGroups(this, gAdapter);
 
 					editor.putString("ContactsActivityTask", GROUPS_TASK);
 					editor.putInt("ContactsActivityList", GROUPS_LIST);
 					editor.commit();
 					break;
 			}
-		}
-	}
-	
-	protected ArrayList<Contact> loadContacts(ArrayList<Contact> contacts, ContactsAdapter cAdapter) {
-		if (DataManagement.isLoadContactsData()) {
-			contacts = DataManagement.getInstance(this).getContactsFromRemoteDb(null);
-			DataManagement.getInstance(this).updateContactsAdapter(contacts, cAdapter);
-			return contacts;
-		} else {
-			contacts = DataManagement.getInstance(this).getContactsFromLocalDb("");
-			DataManagement.getInstance(this).updateContactsAdapter(contacts, cAdapter);
-			return contacts;
-		}
-	}
-	
-	protected ArrayList<Group> loadGroups(ArrayList<Group> groups, GroupsAdapter gAdapter) {
-		if (DataManagement.isLoadGroupsData()) {
-			groups = DataManagement.getInstance(this).getGroupsFromRemoteDb();
-			DataManagement.getInstance(this).updateGroupsAdapter(groups, gAdapter);
-			return groups;
-		} else {
-			groups = DataManagement.getInstance(this).getGroupsFromLocalDb();
-			DataManagement.getInstance(this).updateGroupsAdapter(groups, gAdapter);
-			return groups;
 		}
 	}
 	
