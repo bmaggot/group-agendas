@@ -42,7 +42,6 @@ public class EventsActivity extends ListActivity {
 	private ActionItem pending;
 
 	private EventsAdapter eventsAdapter;
-	private ArrayList<Event> eventsList;
 
 	private TextView topView;
 	private ProgressBar pb;
@@ -65,7 +64,13 @@ public class EventsActivity extends ListActivity {
 		radioButton.setOnCheckedChangeListener(btnNavBarOnCheckedChangeListener);
 
 		setListAdapter(eventsAdapter);
-		eventsList = loadEvents(eventsList, eventsAdapter);
+		dm.loadEvents(this, eventsAdapter);
+		
+//		if (DataManagement.isLoadEventsData()) {
+//			if (NavbarActivity.showInvites) {
+//				openNewInvites();
+//			}
+//		}
 	}
 
 	@Override
@@ -79,8 +84,7 @@ public class EventsActivity extends ListActivity {
 
 		topView = (TextView) findViewById(R.id.topText);
 		
-		eventsList = new ArrayList<Event>();
-		eventsAdapter = new EventsAdapter(eventsList, this);
+		eventsAdapter = new EventsAdapter(dm.getEvents(), this);
 	}
 
 	@Override
@@ -257,34 +261,6 @@ public class EventsActivity extends ListActivity {
 		}
 	};
 
-	protected ArrayList<Event> loadEvents(ArrayList<Event> events, EventsAdapter eAdapter) {
-		if (DataManagement.isLoadEventsData()) {
-			ArrayList<Event> result = DataManagement.getInstance(this).getEventsFromRemoteDb("");
-			if (!NavbarActivity.showInvites) {
-				events = result;
-			} else {
-				events = new ArrayList<Event>();
-				for (Event event : result) {
-					if (event.status == 4) {
-						events.add(event);
-					}
-				}
-			}
-
-			if (NavbarActivity.showInvites) {
-				openNewInvites();
-			}
-			
-			DataManagement.getInstance(this).updateEventsAdapter(events, eAdapter);
-			return events;
-		} else {
-			events = AgendaUtils.getActualEvents(EventsActivity.this, dm.getEventsFromLocalDb());
-			if (events.size() > 0)
-				DataManagement.getInstance(this).updateEventsAdapter(events, eAdapter);
-			return events;
-		}
-	}
-	
 	private void changeTitle(String text) {
 		topView.setText(text);
 	}

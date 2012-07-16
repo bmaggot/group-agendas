@@ -105,7 +105,7 @@ public class LoginActivity extends Activity {
 				finish();
 			} else {
 				error = dm.getError();
-				showDialog(0);
+//				showDialog(0);
 			}
 
 			super.onPostExecute(result);
