@@ -41,6 +41,7 @@ import com.bog.calendar.app.model.MonthRewrite;
 import com.bog.calendar.app.ui.CalendarView;
 import com.bog.calendar.app.ui.CalendarViewRewrite;
 import com.groupagendas.groupagenda.account.AccountProvider;
+import com.groupagendas.groupagenda.contacts.Contact;
 import com.groupagendas.groupagenda.contacts.ContactsActivity;
 import com.groupagendas.groupagenda.contacts.ContactsProvider;
 import com.groupagendas.groupagenda.data.DataManagement;
@@ -511,6 +512,28 @@ public class NavbarActivity extends Activity {
             msg.arg1 = total;
             mHandler.sendMessage(msg);
 
+        }
+        
+        class initContactsScreen extends AsyncTask<Void, ArrayList<Contact>, ArrayList<Item>>{
+
+			@Override
+			protected ArrayList<Item> doInBackground(Void... params) {
+				// TODO Auto-generated method stub
+				return null;
+			}
+
+        	
+        }
+        
+        class initEventsScreen extends AsyncTask<Void, ArrayList<Event>, ArrayList<Item>>{
+
+			@Override
+			protected ArrayList<Item> doInBackground(Void... params) {
+				// TODO Auto-generated method stub
+				return null;
+			}
+
+        	
         }
         
         /* sets the current state for the thread,
