@@ -41,13 +41,62 @@ import com.groupagendas.groupagenda.events.Event;
 
 @Widget
 public class CalendarViewRewrite extends FrameLayout {
+	Calendar currentDate;
+	
+	private View view; //this view
+	private ListView weeksListView; //listview that contais all weeks in month
+
+	private ViewGroup mDayNamesHeader; //header that holds week days names
+
+	
 
 	public CalendarViewRewrite(Context context, AttributeSet attrs)
 	 {
 	   super(context, attrs);
 	 
 	   LayoutInflater layoutInflater = (LayoutInflater)context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-	   View view=layoutInflater.inflate(R.layout.calendar_view,this);
+	   view = layoutInflater.inflate(R.layout.calendar_view,this);
+	   
+	   currentDate = Calendar.getInstance();
+//	   TODO Justas: laikinas hardcode testavimui - reik sukurt metoda, kuris leistu uzsetint
+//	   kokia nori diena ir iskviestu this.updateView();
+	   setFirstDayofWeek(Calendar.MONDAY); 
+	   
+	   weeksListView = (ListView) view.findViewById(R.id.list);
+       mDayNamesHeader = (ViewGroup) view.findViewById(R.id.day_names);
+	   
+	   updateView();
 	 }
+
+	private void setFirstDayofWeek(int value) {
+		currentDate.setFirstDayOfWeek(value);
+		
+	}
+
+	private void updateView() {
+		updateWeekTitles();
+		updateWeeksContent();
+		
+	}
+
+
+	private void updateWeekTitles() {
+		int firstDayOfWeek = currentDate.getFirstDayOfWeek();
+		String[] labels = getContext().getResources().getStringArray(R.array.week_days_title);
+		String[] mDayLabels = new String[currentDate.getActualMaximum(Calendar.DAY_OF_WEEK)];
+        for (int i = firstDayOfWeek; 
+        		i < firstDayOfWeek + currentDate.getActualMaximum(Calendar.DAY_OF_WEEK);
+        		i++) {
+            int calendarDay = (i > Calendar.SATURDAY) ? i - Calendar.SATURDAY : i;
+            mDayLabels[i - firstDayOfWeek] = labels[calendarDay - 1];
+        }
+		
+		
+	}
+
+	private void updateWeeksContent() {
+		System.out.println("LOPISKAS METODAS");
+		
+	}
    
 }

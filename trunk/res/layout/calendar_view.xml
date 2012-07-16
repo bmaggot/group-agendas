@@ -1,5 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<?xml version="1.0" encoding="utf-8"?><LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
               android:orientation="vertical"
               android:layout_width="fill_parent"
               android:layout_height="fill_parent"
@@ -82,14 +81,7 @@
 
     </LinearLayout>
 
-    <TextView
-            style="@style/TextAppearance.Small.Month"
-            android:id="@+id/month_name"
-            android:layout_width="fill_parent"
-            android:layout_height="@dimen/month_name_height"
-            android:gravity="center"
-            android:text="month_name"
-            />
+
 
     <FrameLayout
             android:layout_width="fill_parent"
