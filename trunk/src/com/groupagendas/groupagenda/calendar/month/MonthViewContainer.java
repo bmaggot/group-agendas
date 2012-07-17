@@ -24,7 +24,7 @@ public class MonthViewContainer extends LinearLayout {
 	private LayoutInflater mInflater;
 	private String[] month_names;
 	private CalendarViewRewrite calendarView;
-	private EventListAdapter eventListAdapter;
+	private EventListAdapter eventListAdapter = new EventListAdapter(getContext(), null);
 
 	public MonthViewContainer(Context context) {
 		this(context, null);
@@ -49,6 +49,7 @@ public class MonthViewContainer extends LinearLayout {
 			public void onClick(View v) {
 				selectedDate.add(Calendar.MONTH, -1);
 				setMonthViewTitle(selectedDate);
+				initEventListAdapter(selectedDate);
 //				TODO get events
 //				TODO update calendar view
 				
@@ -60,6 +61,7 @@ public class MonthViewContainer extends LinearLayout {
 			public void onClick(View v) {
 				selectedDate.add(Calendar.MONTH, 1);
 				setMonthViewTitle(selectedDate);
+				initEventListAdapter(selectedDate);
 //				TODO get events
 //				TODO update calendar view
 			}
@@ -85,9 +87,11 @@ public class MonthViewContainer extends LinearLayout {
 				actualEvents.add(e);
 			}
 		}
-		eventListAdapter = new EventListAdapter(getContext(), actualEvents);
+		eventListAdapter.setList(actualEvents);
+		eventListAdapter.setContext(getContext());
 		ListView lv = (ListView) findViewById(R.id.current_events_list);
 		lv.setAdapter(eventListAdapter);
+		eventListAdapter.notifyDataSetChanged();
 	}
 	
 }
