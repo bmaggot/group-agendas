@@ -37,9 +37,9 @@ import az.mecid.android.QuickAction;
 import com.bog.calendar.app.model.CalendarDay;
 import com.bog.calendar.app.model.CalendarMonth;
 import com.bog.calendar.app.model.CalendarYear;
-import com.bog.calendar.app.model.MonthRewrite;
 import com.bog.calendar.app.ui.CalendarView;
 import com.bog.calendar.app.ui.views.month.CalendarViewRewrite;
+import com.bog.calendar.app.ui.views.month.MonthViewContainer;
 import com.groupagendas.groupagenda.account.AccountProvider;
 import com.groupagendas.groupagenda.contacts.Contact;
 import com.groupagendas.groupagenda.contacts.ContactsActivity;
@@ -85,7 +85,7 @@ public class NavbarActivity extends Activity {
 	private Calendar currentDate = Calendar.getInstance();
 	private Calendar selectedDate = Calendar.getInstance();
 	
-	private String[] month_names;
+	
 	
 	private Prefs prefs;
 
@@ -100,7 +100,7 @@ public class NavbarActivity extends Activity {
 		mInflater = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 		
 		calendarContainer = (LinearLayout) findViewById(R.id.calendarContainer);
-		month_names = getResources().getStringArray(R.array.month_names);
+		
 		
 		dm = DataManagement.getInstance(this);
 		
@@ -223,51 +223,47 @@ public class NavbarActivity extends Activity {
 			public void onClick(View v) {				
 				qa.dismiss();
 				calendarContainer.removeAllViews();
-				initMonthView();
+				mInflater.inflate(R.layout.month_view_container, calendarContainer);
 			}
 		});
 		
 	}
 	
 	protected void initMonthView() {
-		mInflater.inflate(R.layout.month_rewrite, calendarContainer);
-		selectedDate.setTimeInMillis(currentDate.getTimeInMillis());
-		setMonthViewTitle(currentDate);
 		
-		ImageView prevButton = (ImageView) this.findViewById(R.id.prev_month_button);
-		ImageView nextButton = (ImageView) this.findViewById(R.id.next_month_button);
-		
-		prevButton.setOnClickListener(new OnClickListener() {
-			
-			@Override
-			public void onClick(View v) {
-				selectedDate.add(Calendar.MONTH, -1);
-				setMonthViewTitle(selectedDate);
-//				TODO get events
-//				TODO update calendar view
-				
-			}
-		});
-		nextButton.setOnClickListener(new OnClickListener() {
-			
-			@Override
-			public void onClick(View v) {
-				selectedDate.add(Calendar.MONTH, 1);
-				setMonthViewTitle(selectedDate);
-//				TODO get events
-//				TODO update calendar view
-			}
-		});
-		
-		CalendarViewRewrite calendarView = (CalendarViewRewrite)this.findViewById(R.id.calendar_view_rewrite);
+//		selectedDate.setTimeInMillis(currentDate.getTimeInMillis());
+//		setMonthViewTitle(currentDate);
+//		
+//		ImageView prevButton = (ImageView) this.findViewById(R.id.prev_month_button);
+//		ImageView nextButton = (ImageView) this.findViewById(R.id.next_month_button);
+//		
+//		prevButton.setOnClickListener(new OnClickListener() {
+//			
+//			@Override
+//			public void onClick(View v) {
+//				selectedDate.add(Calendar.MONTH, -1);
+//				setMonthViewTitle(selectedDate);
+////				TODO get events
+////				TODO update calendar view
+//				
+//			}
+//		});
+//		nextButton.setOnClickListener(new OnClickListener() {
+//			
+//			@Override
+//			public void onClick(View v) {
+//				selectedDate.add(Calendar.MONTH, 1);
+//				setMonthViewTitle(selectedDate);
+////				TODO get events
+////				TODO update calendar view
+//			}
+//		});
+//		
+//		CalendarViewRewrite calendarView = (CalendarViewRewrite)this.findViewById(R.id.calendar_view_rewrite);
 		
 	}
 
-	protected void setMonthViewTitle(Calendar date) {
-		TextView top_panel_title = (TextView) this.findViewById(R.id.top_panel_title);
-		top_panel_title.setText(month_names[date.get(Calendar.MONTH)] + " " + date.get(Calendar.YEAR));
-		
-	}
+	
 
 	public void onResume() {
 		super.onResume();
