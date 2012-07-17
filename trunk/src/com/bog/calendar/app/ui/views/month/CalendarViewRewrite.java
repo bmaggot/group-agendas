@@ -1,4 +1,4 @@
-package com.bog.calendar.app.ui;
+package com.bog.calendar.app.ui.views.month;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -35,12 +35,15 @@ import android.widget.ListView;
 import android.widget.TextView;
 
 import com.bog.calendar.app.model.EventListAdapter;
+import com.bog.calendar.app.ui.Widget;
 import com.groupagendas.groupagenda.R;
 import com.groupagendas.groupagenda.events.Event;
 
 
 @Widget
 public class CalendarViewRewrite extends FrameLayout {
+	
+	private static final int LENGTH_OF_WEEK = 7;
 	Calendar currentDate;
 	
 	private View view; //this view
@@ -65,7 +68,7 @@ public class CalendarViewRewrite extends FrameLayout {
 	   weeksListView = (ListView) view.findViewById(R.id.list);
        mDayNamesHeader = (ViewGroup) view.findViewById(R.id.day_names);
 	   
-	   updateView();
+	  updateView();
 	 }
 
 	private void setFirstDayofWeek(int value) {
@@ -82,8 +85,11 @@ public class CalendarViewRewrite extends FrameLayout {
 
 	private void updateWeekTitles() {
 		int firstDayOfWeek = currentDate.getFirstDayOfWeek();
+
 		String[] labels = getContext().getResources().getStringArray(R.array.week_days_title);
-		String[] mDayLabels = new String[currentDate.getActualMaximum(Calendar.DAY_OF_WEEK)];
+		//array that holds week days label	
+		String[] mDayLabels = new String[LENGTH_OF_WEEK];
+		
         for (int i = firstDayOfWeek; 
         		i < firstDayOfWeek + currentDate.getActualMaximum(Calendar.DAY_OF_WEEK);
         		i++) {
@@ -91,10 +97,19 @@ public class CalendarViewRewrite extends FrameLayout {
             mDayLabels[i - firstDayOfWeek] = labels[calendarDay - 1];
         }
 		
+        TextView label = (TextView) mDayNamesHeader.getChildAt(0);
+        label.setText(R.string.week_title);
+        
+        for (int i = 0; i < LENGTH_OF_WEEK; i ++){
+        	label = (TextView) mDayNamesHeader.getChildAt(i + 1);
+        	label.setText(labels[i]);
+        }
+        
 		
 	}
 
 	private void updateWeeksContent() {
+//		TODO
 		System.out.println("LOPISKAS METODAS");
 		
 	}
