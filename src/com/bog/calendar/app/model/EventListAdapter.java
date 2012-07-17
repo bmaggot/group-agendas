@@ -97,4 +97,12 @@ public class EventListAdapter extends BaseAdapter {
         
         return view;
     }
+
+	public void setContext(Context context) {
+		this.context = context;
+	}
+
+	public void setList(List<Event> list) {
+		this.list = list;
+	}
 }
