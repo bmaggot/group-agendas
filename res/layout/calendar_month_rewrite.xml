@@ -43,8 +43,15 @@
 	<com.groupagendas.groupagenda.calendar.month.CalendarViewRewrite
 		android:id="@+id/calendar_view_rewrite"
 		android:layout_width="fill_parent"
-		android:layout_height="300dip" />
-
+		android:layout_height="300dip">
+		<ListView
+		    android:id="@+id/calendar_month_rows"
+    		android:layout_width="fill_parent"
+    		android:layout_height="fill_parent"
+		    >
+		</ListView>
+	</com.groupagendas.groupagenda.calendar.month.CalendarViewRewrite>
+	    
 	<View
 		android:layout_width="fill_parent"
 		android:layout_height="2dp"
