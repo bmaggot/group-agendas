@@ -81,9 +81,7 @@ public class NavbarActivity extends Activity {
 	
 	private EditText searchView;
 	private EntryAdapter entryAdapter;
-	
-	private Calendar currentDate = Calendar.getInstance();
-	private Calendar selectedDate = Calendar.getInstance();
+
 	
 	
 	
@@ -284,7 +282,6 @@ public class NavbarActivity extends Activity {
 		radioButton.setChecked(false);
 		radioButton.setOnCheckedChangeListener(btnNavBarOnCheckedChangeListener);
 		
-		currentDate = Calendar.getInstance();
 		
 		// settings month view
 		prefs = new Prefs(this);
