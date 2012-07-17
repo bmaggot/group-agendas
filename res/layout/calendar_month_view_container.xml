@@ -3,7 +3,7 @@
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
     android:orientation="vertical" >
-    <com.bog.calendar.app.ui.views.month.MonthViewContainer
+    <com.groupagendas.groupagenda.calendar.month.MonthViewContainer
         android:id="@+id/month_view_container"
         android:layout_width="fill_parent"
     	android:layout_height="fill_parent"
