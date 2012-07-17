@@ -12,7 +12,7 @@ import com.groupagendas.groupagenda.contacts.Group;
 import com.groupagendas.groupagenda.events.Event;
 import com.groupagendas.groupagenda.utils.Prefs;
 
-class Data {
+public class Data {
 
 	private static String pushId;
 	private static Prefs prefs;
@@ -56,8 +56,14 @@ class Data {
 	private static ArrayList<Group> groups;
 	private static ArrayList<Event> events;
 	
+	public static final int DEFAULT_FIRST_WEEK_DAY = 1;
+	
 	//getters'n'setters
 	
+	protected static int getDEFAULT_FIRST_WEEK_DAY() {
+		return DEFAULT_FIRST_WEEK_DAY;
+	}
+
 	protected static String getPushId() {
 		return pushId;
 	}
