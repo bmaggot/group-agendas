@@ -350,7 +350,6 @@ public class CalendarYearView extends FrameLayout {
 
         mListView = (ListView) content.findViewById(R.id.list);
         mDayNamesHeader = (ViewGroup) content.findViewById(R.id.day_names);
-        mMonthName = (TextView) content.findViewById(R.id.month_name);
         weekNumBgPanel = content.findViewById(R.id.week_num_bg_panel);
 
         // go to today or whichever is close to today min or max date

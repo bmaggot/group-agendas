@@ -39,7 +39,7 @@ import com.bog.calendar.app.model.CalendarMonth;
 import com.bog.calendar.app.model.CalendarYear;
 import com.bog.calendar.app.model.MonthRewrite;
 import com.bog.calendar.app.ui.CalendarView;
-import com.bog.calendar.app.ui.CalendarViewRewrite;
+import com.bog.calendar.app.ui.views.month.CalendarViewRewrite;
 import com.groupagendas.groupagenda.account.AccountProvider;
 import com.groupagendas.groupagenda.contacts.Contact;
 import com.groupagendas.groupagenda.contacts.ContactsActivity;

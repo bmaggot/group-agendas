@@ -1,4 +1,4 @@
-package com.bog.calendar.app.ui;
+package com.bog.calendar.app.ui.views.month;
 
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -19,6 +19,7 @@ import android.view.View;
 
 import com.bog.calendar.app.model.CEvent;
 import com.bog.calendar.app.model.EventsHelper;
+import com.bog.calendar.app.ui.MonthCell;
 import com.groupagendas.groupagenda.R;
 
 public class MonthView extends View {
