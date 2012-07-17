@@ -37,9 +37,10 @@
 			android:layout_gravity="center_vertical|right"
 			android:padding="10dip"
 			android:src="@drawable/right" />
+		
 	</FrameLayout>
 
-	<com.bog.calendar.app.ui.views.month.CalendarViewRewrite
+	<com.groupagendas.groupagenda.calendar.month.CalendarViewRewrite
 		android:id="@+id/calendar_view_rewrite"
 		android:layout_width="fill_parent"
 		android:layout_height="300dip" />
