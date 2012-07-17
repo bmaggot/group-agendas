@@ -175,6 +175,7 @@
     <string name="waiting_for_contacts_load">Loading contacts… wait</string>
     <string name="waiting_for_groups_load">Loading groups… wait</string>
     <string name="week_title">w</string>
+    <string name="calendar_dayView_allDayEvents_holder">All day</string>
 
 
 </resources>
