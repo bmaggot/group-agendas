@@ -8,6 +8,10 @@
 	<TextView
 		style="@style/dayView_hourEvent_firstColumn" />
 
-	<TextView
-		style="@style/dayView_hourEvent_secondColumn" />
+	<Shape xmlns:android="http://schemas.android.com/apk/res/android"
+		android:background="@drawable/dayView_hourEvent_secondColumn_entryBackground"
+		style="@style/dayView_hourEvent_secondColumn" >
+		<TextView
+			style="@style/dayView_hourEvent_secondColumn_entryText" />
+	</Shape>
 </LinearLayout>
