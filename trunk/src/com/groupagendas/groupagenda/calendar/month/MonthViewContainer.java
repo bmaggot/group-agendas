@@ -66,6 +66,7 @@ public class MonthViewContainer extends LinearLayout {
 		});
 		
 		calendarView = (CalendarViewRewrite)this.findViewById(R.id.calendar_view_rewrite);
+		initEventListAdapter(selectedDate);
 		
 	}
 	protected void setMonthViewTitle(Calendar date) {
