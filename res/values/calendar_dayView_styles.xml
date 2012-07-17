@@ -23,4 +23,23 @@
 	    <item name="android:layout_weight">0.9</item>
 	    <item name="android:layout_height">match_parent</item>
     </style>
+    
+    <style name="dayView_hourEvent_secondColumn_entryText">
+	    <item name="android:text"></item>
+ 	    <item name="android:gravity">left</item>
+	    <item name="android:textSize">16dp</item>
+	    <item name="android:textColor">@color/white</item>
+	    <item name="android:layout_width">match_parent</item>
+	    <item name="android:layout_height">match_parent</item>
+    </style>
+    
+    <style name="dayView_hourEvent_firstColumn_entryText">
+	    <item name="android:text"></item>
+ 	    <item name="android:gravity">left</item>
+	    <item name="android:textSize">16dp</item>
+	    <item name="android:textColor">@color/black</item>
+	    <item name="android:layout_width">match_parent</item>
+	    <item name="android:layout_height">match_parent</item>
+    </style>
+    
 </resources>
