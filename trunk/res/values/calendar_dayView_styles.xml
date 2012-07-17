@@ -3,8 +3,7 @@
     <style name="dayView_allDay_container">
     </style>
     
-    <style name="dayView_allDay_text">
-	    <item name="android:text">@string/calendar_dayView_allDayEvents_holder</item>
+    <style name="dayView_hourEvent_firstColumn">
 	    <item name="android:gravity">fill_horizontal</item>
 	    <item name="android:textSize">16dp</item>
 	    <item name="android:background">@color/white</item>
@@ -14,11 +13,11 @@
 	    <item name="android:layout_height">match_parent</item>
     </style>
     
-    <style name="dayView_allDay_eventHolder">
+    <style name="dayView_hourEvent_secondColumn">
 	    <item name="android:text"></item>
 <!-- 	    <item name="android:gravity">fill_horizontal</item> -->
-<!-- 	    <item name="android:textSize">16dp</item> -->
-<!-- 	    <item name="android:background">@color/white</item> -->
+	    <item name="android:textSize">16dp</item>
+	    <item name="android:background">@color/white</item>
 <!-- 	    <item name="android:textColor">@color/black</item> -->
 	    <item name="android:layout_width">0dip</item>
 	    <item name="android:layout_weight">0.9</item>
