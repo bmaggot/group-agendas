@@ -1,8 +1,11 @@
 package com.groupagendas.groupagenda.calendar.month;
 
+import java.util.ArrayList;
 import java.util.Calendar;
 
 import com.groupagendas.groupagenda.R;
+import com.groupagendas.groupagenda.data.DataManagement;
+import com.groupagendas.groupagenda.events.Event;
 
 import android.content.Context;
 import android.util.AttributeSet;
@@ -12,6 +15,7 @@ import android.view.View.OnClickListener;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import com.bog.calendar.app.model.EventListAdapter;
 
 public class MonthViewContainer extends LinearLayout {
 	private Calendar selectedDate = Calendar.getInstance();
@@ -19,6 +23,7 @@ public class MonthViewContainer extends LinearLayout {
 	private LayoutInflater mInflater;
 	private String[] month_names;
 	private CalendarViewRewrite calendarView;
+	private EventListAdapter eventListAdapter;
 
 	public MonthViewContainer(Context context) {
 		this(context, null);
@@ -66,6 +71,19 @@ public class MonthViewContainer extends LinearLayout {
 		TextView top_panel_title = (TextView) this.findViewById(R.id.top_panel_title);
 		top_panel_title.setText(month_names[date.get(Calendar.MONTH)] + " " + date.get(Calendar.YEAR));
 		
+	}
+	
+	protected void initEventListAdapter(Calendar date){
+		DataManagement dm = DataManagement.getInstance(getContext());
+		ArrayList<Event> events = dm.getEvents();
+		ArrayList<Event> actualEvents = new ArrayList<Event>();
+		for(int i = 0; i < events.size(); i++){
+			Event e = events.get(i);
+			if(date.after(e.startCalendar) && date.before(e.endCalendar)){
+				actualEvents.add(e);
+			}
+		}
+		eventListAdapter = new EventListAdapter(getContext(), actualEvents);
 	}
 	
 }
