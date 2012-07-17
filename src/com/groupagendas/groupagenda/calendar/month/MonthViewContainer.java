@@ -1,4 +1,4 @@
-package com.bog.calendar.app.ui.views.month;
+package com.groupagendas.groupagenda.calendar.month;
 
 import java.util.Calendar;
 
