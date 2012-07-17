@@ -221,7 +221,7 @@ public class NavbarActivity extends Activity {
 			public void onClick(View v) {				
 				qa.dismiss();
 				calendarContainer.removeAllViews();
-				mInflater.inflate(R.layout.calendar_month_view_container, calendarContainer);
+				mInflater.inflate(R.layout.calendar_day_view_container, calendarContainer);
 			}
 		});
 		
