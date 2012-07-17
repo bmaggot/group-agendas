@@ -9,14 +9,17 @@
     <LinearLayout
         android:orientation="horizontal"
         android:layout_width="fill_parent"
-        android:layout_height="20dp"
-        android:minHeight="20dp">
+        android:layout_height="wrap_content"
+        android:minHeight="20dp"
+        android:maxHeight="100dp">
         
-        <TextView style="@style/dayView_allDay_text" />
+        <TextView
+            style="@style/dayView_hourEvent_firstColumn"
+			android:text="@string/calendar_dayView_allDayEvents_holder"/>
         
         <ListView
 			android:id="@+id/allday_events"
-			style="@style/dayView_allDay_eventHolder">            
+			style="@style/dayView_hourEvent_secondColumn">            
         </ListView>
     </LinearLayout>
     
