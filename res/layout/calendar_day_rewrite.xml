@@ -14,8 +14,9 @@
         
         <TextView style="@style/dayView_allDay_text" />
         
-        <ListView android:id="@+id/allday_events">
-            
+        <ListView
+			android:id="@+id/allday_events"
+			style="@style/dayView_allDay_eventHolder">            
         </ListView>
     </LinearLayout>
     
