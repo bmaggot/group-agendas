@@ -14,6 +14,7 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.ListView;
 import android.widget.TextView;
 import com.bog.calendar.app.model.EventListAdapter;
 
@@ -84,6 +85,8 @@ public class MonthViewContainer extends LinearLayout {
 			}
 		}
 		eventListAdapter = new EventListAdapter(getContext(), actualEvents);
+		ListView lv = (ListView) findViewById(R.id.current_events_list);
+		lv.setAdapter(eventListAdapter);
 	}
 	
 }
