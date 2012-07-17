@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources xmlns:android="http://schemas.android.com/apk/res/android">
     <style name="dayView_allDay_container">
-    </style>
+	</style>
     
     <style name="dayView_hourEvent_firstColumn">
 	    <item name="android:gravity">fill_horizontal</item>
