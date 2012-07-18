@@ -54,46 +54,47 @@ public class EventListAdapter extends BaseAdapter {
 
     @Override
     public View getView(int i, View view, ViewGroup viewGroup) {
+    	
         if (view == null) {
             view = mInflater.inflate(R.layout.calendar_event_row, null);
         }
-        final Event event = list.get(i);
-        TextView startTime = (TextView) view.findViewById(R.id.start_time);
-        TextView endTime = (TextView) view.findViewById(R.id.end_time);
-        TextView descView = (TextView) view.findViewById(R.id.decription);
-        startTime.setText(dt.formatTime(event.startCalendar.getTimeInMillis()));
-        endTime.setText(dt.formatTime(event.endCalendar.getTimeInMillis()));
-        descView.setText(event.title);
-        view.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-            	Intent intent = new Intent(context, EventActivity.class);
-        		intent.putExtra("event_id", event.event_id);
-        		intent.putExtra("type", event.type);
-        		intent.putExtra("isNative", event.isNative);
-        		
-        		context.startActivity(intent);
-            }
-        });
-        ImageView pointView = (ImageView) view.findViewById(R.id.row_point);
-        GradientDrawable drawable = (GradientDrawable) pointView.getDrawable();
-        
-        if(event.color != null && !event.color.equals("null") && event.color.length() > 1){
-        	try {
-        		drawable.setColor(Integer.parseInt(event.color.replace("#", ""), 16)+0xFF000000);
-			} catch (Exception e) {
-				drawable.setColor(Color.GRAY);
-			}
-        	
-        }else{
-        	drawable.setColor(Color.GRAY);
-        }
-        
-        if(event.icon != null && !event.icon.equals("null") && !event.icon.equals("") ){
-        	ImageView iconView = (ImageView) view.findViewById(R.id.row_icon);
-            int iconId = context.getResources().getIdentifier(event.icon, "drawable", "com.groupagendas.groupagenda");
-    		iconView.setImageResource(iconId);
-        }
+//        final Event event = list.get(i);
+//        TextView startTime = (TextView) view.findViewById(R.id.start_time);
+//        TextView endTime = (TextView) view.findViewById(R.id.end_time);
+//        TextView descView = (TextView) view.findViewById(R.id.decription);
+//        startTime.setText(dt.formatTime(event.startCalendar.getTimeInMillis()));
+//        endTime.setText(dt.formatTime(event.endCalendar.getTimeInMillis()));
+//        descView.setText(event.title);
+//        view.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View view) {
+//            	Intent intent = new Intent(context, EventActivity.class);
+//        		intent.putExtra("event_id", event.event_id);
+//        		intent.putExtra("type", event.type);
+//        		intent.putExtra("isNative", event.isNative);
+//        		
+//        		context.startActivity(intent);
+//            }
+//        });
+//        ImageView pointView = (ImageView) view.findViewById(R.id.row_point);
+//        GradientDrawable drawable = (GradientDrawable) pointView.getDrawable();
+//        
+//        if(event.color != null && !event.color.equals("null") && event.color.length() > 1){
+//        	try {
+//        		drawable.setColor(Integer.parseInt(event.color.replace("#", ""), 16)+0xFF000000);
+//			} catch (Exception e) {
+//				drawable.setColor(Color.GRAY);
+//			}
+//        	
+//        }else{
+//        	drawable.setColor(Color.GRAY);
+//        }
+//        
+//        if(event.icon != null && !event.icon.equals("null") && !event.icon.equals("") ){
+//        	ImageView iconView = (ImageView) view.findViewById(R.id.row_icon);
+//            int iconId = context.getResources().getIdentifier(event.icon, "drawable", "com.groupagendas.groupagenda");
+//    		iconView.setImageResource(iconId);
+//        }
         
         return view;
     }
