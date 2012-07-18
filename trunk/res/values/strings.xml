@@ -176,6 +176,7 @@
     <string name="waiting_for_groups_load">Loading groups… wait</string>
     <string name="week_title">w</string>
     <string name="calendar_dayView_allDayEvents_holder">All day</string>
-
+    <string name="calendar_dayView_navigateLeft">Navigate backwards</string>
+    <string name="calendar_dayView_navigateRight">Navigate forward</string>
 
 </resources>
