@@ -4,8 +4,11 @@
     android:layout_width="fill_parent"
     android:layout_height="fill_parent">
     
+<!--    TOP NAVBAR BEGIN -->
     <include android:id="@+id/calendar_navbar" layout="@layout/calendar_top_bar" />
+<!--    TOP NAVBAR END -->
     
+<!--     ALL-DAY EVENTS BEGIN -->
     <LinearLayout
         android:orientation="horizontal"
         android:layout_width="fill_parent"
@@ -22,11 +25,14 @@
 			style="@style/dayView_hourEvent_secondColumn">            
         </ListView>
     </LinearLayout>
+<!--     ALL-DAY EVENTS END -->
     
+<!--     HOUR-LONG EVENTS BEGIN -->
     <ListView
         android:id="@+id/hour_events"
         android:layout_height="fill_parent"
         android:layout_width="fill_parent">
     </ListView>
+<!--     HOUR-LONG EVENTS END -->
     
 </LinearLayout>
