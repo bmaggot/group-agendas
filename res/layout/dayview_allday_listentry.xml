@@ -2,12 +2,7 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_height="wrap_content"
     android:layout_width="wrap_content">
-	<Shape android:background="@drawable/calendar_dayview_secondcolumnbackground"
-		android:tileMode="repeat"
-		android:shape="rectangle"
-		style="@style/dayView_hourEvent_secondColumn" >
 		<TextView
-		    android:background="@drawable/calendar_dayview_secondcolumnbackground"
+		    android:background="@drawable/calendar_dayview_secondcolumn_entrybackground"
 			style="@style/dayView_hourEvent_secondColumn_entryText" />
-	</Shape>
 </LinearLayout>
