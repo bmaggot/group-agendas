@@ -12,10 +12,10 @@ import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 
 public abstract class AbstractAdapter extends BaseAdapter {
-    private Context context;
-    private LayoutInflater mInflater;
-    private List<Event> list;
-    private DateTimeUtils dt;
+    protected Context context;
+    protected LayoutInflater mInflater;
+    protected List<Event> list;
+    protected DateTimeUtils dt;
     
     public AbstractAdapter(Context context, List<Event> list) {
         this.context = context;

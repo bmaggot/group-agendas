@@ -107,16 +107,23 @@ public class DayView extends LinearLayout{
 		DataManagement dm = DataManagement.getInstance(getContext());
 		ArrayList<Event> events = dm.getEvents();
 		
-		hourEventAdapter.setList(filterHourEvents(events));
-		dayEventsPanel.setAdapter(hourEventAdapter);
+		
+		
+		hourEventAdapter.setList(filterHourEvents(events));		
 //		TODO hourEventAdapter.notifyDataSetChanged();
 		
 		allDayEventAdapter.setList(filterAllDayEvents(events));
-		allDayEventsPanel.setAdapter(allDayEventAdapter);
 //		TODO allDayEventAdapter.notifyDataSetChanged();
 		
+		testAdapter(events);
 		
 		
+	}
+
+	private void testAdapter(ArrayList<Event> events) {
+		System.out.println("EVENTU: " + events.size());
+		allDayEventAdapter.setList(events);
+		allDayEventAdapter.notifyDataSetChanged();
 		
 	}
 	private List<Event> filterAllDayEvents(ArrayList<Event> events) {
@@ -130,8 +137,13 @@ public class DayView extends LinearLayout{
 	private void setupViewItems() {
 		prevDayButton = (ImageButton)findViewById(R.id.prevDay);
 		nextDaybutton = (ImageButton)findViewById(R.id.nextDay);
+		
 		dayEventsPanel = (ListView)findViewById(R.id.hour_events);
+		dayEventsPanel.setAdapter(hourEventAdapter);
+		
 		allDayEventsPanel = (ListView)findViewById(R.id.allday_events);
+		allDayEventsPanel.setAdapter(allDayEventAdapter);
+		
 		topPanelTitle = (TextView) findViewById(R.id.top_panel_title); 		
 		updateTopPanelTitle(selectedDate);
 		

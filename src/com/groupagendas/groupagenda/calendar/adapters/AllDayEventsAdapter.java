@@ -2,6 +2,7 @@ package com.groupagendas.groupagenda.calendar.adapters;
 
 import java.util.List;
 
+import com.groupagendas.groupagenda.R;
 import com.groupagendas.groupagenda.events.Event;
 
 import android.content.Context;
@@ -17,7 +18,10 @@ public class AllDayEventsAdapter extends AbstractAdapter {
 
 	@Override
 	public View getView(int i, View view, ViewGroup viewGroup) {
-		System.out.println("bybys");
+//		TODO
+		if (view == null) {
+//            view = mInflater.inflate(R.layout.calendar_event_row, null);
+        }
 		return null;
 	}
 
