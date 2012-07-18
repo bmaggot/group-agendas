@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Shape xmlns:android="http://schemas.android.com/apk/res/android"
+	android:background="@drawable/calendar_dayview_secondcolumnbackground"
+	android:tileMode="repeat"
+	style="@style/dayView_hourEvent_secondColumn" >
+	<TextView
+	    android:background="@drawable/calendar_dayview_secondcolumnbackground"
+		style="@style/dayView_hourEvent_secondColumn_entryText" />
+</Shape>
