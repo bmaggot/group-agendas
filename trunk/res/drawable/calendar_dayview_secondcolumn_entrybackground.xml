@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<shape xmlns:android="http://schemas.android.com/apk/res/android"
+	android:background="@drawable/calendar_dayview_secondcolumnbackground"
+	android:tileMode="repeat"
+	android:shape="rectangle" >
+
+	<gradient
+		android:endColor="#21c0db"
+		android:startColor="#21c0db" />
+
+</shape>
