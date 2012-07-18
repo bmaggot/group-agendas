@@ -101,11 +101,11 @@ public class DayView extends LinearLayout{
 		
 		hourEventAdapter.setList(filterHourEvents(events));
 		dayEventsPanel.setAdapter(hourEventAdapter);
-		hourEventAdapter.notifyDataSetChanged();
+//		TODO hourEventAdapter.notifyDataSetChanged();
 		
 		allDayEventAdapter.setList(filterAllDayEvents(events));
 		allDayEventsPanel.setAdapter(allDayEventAdapter);
-		allDayEventAdapter.notifyDataSetChanged();
+//		TODO allDayEventAdapter.notifyDataSetChanged();
 		
 		
 		
