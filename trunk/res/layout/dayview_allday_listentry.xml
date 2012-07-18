@@ -1,10 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
-<Shape xmlns:android="http://schemas.android.com/apk/res/android"
-	android:background="@drawable/calendar_dayview_secondcolumnbackground"
-	android:tileMode="repeat"
-	android:shape="rectangle"
-	style="@style/dayView_hourEvent_secondColumn" >
-	<TextView
-	    android:background="@drawable/calendar_dayview_secondcolumnbackground"
-		style="@style/dayView_hourEvent_secondColumn_entryText" />
-</Shape>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_height="wrap_content"
+    android:layout_width="wrap_content">
+	<Shape android:background="@drawable/calendar_dayview_secondcolumnbackground"
+		android:tileMode="repeat"
+		android:shape="rectangle"
+		style="@style/dayView_hourEvent_secondColumn" >
+		<TextView
+		    android:background="@drawable/calendar_dayview_secondcolumnbackground"
+			style="@style/dayView_hourEvent_secondColumn_entryText" />
+	</Shape>
+</LinearLayout>
