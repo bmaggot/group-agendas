@@ -3,6 +3,7 @@ package com.groupagendas.groupagenda.calendar.day;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.List;
 
 import com.bog.calendar.app.model.EventListAdapter;
 import com.groupagendas.groupagenda.R;
@@ -33,6 +34,8 @@ public class DayView extends LinearLayout{
 	private ArrayList<Event> allDayEvents = new ArrayList<Event>();
 	private ListView dayEventsPanel;
 	private ListView allDayEventsPanel;
+	private EventListAdapter hourEventAdapter = new EventListAdapter(getContext(), null);
+	private EventListAdapter allDayEventAdapter = new EventListAdapter(getContext(), null);
 	
 	public DayView(Context context) {
 		this(context, null);
@@ -48,9 +51,9 @@ public class DayView extends LinearLayout{
 	}
 
 	protected void initEventListAdapter(Calendar date, boolean allDay){
+		
 		DataManagement dm = DataManagement.getInstance(getContext());
 		ArrayList<Event> events = dm.getEvents();
-		
 		String dayStr = new SimpleDateFormat("yyyy-MM-dd").format(Calendar.getInstance().getTime());
 		Calendar day_start = Utils.stringToCalendar(dayStr+" 00:00:00", Utils.date_format);
 		Calendar day_end   = Utils.stringToCalendar(dayStr+" 23:59:59", Utils.date_format);
@@ -88,15 +91,40 @@ public class DayView extends LinearLayout{
 		
 		((Activity)getContext()).getLayoutInflater().inflate(R.layout.calendar_day_rewrite, this);
 		setupViewItems();
-		initEventListAdapter(selectedDate, true);
+		initEventListAdapters(selectedDate);
 //		initEventListAdapter(selectedDate, false);
 	}
  
+	private void initEventListAdapters(Calendar selectedDate) {
+		DataManagement dm = DataManagement.getInstance(getContext());
+		ArrayList<Event> events = dm.getEvents();
+		
+		hourEventAdapter.setList(filterHourEvents(events));
+		dayEventsPanel.setAdapter(hourEventAdapter);
+		hourEventAdapter.notifyDataSetChanged();
+		
+		allDayEventAdapter.setList(filterAllDayEvents(events));
+		allDayEventsPanel.setAdapter(allDayEventAdapter);
+		allDayEventAdapter.notifyDataSetChanged();
+		
+		
+		
+		
+	}
+	private List<Event> filterAllDayEvents(ArrayList<Event> events) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+	private List<Event> filterHourEvents(ArrayList<Event> events) {
+		// TODO Auto-generated method stub
+		return null;
+	}
 	private void setupViewItems() {
 		prevDayButton = (Button)findViewById(R.id.prevDay);
 		nextDaybutton = (Button)findViewById(R.id.nextDay);
-		topPanelTitle = (TextView) findViewById(R.id.top_panel_title); 
-				
+		dayEventsPanel = (ListView)findViewById(R.id.hour_events);
+		allDayEventsPanel = (ListView)findViewById(R.id.allday_events);
+		topPanelTitle = (TextView) findViewById(R.id.top_panel_title); 		
 		updateTopPanelTitle(selectedDate);
 	}
 
