@@ -2071,6 +2071,13 @@ public class DataManagement {
 								cv.put(EventsProvider.EMetaData.EventsMetaData.INVITED, invited);
 							} catch (JSONException ex) {
 							}
+							
+							try {
+								int all_day = e.getInt("all_day");
+								event.is_all_day = all_day == 1;
+							} catch (JSONException ex) {
+							}
+							
 
 							// //
 							Data.getmContext().getContentResolver().insert(EventsProvider.EMetaData.EventsMetaData.CONTENT_URI, cv);
@@ -2151,6 +2158,7 @@ public class DataManagement {
 				item.attendant_2_count = result.getInt(result.getColumnIndex(EventsProvider.EMetaData.EventsMetaData.ATTENDANT_2_COUNT));
 				item.attendant_0_count = result.getInt(result.getColumnIndex(EventsProvider.EMetaData.EventsMetaData.ATTENDANT_0_COUNT));
 				item.attendant_4_count = result.getInt(result.getColumnIndex(EventsProvider.EMetaData.EventsMetaData.ATTENDANT_4_COUNT));
+				
 
 				items.add(item);
 				result.moveToNext();
@@ -2329,6 +2337,7 @@ public class DataManagement {
 			item.attendant_2_count = result.getInt(result.getColumnIndex(EventsProvider.EMetaData.EventsMetaData.ATTENDANT_2_COUNT));
 			item.attendant_0_count = result.getInt(result.getColumnIndex(EventsProvider.EMetaData.EventsMetaData.ATTENDANT_0_COUNT));
 			item.attendant_4_count = result.getInt(result.getColumnIndex(EventsProvider.EMetaData.EventsMetaData.ATTENDANT_4_COUNT));
+			
 
 			String assigned_contacts = result.getString(result.getColumnIndex(EventsProvider.EMetaData.EventsMetaData.ASSIGNED_CONTACTS));
 			if (assigned_contacts != null && !assigned_contacts.equals("null")) {

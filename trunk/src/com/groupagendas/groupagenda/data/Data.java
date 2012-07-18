@@ -265,7 +265,7 @@ public class Data {
 	protected static void setGroups(ArrayList<Group> groups) {
 		Data.groups = groups;
 	}
-	protected static ArrayList<Event> getEvents() {
+	public static ArrayList<Event> getEvents() {
 		return events;
 	}
 	protected static void setEvents(ArrayList<Event> events) {

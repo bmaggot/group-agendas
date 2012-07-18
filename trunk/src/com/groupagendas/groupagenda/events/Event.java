@@ -64,5 +64,7 @@ public class Event extends Object{
 	public int[] assigned_groups = null;
 	public ArrayList<Invited> invited = null;
 	
+	public boolean is_all_day;
+	
 	
 }
