@@ -1,48 +1,49 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_height="30dp"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_height="40dp"
 	android:layout_width="fill_parent"
+	android:gravity="center_vertical"
 	android:background="@drawable/calendar_navbar_background">
 
     	<ImageButton android:id="@+id/prevDay"
     	    android:background="@null"
 			android:layout_height="wrap_content"
 			android:layout_width="wrap_content"
-			android:layout_marginLeft="15dp"
-			android:layout_marginTop="5dp"
-			android:layout_marginBottom="5dp"
-			android:layout_marginRight="5dp"
-			android:gravity="left"
+			android:layout_marginLeft="5dp"
+			android:layout_centerVertical="true"
+			android:layout_alignParentLeft="true"
 			android:src="@drawable/left"
 			android:contentDescription="@string/calendar_dayView_navigateLeft"/>
 
 		<LinearLayout
+		    android:layout_centerInParent="true"
 		    android:layout_height="wrap_content"
 		    android:layout_width="wrap_content"
-			android:layout_marginTop="5dp"
 			android:layout_marginBottom="5dp"
-			android:gravity="center_horizontal">
+			android:layout_centerVertical="true"
+			android:orientation="vertical" >
 		    
    			<TextView
 				android:id="@+id/top_panel_title"
-				android:layout_height="fill_parent"
+				android:layout_height="wrap_content"
 				android:layout_width="wrap_content"
-				android:gravity="center_vertical"
-				android:text=""
+				android:gravity="top"
+   			    android:text=""
 				android:textColor="#3B4959"
+				android:textSize="22dp"
 				android:textStyle="bold" />
 		</LinearLayout>
 		
     	<ImageButton android:id="@+id/nextDay"
+			android:layout_alignParentRight="true"
+			android:layout_centerVertical="true"
     	    android:background="@null"
 			android:layout_height="wrap_content"
 			android:layout_width="wrap_content"
-			android:layout_marginLeft="5dp"
-			android:layout_marginTop="5dp"
-			android:layout_marginBottom="5dp"
-			android:layout_marginRight="15dp"
+			android:layout_gravity="center_vertical"
+			android:layout_marginRight="5dp"
 			android:gravity="center_vertical"
 			android:src="@drawable/right"
 			android:contentDescription="@string/calendar_dayView_navigateRight"/>
 
-</LinearLayout>
+</RelativeLayout>
