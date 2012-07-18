@@ -7,6 +7,8 @@ import java.util.List;
 
 import com.bog.calendar.app.model.EventListAdapter;
 import com.groupagendas.groupagenda.R;
+import com.groupagendas.groupagenda.calendar.adapters.AllDayEventsAdapter;
+import com.groupagendas.groupagenda.calendar.adapters.HourEventsAdapter;
 import com.groupagendas.groupagenda.data.DataManagement;
 import com.groupagendas.groupagenda.events.Event;
 import com.groupagendas.groupagenda.utils.Utils;
@@ -34,8 +36,8 @@ public class DayView extends LinearLayout{
 	private ArrayList<Event> allDayEvents = new ArrayList<Event>();
 	private ListView dayEventsPanel;
 	private ListView allDayEventsPanel;
-	private EventListAdapter hourEventAdapter = new EventListAdapter(getContext(), null);
-	private EventListAdapter allDayEventAdapter = new EventListAdapter(getContext(), null);
+	private HourEventsAdapter hourEventAdapter = new HourEventsAdapter(getContext(), null);
+	private AllDayEventsAdapter allDayEventAdapter = new AllDayEventsAdapter(getContext(), null);
 	
 	public DayView(Context context) {
 		this(context, null);
