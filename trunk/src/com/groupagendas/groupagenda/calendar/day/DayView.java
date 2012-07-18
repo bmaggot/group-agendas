@@ -3,6 +3,7 @@ package com.groupagendas.groupagenda.calendar.day;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Currency;
 import java.util.List;
 
 import com.bog.calendar.app.model.EventListAdapter;
@@ -17,7 +18,9 @@ import com.groupagendas.groupagenda.data.Data;
 import android.app.Activity;
 import android.content.Context;
 import android.util.AttributeSet;
+import android.view.View;
 import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -25,11 +28,12 @@ import android.widget.TextView;
 public class DayView extends LinearLayout{
 	
 	Calendar selectedDate = Calendar.getInstance();
-	Button prevDayButton;
-	Button nextDaybutton;
+	ImageButton prevDayButton;
+	ImageButton nextDaybutton;
 	TextView topPanelTitle;
 	
 	String[] WeekDayNames;
+	String[] MonthNames;
 
 	private EventListAdapter eventListAdapter = new EventListAdapter(getContext(), null);
 	private ArrayList<Event> dayEvents = new ArrayList<Event>();
@@ -45,6 +49,8 @@ public class DayView extends LinearLayout{
 	public DayView(Context context, AttributeSet attrs) {
 		super(context, attrs);
 		WeekDayNames = getResources().getStringArray(R.array.week_days_names);
+		MonthNames = getResources().getStringArray(R.array.month_names);
+		
 		selectedDate.setFirstDayOfWeek(Data.DEFAULT_FIRST_WEEK_DAY);
 //		dayEventsPanel = (ListView) findViewById(R.id.hour_events);
 //		allDayEventsPanel = (ListView) findViewById(R.id.allday_events);
@@ -122,17 +128,44 @@ public class DayView extends LinearLayout{
 		return null;
 	}
 	private void setupViewItems() {
-		prevDayButton = (Button)findViewById(R.id.prevDay);
-		nextDaybutton = (Button)findViewById(R.id.nextDay);
+		prevDayButton = (ImageButton)findViewById(R.id.prevDay);
+		nextDaybutton = (ImageButton)findViewById(R.id.nextDay);
 		dayEventsPanel = (ListView)findViewById(R.id.hour_events);
 		allDayEventsPanel = (ListView)findViewById(R.id.allday_events);
 		topPanelTitle = (TextView) findViewById(R.id.top_panel_title); 		
 		updateTopPanelTitle(selectedDate);
+		
+		prevDayButton.setOnClickListener(new OnClickListener() {
+			
+			@Override
+			public void onClick(View v) {
+				selectedDate.add(Calendar.DATE, -1);
+				updateTopPanelTitle(selectedDate);
+				initEventListAdapters(selectedDate);
+			}
+		});
+		
+		nextDaybutton.setOnClickListener(new OnClickListener() {
+			
+			@Override
+			public void onClick(View v) {
+				selectedDate.add(Calendar.DATE, 1);
+				updateTopPanelTitle(selectedDate);
+				initEventListAdapters(selectedDate);
+				
+			}
+		});
 	}
 
 	private void updateTopPanelTitle(Calendar selectedDate) {
-//		TODO
+		String title = WeekDayNames[selectedDate.get(Calendar.DAY_OF_WEEK) - 1];
+		title+= ", ";
+		title+= MonthNames[selectedDate.get(Calendar.MONTH)] + " " + selectedDate.get(Calendar.DAY_OF_MONTH);
+		title+= ", ";
+		title+= selectedDate.get(Calendar.YEAR);
+			
 		
+		topPanelTitle.setText(title);
 	}
  
 	
