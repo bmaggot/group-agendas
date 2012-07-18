@@ -48,4 +48,11 @@ public abstract class AbstractAdapter extends BaseAdapter {
 	@Override
 	public abstract View getView(int i, View view, ViewGroup viewGroup); 
 
+	public void setContext(Context context) {
+		this.context = context;
+	}
+
+	public void setList(List<Event> list) {
+		this.list = list;
+	}
 }
