@@ -52,52 +52,8 @@ public class DayView extends LinearLayout {
 		MonthNames = getResources().getStringArray(R.array.month_names);
 
 		selectedDate.setFirstDayOfWeek(Data.DEFAULT_FIRST_WEEK_DAY);
-		// dayEventsPanel = (ListView) findViewById(R.id.hour_events);
-		// allDayEventsPanel = (ListView) findViewById(R.id.allday_events);
 
 	}
-
-	// protected void initEventListAdapter(Calendar date, boolean allDay){
-	//
-	// DataManagement dm = DataManagement.getInstance(getContext());
-	// ArrayList<Event> events = dm.getEvents();
-	// String dayStr = new
-	// SimpleDateFormat("yyyy-MM-dd").format(Calendar.getInstance().getTime());
-	// Calendar day_start = Utils.stringToCalendar(dayStr+" 00:00:00",
-	// Utils.date_format);
-	// Calendar day_end = Utils.stringToCalendar(dayStr+" 23:59:59",
-	// Utils.date_format);
-	// for(int i = 0; i < events.size(); i++){
-	// Event event = events.get(i);
-	// if(date.after(event.startCalendar) && date.before(event.endCalendar) &&
-	// !allDay){
-	// dayEvents.add(event);
-	// } else if (!event.my_time_end.equals("null") &&
-	// !event.my_time_start.equals("null")) {
-	// Calendar calendar_start = Utils.stringToCalendar(event.my_time_start,
-	// event.timezone, Utils.date_format);
-	// Calendar calendar_end = Utils.stringToCalendar(event.my_time_end,
-	// event.timezone, Utils.date_format);
-	// if(calendar_end.equals(calendar_start)){
-	// allDayEvents.add(event);
-	// }
-	// }
-	// }
-	// if(!allDay){
-	// eventListAdapter.setList(dayEvents);
-	// } else {
-	// eventListAdapter.setList(allDayEvents);
-	// }
-	// eventListAdapter.setContext(getContext());
-	// ListView lv = null;
-	// if(!allDay){
-	// lv = (ListView) findViewById(R.id.hour_events);
-	// } else {
-	// lv = (ListView) findViewById(R.id.allday_events);
-	// }
-	// lv.setAdapter(eventListAdapter);
-	// eventListAdapter.notifyDataSetChanged();
-	// }
 
 	@Override
 	protected void onFinishInflate() {
@@ -111,7 +67,6 @@ public class DayView extends LinearLayout {
 	}
 
 	private void initEventListAdapters(Calendar selectedDate) {
-//		DataManagement dm = DataManagement.getInstance(getContext());
 		ArrayList<Event> events = Data.getEvents();
 
 		// hourEventAdapter.setList(filterHourEvents(events, selectedDate));
@@ -155,16 +110,9 @@ public class DayView extends LinearLayout {
 					if ((calendar_end.after(day_end) || calendar_end.equals(day_end)) && (calendar_start.before(day_start) || calendar_start
 							.equals(calendar_start)) || event.is_all_day) {
 						allDayEvents.add(event);
-						System.out.println("Added new all day event dafuq" + event.title);
 					}
 				}
 			}
-
-			// if(date.after(event.startCalendar) &&
-			// date.before(event.endCalendar) && event.allDay){
-			// allDayEvents.add(event);
-			// System.out.println(event.title);
-			// }
 		}
 		return allDayEvents;
 	}
