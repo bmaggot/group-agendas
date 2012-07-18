@@ -8,6 +8,7 @@ import com.groupagendas.groupagenda.events.EventActivity;
 
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Color;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
@@ -18,18 +19,24 @@ public class AllDayEventsAdapter extends AbstractAdapter {
 		super(context, list);
 	}
 
+
 	@Override
 	public View getView(int i, View view, ViewGroup viewGroup) {
-//		TODO
+
 		if (view == null) {
-            view = mInflater.inflate(R.layout.dayview_allday_listentry, null);
+            view = mInflater.inflate(R.layout.calendar_dayview_allday_listentry, null);
         }
 		
 		final Event event = list.get(i);
 		TextView title = (TextView) view.findViewById(R.id.allday_eventtitle);
 		title.setText(event.title);
-//		System.out.println("spalva " + i + " : " + event.);
-//		TODO evento spalvos
+		
+		if (!event.color.equalsIgnoreCase("null")){
+//			TODO in future there should be title color also set
+		System.out.println("spalva " + i + " : " + event.color);	
+		title.setBackgroundColor(Color.parseColor("#" + event.color));
+		}
+		
 		
 		view.setOnClickListener(new View.OnClickListener() {
           @Override
