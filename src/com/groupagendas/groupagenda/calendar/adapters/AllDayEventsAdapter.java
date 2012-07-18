@@ -17,7 +17,7 @@ public class AllDayEventsAdapter extends AbstractAdapter {
 
 	@Override
 	public View getView(int i, View view, ViewGroup viewGroup) {
-		// TODO Auto-generated method stub
+		System.out.println("bybys");
 		return null;
 	}
 
