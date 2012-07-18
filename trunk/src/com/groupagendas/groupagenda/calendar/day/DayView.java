@@ -31,20 +31,20 @@ public class DayView extends LinearLayout{
 	private EventListAdapter eventListAdapter = new EventListAdapter(getContext(), null);
 	private ArrayList<Event> dayEvents = new ArrayList<Event>();
 	private ArrayList<Event> allDayEvents = new ArrayList<Event>();
-	private LinearLayout dayEventsPanel;
-	private LinearLayout allDayEventsPanel;
+	private ListView dayEventsPanel;
+	private ListView allDayEventsPanel;
 	
 	public DayView(Context context) {
-		super(context);
-		dayEventsPanel = (LinearLayout) findViewById(R.id.hour_events);
-		allDayEventsPanel = (LinearLayout) findViewById(R.id.allday_events);
+		this(context, null);
 	}
 	public DayView(Context context, AttributeSet attrs) {
 		super(context, attrs);
 		WeekDayNames = getResources().getStringArray(R.array.week_days_names);
 		selectedDate.setFirstDayOfWeek(Data.DEFAULT_FIRST_WEEK_DAY);
-		dayEventsPanel = (LinearLayout) findViewById(R.id.hour_events);
-		allDayEventsPanel = (LinearLayout) findViewById(R.id.allday_events);
+//		dayEventsPanel = (ListView) findViewById(R.id.hour_events);
+//		allDayEventsPanel = (ListView) findViewById(R.id.allday_events);
+
+		
 	}
 
 	protected void initEventListAdapter(Calendar date, boolean allDay){
@@ -61,7 +61,7 @@ public class DayView extends LinearLayout{
 			} else if (!event.my_time_end.equals("null") && !event.my_time_start.equals("null")) {
 				Calendar calendar_start = Utils.stringToCalendar(event.my_time_start, event.timezone, Utils.date_format);
 				Calendar calendar_end = Utils.stringToCalendar(event.my_time_end, event.timezone, Utils.date_format); 
-					if(calendar_end.after(day_end) && calendar_start.before(day_start)){
+					if(calendar_end.equals(calendar_start)){
 						allDayEvents.add(event);
 					}
 			}
@@ -88,6 +88,8 @@ public class DayView extends LinearLayout{
 		
 		((Activity)getContext()).getLayoutInflater().inflate(R.layout.calendar_day_rewrite, this);
 		setupViewItems();
+		initEventListAdapter(selectedDate, true);
+//		initEventListAdapter(selectedDate, false);
 	}
  
 	private void setupViewItems() {
