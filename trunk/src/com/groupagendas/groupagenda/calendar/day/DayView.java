@@ -185,6 +185,7 @@ public class DayView extends LinearLayout {
 			@Override
 			public void onClick(View v) {
 //				selectedDate.add(Calendar.DATE, 1);
+				selectedDay.goNext();
 				updateTopPanelTitle(selectedDay.getSelectedDate());
 				initEventListAdapters();
 //				initEventListAdapters(selectedDate);
