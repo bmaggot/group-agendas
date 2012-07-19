@@ -24,6 +24,7 @@
 	<color name="monthNameBgColor">#686868</color>
 	<color name="weekNumberCellBgColor">#B8B8B8</color>
 	<color name="red">#FF0000</color>
+	<color name="defaultAllDayEventColor">#21C0DB</color>
 
 	<string-array name="colors_values">
 		<item>000000</item>

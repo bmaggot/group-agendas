@@ -4,8 +4,8 @@
 	android:shape="rectangle" >
 
 	<gradient
-		android:endColor="@color/event_color_start"
-		android:startColor="@color/event_color_start" />
+		android:endColor="@color/defaultAllDayEventColor"
+		android:startColor="@color/defaultAllDayEventColor" />
 
     <corners
 		android:bottomRightRadius="5dp"
