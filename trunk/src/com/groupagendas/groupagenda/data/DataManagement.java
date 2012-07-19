@@ -13,6 +13,7 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.TreeMap;
 
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
@@ -406,7 +407,8 @@ public class DataManagement {
 	public Account getAccountFromLocalDb() {
 		Account u = null;
 
-		Cursor result = Data.getmContext().getContentResolver().query(AccountProvider.AMetaData.AccountMetaData.CONTENT_URI, null, null, null, null);
+		Cursor result = Data.getmContext().getContentResolver()
+				.query(AccountProvider.AMetaData.AccountMetaData.CONTENT_URI, null, null, null, null);
 
 		if (result.moveToFirst()) {
 			u = new Account();
@@ -590,10 +592,9 @@ public class DataManagement {
 		try {
 			HttpClient hc = new DefaultHttpClient();
 			HttpPost post = new HttpPost(Data.getServerUrl() + "mobile/login");
-			post.setHeader("User-Agent", "Linux; AndroidPhone "+android.os.Build.VERSION.RELEASE);
+			post.setHeader("User-Agent", "Linux; AndroidPhone " + android.os.Build.VERSION.RELEASE);
 			post.setHeader("Accept", "*/*");
-//			post.setHeader("Content-Type", "text/vnd.ms-sync.wbxml");
-
+			// post.setHeader("Content-Type", "text/vnd.ms-sync.wbxml");
 
 			MultipartEntity reqEntity = new MultipartEntity(HttpMultipartMode.BROWSER_COMPATIBLE);
 
@@ -616,20 +617,20 @@ public class DataManagement {
 						int id = Integer.parseInt(profile.getString("user_id"));
 						Data.setToken(token);
 						Data.setUserId(id);
-						
-						//Last login set
+
+						// Last login set
 						hc = new DefaultHttpClient();
 						post = new HttpPost(Data.getServerUrl() + "mobile/set_lastlogin");
 
 						reqEntity = new MultipartEntity(HttpMultipartMode.BROWSER_COMPATIBLE);
 
 						reqEntity.addPart("Token", new StringBody(token));
-						
+
 						post.setEntity(reqEntity);
 
 						rp = hc.execute(post);
 						//
-						
+
 						//
 						Data.setEmail(email);
 						Data.setPassword(password);
@@ -813,8 +814,8 @@ public class DataManagement {
 			MultipartEntity reqEntity = new MultipartEntity(HttpMultipartMode.BROWSER_COMPATIBLE);
 			reqEntity.addPart("token", new StringBody(Data.getToken()));
 
-			Cursor result = Data.getmContext().getContentResolver().query(AccountProvider.AMetaData.AutoiconMetaData.CONTENT_URI, null, null, null,
-					null);
+			Cursor result = Data.getmContext().getContentResolver()
+					.query(AccountProvider.AMetaData.AutoiconMetaData.CONTENT_URI, null, null, null, null);
 			result.moveToFirst();
 
 			int i = 1;
@@ -858,7 +859,8 @@ public class DataManagement {
 	public ArrayList<AutoIconItem> getAutoIcons() {
 		ArrayList<AutoIconItem> Items = new ArrayList<AutoIconItem>();
 
-		Cursor result = Data.getmContext().getContentResolver().query(AccountProvider.AMetaData.AutoiconMetaData.CONTENT_URI, null, null, null, null);
+		Cursor result = Data.getmContext().getContentResolver()
+				.query(AccountProvider.AMetaData.AutoiconMetaData.CONTENT_URI, null, null, null, null);
 		result.moveToFirst();
 
 		while (!result.isAfterLast()) {
@@ -888,8 +890,8 @@ public class DataManagement {
 			MultipartEntity reqEntity = new MultipartEntity(HttpMultipartMode.BROWSER_COMPATIBLE);
 			reqEntity.addPart("token", new StringBody(Data.getToken()));
 
-			Cursor result = Data.getmContext().getContentResolver().query(AccountProvider.AMetaData.AutocolorMetaData.CONTENT_URI, null, null, null,
-					null);
+			Cursor result = Data.getmContext().getContentResolver()
+					.query(AccountProvider.AMetaData.AutocolorMetaData.CONTENT_URI, null, null, null, null);
 			result.moveToFirst();
 
 			int i = 1;
@@ -958,10 +960,10 @@ public class DataManagement {
 	public ArrayList<Contact> getContacts() {
 		return Data.getContacts();
 	}
-	
+
 	public int loadContacts(Activity instance, ContactsAdapter cAdapter) {
 		int contactsSize = 0;
-		
+
 		if (isLoadContactsData()) {
 			Data.setContacts(getContactsFromRemoteDb(null));
 			updateContactsAdapter(Data.getContacts(), cAdapter);
@@ -971,10 +973,10 @@ public class DataManagement {
 			updateContactsAdapter(Data.getContacts(), cAdapter);
 			contactsSize = Data.getContacts().size();
 		}
-		
+
 		return contactsSize;
 	}
-	
+
 	public ArrayList<Contact> getContactsFromLocalDb(String where) {
 		Contact item;
 		ArrayList<Contact> items = new ArrayList<Contact>();
@@ -984,8 +986,8 @@ public class DataManagement {
 
 		where += ContactsProvider.CMetaData.ContactsMetaData.NEED_UPDATE + "!=3";
 
-		Cursor result = Data.getmContext().getContentResolver().query(ContactsProvider.CMetaData.ContactsMetaData.CONTENT_URI, null, where, null,
-				null);
+		Cursor result = Data.getmContext().getContentResolver()
+				.query(ContactsProvider.CMetaData.ContactsMetaData.CONTENT_URI, null, where, null, null);
 
 		result.moveToFirst();
 
@@ -1417,7 +1419,7 @@ public class DataManagement {
 	public ArrayList<Group> getGroups() {
 		return Data.getGroups();
 	}
-	
+
 	public int loadGroups(Activity instance, GroupsAdapter gAdapter) {
 		int groupsSize = 0;
 
@@ -1430,33 +1432,34 @@ public class DataManagement {
 			updateGroupsAdapter(Data.getGroups(), gAdapter);
 			groupsSize = Data.getGroups().size();
 		}
-		
+
 		return groupsSize;
 	}
-	
+
 	public Account getAccount() {
 		return Data.getAccount();
 	}
-	
-	public Account loadAccount () {
+
+	public Account loadAccount() {
 		Account acc = new Account();
-		
+
 		if (DataManagement.isLoadAccountData()) {
 			acc = getAccountFromRemoteDb();
 		} else {
 			acc = getAccountFromLocalDb();
 		}
-			
-		return acc;		
+
+		return acc;
 	}
-	
+
 	public ArrayList<Group> getGroupsFromLocalDb() {
 		Group item;
 		ArrayList<Group> items = new ArrayList<Group>();
 
 		String where = ContactsProvider.CMetaData.GroupsMetaData.NEED_UPDATE + "!=3";
 
-		Cursor result = Data.getmContext().getContentResolver().query(ContactsProvider.CMetaData.GroupsMetaData.CONTENT_URI, null, where, null, null);
+		Cursor result = Data.getmContext().getContentResolver()
+				.query(ContactsProvider.CMetaData.GroupsMetaData.CONTENT_URI, null, where, null, null);
 
 		result.moveToFirst();
 
@@ -1599,7 +1602,8 @@ public class DataManagement {
 
 								if (group.deleted == null || group.deleted.equals("null")) {
 									groups.add(group);
-									Data.getmContext().getContentResolver().insert(ContactsProvider.CMetaData.GroupsMetaData.CONTENT_URI, cv);
+									Data.getmContext().getContentResolver()
+											.insert(ContactsProvider.CMetaData.GroupsMetaData.CONTENT_URI, cv);
 								}
 							}
 						}
@@ -1796,11 +1800,11 @@ public class DataManagement {
 	public ArrayList<Event> getEvents() {
 		return Data.getEvents();
 	}
-	
+
 	public int loadEvents(Activity instance, EventsAdapter eAdapter) {
 		int eventsSize = 0;
 		ArrayList<Event> events;
-		
+
 		if (DataManagement.isLoadEventsData()) {
 			ArrayList<Event> result = getEventsFromRemoteDb("");
 			if (!NavbarActivity.showInvites) {
@@ -1822,10 +1826,10 @@ public class DataManagement {
 				updateEventsAdapter(Data.getEvents(), eAdapter);
 			Data.setEvents(events);
 		}
-		
+
 		return eventsSize;
 	}
-	
+
 	public ArrayList<Event> getEventsFromRemoteDb(String eventCategory) {
 		boolean success = false;
 		ArrayList<Event> events = new ArrayList<Event>();
@@ -2071,13 +2075,12 @@ public class DataManagement {
 								cv.put(EventsProvider.EMetaData.EventsMetaData.INVITED, invited);
 							} catch (JSONException ex) {
 							}
-							
+
 							try {
 								int all_day = e.getInt("all_day");
 								event.is_all_day = all_day == 1;
 							} catch (JSONException ex) {
 							}
-							
 
 							// //
 							Data.getmContext().getContentResolver().insert(EventsProvider.EMetaData.EventsMetaData.CONTENT_URI, cv);
@@ -2090,7 +2093,59 @@ public class DataManagement {
 			Log.e("getEventList", ex.getMessage() + " !!!");
 		}
 		Data.setLoadEventsData(false);
+		sortEvents(events);
 		return getNaviveCalendarEvents(events);
+	}
+
+	public void sortEvents(ArrayList<Event> events) {
+		TreeMap<Calendar, ArrayList<Event>> tm = new TreeMap<Calendar, ArrayList<Event>>();
+		Calendar event_start = null;
+		Calendar event_end = null;
+		Calendar tmp_event_start = null;
+		for (Event event : events) {
+			if (!event.my_time_end.equals("null") && !event.my_time_start.equals("null")) {
+				event_start = Utils.stringToCalendar(event.my_time_start, event.timezone, Utils.date_format);
+				event_end = Utils.stringToCalendar(event.my_time_end, event.timezone, Utils.date_format);
+				tmp_event_start = (Calendar) event_start.clone();
+				int difference = 0;
+				while (tmp_event_start.before(event_end)) {
+					tmp_event_start.add(Calendar.DAY_OF_MONTH, 1);
+					difference++;
+				}
+				if (difference == 0){
+					String dayStr = new SimpleDateFormat("yyyy-MM-dd").format(event_start.getTime());
+					Calendar eventDay = Utils.stringToCalendar(dayStr + " 00:00:00", Utils.date_format);
+					tm = putValueIntoTreeMap(tm, eventDay, event);
+				} else if(difference >= 0){
+					for(int i = 0; i < difference; i++){
+						String dayStr = new SimpleDateFormat("yyyy-MM-dd").format(event_start.getTime());
+						Calendar eventDay = Utils.stringToCalendar(dayStr + " 00:00:00", Utils.date_format);
+						putValueIntoTreeMap(tm, eventDay, event);
+						event_start.add(Calendar.DAY_OF_MONTH, 1);
+					}
+				}
+			}
+		}
+		System.out.println("TM done");
+	}
+	
+	public TreeMap<Calendar, ArrayList<Event>> putValueIntoTreeMap (TreeMap<Calendar, ArrayList<Event>> tm, Calendar eventDay, Event event){
+		if(tm.containsKey(eventDay)){
+			ArrayList<Event> tmpArrayList = tm.get(eventDay);
+			tmpArrayList.add(event);
+			tm.put(eventDay, tmpArrayList);
+			System.out.println(eventDay.getTime());
+			System.out.println(event.title);
+			System.out.println("");
+		} else {
+			ArrayList<Event> tmpArrayList = new ArrayList<Event>();
+			tmpArrayList.add(event);
+			tm.put(eventDay, tmpArrayList);
+			System.out.println(eventDay.getTime());
+			System.out.println(event.title);
+			System.out.println("");
+		}
+		return tm;
 	}
 
 	public ArrayList<Event> getEventsFromLocalDb() {
@@ -2098,8 +2153,8 @@ public class DataManagement {
 		ArrayList<Event> items = new ArrayList<Event>();
 		if (Data.get_prefs().getBoolean("isAgenda", true)) {
 			String where = EventsProvider.EMetaData.EventsMetaData.NEED_UPDATE + " < 3";
-			Cursor result = Data.getmContext().getContentResolver().query(EventsProvider.EMetaData.EventsMetaData.CONTENT_URI, null, where, null,
-					null);
+			Cursor result = Data.getmContext().getContentResolver()
+					.query(EventsProvider.EMetaData.EventsMetaData.CONTENT_URI, null, where, null, null);
 
 			result.moveToFirst();
 
@@ -2158,7 +2213,6 @@ public class DataManagement {
 				item.attendant_2_count = result.getInt(result.getColumnIndex(EventsProvider.EMetaData.EventsMetaData.ATTENDANT_2_COUNT));
 				item.attendant_0_count = result.getInt(result.getColumnIndex(EventsProvider.EMetaData.EventsMetaData.ATTENDANT_0_COUNT));
 				item.attendant_4_count = result.getInt(result.getColumnIndex(EventsProvider.EMetaData.EventsMetaData.ATTENDANT_4_COUNT));
-				
 
 				items.add(item);
 				result.moveToNext();
@@ -2173,9 +2227,12 @@ public class DataManagement {
 		SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 		Event item = new Event();
 
-		Cursor cursor = Data.getmContext().getContentResolver().query(Uri.parse("content://com.android.calendar/events"),
-				new String[] { "_id", "title", "description", "dtstart", "dtend", "eventLocation", "eventTimezone" }, "_id=" + id, null,
-				null);
+		Cursor cursor = Data
+				.getmContext()
+				.getContentResolver()
+				.query(Uri.parse("content://com.android.calendar/events"),
+						new String[] { "_id", "title", "description", "dtstart", "dtend", "eventLocation", "eventTimezone" }, "_id=" + id,
+						null, null);
 
 		if (cursor.moveToFirst()) {
 			item.isNative = true;
@@ -2200,8 +2257,8 @@ public class DataManagement {
 	}
 
 	public Cursor getNativeCalendars() {
-		Cursor cursor = Data.getmContext().getContentResolver().query(Uri.parse("content://com.android.calendar/calendars"),
-				(new String[] { "_id", "displayName" }), null, null, null);
+		Cursor cursor = Data.getmContext().getContentResolver()
+				.query(Uri.parse("content://com.android.calendar/calendars"), (new String[] { "_id", "displayName" }), null, null, null);
 		if (cursor != null) {
 			cursor.moveToFirst();
 		}
@@ -2219,9 +2276,12 @@ public class DataManagement {
 
 				if (isNative) {
 					String where = "calendar_id=" + calendar_id;
-					Cursor cursor = Data.getmContext().getContentResolver().query(Uri.parse("content://com.android.calendar/events"),
-							new String[] { "_id", "title", "description", "dtstart", "dtend", "eventLocation", "eventTimezone" }, where,
-							null, null);
+					Cursor cursor = Data
+							.getmContext()
+							.getContentResolver()
+							.query(Uri.parse("content://com.android.calendar/events"),
+									new String[] { "_id", "title", "description", "dtstart", "dtend", "eventLocation", "eventTimezone" },
+									where, null, null);
 
 					cursor.moveToFirst();
 					while (!cursor.isAfterLast()) {
@@ -2337,7 +2397,6 @@ public class DataManagement {
 			item.attendant_2_count = result.getInt(result.getColumnIndex(EventsProvider.EMetaData.EventsMetaData.ATTENDANT_2_COUNT));
 			item.attendant_0_count = result.getInt(result.getColumnIndex(EventsProvider.EMetaData.EventsMetaData.ATTENDANT_0_COUNT));
 			item.attendant_4_count = result.getInt(result.getColumnIndex(EventsProvider.EMetaData.EventsMetaData.ATTENDANT_4_COUNT));
-			
 
 			String assigned_contacts = result.getString(result.getColumnIndex(EventsProvider.EMetaData.EventsMetaData.ASSIGNED_CONTACTS));
 			if (assigned_contacts != null && !assigned_contacts.equals("null")) {
@@ -2376,7 +2435,8 @@ public class DataManagement {
 								invited.status = Data.getmContext().getString(R.string.new_invite);
 							} else {
 								String statusStr = new StringBuilder("status_").append(invited.status_id).toString();
-								int statusId = Data.getmContext().getResources().getIdentifier(statusStr, "string", "com.groupagendas.groupagenda");
+								int statusId = Data.getmContext().getResources()
+										.getIdentifier(statusStr, "string", "com.groupagendas.groupagenda");
 
 								invited.status = Data.getmContext().getString(statusId);
 							}
@@ -2729,16 +2789,16 @@ public class DataManagement {
 		}
 		return phonePrefix;
 	}
-	
-	public String getError(){
+
+	public String getError() {
 		return Data.getERROR();
 	}
-	
-	public void setError(String error){
+
+	public void setError(String error) {
 		Data.setERROR(error);
 	}
-	
-	public static String getCONNECTION_ERROR(){
+
+	public static String getCONNECTION_ERROR() {
 		return Data.getConnectionError();
 	}
 
@@ -2798,27 +2858,26 @@ public class DataManagement {
 	public static void setLoadEventsData(boolean loadEventsData) {
 		Data.setLoadEventsData(loadEventsData);
 	}
-	
+
 	public void updateContactsAdapter(ArrayList<Contact> contacts, ContactsAdapter cAdapter) {
-		if(cAdapter != null){	
+		if (cAdapter != null) {
 			cAdapter.setItems(contacts);
 			cAdapter.notifyDataSetChanged();
 		}
 	}
-	
+
 	public void updateGroupsAdapter(ArrayList<Group> groups, GroupsAdapter gAdapter) {
-		if(gAdapter != null){
+		if (gAdapter != null) {
 			gAdapter.setItems(groups);
 			gAdapter.notifyDataSetChanged();
 		}
 	}
-	
-	public void updateEventsAdapter(ArrayList<Event> events, EventsAdapter eAdapter){
-		if(eAdapter != null){
+
+	public void updateEventsAdapter(ArrayList<Event> events, EventsAdapter eAdapter) {
+		if (eAdapter != null) {
 			eAdapter.setItems(events);
 			eAdapter.notifyDataSetChanged();
 		}
 	}
 
-	
 }

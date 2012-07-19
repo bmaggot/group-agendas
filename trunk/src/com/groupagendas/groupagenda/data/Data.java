@@ -1,6 +1,9 @@
 package com.groupagendas.groupagenda.data;
 
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.HashMap;
+import java.util.TreeMap;
 
 import android.content.Context;
 import android.content.SharedPreferences;
@@ -55,6 +58,7 @@ public class Data {
 	private static ArrayList<Contact> contacts;
 	private static ArrayList<Group> groups;
 	private static ArrayList<Event> events;
+	private static TreeMap<Calendar, ArrayList<Event>> sortedEvents;
 	
 	public static final int DEFAULT_FIRST_WEEK_DAY = 1;
 	
@@ -271,6 +275,23 @@ public class Data {
 	protected static void setEvents(ArrayList<Event> events) {
 		Data.events = events;
 	}
+
+	public static TreeMap<Calendar, ArrayList<Event>> getSortedEvents() {
+		return sortedEvents;
+	}
+
+	public static void setSortedEvents(TreeMap<Calendar, ArrayList<Event>> sortedEvents) {
+		Data.sortedEvents = sortedEvents;
+	}
+	
+	public static ArrayList<Event> getEventByDate(Calendar date){
+		if(sortedEvents.containsKey(date)){
+			return sortedEvents.get(date);
+		} else {
+			return new ArrayList<Event>();
+		}
+	}
+
 	protected static void setUserId(int id){
 		if (_editor == null)
 			return;
