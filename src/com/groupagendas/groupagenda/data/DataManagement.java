@@ -2126,7 +2126,7 @@ public class DataManagement {
 				}
 			}
 		}
-		System.out.println("TM done");
+		Data.setSortedEvents(tm);
 	}
 	
 	public TreeMap<Calendar, ArrayList<Event>> putValueIntoTreeMap (TreeMap<Calendar, ArrayList<Event>> tm, Calendar eventDay, Event event){
@@ -2134,16 +2134,10 @@ public class DataManagement {
 			ArrayList<Event> tmpArrayList = tm.get(eventDay);
 			tmpArrayList.add(event);
 			tm.put(eventDay, tmpArrayList);
-			System.out.println(eventDay.getTime());
-			System.out.println(event.title);
-			System.out.println("");
 		} else {
 			ArrayList<Event> tmpArrayList = new ArrayList<Event>();
 			tmpArrayList.add(event);
 			tm.put(eventDay, tmpArrayList);
-			System.out.println(eventDay.getTime());
-			System.out.println(event.title);
-			System.out.println("");
 		}
 		return tm;
 	}
