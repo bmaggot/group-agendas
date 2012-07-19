@@ -1,211 +1,46 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-	android:layout_width="fill_parent"
-	android:layout_height="fill_parent"
-	android:background="@android:color/white"
-	android:orientation="vertical" >
+    android:orientation="vertical"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent" >
+    
+<!--    TOP NAVBAR BEGIN -->
+    <include android:id="@+id/calendar_navbar"
+		android:layout_gravity="center_horizontal"
+		layout="@layout/calendar_top_bar"
+		android:layout_weight="0"/>
+<!--    TOP NAVBAR END -->
 
-	<RelativeLayout
-		android:layout_width="fill_parent"
-		android:layout_height="40dip"
-		android:background="@drawable/top_panel"
-		android:orientation="horizontal" >
-
-		<Button
-			android:id="@+id/prevDay"
-			android:layout_width="wrap_content"
-			android:layout_height="wrap_content"
-			android:layout_alignParentLeft="true"
-			android:layout_marginLeft="5dp"
-			android:layout_marginTop="5dp"
-			android:gravity="center_vertical"
-			android:text="Prev" />
-
-		<TextView
-			android:id="@+id/top_panel_title"
-			android:layout_width="wrap_content"
-			android:layout_height="fill_parent"
-			android:layout_centerInParent="true"
-			android:gravity="center_vertical"
-			android:text="TopPanel"
-			android:textColor="@color/event_color_start"
-			android:textStyle="bold" />
-
-		<Button
-			android:id="@+id/nextDay"
-			android:layout_width="wrap_content"
-			android:layout_height="wrap_content"
-			android:layout_alignParentRight="true"
-			android:layout_marginRight="5dp"
-			android:layout_marginTop="5dp"
-			android:gravity="center_vertical"
-			android:text="Next" />
-	</RelativeLayout>
-
-	<LinearLayout
-		android:layout_width="fill_parent"
-		android:layout_height="wrap_content"
-		android:orientation="horizontal" >
-
-		<TextView
-			android:layout_width="@dimen/time_panel_width"
-			android:layout_height="fill_parent"
-			android:background="@color/lighter_gray"
-			android:gravity="center"
-			android:text="All Day"
-			android:textColor="@android:color/black"
-			android:textSize="10dip" />
-
-		<LinearLayout
-			android:id="@+id/all_day_events_panel"
-			android:layout_width="fill_parent"
-			android:layout_height="wrap_content"
-			android:orientation="vertical" >
-
-			<TextView
-				android:layout_width="fill_parent"
-				android:layout_height="wrap_content" />
-		</LinearLayout>
-	</LinearLayout>
-
-	<View
-		android:layout_width="fill_parent"
-		android:layout_height="2dip"
-		android:background="@color/darker_gray" />
-
-	<ScrollView
-		android:layout_width="fill_parent"
-		android:layout_height="fill_parent" >
-
-		<RelativeLayout
-			android:layout_width="fill_parent"
-			android:layout_height="fill_parent" >
-
-			<com.bog.calendar.app.ui.BackgroundView
-				android:layout_width="fill_parent"
-				android:layout_height="fill_parent"
-				android:orientation="vertical" >
-
-				<LinearLayout
-					android:layout_width="fill_parent"
-					android:layout_height="fill_parent"
-					android:orientation="horizontal" >
-
-					<LinearLayout
-						android:id="@+id/times_panel"
-						android:layout_width="40dip"
-						android:layout_height="fill_parent"
-						android:orientation="vertical" >
-
-						<TextView
-							style="@style/cellTimeStyle"
-							android:text="0-00" />
-
-						<TextView
-							style="@style/cellTimeStyle"
-							android:text="1-00" />
-
-						<TextView
-							style="@style/cellTimeStyle"
-							android:text="2-00" />
-
-						<TextView
-							style="@style/cellTimeStyle"
-							android:text="3-00" />
-
-						<TextView
-							style="@style/cellTimeStyle"
-							android:text="4-00" />
-
-						<TextView
-							style="@style/cellTimeStyle"
-							android:text="5-00" />
-
-						<TextView
-							style="@style/cellTimeStyle"
-							android:text="6-00" />
-
-						<TextView
-							style="@style/cellTimeStyle"
-							android:text="7-00" />
-
-						<TextView
-							style="@style/cellTimeStyle"
-							android:text="8-00" />
-
-						<TextView
-							style="@style/cellTimeStyle"
-							android:text="9-00" />
-
-						<TextView
-							style="@style/cellTimeStyle"
-							android:text="10-00" />
-
-						<TextView
-							style="@style/cellTimeStyle"
-							android:text="11-00" />
-
-						<TextView
-							style="@style/cellTimeStyle"
-							android:text="12-00" />
-
-						<TextView
-							style="@style/cellTimeStyle"
-							android:text="13-00" />
-
-						<TextView
-							style="@style/cellTimeStyle"
-							android:text="14-00" />
-
-						<TextView
-							style="@style/cellTimeStyle"
-							android:text="15-00" />
-
-						<TextView
-							style="@style/cellTimeStyle"
-							android:text="16-00" />
-
-						<TextView
-							style="@style/cellTimeStyle"
-							android:text="17-00" />
-
-						<TextView
-							style="@style/cellTimeStyle"
-							android:text="18-00" />
-
-						<TextView
-							style="@style/cellTimeStyle"
-							android:text="19-00" />
-
-						<TextView
-							style="@style/cellTimeStyle"
-							android:text="20-00" />
-
-						<TextView
-							style="@style/cellTimeStyle"
-							android:text="21-00" />
-
-						<TextView
-							style="@style/cellTimeStyle"
-							android:text="22-00" />
-
-						<TextView
-							style="@style/cellTimeStyle"
-							android:text="23-00" />
-
-						<TextView
-							style="@style/cellTimeStyle"
-							android:text="24-00" />
-					</LinearLayout>
-
-					<RelativeLayout
-						android:id="@+id/events_panel"
-						android:layout_width="fill_parent"
-						android:layout_height="fill_parent" >
-					</RelativeLayout>
-				</LinearLayout>
-			</com.bog.calendar.app.ui.BackgroundView>
-		</RelativeLayout>
-	</ScrollView>
-
+<!--     ALL-DAY EVENTS BEGIN -->
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:minHeight="20dp"
+        android:maxHeight="100dp"
+        android:layout_weight="1">
+        
+        <TextView
+            style="@style/dayView_hourEvent_firstColumn"
+			android:text="@string/calendar_dayView_allDayEvents_holder"/>
+        
+        <ListView
+			android:id="@+id/allday_events"
+			android:divider="@null"
+			android:dividerHeight="0dp"
+			
+			style="@style/dayView_hourEvent_secondColumn">            
+        </ListView>
+    </LinearLayout>
+<!--     ALL-DAY EVENTS END -->
+    
+<!--     HOUR-LONG EVENTS BEGIN -->
+    <ListView
+        android:id="@+id/hour_events"
+        android:layout_height="fill_parent"
+        android:layout_width="fill_parent"
+        android:layout_weight="1">
+    </ListView>
+<!--     HOUR-LONG EVENTS END -->
+    
 </LinearLayout>
