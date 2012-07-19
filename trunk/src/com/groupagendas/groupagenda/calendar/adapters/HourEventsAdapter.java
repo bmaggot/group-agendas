@@ -17,11 +17,11 @@ public class HourEventsAdapter extends AbstractAdapter {
 
 	@Override
 	public View getView(int i, View view, ViewGroup viewGroup) {
-		if (view == null) {
-//           TODO view = mInflater.inflate(R.layout.calendar_day_entry, null);
-        }
-		final Event event = list.get(i);
-		
+//		if (view == null) {
+//			view = mInflater.inflate(R.layout.calendar_dayview_hourevent_entry, null);
+//        }
+//		final Event event = list.get(i);
+//		
 		return view;
 	}
 
