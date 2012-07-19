@@ -12,6 +12,7 @@ import android.view.View;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.ListView;
+import android.widget.ScrollView;
 import android.widget.TextView;
 
 import com.groupagendas.groupagenda.R;
@@ -29,7 +30,7 @@ public class DayView extends LinearLayout {
 	String[] WeekDayNames;
 	String[] MonthNames;
 
-	private ListView dayEventsPanel;
+	private ScrollView hourEventsPanel;
 	private ListView allDayEventsPanel;
 	private HourEventsAdapter hourEventAdapter = new HourEventsAdapter(getContext(), null);
 	private AllDayEventsAdapter allDayEventAdapter = new AllDayEventsAdapter(getContext(), null);;
@@ -67,8 +68,8 @@ public class DayView extends LinearLayout {
 		prevDayButton = (ImageButton) findViewById(R.id.prevDay);
 		nextDaybutton = (ImageButton) findViewById(R.id.nextDay);
 
-		dayEventsPanel = (ListView) findViewById(R.id.hour_events);
-		dayEventsPanel.setAdapter(hourEventAdapter);
+		hourEventsPanel = (ScrollView) findViewById(R.id.hour_events);
+		
 
 		allDayEventsPanel = (ListView) findViewById(R.id.allday_events);
 		allDayEventsPanel.setAdapter(allDayEventAdapter);
