@@ -76,16 +76,16 @@ public class DayView extends LinearLayout {
 		allDayEventAdapter.setList(filterAllDayEvents(events, selectedDate));
 		allDayEventAdapter.notifyDataSetChanged();
 
-		// testAdapter(events);
+		
 
 	}
 
-	private void testAdapter(ArrayList<Event> events) {
-		System.out.println("EVENTU: " + events.size());
-		allDayEventAdapter.setList(events);
-		allDayEventAdapter.notifyDataSetChanged();
-
-	}
+//	private void testAdapter(ArrayList<Event> events) {
+////		System.out.println("EVENTU: " + events.size());
+////		allDayEventAdapter.setList(events);
+////		allDayEventAdapter.notifyDataSetChanged();
+//
+//	}
 
 	private List<Event> filterAllDayEvents(ArrayList<Event> events, Calendar date) {
 		ArrayList<Event> allDayEvents = new ArrayList<Event>();
