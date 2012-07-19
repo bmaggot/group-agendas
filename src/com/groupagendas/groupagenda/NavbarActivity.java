@@ -48,6 +48,7 @@ import com.groupagendas.groupagenda.utils.Utils;
 
 public class NavbarActivity extends Activity {
 	
+
 	private final int DEFAULT_FIRST_DAY_OF_WEEK = Calendar.MONDAY;
 	
 	private DataManagement dm;
@@ -73,6 +74,7 @@ public class NavbarActivity extends Activity {
 	
 	private EditText searchView;
 	private EntryAdapter entryAdapter;
+	private ViewState viewState = ViewState.MONTH;
 
 	
 	
@@ -266,23 +268,43 @@ public class NavbarActivity extends Activity {
 		
 		// settings month view
 		prefs = new Prefs(this);
+//		TODO issiaiskinti kaip ten su tais accountais
 		String defaultCalendarView = prefs.getValue(AccountProvider.AMetaData.AccountMetaData.SETTING_DEFAULT_VIEW, "m");
 		
+//		switchToView();
 		if(defaultCalendarView.equals("d")){
 			calendarContainer.removeAllViews();
 			mInflater.inflate(R.layout.calendar_day, calendarContainer);
 			new CalendarDay(NavbarActivity.this);
 		}else{
-			calendarContainer.removeAllViews();
+
 			mInflater.inflate(R.layout.calendar_month, calendarContainer);
 			new CalendarMonth(NavbarActivity.this);
-//			mInflater.inflate(R.layout.calendar_year, calendarContainer);
-//			new CalendarYear(NavbarActivity.this);
 		}
 	}
 	
 	
-	
+//	TODO UZBAIGS JUSTAS M JEI KAS NORS PRIMINS ;)
+	private void switchToView() {
+		switch (viewState) {
+		case DAY:
+			
+			break;
+
+		default:
+			String defaultCalendarView = prefs.getValue(AccountProvider.AMetaData.AccountMetaData.SETTING_DEFAULT_VIEW, "m");
+			
+//			TODO set default state accordingly to what is got
+			if (defaultCalendarView.equalsIgnoreCase("m")) viewState = ViewState.MONTH;
+			else viewState = ViewState.MONTH;
+			switchToView();
+			break;
+		}
+		
+	}
+
+
+
 	class GetAllEventsTask extends AsyncTask<Void, ArrayList<Item>, ArrayList<Item>>{
 
 		@Override
