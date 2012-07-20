@@ -1,8 +1,5 @@
 package com.groupagendas.groupagenda.calendar.day;
 
-
-
-
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;

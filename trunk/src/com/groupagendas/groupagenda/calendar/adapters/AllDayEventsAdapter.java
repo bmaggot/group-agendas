@@ -10,8 +10,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.drawable.GradientDrawable;
-import android.graphics.drawable.ShapeDrawable;
-import android.graphics.drawable.shapes.RoundRectShape;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
@@ -34,13 +32,15 @@ public class AllDayEventsAdapter extends AbstractAdapter<Event> {
 		final Event event = list.get(i);
 		TextView title = (TextView) view.findViewById(R.id.allday_eventtitle);
 		title.setText(event.title);
-		GradientDrawable sd = (GradientDrawable)context.getResources().getDrawable(R.drawable.calendar_dayview_secondcolumn_entrybackground);		
+		GradientDrawable sd = (GradientDrawable)context.getResources().getDrawable(R.drawable.calendar_dayview_secondcolumn_entrybackground);
+		
 		if (!event.color.equalsIgnoreCase("null")){
 			sd.setColor(Color.parseColor("#BF" + event.color));
-
+			sd.setStroke(1, Color.parseColor("#" + event.color));
 		}else {
 			sd.setColor(context.getResources().getColor(R.color.defaultAllDayEventColor));
 		}
+		
 		title.setBackgroundDrawable(sd);
 		
 		
