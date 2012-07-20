@@ -379,11 +379,16 @@ public class ContactsActivity extends ListActivity implements OnCheckedChangeLis
 		}
 
 		// compute the item index for given event position belongs to
-		if ((sideIndexY % pixelPerDisplayedItem) > 0)
-			itemPosition = (int) (sideIndexY / pixelPerDisplayedItem) + 1;
-		else
+		if ((sideIndexY % pixelPerDisplayedItem) > 0) {
+			if (android.os.Build.VERSION.RELEASE.toString().startsWith("4")) {
+				itemPosition = (int) (sideIndexY / pixelPerDisplayedItem);
+			} else {
+				itemPosition = (int) (sideIndexY / pixelPerDisplayedItem) + 1;
+			}
+		} else {
 			itemPosition = (int) (sideIndexY / pixelPerDisplayedItem);
-
+		}
+		
 		int indexMin = 0;
 		if (itemPosition <= indexListSize)
 			indexMin = Integer.parseInt(indexList.keySet().toArray()[(itemPosition - 1) * factor].toString());
@@ -391,5 +396,4 @@ public class ContactsActivity extends ListActivity implements OnCheckedChangeLis
 		ListView listView = (ListView) getListView();
 		listView.setSelection(indexMin);
 	}
-
 }
