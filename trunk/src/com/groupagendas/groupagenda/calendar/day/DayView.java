@@ -101,6 +101,7 @@ public class DayView extends LinearLayout {
 		allDayEventsPanel.setAdapter(allDayEventAdapter);
 		
 		hourList = (ListView) findViewById(R.id.hour_list);
+		hourList.setClickable(false);
 		hourList.setAdapter(hourListAdapter);
 
 		topPanelTitle = (TextView) findViewById(R.id.top_panel_title);

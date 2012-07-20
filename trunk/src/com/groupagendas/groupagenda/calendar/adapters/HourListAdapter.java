@@ -15,7 +15,10 @@ public class HourListAdapter extends AbstractAdapter<String> {
 	public HourListAdapter(Context context, List<String> list) {
 		super(context, list);
 	}
-
+@Override
+	public boolean isEnabled(int pos){
+		return false;
+	}
 	@Override
 	public View getView(int i, View view, ViewGroup viewGroup) {
 		if (view == null) {
