@@ -1,9 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources xmlns:android="http://schemas.android.com/apk/res/android">
-    <style name="dayView_allDay_container">
-	</style>
+    <style name="dayView_alldayEvent_firstColumn_entryText">
+        <item name="android:background">@color/white</item>
+  	    <item name="android:text"></item>
+ 	    <item name="android:gravity">center_horizontal</item>
+	    <item name="android:textSize">10dp</item>
+	    <item name="android:textColor">@color/black</item>
+	    <item name="android:layout_width">0dip</item>
+	    <item name="android:layout_weight">0.1</item>
+	    <item name="android:layout_height">18dp</item>
+    </style>    
     
     <style name="dayView_hourEvent_firstColumn">
+        <item name="android:focusable">false</item>
    	    <item name="android:gravity">fill_horizontal</item>
 	    <item name="android:textSize">16dp</item>
 	    <item name="android:background">@color/white</item>
@@ -22,7 +31,7 @@
 	    <item name="android:textColor">@color/black</item>
 	    <item name="android:layout_width">0dip</item>
 	    <item name="android:layout_weight">0.1</item>
-	    <item name="android:layout_height">match_parent</item>
+	    <item name="android:layout_height">18dp</item>
     </style>
     
     <style name="dayView_hourEvent_secondColumn">
