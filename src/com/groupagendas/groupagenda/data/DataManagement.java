@@ -2252,7 +2252,7 @@ public class DataManagement {
 
 	public Cursor getNativeCalendars() {
 		Cursor cursor = Data.getmContext().getContentResolver()
-				.query(Uri.parse("content://com.android.calendar/calendars"), (new String[] { "_id", "displayName" }), null, null, null);
+				.query(Uri.parse("content://calendar/calendars"), (new String[] { "_id", "displayName" }), null, null, null);
 		if (cursor != null) {
 			cursor.moveToFirst();
 		}
