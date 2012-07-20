@@ -44,7 +44,7 @@ public class DayView extends LinearLayout {
 		WeekDayNames = getResources().getStringArray(R.array.week_days_names);
 		MonthNames = getResources().getStringArray(R.array.month_names);
 		selectedDay = new DayInstance(context);
-
+		
 	}
 
 	@Override
@@ -67,7 +67,15 @@ public class DayView extends LinearLayout {
 		allDayEventAdapter.setList(selectedDay.getAllDayEvents());
 		allDayEventAdapter.notifyDataSetChanged();
 
-		
+		// VERY CIOTKIJ HARDCORD. Za Yeah! Peace!
+		LinearLayout allDayEventsContainer = (LinearLayout) findViewById(R.id.allday_container);
+		if (selectedDay.getAllDayEvents().size() < 10) {
+			LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(LayoutParams.FILL_PARENT, LayoutParams.WRAP_CONTENT); 
+			allDayEventsContainer.setLayoutParams(layoutParams);
+		} else {
+			LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(LayoutParams.FILL_PARENT, LayoutParams.FILL_PARENT); 
+			allDayEventsContainer.setLayoutParams(layoutParams);
+		}
 	}
 
 	private void setupViewItems() {
