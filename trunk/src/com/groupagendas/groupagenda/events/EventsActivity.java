@@ -65,7 +65,7 @@ public class EventsActivity extends ListActivity {
 
 		setListAdapter(eventsAdapter);
 		dm.loadEvents(this, eventsAdapter);
-		if(NavbarActivity.showInvites){
+		if(NavbarActivity.showInvites && AgendaUtils.newInvites != 0){
 			changeTitle(getString(R.string.status_4, AgendaUtils.newInvites));
 		}
 	}

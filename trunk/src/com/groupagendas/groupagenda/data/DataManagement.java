@@ -1810,8 +1810,10 @@ public class DataManagement {
 			ArrayList<Event> result = getEventsFromRemoteDb("");
 			if (!NavbarActivity.showInvites) {
 				events = result;
+				eventsSize = events.size();
 			} else {
 				events = filterInvites(result);
+				eventsSize = events.size();
 			}
 			if(events.size() > 0){
 				updateEventsAdapter(events, eAdapter);
@@ -1822,6 +1824,9 @@ public class DataManagement {
 			ArrayList<Event> onlyInvites = null;
 			if (NavbarActivity.showInvites) {
 				onlyInvites = filterInvites(events);
+				eventsSize = onlyInvites.size();
+			} else {
+				eventsSize = events.size();
 			}
 			if (onlyInvites.size() > 0){
 				updateEventsAdapter(onlyInvites, eAdapter);
