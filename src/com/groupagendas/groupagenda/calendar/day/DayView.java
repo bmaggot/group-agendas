@@ -3,6 +3,8 @@ package com.groupagendas.groupagenda.calendar.day;
 
 
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Calendar;
 
 import android.app.Activity;
@@ -17,7 +19,7 @@ import android.widget.TextView;
 
 import com.groupagendas.groupagenda.R;
 import com.groupagendas.groupagenda.calendar.adapters.AllDayEventsAdapter;
-import com.groupagendas.groupagenda.calendar.adapters.HourEventsAdapter;
+import com.groupagendas.groupagenda.calendar.adapters.HourListAdapter;
 
 public class DayView extends LinearLayout {
 	
@@ -29,11 +31,13 @@ public class DayView extends LinearLayout {
 
 	String[] WeekDayNames;
 	String[] MonthNames;
+	String[] HourNames;
 
 	private ScrollView hourEventsPanel;
 	private ListView allDayEventsPanel;
-	private HourEventsAdapter hourEventAdapter = new HourEventsAdapter(getContext(), null);
-	private AllDayEventsAdapter allDayEventAdapter = new AllDayEventsAdapter(getContext(), null);;
+	private ListView hourList;
+	private HourListAdapter hourListAdapter = new HourListAdapter(getContext(), null);
+	private AllDayEventsAdapter allDayEventAdapter = new AllDayEventsAdapter(getContext(), null);
 
 	public DayView(Context context) {
 		this(context, null);
@@ -43,8 +47,9 @@ public class DayView extends LinearLayout {
 		super(context, attrs);
 		WeekDayNames = getResources().getStringArray(R.array.week_days_names);
 		MonthNames = getResources().getStringArray(R.array.month_names);
+		HourNames = getResources().getStringArray(R.array.hour_names);
 		selectedDay = new DayInstance(context);
-		
+
 	}
 
 	@Override
@@ -53,12 +58,18 @@ public class DayView extends LinearLayout {
 		
 		((Activity) getContext()).getLayoutInflater().inflate(R.layout.calendar_day, this);
 		setupViewItems();
+//		drawHourList();
 		initEventListAdapters();
-		drawhourEvents();
+	}
+
+	private void drawHourList() {
+		hourListAdapter.setList(Arrays.asList(HourNames));
+		
 	}
 
 	private void drawhourEvents() {
 //		TODO
+		hourEventsPanel.removeAllViews();
 		hourEventsPanel.addView(new HourEventView(getContext()));
 		
 	}
@@ -66,6 +77,10 @@ public class DayView extends LinearLayout {
 	private void initEventListAdapters() {
 		allDayEventAdapter.setList(selectedDay.getAllDayEvents());
 		allDayEventAdapter.notifyDataSetChanged();
+		
+		
+		
+		drawhourEvents();
 
 		// VERY CIOTKIJ HARDCORD. Za Yeah! Peace!
 		LinearLayout allDayEventsContainer = (LinearLayout) findViewById(R.id.allday_container);
@@ -87,6 +102,9 @@ public class DayView extends LinearLayout {
 
 		allDayEventsPanel = (ListView) findViewById(R.id.allday_events);
 		allDayEventsPanel.setAdapter(allDayEventAdapter);
+		
+		hourList = (ListView) findViewById(R.id.hour_list);
+		allDayEventsPanel.setAdapter(hourListAdapter);
 
 		topPanelTitle = (TextView) findViewById(R.id.top_panel_title);
 		updateTopPanelTitle(selectedDay.getSelectedDate());
