@@ -11,13 +11,13 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 
-public abstract class AbstractAdapter extends BaseAdapter {
+public abstract class AbstractAdapter<T> extends BaseAdapter {
     protected Context context;
     protected LayoutInflater mInflater;
-    protected List<Event> list;
+    protected List<T> list;
     protected DateTimeUtils dt;
     
-    public AbstractAdapter(Context context, List<Event> list) {
+    public AbstractAdapter(Context context, List<T> list) {
         this.context = context;
         this.list = list;
         mInflater = LayoutInflater.from(context);
@@ -52,7 +52,7 @@ public abstract class AbstractAdapter extends BaseAdapter {
 		this.context = context;
 	}
 
-	public void setList(List<Event> list) {
+	public void setList(List<T> list) {
 		this.list = list;
 	}
 }

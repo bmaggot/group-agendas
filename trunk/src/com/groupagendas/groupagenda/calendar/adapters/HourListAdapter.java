@@ -9,9 +9,9 @@ import android.content.Context;
 import android.view.View;
 import android.view.ViewGroup;
 
-public class HourEventsAdapter extends AbstractAdapter {
+public class HourListAdapter extends AbstractAdapter<String> {
 
-	public HourEventsAdapter(Context context, List<Event> list) {
+	public HourListAdapter(Context context, List<String> list) {
 		super(context, list);
 	}
 
