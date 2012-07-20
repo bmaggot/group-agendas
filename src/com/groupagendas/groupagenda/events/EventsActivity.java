@@ -65,12 +65,9 @@ public class EventsActivity extends ListActivity {
 
 		setListAdapter(eventsAdapter);
 		dm.loadEvents(this, eventsAdapter);
-		
-//		if (DataManagement.isLoadEventsData()) {
-//			if (NavbarActivity.showInvites) {
-//				openNewInvites();
-//			}
-//		}
+		if(NavbarActivity.showInvites){
+			changeTitle(getString(R.string.status_4, AgendaUtils.newInvites));
+		}
 	}
 
 	@Override
@@ -98,16 +95,6 @@ public class EventsActivity extends ListActivity {
 		startActivity(intent);
 	}
 
-	public void openNewInvites() {
-		changeTitle(getString(R.string.status_4, AgendaUtils.newInvites));
-		if (qa != null || !NavbarActivity.showInvites) {
-			qa.dismiss();
-			NavbarActivity.showInvites = false;
-		}
-		eventsAdapter.getFilter().filter("4");
-		eventsAdapter.setFilter("4");
-	}
-
 	private CompoundButton.OnCheckedChangeListener btnNavBarOnCheckedChangeListener = new CompoundButton.OnCheckedChangeListener() {
 		public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
 			if (isChecked) {
@@ -121,7 +108,10 @@ public class EventsActivity extends ListActivity {
 
 						@Override
 						public void onClick(View v) {
-							openNewInvites();
+							changeTitle(getString(R.string.status_4, AgendaUtils.newInvites));
+							qa.dismiss();
+							eventsAdapter.getFilter().filter("4");
+							eventsAdapter.setFilter("4");
 						}
 					});
 
