@@ -8,6 +8,7 @@ import com.groupagendas.groupagenda.events.Event;
 import android.content.Context;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 
 public class HourListAdapter extends AbstractAdapter<String> {
 
@@ -17,12 +18,14 @@ public class HourListAdapter extends AbstractAdapter<String> {
 
 	@Override
 	public View getView(int i, View view, ViewGroup viewGroup) {
-//		if (view == null) {
-//			view = mInflater.inflate(R.layout.calendar_dayview_hourevent_entry, null);
-//        }
-//		final Event event = list.get(i);
-//		
-		return view;
+		if (view == null) {
+			view = new TextView(context);
+        }
+		final String title = list.get(i);
+		TextView tmp = (TextView) view;
+		tmp.setText(title);
+		tmp.setTextAppearance(context, R.style.dayView_hourEvent_firstColumn_entryText);
+		return tmp;
 	}
 
 }
