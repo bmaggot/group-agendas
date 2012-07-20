@@ -54,7 +54,13 @@ public class DayView extends LinearLayout {
 		((Activity) getContext()).getLayoutInflater().inflate(R.layout.calendar_day, this);
 		setupViewItems();
 		initEventListAdapters();
+		drawhourEvents();
+	}
 
+	private void drawhourEvents() {
+//		TODO
+		hourEventsPanel.addView(new HourEventView(getContext()));
+		
 	}
 
 	private void initEventListAdapters() {
@@ -97,6 +103,7 @@ public class DayView extends LinearLayout {
 
 			}
 		});
+		
 	}
 
 	private void updateTopPanelTitle(Calendar selectedDate) {
