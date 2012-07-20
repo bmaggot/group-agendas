@@ -84,7 +84,7 @@ public class DayView extends LinearLayout {
 			LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(LayoutParams.FILL_PARENT, LayoutParams.WRAP_CONTENT); 
 			allDayEventsContainer.setLayoutParams(layoutParams);
 		} else {
-			LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(LayoutParams.FILL_PARENT, LayoutParams.FILL_PARENT); 
+			LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(LayoutParams.FILL_PARENT, 180); 
 			allDayEventsContainer.setLayoutParams(layoutParams);
 		}
 		
