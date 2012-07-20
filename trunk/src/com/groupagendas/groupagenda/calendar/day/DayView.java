@@ -1,6 +1,5 @@
 package com.groupagendas.groupagenda.calendar.day;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
 
@@ -55,12 +54,13 @@ public class DayView extends LinearLayout {
 		
 		((Activity) getContext()).getLayoutInflater().inflate(R.layout.calendar_day, this);
 		setupViewItems();
-//		drawHourList();
+		drawHourList();
 		initEventListAdapters();
 	}
 
 	private void drawHourList() {
 		hourListAdapter.setList(Arrays.asList(HourNames));
+		hourListAdapter.notifyDataSetChanged();
 		
 	}
 
@@ -101,7 +101,7 @@ public class DayView extends LinearLayout {
 		allDayEventsPanel.setAdapter(allDayEventAdapter);
 		
 		hourList = (ListView) findViewById(R.id.hour_list);
-		allDayEventsPanel.setAdapter(hourListAdapter);
+		hourList.setAdapter(hourListAdapter);
 
 		topPanelTitle = (TextView) findViewById(R.id.top_panel_title);
 		updateTopPanelTitle(selectedDay.getSelectedDate());
