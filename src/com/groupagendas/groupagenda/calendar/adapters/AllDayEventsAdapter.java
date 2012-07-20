@@ -16,7 +16,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
-public class AllDayEventsAdapter extends AbstractAdapter {
+public class AllDayEventsAdapter extends AbstractAdapter<Event> {
 
 	public AllDayEventsAdapter(Context context, List<Event> list) {
 		super(context, list);
@@ -25,7 +25,7 @@ public class AllDayEventsAdapter extends AbstractAdapter {
 
 	@Override
 	public View getView(int i, View view, ViewGroup viewGroup) {
-//		System.out.println("getview metodas" + i);
+
 
 		if (view == null) {
             view = mInflater.inflate(R.layout.calendar_dayview_allday_listentry, null);
@@ -36,9 +36,8 @@ public class AllDayEventsAdapter extends AbstractAdapter {
 		title.setText(event.title);
 		GradientDrawable sd = (GradientDrawable)context.getResources().getDrawable(R.drawable.calendar_dayview_secondcolumn_entrybackground);		
 		if (!event.color.equalsIgnoreCase("null")){
-//			TODO in future there should be title color also set
 			sd.setColor(Color.parseColor("#BF" + event.color));
-//		title.setBackgroundColor(Color.parseColor("#" + event.color));
+
 		}else {
 			sd.setColor(context.getResources().getColor(R.color.defaultAllDayEventColor));
 		}
