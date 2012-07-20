@@ -1811,24 +1811,36 @@ public class DataManagement {
 			if (!NavbarActivity.showInvites) {
 				events = result;
 			} else {
-				events = new ArrayList<Event>();
-				for (Event event : result) {
-					if (event.status == 4) {
-						events.add(event);
-					}
-				}
+				events = filterInvites(result);
 			}
-
-			updateEventsAdapter(Data.getEvents(), eAdapter);
-			Data.setEvents(events);
+			if(events.size() > 0){
+				updateEventsAdapter(events, eAdapter);
+			}
+			Data.setEvents(result);
 		} else {
 			events = AgendaUtils.getActualEvents(instance, getEventsFromLocalDb());
-			if (events.size() > 0)
-				updateEventsAdapter(Data.getEvents(), eAdapter);
-			Data.setEvents(events);
+			ArrayList<Event> onlyInvites = null;
+			if (NavbarActivity.showInvites) {
+				onlyInvites = filterInvites(events);
+			}
+			if (onlyInvites.size() > 0){
+				updateEventsAdapter(onlyInvites, eAdapter);
+			} else {
+				updateEventsAdapter(events, eAdapter);
+			}
 		}
 
 		return eventsSize;
+	}
+	
+	public ArrayList<Event> filterInvites(ArrayList<Event> events){
+		ArrayList<Event> newEventList = new ArrayList<Event>();
+		for (Event event : events) {
+			if (event.status == 4) {
+				newEventList.add(event);
+			}
+		}	
+		return newEventList;
 	}
 
 	public ArrayList<Event> getEventsFromRemoteDb(String eventCategory) {
