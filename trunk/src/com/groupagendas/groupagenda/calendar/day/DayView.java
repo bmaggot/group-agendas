@@ -6,7 +6,6 @@ import java.util.Calendar;
 import android.app.Activity;
 import android.content.Context;
 import android.util.AttributeSet;
-import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
@@ -36,7 +35,6 @@ public class DayView extends LinearLayout {
 	private HourListAdapter hourListAdapter = new HourListAdapter(getContext(), null);
 	private AllDayEventsAdapter allDayEventAdapter = new AllDayEventsAdapter(getContext(), null);
 
-	private LayoutInflater inflater;
 
 	public DayView(Context context) {
 		this(context, null);
@@ -48,7 +46,7 @@ public class DayView extends LinearLayout {
 		MonthNames = getResources().getStringArray(R.array.month_names);
 		HourNames = getResources().getStringArray(R.array.hour_names);
 		selectedDay = new DayInstance(context);
-		inflater = ((Activity) getContext()).getLayoutInflater();
+		
 
 	}
 
@@ -57,7 +55,7 @@ public class DayView extends LinearLayout {
 		super.onFinishInflate();
 		
 		
-		inflater.inflate(R.layout.calendar_day, this);
+		((Activity) getContext()).getLayoutInflater().inflate(R.layout.calendar_day, this);
 		setupViewItems();
 		drawHourList();
 		initEventListAdapters();
