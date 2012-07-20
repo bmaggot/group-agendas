@@ -277,10 +277,12 @@ public class NavbarActivity extends Activity {
 			mInflater.inflate(R.layout.calendar_day, calendarContainer);
 			new CalendarDay(NavbarActivity.this);
 		}else{
-
-		
-			calendarContainer.removeAllViews();
-			mInflater.inflate(R.layout.calendar_day_view_container, calendarContainer);
+//			qa.dismiss();
+//			
+			mInflater.inflate(R.layout.calendar_month, calendarContainer);
+			new CalendarMonth(NavbarActivity.this);
+//			calendarContainer.removeAllViews();
+//			mInflater.inflate(R.layout.calendar_day_view_container, calendarContainer);
 
 		}
 	}
