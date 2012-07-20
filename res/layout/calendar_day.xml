@@ -27,6 +27,7 @@
         
         <TextView
             style="@style/dayView_hourEvent_firstColumn_entryText"
+	        android:focusable="false"
 			android:text="@string/calendar_dayView_allDayEvents_holder"/>
         
         <TextView
@@ -60,8 +61,12 @@
    	    <ListView android:id="@+id/hour_list"
    	        android:cacheColorHint="@android:color/transparent"
 	        android:minHeight="100dp"
-	        android:layout_height="fill_parent"
+	        android:layout_height="match_parent"
 	        android:layout_width="0dip"
+	        android:gravity="right"
+	        android:focusable="false"
+	        android:dividerHeight="2dp"
+	        android:fadingEdgeLength="0dp"
 	        android:layout_weight="1">
 	    </ListView>
 
@@ -73,6 +78,7 @@
 		    android:layout_height="match_parent" />
         
    	    <ScrollView android:id="@+id/hour_events"
+   	        android:background="@drawable/calendar_dayview_secondcolumn_background"
 	        android:layout_height="fill_parent"
 	        android:layout_width="0dip"
 	        android:layout_weight="9">
