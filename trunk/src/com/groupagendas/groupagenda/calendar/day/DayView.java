@@ -6,6 +6,7 @@ import java.util.Calendar;
 import android.app.Activity;
 import android.content.Context;
 import android.util.AttributeSet;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
@@ -35,6 +36,8 @@ public class DayView extends LinearLayout {
 	private HourListAdapter hourListAdapter = new HourListAdapter(getContext(), null);
 	private AllDayEventsAdapter allDayEventAdapter = new AllDayEventsAdapter(getContext(), null);
 
+	private LayoutInflater inflater;
+
 	public DayView(Context context) {
 		this(context, null);
 	}
@@ -45,6 +48,7 @@ public class DayView extends LinearLayout {
 		MonthNames = getResources().getStringArray(R.array.month_names);
 		HourNames = getResources().getStringArray(R.array.hour_names);
 		selectedDay = new DayInstance(context);
+		inflater = ((Activity) getContext()).getLayoutInflater();
 
 	}
 
@@ -52,7 +56,8 @@ public class DayView extends LinearLayout {
 	protected void onFinishInflate() {
 		super.onFinishInflate();
 		
-		((Activity) getContext()).getLayoutInflater().inflate(R.layout.calendar_day, this);
+		
+		inflater.inflate(R.layout.calendar_day, this);
 		setupViewItems();
 		drawHourList();
 		initEventListAdapters();
@@ -74,10 +79,6 @@ public class DayView extends LinearLayout {
 	private void initEventListAdapters() {
 		allDayEventAdapter.setList(selectedDay.getAllDayEvents());
 		allDayEventAdapter.notifyDataSetChanged();
-		
-		
-		
-		drawhourEvents();
 
 		// VERY CIOTKIJ HARDCORD. Za Yeah! Peace!
 		LinearLayout allDayEventsContainer = (LinearLayout) findViewById(R.id.allday_container);
@@ -88,6 +89,9 @@ public class DayView extends LinearLayout {
 			LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(LayoutParams.FILL_PARENT, LayoutParams.FILL_PARENT); 
 			allDayEventsContainer.setLayoutParams(layoutParams);
 		}
+		
+//		Drawing hour-long events
+		drawhourEvents();
 	}
 
 	private void setupViewItems() {
