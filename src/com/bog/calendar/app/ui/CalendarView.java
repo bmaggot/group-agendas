@@ -1013,7 +1013,7 @@ public class CalendarView extends FrameLayout {
 
             for (; i < mNumCells; i++) {
                 //mFocusDay[i] = (mTempDate.get(Calendar.MONTH) == focusedMonth && mTempDate.get(Calendar.DAY_OF_MONTH) == mSelectedDay);
-            	mFocusDay[i] = (mTempDate.get(Calendar.YEAR) == selectedDate.get(Calendar.YEAR) && mTempDate.get(Calendar.MONTH) == selectedDate.get(Calendar.MONTH) && mTempDate.get(Calendar.DAY_OF_MONTH) == selectedDate.get(Calendar.DAY_OF_MONTH));
+//            	mFocusDay[i] = (mTempDate.get(Calendar.YEAR) == selectedDate.get(Calendar.YEAR) && mTempDate.get(Calendar.MONTH) == selectedDate.get(Calendar.MONTH) && mTempDate.get(Calendar.DAY_OF_MONTH) == selectedDate.get(Calendar.DAY_OF_MONTH));
             	// do not draw dates outside the valid range to avoid user confusion
                 if (mTempDate.before(mFirstDayOfMonth) || mTempDate.after(mLastDayOfMonth)) {
                     mDayNumbers[i] = "";
