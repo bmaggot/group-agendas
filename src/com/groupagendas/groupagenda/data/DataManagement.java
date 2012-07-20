@@ -40,6 +40,7 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.net.Uri;
+import android.os.Build;
 import android.telephony.TelephonyManager;
 import android.util.Log;
 
@@ -2112,12 +2113,12 @@ public class DataManagement {
 					tmp_event_start.add(Calendar.DAY_OF_MONTH, 1);
 					difference++;
 				}
-				if (difference == 0){
+				if (difference == 0) {
 					String dayStr = new SimpleDateFormat("yyyy-MM-dd").format(event_start.getTime());
 					Calendar eventDay = Utils.stringToCalendar(dayStr + " 00:00:00", Utils.date_format);
 					tm = putValueIntoTreeMap(tm, eventDay, event);
-				} else if(difference >= 0){
-					for(int i = 0; i < difference; i++){
+				} else if (difference >= 0) {
+					for (int i = 0; i < difference; i++) {
 						String dayStr = new SimpleDateFormat("yyyy-MM-dd").format(event_start.getTime());
 						Calendar eventDay = Utils.stringToCalendar(dayStr + " 00:00:00", Utils.date_format);
 						putValueIntoTreeMap(tm, eventDay, event);
@@ -2128,9 +2129,9 @@ public class DataManagement {
 		}
 		Data.setSortedEvents(tm);
 	}
-	
-	public TreeMap<Calendar, ArrayList<Event>> putValueIntoTreeMap (TreeMap<Calendar, ArrayList<Event>> tm, Calendar eventDay, Event event){
-		if(tm.containsKey(eventDay)){
+
+	public TreeMap<Calendar, ArrayList<Event>> putValueIntoTreeMap(TreeMap<Calendar, ArrayList<Event>> tm, Calendar eventDay, Event event) {
+		if (tm.containsKey(eventDay)) {
 			ArrayList<Event> tmpArrayList = tm.get(eventDay);
 			tmpArrayList.add(event);
 			tm.put(eventDay, tmpArrayList);
@@ -2221,38 +2222,46 @@ public class DataManagement {
 		SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 		Event item = new Event();
 
-		Cursor cursor = Data
-				.getmContext()
-				.getContentResolver()
-				.query(Uri.parse("content://com.android.calendar/events"),
-						new String[] { "_id", "title", "description", "dtstart", "dtend", "eventLocation", "eventTimezone" }, "_id=" + id,
-						null, null);
+		Cursor cursor;
+		if (Build.VERSION.SDK_INT < 14) {
+			cursor = Data
+					.getmContext()
+					.getContentResolver()
+					.query(Uri.parse("content://com.android.calendar/calendars"),
+							new String[] { "_id", "title", "description", "dtstart", "dtend", "eventLocation", "eventTimezone" },
+							"_id=" + id, null, null);
 
-		if (cursor.moveToFirst()) {
-			item.isNative = true;
-			item.is_owner = false;
-			item.type = "p";
-			item.status = 1;
+			if (cursor.moveToFirst()) {
+				item.isNative = true;
+				item.is_owner = false;
+				item.type = "p";
+				item.status = 1;
 
-			item.event_id = cursor.getInt(0);
-			item.title = cursor.getString(1);
-			item.description_ = cursor.getString(2);
-			item.timezone = cursor.getString(6);
+				item.event_id = cursor.getInt(0);
+				item.title = cursor.getString(1);
+				item.description_ = cursor.getString(2);
+				item.timezone = cursor.getString(6);
 
-			Date dt = new Date();
-			dt.setTime(cursor.getLong(3));
-			item.my_time_start = formatter.format(dt);
+				Date dt = new Date();
+				dt.setTime(cursor.getLong(3));
+				item.my_time_start = formatter.format(dt);
 
-			dt.setTime(cursor.getLong(4));
-			item.my_time_end = formatter.format(dt);
+				dt.setTime(cursor.getLong(4));
+				item.my_time_end = formatter.format(dt);
+			}
 		}
 
 		return item;
 	}
 
 	public Cursor getNativeCalendars() {
-		Cursor cursor = Data.getmContext().getContentResolver()
-				.query(Uri.parse("content://calendar/calendars"), (new String[] { "_id", "displayName" }), null, null, null);
+		Cursor cursor;
+		if (Build.VERSION.SDK_INT < 14) {
+			cursor = Data.getmContext().getContentResolver()
+					.query(Uri.parse("content://com.android.calendar/calendars"), (new String[] { "_id", "displayName" }), null, null, null);
+		} else {
+			cursor = null;
+		}
 		if (cursor != null) {
 			cursor.moveToFirst();
 		}
@@ -2273,7 +2282,7 @@ public class DataManagement {
 					Cursor cursor = Data
 							.getmContext()
 							.getContentResolver()
-							.query(Uri.parse("content://com.android.calendar/events"),
+							.query(Uri.parse("content://com.android.calendar/calendars"),
 									new String[] { "_id", "title", "description", "dtstart", "dtend", "eventLocation", "eventTimezone" },
 									where, null, null);
 
