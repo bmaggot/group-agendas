@@ -10,84 +10,31 @@
 		layout="@layout/calendar_top_bar"
 		android:layout_weight="0"/>
 <!--    TOP NAVBAR END -->
+
 	<TextView
 		android:background="@drawable/border_darkgray"
 	    android:paddingTop="5dip"
 	    android:gravity="center_horizontal"
 	    android:layout_width="match_parent"
 	    android:layout_height="2dp" />
+
 <!--     ALL-DAY EVENTS BEGIN -->
-    <LinearLayout android:id="@+id/allday_container"
-        android:orientation="horizontal"
-        android:layout_width="fill_parent"
-        android:layout_height="fill_parent"
-        android:minHeight="20dp"
-        android:maxHeight="200dp"
-        android:layout_weight="1">
-        
-        <TextView
-            style="@style/dayView_hourEvent_firstColumn_entryText"
-	        android:focusable="false"
-			android:text="@string/calendar_dayView_allDayEvents_holder"/>
-        
-        <TextView
-			android:background="@drawable/border_darkgray"
-		    android:paddingTop="5dip"
-		    android:gravity="center_horizontal"
-		    android:layout_width="2dp"
-		    android:layout_height="match_parent" />
-        
-        <ListView
-			android:id="@+id/allday_events"
-			android:divider="@null"
-			android:dividerHeight="0dp"
-			style="@style/dayView_hourEvent_secondColumn">            
-			
-        </ListView>
-    </LinearLayout>
+	<include layout="@layout/calendar_dayview_allday_section"
+	    android:layout_weight="1" />
 <!--     ALL-DAY EVENTS END -->
+
 	<TextView
 		android:background="@drawable/border_darkgray"
 	    android:paddingTop="5dip"
 	    android:gravity="center_horizontal"
 		android:layout_width="match_parent"
 	    android:layout_height="1dp" />
+
 <!--     HOUR-LONG EVENTS BEGIN -->
-	<ScrollView
-			android:minHeight="100dp"
-	        android:layout_height="fill_parent"
-	        android:layout_width="fill_parent"
-	        android:layout_weight="1">
-		<LinearLayout android:layout_height="fill_parent"
-		        android:layout_width="fill_parent">
-	        
-	   	    <ListView android:id="@+id/hour_list"
-	   	        android:cacheColorHint="@android:color/transparent"
-		        android:minHeight="100dp"
-		        android:layout_height="fill_parent"
-		        android:layout_width="0dip"
-		        android:layout_weight="1">
-		    </ListView>
-<!-- 	       SEPARATOR -->	
-		    <TextView
-				android:background="@drawable/border_darkgray"
-			    android:paddingTop="5dip"
-			    android:gravity="center_horizontal"
-			    android:layout_width="2dp"
-			    android:layout_height="match_parent" />
-<!-- 	       HOUR EVENTS FRAME  BEGIN -->
-	   	    <RelativeLayout android:id="@+id/hour_events"
-		        android:layout_height="fill_parent"
-		        android:layout_width="0dip"
-		        android:layout_weight="9">
-		    </RelativeLayout>
-<!-- 	       HOUR EVENTS FRAME  END -->
-		    
-	    </LinearLayout>
-	</ScrollView>
-        
-	
+	<include layout="@layout/calendar_dayview_hourevent_section"
+	    android:layout_weight="1" />
 <!--     HOUR-LONG EVENTS END -->
+
 	<TextView
 	    style="?android:attr/listSeparatorTextViewStyle"
 	    android:paddingTop="5dip"
