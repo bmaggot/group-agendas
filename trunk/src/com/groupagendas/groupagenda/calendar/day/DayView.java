@@ -1,5 +1,6 @@
 package com.groupagendas.groupagenda.calendar.day;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
 
@@ -10,12 +11,13 @@ import android.view.View;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.ListView;
-import android.widget.ScrollView;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.groupagendas.groupagenda.R;
 import com.groupagendas.groupagenda.calendar.adapters.AllDayEventsAdapter;
 import com.groupagendas.groupagenda.calendar.adapters.HourListAdapter;
+import com.groupagendas.groupagenda.events.Event;
 
 public class DayView extends LinearLayout {
 	
@@ -29,7 +31,7 @@ public class DayView extends LinearLayout {
 	String[] MonthNames;
 	String[] HourNames;
 
-	private ScrollView hourEventsPanel;
+	private RelativeLayout hourEventsPanel;
 	private ListView allDayEventsPanel;
 	private ListView hourList;
 	private HourListAdapter hourListAdapter = new HourListAdapter(getContext(), null);
@@ -70,8 +72,29 @@ public class DayView extends LinearLayout {
 	private void drawhourEvents() {
 //		TODO
 		hourEventsPanel.removeAllViews();
-		hourEventsPanel.addView(new HourEventView(getContext()));
+	 
+		if (selectedDay.hasHourEvents()){
+			ArrayList<Event> hourEventsList = selectedDay.getHourEvents();
+			HourEventsTimetable hourEventsTimetable = selectedDay.getHourEventsTimeTable();
+			
+			for (Event e : hourEventsList){
+				int divider = hourEventsTimetable.getWidthDivider(e);
+				drawEvent(divider, e);
+			}
+		}
+			
+	}
+
+	private void drawEvent(int overlapCount, Event event) {
+		int layerWidth;// = hourEventsPanel.getWidth();
+		layerWidth = 100;
 		
+		RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(Math.round(layerWidth/overlapCount), 50);
+		params.topMargin = 40;
+		params.leftMargin = 10;
+		HourEventView eventFrame = new HourEventView(getContext(), event);
+//		eventFrame.setDimensions(, 100);
+		hourEventsPanel.addView(eventFrame, params);
 	}
 
 	private void initEventListAdapters() {
@@ -96,7 +119,7 @@ public class DayView extends LinearLayout {
 		prevDayButton = (ImageButton) findViewById(R.id.prevDay);
 		nextDaybutton = (ImageButton) findViewById(R.id.nextDay);
 
-		hourEventsPanel = (ScrollView) findViewById(R.id.hour_events);
+		hourEventsPanel = (RelativeLayout) findViewById(R.id.hour_events);
 		
 
 		allDayEventsPanel = (ListView) findViewById(R.id.allday_events);

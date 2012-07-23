@@ -1,20 +1,21 @@
 package com.groupagendas.groupagenda.calendar.day;
 
 import com.groupagendas.groupagenda.R;
+import com.groupagendas.groupagenda.events.Event;
 
 import android.app.Activity;
 import android.content.Context;
-import android.provider.ContactsContract.CommonDataKinds.Event;
+import android.content.res.Resources;
+import android.graphics.Color;
 import android.util.AttributeSet;
+import android.util.TypedValue;
 import android.view.LayoutInflater;
-import android.view.View;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+
 public class HourEventView extends RelativeLayout {
-	private int preferedHeight;
-	private int preferedWidth;
 	private Event event;
 	private TextView title;
 	private TextView timeText;
@@ -23,73 +24,39 @@ public class HourEventView extends RelativeLayout {
 	
 	public HourEventView(Context context){
 		super (context);
-		LayoutInflater.from(context).inflate(R.layout.calendar_dayview_hourevent_entry, this);
+		
 	
 	}
 
-	public HourEventView(Context context, AttributeSet attrs) {
-		super(context, attrs);
-	
+	public HourEventView(Context context, Event event) {
+		super(context);
+		this.event = event;
+		LayoutInflater.from(context).inflate(R.layout.calendar_dayview_hourevent_entry, this);
+		title = (TextView) this.findViewById(R.id.hour_event_title);
+		title.setText(event.title);
+		if (event.color == "null") event.color = "CC6600";
+		this.setBackgroundColor(Color.parseColor("#" + event.color));
+		System.out.println("showing event: " + event.title);
 	
 		// TODO Auto-generated constructor stub
 	}
-//@Override
-//	protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec){
-//	System.out.println("ON MEASURE " + widthMeasureSpec + " " + heightMeasureSpec);
-//		int widthMode = MeasureSpec.getMode(widthMeasureSpec);
-//		int widthSize = MeasureSpec.getSize(widthMeasureSpec);
-//		
-//		int heightMode = MeasureSpec.getMode(heightMeasureSpec);
-//		int heightSize = MeasureSpec.getSize(heightMeasureSpec);
-//		
-//		int chosenWidth = chooseWidth(widthMode, widthSize);
-//		int chosenHeight = chooseHeight(heightMode, heightSize);
-//		
-//		
-//		
-//		setMeasuredDimension(chosenWidth, chosenHeight);
-//	}
 
-//	private int chooseWidth(int mode, int size) {
-//		if (mode == MeasureSpec.AT_MOST || mode == MeasureSpec.EXACTLY) {
-//			return size;
-//		} else { // (mode == MeasureSpec.UNSPECIFIED)
-//			return getPreferedWidth();
-//		}
-//
-//	}
-//	private int chooseHeight(int mode, int size) {
-//		if (mode == MeasureSpec.AT_MOST || mode == MeasureSpec.EXACTLY) {
-//			return size;
-//		} else { // (mode == MeasureSpec.UNSPECIFIED)
-//			return getPreferedHeight();
-//		}
-//
-//	}
+	public void setDimensionsDIP (int widthDIP, int heightDIP){
+		this.setLayoutParams(new LayoutParams(getPixels(widthDIP), getPixels(heightDIP)));
+
+	}
 	
-	@Override
-	protected void onFinishInflate() {
-		super.onFinishInflate();
-		System.out.println("ASDASDASD");
-//		((Activity) getContext()).getLayoutInflater().inflate(R.layout.calendar_day, this);
-		
+	public void setDimensions (int width, int height){
+		this.setLayoutParams(new LayoutParams(width, height));
 
 	}
 
-//	public int getPreferedHeight() {
-//		return preferedHeight;
-//	}
-//
-//	public void setPreferedHeight(int preferedHeight) {
-//		this.preferedHeight = preferedHeight;
-//	}
-//
-//	public int getPreferedWidth() {
-//		return preferedWidth;
-//	}
-//
-//	public void setPreferedWidth(int preferedWidth) {
-//		this.preferedWidth = preferedWidth;
-//	}
+	private int getPixels(int dipValue){
+        Resources r = getResources();
+        int px = (int)TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, dipValue, 
+        r.getDisplayMetrics());
+        return px;
+}
+
 	
 }
