@@ -18,7 +18,6 @@ public class HourEventsPanel extends RelativeLayout {
 	@Override
 	protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec){
 	    super.onMeasure(widthMeasureSpec, heightMeasureSpec);
-	    System.out.println("ON MEASURE");
 	    //getMeasuredHeight() and getMeasuredWidth() now contain the suggested size
 	}
 

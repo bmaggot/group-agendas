@@ -7,8 +7,10 @@ import java.util.Calendar;
 import android.app.Activity;
 import android.content.Context;
 import android.util.AttributeSet;
+import android.view.Display;
 import android.view.View;
 import android.view.ViewTreeObserver;
+import android.view.WindowManager;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.ListView;
@@ -87,10 +89,13 @@ public class DayView extends LinearLayout {
 	}
 
 	private void drawEvent(int overlapCount, Event event) {
-		int layerWidth = hourEventsPanel.getMeasuredWidth();
-		layerWidth = 100;
+//		Display display = ((WindowManager)(Activity)getContext().getSystemService(Context.WINDOW_SERVICE)).getDefaultDisplay();
 		
-		RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(Math.round(layerWidth/overlapCount), 50);
+//		int width = display.getWidth();
+		int dispWidth = ((Activity)getContext()).getWindowManager().getDefaultDisplay().getWidth();
+		int panelWidth =  Math.round(0.9f * dispWidth - 1);
+		System.out.println("WIDTH: " + panelWidth);
+		RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(Math.round(panelWidth/overlapCount), 50);
 		params.topMargin = 40;
 		params.leftMargin = 10;
 		HourEventView eventFrame = new HourEventView(getContext(), event);
@@ -121,15 +126,13 @@ public class DayView extends LinearLayout {
 		nextDaybutton = (ImageButton) findViewById(R.id.nextDay);
 
 		hourEventsPanel = (HourEventsPanel) findViewById(R.id.hour_events);
-		hourEventsPanel.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
-			
-			@Override
-			public void onGlobalLayout() {
-				System.out.println("JAU GALIU PASIIMTI DIMENSIJAS. Plotis: " + hourEventsPanel.getMeasuredWidth());
-				System.out.println("Get width OUTPUT:" + hourEventsPanel.getWidth());
-				
-			}
-		});
+//		hourEventsPanel.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
+//			
+//			@Override
+//			public void onGlobalLayout() {
+//				drawHourEvents();
+//			}
+//		});
 				  
 		
 
