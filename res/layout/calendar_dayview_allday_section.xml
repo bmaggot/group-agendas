@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/allday_container"
+	android:orientation="horizontal"
+	android:layout_width="fill_parent"
+	android:layout_height="fill_parent"
+	android:minHeight="18dp"
+	android:maxHeight="180dp" >
+     
+	<TextView style="@style/dayView_hourEvent_firstColumn_entryText"
+		android:focusable="false"
+		android:text="@string/calendar_dayView_allDayEvents_holder" />
+     
+	<TextView android:background="@drawable/border_darkgray"
+		android:paddingTop="5dip"
+		android:gravity="center_horizontal"
+		android:layout_width="2dp"
+		android:layout_height="match_parent" />
+     
+	<ListView android:id="@+id/allday_events"
+		android:divider="@null"
+		android:dividerHeight="0dp"
+		style="@style/dayView_hourEvent_secondColumn">            
+	</ListView>
+     
+</LinearLayout>
