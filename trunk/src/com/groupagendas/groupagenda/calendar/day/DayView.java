@@ -8,6 +8,7 @@ import android.app.Activity;
 import android.content.Context;
 import android.util.AttributeSet;
 import android.view.View;
+import android.view.ViewTreeObserver;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.ListView;
@@ -31,7 +32,7 @@ public class DayView extends LinearLayout {
 	String[] MonthNames;
 	String[] HourNames;
 
-	private RelativeLayout hourEventsPanel;
+	private HourEventsPanel hourEventsPanel;
 	private ListView allDayEventsPanel;
 	private ListView hourList;
 	private HourListAdapter hourListAdapter = new HourListAdapter(getContext(), null);
@@ -69,8 +70,8 @@ public class DayView extends LinearLayout {
 		
 	}
 
-	private void drawhourEvents() {
-//		TODO
+	public void drawHourEvents() {
+		System.out.println("DRAW HOUR EVENTS METHOD");
 		hourEventsPanel.removeAllViews();
 	 
 		if (selectedDay.hasHourEvents()){
@@ -86,7 +87,7 @@ public class DayView extends LinearLayout {
 	}
 
 	private void drawEvent(int overlapCount, Event event) {
-		int layerWidth;// = hourEventsPanel.getWidth();
+		int layerWidth = hourEventsPanel.getMeasuredWidth();
 		layerWidth = 100;
 		
 		RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(Math.round(layerWidth/overlapCount), 50);
@@ -112,14 +113,24 @@ public class DayView extends LinearLayout {
 		}
 		
 //		Drawing hour-long events
-		drawhourEvents();
+		drawHourEvents();
 	}
 
 	private void setupViewItems() {
 		prevDayButton = (ImageButton) findViewById(R.id.prevDay);
 		nextDaybutton = (ImageButton) findViewById(R.id.nextDay);
 
-		hourEventsPanel = (RelativeLayout) findViewById(R.id.hour_events);
+		hourEventsPanel = (HourEventsPanel) findViewById(R.id.hour_events);
+		hourEventsPanel.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
+			
+			@Override
+			public void onGlobalLayout() {
+				System.out.println("JAU GALIU PASIIMTI DIMENSIJAS. Plotis: " + hourEventsPanel.getMeasuredWidth());
+				System.out.println("Get width OUTPUT:" + hourEventsPanel.getWidth());
+				
+			}
+		});
+				  
 		
 
 		allDayEventsPanel = (ListView) findViewById(R.id.allday_events);
