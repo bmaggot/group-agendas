@@ -23,11 +23,11 @@
 		    android:layout_height="match_parent" />
 		<!-- SCREEN SECTION SEPARATOR -->
 			
-		<RelativeLayout android:id="@+id/hour_events"
+		<com.groupagendas.groupagenda.calendar.day.HourEventsPanel android:id="@+id/hour_events"
 	        android:layout_height="fill_parent"
 	        android:layout_width="0dip"
 	        android:layout_weight="9">
-	    </RelativeLayout>
+	    </com.groupagendas.groupagenda.calendar.day.HourEventsPanel>
 	    
     </LinearLayout>
 </ScrollView>
