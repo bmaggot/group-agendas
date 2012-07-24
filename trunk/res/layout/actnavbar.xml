@@ -4,13 +4,13 @@
 	android:layout_height="fill_parent"
 	android:background="@android:color/white" >
 
-	<LinearLayout
+	<FrameLayout
 		android:id="@+id/calendarContainer"
 		android:layout_width="fill_parent"
 		android:layout_height="fill_parent"
 		android:layout_above="@+id/radiogroup"
 		android:layout_alignParentTop="true" >
-	</LinearLayout>
+	</FrameLayout>
 
 	<RadioGroup
 		android:id="@+id/radiogroup"
