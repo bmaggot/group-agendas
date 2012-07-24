@@ -30,10 +30,10 @@ public class HourEventView extends RelativeLayout {
 	
 	}
 
-	public HourEventView(Context context, Event event, int id) {
+	public HourEventView(Context context, Event event) {
 		super(context);
 		this.event = event;
-		setId(id);
+		setId(event.event_id);
 		LayoutInflater.from(context).inflate(R.layout.calendar_dayview_hourevent_entry, this);
 		title = (TextView) this.findViewById(R.id.hour_event_title);
 		title.setText(event.title);

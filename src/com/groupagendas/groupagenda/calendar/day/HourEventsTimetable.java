@@ -2,9 +2,11 @@ package com.groupagendas.groupagenda.calendar.day;
 
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Collections;
 import java.util.List;
 
 import com.groupagendas.groupagenda.events.Event;
+import com.groupagendas.groupagenda.utils.EventStartComparator;
 import com.groupagendas.groupagenda.utils.Utils;
 
 public class HourEventsTimetable {
@@ -12,6 +14,7 @@ public class HourEventsTimetable {
 
 	
 	public HourEventsTimetable(List<Event> hourEventsList) {
+		Collections.sort(hourEventsList, new EventStartComparator());
 		eventsTimetable = (ArrayList<Event>[]) new ArrayList[24];
 		for (Event e : hourEventsList){
 			this.add(e);
@@ -56,5 +59,14 @@ public class HourEventsTimetable {
 		}
 		
 		return ret;
+	}
+	
+	public int getNeighbourId(Event event){
+		int startHour = Utils.stringToCalendar(event.time_start, Utils.date_format).get(Calendar.HOUR_OF_DAY);
+		ArrayList<Event> hourEvents = eventsTimetable[startHour];
+
+		int index = hourEvents.indexOf(event);
+		if (index != 0) return hourEvents.get(index -1).event_id;  
+		else return 0;
 	}
 }
