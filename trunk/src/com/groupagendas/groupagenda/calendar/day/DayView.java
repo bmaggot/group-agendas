@@ -6,21 +6,26 @@ import java.util.Calendar;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.res.Resources;
 import android.util.AttributeSet;
+import android.util.TypedValue;
 import android.view.Display;
 import android.view.View;
 import android.view.ViewTreeObserver;
 import android.view.WindowManager;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
+import android.widget.LinearLayout.LayoutParams;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.groupagendas.groupagenda.R;
+
 import com.groupagendas.groupagenda.calendar.adapters.AllDayEventsAdapter;
 import com.groupagendas.groupagenda.calendar.adapters.HourListAdapter;
 import com.groupagendas.groupagenda.events.Event;
+import com.groupagendas.groupagenda.utils.Utils;
 
 public class DayView extends LinearLayout {
 	
@@ -37,39 +42,35 @@ public class DayView extends LinearLayout {
 	private HourEventsPanel hourEventsPanel;
 	private ListView allDayEventsPanel;
 	private LinearLayout hourList;
-	private HourListAdapter hourListAdapter = new HourListAdapter(getContext(), null);
-	private AllDayEventsAdapter allDayEventAdapter = new AllDayEventsAdapter(getContext(), null);
+	private AllDayEventsAdapter allDayEventAdapter; 
 
 
 	public DayView(Context context) {
 		this(context, null);
+		System.out.println("KONSTRUKTORIUS DAYVIEW1");
 	}
 
 	public DayView(Context context, AttributeSet attrs) {
 		super(context, attrs);
+		System.out.println("KONSTRUKTORIUS DAYVIEW2");
 		WeekDayNames = getResources().getStringArray(R.array.week_days_names);
 		MonthNames = getResources().getStringArray(R.array.month_names);
 		HourNames = getResources().getStringArray(R.array.hour_names);
 		selectedDay = new DayInstance(context);
+		allDayEventAdapter = new AllDayEventsAdapter(getContext(), new ArrayList<Event>());
 		
 
 	}
 
-	@Override
-	protected void onFinishInflate() {
-		super.onFinishInflate();
-		
-		
-		((Activity) getContext()).getLayoutInflater().inflate(R.layout.calendar_day, this);
+
+	public void init() {
 		setupViewItems();
 		drawHourList();
-		initEventListAdapters();
+		updateEventLists();
 	}
 
 	private void drawHourList() {
-//		hourListAdapter.setList(Arrays.asList(HourNames));
-//		hourListAdapter.notifyDataSetChanged();
-		
+
 		for (int i=0; i<24; i++) {
 			TextView label = new TextView(getContext());
 			label.setTextAppearance(getContext(), R.style.dayView_hourEvent_firstColumn_entryText);
@@ -87,30 +88,53 @@ public class DayView extends LinearLayout {
 			ArrayList<Event> hourEventsList = selectedDay.getHourEvents();
 			HourEventsTimetable hourEventsTimetable = selectedDay.getHourEventsTimeTable();
 			
-			for (Event e : hourEventsList){
+			for (int i = 0; i < hourEventsList.size(); i++){
+				Event e = hourEventsList.get(i);
 				int divider = hourEventsTimetable.getWidthDivider(e);
-				drawEvent(divider, e);
+				drawEvent(divider, e, i + 1);
 			}
 		}
 			
 	}
 
-	private void drawEvent(int overlapCount, Event event) {
-//		Display display = ((WindowManager)(Activity)getContext().getSystemService(Context.WINDOW_SERVICE)).getDefaultDisplay();
-		
-//		int width = display.getWidth();
+	private void drawEvent(int divider, Event event, int id) {
+
 		int dispWidth = ((Activity)getContext()).getWindowManager().getDefaultDisplay().getWidth();
 		int panelWidth =  Math.round(0.9f * dispWidth - 1);
-		System.out.println("WIDTH: " + panelWidth);
-		RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(Math.round(panelWidth/overlapCount), 50);
-		params.topMargin = 40;
-		params.leftMargin = 10;
-		HourEventView eventFrame = new HourEventView(getContext(), event);
-//		eventFrame.setDimensions(, 100);
-		hourEventsPanel.addView(eventFrame, params);
+		int lineHeightDP = 40;
+		
+		final float scale = getContext().getResources().getDisplayMetrics().density;
+		lineHeightDP = (int) (lineHeightDP * scale + 0.5f);
+		int oneDP = (int) (1 * scale + 0.5f);
+ 
+       
+		
+		int startHour  = Utils.stringToCalendar(event.time_start, Utils.date_format).get(Calendar.HOUR_OF_DAY);
+		int endHour = Utils.stringToCalendar(event.time_end, Utils.date_format).get(Calendar.HOUR_OF_DAY);
+		int duration = endHour - startHour;
+		
+		HourEventView eventFrame = new HourEventView(getContext(), event, id);
+		eventFrame.setDimensions(panelWidth/divider, lineHeightDP * duration - oneDP);
+//		hourEventsPanel.measure(widthMeasureSpec, heightMeasureSpec)
+		int layoutWidth = hourEventsPanel.getMeasuredWidth();
+		int layoutHeight = hourEventsPanel.getMeasuredHeight();
+		
+		
+		RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(layoutWidth, layoutHeight);
+//		if(id == 1){
+//			System.out.println("pirmas");
+//			todo patikslinti dimensijas
+//			params.addRule(RelativeLayout.ALIGN_PARENT_TOP);
+			hourEventsPanel.addView(eventFrame);
+//		}
+//		else{
+//			System.out.println("antras");
+//		}
+		
+		
 	}
 
-	private void initEventListAdapters() {
+	private void updateEventLists() {
 		allDayEventAdapter.setList(selectedDay.getAllDayEvents());
 		allDayEventAdapter.notifyDataSetChanged();
 
@@ -132,27 +156,18 @@ public class DayView extends LinearLayout {
 		drawHourEvents(); // Drawing hour-long events
 	}
 
-	private void setupViewItems() {
+	public void setupViewItems() {
 		prevDayButton = (ImageButton) findViewById(R.id.prevDay);
 		nextDaybutton = (ImageButton) findViewById(R.id.nextDay);
 
 		hourEventsPanel = (HourEventsPanel) findViewById(R.id.hour_events);
-//		hourEventsPanel.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
-//			
-//			@Override
-//			public void onGlobalLayout() {
-//				drawHourEvents();
-//			}
-//		});
-				  
-		
 
 		allDayEventsPanel = (ListView) findViewById(R.id.allday_events);
 		allDayEventsPanel.setAdapter(allDayEventAdapter);
 		
 		hourList = (LinearLayout) findViewById(R.id.hour_list);
 		hourList.setClickable(false);
-//		hourList.setAdapter(hourListAdapter);
+
 
 		topPanelTitle = (TextView) findViewById(R.id.top_panel_title);
 		updateTopPanelTitle(selectedDay.getSelectedDate());
@@ -163,7 +178,7 @@ public class DayView extends LinearLayout {
 			public void onClick(View v) {
 				selectedDay.goPrev();
 				updateTopPanelTitle(selectedDay.getSelectedDate());
-				initEventListAdapters();
+				updateEventLists();
 			}
 		});
 
@@ -173,7 +188,7 @@ public class DayView extends LinearLayout {
 			public void onClick(View v) {
 				selectedDay.goNext();
 				updateTopPanelTitle(selectedDay.getSelectedDate());
-				initEventListAdapters();
+				updateEventLists();
 
 			}
 		});
@@ -189,5 +204,7 @@ public class DayView extends LinearLayout {
 
 		topPanelTitle.setText(title);
 	}
+
+
 
 }

@@ -20,6 +20,7 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.CompoundButton;
 import android.widget.EditText;
+import android.widget.FrameLayout;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.RadioButton;
@@ -35,6 +36,7 @@ import com.bog.calendar.app.model.CalendarDay;
 import com.bog.calendar.app.model.CalendarMonth;
 import com.bog.calendar.app.model.CalendarYear;
 import com.groupagendas.groupagenda.account.AccountProvider;
+import com.groupagendas.groupagenda.calendar.day.DayView;
 import com.groupagendas.groupagenda.contacts.Contact;
 import com.groupagendas.groupagenda.contacts.ContactsActivity;
 import com.groupagendas.groupagenda.contacts.ContactsProvider;
@@ -70,7 +72,7 @@ public class NavbarActivity extends Activity {
     private ProgressThread progressThread;
     private ProgressDialog progressDialog;
     
-    private LinearLayout calendarContainer;
+    private FrameLayout calendarContainer;
 	private LayoutInflater mInflater; 
 	
 	private EditText searchView;
@@ -92,7 +94,7 @@ public class NavbarActivity extends Activity {
 		
 		mInflater = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 		
-		calendarContainer = (LinearLayout) findViewById(R.id.calendarContainer);
+		calendarContainer = (FrameLayout) findViewById(R.id.calendarContainer);
 		
 		
 		dm = DataManagement.getInstance(this);
@@ -170,7 +172,14 @@ public class NavbarActivity extends Activity {
 			public void onClick(View v) {
 				qa.dismiss();
 				calendarContainer.removeAllViews();
-				mInflater.inflate(R.layout.calendar_day_view_container, calendarContainer);
+//				DayView view = (DayView)
+				mInflater.inflate(R.layout.calendar_day, calendarContainer);
+				DayView view = (DayView)calendarContainer.getChildAt(0);
+				view.setupViewItems();
+				view.init();
+//				int test = view.getMeasuredHeight();
+//				calendarContainer.addView(new DayView(NavbarActivity.this));
+				System.out.println("test");
 			}
 		});
 		
