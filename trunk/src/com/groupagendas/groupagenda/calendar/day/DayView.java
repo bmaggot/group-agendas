@@ -36,7 +36,7 @@ public class DayView extends LinearLayout {
 
 	private HourEventsPanel hourEventsPanel;
 	private ListView allDayEventsPanel;
-	private ListView hourList;
+	private LinearLayout hourList;
 	private HourListAdapter hourListAdapter = new HourListAdapter(getContext(), null);
 	private AllDayEventsAdapter allDayEventAdapter = new AllDayEventsAdapter(getContext(), null);
 
@@ -67,8 +67,15 @@ public class DayView extends LinearLayout {
 	}
 
 	private void drawHourList() {
-		hourListAdapter.setList(Arrays.asList(HourNames));
-		hourListAdapter.notifyDataSetChanged();
+//		hourListAdapter.setList(Arrays.asList(HourNames));
+//		hourListAdapter.notifyDataSetChanged();
+		
+		for (int i=0; i<24; i++) {
+			TextView label = new TextView(getContext());
+			label.setTextAppearance(getContext(), R.style.dayView_hourEvent_firstColumn_entryText);
+			label.setText(HourNames[i]);
+			hourList.addView(label);
+		}
 		
 	}
 
@@ -110,15 +117,19 @@ public class DayView extends LinearLayout {
 		// VERY CIOTKIJ HARDCORD. Za Yeah! Peace!
 		LinearLayout allDayEventsContainer = (LinearLayout) findViewById(R.id.allday_container);
 		if (selectedDay.getAllDayEvents().size() < 10) {
-			LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(LayoutParams.FILL_PARENT, LayoutParams.WRAP_CONTENT); 
-			allDayEventsContainer.setLayoutParams(layoutParams);
+			if (selectedDay.getAllDayEvents().size() == 0) {
+				LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(LayoutParams.FILL_PARENT, 18); 
+				allDayEventsContainer.setLayoutParams(layoutParams);
+			} else {
+				LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(LayoutParams.FILL_PARENT, selectedDay.getAllDayEvents().size()*18); 
+				allDayEventsContainer.setLayoutParams(layoutParams);
+			}
 		} else {
 			LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(LayoutParams.FILL_PARENT, 180); 
 			allDayEventsContainer.setLayoutParams(layoutParams);
 		}
-		
-//		Drawing hour-long events
-		drawHourEvents();
+
+		drawHourEvents(); // Drawing hour-long events
 	}
 
 	private void setupViewItems() {
@@ -139,9 +150,9 @@ public class DayView extends LinearLayout {
 		allDayEventsPanel = (ListView) findViewById(R.id.allday_events);
 		allDayEventsPanel.setAdapter(allDayEventAdapter);
 		
-		hourList = (ListView) findViewById(R.id.hour_list);
+		hourList = (LinearLayout) findViewById(R.id.hour_list);
 		hourList.setClickable(false);
-		hourList.setAdapter(hourListAdapter);
+//		hourList.setAdapter(hourListAdapter);
 
 		topPanelTitle = (TextView) findViewById(R.id.top_panel_title);
 		updateTopPanelTitle(selectedDay.getSelectedDate());

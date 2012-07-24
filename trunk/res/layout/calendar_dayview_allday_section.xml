@@ -2,20 +2,20 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/allday_container"
 	android:orientation="horizontal"
+	android:layout_weight="1"
 	android:layout_width="fill_parent"
-	android:layout_height="fill_parent"
+	android:layout_height="wrap_content"
 	android:minHeight="18dp"
-	android:maxHeight="180dp" >
+	android:maxHeight="180dp"
+	android:gravity="center|top">
      
-	<TextView style="@style/dayView_hourEvent_firstColumn_entryText"
+	<TextView style="@style/dayView_alldayEvent_firstColumn_entryText"
 		android:focusable="false"
 		android:text="@string/calendar_dayView_allDayEvents_holder" />
      
-	<TextView android:background="@drawable/border_darkgray"
-		android:paddingTop="5dip"
-		android:gravity="center_horizontal"
-		android:layout_width="2dp"
-		android:layout_height="match_parent" />
+	<View android:background="@color/darker_gray"
+	    android:layout_height="match_parent"
+		android:layout_width="2dp" />
      
 	<ListView android:id="@+id/allday_events"
 		android:divider="@null"

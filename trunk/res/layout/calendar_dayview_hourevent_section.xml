@@ -1,32 +1,30 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ScrollView  xmlns:android="http://schemas.android.com/apk/res/android"
-	android:minHeight="100dp"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
 	android:layout_height="fill_parent"
-	android:layout_width="fill_parent" >
+	android:layout_width="fill_parent">
 
 	<LinearLayout android:layout_height="wrap_content"
 		android:layout_width="fill_parent" >
 
-		<ListView android:id="@+id/hour_list"
+		<LinearLayout android:id="@+id/hour_list"
 			android:cacheColorHint="@android:color/transparent"
-			android:minHeight="100dp"
-			android:layout_height="wrap_content"
+			android:layout_height="960dp"
 			android:layout_width="0dip"
-			android:layout_weight="1">
-	    </ListView>
+			android:layout_weight="1"
+			android:orientation="vertical">
+	    </LinearLayout>
 
 		<!-- SCREEN SECTION SEPARATOR -->	
-	    <TextView android:background="@drawable/border_darkgray"
-		    android:paddingTop="5dip"
-		    android:gravity="center_horizontal"
-		    android:layout_width="2dp"
-		    android:layout_height="match_parent" />
+		<View android:background="@color/darker_gray"
+		    android:layout_height="match_parent"
+			android:layout_width="2dp" />
 		<!-- SCREEN SECTION SEPARATOR -->
 			
 		<com.groupagendas.groupagenda.calendar.day.HourEventsPanel android:id="@+id/hour_events"
-	        android:layout_height="fill_parent"
+	        android:layout_height="960dp"
 	        android:layout_width="0dip"
-	        android:layout_weight="9">
+	        android:layout_weight="9"
+	        android:background="@drawable/calendar_dayview_secondcolumn_background">
 	    </com.groupagendas.groupagenda.calendar.day.HourEventsPanel>
 	    
     </LinearLayout>
