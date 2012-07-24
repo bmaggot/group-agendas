@@ -42,8 +42,8 @@ public class DayView extends LinearLayout {
 	private HourEventsPanel hourEventsPanel;
 	private ListView allDayEventsPanel;
 	private LinearLayout hourList;
-	private AllDayEventsAdapter allDayEventAdapter; 
-
+	private float densityFactor = getResources().getDisplayMetrics().density;
+	private AllDayEventsAdapter allDayEventAdapter;
 
 	public DayView(Context context) {
 		this(context, null);
@@ -71,13 +71,21 @@ public class DayView extends LinearLayout {
 
 	private void drawHourList() {
 
+		/*
+		 * 
+		 * A-CHU-JE-NAI, DACHUJA ZAJABYS.
+		 * 
+		 */
+		
 		for (int i=0; i<24; i++) {
 			TextView label = new TextView(getContext());
 			label.setTextAppearance(getContext(), R.style.dayView_hourEvent_firstColumn_entryText);
 			label.setText(HourNames[i]);
+			label.setGravity(android.view.Gravity.CENTER_HORIZONTAL);
+			label.setHeight(Math.round(40*densityFactor));
+			label.setWidth(LayoutParams.FILL_PARENT);
 			hourList.addView(label);
 		}
-		
 	}
 
 	public void drawHourEvents() {
@@ -142,14 +150,14 @@ public class DayView extends LinearLayout {
 		LinearLayout allDayEventsContainer = (LinearLayout) findViewById(R.id.allday_container);
 		if (selectedDay.getAllDayEvents().size() < 10) {
 			if (selectedDay.getAllDayEvents().size() == 0) {
-				LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(LayoutParams.FILL_PARENT, 18); 
+				LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(LayoutParams.FILL_PARENT,  Math.round(18*densityFactor)); 
 				allDayEventsContainer.setLayoutParams(layoutParams);
 			} else {
-				LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(LayoutParams.FILL_PARENT, selectedDay.getAllDayEvents().size()*18); 
+				LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(LayoutParams.FILL_PARENT, Math.round(selectedDay.getAllDayEvents().size()*18*densityFactor)); 
 				allDayEventsContainer.setLayoutParams(layoutParams);
 			}
 		} else {
-			LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(LayoutParams.FILL_PARENT, 180); 
+			LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(LayoutParams.FILL_PARENT, Math.round(180*densityFactor)); 
 			allDayEventsContainer.setLayoutParams(layoutParams);
 		}
 
