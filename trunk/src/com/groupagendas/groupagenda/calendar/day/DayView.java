@@ -98,21 +98,22 @@ public class DayView extends LinearLayout {
 			
 			for (int i = 0; i < hourEventsList.size(); i++){
 				Event e = hourEventsList.get(i);
+				int neighbourId = hourEventsTimetable.getNeighbourId(e);
 				int divider = hourEventsTimetable.getWidthDivider(e);
-				drawEvent(divider, e, i + 1);
+				drawEvent(e, divider, neighbourId);
 			}
 		}
 			
 	}
 
-	private void drawEvent(int divider, Event event, int id) {
+	private void drawEvent(Event event, int divider, int neighbourId) {
 
 		int dispWidth = ((Activity)getContext()).getWindowManager().getDefaultDisplay().getWidth();
 		int panelWidth =  Math.round(0.9f * dispWidth - 1);
 		int lineHeightDP = 40;
 		
 		final float scale = getContext().getResources().getDisplayMetrics().density;
-		lineHeightDP = (int) (lineHeightDP * scale + 0.5f);
+		int lineHeight = (int) (lineHeightDP * scale + 0.5f);
 		int oneDP = (int) (1 * scale + 0.5f);
  
        
@@ -121,24 +122,17 @@ public class DayView extends LinearLayout {
 		int endHour = Utils.stringToCalendar(event.time_end, Utils.date_format).get(Calendar.HOUR_OF_DAY);
 		int duration = endHour - startHour;
 		
-		HourEventView eventFrame = new HourEventView(getContext(), event, id);
-		eventFrame.setDimensions(panelWidth/divider, lineHeightDP * duration - oneDP);
-//		hourEventsPanel.measure(widthMeasureSpec, heightMeasureSpec)
-		int layoutWidth = hourEventsPanel.getMeasuredWidth();
-		int layoutHeight = hourEventsPanel.getMeasuredHeight();
+		HourEventView eventFrame = new HourEventView(getContext(), event);
+	
+		RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(panelWidth/divider, lineHeight * duration - oneDP);	
+	
+		params.topMargin = lineHeight * startHour;
 		
+		if (neighbourId != 0) {
+			params.addRule(RelativeLayout.RIGHT_OF, neighbourId);
+		}
 		
-		RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(layoutWidth, layoutHeight);
-//		if(id == 1){
-//			System.out.println("pirmas");
-//			todo patikslinti dimensijas
-//			params.addRule(RelativeLayout.ALIGN_PARENT_TOP);
-			hourEventsPanel.addView(eventFrame);
-//		}
-//		else{
-//			System.out.println("antras");
-//		}
-		
+		hourEventsPanel.addView(eventFrame, params);
 		
 	}
 
