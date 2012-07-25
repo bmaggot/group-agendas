@@ -8,7 +8,6 @@ public class HourEventsPanel extends RelativeLayout {
 
 	public HourEventsPanel(Context context, AttributeSet attrs) {
 		super(context, attrs);
-		System.out.println("HOUR EVENTS PANEL CONSTRUCTOR");
 	}
 
 	public HourEventsPanel(Context context) {
