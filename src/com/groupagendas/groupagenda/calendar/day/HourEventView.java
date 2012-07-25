@@ -16,6 +16,7 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
@@ -34,11 +35,21 @@ public class HourEventView extends FrameLayout {
 
 	public HourEventView(Context context, Event e) {
 		super(context);
+		
+		LinearLayout titleHolder = (LinearLayout) findViewById(R.id.hour_event_icontitle_holder);
+		RelativeLayout.LayoutParams lp = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.WRAP_CONTENT, RelativeLayout.LayoutParams.WRAP_CONTENT);
+		
 		this.event = e;
 		setId(e.event_id);
 		LayoutInflater.from(context).inflate(R.layout.calendar_dayview_hourevent_entry, this);
 		title = (TextView) this.findViewById(R.id.hour_event_title);
 		title.setText(e.title);
+		title.setTextAppearance(getContext(), R.style.dayView_hourEvent_secondColumn_entryText); // Va cia prasides ledas.
+		
+//		if (evento trukme didesne nei pusvalandis) {
+//			lp.addRule(RelativeLayout.BELOW, R.id.hour_event_time);
+//		}
+		
 		if (e.color == "null") e.color = "CC6600";
 		this.setBackgroundColor(Color.parseColor("#" + e.color));
 		System.out.println("showing event: " + e.title);
