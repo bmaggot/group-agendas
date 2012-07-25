@@ -6,7 +6,8 @@
 
     <uses-sdk
         android:minSdkVersion="8"
-        android:targetSdkVersion="10" />
+        android:maxSdkVersion="16"
+        android:targetSdkVersion="13" />
 
     <permission
         android:name="com.groupagendas.groupagenda.permission.C2D_MESSAGE"
