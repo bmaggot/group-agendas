@@ -80,4 +80,10 @@
 	    <item name="android:layout_height">match_parent</item>
     </style>
     
+    <style name="dayView_hourEvent_secondColumn_timeText">
+        <item name="android:textColor">@color/black</item>
+        <item name="android:textSize">10dp</item>
+        <item name="android:layout_alignParentLeft">true</item>
+    </style>
+    
 </resources>

@@ -25,6 +25,7 @@
 	<color name="weekNumberCellBgColor">#B8B8B8</color>
 	<color name="red">#FF0000</color>
 	<color name="defaultAllDayEventColor">#21C0DB</color>
+	<color name="defaultHourEventColorTransparent">#BF21C0DB</color>
 
 	<string-array name="colors_values">
 		<item>000000</item>
