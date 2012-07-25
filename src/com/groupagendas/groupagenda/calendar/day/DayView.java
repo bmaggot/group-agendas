@@ -89,7 +89,7 @@ public class DayView extends LinearLayout {
 	}
 
 	public void drawHourEvents() {
-		System.out.println("DRAW HOUR EVENTS METHOD");
+	
 		hourEventsPanel.removeAllViews();
 	 
 		if (selectedDay.hasHourEvents()){
@@ -121,16 +121,14 @@ public class DayView extends LinearLayout {
 		int startHour  = Utils.stringToCalendar(event.time_start, Utils.date_format).get(Calendar.HOUR_OF_DAY);
 		int endHour = Utils.stringToCalendar(event.time_end, Utils.date_format).get(Calendar.HOUR_OF_DAY);
 		float duration = endHour - startHour;
-		if (!(duration > 0)){
-			int startMinute  = Utils.stringToCalendar(event.time_start, Utils.date_format).get(Calendar.MINUTE);
-			int endMinute = Utils.stringToCalendar(event.time_end, Utils.date_format).get(Calendar.MINUTE);
-			duration = (endMinute - startMinute)/60;
-		}
+		
+//		if event lasts less than one hour, it's resized to half of hour pane
+		if (duration == 0) duration = 0.525f;   
 		
 		HourEventView eventFrame = new HourEventView(getContext(), event);
 		
 	
-		RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(panelWidth/divider, (int)(lineHeight * duration) - oneDP);	
+		RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(panelWidth/divider, (int)(lineHeight * duration));	
 	
 		params.topMargin = lineHeight * startHour;
 		
