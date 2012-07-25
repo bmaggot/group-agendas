@@ -306,6 +306,7 @@ public class ContactsActivity extends ListActivity implements OnCheckedChangeLis
 			switch (checkedId) {
 				case R.id.contacts:
 					CURRENT_LIST = CONTACTS_LIST;
+					CURRENT_TASK = CONTACTS_TASK;
 //					Toast.makeText(this, getString(R.string.waiting_for_contacts_load), Toast.LENGTH_SHORT).show();
 					setListAdapter(cAdapter);
 
@@ -319,6 +320,7 @@ public class ContactsActivity extends ListActivity implements OnCheckedChangeLis
 				
 				case R.id.groups:
 					CURRENT_LIST = GROUPS_LIST;
+					CURRENT_TASK = GROUPS_TASK;
 //					Toast.makeText(this, getString(R.string.waiting_for_groups_load), Toast.LENGTH_SHORT).show();
 					setListAdapter(gAdapter);
 					dm.loadGroups(this, gAdapter);

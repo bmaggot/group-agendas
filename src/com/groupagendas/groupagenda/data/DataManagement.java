@@ -959,7 +959,10 @@ public class DataManagement {
 
 	// Contacts
 	public ArrayList<Contact> getContacts() {
-		return Data.getContacts();
+		ArrayList<Contact> contacts = Data.getContacts();
+		if (contacts == null)
+			contacts = new ArrayList<Contact>();
+		return contacts;
 	}
 
 	public int loadContacts(Activity instance, ContactsAdapter cAdapter) {
@@ -1418,7 +1421,10 @@ public class DataManagement {
 
 	// GROUPS
 	public ArrayList<Group> getGroups() {
-		return Data.getGroups();
+		ArrayList<Group> groups = Data.getGroups();
+		if (groups == null)
+			groups = new ArrayList<Group>();
+		return groups;
 	}
 
 	public int loadGroups(Activity instance, GroupsAdapter gAdapter) {
