@@ -6,6 +6,7 @@ import java.util.Calendar;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.content.res.Resources;
 import android.util.AttributeSet;
 import android.util.TypedValue;
@@ -25,6 +26,7 @@ import com.groupagendas.groupagenda.R;
 import com.groupagendas.groupagenda.calendar.adapters.AllDayEventsAdapter;
 import com.groupagendas.groupagenda.calendar.adapters.HourListAdapter;
 import com.groupagendas.groupagenda.events.Event;
+import com.groupagendas.groupagenda.events.EventActivity;
 import com.groupagendas.groupagenda.utils.Utils;
 
 public class DayView extends LinearLayout {
@@ -47,12 +49,10 @@ public class DayView extends LinearLayout {
 
 	public DayView(Context context) {
 		this(context, null);
-		System.out.println("KONSTRUKTORIUS DAYVIEW1");
 	}
 
 	public DayView(Context context, AttributeSet attrs) {
 		super(context, attrs);
-		System.out.println("KONSTRUKTORIUS DAYVIEW2");
 		WeekDayNames = getResources().getStringArray(R.array.week_days_names);
 		MonthNames = getResources().getStringArray(R.array.month_names);
 		HourNames = getResources().getStringArray(R.array.hour_names);
@@ -106,7 +106,7 @@ public class DayView extends LinearLayout {
 			
 	}
 
-	private void drawEvent(Event event, int divider, int neighbourId) {
+	private void drawEvent(final Event event, int divider, int neighbourId) {
 
 		int dispWidth = ((Activity)getContext()).getWindowManager().getDefaultDisplay().getWidth();
 		int panelWidth =  Math.round(0.9f * dispWidth - 1);
@@ -123,6 +123,7 @@ public class DayView extends LinearLayout {
 		int duration = endHour - startHour;
 		
 		HourEventView eventFrame = new HourEventView(getContext(), event);
+		
 	
 		RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(panelWidth/divider, lineHeight * duration - oneDP);	
 	
