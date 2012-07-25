@@ -42,6 +42,20 @@ public class HourEventView extends FrameLayout {
 		if (e.color == "null") e.color = "CC6600";
 		this.setBackgroundColor(Color.parseColor("#" + e.color));
 		System.out.println("showing event: " + e.title);
+		
+//		if (this.getChildCount() > 0) {
+//			container.setB
+//			eventLayout.getChildAt(0).set
+//		}
+//		
+//		if (!event.color.equalsIgnoreCase("null")){
+//			sd.setColor(Color.parseColor("#BF" + event.color));
+//			sd.setStroke(1, Color.parseColor("#" + event.color));
+//		}else {
+//			sd.setColor(context.getResources().getColor(R.color.defaultAllDayEventColor));
+//		}
+
+		
 	}
 
 	public void setDimensionsDIP (int widthDIP, int heightDIP){
