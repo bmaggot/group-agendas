@@ -8,6 +8,7 @@ import android.app.Dialog;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.ActivityInfo;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
@@ -215,9 +216,6 @@ public class NavbarActivity extends Activity {
 				Toast.makeText(NavbarActivity.this, getString(R.string.today), Toast.LENGTH_SHORT).show();
 			}
 		});
-		
-
-		
 	}
 	
 	protected void initMonthView() {
@@ -488,6 +486,7 @@ public class NavbarActivity extends Activity {
             getContentResolver().delete(EventsProvider.EMetaData.EventsMetaData.CONTENT_URI, "", null);
             getContentResolver().getType(EventsProvider.EMetaData.EventsMetaData.CONTENT_URI);
             
+            setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_NOSENSOR);
             total = 20;
             Message msg = mHandler.obtainMessage();
             msg.arg1 = total;
