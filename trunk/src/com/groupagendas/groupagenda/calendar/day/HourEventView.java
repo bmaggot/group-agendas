@@ -82,12 +82,6 @@ public class HourEventView extends RelativeLayout {
 			int imgID = getResources().getIdentifier(e.icon, "drawable", getContext().getPackageName());
 			
 			icon.setImageResource(imgID);
-//			HARDCODED dim :-/
-			int iconDimensions = getPixels(20);
-			
-			icon.getLayoutParams().height = iconDimensions;
-			icon.getLayoutParams().width = iconDimensions;
-			
 		}
 		
 		
@@ -110,6 +104,22 @@ public class HourEventView extends RelativeLayout {
 			sd.setColor(context.getResources().getColor(R.color.defaultHourEventColorTransparent));
 		}
 		this.setBackgroundDrawable(sd);
+		
+//		Add listener
+		
+		this.setOnClickListener(new OnClickListener() {
+			
+			@Override
+			public void onClick(View v) {
+				Intent intent = new Intent(getContext(), EventActivity.class);
+	      		intent.putExtra("event_id", event.event_id);
+	      		intent.putExtra("type", event.type);
+	      		intent.putExtra("isNative", event.isNative);
+	      		
+	      		getContext().startActivity(intent);
+				
+			}
+		});
 	}
 
 	public void setDimensionsDIP (int widthDIP, int heightDIP){
