@@ -120,12 +120,17 @@ public class DayView extends LinearLayout {
 		
 		int startHour  = Utils.stringToCalendar(event.time_start, Utils.date_format).get(Calendar.HOUR_OF_DAY);
 		int endHour = Utils.stringToCalendar(event.time_end, Utils.date_format).get(Calendar.HOUR_OF_DAY);
-		int duration = endHour - startHour;
+		float duration = endHour - startHour;
+		if (!(duration > 0)){
+			int startMinute  = Utils.stringToCalendar(event.time_start, Utils.date_format).get(Calendar.MINUTE);
+			int endMinute = Utils.stringToCalendar(event.time_end, Utils.date_format).get(Calendar.MINUTE);
+			duration = (endMinute - startMinute)/60;
+		}
 		
 		HourEventView eventFrame = new HourEventView(getContext(), event);
 		
 	
-		RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(panelWidth/divider, lineHeight * duration - oneDP);	
+		RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(panelWidth/divider, (int)(lineHeight * duration) - oneDP);	
 	
 		params.topMargin = lineHeight * startHour;
 		
