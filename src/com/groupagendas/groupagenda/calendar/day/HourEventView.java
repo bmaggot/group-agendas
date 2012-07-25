@@ -1,14 +1,23 @@
 package com.groupagendas.groupagenda.calendar.day;
 
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+
 import com.groupagendas.groupagenda.R;
 import com.groupagendas.groupagenda.events.Event;
 import com.groupagendas.groupagenda.events.EventActivity;
+import com.groupagendas.groupagenda.utils.Utils;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.res.Resources;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Color;
+import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.GradientDrawable;
 import android.util.AttributeSet;
 import android.util.TypedValue;
 import android.view.LayoutInflater;
@@ -21,13 +30,14 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 
-public class HourEventView extends FrameLayout {
+@SuppressLint("ParserError")
+public class HourEventView extends RelativeLayout {
 	private final Event event;
-	private View content;
+	private final int TIME_TEXT_ID = 1;
 	private TextView title;
 	private TextView timeText;
 	private ImageView icon;
-	
+
 	
 	
 	
@@ -35,38 +45,71 @@ public class HourEventView extends FrameLayout {
 
 	public HourEventView(Context context, Event e) {
 		super(context);
-		
-		LinearLayout titleHolder = (LinearLayout) findViewById(R.id.hour_event_icontitle_holder);
-		RelativeLayout.LayoutParams lp = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.WRAP_CONTENT, RelativeLayout.LayoutParams.WRAP_CONTENT);
-		
+		RelativeLayout.LayoutParams lp = (LayoutParams) this.getLayoutParams();
+		int layoutPadding = getPixels(5);
+		this.setPadding(layoutPadding, layoutPadding, layoutPadding, layoutPadding);
+		View titleHolder = LayoutInflater.from(context).inflate(R.layout.calendar_dayview_hour_event_icontitle_holder, null);
+		GradientDrawable sd = (GradientDrawable)context.getResources().getDrawable(R.drawable.calendar_dayview_secondcolumn_entrybackground);
 		this.event = e;
 		setId(e.event_id);
-		LayoutInflater.from(context).inflate(R.layout.calendar_dayview_hourevent_entry, this);
-		title = (TextView) this.findViewById(R.id.hour_event_title);
+		
+		 lp = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.WRAP_CONTENT, RelativeLayout.LayoutParams.WRAP_CONTENT);
+		
+		
+		Calendar startTime  = Utils.stringToCalendar(event.time_start, Utils.date_format);
+		Calendar endTime = Utils.stringToCalendar(event.time_end, Utils.date_format);
+		
+//		Set Event start time textView
+		timeText = new TextView(getContext());
+		SimpleDateFormat df = new SimpleDateFormat(getContext().getString(R.string.hour_event_view_time_format));
+		timeText.setText(df.format(startTime.getTime()));
+		timeText.setTextAppearance(getContext(), R.style.dayView_hourEvent_secondColumn_timeText);
+		timeText.setId(TIME_TEXT_ID);
+		
+		this.addView(timeText);
+		
+//		Set event TITLE
+		title = (TextView) titleHolder.findViewById(R.id.hour_event_title);
 		title.setText(e.title);
 		title.setTextAppearance(getContext(), R.style.dayView_hourEvent_secondColumn_entryText); // Va cia prasides ledas.
 		
-//		if (evento trukme didesne nei pusvalandis) {
-//			lp.addRule(RelativeLayout.BELOW, R.id.hour_event_time);
-//		}
 		
-		if (e.color == "null") e.color = "CC6600";
-		this.setBackgroundColor(Color.parseColor("#" + e.color));
-		System.out.println("showing event: " + e.title);
+//		set event ICON
+		icon = (ImageView) titleHolder.findViewById(R.id.hour_event_icon);
+		if (e.icon.equalsIgnoreCase("null")){
+			icon.setVisibility(GONE);
+		}else{
+			int imgID = getResources().getIdentifier(e.icon, "drawable", getContext().getPackageName());
+			
+			icon.setImageResource(imgID);
+//			HARDCODED dim :-/
+			int iconDimensions = getPixels(20);
+			
+			icon.getLayoutParams().height = iconDimensions;
+			icon.getLayoutParams().width = iconDimensions;
+			
+		}
 		
-//		if (this.getChildCount() > 0) {
-//			container.setB
-//			eventLayout.getChildAt(0).set
-//		}
-//		
-//		if (!event.color.equalsIgnoreCase("null")){
-//			sd.setColor(Color.parseColor("#BF" + event.color));
-//			sd.setStroke(1, Color.parseColor("#" + event.color));
-//		}else {
-//			sd.setColor(context.getResources().getColor(R.color.defaultAllDayEventColor));
-//		}
-
 		
+//		CHANGE LAYOUT TO ONE LINE IF THERE IS half-hour event
+//		WARNING: START TIME NOW LOSES ITS CORRECT VALUE ;)
+		startTime.add(Calendar.MINUTE, 30);
+		if (startTime.before(endTime)) {
+			lp.addRule(RelativeLayout.BELOW, TIME_TEXT_ID);
+		}else {
+			lp.addRule(RelativeLayout.ALIGN_PARENT_RIGHT);
+		}
+		
+		this.addView(titleHolder, lp);
+		
+//		SET SHAPE AND COLOR
+		if (!e.color.equalsIgnoreCase("null")){
+			sd.setColor(Color.parseColor("#BF" + e.color));
+			sd.setStroke(1, Color.parseColor("#" + e.color));
+		}else {
+			sd.setColor(context.getResources().getColor(R.color.defaultHourEventColorTransparent));
+		}
+		this.setBackgroundDrawable(sd);
 	}
 
 	public void setDimensionsDIP (int widthDIP, int heightDIP){
