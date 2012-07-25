@@ -7,8 +7,8 @@
         	
 <!--             layout size is set in code  com.groupagendas.groupagenda.calendar.day.HourEventView constructor-->        	
         <ImageView android:id="@+id/hour_event_icon"
-            android:layout_width="1dp"
-        	android:layout_height="1dp"
+            android:layout_width="15dp"
+        	android:layout_height="15dp"
             android:layout_marginRight="5dp"/>	
         
 		<TextView android:id="@+id/hour_event_title"
