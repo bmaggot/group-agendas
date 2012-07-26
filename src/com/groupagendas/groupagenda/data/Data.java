@@ -302,4 +302,11 @@ public class Data {
 			return;
 		_editor.commit();
 	}
+	
+	public static void clearData(){
+		account = new Account();
+		contacts = new ArrayList<Contact>();
+		groups = new ArrayList<Group>();
+		events = new ArrayList<Event>();
+	}
 }
