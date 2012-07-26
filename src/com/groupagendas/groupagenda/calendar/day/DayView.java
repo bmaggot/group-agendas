@@ -107,6 +107,7 @@ public class DayView extends LinearLayout {
 				Event e = hourEventsList.get(i);
 				int neighbourId = hourEventsTimetable.getNeighbourId(e);
 				int divider = hourEventsTimetable.getWidthDivider(e);
+				System.out.println("Event: " + e.title + "divider " + divider);
 				drawEvent(e, divider, neighbourId);
 			}
 		}
@@ -117,22 +118,32 @@ public class DayView extends LinearLayout {
 
 		int dispWidth = ((Activity)getContext()).getWindowManager().getDefaultDisplay().getWidth();
 		int panelWidth =  Math.round(0.9f * dispWidth - 1);
+		//HARDCODED VALUE :(
 		int lineHeightDP = 40;
 		
 		final float scale = getContext().getResources().getDisplayMetrics().density;
 		int lineHeight = (int) (lineHeightDP * scale + 0.5f);
-		int oneDP = (int) (1 * scale + 0.5f);
+//		int oneDP = (int) (1 * scale + 0.5f);
  
-       
+	
 		
-		int startHour  = Utils.stringToCalendar(event.time_start, Utils.date_format).get(Calendar.HOUR_OF_DAY);
-		int endHour = Utils.stringToCalendar(event.time_end, Utils.date_format).get(Calendar.HOUR_OF_DAY);
+		int startHour = 0; 
+		int endHour = 24;
+		HourEventView eventFrame = new HourEventView(getContext(), event);
+		if (selectedDay.getSelectedDate().before(event.startCalendar)) {
+			startHour = event.startCalendar.get(Calendar.HOUR_OF_DAY);
+		} else eventFrame.setStartTime(selectedDay.getSelectedDate()); //set event start hour 0:00
+		
+		if (selectedDay.getSelectedDate().get(Calendar.DAY_OF_MONTH) == event.endCalendar.get(Calendar.DAY_OF_MONTH)){
+			if (selectedDay.getSelectedDate().get(Calendar.MONTH) == event.endCalendar.get(Calendar.MONTH))
+				endHour = event.endCalendar.get(Calendar.HOUR_OF_DAY);
+		}
+		
 		float duration = endHour - startHour;
 		
 //		if event lasts less than one hour, it's resized to half of hour pane
 		if (duration == 0) duration = 0.525f;   
 		
-		HourEventView eventFrame = new HourEventView(getContext(), event);
 		
 	
 		RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(panelWidth/divider, (int)(lineHeight * duration));	

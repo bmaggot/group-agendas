@@ -49,18 +49,35 @@ public class DayInstance  {
 			
 			if (events != null){
 				for (Event e : events){
-					if (e.is_all_day){
+					if (allDay(e)){
+						System.out.println(e.title + ": all day");
 						allDayEvents.add(e); //if event is all day then add to all day list
 					}
 					else {//else add event to hour events lists for every hour
+						System.out.println(e.title + ": hour");
 						hourEventsList.add(e);							
 						}
 					 
 					}
 				
-				hourEventsTimetable = new HourEventsTimetable(hourEventsList);
+				hourEventsTimetable = new HourEventsTimetable(hourEventsList, selectedDate);
 			}
 		}
+
+		private boolean allDay(Event e) {
+//			return e.is_all_day;
+			if (e.is_all_day) return true;
+			
+			if (!e.startCalendar.after(selectedDate)){
+				String dayStr = new SimpleDateFormat("yyyy-MM-dd").format(selectedDate.getTime());
+				Calendar tmp = Utils.stringToCalendar(dayStr + " 23:59:59", Utils.date_format);
+				if (!e.endCalendar.before(tmp)) return true;
+			}
+			
+			return false;
+		}
+
+
 
 		public Calendar getSelectedDate() {
 		return selectedDate;

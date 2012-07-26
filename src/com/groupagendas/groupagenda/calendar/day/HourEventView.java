@@ -45,6 +45,8 @@ public class HourEventView extends RelativeLayout {
 
 	public HourEventView(Context context, Event e) {
 		super(context);
+	
+		
 		RelativeLayout.LayoutParams lp = (LayoutParams) this.getLayoutParams();
 		int layoutPadding = getPixels(5);
 		this.setPadding(layoutPadding, layoutPadding, layoutPadding, layoutPadding);
@@ -56,8 +58,9 @@ public class HourEventView extends RelativeLayout {
 		 lp = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.WRAP_CONTENT, RelativeLayout.LayoutParams.WRAP_CONTENT);
 		
 		
-		Calendar startTime  = Utils.stringToCalendar(event.time_start, Utils.date_format);
-		Calendar endTime = Utils.stringToCalendar(event.time_end, Utils.date_format);
+		Calendar startTime  = Utils.stringToCalendar(e.time_start, Utils.date_format);
+		Calendar endTime = Utils.stringToCalendar(e.time_end, Utils.date_format);
+		
 		
 //		Set Event start time textView
 		timeText = new TextView(getContext());
@@ -138,6 +141,10 @@ public class HourEventView extends RelativeLayout {
         r.getDisplayMetrics());
         return px;
 }
+	public void setStartTime (Calendar startTime){
+		SimpleDateFormat df = new SimpleDateFormat(getContext().getString(R.string.hour_event_view_time_format));
+		timeText.setText(df.format(startTime.getTime()));
+	}
 
 	
 }
