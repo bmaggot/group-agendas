@@ -2023,11 +2023,16 @@ public class DataManagement {
 							try {
 								event.my_time_start = e.getString("my_time_start");
 								cv.put(EventsProvider.EMetaData.EventsMetaData.MY_TIME_START, event.my_time_start);
+								event.startCalendar = Utils.stringToCalendar(event.my_time_start, Utils.date_format);
+								
+
 							} catch (JSONException ex) {
 							}
 							try {
 								event.my_time_end = e.getString("my_time_end");
 								cv.put(EventsProvider.EMetaData.EventsMetaData.MY_TIME_END, event.my_time_end);
+								event.endCalendar = Utils.stringToCalendar(event.my_time_end, Utils.date_format);
+								
 							} catch (JSONException ex) {
 							}
 
@@ -2146,7 +2151,6 @@ public class DataManagement {
 				event_end = Utils.stringToCalendar(event.my_time_end, event.timezone, Utils.date_format);
 				tmp_event_start = (Calendar) event_start.clone();
 				int difference = 0;
-				System.out.println(event.title);
 				while (tmp_event_start.before(event_end)) {
 					tmp_event_start.add(Calendar.DAY_OF_MONTH, 1);
 					difference++;

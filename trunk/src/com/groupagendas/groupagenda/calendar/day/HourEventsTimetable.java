@@ -11,9 +11,16 @@ import com.groupagendas.groupagenda.utils.Utils;
 
 public class HourEventsTimetable {
 	private ArrayList<Event>[] eventsTimetable;
-
+	Calendar todayStart;
+	Calendar todayEnd;
 	
-	public HourEventsTimetable(List<Event> hourEventsList) {
+	public HourEventsTimetable(List<Event> hourEventsList, Calendar selectedDate) {
+		this.todayStart = selectedDate;
+		this.todayEnd = (Calendar)todayStart.clone();
+		todayEnd.add(Calendar.HOUR_OF_DAY, 23);
+		todayEnd.add(Calendar.MINUTE, 59);
+		todayEnd.add(Calendar.SECOND, 59);
+		
 		Collections.sort(hourEventsList, new EventStartComparator());
 		eventsTimetable = (ArrayList<Event>[]) new ArrayList[24];
 		for (Event e : hourEventsList){
@@ -22,8 +29,18 @@ public class HourEventsTimetable {
 	}
 	
 	private void add(Event event){
+		
 		Calendar start = Utils.stringToCalendar(event.time_start, Utils.date_format);
-		Calendar end = Utils.stringToCalendar(event.time_end, Utils.date_format);
+		if (start.before(todayStart)){//TODO TEST
+			start = (Calendar) todayStart.clone();
+		}
+		
+		Calendar end = event.endCalendar;
+		
+		if (end.after(todayEnd)){
+			end = todayEnd;
+		}
+		
 		while (start.before(end)){
 			put(start.get(Calendar.HOUR_OF_DAY), event);
 			start.add(Calendar.HOUR_OF_DAY, 1);
