@@ -12,6 +12,7 @@
 			android:layout_marginLeft="15dp"
 			android:layout_centerVertical="true"
 			android:layout_alignParentLeft="true"
+			android:padding="10dp"
 			android:src="@drawable/left"
 			android:contentDescription="@string/calendar_dayView_navigateLeft"/>
 
@@ -43,6 +44,7 @@
 			android:layout_gravity="center_vertical"
 			android:layout_marginRight="15dp"
 			android:gravity="center_vertical"
+			android:padding="10dp"
 			android:src="@drawable/right"
 			android:contentDescription="@string/calendar_dayView_navigateRight"/>
 
