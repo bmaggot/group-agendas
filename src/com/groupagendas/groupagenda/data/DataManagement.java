@@ -2162,6 +2162,8 @@ public class DataManagement {
 						putValueIntoTreeMap(tm, eventDay, event);
 						event_start.add(Calendar.DAY_OF_MONTH, 1);
 					}
+					String dayStr = new SimpleDateFormat("yyyy-MM-dd").format(event_end.getTime());
+					event_end = Utils.stringToCalendar(dayStr + " 00:00:00", Utils.date_format);
 					if(event_end.after(eventDay)){
 						eventDay.add(Calendar.DAY_OF_MONTH, 1);
 						putValueIntoTreeMap(tm, eventDay, event);
