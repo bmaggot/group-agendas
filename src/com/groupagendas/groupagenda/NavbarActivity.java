@@ -486,7 +486,9 @@ public class NavbarActivity extends Activity {
             getContentResolver().delete(ContactsProvider.CMetaData.GroupsMetaData.CONTENT_URI, "", null);
             getContentResolver().delete(EventsProvider.EMetaData.EventsMetaData.CONTENT_URI, "", null);
             getContentResolver().getType(EventsProvider.EMetaData.EventsMetaData.CONTENT_URI);
-            Data.clearData();
+            if(Data.needToClearData){
+            	Data.clearData();
+            }
             
             setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_NOSENSOR);
             total = 20;
