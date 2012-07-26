@@ -5,6 +5,8 @@ import java.util.Calendar;
 import java.util.HashMap;
 import java.util.TreeMap;
 
+import org.json.JSONObject;
+
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
@@ -61,6 +63,8 @@ public class Data {
 	private static TreeMap<Calendar, ArrayList<Event>> sortedEvents;
 	
 	public static final int DEFAULT_FIRST_WEEK_DAY = 1;
+	public static ArrayList<JSONObject> unUploadedData = new ArrayList<JSONObject>();
+	public static boolean needToClearData = true;
 	
 	//getters'n'setters
 	
@@ -297,6 +301,22 @@ public class Data {
 			return;
 		_editor.putInt("userid", id);
 	}
+	public static ArrayList<JSONObject> getUnUploadedData() {
+		return unUploadedData;
+	}
+
+	public static void setUnUploadedData(ArrayList<JSONObject> unUploadedData) {
+		Data.unUploadedData = unUploadedData;
+	}
+
+	public boolean isNeedToClearData() {
+		return needToClearData;
+	}
+
+	public void setNeedToClearData(boolean needToClearData) {
+		this.needToClearData = needToClearData;
+	}
+
 	public static void save() {
 		if (_editor == null)
 			return;
