@@ -676,13 +676,6 @@ public class DataManagement {
 		}
 		return success;
 	}
-	
-	private boolean isNetworkAvailable() {
-	    ConnectivityManager connectivityManager 
-	          = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
-	    NetworkInfo activeNetworkInfo = connectivityManager.getActiveNetworkInfo();
-	    return activeNetworkInfo != null;
-	}
 
 	public void registerPhone() {
 		try {
