@@ -31,7 +31,7 @@ public class HourEventsTimetable {
 	private void add(Event event){
 		
 		Calendar start = Utils.stringToCalendar(event.time_start, Utils.date_format);
-		if (start.before(todayStart)){//TODO TEST
+		if (start.before(todayStart)){//TODO TEST cia jeigu eventas prasideda ne sita diena, o anksciau
 			start = (Calendar) todayStart.clone();
 		}
 		
