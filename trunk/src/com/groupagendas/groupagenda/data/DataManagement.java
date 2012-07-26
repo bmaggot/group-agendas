@@ -2147,8 +2147,8 @@ public class DataManagement {
 				tmp_event_start = (Calendar) event_start.clone();
 				int difference = 0;
 				while (tmp_event_start.before(event_end)) {
-					tmp_event_start.add(Calendar.DAY_OF_MONTH, 1);
 					difference++;
+					tmp_event_start.add(Calendar.DAY_OF_MONTH, 1);
 				}
 				if (difference == 0) {
 					String dayStr = new SimpleDateFormat("yyyy-MM-dd").format(event_start.getTime());
