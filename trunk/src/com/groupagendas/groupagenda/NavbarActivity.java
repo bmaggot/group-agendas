@@ -41,6 +41,7 @@ import com.groupagendas.groupagenda.calendar.day.DayView;
 import com.groupagendas.groupagenda.contacts.Contact;
 import com.groupagendas.groupagenda.contacts.ContactsActivity;
 import com.groupagendas.groupagenda.contacts.ContactsProvider;
+import com.groupagendas.groupagenda.data.Data;
 import com.groupagendas.groupagenda.data.DataManagement;
 import com.groupagendas.groupagenda.events.Event;
 import com.groupagendas.groupagenda.events.EventsActivity;
@@ -485,6 +486,7 @@ public class NavbarActivity extends Activity {
             getContentResolver().delete(ContactsProvider.CMetaData.GroupsMetaData.CONTENT_URI, "", null);
             getContentResolver().delete(EventsProvider.EMetaData.EventsMetaData.CONTENT_URI, "", null);
             getContentResolver().getType(EventsProvider.EMetaData.EventsMetaData.CONTENT_URI);
+            Data.clearData();
             
             setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_NOSENSOR);
             total = 20;

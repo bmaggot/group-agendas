@@ -35,10 +35,11 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import android.app.Activity;
-import android.app.ListActivity;
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.net.Uri;
 import android.os.Build;
 import android.telephony.TelephonyManager;
@@ -52,13 +53,11 @@ import com.groupagendas.groupagenda.R;
 import com.groupagendas.groupagenda.account.Account;
 import com.groupagendas.groupagenda.account.AccountProvider;
 import com.groupagendas.groupagenda.contacts.Contact;
-import com.groupagendas.groupagenda.contacts.ContactsActivity;
 import com.groupagendas.groupagenda.contacts.ContactsAdapter;
 import com.groupagendas.groupagenda.contacts.ContactsProvider;
 import com.groupagendas.groupagenda.contacts.Group;
 import com.groupagendas.groupagenda.contacts.GroupsAdapter;
 import com.groupagendas.groupagenda.events.Event;
-import com.groupagendas.groupagenda.events.EventsActivity;
 import com.groupagendas.groupagenda.events.EventsAdapter;
 import com.groupagendas.groupagenda.events.EventsProvider;
 import com.groupagendas.groupagenda.events.Invited;
@@ -676,6 +675,13 @@ public class DataManagement {
 			Log.e("login2", Data.getERROR() + "!!!");
 		}
 		return success;
+	}
+	
+	private boolean isNetworkAvailable() {
+	    ConnectivityManager connectivityManager 
+	          = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+	    NetworkInfo activeNetworkInfo = connectivityManager.getActiveNetworkInfo();
+	    return activeNetworkInfo != null;
 	}
 
 	public void registerPhone() {
