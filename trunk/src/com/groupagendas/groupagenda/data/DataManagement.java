@@ -2170,6 +2170,8 @@ public class DataManagement {
 					String dayStr = new SimpleDateFormat("yyyy-MM-dd").format(event_end.getTime());
 					Calendar eventTmpEnd = Utils.stringToCalendar(dayStr + " 00:00:00", Utils.date_format);
 					if(eventTmpEnd.after(eventDay)){
+						dayStr = new SimpleDateFormat("yyyy-MM-dd").format(event_start.getTime());
+						event_start = Utils.stringToCalendar(dayStr + " 00:00:00", Utils.date_format);
 						putValueIntoTreeMap(tm, event_start, event);
 					}
 				}
