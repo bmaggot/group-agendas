@@ -8,9 +8,11 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.res.Resources;
+import android.graphics.Rect;
 import android.util.AttributeSet;
 import android.util.TypedValue;
 import android.view.Display;
+import android.view.TouchDelegate;
 import android.view.View;
 import android.view.ViewTreeObserver;
 import android.view.WindowManager;
@@ -35,7 +37,12 @@ public class DayView extends LinearLayout {
 
 	ImageButton prevDayButton;
 	ImageButton nextDaybutton;
+	Rect prevDayButtonBounds;
+	Rect nextDayButtonBounds;
+	TouchDelegate prevDayButtonDelegate;
+	TouchDelegate nextDayButtonDelegate;
 	TextView topPanelTitle;
+	
 
 	String[] WeekDayNames;
 	String[] MonthNames;
@@ -165,6 +172,9 @@ public class DayView extends LinearLayout {
 	public void setupViewItems() {
 		prevDayButton = (ImageButton) findViewById(R.id.prevDay);
 		nextDaybutton = (ImageButton) findViewById(R.id.nextDay);
+		
+		prevDayButtonBounds = new Rect();
+		nextDayButtonBounds = new Rect();
 
 		hourEventsPanel = (HourEventsPanel) findViewById(R.id.hour_events);
 
@@ -177,7 +187,7 @@ public class DayView extends LinearLayout {
 
 		topPanelTitle = (TextView) findViewById(R.id.top_panel_title);
 		updateTopPanelTitle(selectedDay.getSelectedDate());
-
+		
 		prevDayButton.setOnClickListener(new OnClickListener() {
 
 			@Override
@@ -187,7 +197,7 @@ public class DayView extends LinearLayout {
 				updateEventLists();
 			}
 		});
-
+		
 		nextDaybutton.setOnClickListener(new OnClickListener() {
 
 			@Override
@@ -199,6 +209,7 @@ public class DayView extends LinearLayout {
 			}
 		});
 		
+		setupDelegates();
 	}
 
 	private void updateTopPanelTitle(Calendar selectedDate) {
@@ -211,6 +222,30 @@ public class DayView extends LinearLayout {
 		topPanelTitle.setText(title);
 	}
 
+	private void setupDelegates() {
+		int[] tmpCoords = new int[2];
+		int screenWidth = getResources().getDisplayMetrics().widthPixels;
+		View calNavbar = (View) findViewById(R.id.calendar_navbar);
+		calNavbar.getLocationOnScreen(tmpCoords);
+		prevDayButton.getHitRect(prevDayButtonBounds);
+		prevDayButtonBounds.right = tmpCoords[0]+50;
+		prevDayButtonBounds.left = tmpCoords[0];
+		prevDayButtonBounds.top = tmpCoords[1];
+		prevDayButtonBounds.bottom = tmpCoords[1]+50;
+		prevDayButtonDelegate = new TouchDelegate(prevDayButtonBounds, prevDayButton);
+		
+		nextDaybutton.getHitRect(nextDayButtonBounds);
+		nextDayButtonBounds.right = tmpCoords[0]+screenWidth;
+		nextDayButtonBounds.left = tmpCoords[0]+screenWidth-50;
+		nextDayButtonBounds.top = tmpCoords[1];
+		nextDayButtonBounds.bottom = tmpCoords[1]+50;		
+		nextDayButtonDelegate = new TouchDelegate(nextDayButtonBounds, nextDaybutton);
 
+		if (View.class.isInstance(calNavbar)) {
+			calNavbar.setTouchDelegate(prevDayButtonDelegate);
+			calNavbar.setTouchDelegate(nextDayButtonDelegate);
+		}
+
+	}
 
 }
