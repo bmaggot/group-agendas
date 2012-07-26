@@ -2146,6 +2146,7 @@ public class DataManagement {
 				event_end = Utils.stringToCalendar(event.my_time_end, event.timezone, Utils.date_format);
 				tmp_event_start = (Calendar) event_start.clone();
 				int difference = 0;
+				System.out.println(event.title);
 				while (tmp_event_start.before(event_end)) {
 					tmp_event_start.add(Calendar.DAY_OF_MONTH, 1);
 					difference++;
@@ -2165,8 +2166,7 @@ public class DataManagement {
 					String dayStr = new SimpleDateFormat("yyyy-MM-dd").format(event_end.getTime());
 					Calendar eventTmpEnd = Utils.stringToCalendar(dayStr + " 00:00:00", Utils.date_format);
 					if(eventTmpEnd.after(eventDay)){
-						eventDay.add(Calendar.DAY_OF_MONTH, 1);
-						putValueIntoTreeMap(tm, eventDay, event);
+						putValueIntoTreeMap(tm, event_start, event);
 					}
 				}
 			}
