@@ -30,15 +30,16 @@ public class HourEventsTimetable {
 	
 	private void add(Event event){
 		
+		Calendar end = event.endCalendar;
+		if (end.after(todayEnd)){
+			end = todayEnd;
+		}
+		
 		Calendar start = Utils.stringToCalendar(event.time_start, Utils.date_format);
 		if (start.before(todayStart)){//TODO TEST cia jeigu eventas prasideda ne sita diena, o anksciau
 			start = (Calendar) todayStart.clone();
-		}
-		
-		Calendar end = event.endCalendar;
-		
-		if (end.after(todayEnd)){
 			end = todayEnd;
+			end.set(start.get(Calendar.YEAR), start.get(Calendar.MONTH), start.get(Calendar.DAY_OF_MONTH));
 		}
 		
 		while (start.before(end)){
