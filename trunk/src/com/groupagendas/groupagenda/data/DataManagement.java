@@ -69,6 +69,8 @@ import com.groupagendas.groupagenda.utils.Prefs;
 import com.groupagendas.groupagenda.utils.Utils;
 
 public class DataManagement {
+	
+	public boolean networkAvailable = true;
 
 	private DataManagement(Activity c) {
 		Data.setPrefs(new Prefs(c));
@@ -589,107 +591,100 @@ public class DataManagement {
 		boolean success = false;
 		String token = null;
 
-		if(isNetworkAvailable()){
-			try {
-				HttpClient hc = new DefaultHttpClient();
-				HttpPost post = new HttpPost(Data.getServerUrl() + "mobile/login");
-				post.setHeader("User-Agent", "Linux; AndroidPhone " + android.os.Build.VERSION.RELEASE);
-				post.setHeader("Accept", "*/*");
-				// post.setHeader("Content-Type", "text/vnd.ms-sync.wbxml");
-	
-				MultipartEntity reqEntity = new MultipartEntity(HttpMultipartMode.BROWSER_COMPATIBLE);
-	
-				reqEntity.addPart("email", new StringBody(email));
-				reqEntity.addPart("password", new StringBody(password));
-	
-				post.setEntity(reqEntity);
-	
-				HttpResponse rp = hc.execute(post);
-	
-				if (rp.getStatusLine().getStatusCode() == HttpStatus.SC_OK) {
-					String resp = EntityUtils.toString(rp.getEntity());
-					if (resp != null) {
-						JSONObject object = new JSONObject(resp);
-						success = object.getBoolean("success");
-						Log.e("resp", resp);
-						if (success == true) {
-							token = object.getString("token");
-							JSONObject profile = object.getJSONObject("profile");
-							int id = Integer.parseInt(profile.getString("user_id"));
-							Data.setToken(token);
-							Data.setUserId(id);
-	
-							// Last login set
-							hc = new DefaultHttpClient();
-							post = new HttpPost(Data.getServerUrl() + "mobile/set_lastlogin");
-	
-							reqEntity = new MultipartEntity(HttpMultipartMode.BROWSER_COMPATIBLE);
-	
-							reqEntity.addPart("Token", new StringBody(token));
-	
-							post.setEntity(reqEntity);
-	
-							rp = hc.execute(post);
-							//
-	
-							//
-							Data.setEmail(email);
-							Data.setPassword(password);
-							Data.setLogged(true);
-							//
-							Data.save();
-	
-							// autoicons and autocolors
-							Data.getmContext().getContentResolver().delete(AccountProvider.AMetaData.AutoiconMetaData.CONTENT_URI, "", null);
-							JSONArray autoicons = object.getJSONArray("custom_icons");
-							for (int i = 0, l = autoicons.length(); i < l; i++) {
-								final JSONObject autoicon = autoicons.getJSONObject(i);
-								ContentValues values = new ContentValues();
-								values.put(AccountProvider.AMetaData.AutoiconMetaData.ICON, autoicon.getString("icon"));
-								values.put(AccountProvider.AMetaData.AutoiconMetaData.KEYWORD, autoicon.getString("keyword"));
-								values.put(AccountProvider.AMetaData.AutoiconMetaData.CONTEXT, autoicon.getString("context"));
-	
-								Data.getmContext().getContentResolver().insert(AccountProvider.AMetaData.AutoiconMetaData.CONTENT_URI, values);
-							}
-	
-							Data.getmContext().getContentResolver().delete(AccountProvider.AMetaData.AutocolorMetaData.CONTENT_URI, "", null);
-							JSONArray autocolors = object.getJSONArray("custom_colors");
-							for (int i = 0, l = autocolors.length(); i < l; i++) {
-								final JSONObject autocolor = autocolors.getJSONObject(i);
-								ContentValues values = new ContentValues();
-								values.put(AccountProvider.AMetaData.AutocolorMetaData.COLOR, autocolor.getString("color"));
-								values.put(AccountProvider.AMetaData.AutocolorMetaData.KEYWORD, autocolor.getString("keyword"));
-								values.put(AccountProvider.AMetaData.AutocolorMetaData.CONTEXT, autocolor.getString("context"));
-	
-								Data.getmContext().getContentResolver().insert(AccountProvider.AMetaData.AutocolorMetaData.CONTENT_URI, values);
-							}
-							registerPhone();
-						} else {
-							Data.setERROR(object.getJSONObject("error").getString("reason"));
-							Log.e("login", Data.getERROR() + "!!!");
+		isNetworkAvailable();
+		try {
+			HttpClient hc = new DefaultHttpClient();
+			HttpPost post = new HttpPost(Data.getServerUrl() + "mobile/login");
+			post.setHeader("User-Agent", "Linux; AndroidPhone " + android.os.Build.VERSION.RELEASE);
+			post.setHeader("Accept", "*/*");
+			// post.setHeader("Content-Type", "text/vnd.ms-sync.wbxml");
+
+			MultipartEntity reqEntity = new MultipartEntity(HttpMultipartMode.BROWSER_COMPATIBLE);
+
+			reqEntity.addPart("email", new StringBody(email));
+			reqEntity.addPart("password", new StringBody(password));
+
+			post.setEntity(reqEntity);
+
+			HttpResponse rp = hc.execute(post);
+
+			if (rp.getStatusLine().getStatusCode() == HttpStatus.SC_OK) {
+				String resp = EntityUtils.toString(rp.getEntity());
+				if (resp != null) {
+					JSONObject object = new JSONObject(resp);
+					success = object.getBoolean("success");
+					Log.e("resp", resp);
+					if (success == true) {
+						token = object.getString("token");
+						JSONObject profile = object.getJSONObject("profile");
+						int id = Integer.parseInt(profile.getString("user_id"));
+						Data.setToken(token);
+						Data.setUserId(id);
+
+						// Last login set
+						hc = new DefaultHttpClient();
+						post = new HttpPost(Data.getServerUrl() + "mobile/set_lastlogin");
+
+						reqEntity = new MultipartEntity(HttpMultipartMode.BROWSER_COMPATIBLE);
+
+						reqEntity.addPart("Token", new StringBody(token));
+
+						post.setEntity(reqEntity);
+
+						rp = hc.execute(post);
+						//
+
+						//
+						Data.setEmail(email);
+						Data.setPassword(password);
+						Data.setLogged(true);
+						//
+						Data.save();
+
+						// autoicons and autocolors
+						Data.getmContext().getContentResolver().delete(AccountProvider.AMetaData.AutoiconMetaData.CONTENT_URI, "", null);
+						JSONArray autoicons = object.getJSONArray("custom_icons");
+						for (int i = 0, l = autoicons.length(); i < l; i++) {
+							final JSONObject autoicon = autoicons.getJSONObject(i);
+							ContentValues values = new ContentValues();
+							values.put(AccountProvider.AMetaData.AutoiconMetaData.ICON, autoicon.getString("icon"));
+							values.put(AccountProvider.AMetaData.AutoiconMetaData.KEYWORD, autoicon.getString("keyword"));
+							values.put(AccountProvider.AMetaData.AutoiconMetaData.CONTEXT, autoicon.getString("context"));
+
+							Data.getmContext().getContentResolver().insert(AccountProvider.AMetaData.AutoiconMetaData.CONTENT_URI, values);
 						}
+
+						Data.getmContext().getContentResolver().delete(AccountProvider.AMetaData.AutocolorMetaData.CONTENT_URI, "", null);
+						JSONArray autocolors = object.getJSONArray("custom_colors");
+						for (int i = 0, l = autocolors.length(); i < l; i++) {
+							final JSONObject autocolor = autocolors.getJSONObject(i);
+							ContentValues values = new ContentValues();
+							values.put(AccountProvider.AMetaData.AutocolorMetaData.COLOR, autocolor.getString("color"));
+							values.put(AccountProvider.AMetaData.AutocolorMetaData.KEYWORD, autocolor.getString("keyword"));
+							values.put(AccountProvider.AMetaData.AutocolorMetaData.CONTEXT, autocolor.getString("context"));
+
+							Data.getmContext().getContentResolver().insert(AccountProvider.AMetaData.AutocolorMetaData.CONTENT_URI, values);
+						}
+						registerPhone();
+					} else {
+						Data.setERROR(object.getJSONObject("error").getString("reason"));
+						Log.e("login", Data.getERROR() + "!!!");
 					}
 				}
-	
-			} catch (Exception ex) {
-				Data.setERROR(ex.getMessage());
-				Log.e("login2", Data.getERROR() + "!!!");
 			}
-		} else {
-			if(Data.getEmail().equals(email) && Data.getPassword().equals(password)){
-				success = true;
-				Data.needToClearData = false;
-				System.out.println("No network!!!");
-			}
+
+		} catch (Exception ex) {
+			Data.setERROR(ex.getMessage());
+			Log.e("login2", Data.getERROR() + "!!!");
 		}
 		return success;
 	}
 	
-	private boolean isNetworkAvailable() {
+	private void isNetworkAvailable() {
 	    ConnectivityManager connectivityManager 
 	          = (ConnectivityManager) Data.getmContext().getSystemService(Context.CONNECTIVITY_SERVICE);
 	    NetworkInfo activeNetworkInfo = connectivityManager.getActiveNetworkInfo();
-	    return activeNetworkInfo != null;
+	    networkAvailable = activeNetworkInfo != null;
 	}
 
 	public void registerPhone() {
