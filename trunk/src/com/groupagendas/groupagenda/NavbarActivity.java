@@ -114,7 +114,7 @@ public class NavbarActivity extends Activity {
 			@Override
 			public void onClick(View v) {
 				qa.dismiss();
-				new GetAllEventsTask().execute();
+				showListSearchView();
 			}
 		});
 		
@@ -125,7 +125,7 @@ public class NavbarActivity extends Activity {
 			@Override
 			public void onClick(View v) {
 				qa.dismiss();
-				Toast.makeText(NavbarActivity.this, getString(R.string.go_to_date), Toast.LENGTH_SHORT).show();
+				showGoToDateView();
 			}
 		});
 		
@@ -136,9 +136,8 @@ public class NavbarActivity extends Activity {
 			@Override
 			public void onClick(View v) {
 				qa.dismiss();
-				calendarContainer.removeAllViews();
-				mInflater.inflate(R.layout.calendar_year, calendarContainer);
-				new CalendarYear(NavbarActivity.this);
+				viewState = ViewState.YEAR;
+				showYearView();
 			}
 		});
 		
@@ -148,10 +147,9 @@ public class NavbarActivity extends Activity {
 
 			@Override
 			public void onClick(View v) {
+				viewState = ViewState.MONTH;
 				qa.dismiss();
-				calendarContainer.removeAllViews();
-				mInflater.inflate(R.layout.calendar_month, calendarContainer);
-				new CalendarMonth(NavbarActivity.this);
+				showMonthView();
 			}
 		});
 		
@@ -162,7 +160,7 @@ public class NavbarActivity extends Activity {
 			@Override
 			public void onClick(View v) {
 				qa.dismiss();
-				Toast.makeText(NavbarActivity.this, getString(R.string.week), Toast.LENGTH_SHORT).show();
+				showWeekView();
 			}
 		});
 		
@@ -173,15 +171,8 @@ public class NavbarActivity extends Activity {
 			@Override
 			public void onClick(View v) {
 				qa.dismiss();
-				calendarContainer.removeAllViews();
-//				DayView view = (DayView)
-				mInflater.inflate(R.layout.calendar_day, calendarContainer);
-				DayView view = (DayView)calendarContainer.getChildAt(0);
-				view.setupViewItems();
-				view.init();
-//				int test = view.getMeasuredHeight();
-//				calendarContainer.addView(new DayView(NavbarActivity.this));
-				System.out.println("test");
+				viewState = ViewState.DAY;
+				showDayView();
 			}
 		});
 		
@@ -192,7 +183,7 @@ public class NavbarActivity extends Activity {
 			@Override
 			public void onClick(View v) {
 				qa.dismiss();
-				Toast.makeText(NavbarActivity.this, getString(R.string.agenda), Toast.LENGTH_SHORT).show();
+				showAgendaView();
 			}
 		});
 		
@@ -203,7 +194,7 @@ public class NavbarActivity extends Activity {
 			@Override
 			public void onClick(View v) {
 				qa.dismiss();
-				Toast.makeText(NavbarActivity.this, getString(R.string.mini_month), Toast.LENGTH_SHORT).show();
+				showMiniMonthView();
 			}
 		});
 		
@@ -214,44 +205,14 @@ public class NavbarActivity extends Activity {
 			@Override
 			public void onClick(View v) {
 				qa.dismiss();
-				Toast.makeText(NavbarActivity.this, getString(R.string.today), Toast.LENGTH_SHORT).show();
+				showTodayView();
+				
 			}
 		});
 	}
 	
-	protected void initMonthView() {
-		
-//		selectedDate.setTimeInMillis(currentDate.getTimeInMillis());
-//		setMonthViewTitle(currentDate);
-//		
-//		ImageView prevButton = (ImageView) this.findViewById(R.id.prev_month_button);
-//		ImageView nextButton = (ImageView) this.findViewById(R.id.next_month_button);
-//		
-//		prevButton.setOnClickListener(new OnClickListener() {
-//			
-//			@Override
-//			public void onClick(View v) {
-//				selectedDate.add(Calendar.MONTH, -1);
-//				setMonthViewTitle(selectedDate);
-////				TODO get events
-////				TODO update calendar view
-//				
-//			}
-//		});
-//		nextButton.setOnClickListener(new OnClickListener() {
-//			
-//			@Override
-//			public void onClick(View v) {
-//				selectedDate.add(Calendar.MONTH, 1);
-//				setMonthViewTitle(selectedDate);
-////				TODO get events
-////				TODO update calendar view
-//			}
-//		});
-//		
-//		CalendarViewRewrite calendarView = (CalendarViewRewrite)this.findViewById(R.id.calendar_view_rewrite);
-		
-	}
+	
+	
 
 	
 
@@ -275,44 +236,133 @@ public class NavbarActivity extends Activity {
 		radioButton.setOnCheckedChangeListener(btnNavBarOnCheckedChangeListener);
 		
 		
-		// settings month view
-		prefs = new Prefs(this);
-//		TODO issiaiskinti kaip ten su tais accountais
-		String defaultCalendarView = prefs.getValue(AccountProvider.AMetaData.AccountMetaData.SETTING_DEFAULT_VIEW, "m");
-		
-//		switchToView();
-		if(defaultCalendarView.equals("d")){
-			calendarContainer.removeAllViews();
-			mInflater.inflate(R.layout.calendar_day, calendarContainer);
-			new CalendarDay(NavbarActivity.this);
-		}else{
-//			qa.dismiss();
-//			
-			mInflater.inflate(R.layout.calendar_month, calendarContainer);
-			new CalendarMonth(NavbarActivity.this);
+		switchToView();
+//		if(defaultCalendarView.equals("d")){
 //			calendarContainer.removeAllViews();
-//			mInflater.inflate(R.layout.calendar_day_view_container, calendarContainer);
-
-		}
+//			mInflater.inflate(R.layout.calendar_day, calendarContainer);
+//			new CalendarDay(NavbarActivity.this);
+//		}else{
+////			qa.dismiss();
+////			
+//			mInflater.inflate(R.layout.calendar_month, calendarContainer);
+//			new CalendarMonth(NavbarActivity.this);
+////			calendarContainer.removeAllViews();
+////			mInflater.inflate(R.layout.calendar_day_view_container, calendarContainer);
+//
+//		}
 	}
 	
 	
-//	TODO UZBAIGS JUSTAS M JEI KAS NORS PRIMINS ;)
 	private void switchToView() {
 		switch (viewState) {
-		case DAY:
+		case TODAY:
+			showTodayView();
+			break;
 			
+		case DAY:
+			showDayView();
+			break;
+		
+		case WEEK:
+			showWeekView();
+			break;
+		case MONTH:
+			showMonthView();
+			break;
+		case MINI_MONTH:
+			showMiniMonthView();
+			break;
+		case YEAR:
+			showYearView();
+			break;
+		case AGENDA:
+			showAgendaView();
+			break;
+		case GO_TO_DATE:
+			showGoToDateView();
+			break;
+		case LIST_SEARCH:
+			showListSearchView();
 			break;
 
 		default:
-			String defaultCalendarView = prefs.getValue(AccountProvider.AMetaData.AccountMetaData.SETTING_DEFAULT_VIEW, "m");
+			prefs = new Prefs(this);
+//			TODO issiaiskinti kaip ten su tais accountais
+			String defaultCalendarView = prefs.getValue(AccountProvider.AMetaData.AccountMetaData.SETTING_DEFAULT_VIEW, "MONTH");
 			
 //			TODO set default state accordingly to what is got
-			if (defaultCalendarView.equalsIgnoreCase("m")) viewState = ViewState.MONTH;
+			if (defaultCalendarView.equalsIgnoreCase(ViewState.MONTH.toString())) viewState = ViewState.MONTH;
 			else viewState = ViewState.MONTH;
+			
+			
+			
+			
 			switchToView();
 			break;
 		}
+		
+	}
+
+
+
+	private void showGoToDateView() {
+		Toast.makeText(NavbarActivity.this, getString(R.string.go_to_date), Toast.LENGTH_SHORT).show();
+		
+	}
+
+
+
+
+	private void showListSearchView() {
+		new GetAllEventsTask().execute();
+		
+	}
+
+
+
+
+
+
+	private void showTodayView() {
+		Toast.makeText(NavbarActivity.this, getString(R.string.today), Toast.LENGTH_SHORT).show();
+		
+	}
+
+	private void showWeekView() {
+		Toast.makeText(NavbarActivity.this, getString(R.string.week), Toast.LENGTH_SHORT).show();
+		
+	}
+
+	private void showMiniMonthView() {
+		Toast.makeText(NavbarActivity.this, getString(R.string.mini_month), Toast.LENGTH_SHORT).show();
+		
+	}
+
+	private void showYearView() {
+		calendarContainer.removeAllViews();
+		mInflater.inflate(R.layout.calendar_year, calendarContainer);
+		new CalendarYear(NavbarActivity.this);
+	
+}
+
+	private void showAgendaView() {
+		Toast.makeText(NavbarActivity.this, getString(R.string.agenda), Toast.LENGTH_SHORT).show();
+	
+}
+	
+	private void showDayView() {
+		calendarContainer.removeAllViews();
+		mInflater.inflate(R.layout.calendar_day, calendarContainer);
+		DayView view = (DayView)calendarContainer.getChildAt(0);
+		view.setupViewItems();
+		view.init();
+		
+	}
+	
+	private void showMonthView() {
+		calendarContainer.removeAllViews();
+		mInflater.inflate(R.layout.calendar_month, calendarContainer);
+		new CalendarMonth(NavbarActivity.this);
 		
 	}
 
