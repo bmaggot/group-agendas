@@ -2,13 +2,11 @@
 <resources>
 
 	<string-array name="agenda_views_values">
-		<item>t</item>
-		<item>m</item>
-		<item>w</item>
-		<item>d</item>
+		<item>MONTH</item>
+		<item>WEEK</item>
+		<item>DAY</item>
 	</string-array>
 	<string-array name="agenda_views_labels">
-		<item>3 months</item>
 		<item>Monthly</item>
 		<item>Weekly</item>
 		<item>Daily</item>
