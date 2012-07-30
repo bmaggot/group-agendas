@@ -3012,10 +3012,39 @@ public class DataManagement {
 		}
 	}
 	
-	public void executeOfflineChanges() {
-		if (networkAvailable) {
-			// Write sum shit.
+	public boolean executeOfflineChanges(ArrayList<OfflineData> requests) {
+		boolean success = false;
+		HttpClient hc = new DefaultHttpClient();
+		
+		try {
+			for (OfflineData request : requests) {
+				HttpPost post = new HttpPost(Data.getServerUrl() + request.getLocation());
+				post.setEntity(request.getRequest());
+				if (networkAvailable) {
+					HttpResponse rp = hc.execute(post);
+					
+					if (rp.getStatusLine().getStatusCode() == HttpStatus.SC_OK) {
+						String resp = EntityUtils.toString(rp.getEntity());
+						if (resp != null) {
+							Log.e("createEvent - resp", resp + "!!!");
+							JSONObject object = new JSONObject(resp);
+							success = object.getBoolean("success");
+		
+							Log.e("createEvent - success", "" + success);
+		
+							if (success == false) {
+								Log.e("Create event error", object.getJSONObject("error").getString("reason"));
+							}
+						}
+					} else {
+						Log.e("createEvent - status", rp.getStatusLine().getStatusCode() + "");
+					}
+				}
+			}
+		} catch (Exception ex) {
+			Log.e("createEvent ex", ex.getMessage() + "!!!");
 		}
+		return success;
 	}
 
 }
