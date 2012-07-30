@@ -101,7 +101,7 @@
 	<string name="cost">Cost</string>
 	<string name="accomodation">Accomodation</string>
 	<string name="invites">Invites</string>
-	<string name="loading_data">Loading data</string>
+	<string name="loading_data">Loading data...</string>
 	<string name="loading_accaunt">Loading Account info…</string>
 	<string name="loading_contacts">Loading Contacts…</string>
 	<string name="loading_groups">Loading Groups…</string>
