@@ -1,39 +1,31 @@
 package com.groupagendas.groupagenda.calendar.day;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Calendar;
-
 import android.app.Activity;
 import android.content.Context;
-import android.content.Intent;
-import android.content.res.Resources;
 import android.graphics.Rect;
 import android.util.AttributeSet;
-import android.util.TypedValue;
-import android.view.Display;
 import android.view.TouchDelegate;
 import android.view.View;
-import android.view.ViewTreeObserver;
-import android.view.WindowManager;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
-import android.widget.LinearLayout.LayoutParams;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.groupagendas.groupagenda.R;
 
+import com.groupagendas.groupagenda.account.AccountProvider;
 import com.groupagendas.groupagenda.calendar.adapters.AllDayEventsAdapter;
-import com.groupagendas.groupagenda.calendar.adapters.HourListAdapter;
 import com.groupagendas.groupagenda.events.Event;
-import com.groupagendas.groupagenda.events.EventActivity;
-import com.groupagendas.groupagenda.utils.Utils;
+import com.groupagendas.groupagenda.utils.Prefs;
 
 public class DayView extends LinearLayout {
 	
 	DayInstance selectedDay;
+	
+	boolean am_pmEnabled;
 
 	ImageButton prevDayButton;
 	ImageButton nextDaybutton;
@@ -59,10 +51,21 @@ public class DayView extends LinearLayout {
 	}
 
 	public DayView(Context context, AttributeSet attrs) {
+
 		super(context, attrs);
+		Prefs prefs = new Prefs(getContext());
+		
+		String am_pm = prefs.getValue(AccountProvider.AMetaData.AccountMetaData.SETTING_AMPM, "false");
+		am_pmEnabled = Boolean.parseBoolean(am_pm);
 		WeekDayNames = getResources().getStringArray(R.array.week_days_names);
 		MonthNames = getResources().getStringArray(R.array.month_names);
-		HourNames = getResources().getStringArray(R.array.hour_names);
+		if(am_pmEnabled){
+			HourNames = getResources().getStringArray(R.array.hour_names_am_pm);
+		}
+		else{
+			HourNames = getResources().getStringArray(R.array.hour_names);
+		}
+		
 		selectedDay = new DayInstance(context);
 		allDayEventAdapter = new AllDayEventsAdapter(getContext(), new ArrayList<Event>());
 		
