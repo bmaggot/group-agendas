@@ -3,12 +3,14 @@ package com.groupagendas.groupagenda;
 import java.util.ArrayList;
 import java.util.Calendar;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.Dialog;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.ActivityInfo;
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
@@ -37,6 +39,7 @@ import com.bog.calendar.app.model.CalendarDay;
 import com.bog.calendar.app.model.CalendarMonth;
 import com.bog.calendar.app.model.CalendarYear;
 import com.groupagendas.groupagenda.account.AccountProvider;
+import com.groupagendas.groupagenda.calendar.AbstractCalendarContainer;
 import com.groupagendas.groupagenda.calendar.day.DayView;
 import com.groupagendas.groupagenda.contacts.Contact;
 import com.groupagendas.groupagenda.contacts.ContactsActivity;
@@ -51,12 +54,16 @@ import com.groupagendas.groupagenda.utils.AgendaUtils;
 import com.groupagendas.groupagenda.utils.Prefs;
 import com.groupagendas.groupagenda.utils.Utils;
 
+@SuppressLint("ParserError")
 public class NavbarActivity extends Activity {
 	
 
-	private final int DEFAULT_FIRST_DAY_OF_WEEK = Calendar.MONDAY;
+	
+
 	
 	private DataManagement dm;
+	
+	private ProgressDialog progressDialog;
 	
 	private QuickAction qa;
 	
@@ -71,8 +78,8 @@ public class NavbarActivity extends Activity {
 	private ActionItem today;
 		
 	static final int PROGRESS_DIALOG = 0;
-    private ProgressThread progressThread;
-    private ProgressDialog progressDialog;
+//    private ProgressThread progressThread;
+    
     
     private FrameLayout calendarContainer;
 	private LayoutInflater mInflater; 
@@ -83,29 +90,161 @@ public class NavbarActivity extends Activity {
 
 	
 	
-	
 	private Prefs prefs;
+
+	private boolean dataLoaded = false;
+	private int loadPhase = 0;
 
 
 	public static boolean showInvites = false;
-    
+	
+	private class LoadViewTask extends AsyncTask<Void, Integer, Void>  
+    {  
+        //Before running code in separate thread  
+        @Override  
+        protected void onPreExecute()  
+        {  
+        	setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_NOSENSOR);
+        	
+            //Create a new progress dialog  
+            progressDialog = new ProgressDialog(NavbarActivity.this);  
+            //Set the progress dialog to display a horizontal progress bar  
+            progressDialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
+            //Set the dialog message to 'Loading application View, please wait...'  
+            progressDialog.setMessage(getString(R.string.loading_data));
+            //This dialog can't be canceled by pressing the back key  
+            progressDialog.setCancelable(false);  
+            //This dialog isn't indeterminate  
+            progressDialog.setIndeterminate(false);  
+            //The maximum number of items is 100  
+            progressDialog.setMax(100);  
+            //Set the current progress to zero  
+            progressDialog.setProgress(0);  
+            //Display the progress dialog  
+            progressDialog.show();  
+        	
+        }  
+  
+        //The code to be executed in a background thread.  
+        @Override  
+        protected Void doInBackground(Void... params)  
+        {  
+            /* This is just a code that delays the thread execution 4 times, 
+             * during 850 milliseconds and updates the current progress. This 
+             * is where the code that is going to be executed on a background 
+             * thread must be placed. 
+             */  
+            
+                //Get the current thread's token  
+                synchronized (this)  
+                {  
+                    //Initialize an integer (that will act as a counter) to zero  
+                	int total = 0;
+                	System.out.println("PHASE: " + loadPhase);
+                	
+                  switch (loadPhase) {
+				case 0:
+					 // Delete old data
+	                  getContentResolver().delete(AccountProvider.AMetaData.AccountMetaData.CONTENT_URI, "", null);
+	                  getContentResolver().delete(ContactsProvider.CMetaData.ContactsMetaData.CONTENT_URI, "", null);
+	                  getContentResolver().delete(ContactsProvider.CMetaData.GroupsMetaData.CONTENT_URI, "", null);
+	                  getContentResolver().delete(EventsProvider.EMetaData.EventsMetaData.CONTENT_URI, "", null);
+	                  getContentResolver().getType(EventsProvider.EMetaData.EventsMetaData.CONTENT_URI);
+	                  if(Data.needToClearData){
+	                  	Data.clearData();
+	                  }
+	                  
+	                  loadPhase++;
+	                  total = 20;
+	                  publishProgress(total);
+				case 1: // Load account
+	                  dm.getAccountFromRemoteDb();
+	                  loadPhase++;
+	                  total = 40;
+	                  publishProgress(total);
+				case 2:// Load contacts
+	                  dm.getContactsFromRemoteDb(null);
+	                  loadPhase++;
+	                  total = 60;
+	                  publishProgress(total);
+				case 3:// Load groups
+	                  dm.getGroupsFromRemoteDb();
+	                  loadPhase++;
+	                  total = 80;
+	                  publishProgress(total);
+	                  
+				case 4:      // Load events
+	                  dm.getEventsFromRemoteDb("");
+	                  loadPhase++;
+	                  total = 100;
+	                  publishProgress(total);
+					}
+                }  
+                return null;
+        }  
+  
+        //Update the progress  
+        @Override  
+        protected void onProgressUpdate(Integer... values)  
+        {  
+            //set the current progress of the progress dialog  
+            progressDialog.setProgress(values[0]); 
+            switch(values[0]){
+          case 20:
+          	progressDialog.setMessage(getString(R.string.loading_accaunt));
+          	break;
+          case 40:
+          	progressDialog.setMessage(getString(R.string.loading_contacts));
+          	break;
+          case 60:
+          	progressDialog.setMessage(getString(R.string.loading_groups));
+          	break;
+          case 80:
+          	progressDialog.setMessage(getString(R.string.loading_events));
+          	break;
+            }
+        }  
+  
+        //after executing the code in the thread  
+        @Override  
+        protected void onPostExecute(Void result)  
+        {  
+        	
+            //close the progress dialog  
+            progressDialog.dismiss(); 
+            dataLoaded = true;
+            switchToView();
+            setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_SENSOR);
+            //initialize the View  
+//            setContentView(R.layout.actnavbar);  
+        }  
+    } 
+	
+	
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+		dm = DataManagement.getInstance(this);
 		setContentView(R.layout.actnavbar);
+		restoreMe(savedInstanceState);
+		if (!dataLoaded && (progressDialog == null)) {
+			
+			new LoadViewTask().execute();  
+		}
 		
 		mInflater = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 		
 		calendarContainer = (FrameLayout) findViewById(R.id.calendarContainer);
 		
 		
-		dm = DataManagement.getInstance(this);
 		
-		Intent intent = getIntent();
-		if(intent.getBooleanExtra("load_data", false)){
-			showDialog(PROGRESS_DIALOG);
-			DataManagement.updateAppData(5);
-		}
+//		
+//		Intent intent = getIntent();
+//		if(intent.getBooleanExtra("load_data", false)){
+//			showDialog(PROGRESS_DIALOG);
+		//TODO
+//			DataManagement.updateAppData(5);
+//		}
 		
 		list_search = new ActionItem();
 		list_search.setTitle(getString(R.string.list_search));
@@ -209,6 +348,8 @@ public class NavbarActivity extends Activity {
 				
 			}
 		});
+		
+		
 	}
 	
 	
@@ -234,37 +375,44 @@ public class NavbarActivity extends Activity {
 		radioButton = (RadioButton) findViewById(R.id.btnNewevent);
 		radioButton.setChecked(false);
 		radioButton.setOnCheckedChangeListener(btnNavBarOnCheckedChangeListener);
-		
-		
-		switchToView();
-//		if(defaultCalendarView.equals("d")){
-//			calendarContainer.removeAllViews();
-//			mInflater.inflate(R.layout.calendar_day, calendarContainer);
-//			new CalendarDay(NavbarActivity.this);
-//		}else{
-////			qa.dismiss();
-////			
-//			mInflater.inflate(R.layout.calendar_month, calendarContainer);
-//			new CalendarMonth(NavbarActivity.this);
-////			calendarContainer.removeAllViews();
-////			mInflater.inflate(R.layout.calendar_day_view_container, calendarContainer);
-//
-//		}
+	
+		if (dataLoaded) switchToView();
 	}
 	
+	@Override
+	  protected void onSaveInstanceState(Bundle outState) {
+	    super.onSaveInstanceState(outState);
+	     outState.putBoolean("isDataLoaded", dataLoaded);
+	     outState.putString("loadPhase", Integer.toString(loadPhase));
+	     outState.putString("viewState", "" + viewState);
+	  }
+	
+	 private void restoreMe(Bundle state) {
+		    
+		    if (state!=null) {
+		      dataLoaded = state.getBoolean("isDataLoaded");
+		      loadPhase = state.getInt("loadPhase");
+		      viewState = ViewState.getValueByString(state.getString("viewState"));
+		      
+		    }
+		  }
+//	@Override
+//	public void onDestroy(){
+//		super.onDestroy();
+//		
+//		System.out.println("destroy");
+//	}
 	
 	private void switchToView() {
+		
 		if (viewState == null){
 			prefs = new Prefs(this);
-//			TODO issiaiskinti kaip ten su tais accountais
 			String defaultCalendarView = prefs.getValue(AccountProvider.AMetaData.AccountMetaData.SETTING_DEFAULT_VIEW, "MONTH");
-			
-//			TODO set default state accordingly to what is got
-			
 			viewState = ViewState.getValueByString(defaultCalendarView);
 			
+			String dw = dm.getAccount().setting_default_view;
+			viewState = ViewState.getValueByString(dw);
 		}
-		
 		switch (viewState) {
 			case TODAY:
 				showTodayView();
@@ -318,11 +466,6 @@ public class NavbarActivity extends Activity {
 		
 	}
 
-
-
-
-
-
 	private void showTodayView() {
 		Toast.makeText(NavbarActivity.this, getString(R.string.today), Toast.LENGTH_SHORT).show();
 		
@@ -354,7 +497,6 @@ public class NavbarActivity extends Activity {
 		calendarContainer.removeAllViews();
 		mInflater.inflate(R.layout.calendar_day, calendarContainer);
 		DayView view = (DayView)calendarContainer.getChildAt(0);
-//		view.setupViewItems();
 		view.init();
 		
 	}
@@ -461,151 +603,140 @@ public class NavbarActivity extends Activity {
 		}
 	};
 	
-	protected Dialog onCreateDialog(int id) {
-        switch(id) {
-        case PROGRESS_DIALOG:
-            progressDialog = new ProgressDialog(NavbarActivity.this);
-            progressDialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
-            progressDialog.setMessage(getString(R.string.loading_data));
-            progressDialog.setCancelable(false);
-            return progressDialog;
-        default:
-            return null;
-        }
-    }
+//	protected Dialog onCreateDialog(int id) {
+//        switch(id) {
+//        case PROGRESS_DIALOG:
+//            progressDialog = new ProgressDialog(NavbarActivity.this);
+//            progressDialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
+//            progressDialog.setMessage(getString(R.string.loading_data));
+//            progressDialog.setCancelable(false);
+//            return progressDialog;
+//        default:
+//            return null;
+//        }
+//    }
 
-    @Override
-    protected void onPrepareDialog(int id, Dialog dialog) {
-        switch(id) {
-        case PROGRESS_DIALOG:
-            progressDialog.setProgress(0);
-            progressThread = new ProgressThread(handler);
-            progressThread.start();
-        }
-    }
+//    @Override
+//    protected void onPrepareDialog(int id, Dialog dialog) {
+//        switch(id) {
+//        case PROGRESS_DIALOG:
+//            progressDialog.setProgress(0);
+//            progressThread = new ProgressThread(handler);
+//            progressThread.start();
+//        }
+//    }
+//    
+    
 	
 	// Define the Handler that receives messages from the thread and update the progress
-    final Handler handler = new Handler() {
-        public void handleMessage(Message msg) {
-            int total = msg.arg1;
-            progressDialog.setProgress(total);
-            
-            switch(total){
-            case 20:
-            	progressDialog.setMessage(getString(R.string.loading_accaunt));
-            	break;
-            case 40:
-            	progressDialog.setMessage(getString(R.string.loading_contacts));
-            	break;
-            case 60:
-            	progressDialog.setMessage(getString(R.string.loading_groups));
-            	break;
-            case 80:
-            	progressDialog.setMessage(getString(R.string.loading_events));
-            	break;
-            case 100:
-            	dismissDialog(PROGRESS_DIALOG);
-                progressThread.setState(ProgressThread.STATE_DONE);
-            	break;
-            }
-        }
-    };
+//    final Handler handler = new Handler() {
+//        public void handleMessage(Message msg) {
+//            int total = msg.arg1;
+//            progressDialog.setProgress(total);
+//            
+//            
+//            }
+//        }
+//    };
 
     /** Nested class that performs progress calculations (counting) */
-    private class ProgressThread extends Thread {
-        Handler mHandler;
-        final static int STATE_DONE = 0;
-        
-        final static int STATE_RUNNING = 1;
-        
-        @SuppressWarnings("unused")
-		int mState;
-        int total;
-       
-        ProgressThread(Handler h) {
-            mHandler = h;
-        }
-       
-        public void run() {
-            mState = STATE_RUNNING;   
-            total = 0;
-            
-            // Delete old data
-            getContentResolver().delete(AccountProvider.AMetaData.AccountMetaData.CONTENT_URI, "", null);
-            getContentResolver().delete(ContactsProvider.CMetaData.ContactsMetaData.CONTENT_URI, "", null);
-            getContentResolver().delete(ContactsProvider.CMetaData.GroupsMetaData.CONTENT_URI, "", null);
-            getContentResolver().delete(EventsProvider.EMetaData.EventsMetaData.CONTENT_URI, "", null);
-            getContentResolver().getType(EventsProvider.EMetaData.EventsMetaData.CONTENT_URI);
-            if(Data.needToClearData){
-            	Data.clearData();
-            }
-            
-            setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_NOSENSOR);
-            total = 20;
-            Message msg = mHandler.obtainMessage();
-            msg.arg1 = total;
-            mHandler.sendMessage(msg);
-            
-            // Load account
-            dm.getAccountFromRemoteDb();
-            total = 40;
-            msg = mHandler.obtainMessage();
-            msg.arg1 = total;
-            mHandler.sendMessage(msg);
-            
-            // Load contacts
-            dm.getContactsFromRemoteDb(null);
-            total = 60;
-            msg = mHandler.obtainMessage();
-            msg.arg1 = total;
-            mHandler.sendMessage(msg);
-            
-            // Load groups
-            dm.getGroupsFromRemoteDb();
-            total = 80;
-            msg = mHandler.obtainMessage();
-            msg.arg1 = total;
-            mHandler.sendMessage(msg);
-            
-            // Load events
-            dm.getEventsFromRemoteDb("");
-            total = 100;
-            msg = mHandler.obtainMessage();
-            msg.arg1 = total;
-            mHandler.sendMessage(msg);
-
-        }
-        
-        class initContactsScreen extends AsyncTask<Void, ArrayList<Contact>, ArrayList<Item>>{
-
-			@Override
-			protected ArrayList<Item> doInBackground(Void... params) {
-				// TODO Auto-generated method stub
-				return null;
-			}
-
-        	
-        }
-        
-        class initEventsScreen extends AsyncTask<Void, ArrayList<Event>, ArrayList<Item>>{
-
-			@Override
-			protected ArrayList<Item> doInBackground(Void... params) {
-				// TODO Auto-generated method stub
-				return null;
-			}
-
-        	
-        }
-        
-        /* sets the current state for the thread,
-         * used to stop the thread */
-        public void setState(int state) {
-            mState = state;
-        }
-    }
+//    private class ProgressThread extends Thread {
+//        Handler mHandler;
+//        final static int STATE_DONE = 0;
+//        
+//        final static int STATE_RUNNING = 1;
+//        
+//        @SuppressWarnings("unused")
+//		int mState;
+//        int total;
+//       
+//        ProgressThread(Handler h) {
+//            mHandler = h;
+//        }
+//       
+//        public void run() {
+//            mState = STATE_RUNNING;   
+//            total = 0;
+//            
+//            // Delete old data
+//            getContentResolver().delete(AccountProvider.AMetaData.AccountMetaData.CONTENT_URI, "", null);
+//            getContentResolver().delete(ContactsProvider.CMetaData.ContactsMetaData.CONTENT_URI, "", null);
+//            getContentResolver().delete(ContactsProvider.CMetaData.GroupsMetaData.CONTENT_URI, "", null);
+//            getContentResolver().delete(EventsProvider.EMetaData.EventsMetaData.CONTENT_URI, "", null);
+//            getContentResolver().getType(EventsProvider.EMetaData.EventsMetaData.CONTENT_URI);
+//            if(Data.needToClearData){
+//            	Data.clearData();
+//            }
+//            
+//            setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_NOSENSOR);
+//            total = 20;
+//            Message msg = mHandler.obtainMessage();
+//            msg.arg1 = total;
+//            mHandler.sendMessage(msg);
+//            
+//            // Load account
+//            dm.getAccountFromRemoteDb();
+//            total = 40;
+//            msg = mHandler.obtainMessage();
+//            msg.arg1 = total;
+//            mHandler.sendMessage(msg);
+//            
+//            // Load contacts
+//            dm.getContactsFromRemoteDb(null);
+//            total = 60;
+//            msg = mHandler.obtainMessage();
+//            msg.arg1 = total;
+//            mHandler.sendMessage(msg);
+//            
+//            // Load groups
+//            dm.getGroupsFromRemoteDb();
+//            total = 80;
+//            msg = mHandler.obtainMessage();
+//            msg.arg1 = total;
+//            mHandler.sendMessage(msg);
+//            
+//            // Load events
+//            dm.getEventsFromRemoteDb("");
+//            total = 100;
+//            msg = mHandler.obtainMessage();
+//            msg.arg1 = total;
+//            mHandler.sendMessage(msg);
+//            
+////            View test = calendarContainer.getChildAt(0);
+////            switchToView();
+//        }
+//        
+//        class initContactsScreen extends AsyncTask<Void, ArrayList<Contact>, ArrayList<Item>>{
+//
+//			@Override
+//			protected ArrayList<Item> doInBackground(Void... params) {
+//				// TODO Auto-generated method stub
+//				return null;
+//			}
+//
+//        	
+//        }
+//        
+//        class initEventsScreen extends AsyncTask<Void, ArrayList<Event>, ArrayList<Item>>{
+//
+//			@Override
+//			protected ArrayList<Item> doInBackground(Void... params) {
+//				// TODO Auto-generated method stub
+//				return null;
+//			}
+//
+//        	
+//        }
+//        
+//        /* sets the current state for the thread,
+//         * used to stop the thread */
+//        public void setState(int state) {
+//            mState = state;
+//        }
+//    }
     
-    @Override
+    @SuppressLint("ParserError")
+	@Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {
         if (keyCode == KeyEvent.KEYCODE_BACK) {
             moveTaskToBack(true);
@@ -613,4 +744,15 @@ public class NavbarActivity extends Activity {
         }
         return super.onKeyDown(keyCode, event);
     }
+
+
+
+
+
+
+	public FrameLayout getCalendarContainer() {
+		return calendarContainer;
+	}
+    
+    
 }
