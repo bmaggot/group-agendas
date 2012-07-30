@@ -23,9 +23,7 @@ public class ConnectReceiver extends BroadcastReceiver {
 	         }
 	      }
 		
-		if (conn.getNetworkInfo(0).getState() == NetworkInfo.State.CONNECTED || conn.getNetworkInfo(0).getState() == NetworkInfo.State.CONNECTING
-				|| conn.getNetworkInfo(1).getState() == NetworkInfo.State.CONNECTING
-				|| conn.getNetworkInfo(1).getState() == NetworkInfo.State.CONNECTED) {
+		if (conn.getNetworkInfo(0).getState() == NetworkInfo.State.CONNECTED || conn.getNetworkInfo(1).getState() == NetworkInfo.State.CONNECTED) {
 			DataManagement.networkAvailable = true;
 //			Intent serviceIntent = new Intent();
 //			serviceIntent.setAction("com.groupagendas.groupagenda.UpdateService");

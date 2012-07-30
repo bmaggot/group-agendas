@@ -57,6 +57,7 @@ import com.groupagendas.groupagenda.contacts.ContactsAdapter;
 import com.groupagendas.groupagenda.contacts.ContactsProvider;
 import com.groupagendas.groupagenda.contacts.Group;
 import com.groupagendas.groupagenda.contacts.GroupsAdapter;
+import com.groupagendas.groupagenda.data.OfflineData;
 import com.groupagendas.groupagenda.events.Event;
 import com.groupagendas.groupagenda.events.EventsAdapter;
 import com.groupagendas.groupagenda.events.EventsProvider;
@@ -140,7 +141,8 @@ public class DataManagement {
 					}
 				}
 			} else {
-				Data.setUnuploadedAccount(reqEntity);
+				OfflineData uplooad = new OfflineData("mobile/account_edit", reqEntity);
+				Data.getUnuploadedData().add(uplooad);
 			}
 
 		} catch (Exception ex) {
@@ -166,17 +168,22 @@ public class DataManagement {
 			}
 
 			post.setEntity(reqEntity);
-			HttpResponse rp = hc.execute(post);
-
-			if (rp.getStatusLine().getStatusCode() == HttpStatus.SC_OK) {
-				String resp = EntityUtils.toString(rp.getEntity());
-				if (resp != null) {
-					JSONObject object = new JSONObject(resp);
-					success = object.getBoolean("success");
-					if (!success) {
-						Log.e("Change account image ERROR", object.getJSONObject("error").getString("reason"));
+			if (networkAvailable) {
+				HttpResponse rp = hc.execute(post);
+	
+				if (rp.getStatusLine().getStatusCode() == HttpStatus.SC_OK) {
+					String resp = EntityUtils.toString(rp.getEntity());
+					if (resp != null) {
+						JSONObject object = new JSONObject(resp);
+						success = object.getBoolean("success");
+						if (!success) {
+							Log.e("Change account image ERROR", object.getJSONObject("error").getString("reason"));
+						}
 					}
 				}
+			} else {
+				OfflineData uplooad = new OfflineData("mobile/account_image", reqEntity);
+				Data.getUnuploadedData().add(uplooad);
 			}
 
 		} catch (Exception ex) {
@@ -535,6 +542,7 @@ public class DataManagement {
 				reqEntity.addPart("email_id", new StringBody(String.valueOf(email_id)));
 
 			post.setEntity(reqEntity);
+			if (networkAvailable) {
 			HttpResponse rp = hc.execute(post);
 
 			if (rp.getStatusLine().getStatusCode() == HttpStatus.SC_OK) {
@@ -547,6 +555,10 @@ public class DataManagement {
 						Log.e("Change email ERROR", object.getJSONObject("error").getString("reason"));
 					}
 				}
+			}
+			} else {
+//				OfflineData uplooad = new OfflineData("mobile/account_email_change", reqEntity);
+//				Data.getUnuploadedData().add(uplooad);
 			}
 
 		} catch (Exception ex) {
@@ -572,6 +584,7 @@ public class DataManagement {
 			reqEntity.addPart("setting_date_format", new StringBody(dateformat));
 
 			post.setEntity(reqEntity);
+			if (networkAvailable) {
 			HttpResponse rp = hc.execute(post);
 
 			if (rp.getStatusLine().getStatusCode() == HttpStatus.SC_OK) {
@@ -583,6 +596,10 @@ public class DataManagement {
 						Log.e("Edit settings ERROR", object.getJSONObject("error").getString("reason"));
 					}
 				}
+			}
+			} else {
+//				OfflineData uplooad = new OfflineData("mobile/settings_update", reqEntity);
+//				Data.getUnuploadedData().add(uplooad);
 			}
 		} catch (Exception ex) {
 			Log.e("Edit settings ERROR", ex.getMessage() + "!!!");
@@ -1302,7 +1319,8 @@ public class DataManagement {
 					}
 				}
 			} else {
-// TODO add to some cool structure				Data.getUnuploadedContacts().add(reqEntity);
+				OfflineData uplooad = new OfflineData("mobile/contact_remove", reqEntity);
+				Data.getUnuploadedData().add(uplooad);
 			}
 		} catch (Exception ex) {
 			Log.e("removeContact", ex.getMessage() + "!!!");
@@ -1375,7 +1393,8 @@ public class DataManagement {
 					}
 				}
 			} else {
-// TODO same shit as before				Data.getUnuploadedContacts().add(reqEntity);
+				OfflineData uplooad = new OfflineData("mobile/contact_edit", reqEntity);
+				Data.getUnuploadedData().add(uplooad);
 			}
 		} catch (Exception ex) {
 			Log.e("editContact - error: ", ex.getMessage() + " !!!");
@@ -1444,7 +1463,8 @@ public class DataManagement {
 					}
 				}
 			} else {
-				Data.getUnuploadedContacts().add(reqEntity);
+				OfflineData uplooad = new OfflineData("mobile/contact_create", reqEntity);
+				Data.getUnuploadedData().add(uplooad);
 			}
 		} catch (Exception ex) {
 			Log.e("createContact", ex.getMessage() + " !!!");
@@ -1719,7 +1739,8 @@ public class DataManagement {
 					}
 				}
 			} else {
-// TODO same shit as berore				Data.getUnuploadedGroups().add(reqEntity);
+				OfflineData uplooad = new OfflineData("mobile/group_remove", reqEntity);
+				Data.getUnuploadedData().add(uplooad);
 			}
 		} catch (Exception ex) {
 			Log.e("removeGroup", ex.getMessage() + " !!!");
@@ -1782,7 +1803,8 @@ public class DataManagement {
 					}
 				}
 			} else {
-// TODO same shit as before				Data.getUnuploadedGroups().add(reqEntity);
+				OfflineData uplooad = new OfflineData("mobile/groups_edit", reqEntity);
+				Data.getUnuploadedData().add(uplooad);
 			}
 		} catch (Exception ex) {
 			Log.e("editGroup - error: ", ex.getMessage() + " !!!");
@@ -1841,7 +1863,8 @@ public class DataManagement {
 					}
 				}
 			} else {
-				Data.getUnuploadedGroups().add(reqEntity);
+				OfflineData uplooad = new OfflineData("mobile/groups_create", reqEntity);
+				Data.getUnuploadedData().add(uplooad);
 			}
 		} catch (Exception ex) {
 			Log.e("createGroup - error: ", ex.getMessage() + " !!!");
@@ -2667,7 +2690,8 @@ public class DataManagement {
 					}
 				}
 			} else {
-// TODO same shit as before				Data.getUnuploadedEvents().add(reqEntity);
+				OfflineData uplooad = new OfflineData("mobile/events_edit", reqEntity);
+				Data.getUnuploadedData().add(uplooad);
 			}
 		} catch (Exception ex) {
 			success = false;
@@ -2758,7 +2782,8 @@ public class DataManagement {
 					Log.e("createEvent - status", rp.getStatusLine().getStatusCode() + "");
 				}
 			} else {
-				Data.getUnuploadedEvents().add(reqEntity);
+				OfflineData uplooad = new OfflineData("mobile/events_create", reqEntity);
+				Data.getUnuploadedData().add(uplooad);
 			}
 		} catch (Exception ex) {
 			Log.e("createEvent ex", ex.getMessage() + "!!!");
@@ -2809,7 +2834,8 @@ public class DataManagement {
 					}
 				}
 			} else {
-//	TODO same shit as before			Data.getUnuploadedEvents().add(reqEntity);
+				OfflineData uplooad = new OfflineData("mobile/events_remove", reqEntity);
+				Data.getUnuploadedData().add(uplooad);
 			}
 		} catch (Exception ex) {
 			Log.e("removeEvent ex", ex.getMessage());
@@ -2846,7 +2872,8 @@ public class DataManagement {
 					}
 				}
 			} else {
-// SAME				Data.getUnuploadedEvents().add(reqEntity);
+				OfflineData uplooad = new OfflineData("mobile/set_event_status", reqEntity);
+				Data.getUnuploadedData().add(uplooad);
 			}
 		} catch (Exception ex) {
 			Log.e("Edit event status ERROR", ex.getMessage() + "!!!");

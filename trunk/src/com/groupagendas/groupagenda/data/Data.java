@@ -64,7 +64,7 @@ public class Data {
 	private static TreeMap<Calendar, ArrayList<Event>> sortedEvents;
 	
 	public static final int DEFAULT_FIRST_WEEK_DAY = 1;
-	public static ArrayList<MultipartEntity> unuploadedContacts = new ArrayList<MultipartEntity>();
+	public static ArrayList<OfflineData> unuploadedContacts = new ArrayList<OfflineData>();
 	public static ArrayList<MultipartEntity> unuploadedEvents = new ArrayList<MultipartEntity>();
 	public static ArrayList<MultipartEntity> unuploadedGroups = new ArrayList<MultipartEntity>();
 	public static MultipartEntity unuploadedAccount = new MultipartEntity();
@@ -306,36 +306,12 @@ public class Data {
 		_editor.putInt("userid", id);
 	}
 
-	public static ArrayList<MultipartEntity> getUnuploadedContacts() {
+	public static ArrayList<OfflineData> getUnuploadedData() {
 		return unuploadedContacts;
 	}
 
-	public static void setUnuploadedContacts (ArrayList<MultipartEntity> unuploadedContacts) {
+	public static void setUnuploadedData (ArrayList<OfflineData> unuploadedData) {
 		Data.unuploadedContacts = unuploadedContacts;
-	}
-
-	public static ArrayList<MultipartEntity> getUnuploadedGroups() {
-		return unuploadedGroups;
-	}
-
-	public static void setUnuploadedGroups (ArrayList<MultipartEntity> unuploadedGroups) {
-		Data.unuploadedGroups = unuploadedGroups;
-	}
-
-	public static ArrayList<MultipartEntity> getUnuploadedEvents() {
-		return unuploadedEvents;
-	}
-
-	public static void setUnuploadedEvents(ArrayList<MultipartEntity> unuploadedEvents) {
-		Data.unuploadedEvents = unuploadedEvents;
-	}
-	
-	public static MultipartEntity getUnuploadedAccount () {
-		return unuploadedAccount;
-	}
-	
-	public static void setUnuploadedAccount (MultipartEntity unuploadedAccount) {
-		Data.unuploadedAccount = unuploadedAccount;
 	}
 
 	public boolean isNeedToClearData() {
