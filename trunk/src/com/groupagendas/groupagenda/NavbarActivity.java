@@ -79,7 +79,7 @@ public class NavbarActivity extends Activity {
 	
 	private EditText searchView;
 	private EntryAdapter entryAdapter;
-	private ViewState viewState = ViewState.MONTH;
+	private ViewState viewState;
 
 	
 	
@@ -254,52 +254,52 @@ public class NavbarActivity extends Activity {
 	
 	
 	private void switchToView() {
-		switch (viewState) {
-		case TODAY:
-			showTodayView();
-			break;
-			
-		case DAY:
-			showDayView();
-			break;
-		
-		case WEEK:
-			showWeekView();
-			break;
-		case MONTH:
-			showMonthView();
-			break;
-		case MINI_MONTH:
-			showMiniMonthView();
-			break;
-		case YEAR:
-			showYearView();
-			break;
-		case AGENDA:
-			showAgendaView();
-			break;
-		case GO_TO_DATE:
-			showGoToDateView();
-			break;
-		case LIST_SEARCH:
-			showListSearchView();
-			break;
-
-		default:
+		if (viewState == null){
 			prefs = new Prefs(this);
 //			TODO issiaiskinti kaip ten su tais accountais
 			String defaultCalendarView = prefs.getValue(AccountProvider.AMetaData.AccountMetaData.SETTING_DEFAULT_VIEW, "MONTH");
 			
 //			TODO set default state accordingly to what is got
-			if (defaultCalendarView.equalsIgnoreCase(ViewState.MONTH.toString())) viewState = ViewState.MONTH;
-			else viewState = ViewState.MONTH;
 			
+			viewState = ViewState.getValueByString(defaultCalendarView);
 			
-			
-			
-			switchToView();
-			break;
 		}
+		
+		switch (viewState) {
+			case TODAY:
+				showTodayView();
+				break;
+				
+			case DAY:
+				showDayView();
+				break;
+			
+			case WEEK:
+				showWeekView();
+				break;
+			case MONTH:
+				showMonthView();
+				break;
+			case MINI_MONTH:
+				showMiniMonthView();
+				break;
+			case YEAR:
+				showYearView();
+				break;
+			case AGENDA:
+				showAgendaView();
+				break;
+			case GO_TO_DATE:
+				showGoToDateView();
+				break;
+			case LIST_SEARCH:
+				showListSearchView();
+				break;
+		}
+		
+
+	
+		
 		
 	}
 
@@ -354,7 +354,7 @@ public class NavbarActivity extends Activity {
 		calendarContainer.removeAllViews();
 		mInflater.inflate(R.layout.calendar_day, calendarContainer);
 		DayView view = (DayView)calendarContainer.getChildAt(0);
-		view.setupViewItems();
+//		view.setupViewItems();
 		view.init();
 		
 	}
