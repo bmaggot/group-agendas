@@ -10,4 +10,12 @@ public class OfflineData {
 		this.location = location;
 		this.unuploadedEntity = unuploadedEntity;
 	}
+	
+	public String getLocation () {
+		return this.location;
+	}
+	
+	public MultipartEntity getRequest () {
+		return this.unuploadedEntity;
+	}
 }
