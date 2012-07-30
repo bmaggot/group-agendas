@@ -64,10 +64,7 @@ public class Data {
 	private static TreeMap<Calendar, ArrayList<Event>> sortedEvents;
 	
 	public static final int DEFAULT_FIRST_WEEK_DAY = 1;
-	public static ArrayList<OfflineData> unuploadedContacts = new ArrayList<OfflineData>();
-	public static ArrayList<MultipartEntity> unuploadedEvents = new ArrayList<MultipartEntity>();
-	public static ArrayList<MultipartEntity> unuploadedGroups = new ArrayList<MultipartEntity>();
-	public static MultipartEntity unuploadedAccount = new MultipartEntity();
+	public static ArrayList<OfflineData> unuploadedData = new ArrayList<OfflineData>();
 	public static boolean needToClearData = true;
 	
 	//getters'n'setters
@@ -307,11 +304,11 @@ public class Data {
 	}
 
 	public static ArrayList<OfflineData> getUnuploadedData() {
-		return unuploadedContacts;
+		return unuploadedData;
 	}
 
 	public static void setUnuploadedData (ArrayList<OfflineData> unuploadedData) {
-		Data.unuploadedContacts = unuploadedContacts;
+		Data.unuploadedData = unuploadedData;
 	}
 
 	public boolean isNeedToClearData() {

@@ -25,6 +25,18 @@ public class ConnectReceiver extends BroadcastReceiver {
 		
 		if (conn.getNetworkInfo(0).getState() == NetworkInfo.State.CONNECTED || conn.getNetworkInfo(1).getState() == NetworkInfo.State.CONNECTED) {
 			DataManagement.networkAvailable = true;
+			
+			boolean success = false;
+			
+			if (DataManagement.networkAvailable && (Data.getUnuploadedData().size() > 0)) {
+				success = DataManagement.executeOfflineChanges(Data.getUnuploadedData());
+			}
+			
+			if (success) {
+
+			} else {
+				
+			}
 //			Intent serviceIntent = new Intent();
 //			serviceIntent.setAction("com.groupagendas.groupagenda.UpdateService");
 //			context.startService(serviceIntent);

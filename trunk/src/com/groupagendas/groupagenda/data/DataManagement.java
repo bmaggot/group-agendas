@@ -2768,11 +2768,11 @@ public class DataManagement {
 				if (rp.getStatusLine().getStatusCode() == HttpStatus.SC_OK) {
 					String resp = EntityUtils.toString(rp.getEntity());
 					if (resp != null) {
-						Log.e("createEvent - resp", resp + "!!!");
+//						Log.e("createEvent - resp", resp + "!!!");
 						JSONObject object = new JSONObject(resp);
 						success = object.getBoolean("success");
 	
-						Log.e("createEvent - success", "" + success);
+//						Log.e("createEvent - success", "" + success);
 	
 						if (success == false) {
 							Log.e("Create event error", object.getJSONObject("error").getString("reason"));
@@ -2821,7 +2821,7 @@ public class DataManagement {
 							success = object.getBoolean("success");
 						}
 	
-						Log.e("removeEvent - success", "" + success);
+//						Log.e("removeEvent - success", "" + success);
 	
 						if (success == false) {
 							// array of errors!!!
@@ -2863,7 +2863,7 @@ public class DataManagement {
 				if (rp.getStatusLine().getStatusCode() == HttpStatus.SC_OK) {
 					String resp = EntityUtils.toString(rp.getEntity());
 					if (resp != null) {
-						Log.e("respSt", resp);
+//						Log.e("respSt", resp);
 						JSONObject object = new JSONObject(resp);
 						success = object.getBoolean("success");
 						if (!success) {
@@ -3012,7 +3012,7 @@ public class DataManagement {
 		}
 	}
 	
-	public boolean executeOfflineChanges(ArrayList<OfflineData> requests) {
+	public static boolean executeOfflineChanges(ArrayList<OfflineData> requests) {
 		boolean success = false;
 		HttpClient hc = new DefaultHttpClient();
 		
@@ -3026,14 +3026,16 @@ public class DataManagement {
 					if (rp.getStatusLine().getStatusCode() == HttpStatus.SC_OK) {
 						String resp = EntityUtils.toString(rp.getEntity());
 						if (resp != null) {
-							Log.e("createEvent - resp", resp + "!!!");
+//							Log.e("createEvent - resp", resp + "!!!");
 							JSONObject object = new JSONObject(resp);
 							success = object.getBoolean("success");
 		
-							Log.e("createEvent - success", "" + success);
+//							Log.e("createEvent - success", "" + success);
 		
 							if (success == false) {
 								Log.e("Create event error", object.getJSONObject("error").getString("reason"));
+							} else if (success == true) {
+								Data.setUnuploadedData(new ArrayList<OfflineData>());
 							}
 						}
 					} else {

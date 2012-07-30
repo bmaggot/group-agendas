@@ -146,8 +146,7 @@
 
         <service android:name=".UpdateService" >
             <intent-filter>
-                <action android:name="com.groupagendas.groupagenda.UpdateService" >
-                </action>
+                <action android:name="com.groupagendas.groupagenda.UpdateService" />
             </intent-filter>
         </service>
 
