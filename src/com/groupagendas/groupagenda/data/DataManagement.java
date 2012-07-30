@@ -70,7 +70,7 @@ import com.groupagendas.groupagenda.utils.Utils;
 
 public class DataManagement {
 	
-	public boolean networkAvailable = true;
+	public static boolean networkAvailable = true;
 
 	private DataManagement(Activity c) {
 		Data.setPrefs(new Prefs(c));
@@ -125,17 +125,22 @@ public class DataManagement {
 			reqEntity.addPart("language", new StringBody("en"));
 
 			post.setEntity(reqEntity);
-			HttpResponse rp = hc.execute(post);
-
-			if (rp.getStatusLine().getStatusCode() == HttpStatus.SC_OK) {
-				String resp = EntityUtils.toString(rp.getEntity());
-				if (resp != null) {
-					JSONObject object = new JSONObject(resp);
-					success = object.getBoolean("success");
-					if (!success) {
-						Log.e("Change account ERROR", object.getJSONObject("error").getString("reason"));
+			
+			if (networkAvailable) {
+				HttpResponse rp = hc.execute(post);
+	
+				if (rp.getStatusLine().getStatusCode() == HttpStatus.SC_OK) {
+					String resp = EntityUtils.toString(rp.getEntity());
+					if (resp != null) {
+						JSONObject object = new JSONObject(resp);
+						success = object.getBoolean("success");
+						if (!success) {
+							Log.e("Change account ERROR", object.getJSONObject("error").getString("reason"));
+						}
 					}
 				}
+			} else {
+				Data.setUnuploadedAccount(reqEntity);
 			}
 
 		} catch (Exception ex) {
@@ -591,101 +596,108 @@ public class DataManagement {
 		boolean success = false;
 		String token = null;
 
-		isNetworkAvailable();
-		try {
-			HttpClient hc = new DefaultHttpClient();
-			HttpPost post = new HttpPost(Data.getServerUrl() + "mobile/login");
-			post.setHeader("User-Agent", "Linux; AndroidPhone " + android.os.Build.VERSION.RELEASE);
-			post.setHeader("Accept", "*/*");
-			// post.setHeader("Content-Type", "text/vnd.ms-sync.wbxml");
-
-			MultipartEntity reqEntity = new MultipartEntity(HttpMultipartMode.BROWSER_COMPATIBLE);
-
-			reqEntity.addPart("email", new StringBody(email));
-			reqEntity.addPart("password", new StringBody(password));
-
-			post.setEntity(reqEntity);
-
-			HttpResponse rp = hc.execute(post);
-
-			if (rp.getStatusLine().getStatusCode() == HttpStatus.SC_OK) {
-				String resp = EntityUtils.toString(rp.getEntity());
-				if (resp != null) {
-					JSONObject object = new JSONObject(resp);
-					success = object.getBoolean("success");
-					Log.e("resp", resp);
-					if (success == true) {
-						token = object.getString("token");
-						JSONObject profile = object.getJSONObject("profile");
-						int id = Integer.parseInt(profile.getString("user_id"));
-						Data.setToken(token);
-						Data.setUserId(id);
-
-						// Last login set
-						hc = new DefaultHttpClient();
-						post = new HttpPost(Data.getServerUrl() + "mobile/set_lastlogin");
-
-						reqEntity = new MultipartEntity(HttpMultipartMode.BROWSER_COMPATIBLE);
-
-						reqEntity.addPart("Token", new StringBody(token));
-
-						post.setEntity(reqEntity);
-
-						rp = hc.execute(post);
-						//
-
-						//
-						Data.setEmail(email);
-						Data.setPassword(password);
-						Data.setLogged(true);
-						//
-						Data.save();
-
-						// autoicons and autocolors
-						Data.getmContext().getContentResolver().delete(AccountProvider.AMetaData.AutoiconMetaData.CONTENT_URI, "", null);
-						JSONArray autoicons = object.getJSONArray("custom_icons");
-						for (int i = 0, l = autoicons.length(); i < l; i++) {
-							final JSONObject autoicon = autoicons.getJSONObject(i);
-							ContentValues values = new ContentValues();
-							values.put(AccountProvider.AMetaData.AutoiconMetaData.ICON, autoicon.getString("icon"));
-							values.put(AccountProvider.AMetaData.AutoiconMetaData.KEYWORD, autoicon.getString("keyword"));
-							values.put(AccountProvider.AMetaData.AutoiconMetaData.CONTEXT, autoicon.getString("context"));
-
-							Data.getmContext().getContentResolver().insert(AccountProvider.AMetaData.AutoiconMetaData.CONTENT_URI, values);
+		if(networkAvailable){
+			try {
+				HttpClient hc = new DefaultHttpClient();
+				HttpPost post = new HttpPost(Data.getServerUrl() + "mobile/login");
+				post.setHeader("User-Agent", "Linux; AndroidPhone " + android.os.Build.VERSION.RELEASE);
+				post.setHeader("Accept", "*/*");
+				// post.setHeader("Content-Type", "text/vnd.ms-sync.wbxml");
+	
+				MultipartEntity reqEntity = new MultipartEntity(HttpMultipartMode.BROWSER_COMPATIBLE);
+	
+				reqEntity.addPart("email", new StringBody(email));
+				reqEntity.addPart("password", new StringBody(password));
+	
+				post.setEntity(reqEntity);
+	
+				HttpResponse rp = hc.execute(post);
+	
+				if (rp.getStatusLine().getStatusCode() == HttpStatus.SC_OK) {
+					String resp = EntityUtils.toString(rp.getEntity());
+					if (resp != null) {
+						JSONObject object = new JSONObject(resp);
+						success = object.getBoolean("success");
+						Log.e("resp", resp);
+						if (success == true) {
+							token = object.getString("token");
+							JSONObject profile = object.getJSONObject("profile");
+							int id = Integer.parseInt(profile.getString("user_id"));
+							Data.setToken(token);
+							Data.setUserId(id);
+	
+							// Last login set
+							hc = new DefaultHttpClient();
+							post = new HttpPost(Data.getServerUrl() + "mobile/set_lastlogin");
+	
+							reqEntity = new MultipartEntity(HttpMultipartMode.BROWSER_COMPATIBLE);
+	
+							reqEntity.addPart("Token", new StringBody(token));
+	
+							post.setEntity(reqEntity);
+	
+							rp = hc.execute(post);
+							//
+	
+							//
+							Data.setEmail(email);
+							Data.setPassword(password);
+							Data.setLogged(true);
+							//
+							Data.save();
+	
+							// autoicons and autocolors
+							Data.getmContext().getContentResolver().delete(AccountProvider.AMetaData.AutoiconMetaData.CONTENT_URI, "", null);
+							JSONArray autoicons = object.getJSONArray("custom_icons");
+							for (int i = 0, l = autoicons.length(); i < l; i++) {
+								final JSONObject autoicon = autoicons.getJSONObject(i);
+								ContentValues values = new ContentValues();
+								values.put(AccountProvider.AMetaData.AutoiconMetaData.ICON, autoicon.getString("icon"));
+								values.put(AccountProvider.AMetaData.AutoiconMetaData.KEYWORD, autoicon.getString("keyword"));
+								values.put(AccountProvider.AMetaData.AutoiconMetaData.CONTEXT, autoicon.getString("context"));
+	
+								Data.getmContext().getContentResolver().insert(AccountProvider.AMetaData.AutoiconMetaData.CONTENT_URI, values);
+							}
+	
+							Data.getmContext().getContentResolver().delete(AccountProvider.AMetaData.AutocolorMetaData.CONTENT_URI, "", null);
+							JSONArray autocolors = object.getJSONArray("custom_colors");
+							for (int i = 0, l = autocolors.length(); i < l; i++) {
+								final JSONObject autocolor = autocolors.getJSONObject(i);
+								ContentValues values = new ContentValues();
+								values.put(AccountProvider.AMetaData.AutocolorMetaData.COLOR, autocolor.getString("color"));
+								values.put(AccountProvider.AMetaData.AutocolorMetaData.KEYWORD, autocolor.getString("keyword"));
+								values.put(AccountProvider.AMetaData.AutocolorMetaData.CONTEXT, autocolor.getString("context"));
+	
+								Data.getmContext().getContentResolver().insert(AccountProvider.AMetaData.AutocolorMetaData.CONTENT_URI, values);
+							}
+							registerPhone();
+						} else {
+							Data.setERROR(object.getJSONObject("error").getString("reason"));
+							Log.e("login", Data.getERROR() + "!!!");
 						}
-
-						Data.getmContext().getContentResolver().delete(AccountProvider.AMetaData.AutocolorMetaData.CONTENT_URI, "", null);
-						JSONArray autocolors = object.getJSONArray("custom_colors");
-						for (int i = 0, l = autocolors.length(); i < l; i++) {
-							final JSONObject autocolor = autocolors.getJSONObject(i);
-							ContentValues values = new ContentValues();
-							values.put(AccountProvider.AMetaData.AutocolorMetaData.COLOR, autocolor.getString("color"));
-							values.put(AccountProvider.AMetaData.AutocolorMetaData.KEYWORD, autocolor.getString("keyword"));
-							values.put(AccountProvider.AMetaData.AutocolorMetaData.CONTEXT, autocolor.getString("context"));
-
-							Data.getmContext().getContentResolver().insert(AccountProvider.AMetaData.AutocolorMetaData.CONTENT_URI, values);
-						}
-						registerPhone();
-					} else {
-						Data.setERROR(object.getJSONObject("error").getString("reason"));
-						Log.e("login", Data.getERROR() + "!!!");
 					}
 				}
+	
+			} catch (Exception ex) {
+				Data.setERROR(ex.getMessage());
+				Log.e("login2", Data.getERROR() + "!!!");
 			}
-
-		} catch (Exception ex) {
-			Data.setERROR(ex.getMessage());
-			Log.e("login2", Data.getERROR() + "!!!");
+		} else {
+//			if(Data.getEmail().equals(email) && Data.getPassword().equals(password)){
+//				success = true;
+//				Data.needToClearData = false;
+//				System.out.println("No network!!!");
+//			}
 		}
 		return success;
 	}
 	
-	private void isNetworkAvailable() {
-	    ConnectivityManager connectivityManager 
-	          = (ConnectivityManager) Data.getmContext().getSystemService(Context.CONNECTIVITY_SERVICE);
-	    NetworkInfo activeNetworkInfo = connectivityManager.getActiveNetworkInfo();
-	    networkAvailable = activeNetworkInfo != null;
-	}
+//	private boolean isNetworkAvailable() {
+//	    ConnectivityManager connectivityManager 
+//	          = (ConnectivityManager) Data.getmContext().getSystemService(Context.CONNECTIVITY_SERVICE);
+//	    NetworkInfo activeNetworkInfo = connectivityManager.getActiveNetworkInfo();
+//	    return activeNetworkInfo != null;
+//	}
 
 	public void registerPhone() {
 		try {
@@ -1272,21 +1284,25 @@ public class DataManagement {
 			reqEntity.addPart("token", new StringBody(Data.getToken()));
 
 			post.setEntity(reqEntity);
-			HttpResponse rp = hc.execute(post);
-
-			if (rp.getStatusLine().getStatusCode() == HttpStatus.SC_OK) {
-				String resp = EntityUtils.toString(rp.getEntity());
-				if (resp != null) {
-					JSONObject object = new JSONObject(resp);
-					success = object.getBoolean("success");
-
-					Log.e("removeContact - success", "" + success);
-
-					if (success == false) {
-						error = object.getString("error");
-						Log.e("removeContact - error: ", error);
+			if (networkAvailable) {
+				HttpResponse rp = hc.execute(post);
+	
+				if (rp.getStatusLine().getStatusCode() == HttpStatus.SC_OK) {
+					String resp = EntityUtils.toString(rp.getEntity());
+					if (resp != null) {
+						JSONObject object = new JSONObject(resp);
+						success = object.getBoolean("success");
+	
+						Log.e("removeContact - success", "" + success);
+	
+						if (success == false) {
+							error = object.getString("error");
+							Log.e("removeContact - error: ", error);
+						}
 					}
 				}
+			} else {
+// TODO add to some cool structure				Data.getUnuploadedContacts().add(reqEntity);
 			}
 		} catch (Exception ex) {
 			Log.e("removeContact", ex.getMessage() + "!!!");
@@ -1338,23 +1354,28 @@ public class DataManagement {
 			}
 
 			post.setEntity(reqEntity);
-			HttpResponse rp = hc.execute(post);
-
-			if (rp.getStatusLine().getStatusCode() == HttpStatus.SC_OK) {
-				String resp = EntityUtils.toString(rp.getEntity());
-				if (resp != null) {
-					JSONObject object = new JSONObject(resp);
-					success = object.getBoolean("success");
-
-					success = object.getBoolean("success");
-
-					Log.e("editContact - success", "" + success);
-
-					if (success == false) {
-						Data.setERROR(object.getJSONObject("error").getString("reason"));
-						Log.e("editContact - error: ", Data.getERROR());
+			
+			if(networkAvailable) {
+				HttpResponse rp = hc.execute(post);
+	
+				if (rp.getStatusLine().getStatusCode() == HttpStatus.SC_OK) {
+					String resp = EntityUtils.toString(rp.getEntity());
+					if (resp != null) {
+						JSONObject object = new JSONObject(resp);
+						success = object.getBoolean("success");
+	
+						success = object.getBoolean("success");
+	
+						Log.e("editContact - success", "" + success);
+	
+						if (success == false) {
+							Data.setERROR(object.getJSONObject("error").getString("reason"));
+							Log.e("editContact - error: ", Data.getERROR());
+						}
 					}
 				}
+			} else {
+// TODO same shit as before				Data.getUnuploadedContacts().add(reqEntity);
 			}
 		} catch (Exception ex) {
 			Log.e("editContact - error: ", ex.getMessage() + " !!!");
@@ -1404,22 +1425,26 @@ public class DataManagement {
 			}
 
 			post.setEntity(reqEntity);
-
-			HttpResponse rp = hc.execute(post);
-
-			if (rp.getStatusLine().getStatusCode() == HttpStatus.SC_OK) {
-				String resp = EntityUtils.toString(rp.getEntity());
-				if (resp != null) {
-					JSONObject object = new JSONObject(resp);
-					success = object.getBoolean("success");
-
-					Log.e("createContact - success", "" + success);
-
-					if (success == false) {
-						Data.setERROR(object.getJSONObject("error").getString("reason"));
-						Log.e("createContact - error: ", Data.getERROR());
+			
+			if (networkAvailable) { 
+				HttpResponse rp = hc.execute(post);
+	
+				if (rp.getStatusLine().getStatusCode() == HttpStatus.SC_OK) {
+					String resp = EntityUtils.toString(rp.getEntity());
+					if (resp != null) {
+						JSONObject object = new JSONObject(resp);
+						success = object.getBoolean("success");
+	
+						Log.e("createContact - success", "" + success);
+	
+						if (success == false) {
+							Data.setERROR(object.getJSONObject("error").getString("reason"));
+							Log.e("createContact - error: ", Data.getERROR());
+						}
 					}
 				}
+			} else {
+				Data.getUnuploadedContacts().add(reqEntity);
 			}
 		} catch (Exception ex) {
 			Log.e("createContact", ex.getMessage() + " !!!");
@@ -1677,19 +1702,24 @@ public class DataManagement {
 			reqEntity.addPart("token", new StringBody(Data.getToken()));
 
 			post.setEntity(reqEntity);
-			HttpResponse rp = hc.execute(post);
-
-			if (rp.getStatusLine().getStatusCode() == HttpStatus.SC_OK) {
-				String resp = EntityUtils.toString(rp.getEntity());
-				if (resp != null) {
-					JSONObject object = new JSONObject(resp);
-					success = object.getBoolean("success");
-
-					if (success == false) {
-						error = object.getString("error");
-						Log.e("removeGroup - error: ", error);
+			
+			if (networkAvailable) {
+				HttpResponse rp = hc.execute(post);
+	
+				if (rp.getStatusLine().getStatusCode() == HttpStatus.SC_OK) {
+					String resp = EntityUtils.toString(rp.getEntity());
+					if (resp != null) {
+						JSONObject object = new JSONObject(resp);
+						success = object.getBoolean("success");
+	
+						if (success == false) {
+							error = object.getString("error");
+							Log.e("removeGroup - error: ", error);
+						}
 					}
 				}
+			} else {
+// TODO same shit as berore				Data.getUnuploadedGroups().add(reqEntity);
 			}
 		} catch (Exception ex) {
 			Log.e("removeGroup", ex.getMessage() + " !!!");
@@ -1732,23 +1762,27 @@ public class DataManagement {
 
 			post.setEntity(reqEntity);
 
-			HttpResponse rp = hc.execute(post);
-
-			if (rp.getStatusLine().getStatusCode() == HttpStatus.SC_OK) {
-				String resp = EntityUtils.toString(rp.getEntity());
-				if (resp != null) {
-					JSONObject object = new JSONObject(resp);
-					success = object.getBoolean("success");
-
-					success = object.getBoolean("success");
-
-					Log.e("editGroup - success", "" + success);
-
-					if (success == false) {
-						Data.setERROR(object.getJSONObject("error").getString("reason"));
-						Log.e("editGroup - error: ", Data.getERROR());
+			if (networkAvailable) {
+				HttpResponse rp = hc.execute(post);
+	
+				if (rp.getStatusLine().getStatusCode() == HttpStatus.SC_OK) {
+					String resp = EntityUtils.toString(rp.getEntity());
+					if (resp != null) {
+						JSONObject object = new JSONObject(resp);
+						success = object.getBoolean("success");
+	
+						success = object.getBoolean("success");
+	
+						Log.e("editGroup - success", "" + success);
+	
+						if (success == false) {
+							Data.setERROR(object.getJSONObject("error").getString("reason"));
+							Log.e("editGroup - error: ", Data.getERROR());
+						}
 					}
 				}
+			} else {
+// TODO same shit as before				Data.getUnuploadedGroups().add(reqEntity);
 			}
 		} catch (Exception ex) {
 			Log.e("editGroup - error: ", ex.getMessage() + " !!!");
@@ -1789,21 +1823,25 @@ public class DataManagement {
 
 			post.setEntity(reqEntity);
 
-			HttpResponse rp = hc.execute(post);
-
-			if (rp.getStatusLine().getStatusCode() == HttpStatus.SC_OK) {
-				String resp = EntityUtils.toString(rp.getEntity());
-				if (resp != null) {
-					JSONObject object = new JSONObject(resp);
-					success = object.getBoolean("success");
-
-					Log.e("createGroup - success", "" + success);
-
-					if (success == false) {
-						Data.setERROR(object.getJSONObject("error").getString("reason"));
-						Log.e("createGroup - error: ", Data.getERROR());
+			if (networkAvailable) {
+				HttpResponse rp = hc.execute(post);
+	
+				if (rp.getStatusLine().getStatusCode() == HttpStatus.SC_OK) {
+					String resp = EntityUtils.toString(rp.getEntity());
+					if (resp != null) {
+						JSONObject object = new JSONObject(resp);
+						success = object.getBoolean("success");
+	
+						Log.e("createGroup - success", "" + success);
+	
+						if (success == false) {
+							Data.setERROR(object.getJSONObject("error").getString("reason"));
+							Log.e("createGroup - error: ", Data.getERROR());
+						}
 					}
 				}
+			} else {
+				Data.getUnuploadedGroups().add(reqEntity);
 			}
 		} catch (Exception ex) {
 			Log.e("createGroup - error: ", ex.getMessage() + " !!!");
@@ -2614,17 +2652,22 @@ public class DataManagement {
 			}
 
 			post.setEntity(reqEntity);
-			HttpResponse rp = hc.execute(post);
-
-			if (rp.getStatusLine().getStatusCode() == HttpStatus.SC_OK) {
-				String resp = EntityUtils.toString(rp.getEntity());
-				if (resp != null) {
-					JSONObject object = new JSONObject(resp);
-					success = object.getBoolean("success");
-					if (!success) {
-						Log.e("Edit event ERROR", object.getJSONObject("error").getString("reason"));
+			
+			if (networkAvailable) {
+				HttpResponse rp = hc.execute(post);
+	
+				if (rp.getStatusLine().getStatusCode() == HttpStatus.SC_OK) {
+					String resp = EntityUtils.toString(rp.getEntity());
+					if (resp != null) {
+						JSONObject object = new JSONObject(resp);
+						success = object.getBoolean("success");
+						if (!success) {
+							Log.e("Edit event ERROR", object.getJSONObject("error").getString("reason"));
+						}
 					}
 				}
+			} else {
+// TODO same shit as before				Data.getUnuploadedEvents().add(reqEntity);
 			}
 		} catch (Exception ex) {
 			success = false;
@@ -2694,23 +2737,28 @@ public class DataManagement {
 				reqEntity.addPart("groups[]", new StringBody(""));
 			}
 			post.setEntity(reqEntity);
-			HttpResponse rp = hc.execute(post);
-
-			if (rp.getStatusLine().getStatusCode() == HttpStatus.SC_OK) {
-				String resp = EntityUtils.toString(rp.getEntity());
-				if (resp != null) {
-					Log.e("createEvent - resp", resp + "!!!");
-					JSONObject object = new JSONObject(resp);
-					success = object.getBoolean("success");
-
-					Log.e("createEvent - success", "" + success);
-
-					if (success == false) {
-						Log.e("Create event error", object.getJSONObject("error").getString("reason"));
+			
+			if (networkAvailable) {
+				HttpResponse rp = hc.execute(post);
+	
+				if (rp.getStatusLine().getStatusCode() == HttpStatus.SC_OK) {
+					String resp = EntityUtils.toString(rp.getEntity());
+					if (resp != null) {
+						Log.e("createEvent - resp", resp + "!!!");
+						JSONObject object = new JSONObject(resp);
+						success = object.getBoolean("success");
+	
+						Log.e("createEvent - success", "" + success);
+	
+						if (success == false) {
+							Log.e("Create event error", object.getJSONObject("error").getString("reason"));
+						}
 					}
+				} else {
+					Log.e("createEvent - status", rp.getStatusLine().getStatusCode() + "");
 				}
 			} else {
-				Log.e("createEvent - status", rp.getStatusLine().getStatusCode() + "");
+				Data.getUnuploadedEvents().add(reqEntity);
 			}
 		} catch (Exception ex) {
 			Log.e("createEvent ex", ex.getMessage() + "!!!");
@@ -2732,31 +2780,36 @@ public class DataManagement {
 			reqEntity.addPart("event_id", new StringBody(String.valueOf(id)));
 
 			post.setEntity(reqEntity);
-			HttpResponse rp = hc.execute(post);
-
-			if (rp.getStatusLine().getStatusCode() == HttpStatus.SC_OK) {
-				String resp = EntityUtils.toString(rp.getEntity());
-				if (resp != null) {
-					JSONObject object = new JSONObject(resp);
-					String successStr = object.getString("success");
-
-					if (successStr.equals("null")) {
-						success = false;
-					} else {
-						success = object.getBoolean("success");
-					}
-
-					Log.e("removeEvent - success", "" + success);
-
-					if (success == false) {
-						// array of errors!!!
-						JSONObject errObj = object.getJSONObject("error");
-						Data.setERROR(errObj.getString("reason"));
-						Log.e("removeEvent - error: ", Data.getERROR());
-					} else {
-						this.getEventsFromRemoteDb("");
+			
+			if (networkAvailable) {
+				HttpResponse rp = hc.execute(post);
+	
+				if (rp.getStatusLine().getStatusCode() == HttpStatus.SC_OK) {
+					String resp = EntityUtils.toString(rp.getEntity());
+					if (resp != null) {
+						JSONObject object = new JSONObject(resp);
+						String successStr = object.getString("success");
+	
+						if (successStr.equals("null")) {
+							success = false;
+						} else {
+							success = object.getBoolean("success");
+						}
+	
+						Log.e("removeEvent - success", "" + success);
+	
+						if (success == false) {
+							// array of errors!!!
+							JSONObject errObj = object.getJSONObject("error");
+							Data.setERROR(errObj.getString("reason"));
+							Log.e("removeEvent - error: ", Data.getERROR());
+						} else {
+							this.getEventsFromRemoteDb("");
+						}
 					}
 				}
+			} else {
+//	TODO same shit as before			Data.getUnuploadedEvents().add(reqEntity);
 			}
 		} catch (Exception ex) {
 			Log.e("removeEvent ex", ex.getMessage());
@@ -2778,18 +2831,22 @@ public class DataManagement {
 			reqEntity.addPart("status", new StringBody(status));
 
 			post.setEntity(reqEntity);
-			HttpResponse rp = hc.execute(post);
-
-			if (rp.getStatusLine().getStatusCode() == HttpStatus.SC_OK) {
-				String resp = EntityUtils.toString(rp.getEntity());
-				if (resp != null) {
-					Log.e("respSt", resp);
-					JSONObject object = new JSONObject(resp);
-					success = object.getBoolean("success");
-					if (!success) {
-						Log.e("Edit event status ERROR", object.getJSONObject("error").getString("reason"));
+			if (networkAvailable) {
+				HttpResponse rp = hc.execute(post);
+	
+				if (rp.getStatusLine().getStatusCode() == HttpStatus.SC_OK) {
+					String resp = EntityUtils.toString(rp.getEntity());
+					if (resp != null) {
+						Log.e("respSt", resp);
+						JSONObject object = new JSONObject(resp);
+						success = object.getBoolean("success");
+						if (!success) {
+							Log.e("Edit event status ERROR", object.getJSONObject("error").getString("reason"));
+						}
 					}
 				}
+			} else {
+// SAME				Data.getUnuploadedEvents().add(reqEntity);
 			}
 		} catch (Exception ex) {
 			Log.e("Edit event status ERROR", ex.getMessage() + "!!!");
@@ -2925,6 +2982,12 @@ public class DataManagement {
 		if (eAdapter != null) {
 			eAdapter.setItems(events);
 			eAdapter.notifyDataSetChanged();
+		}
+	}
+	
+	public void executeOfflineChanges() {
+		if (networkAvailable) {
+			// Write sum shit.
 		}
 	}
 

@@ -5,6 +5,7 @@ import java.util.Calendar;
 import java.util.HashMap;
 import java.util.TreeMap;
 
+import org.apache.http.entity.mime.MultipartEntity;
 import org.json.JSONObject;
 
 import android.content.Context;
@@ -63,7 +64,10 @@ public class Data {
 	private static TreeMap<Calendar, ArrayList<Event>> sortedEvents;
 	
 	public static final int DEFAULT_FIRST_WEEK_DAY = 1;
-	public static ArrayList<JSONObject> unUploadedData = new ArrayList<JSONObject>();
+	public static ArrayList<MultipartEntity> unuploadedContacts = new ArrayList<MultipartEntity>();
+	public static ArrayList<MultipartEntity> unuploadedEvents = new ArrayList<MultipartEntity>();
+	public static ArrayList<MultipartEntity> unuploadedGroups = new ArrayList<MultipartEntity>();
+	public static MultipartEntity unuploadedAccount = new MultipartEntity();
 	public static boolean needToClearData = true;
 	
 	//getters'n'setters
@@ -301,12 +305,37 @@ public class Data {
 			return;
 		_editor.putInt("userid", id);
 	}
-	public static ArrayList<JSONObject> getUnUploadedData() {
-		return unUploadedData;
+
+	public static ArrayList<MultipartEntity> getUnuploadedContacts() {
+		return unuploadedContacts;
 	}
 
-	public static void setUnUploadedData(ArrayList<JSONObject> unUploadedData) {
-		Data.unUploadedData = unUploadedData;
+	public static void setUnuploadedContacts (ArrayList<MultipartEntity> unuploadedContacts) {
+		Data.unuploadedContacts = unuploadedContacts;
+	}
+
+	public static ArrayList<MultipartEntity> getUnuploadedGroups() {
+		return unuploadedGroups;
+	}
+
+	public static void setUnuploadedGroups (ArrayList<MultipartEntity> unuploadedGroups) {
+		Data.unuploadedGroups = unuploadedGroups;
+	}
+
+	public static ArrayList<MultipartEntity> getUnuploadedEvents() {
+		return unuploadedEvents;
+	}
+
+	public static void setUnuploadedEvents(ArrayList<MultipartEntity> unuploadedEvents) {
+		Data.unuploadedEvents = unuploadedEvents;
+	}
+	
+	public static MultipartEntity getUnuploadedAccount () {
+		return unuploadedAccount;
+	}
+	
+	public static void setUnuploadedAccount (MultipartEntity unuploadedAccount) {
+		Data.unuploadedAccount = unuploadedAccount;
 	}
 
 	public boolean isNeedToClearData() {
