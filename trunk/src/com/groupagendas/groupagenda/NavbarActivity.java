@@ -39,7 +39,6 @@ import com.bog.calendar.app.model.CalendarDay;
 import com.bog.calendar.app.model.CalendarMonth;
 import com.bog.calendar.app.model.CalendarYear;
 import com.groupagendas.groupagenda.account.AccountProvider;
-import com.groupagendas.groupagenda.calendar.AbstractCalendarContainer;
 import com.groupagendas.groupagenda.calendar.day.DayView;
 import com.groupagendas.groupagenda.contacts.Contact;
 import com.groupagendas.groupagenda.contacts.ContactsActivity;
