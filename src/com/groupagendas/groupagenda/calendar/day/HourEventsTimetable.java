@@ -84,7 +84,7 @@ public class HourEventsTimetable {
 		ArrayList<Event> hourEvents = eventsTimetable[startHour];
 
 		int index = hourEvents.indexOf(event);
-		if (index != 0) return hourEvents.get(index -1).event_id;  
+		if (index > 0) return hourEvents.get(index -1).event_id;  
 		else return 0;
 	}
 }
