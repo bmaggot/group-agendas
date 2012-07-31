@@ -9,7 +9,6 @@
     	    android:background="@null"
 			android:layout_height="wrap_content"
 			android:layout_width="wrap_content"
-			android:layout_marginLeft="15dp"
 			android:layout_centerVertical="true"
 			android:layout_alignParentLeft="true"
 			android:padding="10dp"
@@ -29,9 +28,9 @@
 				android:layout_height="wrap_content"
 				android:layout_width="wrap_content"
 				android:gravity="top"
-   			    android:text="Wednesday, July 18, 2012"
+   			    android:text="Wednesday, August 18, 2012"
 				android:textColor="#3B4959"
-				android:textSize="18dp"
+				android:textSize="16dp"
 				android:textStyle="bold" />
 		</LinearLayout>
 		
@@ -42,7 +41,6 @@
 			android:layout_height="wrap_content"
 			android:layout_width="wrap_content"
 			android:layout_gravity="center_vertical"
-			android:layout_marginRight="15dp"
 			android:gravity="center_vertical"
 			android:padding="10dp"
 			android:src="@drawable/right"
