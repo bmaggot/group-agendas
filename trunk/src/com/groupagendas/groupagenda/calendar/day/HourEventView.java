@@ -37,15 +37,17 @@ public class HourEventView extends RelativeLayout {
 	private TextView title;
 	private TextView timeText;
 	private ImageView icon;
+	boolean usesAMPM;
 
 	
 	
 	
 	
 
-	public HourEventView(Context context, Event e) {
+	public HourEventView(Context context, Event e, boolean usesAMPM) {
 		super(context);
-	
+		
+		this.usesAMPM = usesAMPM;
 		
 		RelativeLayout.LayoutParams lp = (LayoutParams) this.getLayoutParams();
 		int layoutPadding = getPixels(5);
@@ -58,13 +60,18 @@ public class HourEventView extends RelativeLayout {
 		 lp = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.WRAP_CONTENT, RelativeLayout.LayoutParams.WRAP_CONTENT);
 		
 		
-		Calendar startTime  = Utils.stringToCalendar(e.time_start, Utils.date_format);
-		Calendar endTime = Utils.stringToCalendar(e.time_end, Utils.date_format);
+		Calendar startTime  = Utils.stringToCalendar(e.my_time_start, Utils.date_format);
+		Calendar endTime = e.endCalendar;
 		
-		
+		SimpleDateFormat df;
 //		Set Event start time textView
 		timeText = new TextView(getContext());
-		SimpleDateFormat df = new SimpleDateFormat(getContext().getString(R.string.hour_event_view_time_format));
+		if (usesAMPM){
+			df = new SimpleDateFormat(getContext().getString(R.string.hour_event_view_time_format_AMPM));
+		}else{
+			df = new SimpleDateFormat(getContext().getString(R.string.hour_event_view_time_format));
+		}
+		
 		timeText.setText(df.format(startTime.getTime()));
 		timeText.setTextAppearance(getContext(), R.style.dayView_hourEvent_secondColumn_timeText);
 		timeText.setId(TIME_TEXT_ID);
