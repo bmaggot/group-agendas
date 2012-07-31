@@ -19,6 +19,7 @@ import com.groupagendas.groupagenda.R;
 
 import com.groupagendas.groupagenda.account.AccountProvider;
 import com.groupagendas.groupagenda.calendar.adapters.AllDayEventsAdapter;
+import com.groupagendas.groupagenda.data.DataManagement;
 import com.groupagendas.groupagenda.events.Event;
 import com.groupagendas.groupagenda.utils.Prefs;
 
@@ -58,10 +59,10 @@ public class DayView extends LinearLayout {
 	public DayView(Context context, AttributeSet attrs) {
 
 		super(context, attrs);
-		Prefs prefs = new Prefs(getContext());
 		
-		String am_pm = prefs.getValue(AccountProvider.AMetaData.AccountMetaData.SETTING_AMPM, "false");
-		am_pmEnabled = Boolean.parseBoolean(am_pm);
+		
+		
+		am_pmEnabled =  DataManagement.getInstance(getContext()).getAccount().setting_ampm != 0;
 		WeekDayNames = getResources().getStringArray(R.array.week_days_names);
 		MonthNames = getResources().getStringArray(R.array.month_names);
 		if(am_pmEnabled){
