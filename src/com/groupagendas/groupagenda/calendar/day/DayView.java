@@ -128,7 +128,6 @@ public class DayView extends LinearLayout {
 				Event e = hourEventsList.get(i);
 				int neighbourId = hourEventsTimetable.getNeighbourId(e);
 				int divider = hourEventsTimetable.getWidthDivider(e);
-				System.out.println("Event: " + e.title + "divider " + divider);
 				drawEvent(e, divider, neighbourId);
 			}
 		}
