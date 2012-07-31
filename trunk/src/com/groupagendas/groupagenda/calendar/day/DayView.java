@@ -24,6 +24,8 @@ import com.groupagendas.groupagenda.utils.Prefs;
 
 public class DayView extends LinearLayout {
 	
+	private static final float DEFAULT_TIME_TO_SCROLL = 7.5f;
+
 	DayInstance selectedDay;
 	
 	boolean am_pmEnabled;
@@ -80,16 +82,16 @@ public class DayView extends LinearLayout {
 		setupViewItems();
 		drawHourList();
 		updateEventLists();
-		scrollHourPanelto(this.getResources().getInteger(R.integer.hour_events_scrollPanePositionHour));
+		scrollHourPanelto(DEFAULT_TIME_TO_SCROLL);
 		
 	}
 
-	private void scrollHourPanelto(final int hour) {
+	private void scrollHourPanelto(final float hour) {
 		final ScrollView scrollPanel = (ScrollView)this.findViewById(R.id.calendar_day_view_hour_events_scroll);
 		scrollPanel.post(new Runnable() {
 		    @Override
 		    public void run() {
-		        scrollPanel.scrollTo(0, hour * Math.round(hourLineHeightDP * densityFactor));
+		        scrollPanel.scrollTo(0, (int) (hour * Math.round(hourLineHeightDP * densityFactor)));
 		    } 
 		});
 
