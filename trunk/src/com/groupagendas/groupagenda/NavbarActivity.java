@@ -1,20 +1,15 @@
 package com.groupagendas.groupagenda;
 
 import java.util.ArrayList;
-import java.util.Calendar;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
-import android.app.Dialog;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.ActivityInfo;
-import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.os.Handler;
-import android.os.Message;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.KeyEvent;
@@ -24,7 +19,6 @@ import android.view.View.OnClickListener;
 import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.FrameLayout;
-import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.RadioButton;
 import android.widget.Toast;
@@ -35,12 +29,11 @@ import at.bartinger.list.item.SectionItem;
 import az.mecid.android.ActionItem;
 import az.mecid.android.QuickAction;
 
-import com.bog.calendar.app.model.CalendarDay;
+
 import com.bog.calendar.app.model.CalendarMonth;
 import com.bog.calendar.app.model.CalendarYear;
 import com.groupagendas.groupagenda.account.AccountProvider;
 import com.groupagendas.groupagenda.calendar.day.DayView;
-import com.groupagendas.groupagenda.contacts.Contact;
 import com.groupagendas.groupagenda.contacts.ContactsActivity;
 import com.groupagendas.groupagenda.contacts.ContactsProvider;
 import com.groupagendas.groupagenda.data.Data;
