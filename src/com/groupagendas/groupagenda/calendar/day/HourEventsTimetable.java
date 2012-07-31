@@ -35,8 +35,8 @@ public class HourEventsTimetable {
 			end = todayEnd;
 		}
 		
-		Calendar start = Utils.stringToCalendar(event.time_start, Utils.date_format);
-		if (start.before(todayStart)){//TODO TEST cia jeigu eventas prasideda ne sita diena, o anksciau
+		Calendar start = Utils.stringToCalendar(event.my_time_start, Utils.date_format);
+		if (start.before(todayStart)){//TODO cia jeigu eventas prasideda ne sita diena, o anksciau
 			start = (Calendar) todayStart.clone();
 			end = todayEnd;
 			end.set(start.get(Calendar.YEAR), start.get(Calendar.MONTH), start.get(Calendar.DAY_OF_MONTH));
@@ -65,8 +65,8 @@ public class HourEventsTimetable {
  */
 
 	public int getWidthDivider(Event event) {
-		Calendar start = Utils.stringToCalendar(event.time_start, Utils.date_format);
-		Calendar end = Utils.stringToCalendar(event.time_end, Utils.date_format);
+		Calendar start = Utils.stringToCalendar(event.my_time_start, Utils.date_format);
+		Calendar end = Utils.stringToCalendar(event.my_time_end, Utils.date_format);
 		int ret = 1;
 		
 		while (start.before(end)){
@@ -80,7 +80,8 @@ public class HourEventsTimetable {
 	}
 	
 	public int getNeighbourId(Event event){
-		int startHour = Utils.stringToCalendar(event.time_start, Utils.date_format).get(Calendar.HOUR_OF_DAY);
+		int startHour = 0;
+		if (todayStart.before(event.startCalendar)) startHour = event.startCalendar.get(Calendar.HOUR_OF_DAY);
 		ArrayList<Event> hourEvents = eventsTimetable[startHour];
 
 		int index = hourEvents.indexOf(event);

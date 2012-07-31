@@ -12,6 +12,7 @@ import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
+import android.widget.ScrollView;
 import android.widget.TextView;
 
 import com.groupagendas.groupagenda.R;
@@ -39,6 +40,8 @@ public class DayView extends LinearLayout {
 	String[] WeekDayNames;
 	String[] MonthNames;
 	String[] HourNames;
+	
+	private final int hourLineHeightDP = 40;
 
 	private HourEventsPanel hourEventsPanel;
 	private ListView allDayEventsPanel;
@@ -77,6 +80,21 @@ public class DayView extends LinearLayout {
 		setupViewItems();
 		drawHourList();
 		updateEventLists();
+		scrollHourPanelto(this.getResources().getInteger(R.integer.hour_events_scrollPanePositionHour));
+		
+	}
+
+	private void scrollHourPanelto(final int hour) {
+		final ScrollView scrollPanel = (ScrollView)this.findViewById(R.id.calendar_day_view_hour_events_scroll);
+		scrollPanel.post(new Runnable() {
+		    @Override
+		    public void run() {
+		        scrollPanel.scrollTo(0, hour * Math.round(hourLineHeightDP * densityFactor));
+		    } 
+		});
+
+
+		
 	}
 
 	private void drawHourList() {
@@ -92,7 +110,7 @@ public class DayView extends LinearLayout {
 			label.setTextAppearance(getContext(), R.style.dayView_hourEvent_firstColumn_entryText);
 			label.setText(HourNames[i]);
 			label.setGravity(android.view.Gravity.CENTER_HORIZONTAL);
-			label.setHeight(Math.round(40*densityFactor));
+			label.setHeight(Math.round(hourLineHeightDP*densityFactor));
 			label.setWidth(LayoutParams.FILL_PARENT);
 			hourList.addView(label);
 		}
@@ -121,37 +139,44 @@ public class DayView extends LinearLayout {
 
 		int dispWidth = ((Activity)getContext()).getWindowManager().getDefaultDisplay().getWidth();
 		int panelWidth =  Math.round(0.9f * dispWidth - 1);
-		//HARDCODED VALUE :(
-		int lineHeightDP = 40;
+		
 		
 		final float scale = getContext().getResources().getDisplayMetrics().density;
-		int lineHeight = (int) (lineHeightDP * scale + 0.5f);
+		int lineHeight = (int) (hourLineHeightDP * scale + 0.5f);
 //		int oneDP = (int) (1 * scale + 0.5f);
  
 	
+		HourEventView eventFrame = new HourEventView(getContext(), event, this.am_pmEnabled);
 		
-		int startHour = 0; 
-		int endHour = 24;
-		HourEventView eventFrame = new HourEventView(getContext(), event);
+		float startTimeHours = 0; 
+		float endTimeHours = 24;
+		
 		if (selectedDay.getSelectedDate().before(event.startCalendar)) {
-			startHour = event.startCalendar.get(Calendar.HOUR_OF_DAY);
+			startTimeHours = event.startCalendar.get(Calendar.HOUR_OF_DAY);
+			float minutes = event.startCalendar.get(Calendar.MINUTE);
+			startTimeHours += minutes / 60;
 		} else eventFrame.setStartTime(selectedDay.getSelectedDate()); //set event start hour 0:00
 		
+		int mul = 0; // half-hour multiplier
 		if (selectedDay.getSelectedDate().get(Calendar.DAY_OF_MONTH) == event.endCalendar.get(Calendar.DAY_OF_MONTH)){
-			if (selectedDay.getSelectedDate().get(Calendar.MONTH) == event.endCalendar.get(Calendar.MONTH))
-				endHour = event.endCalendar.get(Calendar.HOUR_OF_DAY);
+			if (selectedDay.getSelectedDate().get(Calendar.MONTH) == event.endCalendar.get(Calendar.MONTH)){
+				endTimeHours = event.endCalendar.get(Calendar.HOUR_OF_DAY);
+				float minutes = event.endCalendar.get(Calendar.MINUTE);
+				endTimeHours += minutes / 60;
+									
+				}			
 		}
 		
-		float duration = endHour - startHour;
+		float duration = endTimeHours - startTimeHours ;
 		
 //		if event lasts less than one hour, it's resized to half of hour pane
-		if (duration == 0) duration = 0.525f;   
+		if (duration < 1) duration = 0.525f;   
 		
 		
 	
 		RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(panelWidth/divider, (int)(lineHeight * duration));	
 	
-		params.topMargin = lineHeight * startHour;
+		params.topMargin = (int) (lineHeight * startTimeHours);
 		
 		if (neighbourId != 0) {
 			params.addRule(RelativeLayout.RIGHT_OF, neighbourId);
