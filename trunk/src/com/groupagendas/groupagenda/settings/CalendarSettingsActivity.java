@@ -53,13 +53,27 @@ public class CalendarSettingsActivity extends Activity{
 		adapterDefaultview.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
 		defaultviewSpinner.setAdapter(adapterDefaultview);
 		defaultviewArray = getResources().getStringArray(R.array.agenda_views_values);
+		String dw = dm.getAccount().setting_default_view;
+		for (int i = 0; i < defaultviewArray.length; i++){
+			if (dw.equalsIgnoreCase(defaultviewArray[i])){
+				defaultviewSpinner.setSelection(i);
+				break;
+			}
+		}
+		
 		
 		dateformatSpinner = (Spinner) findViewById(R.id.dateformatSpinner);
 		ArrayAdapter<CharSequence> adapterDateformat = ArrayAdapter.createFromResource(this, R.array.date_format_values, android.R.layout.simple_spinner_item);
 		adapterDateformat.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
 		dateformatSpinner.setAdapter(adapterDateformat);
 		dateformatArray = getResources().getStringArray(R.array.date_format_values);
-		
+		String df = dm.getAccount().setting_default_view;
+		for (int i = 0; i < dateformatArray.length; i++){
+			if (df.equalsIgnoreCase(dateformatArray[i])){
+				dateformatSpinner.setSelection(i);
+				break;
+			}
+		}
 		saveButton = (Button) findViewById(R.id.save);
 		saveButton.setOnClickListener(new OnClickListener() {
 			@Override
