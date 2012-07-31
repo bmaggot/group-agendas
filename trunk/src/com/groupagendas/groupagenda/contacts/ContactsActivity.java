@@ -194,11 +194,24 @@ public class ContactsActivity extends ListActivity implements OnCheckedChangeLis
 						printAllContacts(myService);
 					} catch (ServiceException e) {
 						e.printStackTrace();
+						System.out.println("ServiceException");
+						e.getMessage();
+						e.getCause();
+						e.getInternalReason();
+						System.out.println("ServiceException");
 					} catch (IOException e) {
 						e.printStackTrace();
+						System.out.println("IOException");
+						e.getMessage();
+						e.getCause();
+						System.out.println("IOException");
 					}
 				} catch (AuthenticationException e) {
 					e.printStackTrace();
+					System.out.println("AuthenticationException");
+					e.getMessage();
+					e.getInternalReason();
+					System.out.println("AuthenticationException");
 				}
 				
 			}
