@@ -185,7 +185,7 @@ public class ContactsActivity extends ListActivity implements OnCheckedChangeLis
 				ContactsService myService = new ContactsService("<var>GA</var>");
 				
 			}
-		};
+		});
 		
 	}
 
