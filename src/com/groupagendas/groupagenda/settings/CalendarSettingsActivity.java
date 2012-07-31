@@ -47,6 +47,7 @@ public class CalendarSettingsActivity extends Activity{
 		new GetAccountFromDBTask().execute();
 		
 		am_pmToggle = (ToggleButton) findViewById(R.id.am_pm);
+		am_pmToggle.setChecked(dm.getAccount().setting_ampm != 0);
 		
 		defaultviewSpinner = (Spinner) findViewById(R.id.defaultviewSpinner);
 		ArrayAdapter<CharSequence> adapterDefaultview = ArrayAdapter.createFromResource(this, R.array.agenda_views_labels, android.R.layout.simple_spinner_item);
