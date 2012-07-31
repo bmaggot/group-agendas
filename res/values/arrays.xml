@@ -59,7 +59,7 @@
     	<item >23:00</item>
     </string-array>
     <string-array name="hour_names_am_pm">
-        <item >12 PM</item>
+        <item >12 AM</item>
         <item >1 AM</item>
         <item >2 AM</item>
         <item >3 AM</item>
@@ -71,7 +71,7 @@
     	<item >9 AM</item>
     	<item >10 AM</item>
     	<item >11 AM</item>
-    	<item >12 AM</item>
+    	<item >12 PM</item>
     	<item >1 PM</item>
         <item >2 PM</item>
         <item >3 PM</item>
