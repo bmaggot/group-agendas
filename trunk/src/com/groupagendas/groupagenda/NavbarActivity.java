@@ -398,9 +398,9 @@ public class NavbarActivity extends Activity {
 	private void switchToView() {
 		
 		if (viewState == null){
-			prefs = new Prefs(this);
-			String defaultCalendarView = prefs.getValue(AccountProvider.AMetaData.AccountMetaData.SETTING_DEFAULT_VIEW, "MONTH");
-			viewState = ViewState.getValueByString(defaultCalendarView);
+//			prefs = new Prefs(this);
+//			String defaultCalendarView = prefs.getValue(AccountProvider.AMetaData.AccountMetaData.SETTING_DEFAULT_VIEW, "MONTH");
+//			viewState = ViewState.getValueByString(defaultCalendarView);
 			
 			String dw = dm.getAccount().setting_default_view;
 			viewState = ViewState.getValueByString(dw);
