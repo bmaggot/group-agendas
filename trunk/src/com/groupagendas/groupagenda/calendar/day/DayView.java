@@ -157,7 +157,6 @@ public class DayView extends LinearLayout {
 			startTimeHours += minutes / 60;
 		} else eventFrame.setStartTime(selectedDay.getSelectedDate()); //set event start hour 0:00
 		
-		int mul = 0; // half-hour multiplier
 		if (selectedDay.getSelectedDate().get(Calendar.DAY_OF_MONTH) == event.endCalendar.get(Calendar.DAY_OF_MONTH)){
 			if (selectedDay.getSelectedDate().get(Calendar.MONTH) == event.endCalendar.get(Calendar.MONTH)){
 				endTimeHours = event.endCalendar.get(Calendar.HOUR_OF_DAY);
