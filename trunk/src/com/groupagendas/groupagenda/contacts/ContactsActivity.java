@@ -3,7 +3,6 @@ package com.groupagendas.groupagenda.contacts;
 import java.util.ArrayList;
 import java.util.TreeMap;
 
-//import android.app.Activity;
 import android.app.ListActivity;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -19,12 +18,13 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.View.OnClickListener;
 import android.view.View.OnTouchListener;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.LinearLayout.LayoutParams;
 import android.widget.ListView;
-//import android.widget.ProgressBar;
 import android.widget.RadioGroup;
 import android.widget.RadioGroup.OnCheckedChangeListener;
 import android.widget.TextView;
@@ -32,6 +32,15 @@ import android.widget.TextView;
 import com.groupagendas.groupagenda.R;
 import com.groupagendas.groupagenda.data.DataManagement;
 import com.makeramen.segmented.SegmentedRadioGroup;
+
+import com.google.gdata.client.*;
+import com.google.gdata.client.contacts.*;
+import com.google.gdata.data.*;
+import com.google.gdata.data.contacts.*;
+import com.google.gdata.data.extensions.*;
+import com.google.gdata.util.*;
+import java.io.IOException;
+import java.net.URL;
 
 public class ContactsActivity extends ListActivity implements OnCheckedChangeListener {
 
@@ -69,6 +78,8 @@ public class ContactsActivity extends ListActivity implements OnCheckedChangeLis
 
 	private ContactsAdapter cAdapter;
 	private GroupsAdapter gAdapter;
+	
+	private Button importButton;
 
 	@Override
 	public void onWindowFocusChanged(boolean hasFocus) {
@@ -165,6 +176,16 @@ public class ContactsActivity extends ListActivity implements OnCheckedChangeLis
 			setListAdapter(gAdapter);
 			dm.loadGroups(this, gAdapter);
 		}
+		
+		importButton = (Button) findViewById(R.id.import_button);
+		importButton.setOnClickListener(new OnClickListener() {
+			
+			@Override
+			public void onClick(View v) {
+				ContactsService myService = new ContactsService("<var>GA</var>");
+				
+			}
+		};
 		
 	}
 
