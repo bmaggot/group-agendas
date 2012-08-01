@@ -89,7 +89,7 @@ public class HourEventView extends RelativeLayout {
 //		CHANGE LAYOUT TO ONE LINE IF THERE IS half-hour event
 //		WARNING: START TIME NOW LOSES ITS CORRECT VALUE ;)
 		int layoutPadding;
-		startTime.add(Calendar.MINUTE, 30);
+		startTime.add(Calendar.MINUTE, 60);
 		if (startTime.before(endTime)) {
 			lp.addRule(RelativeLayout.BELOW, TIME_TEXT_ID);
 			 layoutPadding= getPixels(5);
@@ -98,7 +98,7 @@ public class HourEventView extends RelativeLayout {
 		}else {
 			lp.addRule(RelativeLayout.ALIGN_PARENT_RIGHT);
 			timeText.setTextAppearance(getContext(), R.style.dayView_hourEvent_secondColumn_timeText_small);
-			layoutPadding= getPixels(1);
+			layoutPadding= getPixels(2);
 			title.setTextAppearance(getContext(), R.style.dayView_hourEvent_secondColumn_entryText_small);
 		}
 		

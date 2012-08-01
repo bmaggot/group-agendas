@@ -27,7 +27,7 @@ public class DayInstance  {
 		private List<Event> allDayEvents; 
 		private HourEventsTimetable hourEventsTimetable;
 		private ArrayList<Event> hourEventsList;
-		private Calendar selectedDate = Calendar.getInstance(); 
+		private Calendar selectedDate; 
 		private Activity activity;
 		
 		public DayInstance(Context context, Calendar selectedDate){
@@ -116,6 +116,17 @@ public class DayInstance  {
 
 		public ArrayList<Event> getHourEvents() {
 			return hourEventsList;			
+		}
+
+
+
+
+		public boolean isToday() {
+			Calendar tmp = Calendar.getInstance();
+			return tmp.get(Calendar.ERA) == selectedDate.get(Calendar.ERA) &&
+	                tmp.get(Calendar.YEAR) == selectedDate.get(Calendar.YEAR) &&
+	                tmp.get(Calendar.DAY_OF_YEAR) == selectedDate.get(Calendar.DAY_OF_YEAR);
+		
 		}
 
 		
