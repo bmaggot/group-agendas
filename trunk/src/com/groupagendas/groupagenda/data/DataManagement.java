@@ -2241,6 +2241,13 @@ public class DataManagement {
 		}
 		return tm;
 	}
+	
+	public void putEventIntoTreeMap(Event event){
+		Calendar event_start = Utils.stringToCalendar(event.my_time_start, event.timezone, Utils.date_format);
+		String dayStr = new SimpleDateFormat("yyyy-MM-dd").format(event_start.getTime());
+		Calendar event_day = Utils.stringToCalendar(dayStr + " 00:00:00", Utils.date_format);
+		Data.setSortedEvents(putValueIntoTreeMap(Data.getSortedEvents(), event_day, event));
+	}
 
 	public ArrayList<Event> getEventsFromLocalDb() {
 		Event item;
