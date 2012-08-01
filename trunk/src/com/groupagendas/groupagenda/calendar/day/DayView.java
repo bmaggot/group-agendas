@@ -44,7 +44,7 @@ public class DayView extends LinearLayout {
 	String[] MonthNames;
 	String[] HourNames;
 	
-	private final int hourLineHeightDP = 40;
+	private final int hourLineHeightDP = 24;
 
 	private HourEventsPanel hourEventsPanel;
 	private ListView allDayEventsPanel;
@@ -72,14 +72,15 @@ public class DayView extends LinearLayout {
 			HourNames = getResources().getStringArray(R.array.hour_names);
 		}
 		
-		selectedDay = new DayInstance(context);
+		selectedDay = null; 
 		allDayEventAdapter = new AllDayEventsAdapter(getContext(), new ArrayList<Event>());
 		
 
 	}
 
 
-	public void init() {
+	public void init(Calendar selectedDate) {
+		this.selectedDay = new DayInstance(getContext(), selectedDate);
 		setupViewItems();
 		drawHourList();
 		updateEventLists();
@@ -92,7 +93,8 @@ public class DayView extends LinearLayout {
 		scrollPanel.post(new Runnable() {
 		    @Override
 		    public void run() {
-		        scrollPanel.scrollTo(0, (int) (hour * Math.round(hourLineHeightDP * densityFactor)));
+		    	int y = (int) (hour * Math.round(hourLineHeightDP * densityFactor));
+		        scrollPanel.scrollTo(0, y);
 		    } 
 		});
 
@@ -170,8 +172,8 @@ public class DayView extends LinearLayout {
 		
 		float duration = endTimeHours - startTimeHours ;
 		
-//		if event lasts less than one hour, it's resized to half of hour pane
-		if (duration < 1) duration = 0.525f;   
+//		if event lasts less than one hour, it's resized to half of hour pane to make text visible at all :)
+		if (duration < 1) duration = 1.0f;   
 		
 		
 	
