@@ -30,11 +30,9 @@ public class DayInstance  {
 		private Calendar selectedDate = Calendar.getInstance(); 
 		private Activity activity;
 		
-		public DayInstance(Context context){
+		public DayInstance(Context context, Calendar selectedDate){
 			activity = (Activity) context;
-			String dayStr = new SimpleDateFormat("yyyy-MM-dd").format(selectedDate.getTime());
-			selectedDate = Utils.stringToCalendar(dayStr + " 00:00:00", Utils.date_format);
-			selectedDate.setFirstDayOfWeek(Data.DEFAULT_FIRST_WEEK_DAY);
+			this.selectedDate = selectedDate;
 			updateEventLists();
 		}
 		
@@ -50,10 +48,12 @@ public class DayInstance  {
 			if (events != null){
 				for (Event e : events){
 					if (allDay(e)){
+						System.out.println(e.title + ": all day");
 						allDayEvents.add(e); //if event is all day then add to all day list
 					}
-					else {
-						hourEventsList.add(e);//else add event to hour events lists for every hour							
+					else {//else add event to hour events lists for every hour
+						System.out.println(e.title + ": hour");
+						hourEventsList.add(e);							
 						}
 					 
 					}
