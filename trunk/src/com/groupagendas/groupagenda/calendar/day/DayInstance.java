@@ -50,12 +50,10 @@ public class DayInstance  {
 			if (events != null){
 				for (Event e : events){
 					if (allDay(e)){
-						System.out.println(e.title + ": all day");
 						allDayEvents.add(e); //if event is all day then add to all day list
 					}
-					else {//else add event to hour events lists for every hour
-						System.out.println(e.title + ": hour");
-						hourEventsList.add(e);							
+					else {
+						hourEventsList.add(e);//else add event to hour events lists for every hour							
 						}
 					 
 					}

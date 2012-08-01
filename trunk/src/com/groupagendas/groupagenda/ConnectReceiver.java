@@ -37,11 +37,9 @@ public class ConnectReceiver extends BroadcastReceiver {
 			} else {
 				
 			}
-//			Intent serviceIntent = new Intent();
-//			serviceIntent.setAction("com.groupagendas.groupagenda.UpdateService");
-//			context.startService(serviceIntent);
 		} else {
 			DataManagement.networkAvailable = false;
+			Log.i("app","No connection to network!");
 		}
 		
 	}
