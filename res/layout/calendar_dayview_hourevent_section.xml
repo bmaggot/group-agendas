@@ -9,7 +9,7 @@
 
 		<LinearLayout android:id="@+id/hour_list"
 			android:cacheColorHint="@android:color/transparent"
-			android:layout_height="576dp"
+			android:layout_height="560dp"
 			android:layout_width="0dip"
 			android:layout_weight="1"
 			android:orientation="vertical">
@@ -22,7 +22,7 @@
 		<!-- SCREEN SECTION SEPARATOR -->
 			
 		<com.groupagendas.groupagenda.calendar.day.HourEventsPanel android:id="@+id/hour_events"
-	        android:layout_height="576dp"
+	        android:layout_height="560dp"
 	        android:layout_width="0dip"
 	        android:layout_weight="9"
 	        android:background="@drawable/calendar_dayview_secondcolumn_background">
