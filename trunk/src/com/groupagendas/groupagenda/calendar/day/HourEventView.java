@@ -42,8 +42,7 @@ public class HourEventView extends RelativeLayout {
 		this.usesAMPM = usesAMPM;
 		
 		RelativeLayout.LayoutParams lp = (LayoutParams) this.getLayoutParams();
-		int layoutPadding = getPixels(5);
-		this.setPadding(layoutPadding, layoutPadding, layoutPadding, layoutPadding);
+		
 		View titleHolder = LayoutInflater.from(context).inflate(R.layout.calendar_dayview_hour_event_icontitle_holder, null);
 		GradientDrawable sd = (GradientDrawable)context.getResources().getDrawable(R.drawable.calendar_dayview_secondcolumn_entrybackground);
 		this.event = e;
@@ -73,7 +72,7 @@ public class HourEventView extends RelativeLayout {
 //		Set event TITLE
 		title = (TextView) titleHolder.findViewById(R.id.hour_event_title);
 		title.setText(e.title);
-		title.setTextAppearance(getContext(), R.style.dayView_hourEvent_secondColumn_entryText); // Va cia prasides ledas.
+	
 		
 		
 //		set event ICON
@@ -89,14 +88,22 @@ public class HourEventView extends RelativeLayout {
 		
 //		CHANGE LAYOUT TO ONE LINE IF THERE IS half-hour event
 //		WARNING: START TIME NOW LOSES ITS CORRECT VALUE ;)
+		int layoutPadding;
 		startTime.add(Calendar.MINUTE, 30);
 		if (startTime.before(endTime)) {
 			lp.addRule(RelativeLayout.BELOW, TIME_TEXT_ID);
+			 layoutPadding= getPixels(5);
+			 title.setTextAppearance(getContext(), R.style.dayView_hourEvent_secondColumn_entryText);
+			
 		}else {
 			lp.addRule(RelativeLayout.ALIGN_PARENT_RIGHT);
+			timeText.setTextAppearance(getContext(), R.style.dayView_hourEvent_secondColumn_timeText_small);
+			layoutPadding= getPixels(1);
+			title.setTextAppearance(getContext(), R.style.dayView_hourEvent_secondColumn_entryText_small);
 		}
 		
 		this.addView(titleHolder, lp);
+		this.setPadding(layoutPadding, layoutPadding, layoutPadding, layoutPadding);
 		
 //		SET SHAPE AND COLOR
 		if (!e.color.equalsIgnoreCase("null")){
@@ -123,6 +130,8 @@ public class HourEventView extends RelativeLayout {
 			}
 		});
 	}
+	
+	
 
 	public void setDimensionsDIP (int widthDIP, int heightDIP){
 		this.setLayoutParams(new LayoutParams(getPixels(widthDIP), getPixels(heightDIP)));
@@ -144,6 +153,7 @@ public class HourEventView extends RelativeLayout {
 		SimpleDateFormat df = new SimpleDateFormat(getContext().getString(R.string.hour_event_view_time_format));
 		timeText.setText(df.format(startTime.getTime()));
 	}
+
 
 	
 }

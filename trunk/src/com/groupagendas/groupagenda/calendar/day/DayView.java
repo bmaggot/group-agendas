@@ -159,7 +159,7 @@ public class DayView extends LinearLayout {
 			startTimeHours = event.startCalendar.get(Calendar.HOUR_OF_DAY);
 			float minutes = event.startCalendar.get(Calendar.MINUTE);
 			startTimeHours += minutes / 60;
-		} else eventFrame.setStartTime(selectedDay.getSelectedDate()); //set event start hour 0:00
+		} else eventFrame.setStartTime(selectedDay.getSelectedDate()); //set event start hour 0:00 to show
 		
 		if (selectedDay.getSelectedDate().get(Calendar.DAY_OF_MONTH) == event.endCalendar.get(Calendar.DAY_OF_MONTH)){
 			if (selectedDay.getSelectedDate().get(Calendar.MONTH) == event.endCalendar.get(Calendar.MONTH)){
@@ -173,8 +173,7 @@ public class DayView extends LinearLayout {
 		float duration = endTimeHours - startTimeHours ;
 		
 //		if event lasts less than one hour, it's resized to half of hour pane to make text visible at all :)
-		if (duration < 1) duration = 1.0f;   
-		
+		if (duration < 1) duration = 0.525f;   
 		
 	
 		RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(panelWidth/divider, (int)(lineHeight * duration));	
