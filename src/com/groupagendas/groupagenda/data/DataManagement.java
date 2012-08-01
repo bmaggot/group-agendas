@@ -478,7 +478,7 @@ public class DataManagement {
 			u.modified = result.getString(result.getColumnIndex(AccountProvider.AMetaData.AccountMetaData.MODIFIED));
 		}
 		result.close();
-
+		Data.setAccount(u);
 		return u;
 	}
 
@@ -635,7 +635,7 @@ public class DataManagement {
 					if (resp != null) {
 						JSONObject object = new JSONObject(resp);
 						success = object.getBoolean("success");
-						Log.e("resp", resp);
+						Log.i("response", resp);
 						if (success == true) {
 							token = object.getString("token");
 							JSONObject profile = object.getJSONObject("profile");
@@ -700,21 +700,14 @@ public class DataManagement {
 				Log.e("login2", Data.getERROR() + "!!!");
 			}
 		} else {
-//			if(Data.getEmail().equals(email) && Data.getPassword().equals(password)){
-//				success = true;
-//				Data.needToClearData = false;
-//				System.out.println("No network!!!");
-//			}
+			if(Data.getEmail().equals(email) && Data.getPassword().equals(password)){
+				success = true;
+				Data.setLogged(true);
+				Data.needToClearData = false;
+			}
 		}
 		return success;
 	}
-	
-//	private boolean isNetworkAvailable() {
-//	    ConnectivityManager connectivityManager 
-//	          = (ConnectivityManager) Data.getmContext().getSystemService(Context.CONNECTIVITY_SERVICE);
-//	    NetworkInfo activeNetworkInfo = connectivityManager.getActiveNetworkInfo();
-//	    return activeNetworkInfo != null;
-//	}
 
 	public void registerPhone() {
 		try {
