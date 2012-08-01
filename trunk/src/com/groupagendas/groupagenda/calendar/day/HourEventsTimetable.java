@@ -88,4 +88,8 @@ public class HourEventsTimetable {
 		if (index > 0) return hourEvents.get(index -1).event_id;  
 		else return 0;
 	}
+
+	public boolean hasEvents(int hour) {
+		return eventsTimetable[hour]!=null;
+	}
 }

@@ -44,7 +44,7 @@ public class DayView extends LinearLayout {
 	String[] MonthNames;
 	String[] HourNames;
 	
-	private final int hourLineHeightDP = 24;
+	private final int hourLineHeightDP = 23;
 
 	private HourEventsPanel hourEventsPanel;
 	private ListView allDayEventsPanel;
@@ -84,11 +84,20 @@ public class DayView extends LinearLayout {
 		setupViewItems();
 		drawHourList();
 		updateEventLists();
-		scrollHourPanelto(DEFAULT_TIME_TO_SCROLL);
+		scrollHourPanel();
 		
 	}
 
-	private void scrollHourPanelto(final float hour) {
+	private void scrollHourPanel() {
+		final float hour;
+		
+		if (selectedDay.isToday()){
+			Calendar tmp = Calendar.getInstance();
+			hour = tmp.get(Calendar.HOUR_OF_DAY) + tmp.get(Calendar.MINUTE)/60.0f;
+		}else{
+			hour = DEFAULT_TIME_TO_SCROLL;
+		}
+		
 		final ScrollView scrollPanel = (ScrollView)this.findViewById(R.id.calendar_day_view_hour_events_scroll);
 		scrollPanel.post(new Runnable() {
 		    @Override
@@ -122,9 +131,9 @@ public class DayView extends LinearLayout {
 	}
 
 	public void drawHourEvents() {
-	
+//	todo add new event when clicked on empty space
 		hourEventsPanel.removeAllViews();
-	 
+		System.out.println("HOUR EVENTS DRAW");
 		if (selectedDay.hasHourEvents()){
 			ArrayList<Event> hourEventsList = selectedDay.getHourEvents();
 			HourEventsTimetable hourEventsTimetable = selectedDay.getHourEventsTimeTable();
@@ -135,8 +144,16 @@ public class DayView extends LinearLayout {
 				int divider = hourEventsTimetable.getWidthDivider(e);
 				drawEvent(e, divider, neighbourId);
 			}
+		
 		}
+		
 			
+	}
+
+	private void addListenerForEmptyHour(int hour) {
+//		TODO
+		System.out.println("add listener for hour " + hour);
+		
 	}
 
 	private void drawEvent(final Event event, int divider, int neighbourId) {
@@ -173,7 +190,7 @@ public class DayView extends LinearLayout {
 		float duration = endTimeHours - startTimeHours ;
 		
 //		if event lasts less than one hour, it's resized to half of hour pane to make text visible at all :)
-		if (duration < 1) duration = 0.525f;   
+		if (duration <= 0.5f) duration = 0.55f;   
 		
 	
 		RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(panelWidth/divider, (int)(lineHeight * duration));	
