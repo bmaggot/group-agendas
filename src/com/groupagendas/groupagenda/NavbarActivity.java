@@ -1,6 +1,8 @@
 package com.groupagendas.groupagenda;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
@@ -63,6 +65,8 @@ public class NavbarActivity extends Activity {
 	private ActionItem agenda;
 	private ActionItem mini_month;
 	private ActionItem today;
+	
+	private Calendar selectedDate = null;
 
 	static final int PROGRESS_DIALOG = 0;
 	// private ProgressThread progressThread;
@@ -82,7 +86,7 @@ public class NavbarActivity extends Activity {
 	public static boolean showInvites = false;
 
 	private class LoadViewTask extends AsyncTask<Void, Integer, Void> {
-		// Before running code in separate thread
+	
 		@Override
 		protected void onPreExecute() {
 			setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_NOSENSOR);
@@ -110,16 +114,10 @@ public class NavbarActivity extends Activity {
 		// The code to be executed in a background thread.
 		@Override
 		protected Void doInBackground(Void... params) {
-			/*
-			 * This is just a code that delays the thread execution 4 times,
-			 * during 850 milliseconds and updates the current progress. This is
-			 * where the code that is going to be executed on a background
-			 * thread must be placed.
-			 */
-
-			// Get the current thread's token
+		
+	
 			synchronized (this) {
-				// Initialize an integer (that will act as a counter) to zero
+				
 				int total = 0;
 				System.out.println("PHASE: " + loadPhase);
 
@@ -191,22 +189,28 @@ public class NavbarActivity extends Activity {
 		@Override
 		protected void onPostExecute(Void result) {
 
-			// close the progress dialog
 			progressDialog.dismiss();
 			dataLoaded = true;
 			switchToView();
 			setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_SENSOR);
-			// initialize the View
-			// setContentView(R.layout.actnavbar);
 		}
 	}
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+		
 		dm = DataManagement.getInstance(this);
+		
 		setContentView(R.layout.actnavbar);
+		if (savedInstanceState == null){     //if no selectedDate will be restored we create today's date
+			String dayStr = new SimpleDateFormat("yyyy-MM-dd").format(Calendar.getInstance().getTime());
+			selectedDate = Utils.stringToCalendar(dayStr + " 00:00:00", Utils.date_format);
+			selectedDate.setFirstDayOfWeek(Data.DEFAULT_FIRST_WEEK_DAY);
+		}
+		
 		restoreMe(savedInstanceState);
+		
 		if (!dataLoaded && (progressDialog == null)) {
 
 			new LoadViewTask().execute();
@@ -353,38 +357,29 @@ public class NavbarActivity extends Activity {
 	}
 
 	@Override
-	protected void onSaveInstanceState(Bundle outState) {
-		super.onSaveInstanceState(outState);
-		outState.putBoolean("isDataLoaded", dataLoaded);
-		outState.putString("loadPhase", Integer.toString(loadPhase));
-		outState.putString("viewState", "" + viewState);
-	}
-
-	private void restoreMe(Bundle state) {
-
-		if (state != null) {
-			dataLoaded = state.getBoolean("isDataLoaded");
-			loadPhase = state.getInt("loadPhase");
-			viewState = ViewState.getValueByString(state.getString("viewState"));
-
-		}
-	}
-
-	// @Override
-	// public void onDestroy(){
-	// super.onDestroy();
-	//
-	// System.out.println("destroy");
-	// }
+	  protected void onSaveInstanceState(Bundle outState) {
+	    super.onSaveInstanceState(outState);
+	     outState.putBoolean("isDataLoaded", dataLoaded);
+	     outState.putString("loadPhase", Integer.toString(loadPhase));
+	     outState.putString("viewState", "" + viewState);
+	     String dateStr = new SimpleDateFormat(Utils.date_format).format(selectedDate.getTime());			
+	     outState.putString("selectedDate", dateStr);
+	  }
+	
+	 private void restoreMe(Bundle state) {
+		    
+		    if (state!=null) {
+		      dataLoaded = state.getBoolean("isDataLoaded");
+		      loadPhase = state.getInt("loadPhase");
+		      viewState = ViewState.getValueByString(state.getString("viewState"));
+		      selectedDate = Utils.stringToCalendar(state.getString("selectedDate"), Utils.date_format);
+		      selectedDate.setFirstDayOfWeek(Data.DEFAULT_FIRST_WEEK_DAY);  
+		    }
+		  }
 
 	private void switchToView() {
 
 		if (viewState == null) {
-			// prefs = new Prefs(this);
-			// String defaultCalendarView =
-			// prefs.getValue(AccountProvider.AMetaData.AccountMetaData.SETTING_DEFAULT_VIEW,
-			// "MONTH");
-			// viewState = ViewState.getValueByString(defaultCalendarView);
 			if (dm.getAccount() != null) {
 				String dw = dm.getAccount().setting_default_view;
 				viewState = ViewState.getValueByString(dw);
@@ -467,7 +462,7 @@ public class NavbarActivity extends Activity {
 		calendarContainer.removeAllViews();
 		mInflater.inflate(R.layout.calendar_day, calendarContainer);
 		DayView view = (DayView) calendarContainer.getChildAt(0);
-		view.init();
+		view.init(selectedDate);
 
 	}
 
@@ -570,42 +565,7 @@ public class NavbarActivity extends Activity {
 		}
 	};
 
-	// protected Dialog onCreateDialog(int id) {
-	// switch(id) {
-	// case PROGRESS_DIALOG:
-	// progressDialog = new ProgressDialog(NavbarActivity.this);
-	// progressDialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
-	// progressDialog.setMessage(getString(R.string.loading_data));
-	// progressDialog.setCancelable(false);
-	// return progressDialog;
-	// default:
-	// return null;
-	// }
-	// }
-
-	// @Override
-	// protected void onPrepareDialog(int id, Dialog dialog) {
-	// switch(id) {
-	// case PROGRESS_DIALOG:
-	// progressDialog.setProgress(0);
-	// progressThread = new ProgressThread(handler);
-	// progressThread.start();
-	// }
-	// }
-	//
-
-	// Define the Handler that receives messages from the thread and update the
-	// progress
-	// final Handler handler = new Handler() {
-	// public void handleMessage(Message msg) {
-	// int total = msg.arg1;
-	// progressDialog.setProgress(total);
-	//
-	//
-	// }
-	// }
-	// };
-
+	
 	/** Nested class that performs progress calculations (counting) */
 	// private class ProgressThread extends Thread {
 	// Handler mHandler;
