@@ -449,6 +449,7 @@ public class NewEventActivity extends Activity {
 				}
 
 				getContentResolver().insert(EventsProvider.EMetaData.EventsMetaData.CONTENT_URI, cv);
+				dm.putEventIntoTreeMap(event);
 			}
 
 			return check;
