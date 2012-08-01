@@ -1,13 +1,25 @@
 package com.groupagendas.groupagenda;
 
+import java.util.ArrayList;
+
+import org.apache.http.HttpResponse;
+import org.apache.http.HttpStatus;
+import org.apache.http.client.HttpClient;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.util.EntityUtils;
+import org.json.JSONObject;
+
 import com.groupagendas.groupagenda.data.Data;
 import com.groupagendas.groupagenda.data.DataManagement;
+import com.groupagendas.groupagenda.data.OfflineData;
 
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
+import android.os.AsyncTask;
 import android.util.Log;
 
 public class ConnectReceiver extends BroadcastReceiver {
@@ -29,7 +41,7 @@ public class ConnectReceiver extends BroadcastReceiver {
 			boolean success = false;
 			
 			if (DataManagement.networkAvailable && (Data.getUnuploadedData().size() > 0)) {
-				success = DataManagement.executeOfflineChanges(Data.getUnuploadedData());
+				new ExecuteOfflineChanges().execute(Data.getUnuploadedData());
 			}
 			
 			if (success) {
@@ -42,5 +54,57 @@ public class ConnectReceiver extends BroadcastReceiver {
 			Log.i("app","No connection to network!");
 		}
 		
+	}
+
+	private class ExecuteOfflineChanges extends AsyncTask<ArrayList<OfflineData>, Void, Boolean> {
+
+		@Override
+		protected Boolean doInBackground (ArrayList<OfflineData>... params) {
+			ArrayList<OfflineData> requests = params[0];
+			boolean success = false;
+			HttpClient hc = new DefaultHttpClient();
+			
+			try {
+				for (OfflineData request : requests) {
+					HttpPost post = new HttpPost(Data.getServerUrl() + request.getLocation());
+					post.setEntity(request.getRequest());
+					if (DataManagement.networkAvailable) {
+						HttpResponse rp = hc.execute(post);
+						
+						if (rp.getStatusLine().getStatusCode() == HttpStatus.SC_OK) {
+							String resp = EntityUtils.toString(rp.getEntity());
+							if (resp != null) {
+								JSONObject object = new JSONObject(resp);
+								success = object.getBoolean("success");
+			
+								if (success == false) {
+									Log.e("Create event error", object.getJSONObject("error").getString("reason"));
+								}
+							}
+						} else {
+							Log.e("createEvent - status", rp.getStatusLine().getStatusCode() + "");
+						}
+					}
+				}
+				if (success == true) {
+					Data.setUnuploadedData(new ArrayList<OfflineData>());
+				}
+			} catch (Exception ex) {
+				Log.e("createEvent ex", ex.getMessage() + "!!!");
+			}
+//			this.success = success;
+			return success;
+		}
+
+		@Override
+		protected void onPostExecute (Boolean success) {
+			if (success) {
+				Data.setUnuploadedData(new ArrayList<OfflineData>());
+			}
+		}
+		
+        @Override
+        protected void onProgressUpdate(Void... values) {
+        }
 	}
 }

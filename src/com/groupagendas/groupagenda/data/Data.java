@@ -178,7 +178,7 @@ public class Data {
 	protected static void setTimezone(String timezone) {
 		Data.timezone = timezone;
 	}
-	protected static String getServerUrl() {
+	public static String getServerUrl() {
 		return serverUrl;
 	}
 	protected static void setServerUrl(String serverUrl) {
