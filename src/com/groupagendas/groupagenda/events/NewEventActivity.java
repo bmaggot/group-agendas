@@ -37,6 +37,7 @@ import com.groupagendas.groupagenda.timezone.TimezoneManager;
 import com.groupagendas.groupagenda.utils.CountryManager;
 import com.groupagendas.groupagenda.utils.DateTimeUtils;
 import com.groupagendas.groupagenda.utils.Prefs;
+import com.groupagendas.groupagenda.utils.Utils;
 import com.ptashek.widgets.datetimepicker.DateTimePicker;
 
 public class NewEventActivity extends Activity {
@@ -134,7 +135,6 @@ public class NewEventActivity extends Activity {
 				gridview.setOnItemClickListener(new OnItemClickListener() {
 					public void onItemClick(AdapterView<?> parent, View v, int position, long id) {
 						if(iconsValues[position].equals("noicon")){
-							event.icon = "";
 							iconView.setImageDrawable(getResources().getDrawable(R.drawable.no_icon));
 						}else{
 							event.icon = iconsValues[position];
@@ -394,18 +394,23 @@ public class NewEventActivity extends Activity {
 			temp = typeArray[typeSpinner.getSelectedItemPosition()];
 			event.type = temp;
 			cv.put(EventsProvider.EMetaData.EventsMetaData.TYPE, temp);
-
-			if(!event.my_time_start.equals(event.my_time_end)){
-				event.my_time_start = dtUtils.formatDateTimeToDefault(startCalendar.getTime());
-				cv.put(EventsProvider.EMetaData.EventsMetaData.MY_TIME_START, event.my_time_start);
+			
+			event.startCalendar = startCalendar;
+			event.endCalendar = endCalendar;
+//			TODO SET CALENDAR TIMEZONE to local time!!!!!!!
+			
+			if(startCalendar.getTimeInMillis() != endCalendar.getTimeInMillis()){	
 				
+				event.my_time_start = dtUtils.formatDateTimeToDefault(startCalendar.getTime());
 				event.my_time_end = dtUtils.formatDateTimeToDefault(endCalendar.getTime());
+				cv.put(EventsProvider.EMetaData.EventsMetaData.MY_TIME_START, event.my_time_start);
 				cv.put(EventsProvider.EMetaData.EventsMetaData.MY_TIME_END, event.my_time_end);
 			} else {
 				check = false;
 				errorStr = getString(R.string.start_equals_end);
 			}
-
+			event.endCalendar = Utils.stringToCalendar(event.my_time_end, Utils.date_format); 
+			
 			event.country = countryArray[countrySpinner.getSelectedItemPosition()];
 			cv.put(EventsProvider.EMetaData.EventsMetaData.COUNTRY, event.country);
 
