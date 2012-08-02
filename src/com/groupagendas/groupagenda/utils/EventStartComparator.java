@@ -9,8 +9,8 @@ public class EventStartComparator implements Comparator<Event> {
 
 	@Override
 	public int compare(Event event1, Event event2) {
-		Calendar start1 = Utils.stringToCalendar(event1.time_start, Utils.date_format);
-		Calendar start2 = Utils.stringToCalendar(event2.time_start, Utils.date_format);
+		Calendar start1 = Utils.stringToCalendar(event1.my_time_start, Utils.date_format);
+		Calendar start2 = Utils.stringToCalendar(event2.my_time_start, Utils.date_format);
 		
 		
 		return (start1.before(start2) ? -1 : (start2.before(start1) ? 1 : 0));
