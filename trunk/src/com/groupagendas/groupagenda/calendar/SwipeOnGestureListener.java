@@ -24,10 +24,10 @@ public class SwipeOnGestureListener extends SimpleOnGestureListener {
 	    return false;
 	   if (e1.getX() - e2.getX() > SWIPE_MIN_DISTANCE
 	     && Math.abs(velocityX) > SWIPE_THRESHOLD_VELOCITY) {
-		   parentView.goPrev();
+		   parentView.goNext();
 	   } else if (e2.getX() - e1.getX() > SWIPE_MIN_DISTANCE
 	     && Math.abs(velocityX) > SWIPE_THRESHOLD_VELOCITY) {
-		   parentView.goNext();
+		   parentView.goPrev();
 	   }
 	   return super.onFling(e1, e2, velocityX, velocityY);
 	  }
