@@ -1,6 +1,5 @@
 package com.groupagendas.groupagenda.calendar;
 
-import com.groupagendas.groupagenda.calendar.day.SwipeOnGestureListener;
 
 import android.content.Context;
 import android.util.AttributeSet;

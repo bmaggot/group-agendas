@@ -1,6 +1,5 @@
-package com.groupagendas.groupagenda.calendar.day;
+package com.groupagendas.groupagenda.calendar;
 
-import com.groupagendas.groupagenda.calendar.AbstractCalendarView;
 
 import android.view.GestureDetector.SimpleOnGestureListener;
 import android.view.MotionEvent;
