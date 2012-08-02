@@ -2,6 +2,7 @@ package com.groupagendas.groupagenda.events;
 
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.TimeZone;
 
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -29,6 +30,7 @@ import android.widget.RelativeLayout;
 import android.widget.Spinner;
 
 import com.groupagendas.groupagenda.R;
+import com.groupagendas.groupagenda.account.Account;
 import com.groupagendas.groupagenda.contacts.Contact;
 import com.groupagendas.groupagenda.data.DataManagement;
 import com.groupagendas.groupagenda.settings.AutoColorItem;
@@ -340,6 +342,7 @@ public class NewEventActivity extends Activity {
 
 	};
 	
+	
 	public void saveEvent(View v) {
 		new NewEventTask().execute();
 	}
@@ -398,6 +401,9 @@ public class NewEventActivity extends Activity {
 			event.startCalendar = startCalendar;
 			event.endCalendar = endCalendar;
 //			TODO SET CALENDAR TIMEZONE to local time!!!!!!!
+//			Account user = dm.getAccount();
+//			System.out.println("is kompo: "+ TimeZone.getTimeZone("UTC"));
+//			System.out.println("timezone " + user.timezone);
 			
 			if(startCalendar.getTimeInMillis() != endCalendar.getTimeInMillis()){	
 				
