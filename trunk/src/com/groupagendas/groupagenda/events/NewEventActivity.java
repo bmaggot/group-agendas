@@ -395,11 +395,16 @@ public class NewEventActivity extends Activity {
 			event.type = temp;
 			cv.put(EventsProvider.EMetaData.EventsMetaData.TYPE, temp);
 
-			event.my_time_start = dtUtils.formatDateTimeToDefault(startCalendar.getTime());
-			cv.put(EventsProvider.EMetaData.EventsMetaData.MY_TIME_START, event.my_time_start);
-			
-			event.my_time_end = dtUtils.formatDateTimeToDefault(endCalendar.getTime());
-			cv.put(EventsProvider.EMetaData.EventsMetaData.MY_TIME_END, event.my_time_end);
+			if(!event.my_time_start.equals(event.my_time_end)){
+				event.my_time_start = dtUtils.formatDateTimeToDefault(startCalendar.getTime());
+				cv.put(EventsProvider.EMetaData.EventsMetaData.MY_TIME_START, event.my_time_start);
+				
+				event.my_time_end = dtUtils.formatDateTimeToDefault(endCalendar.getTime());
+				cv.put(EventsProvider.EMetaData.EventsMetaData.MY_TIME_END, event.my_time_end);
+			} else {
+				check = false;
+				errorStr = getString(R.string.start_equals_end);
+			}
 
 			event.country = countryArray[countrySpinner.getSelectedItemPosition()];
 			cv.put(EventsProvider.EMetaData.EventsMetaData.COUNTRY, event.country);
