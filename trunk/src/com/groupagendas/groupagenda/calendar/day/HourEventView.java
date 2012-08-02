@@ -77,13 +77,15 @@ public class HourEventView extends RelativeLayout {
 		
 //		set event ICON
 		icon = (ImageView) titleHolder.findViewById(R.id.hour_event_icon);
-		if (e.icon.equalsIgnoreCase("null")){
-			icon.setVisibility(GONE);
-		}else{
-			int imgID = getResources().getIdentifier(e.icon, "drawable", getContext().getPackageName());
-			
-			icon.setImageResource(imgID);
-		}
+		if(e.icon == null) e.icon = "null";
+		
+		 if (e.icon.equalsIgnoreCase("null")){
+				icon.setVisibility(GONE);
+			}else{
+				int imgID = getResources().getIdentifier(e.icon, "drawable", getContext().getPackageName());
+				
+				icon.setImageResource(imgID);
+			}
 		
 		
 //		CHANGE LAYOUT TO ONE LINE IF THERE IS half-hour event
@@ -106,6 +108,8 @@ public class HourEventView extends RelativeLayout {
 		this.setPadding(layoutPadding, layoutPadding, layoutPadding, layoutPadding);
 		
 //		SET SHAPE AND COLOR
+		if (e.color == null) e.color = "null";
+		
 		if (!e.color.equalsIgnoreCase("null")){
 			sd.setColor(Color.parseColor("#BF" + e.color));
 			sd.setStroke(1, Color.parseColor("#" + e.color));
