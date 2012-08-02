@@ -10,6 +10,7 @@ import android.view.GestureDetector;
 import android.view.MotionEvent;
 import android.view.TouchDelegate;
 import android.view.View;
+import android.view.View.OnTouchListener;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.ListView;
@@ -103,6 +104,10 @@ public class DayView extends AbstractCalendarView {
 		}
 		
 		final ScrollView scrollPanel = (ScrollView)this.findViewById(R.id.calendar_day_view_hour_events_scroll);
+		scrollPanel.setOnTouchListener(null);
+		
+		
+		
 		scrollPanel.post(new Runnable() {
 		    @Override
 		    public void run() {
@@ -239,6 +244,17 @@ public class DayView extends AbstractCalendarView {
 		nextDayButtonBounds = new Rect();
 
 		hourEventsPanel = (HourEventsPanel) findViewById(R.id.hour_events);
+		hourEventsPanel.setSwipeGestureDetector(new GestureDetector(new HourEventsPanelMotionListener(this)));
+		hourEventsPanel.setOnTouchListener(new OnTouchListener() {
+			@Override
+			public boolean onTouch(View v, MotionEvent event) {
+				if (hourEventsPanel.getSwipeGestureDetector().onTouchEvent(event)) {
+				     return false;
+				    } else {
+				     return true;
+				    }
+			}
+		});
 
 		allDayEventsPanel = (ListView) findViewById(R.id.allday_events);
 		allDayEventsPanel.setAdapter(allDayEventAdapter);

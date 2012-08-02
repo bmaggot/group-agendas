@@ -1,14 +1,19 @@
 package com.groupagendas.groupagenda.calendar;
 
 
+import com.groupagendas.groupagenda.NavbarActivity;
+import com.groupagendas.groupagenda.events.NewEventActivity;
+
+import android.app.Activity;
+import android.content.Intent;
 import android.view.GestureDetector.SimpleOnGestureListener;
 import android.view.MotionEvent;
 
 public class SwipeOnGestureListener extends SimpleOnGestureListener {
 
-	  private static final int SWIPE_MIN_DISTANCE = 100;
-	  private static final int SWIPE_MAX_OFF_PATH = 250;
-	  private static final int SWIPE_THRESHOLD_VELOCITY = 200;
+	  private static final int SWIPE_MIN_DISTANCE = 20;
+	  private static final int SWIPE_MAX_OFF_PATH = 500;
+	  private static final int SWIPE_THRESHOLD_VELOCITY = 50;
 	  
 	  AbstractCalendarView parentView;
 	  
@@ -16,9 +21,15 @@ public class SwipeOnGestureListener extends SimpleOnGestureListener {
 		  parentView = parent;
 	  }
 	  
-
-	  public boolean onFling(MotionEvent e1, MotionEvent e2, float velocityX, float velocityY) {
+	  public boolean onSingleTapUp(MotionEvent e){
+		  Activity navbar = (Activity)(parentView.getContext());
+		  Intent intent = new Intent(navbar, NewEventActivity.class);
+		  navbar.startActivity(intent);
+		return true;
 		  
+	  }
+
+	  public boolean onFling(MotionEvent e1, MotionEvent e2, float velocityX, float velocityY) {  
 	   System.out.println(" in onFling() :: ");
 	   if (Math.abs(e1.getY() - e2.getY()) > SWIPE_MAX_OFF_PATH)
 	    return false;
