@@ -6,6 +6,8 @@ import android.app.Activity;
 import android.content.Context;
 import android.graphics.Rect;
 import android.util.AttributeSet;
+import android.view.GestureDetector;
+import android.view.MotionEvent;
 import android.view.TouchDelegate;
 import android.view.View;
 import android.widget.ImageButton;
@@ -18,12 +20,13 @@ import android.widget.TextView;
 import com.groupagendas.groupagenda.R;
 
 import com.groupagendas.groupagenda.account.AccountProvider;
+import com.groupagendas.groupagenda.calendar.AbstractCalendarView;
 import com.groupagendas.groupagenda.calendar.adapters.AllDayEventsAdapter;
 import com.groupagendas.groupagenda.data.DataManagement;
 import com.groupagendas.groupagenda.events.Event;
 import com.groupagendas.groupagenda.utils.Prefs;
 
-public class DayView extends LinearLayout {
+public class DayView extends AbstractCalendarView {
 	
 	private static final float DEFAULT_TIME_TO_SCROLL = 7.5f;
 
@@ -51,6 +54,7 @@ public class DayView extends LinearLayout {
 	private LinearLayout hourList;
 	private float densityFactor = getResources().getDisplayMetrics().density;
 	private AllDayEventsAdapter allDayEventAdapter;
+	
 
 	public DayView(Context context) {
 		this(context, null);
@@ -74,13 +78,13 @@ public class DayView extends LinearLayout {
 		
 		selectedDay = null; 
 		allDayEventAdapter = new AllDayEventsAdapter(getContext(), new ArrayList<Event>());
-		
 
 	}
 
 
 	public void init(Calendar selectedDate) {
 		this.selectedDay = new DayInstance(getContext(), selectedDate);
+		setUpSwipeGestureListener();
 		setupViewItems();
 		drawHourList();
 		updateEventLists();
@@ -250,9 +254,7 @@ public class DayView extends LinearLayout {
 
 			@Override
 			public void onClick(View v) {
-				selectedDay.goPrev();
-				updateTopPanelTitle(selectedDay.getSelectedDate());
-				updateEventLists();
+				goPrev();
 			}
 		});
 		
@@ -260,14 +262,23 @@ public class DayView extends LinearLayout {
 
 			@Override
 			public void onClick(View v) {
-				selectedDay.goNext();
-				updateTopPanelTitle(selectedDay.getSelectedDate());
-				updateEventLists();
-
+				goNext();
 			}
 		});
 		
 		setupDelegates();
+	}
+	
+	public void goPrev(){
+		selectedDay.goPrev();
+		updateTopPanelTitle(selectedDay.getSelectedDate());
+		updateEventLists();
+	}
+	
+	public void goNext(){
+		selectedDay.goNext();
+		updateTopPanelTitle(selectedDay.getSelectedDate());
+		updateEventLists();
 	}
 
 	private void updateTopPanelTitle(Calendar selectedDate) {
