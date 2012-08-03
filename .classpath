@@ -5,7 +5,5 @@
 	<classpathentry kind="src" path="src"/>
 	<classpathentry kind="src" path="gen"/>
 	<classpathentry exported="true" kind="lib" path="libs/httpmime-4.1.2.jar"/>
-	<classpathentry kind="lib" path="libs/gdata.jar"/>
-	<classpathentry kind="lib" path="libs/google-api-services-oauth2-v2-rev9-1.7.2-beta.jar"/>
 	<classpathentry kind="output" path="bin/classes"/>
 </classpath>
