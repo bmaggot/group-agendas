@@ -29,8 +29,10 @@ import com.groupagendas.groupagenda.utils.Prefs;
 
 public class DayView extends AbstractCalendarView {
 	
-	private static final float DEFAULT_TIME_TO_SCROLL = 7.5f;
+	private static final float DEFAULT_TIME_TO_SCROLL = 7.5f; //DEFAULT HOUR TO SCROLL. 7.5f = 7:30
+	public static final int hourLineHeightDP = 23;  //HEIGHT OF ONE HOUR LINE IN DIP
 
+	
 	DayInstance selectedDay;
 	
 	boolean am_pmEnabled;
@@ -48,7 +50,7 @@ public class DayView extends AbstractCalendarView {
 	String[] MonthNames;
 	String[] HourNames;
 	
-	private final int hourLineHeightDP = 23;
+	
 
 	private HourEventsPanel hourEventsPanel;
 	private ListView allDayEventsPanel;
@@ -64,8 +66,6 @@ public class DayView extends AbstractCalendarView {
 	public DayView(Context context, AttributeSet attrs) {
 
 		super(context, attrs);
-		
-		
 		
 		am_pmEnabled =  DataManagement.getInstance(getContext()).getAccount().setting_ampm != 0;
 		WeekDayNames = getResources().getStringArray(R.array.week_days_names);
@@ -159,11 +159,6 @@ public class DayView extends AbstractCalendarView {
 			
 	}
 
-	private void addListenerForEmptyHour(int hour) {
-//		TODO
-		System.out.println("add listener for hour " + hour);
-		
-	}
 
 	private void drawEvent(final Event event, int divider, int neighbourId) {
 
@@ -244,7 +239,7 @@ public class DayView extends AbstractCalendarView {
 		nextDayButtonBounds = new Rect();
 
 		hourEventsPanel = (HourEventsPanel) findViewById(R.id.hour_events);
-		hourEventsPanel.setSwipeGestureDetector(new GestureDetector(new HourEventsPanelMotionListener(this)));
+		hourEventsPanel.setSwipeGestureDetector(new GestureDetector(new HourEventsPanelMotionListener(this, selectedDay.getSelectedDate())));
 		hourEventsPanel.setOnTouchListener(new OnTouchListener() {
 			@Override
 			public boolean onTouch(View v, MotionEvent event) {

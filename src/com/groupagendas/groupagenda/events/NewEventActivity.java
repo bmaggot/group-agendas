@@ -43,6 +43,10 @@ import com.groupagendas.groupagenda.utils.Utils;
 import com.ptashek.widgets.datetimepicker.DateTimePicker;
 
 public class NewEventActivity extends Activity {
+	public static final String EXTRA_STRING_FOR_START_CALENDAR = "strTime";
+	public static final int DEFAULT_EVENT_DURATION_IN_HOURS = 2;
+	
+	
 	private DataManagement dm;
 	private DateTimeUtils dtUtils;
 
@@ -211,11 +215,13 @@ public class NewEventActivity extends Activity {
 		});
 
 		// Time
-		String strTime = getIntent().getStringExtra("strTime");
+		String strTime = getIntent().getStringExtra(EXTRA_STRING_FOR_START_CALENDAR);
 		if(strTime != null){
-			startCalendar = dtUtils.stringDateToCalendar(strTime);
+			startCalendar = Utils.stringToCalendar(strTime, Utils.date_format);
+//			startCalendar = dtUtils.stringDateToCalendar(strTime);
 			endCalendar.setTime(startCalendar.getTime());
-			endCalendar.add(Calendar.DAY_OF_MONTH, 1);
+			endCalendar.add(Calendar.HOUR_OF_DAY, DEFAULT_EVENT_DURATION_IN_HOURS);
+			
 		}
 		// start
 		startView = (EditText) findViewById(R.id.startView);

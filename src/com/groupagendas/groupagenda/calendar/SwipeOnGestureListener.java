@@ -15,19 +15,15 @@ public class SwipeOnGestureListener extends SimpleOnGestureListener {
 	  private static final int SWIPE_MAX_OFF_PATH = 600;
 	  private static final int SWIPE_THRESHOLD_VELOCITY = 20;
 	  
-	  AbstractCalendarView parentView;
+	  protected AbstractCalendarView parentView;
 	  
 	  public SwipeOnGestureListener (AbstractCalendarView parent){
 		  parentView = parent;
 	  }
 	  
-	  public boolean onSingleTapUp(MotionEvent e){
-		  Activity navbar = (Activity)(parentView.getContext());
-		  Intent intent = new Intent(navbar, NewEventActivity.class);
-		  navbar.startActivity(intent);
-		return true;
+
 		  
-	  }
+	  
 
 	  public boolean onFling(MotionEvent e1, MotionEvent e2, float velocityX, float velocityY) {  
 	   System.out.println(" in onFling() :: ");
