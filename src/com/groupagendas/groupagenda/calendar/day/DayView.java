@@ -10,7 +10,6 @@ import android.view.GestureDetector;
 import android.view.MotionEvent;
 import android.view.TouchDelegate;
 import android.view.View;
-import android.view.View.OnTouchListener;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.ListView;
@@ -20,12 +19,12 @@ import android.widget.TextView;
 
 import com.groupagendas.groupagenda.R;
 
-import com.groupagendas.groupagenda.account.AccountProvider;
+
 import com.groupagendas.groupagenda.calendar.AbstractCalendarView;
 import com.groupagendas.groupagenda.calendar.adapters.AllDayEventsAdapter;
 import com.groupagendas.groupagenda.data.DataManagement;
 import com.groupagendas.groupagenda.events.Event;
-import com.groupagendas.groupagenda.utils.Prefs;
+
 
 public class DayView extends AbstractCalendarView {
 	
