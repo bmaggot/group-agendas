@@ -119,7 +119,7 @@ public class NavbarActivity extends Activity {
 			synchronized (this) {
 				
 				int total = 0;
-				System.out.println("PHASE: " + loadPhase);
+			
 
 				if (Data.needToClearData) {
 					switch (loadPhase) {

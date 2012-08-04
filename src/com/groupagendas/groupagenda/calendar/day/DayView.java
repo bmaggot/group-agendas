@@ -142,7 +142,6 @@ public class DayView extends AbstractCalendarView {
 	public void drawHourEvents() {
 //	todo add new event when clicked on empty space
 		hourEventsPanel.removeAllViews();
-		System.out.println("HOUR EVENTS DRAW");
 		if (selectedDay.hasHourEvents()){
 			ArrayList<Event> hourEventsList = selectedDay.getHourEvents();
 			HourEventsTimetable hourEventsTimetable = selectedDay.getHourEventsTimeTable();
