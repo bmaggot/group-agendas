@@ -480,7 +480,7 @@ public class DataManagement {
 	}
 
 	public boolean registerAccount(String language, String country, String timezone, String sex, String name, String lastname,
-			String email, String phonecode, String phone, String password) {
+			String email, String phonecode, String phone, String password, String city, String street, String streetNo, String zip) {
 		boolean success = false;
 
 		try {
@@ -500,6 +500,9 @@ public class DataManagement {
 			reqEntity.addPart("phone1", new StringBody(phone));
 			reqEntity.addPart("password", new StringBody(password));
 			reqEntity.addPart("confirm_password", new StringBody(password));
+			reqEntity.addPart("city", new StringBody(city));
+			reqEntity.addPart("street", new StringBody(street + " " + streetNo));
+			reqEntity.addPart("zip", new StringBody(zip));
 
 			post.setEntity(reqEntity);
 

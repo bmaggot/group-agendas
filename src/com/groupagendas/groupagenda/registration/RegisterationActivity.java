@@ -52,7 +52,11 @@ public class RegisterationActivity extends Activity {
 	private EditText phoneView;
 	private EditText passwordView;
 	private EditText confirmView;
-
+	private EditText zipCodeField;
+	private EditText streetField;
+	private EditText streetNoField;
+	private EditText cityField;
+	
 	private Button registerButton;
 	private Button statementsButton;
 
@@ -150,6 +154,10 @@ public class RegisterationActivity extends Activity {
 		phoneView = (EditText) findViewById(R.id.phoneView);
 		passwordView = (EditText) findViewById(R.id.passwordView);
 		confirmView = (EditText) findViewById(R.id.confirmView);
+		zipCodeField = (EditText) findViewById(R.id.registration_zip);
+		streetNoField = (EditText) findViewById(R.id.registration_street_no);
+		streetField = (EditText) findViewById(R.id.registration_street);
+		cityField = (EditText) findViewById(R.id.registration_city);
 
 		chkStatement = (CheckBox) findViewById(R.id.chk_statement);
 
@@ -254,12 +262,31 @@ public class RegisterationActivity extends Activity {
 						errorStr = getString(R.string.field_is_required, getString(R.string.name));
 					}
 
-					// Sex
-					selectedItem = sexSpinner.getSelectedItemPosition();
-					if (selectedItem == 0) {
+					// Address
+					fieldValue = streetField.getText().toString();
+					if ((!fieldValue.equals("") || (fieldValue != null)) && (fieldValue.length() < 3)) {
 						check = false;
-						errorStr = getString(R.string.field_is_required, getString(R.string.sex));
+						errorStr = getString(R.string.registration_error_val_too_short, getString(R.string.registration_address_street_holder));
 					}
+
+					fieldValue = cityField.getText().toString();
+					if ((!fieldValue.equals("") || (fieldValue != null)) && (fieldValue.length() < 2)) {
+						check = false;
+						errorStr = getString(R.string.registration_error_val_too_short, getString(R.string.registration_address_zip_holder));
+					}
+
+					fieldValue = zipCodeField.getText().toString();
+					if ((!fieldValue.equals("") || (fieldValue != null)) && (fieldValue.length() < 3)) {
+						check = false;
+						errorStr = getString(R.string.registration_error_val_too_short, getString(R.string.registration_address_city_holder));
+					}
+
+					// Sex
+//					selectedItem = sexSpinner.getSelectedItemPosition();
+//					if (selectedItem == 0) {
+//						check = false;
+//						errorStr = getString(R.string.field_is_required, getString(R.string.sex));
+//					}
 
 					// Country
 					selectedItem = countrySpinner.getSelectedItemPosition();
@@ -281,6 +308,7 @@ public class RegisterationActivity extends Activity {
 						AlertDialog dialog = builder.create();
 						dialog.show();
 					}
+					
 				}
 			}
 		});
@@ -307,8 +335,12 @@ public class RegisterationActivity extends Activity {
 			String phonecode = phonecodeView.getText().toString();
 			String phone = phoneView.getText().toString();
 			String password = passwordView.getText().toString();
+			String street = streetField.getText().toString();
+			String streetNo = streetNoField.getText().toString();
+			String zipCode = zipCodeField.getText().toString();
+			String city = cityField.getText().toString();
 
-			return dm.registerAccount(language, country, timezone, sex, name, lastname, email, phonecode, phone, password);
+			return dm.registerAccount(language, country, timezone, sex, name, lastname, email, phonecode, phone, password, city, street, streetNo, zipCode);
 		}
 
 		@Override
