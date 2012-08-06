@@ -2,6 +2,8 @@ package com.groupagendas.groupagenda.registration;
 
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
+import java.util.Locale;
+import java.util.SimpleTimeZone;
 
 import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.methods.HttpPost;
@@ -12,7 +14,9 @@ import org.json.JSONException;
 
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.app.Application;
 import android.app.Dialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -91,12 +95,19 @@ public class RegisterationActivity extends Activity {
 
 		timezoneSpinner = (Spinner) findViewById(R.id.timezoneSpinner);
 
+		String localCountry = getApplicationContext().getResources().getConfiguration().locale.getISO3Country();
+		String localLanguage = getApplicationContext().getResources().getConfiguration().locale.getDisplayLanguage();
+
+		
 		countrySpinner = (Spinner) findViewById(R.id.countrySpinner);
 		ArrayAdapter<String> adapterCountry = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_item,
 				CountryManager.getCountries(this));
 		adapterCountry.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
 		countrySpinner.setAdapter(adapterCountry);
 		countryArray = CountryManager.getCountryValues(this);
+		
+		int myCountryPos = getMyCountry(countryArray, localCountry);
+		countrySpinner.setSelection(myCountryPos);
 		countrySpinner.setOnItemSelectedListener(new OnItemSelectedListener() {
 
 			@Override
@@ -314,6 +325,17 @@ public class RegisterationActivity extends Activity {
 		});
 	}
 
+	private int getMyCountry (String[] countryList, String myCountryCode) {
+		int countryPosition = 0;
+
+		for (int iterator = 0; iterator < countryList.length; iterator++) {
+			if (countryList[iterator].equalsIgnoreCase(myCountryCode)) {
+					countryPosition = iterator;
+			}
+		}
+		return countryPosition; 
+	}
+	
 	class RegistrationTask extends AsyncTask<Void, Boolean, Boolean> {
 
 		@Override
