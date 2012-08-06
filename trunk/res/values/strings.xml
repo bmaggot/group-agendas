@@ -179,5 +179,12 @@
     <string name="calendar_dayView_allDayEvents_holder">All day</string>
     <string name="calendar_dayView_navigateLeft">Navigate backwards</string>
     <string name="calendar_dayView_navigateRight">Navigate forward</string>
-
+    <string name="registration_address_title_holder">Address</string>
+    <string name="registration_address_zip_holder">ZIP</string>
+    <string name="registration_address_street_holder">Street</string>
+    <string name="registration_address_number_holder">Number</string>
+	<string name="registration_address_city_holder">City</string>
+	<string name="registration_error_val_too_short">Following value\'s too short :</string>
+	<string name="registration_error_val_wrong_type">Following value\'s wrong type :</string>
+	
 </resources>
