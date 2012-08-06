@@ -44,7 +44,7 @@ import com.ptashek.widgets.datetimepicker.DateTimePicker;
 
 public class NewEventActivity extends Activity {
 	public static final String EXTRA_STRING_FOR_START_CALENDAR = "strTime";
-	public static final int DEFAULT_EVENT_DURATION_IN_HOURS = 2;
+	public static final int DEFAULT_EVENT_DURATION_IN_MINS = 30;
 	
 	
 	private DataManagement dm;
@@ -220,7 +220,7 @@ public class NewEventActivity extends Activity {
 			startCalendar = Utils.stringToCalendar(strTime, Utils.date_format);
 //			startCalendar = dtUtils.stringDateToCalendar(strTime);
 			endCalendar.setTime(startCalendar.getTime());
-			endCalendar.add(Calendar.HOUR_OF_DAY, DEFAULT_EVENT_DURATION_IN_HOURS);
+			endCalendar.add(Calendar.MINUTE, DEFAULT_EVENT_DURATION_IN_MINS);
 			
 		}
 		// start
