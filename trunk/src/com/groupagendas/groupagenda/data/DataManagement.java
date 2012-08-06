@@ -55,6 +55,7 @@ import com.groupagendas.groupagenda.contacts.ContactsAdapter;
 import com.groupagendas.groupagenda.contacts.ContactsProvider;
 import com.groupagendas.groupagenda.contacts.Group;
 import com.groupagendas.groupagenda.contacts.GroupsAdapter;
+import com.groupagendas.groupagenda.error.report.Reporter;
 import com.groupagendas.groupagenda.events.Event;
 import com.groupagendas.groupagenda.events.EventsAdapter;
 import com.groupagendas.groupagenda.events.EventsProvider;
@@ -690,7 +691,7 @@ public class DataManagement {
 							registerPhone();
 						} else {
 							Data.setERROR(object.getJSONObject("error").getString("reason"));
-							Log.e("login", Data.getERROR() + "!!!");
+							Reporter.reportError(DataManagement.class.toString(), "login", Data.getERROR());
 						}
 					}
 				}
@@ -721,7 +722,7 @@ public class DataManagement {
 				sendPushIdToServer(Data.getmContext(), Data.getPushId());
 			}
 		} catch (Exception e) {
-			e.printStackTrace();
+			Reporter.reportError(DataManagement.class.toString(), "registerPhone", e.getMessage().toString());
 		}
 	}
 
