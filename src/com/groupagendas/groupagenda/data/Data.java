@@ -166,7 +166,7 @@ public class Data {
 	protected static void set_editor(Editor _editor) {
 		Data._editor = _editor;
 	}
-	protected static String getToken() {
+	public static String getToken() {
 		return token;
 	}
 	protected static void setToken(String token) {
