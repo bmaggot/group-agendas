@@ -667,8 +667,6 @@ public class NavbarActivity extends Activity {
 	// mState = state;
 	// }
 	// }
-
-	@SuppressLint("ParserError")
 	@Override
 	public boolean onKeyDown(int keyCode, KeyEvent event) {
 		if (keyCode == KeyEvent.KEYCODE_BACK) {
