@@ -66,6 +66,7 @@ public class Data {
 	public static final int DEFAULT_FIRST_WEEK_DAY = 1;
 	public static ArrayList<OfflineData> unuploadedData = new ArrayList<OfflineData>();
 	public static boolean needToClearData = true;
+	public static String localPrefix = "";
 	
 	//getters'n'setters
 	

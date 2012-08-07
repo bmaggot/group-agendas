@@ -1,25 +1,16 @@
 package com.groupagendas.groupagenda.registration;
 
-import java.io.IOException;
-import java.io.UnsupportedEncodingException;
 import java.util.Locale;
-import java.util.SimpleTimeZone;
-
-import org.apache.http.client.ClientProtocolException;
-import org.apache.http.client.methods.HttpPost;
-import org.apache.http.entity.mime.HttpMultipartMode;
-import org.apache.http.entity.mime.MultipartEntity;
-import org.apache.http.entity.mime.content.StringBody;
-import org.json.JSONException;
+import java.util.concurrent.ExecutionException;
 
 import android.app.Activity;
 import android.app.AlertDialog;
-import android.app.Application;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.telephony.TelephonyManager;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.WindowManager;
@@ -29,14 +20,16 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
-import android.widget.PopupWindow;
 import android.widget.ProgressBar;
 import android.widget.Spinner;
 
 import com.groupagendas.groupagenda.R;
+import com.groupagendas.groupagenda.data.Data;
 import com.groupagendas.groupagenda.data.DataManagement;
+import com.groupagendas.groupagenda.error.report.Reporter;
 import com.groupagendas.groupagenda.timezone.TimezoneManager;
 import com.groupagendas.groupagenda.utils.CountryManager;
+import com.groupagendas.groupagenda.utils.PrefixReceiver;
 import com.groupagendas.groupagenda.utils.Utils;
 
 public class RegisterationActivity extends Activity {
@@ -72,7 +65,7 @@ public class RegisterationActivity extends Activity {
 	private ProgressBar pb;
 	private CheckBox chkStatement;
 	private AlertDialog mDialog;
-	private String phonePrefix = null;
+	private String localCountry;
 
 	private final int DIALOG_SUCCESS = 0;
 	private final int DIALOG_ERROR = 1;
@@ -81,6 +74,20 @@ public class RegisterationActivity extends Activity {
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.registration);
+
+		Locale usersLocale = getApplicationContext().getResources().getConfiguration().locale;
+		TelephonyManager tm = (TelephonyManager) getSystemService(Context.TELEPHONY_SERVICE);
+		String userPhoneNo;
+		String localLanguage;
+		
+		localCountry = usersLocale.getISO3Country();
+
+		if (tm.getLine1Number() != null)
+			userPhoneNo = tm.getLine1Number().toString();
+		else
+			userPhoneNo = "";
+		
+		localLanguage = usersLocale.getDisplayLanguage(usersLocale).toString();
 
 		pb = (ProgressBar) findViewById(R.id.progress);
 
@@ -92,12 +99,9 @@ public class RegisterationActivity extends Activity {
 		adapterLanguage.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
 		languageSpinner.setAdapter(adapterLanguage);
 		languageArray = getResources().getStringArray(R.array.language_values);
+		languageSpinner.setSelection(getMyCountry(languageArray, localLanguage));
 
 		timezoneSpinner = (Spinner) findViewById(R.id.timezoneSpinner);
-
-		String localCountry = getApplicationContext().getResources().getConfiguration().locale.getISO3Country();
-		String localLanguage = getApplicationContext().getResources().getConfiguration().locale.getDisplayLanguage();
-
 		
 		countrySpinner = (Spinner) findViewById(R.id.countrySpinner);
 		ArrayAdapter<String> adapterCountry = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_item,
@@ -119,7 +123,6 @@ public class RegisterationActivity extends Activity {
 					timezoneSpinner.setAdapter(adapterTimezone);
 					timezoneSpinner.setEnabled(false);
 					timezoneArray = null;
-					phonePrefix = null;
 				} else {
 					timezoneSpinner.setEnabled(true);
 					String[] timezoneLabels = TimezoneManager.getTimezones(RegisterationActivity.this, countryArray[pos]);
@@ -131,16 +134,15 @@ public class RegisterationActivity extends Activity {
 					timezoneArray = TimezoneManager.getTimezonesValues(RegisterationActivity.this, countryArray[pos]);
 
 					try {
-						phonePrefix = dm.getPhonePrefix(countryArray[pos]);
-					} catch (ClientProtocolException e) {
-						e.printStackTrace();
-					} catch (IOException e) {
-						e.printStackTrace();
-					} catch (JSONException e) {
-						e.printStackTrace();
+						Data.localPrefix = new PrefixReceiver().execute(countryArray[pos]).get();
+					} catch (InterruptedException e) {
+						Reporter.reportError(RegisterationActivity.class.toString(), "PrefixReceiver().execute(countryArray[pos]).get()", e.getMessage());
+					} catch (ExecutionException e) {
+						Reporter.reportError(RegisterationActivity.class.toString(), "PrefixReceiver().execute(countryArray[pos]).get()", e.getMessage());
 					}
-					if (phonePrefix != null) {
-						phonecodeView.setText("+" + phonePrefix);
+					
+					if (Data.localPrefix != null) {
+						phonecodeView.setText("+" + Data.localPrefix);
 					}
 
 				}
@@ -161,8 +163,24 @@ public class RegisterationActivity extends Activity {
 		nameView = (EditText) findViewById(R.id.nameView);
 		lastnameView = (EditText) findViewById(R.id.lastnameView);
 		emailView = (EditText) findViewById(R.id.emailView);
+		
 		phonecodeView = (EditText) findViewById(R.id.phonecodeView);
+		try {
+			Data.localPrefix = new PrefixReceiver().execute(localCountry).get();
+		} catch (InterruptedException e) {
+			Reporter.reportError(RegisterationActivity.class.toString(), "PrefixReceiver().execute(countryArray[pos]).get()", e.getMessage());
+		} catch (ExecutionException e) {
+			Reporter.reportError(RegisterationActivity.class.toString(), "PrefixReceiver().execute(countryArray[pos]).get()", e.getMessage());
+		}
+		
+		if (Data.localPrefix != null) {
+			phonecodeView.setText("+" + Data.localPrefix);
+		}
+				
 		phoneView = (EditText) findViewById(R.id.phoneView);
+		if (!userPhoneNo.equalsIgnoreCase(""))
+			phoneView.setText(userPhoneNo);			
+		
 		passwordView = (EditText) findViewById(R.id.passwordView);
 		confirmView = (EditText) findViewById(R.id.confirmView);
 		zipCodeField = (EditText) findViewById(R.id.registration_zip);
@@ -291,13 +309,6 @@ public class RegisterationActivity extends Activity {
 						check = false;
 						errorStr = getString(R.string.registration_error_val_too_short, getString(R.string.registration_address_city_holder));
 					}
-
-					// Sex
-//					selectedItem = sexSpinner.getSelectedItemPosition();
-//					if (selectedItem == 0) {
-//						check = false;
-//						errorStr = getString(R.string.field_is_required, getString(R.string.sex));
-//					}
 
 					// Country
 					selectedItem = countrySpinner.getSelectedItemPosition();
