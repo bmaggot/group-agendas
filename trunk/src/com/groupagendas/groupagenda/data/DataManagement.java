@@ -2,6 +2,7 @@ package com.groupagendas.groupagenda.data;
 
 import java.io.DataOutputStream;
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.text.SimpleDateFormat;
@@ -39,6 +40,7 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Build;
 import android.telephony.TelephonyManager;
 import android.util.Log;
@@ -2903,24 +2905,6 @@ public class DataManagement {
 			e.printStackTrace();
 		}
 		return new byte[0];
-	}
-
-	public String getPhonePrefix(String country) throws ClientProtocolException, IOException, JSONException {
-		HttpClient hc = new DefaultHttpClient();
-		HttpPost post = new HttpPost(Data.getServerUrl() + "mobile/get_country_code");
-		MultipartEntity reqEntity = new MultipartEntity(HttpMultipartMode.BROWSER_COMPATIBLE);
-		String phonePrefix = null;
-		reqEntity.addPart("country_name", new StringBody(country));
-		post.setEntity(reqEntity);
-		HttpResponse rp = hc.execute(post);
-		if (rp.getStatusLine().getStatusCode() == HttpStatus.SC_OK) {
-			String response = EntityUtils.toString(rp.getEntity());
-			JSONObject js = new JSONObject(response);
-			if (js.getBoolean("success")) {
-				phonePrefix = js.getString("country_code");
-			}
-		}
-		return phonePrefix;
 	}
 
 	public String getError() {
