@@ -150,7 +150,7 @@
                     android:inputType="textEmailAddress"
                     android:singleLine="true" />
             </LinearLayout>
-
+
             <LinearLayout
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
@@ -160,18 +160,17 @@
                 <TextView
                     android:layout_width="fill_parent"
                     android:layout_height="fill_parent"
+                    android:layout_marginBottom="7dp"
                     android:gravity="center_horizontal|center_vertical"
                     android:text="@string/phone"
-                    android:layout_marginBottom="7dp"
                     android:textColor="@android:color/black" />
-
             </LinearLayout>
 
             <LinearLayout
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal" >
-
+
                 <EditText
                     android:id="@+id/phonecodeView"
                     android:layout_width="80dp"
@@ -179,7 +178,7 @@
                     android:ems="10"
                     android:inputType="phone"
                     android:singleLine="true" />
-
+
                 <EditText
                     android:id="@+id/phoneView"
                     android:layout_width="match_parent"
@@ -187,7 +186,6 @@
                     android:ems="10"
                     android:inputType="phone"
                     android:singleLine="true" />
-
             </LinearLayout>
 
             <LinearLayout
@@ -237,17 +235,17 @@
                     android:id="@+id/chk_statement"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:clickable="false"
                     android:checked="false"
-                    android:textColor="@android:color/black"
-                    android:text="@string/chk_statement" />
+                    android:clickable="false"
+                    android:text="@string/chk_statement"
+                    android:textColor="@android:color/black" />
 
                 <Button
                     android:id="@+id/statementButton"
-                    android:text="@string/privacy_statement"
                     android:layout_width="100dp"
+                    android:layout_height="wrap_content"
                     android:layout_alignParentRight="true"
-                    android:layout_height="wrap_content" />
+                    android:text="@string/privacy_statement" />
             </RelativeLayout>
 
             <LinearLayout
@@ -270,56 +268,56 @@
             <TextView
                 android:layout_width="80dp"
                 android:layout_height="wrap_content"
+                android:gravity="left"
                 android:text="@string/registration_address_title_holder"
                 android:textColor="@android:color/black"
-                android:textStyle="bold"
-                android:gravity="left" />
-            
+                android:textStyle="bold" />
+
             <LinearLayout
-                android:layout_marginTop="5dp"
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
+                android:layout_marginTop="5dp"
                 android:orientation="horizontal" >
 
                 <EditText
                     android:id="@+id/registration_street"
                     android:layout_width="0dp"
-                    android:layout_weight="0.7"
-                    android:layout_marginRight="5dp"
-                    android:hint="@string/registration_address_street_holder"
                     android:layout_height="wrap_content"
+                    android:layout_marginRight="5dp"
+                    android:layout_weight="0.7"
+                    android:hint="@string/registration_address_street_holder"
                     android:inputType="textPostalAddress" />
-                
+
                 <EditText
                     android:id="@+id/registration_street_no"
-                    android:layout_weight="0.3"
                     android:layout_width="0dp"
-                    android:hint="@string/registration_address_number_holder"
                     android:layout_height="wrap_content"
+                    android:layout_weight="0.3"
+                    android:hint="@string/registration_address_number_holder"
                     android:inputType="numberSigned" />
-			</LinearLayout>
-			
-            <LinearLayout 
+            </LinearLayout>
+
+            <LinearLayout
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="5dp"
-                android:orientation="horizontal">
+                android:orientation="horizontal" >
 
                 <EditText
                     android:id="@+id/registration_zip"
                     android:layout_width="0dp"
-                    android:layout_weight="0.3"
-                    android:layout_marginRight="5dp"
-                    android:hint="@string/registration_address_zip_holder"
                     android:layout_height="wrap_content"
+                    android:layout_marginRight="5dp"
+                    android:layout_weight="0.3"
+                    android:hint="@string/registration_address_zip_holder"
                     android:inputType="numberSigned" />
-                
+
                 <EditText
                     android:id="@+id/registration_city"
                     android:layout_width="0dp"
+                    android:layout_height="wrap_content"
                     android:layout_weight="0.7"
                     android:hint="@string/registration_address_city_holder"
-                    android:layout_height="wrap_content"
                     android:inputType="text" />
             </LinearLayout>
 

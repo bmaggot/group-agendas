@@ -1,21 +1,24 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android" 
-       		android:id="@+id/hour_event_icontitle_holder"
-        	android:layout_width="wrap_content"
-        	android:layout_height="wrap_content"
-        	android:layout_alignParentRight="true">
-        	
-<!--             layout size is set in code  com.groupagendas.groupagenda.calendar.day.HourEventView constructor-->        	
-        <ImageView android:id="@+id/hour_event_icon"
-            android:layout_width="15dp"
-        	android:layout_height="15dp"
-            android:layout_marginRight="5dp"/>	
-        
-		<TextView android:id="@+id/hour_event_title"
-		    android:layout_width="wrap_content"
-			android:layout_height="wrap_content"
-			android:text="test"
-			android:textSize="10dp"
-			android:textColor="@color/black" />
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/hour_event_icontitle_holder"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:layout_alignParentRight="true" >
+
+    <!-- layout size is set in code  com.groupagendas.groupagenda.calendar.day.HourEventView constructor -->
+
+    <ImageView
+        android:id="@+id/hour_event_icon"
+        android:layout_width="15dp"
+        android:layout_height="15dp"
+        android:layout_marginRight="5dp" />
+
+    <TextView
+        android:id="@+id/hour_event_title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="test"
+        android:textColor="@color/black"
+        android:textSize="10dp" />
 
 </LinearLayout>

@@ -1,21 +1,21 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-	<string-array name="language_labels">
-		<item>English</item>
-		<item>Nederlands</item>
-		<item>Český</item>
-		<item>Pусский</item>
-		<item>Lietuviškai</item>
-		<item>Portugese</item>
-	</string-array>
-	<string-array name="language_values">
-		<item>english</item>
-		<item>dutch</item>
-		<item>czech</item>
-		<item>russian</item>
-		<item>lithuanian</item>
-		<item>portugese</item>
-	</string-array>
+    <string-array name="language_labels">
+        <item>English</item>
+        <item>Nederlands</item>
+        <item>Český</item>
+        <item>Pусский</item>
+        <item>Lietuviškai</item>
+        <item>Portugese</item>
+    </string-array>
+    <string-array name="language_values">
+        <item>english</item>
+        <item>dutch</item>
+        <item>czech</item>
+        <item>russian</item>
+        <item>lithuanian</item>
+        <item>portugese</item>
+    </string-array>
 
 </resources>

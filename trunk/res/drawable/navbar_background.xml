@@ -36,18 +36,18 @@
 
 <layer-list xmlns:android="http://schemas.android.com/apk/res/android" >
 
-	<item>
-		<shape>
-			<solid android:color="#21c0db" />
-		</shape>
-	</item>
-	<item android:bottom="23dip">
-		<shape>
-			<gradient
-				android:angle="270.0"
-				android:endColor="#21c0db"
-				android:startColor="#21c0db" />
-		</shape>
-	</item>
+    <item>
+        <shape>
+            <solid android:color="#21c0db" />
+        </shape>
+    </item>
+    <item android:bottom="23dip">
+        <shape>
+            <gradient
+                android:angle="270.0"
+                android:endColor="#21c0db"
+                android:startColor="#21c0db" />
+        </shape>
+    </item>
 
 </layer-list>

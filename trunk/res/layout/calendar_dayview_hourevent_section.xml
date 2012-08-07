@@ -1,32 +1,37 @@
 <?xml version="1.0" encoding="utf-8"?>
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
-	android:layout_height="fill_parent"
-	android:layout_width="fill_parent"
-	android:id="@+id/calendar_day_view_hour_events_scroll">
+    android:id="@+id/calendar_day_view_hour_events_scroll"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent" >
 
-	<LinearLayout android:layout_height="wrap_content"
-		android:layout_width="fill_parent" >
+    <LinearLayout
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content" >
 
-		<LinearLayout android:id="@+id/hour_list"
-			android:cacheColorHint="@android:color/transparent"
-			android:layout_height="560dp"
-			android:layout_width="0dip"
-			android:layout_weight="1"
-			android:orientation="vertical">
-	    </LinearLayout>
+        <LinearLayout
+            android:id="@+id/hour_list"
+            android:layout_width="0dip"
+            android:layout_height="560dp"
+            android:layout_weight="1"
+            android:cacheColorHint="@android:color/transparent"
+            android:orientation="vertical" >
+        </LinearLayout>
 
-		<!-- SCREEN SECTION SEPARATOR -->	
-		<View android:background="@color/darker_gray"
-		    android:layout_height="match_parent"
-			android:layout_width="2dp" />
-		<!-- SCREEN SECTION SEPARATOR -->
-			
-		<com.groupagendas.groupagenda.calendar.day.HourEventsPanel android:id="@+id/hour_events"
-	        android:layout_height="560dp"
-	        android:layout_width="0dip"
-	        android:layout_weight="9"
-	        android:background="@drawable/calendar_dayview_secondcolumn_background">
-	    </com.groupagendas.groupagenda.calendar.day.HourEventsPanel>
-	    
+        <!-- SCREEN SECTION SEPARATOR -->
+
+        <View
+            android:layout_width="2dp"
+            android:layout_height="match_parent"
+            android:background="@color/darker_gray" />
+        <!-- SCREEN SECTION SEPARATOR -->
+
+        <com.groupagendas.groupagenda.calendar.day.HourEventsPanel
+            android:id="@+id/hour_events"
+            android:layout_width="0dip"
+            android:layout_height="560dp"
+            android:layout_weight="9"
+            android:background="@drawable/calendar_dayview_secondcolumn_background" >
+        </com.groupagendas.groupagenda.calendar.day.HourEventsPanel>
     </LinearLayout>
+
 </ScrollView>

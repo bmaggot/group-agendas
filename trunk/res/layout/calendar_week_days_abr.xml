@@ -1,79 +1,73 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-		android:id="@+id/day_names"
-        android:orientation="horizontal"
-        android:layout_width="fill_parent"
-        android:layout_height="@dimen/week_day_names_height"
+    android:id="@+id/day_names"
+    android:layout_width="fill_parent"
+    android:layout_height="@dimen/week_day_names_height"
+    android:background="@android:color/transparent"
+    android:gravity="center"
+    android:orientation="horizontal" >
+
+    <TextView
+        android:layout_width="0dip"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
         android:gravity="center"
-        android:background="@android:color/transparent">
+        android:text="w" />
 
-        <TextView android:layout_width="0dip"
-                  android:layout_height="wrap_content"
-                  android:layout_weight="1"
-                  android:text="w"
-                  android:gravity="center"/>
+    <TextView
+        style="@style/TextAppearance.Small.Week"
+        android:layout_width="0dip"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:gravity="center"
+        android:text="s" />
 
-        <TextView
-                style="@style/TextAppearance.Small.Week"
-                android:layout_width="0dip"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:gravity="center"
-                android:text="s"
-                />
+    <TextView
+        style="@style/TextAppearance.Small.Week"
+        android:layout_width="0dip"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:gravity="center"
+        android:text="m" />
 
-        <TextView
-                style="@style/TextAppearance.Small.Week"
-                android:layout_width="0dip"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:gravity="center"
-                android:text="m"
-                />
+    <TextView
+        style="@style/TextAppearance.Small.Week"
+        android:layout_width="0dip"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:gravity="center"
+        android:text="t" />
 
-        <TextView
-                style="@style/TextAppearance.Small.Week"
-                android:layout_width="0dip"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:gravity="center"
-                android:text="t"
-                />
+    <TextView
+        style="@style/TextAppearance.Small.Week"
+        android:layout_width="0dip"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:gravity="center"
+        android:text="w" />
 
-        <TextView
-                style="@style/TextAppearance.Small.Week"
-                android:layout_width="0dip"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:gravity="center"
-                android:text="w"
-                />
+    <TextView
+        style="@style/TextAppearance.Small.Week"
+        android:layout_width="0dip"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:gravity="center"
+        android:text="t" />
 
-        <TextView
-                style="@style/TextAppearance.Small.Week"
-                android:layout_width="0dip"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:gravity="center"
-                android:text="t"
-                />
+    <TextView
+        style="@style/TextAppearance.Small.Week"
+        android:layout_width="0dip"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:gravity="center"
+        android:text="f" />
 
-        <TextView
-                style="@style/TextAppearance.Small.Week"
-                android:layout_width="0dip"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:gravity="center"
-                android:text="f"
-                />
+    <TextView
+        style="@style/TextAppearance.Small.Week"
+        android:layout_width="0dip"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:gravity="center"
+        android:text="s" />
 
-        <TextView
-                style="@style/TextAppearance.Small.Week"
-                android:layout_width="0dip"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:gravity="center"
-                android:text="s"
-                />
-
-    </LinearLayout>
+</LinearLayout>

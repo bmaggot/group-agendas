@@ -1,150 +1,150 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-	android:layout_width="fill_parent"
-	android:layout_height="fill_parent"
-	android:background="#FFFFFF"
-	android:orientation="vertical" >
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:background="#FFFFFF"
+    android:orientation="vertical" >
 
-	<RelativeLayout
-		android:id="@+id/topBar"
-		android:layout_width="fill_parent"
-		android:layout_height="50dp"
-		android:layout_alignParentTop="true"
-		android:layout_centerHorizontal="true"
-		android:layout_centerVertical="true"
-		android:background="@drawable/top_bar_background" >
+    <RelativeLayout
+        android:id="@+id/topBar"
+        android:layout_width="fill_parent"
+        android:layout_height="50dp"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true"
+        android:layout_centerVertical="true"
+        android:background="@drawable/top_bar_background" >
 
-		<TextView
-			android:id="@+id/title"
-			android:layout_width="wrap_content"
-			android:layout_height="wrap_content"
-			android:layout_centerInParent="true"
-			android:text="@string/events"
-			android:textColor="@android:color/white"
-			android:textSize="20dp"
-			android:textStyle="bold" />
+        <TextView
+            android:id="@+id/title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:text="@string/events"
+            android:textColor="@android:color/white"
+            android:textSize="20dp"
+            android:textStyle="bold" />
 
-		<ProgressBar
-			android:id="@+id/progress"
-			style="@android:style/Widget.ProgressBar.Small"
-			android:layout_width="wrap_content"
-			android:layout_height="wrap_content"
-			android:layout_alignParentRight="true"
-			android:layout_centerInParent="true"
-			android:layout_marginRight="20dp"
-			android:visibility="gone" />
-	</RelativeLayout>
+        <ProgressBar
+            android:id="@+id/progress"
+            style="@android:style/Widget.ProgressBar.Small"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:layout_centerInParent="true"
+            android:layout_marginRight="20dp"
+            android:visibility="gone" />
+    </RelativeLayout>
 
-	<TableLayout
-		android:layout_width="fill_parent"
-		android:layout_height="fill_parent"
-		android:layout_above="@+id/bottom"
-		android:layout_below="@id/topBar"
-		android:padding="10dp"
-		android:stretchColumns="2" >
+    <TableLayout
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:layout_above="@+id/bottom"
+        android:layout_below="@id/topBar"
+        android:padding="10dp"
+        android:stretchColumns="2" >
 
-		<TableRow
-			android:layout_marginLeft="10dp"
-			android:layout_marginRight="10dp"
-			android:padding="3dp" >
+        <TableRow
+            android:layout_marginLeft="10dp"
+            android:layout_marginRight="10dp"
+            android:padding="3dp" >
 
-			<TextView
-				android:layout_marginRight="10dp"
-				android:text="@string/name"
-				android:textColor="#01a2b5"
-				android:textSize="18dp" />
+            <TextView
+                android:layout_marginRight="10dp"
+                android:text="@string/name"
+                android:textColor="#01a2b5"
+                android:textSize="18dp" />
 
-			<EditText
-				android:id="@+id/group_name"
-				android:textColor="#000000" />
-		</TableRow>
+            <EditText
+                android:id="@+id/group_name"
+                android:textColor="#000000" />
+        </TableRow>
 
-		<View
-			android:layout_width="fill_parent"
-			android:layout_height="1dp"
-			android:background="#FF909090" />
+        <View
+            android:layout_width="fill_parent"
+            android:layout_height="1dp"
+            android:background="#FF909090" />
 
-		<TableRow
-			android:layout_marginLeft="10dp"
-			android:layout_marginRight="10dp"
-			android:padding="3dp" >
+        <TableRow
+            android:layout_marginLeft="10dp"
+            android:layout_marginRight="10dp"
+            android:padding="3dp" >
 
-			<TextView
-				android:layout_width="fill_parent"
-				android:layout_height="wrap_content"
-				android:layout_marginRight="10dp"
-				android:text="@string/replace_image"
-				android:textColor="#01a2b5"
-				android:textSize="18dp" />
+            <TextView
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginRight="10dp"
+                android:text="@string/replace_image"
+                android:textColor="#01a2b5"
+                android:textSize="18dp" />
 
-			<ImageView
-				android:id="@+id/group_image"
-				android:layout_width="120dp"
-				android:layout_height="120dp" />
-		</TableRow>
+            <ImageView
+                android:id="@+id/group_image"
+                android:layout_width="120dp"
+                android:layout_height="120dp" />
+        </TableRow>
 
-		<View
-			android:layout_width="fill_parent"
-			android:layout_height="1dp"
-			android:background="#FF909090" />
+        <View
+            android:layout_width="fill_parent"
+            android:layout_height="1dp"
+            android:background="#FF909090" />
 
-		<TableRow
-			android:id="@+id/remove_image_row"
-			android:layout_marginLeft="10dp"
-			android:layout_marginRight="10dp"
-			android:padding="3dp" >
+        <TableRow
+            android:id="@+id/remove_image_row"
+            android:layout_marginLeft="10dp"
+            android:layout_marginRight="10dp"
+            android:padding="3dp" >
 
-			<TextView
-				android:layout_width="fill_parent"
-				android:layout_height="wrap_content"
-				android:layout_marginRight="10dp"
-				android:text="@string/remove_image"
-				android:textColor="#01a2b5"
-				android:textSize="18dp" />
+            <TextView
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginRight="10dp"
+                android:text="@string/remove_image"
+                android:textColor="#01a2b5"
+                android:textSize="18dp" />
 
-			<CheckBox android:id="@+id/remove_image" />
-		</TableRow>
+            <CheckBox android:id="@+id/remove_image" />
+        </TableRow>
 
-		<View
-			android:id="@+id/remove_image_line"
-			android:layout_width="fill_parent"
-			android:layout_height="1dp"
-			android:background="#FF909090" />
+        <View
+            android:id="@+id/remove_image_line"
+            android:layout_width="fill_parent"
+            android:layout_height="1dp"
+            android:background="#FF909090" />
 
-		<TableRow
-			android:layout_marginLeft="10dp"
-			android:layout_marginRight="10dp"
-			android:padding="3dp" >
+        <TableRow
+            android:layout_marginLeft="10dp"
+            android:layout_marginRight="10dp"
+            android:padding="3dp" >
 
-			<TextView
-				android:layout_width="fill_parent"
-				android:layout_height="wrap_content"
-				android:layout_marginRight="10dp"
-				android:text="@string/contacts_"
-				android:textColor="#01a2b5"
-				android:textSize="18dp" />
+            <TextView
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginRight="10dp"
+                android:text="@string/contacts_"
+                android:textColor="#01a2b5"
+                android:textSize="18dp" />
 
-			<Button
-				android:id="@+id/contactsButton"
-				android:layout_width="wrap_content"
-				android:layout_height="wrap_content"
-				android:text="@string/choose" />
-		</TableRow>
-	</TableLayout>
+            <Button
+                android:id="@+id/contactsButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/choose" />
+        </TableRow>
+    </TableLayout>
 
-	<LinearLayout
-		android:id="@+id/bottom"
-		android:layout_width="fill_parent"
-		android:layout_height="wrap_content"
-		android:layout_alignParentBottom="true"
-		android:layout_marginBottom="10dp"
-		android:gravity="center_horizontal|center_vertical" >
+    <LinearLayout
+        android:id="@+id/bottom"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_marginBottom="10dp"
+        android:gravity="center_horizontal|center_vertical" >
 
-		<Button
-			android:id="@+id/sendbutton"
-			android:layout_width="100dp"
-			android:layout_height="wrap_content"
-			android:text="@string/save" />
-	</LinearLayout>
+        <Button
+            android:id="@+id/sendbutton"
+            android:layout_width="100dp"
+            android:layout_height="wrap_content"
+            android:text="@string/save" />
+    </LinearLayout>
 
 </RelativeLayout>

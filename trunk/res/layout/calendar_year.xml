@@ -1,160 +1,160 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-	android:layout_width="fill_parent"
-	android:layout_height="fill_parent"
-	android:background="@color/white"
-	android:orientation="vertical" >
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:background="@color/white"
+    android:orientation="vertical" >
 
-	<FrameLayout
-		android:layout_width="fill_parent"
-		android:layout_height="60dip"
-		android:background="@drawable/top_panel"
-		android:paddingBottom="10dip"
-		android:paddingLeft="10dip"
-		android:paddingRight="10dip" >
+    <FrameLayout
+        android:layout_width="fill_parent"
+        android:layout_height="60dip"
+        android:background="@drawable/top_panel"
+        android:paddingBottom="10dip"
+        android:paddingLeft="10dip"
+        android:paddingRight="10dip" >
 
-		<ImageView
-			android:id="@+id/prev_month_button"
-			android:layout_width="wrap_content"
-			android:layout_height="wrap_content"
-			android:layout_gravity="center_vertical|left"
-			android:padding="10dip"
-			android:src="@drawable/left" />
+        <ImageView
+            android:id="@+id/prev_month_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical|left"
+            android:padding="10dip"
+            android:src="@drawable/left" />
 
-		<TextView
-			android:id="@+id/top_panel_title"
-			style="@style/titleTextStyle"
-			android:layout_width="wrap_content"
-			android:layout_height="wrap_content"
-			android:layout_gravity="center"
-			android:text="2012" />
+        <TextView
+            android:id="@+id/top_panel_title"
+            style="@style/titleTextStyle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:text="2012" />
 
-		<ImageView
-			android:id="@+id/next_month_button"
-			android:layout_width="wrap_content"
-			android:layout_height="wrap_content"
-			android:layout_gravity="center_vertical|right"
-			android:padding="10dip"
-			android:src="@drawable/right" />
-	</FrameLayout>
+        <ImageView
+            android:id="@+id/next_month_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical|right"
+            android:padding="10dip"
+            android:src="@drawable/right" />
+    </FrameLayout>
 
-	<LinearLayout
-		android:layout_width="fill_parent"
-		android:layout_height="fill_parent"
-		android:layout_marginTop="@dimen/week_day_names_margin"
-		android:orientation="vertical" >
+    <LinearLayout
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:layout_marginTop="@dimen/week_day_names_margin"
+        android:orientation="vertical" >
 
-		<LinearLayout
-			android:layout_width="fill_parent"
-			android:layout_height="0dip"
-			android:layout_weight="1"
-			android:orientation="horizontal" >
+        <LinearLayout
+            android:layout_width="fill_parent"
+            android:layout_height="0dip"
+            android:layout_weight="1"
+            android:orientation="horizontal" >
 
-			<com.bog.calendar.app.ui.CalendarYearView
-				android:id="@+id/month_00"
-				style="@style/monthViewStyle"
-				android:layout_width="0dip"
-				android:layout_height="fill_parent"
-				android:layout_weight="1" />
+            <com.bog.calendar.app.ui.CalendarYearView
+                android:id="@+id/month_00"
+                style="@style/monthViewStyle"
+                android:layout_width="0dip"
+                android:layout_height="fill_parent"
+                android:layout_weight="1" />
 
-			<com.bog.calendar.app.ui.CalendarYearView
-				android:id="@+id/month_01"
-				style="@style/monthViewStyle"
-				android:layout_width="0dip"
-				android:layout_height="fill_parent"
-				android:layout_weight="1" />
+            <com.bog.calendar.app.ui.CalendarYearView
+                android:id="@+id/month_01"
+                style="@style/monthViewStyle"
+                android:layout_width="0dip"
+                android:layout_height="fill_parent"
+                android:layout_weight="1" />
 
-			<com.bog.calendar.app.ui.CalendarYearView
-				android:id="@+id/month_02"
-				style="@style/monthViewStyle"
-				android:layout_width="0dip"
-				android:layout_height="fill_parent"
-				android:layout_weight="1" />
-		</LinearLayout>
+            <com.bog.calendar.app.ui.CalendarYearView
+                android:id="@+id/month_02"
+                style="@style/monthViewStyle"
+                android:layout_width="0dip"
+                android:layout_height="fill_parent"
+                android:layout_weight="1" />
+        </LinearLayout>
 
-		<LinearLayout
-			android:layout_width="fill_parent"
-			android:layout_height="0dip"
-			android:layout_weight="1"
-			android:orientation="horizontal" >
+        <LinearLayout
+            android:layout_width="fill_parent"
+            android:layout_height="0dip"
+            android:layout_weight="1"
+            android:orientation="horizontal" >
 
-			<com.bog.calendar.app.ui.CalendarYearView
-				android:id="@+id/month_03"
-				style="@style/monthViewStyle"
-				android:layout_width="0dip"
-				android:layout_height="fill_parent"
-				android:layout_weight="1" />
+            <com.bog.calendar.app.ui.CalendarYearView
+                android:id="@+id/month_03"
+                style="@style/monthViewStyle"
+                android:layout_width="0dip"
+                android:layout_height="fill_parent"
+                android:layout_weight="1" />
 
-			<com.bog.calendar.app.ui.CalendarYearView
-				android:id="@+id/month_04"
-				style="@style/monthViewStyle"
-				android:layout_width="0dip"
-				android:layout_height="fill_parent"
-				android:layout_weight="1" />
+            <com.bog.calendar.app.ui.CalendarYearView
+                android:id="@+id/month_04"
+                style="@style/monthViewStyle"
+                android:layout_width="0dip"
+                android:layout_height="fill_parent"
+                android:layout_weight="1" />
 
-			<com.bog.calendar.app.ui.CalendarYearView
-				android:id="@+id/month_05"
-				style="@style/monthViewStyle"
-				android:layout_width="0dip"
-				android:layout_height="fill_parent"
-				android:layout_weight="1" />
-		</LinearLayout>
+            <com.bog.calendar.app.ui.CalendarYearView
+                android:id="@+id/month_05"
+                style="@style/monthViewStyle"
+                android:layout_width="0dip"
+                android:layout_height="fill_parent"
+                android:layout_weight="1" />
+        </LinearLayout>
 
-		<LinearLayout
-			android:layout_width="fill_parent"
-			android:layout_height="0dip"
-			android:layout_weight="1"
-			android:orientation="horizontal" >
+        <LinearLayout
+            android:layout_width="fill_parent"
+            android:layout_height="0dip"
+            android:layout_weight="1"
+            android:orientation="horizontal" >
 
-			<com.bog.calendar.app.ui.CalendarYearView
-				android:id="@+id/month_06"
-				style="@style/monthViewStyle"
-				android:layout_width="0dip"
-				android:layout_height="fill_parent"
-				android:layout_weight="1" />
+            <com.bog.calendar.app.ui.CalendarYearView
+                android:id="@+id/month_06"
+                style="@style/monthViewStyle"
+                android:layout_width="0dip"
+                android:layout_height="fill_parent"
+                android:layout_weight="1" />
 
-			<com.bog.calendar.app.ui.CalendarYearView
-				android:id="@+id/month_07"
-				style="@style/monthViewStyle"
-				android:layout_width="0dip"
-				android:layout_height="fill_parent"
-				android:layout_weight="1" />
+            <com.bog.calendar.app.ui.CalendarYearView
+                android:id="@+id/month_07"
+                style="@style/monthViewStyle"
+                android:layout_width="0dip"
+                android:layout_height="fill_parent"
+                android:layout_weight="1" />
 
-			<com.bog.calendar.app.ui.CalendarYearView
-				android:id="@+id/month_08"
-				style="@style/monthViewStyle"
-				android:layout_width="0dip"
-				android:layout_height="fill_parent"
-				android:layout_weight="1" />
-		</LinearLayout>
+            <com.bog.calendar.app.ui.CalendarYearView
+                android:id="@+id/month_08"
+                style="@style/monthViewStyle"
+                android:layout_width="0dip"
+                android:layout_height="fill_parent"
+                android:layout_weight="1" />
+        </LinearLayout>
 
-		<LinearLayout
-			android:layout_width="fill_parent"
-			android:layout_height="0dip"
-			android:layout_weight="1"
-			android:orientation="horizontal" >
+        <LinearLayout
+            android:layout_width="fill_parent"
+            android:layout_height="0dip"
+            android:layout_weight="1"
+            android:orientation="horizontal" >
 
-			<com.bog.calendar.app.ui.CalendarYearView
-				android:id="@+id/month_09"
-				style="@style/monthViewStyle"
-				android:layout_width="0dip"
-				android:layout_height="fill_parent"
-				android:layout_weight="1" />
+            <com.bog.calendar.app.ui.CalendarYearView
+                android:id="@+id/month_09"
+                style="@style/monthViewStyle"
+                android:layout_width="0dip"
+                android:layout_height="fill_parent"
+                android:layout_weight="1" />
 
-			<com.bog.calendar.app.ui.CalendarYearView
-				android:id="@+id/month_10"
-				style="@style/monthViewStyle"
-				android:layout_width="0dip"
-				android:layout_height="fill_parent"
-				android:layout_weight="1" />
+            <com.bog.calendar.app.ui.CalendarYearView
+                android:id="@+id/month_10"
+                style="@style/monthViewStyle"
+                android:layout_width="0dip"
+                android:layout_height="fill_parent"
+                android:layout_weight="1" />
 
-			<com.bog.calendar.app.ui.CalendarYearView
-				android:id="@+id/month_11"
-				style="@style/monthViewStyle"
-				android:layout_width="0dip"
-				android:layout_height="fill_parent"
-				android:layout_weight="1" />
-		</LinearLayout>
-	</LinearLayout>
+            <com.bog.calendar.app.ui.CalendarYearView
+                android:id="@+id/month_11"
+                style="@style/monthViewStyle"
+                android:layout_width="0dip"
+                android:layout_height="fill_parent"
+                android:layout_weight="1" />
+        </LinearLayout>
+    </LinearLayout>
 
 </LinearLayout>

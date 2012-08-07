@@ -1,67 +1,67 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-	android:layout_width="fill_parent"
-	android:layout_height="fill_parent"
-	android:background="@android:color/white"
-	android:gravity="center_horizontal"
-	android:orientation="vertical"
-	android:padding="10dp" >
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:background="@android:color/white"
+    android:gravity="center_horizontal"
+    android:orientation="vertical"
+    android:padding="10dp" >
 
-	<ImageView
-		android:layout_width="fill_parent"
-		android:layout_height="wrap_content"
-		android:src="@drawable/ga_logo" />
+    <ImageView
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:src="@drawable/ga_logo" />
 
-	<EditText
-		android:id="@+id/login_emailText"
-		android:layout_width="fill_parent"
-		android:layout_height="wrap_content"
-		android:hint="@string/email_address"
-		android:inputType="textEmailAddress" >
-	</EditText>
+    <EditText
+        android:id="@+id/login_emailText"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:hint="@string/email_address"
+        android:inputType="textEmailAddress" >
+    </EditText>
 
-	<EditText
-		android:id="@+id/login_passwordText"
-		android:layout_width="fill_parent"
-		android:layout_height="wrap_content"
-		android:hint="@string/password"
-		android:imeOptions="actionDone"
-		android:inputType="textPassword" />
+    <EditText
+        android:id="@+id/login_passwordText"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:hint="@string/password"
+        android:imeOptions="actionDone"
+        android:inputType="textPassword" />
 
-	<RelativeLayout
-		android:layout_width="fill_parent"
-		android:layout_height="wrap_content"
-		android:layout_marginTop="5dp" >
+    <RelativeLayout
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="5dp" >
 
-		<Button
-			android:id="@+id/registerButton"
-			android:layout_width="100dp"
-			android:layout_height="wrap_content"
-			android:text="@string/register" />
+        <Button
+            android:id="@+id/registerButton"
+            android:layout_width="100dp"
+            android:layout_height="wrap_content"
+            android:text="@string/register" />
 
-		<ProgressBar
-			android:id="@+id/progress"
-			style="@android:style/Widget.ProgressBar.Small"
-			android:layout_width="wrap_content"
-			android:layout_height="wrap_content"
-			android:layout_centerInParent="true"
-			android:layout_marginTop="10dp"
-			android:visibility="gone" />
+        <ProgressBar
+            android:id="@+id/progress"
+            style="@android:style/Widget.ProgressBar.Small"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:layout_marginTop="10dp"
+            android:visibility="gone" />
 
-		<Button
-			android:id="@+id/loginButton"
-			android:layout_width="100dp"
-			android:layout_height="wrap_content"
-			android:layout_alignParentRight="true"
-			android:text="@string/login" />
-	</RelativeLayout>
-
-    <Button
-            android:id="@+id/forgot_pass"
-            android:layout_width="150dp"
+        <Button
+            android:id="@+id/loginButton"
+            android:layout_width="100dp"
             android:layout_height="wrap_content"
             android:layout_alignParentRight="true"
-            android:layout_marginTop="5dp"
-            android:text="@string/forgot_pass" />
+            android:text="@string/login" />
+    </RelativeLayout>
+
+    <Button
+        android:id="@+id/forgot_pass"
+        android:layout_width="150dp"
+        android:layout_height="wrap_content"
+        android:layout_alignParentRight="true"
+        android:layout_marginTop="5dp"
+        android:text="@string/forgot_pass" />
 
 </LinearLayout>

@@ -2,6 +2,7 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content" >
+
     <ScrollView
         android:id="@+id/scroller"
         android:layout_width="wrap_content"
@@ -10,6 +11,7 @@
         android:background="@drawable/popup"
         android:fadingEdgeLength="5dip"
         android:scrollbars="none" >
+
         <LinearLayout
             android:id="@+id/tracks"
             android:layout_width="wrap_content"
@@ -18,11 +20,13 @@
             android:orientation="vertical"
             android:padding="10dip" />
     </ScrollView>
+
     <ImageView
         android:id="@+id/arrow_up"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:src="@drawable/arrow_up" />
+
     <ImageView
         android:id="@+id/arrow_down"
         android:layout_width="wrap_content"
@@ -30,4 +34,5 @@
         android:layout_below="@id/scroller"
         android:layout_marginTop="-4dip"
         android:src="@drawable/arrow_down" />
+
 </RelativeLayout>

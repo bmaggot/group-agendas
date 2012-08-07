@@ -4,40 +4,52 @@
     android:layout_height="45dp"
     android:orientation="vertical" >
 
-	<shape
-		android:id="@+id/week_no"
-		style="@style/week_no_container">
-	    <!--  GOTTA ADD STROKE -->
-		<TextView android:id="@+id/week_no_text" style="week_no_text"/>
-	</shape>
-	
-	<shape android:id="@+id/week_day1">
-	    <!--  GOTTA ADD STROKE HERE TOO -->
-		<TextView android:id="@+id/week_day1_text" />
-	</shape>
-	
-	<shape android:id="@+id/week_day2">
-		<TextView android:id="@+id/week_day2_text" />
-	</shape>
-	
-	<shape android:id="@+id/week_day3">
-		<TextView android:id="@+id/week_day3_text" />
-	</shape>
-	
-	<shape android:id="@+id/week_day4">
-		<TextView android:id="@+id/week_day4_text" />
-	</shape>
-	
-	<shape android:id="@+id/week_day5">
-		<TextView android:id="@+id/week_day5_text" />
-	</shape>
-	
-	<shape android:id="@+id/week_day6">
-		<TextView android:id="@+id/week_day6_text" />
-	</shape>
-	
-	<shape android:id="@+id/week_day7">
-		<TextView android:id="@+id/week_day7_text" />
-	</shape>
-	
+    <shape
+        android:id="@+id/week_no"
+        style="@style/week_no_container" >
+
+        <!-- GOTTA ADD STROKE -->
+
+        <TextView
+            android:id="@+id/week_no_text"
+            style="week_no_text" />
+    </shape>
+
+    <shape android:id="@+id/week_day1" >
+
+        <!-- GOTTA ADD STROKE HERE TOO -->
+
+        <TextView android:id="@+id/week_day1_text" />
+    </shape>
+
+    <shape android:id="@+id/week_day2" >
+
+        <TextView android:id="@+id/week_day2_text" />
+    </shape>
+
+    <shape android:id="@+id/week_day3" >
+
+        <TextView android:id="@+id/week_day3_text" />
+    </shape>
+
+    <shape android:id="@+id/week_day4" >
+
+        <TextView android:id="@+id/week_day4_text" />
+    </shape>
+
+    <shape android:id="@+id/week_day5" >
+
+        <TextView android:id="@+id/week_day5_text" />
+    </shape>
+
+    <shape android:id="@+id/week_day6" >
+
+        <TextView android:id="@+id/week_day6_text" />
+    </shape>
+
+    <shape android:id="@+id/week_day7" >
+
+        <TextView android:id="@+id/week_day7_text" />
+    </shape>
+
 </LinearLayout>

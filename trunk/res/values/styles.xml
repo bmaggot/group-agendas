@@ -1,33 +1,33 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-	<style name="cellTimeStyle" parent="android:Widget.TextView">
-		<item name="android:layout_width">fill_parent</item>
-		<item name="android:layout_height">@dimen/cell_height</item>
-		<item name="android:textColor">@android:color/black</item>
-		<item name="android:textSize">11dip</item>
-		<item name="android:gravity">top|center_horizontal</item>
-	</style>
+    <style name="cellTimeStyle" parent="android:Widget.TextView">
+        <item name="android:layout_width">fill_parent</item>
+        <item name="android:layout_height">@dimen/cell_height</item>
+        <item name="android:textColor">@android:color/black</item>
+        <item name="android:textSize">11dip</item>
+        <item name="android:gravity">top|center_horizontal</item>
+    </style>
 
-	<style name="titleTextStyle" parent="android:Widget.TextView">
-		<item name="android:textColor">@color/event_color_start</item>
-		<item name="android:textSize">15dip</item>
-		<item name="android:textStyle">bold</item>
-		<item name="android:shadowColor">@color/white</item>
-		<item name="android:shadowDx">0</item>
-		<item name="android:shadowDy">1</item>
-		<item name="android:shadowRadius">2</item>
-	</style>
+    <style name="titleTextStyle" parent="android:Widget.TextView">
+        <item name="android:textColor">@color/event_color_start</item>
+        <item name="android:textSize">15dip</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:shadowColor">@color/white</item>
+        <item name="android:shadowDx">0</item>
+        <item name="android:shadowDy">1</item>
+        <item name="android:shadowRadius">2</item>
+    </style>
 
-	<style name="monthViewStyle">
-		<item name="android:layout_margin">0dip</item>
-	</style>
+    <style name="monthViewStyle">
+        <item name="android:layout_margin">0dip</item>
+    </style>
 
-	<style name="Widget">
-		<item name="android:textAppearance">@style/TextAppearance</item>
-	</style>
+    <style name="Widget">
+        <item name="android:textAppearance">@style/TextAppearance</item>
+    </style>
 
-	<!--
+    <!--
     <style name="Widget.CalendarView">
         <item name="android:showWeekNumber">false</item>
         <item name="android:firstDayOfWeek">1</item>
@@ -43,106 +43,106 @@
         <item name="android:weekDayTextAppearance">@style/TextAppearance.Small.CalendarViewWeekDayView</item>
         <item name="android:dateTextAppearance">@style/TextAppearance.Small</item>
     </style>
-	-->
+    -->
 
-	<style name="TextAppearance.Small.CalendarViewWeekDayView">
-		<item name="android:textStyle">bold</item>
-	</style>
+    <style name="TextAppearance.Small.CalendarViewWeekDayView">
+        <item name="android:textStyle">bold</item>
+    </style>
 
-	<style name="TextAppearance.Small">
-		<item name="android:textSize">14sp</item>
-		<item name="android:textColor">@color/black</item>
-	</style>
+    <style name="TextAppearance.Small">
+        <item name="android:textSize">14sp</item>
+        <item name="android:textColor">@color/black</item>
+    </style>
 
-	<style name="TextAppearance.Small.Week">
-		<item name="android:textSize">10sp</item>
-		<item name="android:textColor">@color/monthWeekTextColor</item>
-		<item name="android:textStyle">bold</item>
-		<item name="android:shadowColor">@color/white</item>
-		<item name="android:shadowDx">0</item>
-		<item name="android:shadowDy">1</item>
-		<item name="android:shadowRadius">2</item>
-	</style>
+    <style name="TextAppearance.Small.Week">
+        <item name="android:textSize">10sp</item>
+        <item name="android:textColor">@color/monthWeekTextColor</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:shadowColor">@color/white</item>
+        <item name="android:shadowDx">0</item>
+        <item name="android:shadowDy">1</item>
+        <item name="android:shadowRadius">2</item>
+    </style>
 
-	<style name="TextAppearance.Small.Month">
-		<item name="android:textSize">14sp</item>
-		<item name="android:textColor">@color/white</item>
-		<item name="android:background">@color/monthNameBgColor</item>
-	</style>
+    <style name="TextAppearance.Small.Month">
+        <item name="android:textSize">14sp</item>
+        <item name="android:textColor">@color/white</item>
+        <item name="android:background">@color/monthNameBgColor</item>
+    </style>
 
-	<style name="TextAppearance.Medium">
-		<item name="android:textSize">18sp</item>
-		<item name="android:textStyle">normal</item>
-	</style>
+    <style name="TextAppearance.Medium">
+        <item name="android:textSize">18sp</item>
+        <item name="android:textStyle">normal</item>
+    </style>
 
-	<style name="TextAppearance">
-		<item name="android:textColor">@color/black</item>
-		<item name="android:textColorHighlight">@color/black</item>
-		<item name="android:textColorHint">@color/black</item>
-		<item name="android:textColorLink">@color/black</item>
-		<item name="android:textSize">16sp</item>
-		<item name="android:textStyle">normal</item>
-	</style>
+    <style name="TextAppearance">
+        <item name="android:textColor">@color/black</item>
+        <item name="android:textColorHighlight">@color/black</item>
+        <item name="android:textColorHint">@color/black</item>
+        <item name="android:textColorLink">@color/black</item>
+        <item name="android:textSize">16sp</item>
+        <item name="android:textStyle">normal</item>
+    </style>
 
-	<style name="navbar_button">
-		<item name="android:layout_width">0dp</item>
-		<item name="android:layout_height">wrap_content</item>
-		<item name="android:button">@null</item>
-		<item name="android:background">@drawable/navbar_backgroundselector</item>
-		<item name="android:gravity">center_horizontal</item>
-		<item name="android:layout_weight">1</item>
-		<item name="android:textSize">12dp</item>
-		<item name="android:padding">4dp</item>
-	</style>
+    <style name="navbar_button">
+        <item name="android:layout_width">0dp</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:button">@null</item>
+        <item name="android:background">@drawable/navbar_backgroundselector</item>
+        <item name="android:gravity">center_horizontal</item>
+        <item name="android:layout_weight">1</item>
+        <item name="android:textSize">12dp</item>
+        <item name="android:padding">4dp</item>
+    </style>
 
-	<style name="Theme_Dialog_Translucent" parent="android:Theme.Dialog">
-		<item name="android:windowBackground">@android:color/transparent</item>
-	</style>
+    <style name="Theme_Dialog_Translucent" parent="android:Theme.Dialog">
+        <item name="android:windowBackground">@android:color/transparent</item>
+    </style>
 
-	<style name="Animations" />
-	<!-- PopDownMenu -->
-	<style name="Animations.PopDownMenu" />
+    <style name="Animations" />
+    <!-- PopDownMenu -->
+    <style name="Animations.PopDownMenu" />
 
-	<style name="Animations.PopDownMenu.Center">
-		<item name="@android:windowEnterAnimation">@anim/grow_from_top</item>
-		<item name="@android:windowExitAnimation">@anim/shrink_from_bottom</item>
-	</style>
+    <style name="Animations.PopDownMenu.Center">
+        <item name="@android:windowEnterAnimation">@anim/grow_from_top</item>
+        <item name="@android:windowExitAnimation">@anim/shrink_from_bottom</item>
+    </style>
 
-	<style name="Animations.PopDownMenu.Left">
-		<item name="@android:windowEnterAnimation">@anim/grow_from_topleft_to_bottomright</item>
-		<item name="@android:windowExitAnimation">@anim/shrink_from_bottomright_to_topleft</item>
-	</style>
+    <style name="Animations.PopDownMenu.Left">
+        <item name="@android:windowEnterAnimation">@anim/grow_from_topleft_to_bottomright</item>
+        <item name="@android:windowExitAnimation">@anim/shrink_from_bottomright_to_topleft</item>
+    </style>
 
-	<style name="Animations.PopDownMenu.Right">
-		<item name="@android:windowEnterAnimation">@anim/grow_from_topright_to_bottomleft</item>
-		<item name="@android:windowExitAnimation">@anim/shrink_from_bottomleft_to_topright</item>
-	</style>
+    <style name="Animations.PopDownMenu.Right">
+        <item name="@android:windowEnterAnimation">@anim/grow_from_topright_to_bottomleft</item>
+        <item name="@android:windowExitAnimation">@anim/shrink_from_bottomleft_to_topright</item>
+    </style>
 
-	<style name="Animations.PopDownMenu.Reflect">
-		<item name="@android:windowEnterAnimation">@anim/pump_top</item>
-		<item name="@android:windowExitAnimation">@anim/disappear</item>
-	</style>
-	<!-- PopUpMenu -->
-	<style name="Animations.PopUpMenu" />
+    <style name="Animations.PopDownMenu.Reflect">
+        <item name="@android:windowEnterAnimation">@anim/pump_top</item>
+        <item name="@android:windowExitAnimation">@anim/disappear</item>
+    </style>
+    <!-- PopUpMenu -->
+    <style name="Animations.PopUpMenu" />
 
-	<style name="Animations.PopUpMenu.Center">
-		<item name="@android:windowEnterAnimation">@anim/grow_from_bottom</item>
-		<item name="@android:windowExitAnimation">@anim/shrink_from_top</item>
-	</style>
+    <style name="Animations.PopUpMenu.Center">
+        <item name="@android:windowEnterAnimation">@anim/grow_from_bottom</item>
+        <item name="@android:windowExitAnimation">@anim/shrink_from_top</item>
+    </style>
 
-	<style name="Animations.PopUpMenu.Left">
-		<item name="@android:windowEnterAnimation">@anim/grow_from_bottomleft_to_topright</item>
-		<item name="@android:windowExitAnimation">@anim/shrink_from_topright_to_bottomleft</item>
-	</style>
+    <style name="Animations.PopUpMenu.Left">
+        <item name="@android:windowEnterAnimation">@anim/grow_from_bottomleft_to_topright</item>
+        <item name="@android:windowExitAnimation">@anim/shrink_from_topright_to_bottomleft</item>
+    </style>
 
-	<style name="Animations.PopUpMenu.Right">
-		<item name="@android:windowEnterAnimation">@anim/grow_from_bottomright_to_topleft</item>
-		<item name="@android:windowExitAnimation">@anim/shrink_from_topleft_to_bottomright</item>
-	</style>
+    <style name="Animations.PopUpMenu.Right">
+        <item name="@android:windowEnterAnimation">@anim/grow_from_bottomright_to_topleft</item>
+        <item name="@android:windowExitAnimation">@anim/shrink_from_topleft_to_bottomright</item>
+    </style>
 
-	<style name="Animations.PopUpMenu.Reflect">
-		<item name="@android:windowEnterAnimation">@anim/pump_bottom</item>
-		<item name="@android:windowExitAnimation">@anim/disappear</item>
-	</style>
+    <style name="Animations.PopUpMenu.Reflect">
+        <item name="@android:windowEnterAnimation">@anim/pump_bottom</item>
+        <item name="@android:windowExitAnimation">@anim/disappear</item>
+    </style>
 
 </resources>
