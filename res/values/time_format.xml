@@ -1,5 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+
     <string name="hour_event_view_time_format">HH:mm</string>
     <string name="hour_event_view_time_format_AMPM">HH:mm a</string>
+
 </resources>

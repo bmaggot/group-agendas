@@ -1,108 +1,109 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources xmlns:android="http://schemas.android.com/apk/res/android">
+
     <style name="dayView_alldayEvent_firstColumn_entryText">
         <item name="android:background">@color/white</item>
-  	    <item name="android:text"></item>
- 	    <item name="android:gravity">center_horizontal</item>
-	    <item name="android:textSize">8dp</item>
-	    <item name="android:textColor">@color/black</item>
-	    <item name="android:layout_width">0dp</item>
-	    <item name="android:layout_weight">0.1</item>
-	    <item name="android:layout_height">wrap_content</item>
+        <item name="android:text"></item>
+        <item name="android:gravity">center_horizontal</item>
+        <item name="android:textSize">8dp</item>
+        <item name="android:textColor">@color/black</item>
+        <item name="android:layout_width">0dp</item>
+        <item name="android:layout_weight">0.1</item>
+        <item name="android:layout_height">wrap_content</item>
     </style>
 
     <style name="dayView_alldayEvent_secondColumn">
         <item name="android:cacheColorHint">@android:color/transparent</item>
-	    <item name="android:textSize">8dp</item>
-	    <item name="android:background">@color/white</item>
-	    <item name="android:layout_width">0dp</item>
-	    <item name="android:layout_weight">0.9</item>
-	    <item name="android:layout_height">match_parent</item>
+        <item name="android:textSize">8dp</item>
+        <item name="android:background">@color/white</item>
+        <item name="android:layout_width">0dp</item>
+        <item name="android:layout_weight">0.9</item>
+        <item name="android:layout_height">match_parent</item>
     </style>
-    
+
     <style name="dayView_alldayEvent_secondColumn_entryText">
-	    <item name="android:text"></item>
-	    <item name="android:background">@drawable/calendar_dayview_secondcolumn_entrybackground</item>
- 	    <item name="android:gravity">left</item>
-	    <item name="android:paddingLeft">5dp</item>
-	    <item name="android:paddingTop">2dp</item>
-   	    <item name="android:paddingBottom">2dp</item>
-   	    <item name="android:textColor">@color/white</item>
-	    <item name="android:textSize">10dp</item>
-   	    <item name="android:textStyle">bold</item>
- 	    <item name="android:layout_width">match_parent</item>
-	    <item name="android:layout_height">18dp</item>
+        <item name="android:text"></item>
+        <item name="android:background">@drawable/calendar_dayview_secondcolumn_entrybackground</item>
+        <item name="android:gravity">left</item>
+        <item name="android:paddingLeft">5dp</item>
+        <item name="android:paddingTop">2dp</item>
+        <item name="android:paddingBottom">2dp</item>
+        <item name="android:textColor">@color/white</item>
+        <item name="android:textSize">10dp</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">18dp</item>
     </style>
-    
+
     <style name="dayView_hourEvent_firstColumn">
         <item name="android:focusable">false</item>
-   	    <item name="android:gravity">fill_horizontal</item>
-	    <item name="android:textSize">10dp</item>
-	    <item name="android:background">@color/white</item>
+        <item name="android:gravity">fill_horizontal</item>
+        <item name="android:textSize">10dp</item>
+        <item name="android:background">@color/white</item>
         <item name="android:cacheColorHint">@android:color/transparent</item>
-   	    <item name="android:textColor">@color/black</item>
-	    <item name="android:layout_width">0dip</item>
-	    <item name="android:layout_weight">0.1</item>
-	    <item name="android:layout_height">match_parent</item>
+        <item name="android:textColor">@color/black</item>
+        <item name="android:layout_width">0dip</item>
+        <item name="android:layout_weight">0.1</item>
+        <item name="android:layout_height">match_parent</item>
     </style>
-    
+
     <style name="dayView_hourEvent_firstColumn_entryText">
         <item name="android:background">@color/red</item>
-  	    <item name="android:text"></item>
- 	    <item name="android:gravity">center</item>
- 	    <item name="android:layout_gravity">center_horizontal</item>
-	    <item name="android:textSize">8dp</item>
-	    <item name="android:textColor">@color/black</item>
-	    <item name="android:layout_width">fill_parent</item>
-	    <item name="android:layout_height">40dp</item>
+        <item name="android:text"></item>
+        <item name="android:gravity">center</item>
+        <item name="android:layout_gravity">center_horizontal</item>
+        <item name="android:textSize">8dp</item>
+        <item name="android:textColor">@color/black</item>
+        <item name="android:layout_width">fill_parent</item>
+        <item name="android:layout_height">40dp</item>
     </style>
-    
+
     <style name="dayView_hourEvent_secondColumn">
         <item name="android:cacheColorHint">@android:color/transparent</item>
-	    <item name="android:text"></item>
-	    <item name="android:textSize">8dp</item>
-	    <item name="android:background">@color/white</item>
-	    <item name="android:layout_width">0dip</item>
-	    <item name="android:layout_weight">0.9</item>
-	    <item name="android:layout_height">match_parent</item>
+        <item name="android:text"></item>
+        <item name="android:textSize">8dp</item>
+        <item name="android:background">@color/white</item>
+        <item name="android:layout_width">0dip</item>
+        <item name="android:layout_weight">0.9</item>
+        <item name="android:layout_height">match_parent</item>
     </style>
-    
+
     <style name="dayView_hourEvent_secondColumn_entryText">
-	    <item name="android:text"></item>
-   	    <item name="android:gravity">left</item>
-	    <item name="android:paddingLeft">5dp</item>
-	    <item name="android:paddingTop">2dp</item>
-   	    <item name="android:paddingBottom">2dp</item>
-   	    <item name="android:textColor">@color/white</item>
-	    <item name="android:textSize">10dp</item>
-   	    <item name="android:textStyle">bold</item>
- 	    <item name="android:layout_width">match_parent</item>
-	    <item name="android:layout_height">match_parent</item>
+        <item name="android:text"></item>
+        <item name="android:gravity">left</item>
+        <item name="android:paddingLeft">5dp</item>
+        <item name="android:paddingTop">2dp</item>
+        <item name="android:paddingBottom">2dp</item>
+        <item name="android:textColor">@color/white</item>
+        <item name="android:textSize">10dp</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">match_parent</item>
     </style>
-    
+
     <style name="dayView_hourEvent_secondColumn_entryText_small">
-	    <item name="android:text"></item>
-   	    <item name="android:gravity">left</item>
-	    <item name="android:paddingLeft">5dp</item>
-	    <item name="android:paddingTop">2dp</item>
-   	    <item name="android:paddingBottom">2dp</item>
-   	    <item name="android:textColor">@color/white</item>
-	    <item name="android:textSize">8dp</item>
-   	    <item name="android:textStyle">bold</item>
- 	    <item name="android:layout_width">match_parent</item>
-	    <item name="android:layout_height">match_parent</item>
+        <item name="android:text"></item>
+        <item name="android:gravity">left</item>
+        <item name="android:paddingLeft">5dp</item>
+        <item name="android:paddingTop">2dp</item>
+        <item name="android:paddingBottom">2dp</item>
+        <item name="android:textColor">@color/white</item>
+        <item name="android:textSize">8dp</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">match_parent</item>
     </style>
-    
+
     <style name="dayView_hourEvent_secondColumn_timeText">
         <item name="android:textColor">@color/black</item>
         <item name="android:textSize">10dp</item>
         <item name="android:layout_alignParentLeft">true</item>
     </style>
-    
+
     <style name="dayView_hourEvent_secondColumn_timeText_small">
         <item name="android:textColor">@color/black</item>
         <item name="android:textSize">8dp</item>
         <item name="android:layout_alignParentLeft">true</item>
     </style>
-    
+
 </resources>

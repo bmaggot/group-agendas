@@ -1,53 +1,53 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-	<color name="white">#fff</color>
-	<color name="lighter_gray">#ddd</color>
-	<color name="darker_gray">#aaa</color>
-	<color name="black">#000000</color>
-	<color name="event_color_start">#676F7F</color>
-	<color name="event_color_center">#687392</color>
-	<color name="event_color_end">#818DA5</color>
+    <color name="white">#fff</color>
+    <color name="lighter_gray">#ddd</color>
+    <color name="darker_gray">#aaa</color>
+    <color name="black">#000000</color>
+    <color name="event_color_start">#676F7F</color>
+    <color name="event_color_center">#687392</color>
+    <color name="event_color_end">#818DA5</color>
 
-	<drawable name="empty">#00000000</drawable>
+    <drawable name="empty">#00000000</drawable>
 
-	<color name="mainBgLineColor">#aaaaaa</color>
-	<color name="secondaryBgLineColor">#cccccc</color>
-	<color name="monthTextColor">#A9A9A9</color>
-	<color name="monthWeekTextColor">#6D6D6D</color>
-	<color name="monthHolidayTextColor">#A0A0A0</color>
-	<color name="monthHolidayHiderColor">#46E9E9E9</color>
-	<color name="monthCellBorderColor">#A9A9A9</color>
-	<color name="monthEventPointColor">#1F3C6A</color>
-	<color name="monthInactiveBgColor">#F5F5F5</color>
-	<color name="monthInactiveTextColor">#E0E0E0</color>
-	<color name="monthNameBgColor">#686868</color>
-	<color name="weekNumberCellBgColor">#B8B8B8</color>
-	<color name="red">#FF0000</color>
-	<color name="defaultAllDayEventColor">#21C0DB</color>
-	<color name="defaultHourEventColorTransparent">#BF21C0DB</color>
+    <color name="mainBgLineColor">#aaaaaa</color>
+    <color name="secondaryBgLineColor">#cccccc</color>
+    <color name="monthTextColor">#A9A9A9</color>
+    <color name="monthWeekTextColor">#6D6D6D</color>
+    <color name="monthHolidayTextColor">#A0A0A0</color>
+    <color name="monthHolidayHiderColor">#46E9E9E9</color>
+    <color name="monthCellBorderColor">#A9A9A9</color>
+    <color name="monthEventPointColor">#1F3C6A</color>
+    <color name="monthInactiveBgColor">#F5F5F5</color>
+    <color name="monthInactiveTextColor">#E0E0E0</color>
+    <color name="monthNameBgColor">#686868</color>
+    <color name="weekNumberCellBgColor">#B8B8B8</color>
+    <color name="red">#FF0000</color>
+    <color name="defaultAllDayEventColor">#21C0DB</color>
+    <color name="defaultHourEventColorTransparent">#BF21C0DB</color>
 
-	<string-array name="colors_values">
-		<item>000000</item>
-		<item>7f7f7f</item>
-		<item>880015</item>
-		<item>ed1c24</item>
-		<item>ff7f27</item>
-		<item>fff200</item>
-		<item>22b14c</item>
-		<item>00a2e8</item>
-		<item>3f48cc</item>
-		<item>a349a4</item>
-		<item>ffffff</item>
-		<item>c3c3c3</item>
-		<item>b97a57</item>
-		<item>ffaec9</item>
-		<item>ffc90e</item>
-		<item>efe4b0</item>
-		<item>b5e61d</item>
-		<item>99d9ea</item>
-		<item>7092be</item>
-		<item>c8bfe7</item>
-	</string-array>
+    <string-array name="colors_values">
+        <item>000000</item>
+        <item>7f7f7f</item>
+        <item>880015</item>
+        <item>ed1c24</item>
+        <item>ff7f27</item>
+        <item>fff200</item>
+        <item>22b14c</item>
+        <item>00a2e8</item>
+        <item>3f48cc</item>
+        <item>a349a4</item>
+        <item>ffffff</item>
+        <item>c3c3c3</item>
+        <item>b97a57</item>
+        <item>ffaec9</item>
+        <item>ffc90e</item>
+        <item>efe4b0</item>
+        <item>b5e61d</item>
+        <item>99d9ea</item>
+        <item>7092be</item>
+        <item>c8bfe7</item>
+    </string-array>
 
 </resources>

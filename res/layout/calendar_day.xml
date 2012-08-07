@@ -1,38 +1,44 @@
 <?xml version="1.0" encoding="utf-8"?>
 <com.groupagendas.groupagenda.calendar.day.DayView xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical"
     android:layout_width="fill_parent"
-    android:layout_height="fill_parent" >
-    
-<!--    TOP NAVBAR BEGIN -->
-    <include android:id="@+id/calendar_navbar"
-		android:layout_gravity="center_horizontal"
-		layout="@layout/calendar_top_bar" />
-<!--    TOP NAVBAR END -->
+    android:layout_height="fill_parent"
+    android:orientation="vertical" >
 
-	<View android:background="@color/darker_gray"
-	    android:layout_width="match_parent"
-	    android:layout_height="2dp" />
+    <!-- TOP NAVBAR BEGIN -->
 
-<!--     ALL-DAY EVENTS BEGIN -->
-	<include layout="@layout/calendar_dayview_allday_section" />
-<!--     ALL-DAY EVENTS END -->
+    <include
+        android:id="@+id/calendar_navbar"
+        android:layout_gravity="center_horizontal"
+        layout="@layout/calendar_top_bar" />
+    <!-- TOP NAVBAR END -->
 
-	<TextView
-		android:background="@drawable/border_darkgray"
-	    android:gravity="center_horizontal"
-		android:layout_width="match_parent"
-	    android:layout_height="1dp" />
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="2dp"
+        android:background="@color/darker_gray" />
 
-<!--     HOUR-LONG EVENTS BEGIN -->
-	<include layout="@layout/calendar_dayview_hourevent_section" />
-<!--     HOUR-LONG EVENTS END -->
+    <!-- ALL-DAY EVENTS BEGIN -->
 
-	<TextView
-	    style="?android:attr/listSeparatorTextViewStyle"
-	    android:paddingTop="5dip"
-	    android:color="@color/black"
-	    android:gravity="center_horizontal"
-	    android:layout_width="match_parent"
-	    android:layout_height="1dp" />
+    <include layout="@layout/calendar_dayview_allday_section" />
+    <!-- ALL-DAY EVENTS END -->
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@drawable/border_darkgray"
+        android:gravity="center_horizontal" />
+
+    <!-- HOUR-LONG EVENTS BEGIN -->
+
+    <include layout="@layout/calendar_dayview_hourevent_section" />
+    <!-- HOUR-LONG EVENTS END -->
+
+    <TextView
+        style="?android:attr/listSeparatorTextViewStyle"
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:gravity="center_horizontal"
+        android:paddingTop="5dip"
+        android:color="@color/black" />
+
 </com.groupagendas.groupagenda.calendar.day.DayView>

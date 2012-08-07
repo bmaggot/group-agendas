@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- Copyright (C) 2006 The Android Open Source Project
+<!--
+     Copyright (C) 2006 The Android Open Source Project
 
      Licensed under the Apache License, Version 2.0 (the "License");
      you may not use this file except in compliance with the License.
@@ -14,40 +15,43 @@
      limitations under the License.
 -->
 
-<!-- Formatting note: terminate all comments with a period, to avoid breaking
+<!--
+     Formatting note: terminate all comments with a period, to avoid breaking
      the documentation output. To suppress comment lines from the documentation
      output, insert an eat-comment element after the comment lines.
 -->
 
 <resources>
-    <declare-styleable name="CalendarView">
-        <!-- The first day of week according to {@link java.util.Calendar}. -->
-        <attr name="firstDayOfWeek" format="integer"/>
-        <!-- Whether do show week numbers. -->
-        <attr name="showWeekNumber" format="boolean"/>
-        <!-- The number of weeks to be shown. -->
-        <attr name="shownWeekCount" format="integer"/>
-        <!-- The background color for the selected week. -->
-        <attr name="selectedWeekBackgroundColor" format="color"/>
-        <!-- The color for the dates of the selected month. -->
-        <attr name="focusedMonthDateColor" format="color"/>
-        <!-- The color for the dates of an unfocused month. -->
-        <attr name="unfocusedMonthDateColor" format="color"/>
-        <!-- The color for the week numbers. -->
-        <attr name="weekNumberColor" format="color"/>
-        <!-- The color for the sepatator line between weeks. -->
-        <attr name="weekSeparatorLineColor" format="color"/>
-        <!-- The text appearance for the week day abbreviation of the calendar header. -->
-        <attr name="weekDayTextAppearance" format="reference"/>
-        <!-- The text appearance for the calendar dates. -->
-        <attr name="dateTextAppearance" format="reference"/>
-    </declare-styleable>
 
+    <declare-styleable name="CalendarView">
+
+        <!-- The first day of week according to {@link java.util.Calendar}. -->
+        <attr name="firstDayOfWeek" format="integer" />
+        <!-- Whether do show week numbers. -->
+        <attr name="showWeekNumber" format="boolean" />
+        <!-- The number of weeks to be shown. -->
+        <attr name="shownWeekCount" format="integer" />
+        <!-- The background color for the selected week. -->
+        <attr name="selectedWeekBackgroundColor" format="color" />
+        <!-- The color for the dates of the selected month. -->
+        <attr name="focusedMonthDateColor" format="color" />
+        <!-- The color for the dates of an unfocused month. -->
+        <attr name="unfocusedMonthDateColor" format="color" />
+        <!-- The color for the week numbers. -->
+        <attr name="weekNumberColor" format="color" />
+        <!-- The color for the sepatator line between weeks. -->
+        <attr name="weekSeparatorLineColor" format="color" />
+        <!-- The text appearance for the week day abbreviation of the calendar header. -->
+        <attr name="weekDayTextAppearance" format="reference" />
+        <!-- The text appearance for the calendar dates. -->
+        <attr name="dateTextAppearance" format="reference" />
+    </declare-styleable>
     <declare-styleable name="TextAppearance">
+
         <!-- Text color. -->
         <attr name="textColor" format="color" />
         <!-- Size of the text. Recommended dimension type for text is "sp" for scaled-pixels (example: 15sp). -->
-        <attr name="textSize" format="dimension"/>
+        <attr name="textSize" format="dimension" />
         <!-- Style (bold, italic, bolditalic) for the text. -->
         <attr name="textStyle">
             <flag name="normal" value="0" />
@@ -69,11 +73,13 @@
     </declare-styleable>
 
     <attr name="calendarViewStyle" format="reference" />
-
     <attr name="textAppearance" format="reference" />
 
-    <!-- Indicates that the content of a non-editable TextView can be selected.
-     Default value is false. EditText content is always selectable. -->
+    <!--
+     Indicates that the content of a non-editable TextView can be selected.
+     Default value is false. EditText content is always selectable.
+    -->
     <attr name="textIsSelectable" format="boolean" />
     <attr name="layout" />
+
 </resources>

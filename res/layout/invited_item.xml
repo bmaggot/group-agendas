@@ -1,38 +1,38 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-	android:layout_width="fill_parent"
-	android:layout_height="fill_parent"
-	android:orientation="vertical"
-	android:padding="10dp" >
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:orientation="vertical"
+    android:padding="10dp" >
 
-	<RelativeLayout
-		android:layout_width="fill_parent"
-		android:layout_height="wrap_content" >
+    <RelativeLayout
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content" >
 
-		<TextView
-			android:id="@+id/statusView"
-			android:layout_width="wrap_content"
-			android:layout_height="wrap_content"
-			android:layout_alignParentRight="true"
-			android:background="#21c0db"
-			android:paddingLeft="5dp"
-			android:paddingRight="5dp"
-			android:text="0"
-			android:textColor="@android:color/white" />
+        <TextView
+            android:id="@+id/statusView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:background="#21c0db"
+            android:paddingLeft="5dp"
+            android:paddingRight="5dp"
+            android:text="0"
+            android:textColor="@android:color/white" />
 
-		<TextView
-			android:id="@+id/nameView"
-			android:layout_width="fill_parent"
-			android:layout_height="wrap_content"
-			android:text="@string/ABW"
-			android:textColor="@android:color/background_dark"
-			android:textStyle="bold" />
-	</RelativeLayout>
+        <TextView
+            android:id="@+id/nameView"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/ABW"
+            android:textColor="@android:color/background_dark"
+            android:textStyle="bold" />
+    </RelativeLayout>
 
-	<TextView
-		android:id="@+id/emailView"
-		android:layout_width="fill_parent"
-		android:layout_height="wrap_content"
-		android:text="Email" />
+    <TextView
+        android:id="@+id/emailView"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:text="Email" />
 
 </LinearLayout>

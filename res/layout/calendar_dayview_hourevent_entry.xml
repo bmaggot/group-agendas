@@ -1,36 +1,40 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-	android:id="@+id/hour_event_holder"
-	android:layout_width="fill_parent"
-	android:background="@drawable/calendar_dayview_secondcolumn_entrybackground"
-	android:layout_height="fill_parent"
-	android:orientation="vertical"
-	android:padding="5dp"
-	android:layout_weight="1">
-	
-	<TextView android:id="@+id/hour_event_time"
-	    android:layout_width="wrap_content"
-		android:layout_height="wrap_content"
-		android:text="test"
-		android:textSize="10dp"
-		android:textColor="@color/black"
-		android:layout_alignParentLeft="true" />
-	
-<!--     <LinearLayout android:id="@+id/hour_event_icontitle_holder" -->
-<!--         	android:layout_width="wrap_content" -->
-<!--         	android:layout_height="wrap_content" -->
-<!--         	android:layout_alignParentRight="true"> -->
-        	
-<!--         <ImageView android:id="@+id/hour_event_icon" -->
-<!--             android:layout_width="wrap_content" -->
-<!--             android:layout_height="wrap_content"/>	 -->
-        
-<!-- 		<TextView android:id="@+id/hour_event_title" -->
-<!-- 		    android:layout_width="wrap_content" -->
-<!-- 			android:layout_height="wrap_content" -->
-<!-- 			android:text="test" -->
-<!-- 			android:paddingLeft="5dp" -->
-<!-- 			android:textSize="10dp" -->
-<!-- 			android:textColor="@color/black" /> -->
-<!-- 	</LinearLayout> -->
+    android:id="@+id/hour_event_holder"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:layout_weight="1"
+    android:background="@drawable/calendar_dayview_secondcolumn_entrybackground"
+    android:orientation="vertical"
+    android:padding="5dp" >
+
+    <TextView
+        android:id="@+id/hour_event_time"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:text="test"
+        android:textColor="@color/black"
+        android:textSize="10dp" />
+
+    <!-- <LinearLayout android:id="@+id/hour_event_icontitle_holder" -->
+    <!-- android:layout_width="wrap_content" -->
+    <!-- android:layout_height="wrap_content" -->
+    <!-- android:layout_alignParentRight="true"> -->
+
+
+    <!-- <ImageView android:id="@+id/hour_event_icon" -->
+    <!-- android:layout_width="wrap_content" -->
+    <!-- android:layout_height="wrap_content"/> -->
+
+
+    <!-- <TextView android:id="@+id/hour_event_title" -->
+    <!-- android:layout_width="wrap_content" -->
+    <!-- android:layout_height="wrap_content" -->
+    <!-- android:text="test" -->
+    <!-- android:paddingLeft="5dp" -->
+    <!-- android:textSize="10dp" -->
+    <!-- android:textColor="@color/black" /> -->
+    <!-- </LinearLayout> -->
+
 </RelativeLayout>

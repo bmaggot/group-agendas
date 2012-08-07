@@ -1,105 +1,108 @@
-<?xml version="1.0" encoding="utf-8" ?>
-<LinearLayout android:layout_width="fill_parent"
-	android:layout_height="fill_parent"
-	android:background="#FFFFFF" xmlns:android="http://schemas.android.com/apk/res/android" android:focusableInTouchMode="true" android:orientation="vertical">
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:background="#FFFFFF"
+    android:focusableInTouchMode="true"
+    android:orientation="vertical" >
 
-	<RelativeLayout
-		android:layout_width="fill_parent"
-		android:layout_height="50dp"
-		android:background="@drawable/top_bar_background">
+    <RelativeLayout
+        android:layout_width="fill_parent"
+        android:layout_height="50dp"
+        android:background="@drawable/top_bar_background" >
 
-		<com.makeramen.segmented.SegmentedRadioGroup
-			android:id="@+id/segmentedButtons"
-			android:layout_width="wrap_content"
-			android:layout_height="wrap_content"
-			android:layout_centerInParent="true"
-			android:layout_margin="7dip"
-			android:checkedButton="@+id/contacts"
-			android:orientation="horizontal" >
+        <com.makeramen.segmented.SegmentedRadioGroup
+            android:id="@+id/segmentedButtons"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:layout_margin="7dip"
+            android:checkedButton="@+id/contacts"
+            android:orientation="horizontal" >
 
-			<RadioButton
-				android:id="@+id/contacts"
-				android:layout_width="100dp" 
-				android:layout_height="match_parent" 
-				android:button="@null" 
-				android:gravity="center" 
-				android:minHeight="33dip" 
-				android:minWidth="40dip" 
-				android:text="@string/contacts" 
-				android:textAppearance="?android:attr/textAppearanceSmall"
-				android:textColor="@color/radio_colors"/>
+            <RadioButton
+                android:id="@+id/contacts"
+                android:layout_width="100dp"
+                android:layout_height="match_parent"
+                android:button="@null"
+                android:gravity="center"
+                android:minHeight="33dip"
+                android:minWidth="40dip"
+                android:text="@string/contacts"
+                android:textAppearance="?android:attr/textAppearanceSmall"
+                android:textColor="@color/radio_colors" />
 
-			<RadioButton
-				android:id="@+id/groups"
-				android:layout_width="100dp"
-				android:button="@null"
-				android:gravity="center"
-				android:minHeight="33dip"
-				android:minWidth="40dip"
-				android:text="@string/groups"
-				android:textAppearance="?android:attr/textAppearanceSmall"
-				android:textColor="@color/radio_colors" />
-		</com.makeramen.segmented.SegmentedRadioGroup>
+            <RadioButton
+                android:id="@+id/groups"
+                android:layout_width="100dp"
+                android:button="@null"
+                android:gravity="center"
+                android:minHeight="33dip"
+                android:minWidth="40dip"
+                android:text="@string/groups"
+                android:textAppearance="?android:attr/textAppearanceSmall"
+                android:textColor="@color/radio_colors" />
+        </com.makeramen.segmented.SegmentedRadioGroup>
 
-		<ProgressBar
-			android:id="@+id/progress"
-			style="@android:style/Widget.ProgressBar.Small"
-			android:layout_width="wrap_content"
-			android:layout_height="wrap_content"
-			android:layout_alignParentRight="true"
-			android:layout_centerInParent="true"
-			android:layout_marginRight="20dp"
-			android:visibility="gone" />
+        <ProgressBar
+            android:id="@+id/progress"
+            style="@android:style/Widget.ProgressBar.Small"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:layout_centerInParent="true"
+            android:layout_marginRight="20dp"
+            android:visibility="gone" />
 
-		<Button
-		    android:id="@+id/import_button"
-		    style="?android:attr/buttonStyleSmall"
-		    android:layout_width="wrap_content"
-		    android:layout_height="wrap_content"
-		    android:layout_alignParentBottom="true"
-		    android:layout_alignParentRight="true"
-		    android:text="import" />
+        <Button
+            android:id="@+id/import_button"
+            style="?android:attr/buttonStyleSmall"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:layout_alignParentRight="true"
+            android:text="import" />
+    </RelativeLayout>
 
-	</RelativeLayout>
+    <RelativeLayout
+        android:layout_width="fill_parent"
+        android:layout_height="50dp"
+        android:background="@drawable/search_field_background" >
 
-	<RelativeLayout
-		android:layout_width="fill_parent"
-		android:layout_height="50dp" android:background="@drawable/search_field_background">
-		
-		<EditText
-			android:id="@+id/search"
-			android:layout_width="fill_parent"
-			android:layout_height="wrap_content"
-			android:layout_marginLeft="10dp"
-			android:layout_marginRight="10dp" 
-			android:layout_marginTop="4dp" 
-			android:hint="@string/search" 
-			android:singleLine="true"/>
-		
-	</RelativeLayout>
+        <EditText
+            android:id="@+id/search"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="10dp"
+            android:layout_marginRight="10dp"
+            android:layout_marginTop="4dp"
+            android:hint="@string/search"
+            android:singleLine="true" />
+    </RelativeLayout>
 
-	<LinearLayout
-	    android:layout_width="fill_parent"
-	    android:layout_height="fill_parent">
-		
-		<ListView 
-		    android:id="@android:id/list" 
-		    android:layout_width="0dip" 
-		    android:layout_height="wrap_content" 
-		    android:layout_marginTop="1dp" 
-		    android:layout_weight="1" 
-		    android:background="#FFFFFF" 
-		    android:cacheColorHint="#00000000" 
-		    android:longClickable="true" 
-		    android:padding="5dp" 
-		    android:textFilterEnabled="true">
-		    
-		</ListView>
-		<LinearLayout 
-		    android:layout_width="25dp"
-		    android:id="@+id/sideIndex"
-		    android:orientation="vertical"
-		    android:layout_height="match_parent">		    
-		</LinearLayout>
-	</LinearLayout>
+    <LinearLayout
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent" >
+
+        <ListView
+            android:id="@android:id/list"
+            android:layout_width="0dip"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="1dp"
+            android:layout_weight="1"
+            android:background="#FFFFFF"
+            android:cacheColorHint="#00000000"
+            android:longClickable="true"
+            android:padding="5dp"
+            android:textFilterEnabled="true" >
+        </ListView>
+
+        <LinearLayout
+            android:id="@+id/sideIndex"
+            android:layout_width="25dp"
+            android:layout_height="match_parent"
+            android:orientation="vertical" >
+        </LinearLayout>
+    </LinearLayout>
+
 </LinearLayout>

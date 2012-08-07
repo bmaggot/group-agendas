@@ -1,4 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <!--<item name="calendarViewStyle" type="style">@style/Widget.CalendarView</item>-->
+
+    <!-- <item name="calendarViewStyle" type="style">@style/Widget.CalendarView</item> -->
+
 </resources>

@@ -1,73 +1,73 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-	android:layout_width="match_parent"
-	android:layout_height="match_parent"
-	android:background="@color/white"
-	android:orientation="vertical" >
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/white"
+    android:orientation="vertical" >
 
-	<ScrollView
-		android:layout_width="fill_parent"
-		android:layout_height="fill_parent" >
+    <ScrollView
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent" >
 
-		<LinearLayout
-			android:layout_width="fill_parent"
-			android:layout_height="wrap_content"
-			android:orientation="vertical"
-			android:padding="20dp" >
+        <LinearLayout
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="20dp" >
 
-			<ImageView
-				android:layout_width="fill_parent"
-				android:layout_height="wrap_content"
-				android:src="@drawable/ga_logo" />
+            <ImageView
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:src="@drawable/ga_logo" />
 
-			<TextView
-				android:layout_width="fill_parent"
-				android:layout_height="wrap_content"
-				android:text="@string/groupagenda"
-				android:textStyle="bold" />
+            <TextView
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/groupagenda"
+                android:textStyle="bold" />
 
-			<RelativeLayout
-				android:layout_width="fill_parent"
-				android:layout_height="wrap_content" >
+            <RelativeLayout
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content" >
 
-				<TextView
-					android:layout_width="fill_parent"
-					android:layout_height="wrap_content"
-					android:layout_alignParentLeft="true"
-					android:text="@string/show_calendar"
-					android:textColor="@android:color/black"
-					android:textStyle="bold" />
+                <TextView
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentLeft="true"
+                    android:text="@string/show_calendar"
+                    android:textColor="@android:color/black"
+                    android:textStyle="bold" />
 
-				<ToggleButton
-					android:id="@+id/toggleAgenda"
-					android:layout_width="wrap_content"
-					android:layout_height="wrap_content"
-					android:layout_alignParentRight="true"
-					android:text="ToggleButton" />
-			</RelativeLayout>
+                <ToggleButton
+                    android:id="@+id/toggleAgenda"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentRight="true"
+                    android:text="ToggleButton" />
+            </RelativeLayout>
 
-			<TextView
-				android:layout_width="fill_parent"
-				android:layout_height="wrap_content"
-				android:layout_marginTop="10dp"
-				android:text="@string/native_calendars"
-				android:textStyle="bold" />
+            <TextView
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:text="@string/native_calendars"
+                android:textStyle="bold" />
 
-			<LinearLayout
-				android:id="@+id/calendarContainer"
-				android:layout_width="fill_parent"
-				android:layout_height="wrap_content"
-				android:orientation="vertical" >
-			</LinearLayout>
+            <LinearLayout
+                android:id="@+id/calendarContainer"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical" >
+            </LinearLayout>
 
-			<TextView
-				android:layout_width="fill_parent"
-				android:layout_height="wrap_content"
-				android:layout_marginTop="10dp"
-				android:gravity="center_horizontal"
-				android:text="@string/select_calendars_to_display"
-				android:textStyle="bold" />
-		</LinearLayout>
-	</ScrollView>
+            <TextView
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:gravity="center_horizontal"
+                android:text="@string/select_calendars_to_display"
+                android:textStyle="bold" />
+        </LinearLayout>
+    </ScrollView>
 
 </LinearLayout>

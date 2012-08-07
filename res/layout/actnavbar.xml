@@ -1,58 +1,58 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-	android:layout_width="fill_parent"
-	android:layout_height="fill_parent"
-	android:background="@android:color/white" >
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:background="@android:color/white" >
 
-	<FrameLayout
-		android:id="@+id/calendarContainer"
-		android:layout_width="fill_parent"
-		android:layout_height="fill_parent"
-		android:layout_above="@+id/radiogroup"
-		android:layout_alignParentTop="true" >
-	</FrameLayout>
+    <FrameLayout
+        android:id="@+id/calendarContainer"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:layout_above="@+id/radiogroup"
+        android:layout_alignParentTop="true" >
+    </FrameLayout>
 
-	<RadioGroup
-		android:id="@+id/radiogroup"
-		android:layout_width="fill_parent"
-		android:layout_height="45dp"
-		android:layout_alignParentBottom="true"
-		android:background="@drawable/navbar_background"
-		android:orientation="horizontal" >
+    <RadioGroup
+        android:id="@+id/radiogroup"
+        android:layout_width="fill_parent"
+        android:layout_height="45dp"
+        android:layout_alignParentBottom="true"
+        android:background="@drawable/navbar_background"
+        android:orientation="horizontal" >
 
-		<RadioButton
-			android:id="@+id/btnCalendar"
-			style="@style/navbar_button"
-			android:background="@drawable/nav_backgroud"
-			android:drawableTop="@drawable/different_white" />
+        <RadioButton
+            android:id="@+id/btnCalendar"
+            style="@style/navbar_button"
+            android:background="@drawable/nav_backgroud"
+            android:drawableTop="@drawable/different_white" />
 
-		<RadioButton
-			android:id="@+id/btnCalendars"
-			style="@style/navbar_button"
-			android:layout_marginLeft="5dp"
-			android:background="@drawable/nav_backgroud"
-			android:drawableTop="@drawable/filter_white" />
+        <RadioButton
+            android:id="@+id/btnCalendars"
+            style="@style/navbar_button"
+            android:layout_marginLeft="5dp"
+            android:background="@drawable/nav_backgroud"
+            android:drawableTop="@drawable/filter_white" />
 
-		<RadioButton
-			android:id="@+id/btnContacts"
-			style="@style/navbar_button"
-			android:layout_marginLeft="5dp"
-			android:background="@drawable/nav_backgroud"
-			android:drawableTop="@drawable/contacts_white" />
+        <RadioButton
+            android:id="@+id/btnContacts"
+            style="@style/navbar_button"
+            android:layout_marginLeft="5dp"
+            android:background="@drawable/nav_backgroud"
+            android:drawableTop="@drawable/contacts_white" />
 
-		<RadioButton
-			android:id="@+id/btnEvents"
-			style="@style/navbar_button"
-			android:layout_marginLeft="5dp"
-			android:background="@drawable/nav_backgroud"
-			android:drawableTop="@drawable/logo_white" />
+        <RadioButton
+            android:id="@+id/btnEvents"
+            style="@style/navbar_button"
+            android:layout_marginLeft="5dp"
+            android:background="@drawable/nav_backgroud"
+            android:drawableTop="@drawable/logo_white" />
 
-		<RadioButton
-			android:id="@+id/btnNewevent"
-			style="@style/navbar_button"
-			android:layout_marginLeft="5dp"
-			android:background="@drawable/nav_backgroud"
-			android:drawableTop="@drawable/add_white" />
-	</RadioGroup>
+        <RadioButton
+            android:id="@+id/btnNewevent"
+            style="@style/navbar_button"
+            android:layout_marginLeft="5dp"
+            android:background="@drawable/nav_backgroud"
+            android:drawableTop="@drawable/add_white" />
+    </RadioGroup>
 
 </RelativeLayout>

@@ -1,37 +1,37 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-	android:layout_width="fill_parent"
-	android:layout_height="fill_parent"
-	android:background="@android:color/white"
-	android:orientation="vertical" >
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:background="@android:color/white"
+    android:orientation="vertical" >
 
-	<RelativeLayout
-		android:id="@+id/topBar"
-		android:layout_width="fill_parent"
-		android:layout_height="50dp"
-		android:background="@drawable/top_bar_background" >
+    <RelativeLayout
+        android:id="@+id/topBar"
+        android:layout_width="fill_parent"
+        android:layout_height="50dp"
+        android:background="@drawable/top_bar_background" >
 
-		<TextView
-			android:id="@+id/topText"
-			android:layout_width="wrap_content"
-			android:layout_height="wrap_content"
-			android:layout_centerInParent="true"
-			android:text="@string/whats_new"
-			android:textColor="@android:color/white"
-			android:textSize="20dp"
-			android:textStyle="bold" />
-	</RelativeLayout>
+        <TextView
+            android:id="@+id/topText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:text="@string/whats_new"
+            android:textColor="@android:color/white"
+            android:textSize="20dp"
+            android:textStyle="bold" />
+    </RelativeLayout>
 
-	<ScrollView
-		android:layout_width="fill_parent"
-		android:layout_height="fill_parent"
-		android:padding="10dp" >
+    <ScrollView
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:padding="10dp" >
 
-		<TextView
-			android:id="@+id/text"
-			android:layout_width="fill_parent"
-			android:layout_height="fill_parent"
-			android:textColor="@android:color/black" />
-	</ScrollView>
+        <TextView
+            android:id="@+id/text"
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            android:textColor="@android:color/black" />
+    </ScrollView>
 
 </LinearLayout>
