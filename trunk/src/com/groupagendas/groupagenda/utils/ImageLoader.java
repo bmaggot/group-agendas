@@ -20,6 +20,7 @@ import android.widget.ImageView;
 
 import com.groupagendas.groupagenda.AgendaApplication;
 import com.groupagendas.groupagenda.R;
+import com.groupagendas.groupagenda.error.report.Reporter;
 
 public class ImageLoader {
 	private AgendaApplication myApp;
@@ -95,7 +96,7 @@ public class ImageLoader {
 				bitmap = decodeFile(f);
 				return bitmap;
 			} catch (Exception ex) {
-				ex.printStackTrace();
+				Reporter.reportError(this.getClass().toString(), Thread.currentThread().getStackTrace()[2].getMethodName().toString(), ex.getMessage());
 				return null;
 			}
 		}
@@ -128,6 +129,7 @@ public class ImageLoader {
 			o2.inSampleSize = scale;
 			return BitmapFactory.decodeStream(new FileInputStream(f), null, o2);
 		} catch (FileNotFoundException e) {
+			Reporter.reportError(this.getClass().toString(), Thread.currentThread().getStackTrace()[2].getMethodName().toString(), e.getMessage());
 		}
 		return null;
 	}
@@ -193,7 +195,7 @@ public class ImageLoader {
 						break;
 				}
 			} catch (InterruptedException e) {
-				// allow thread to exit
+				Reporter.reportError(this.getClass().toString(), Thread.currentThread().getStackTrace()[2].getMethodName().toString(), e.getMessage());
 			}
 		}
 	}

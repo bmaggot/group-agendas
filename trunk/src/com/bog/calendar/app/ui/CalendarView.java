@@ -36,6 +36,7 @@ import android.widget.TextView;
 
 import com.bog.calendar.app.model.EventListAdapter;
 import com.groupagendas.groupagenda.R;
+import com.groupagendas.groupagenda.error.report.Reporter;
 import com.groupagendas.groupagenda.events.Event;
 
 /**
@@ -687,7 +688,7 @@ public class CalendarView extends FrameLayout {
             outDate.setTime(mDateFormat.parse(date));
             return true;
         } catch (ParseException e) {
-            Log.w(LOG_TAG, "Date: " + date + " not in format: " + DATE_FORMAT);
+        	Reporter.reportError(this.getClass().toString(), Thread.currentThread().getStackTrace()[2].getMethodName().toString(), e.getMessage());
             return false;
         }
     }
@@ -1192,6 +1193,7 @@ public class CalendarView extends FrameLayout {
                         				try {
                         					eventPointPaint.setColor(Integer.parseInt(e.color, 16)+0xFF000000);
 										} catch (Exception e2) {
+											Reporter.reportError(this.getClass().toString(), Thread.currentThread().getStackTrace()[2].getMethodName().toString(), e2.getMessage());
 											eventPointPaint.setColor(getResources().getColor(R.color.monthEventPointColor));
 										}
                         			}else{

@@ -6,6 +6,8 @@ import java.net.URLEncoder;
 import java.util.HashMap;
 import java.util.Map;
 
+import com.groupagendas.groupagenda.error.report.Reporter;
+
 public class MapUtils {
 	public static String mapToString(Map<String, String> map) {
 		
@@ -25,6 +27,7 @@ public class MapUtils {
 				stringBuilder.append("=");
 				stringBuilder.append(value != null ? URLEncoder.encode(value, "UTF-8") : "");
 			} catch (UnsupportedEncodingException e) {
+				Reporter.reportError(MapUtils.class.toString(), Thread.currentThread().getStackTrace()[2].getMethodName().toString(), e.getMessage());
 				throw new RuntimeException("This method requires UTF-8 encoding support", e);
 			}
 		}
@@ -39,6 +42,7 @@ public class MapUtils {
 			try {
 				map.put(URLDecoder.decode(nameValue[0], "UTF-8"), nameValue.length > 1 ? URLDecoder.decode(nameValue[1], "UTF-8") : "");
 			} catch (UnsupportedEncodingException e) {
+				Reporter.reportError(MapUtils.class.toString(), Thread.currentThread().getStackTrace()[2].getMethodName().toString(), e.getMessage());
 				throw new RuntimeException("This method requires UTF-8 encoding support", e);
 			}
 		}

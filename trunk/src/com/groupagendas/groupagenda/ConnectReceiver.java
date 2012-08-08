@@ -13,6 +13,7 @@ import org.json.JSONObject;
 import com.groupagendas.groupagenda.data.Data;
 import com.groupagendas.groupagenda.data.DataManagement;
 import com.groupagendas.groupagenda.data.OfflineData;
+import com.groupagendas.groupagenda.error.report.Reporter;
 
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -90,7 +91,7 @@ public class ConnectReceiver extends BroadcastReceiver {
 					Data.setUnuploadedData(new ArrayList<OfflineData>());
 				}
 			} catch (Exception ex) {
-				Log.e("createEvent ex", ex.getMessage() + "!!!");
+				Reporter.reportError(this.getClass().toString(), Thread.currentThread().getStackTrace()[2].getMethodName().toString(), ex.getMessage());
 			}
 //			this.success = success;
 			return success;

@@ -39,6 +39,7 @@ import android.widget.TextView;
 
 import com.bog.calendar.app.model.EventListAdapter;
 import com.groupagendas.groupagenda.R;
+import com.groupagendas.groupagenda.error.report.Reporter;
 import com.groupagendas.groupagenda.events.Event;
 import com.groupagendas.groupagenda.events.NewEventActivity;
 import com.groupagendas.groupagenda.utils.DateTimeUtils;
@@ -688,7 +689,7 @@ public class CalendarYearView extends FrameLayout {
             outDate.setTime(mDateFormat.parse(date));
             return true;
         } catch (ParseException e) {
-            Log.w(LOG_TAG, "Date: " + date + " not in format: " + DATE_FORMAT);
+        	Reporter.reportError(this.getClass().toString(), Thread.currentThread().getStackTrace()[2].getMethodName().toString(), e.getMessage());
             return false;
         }
     }

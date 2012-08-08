@@ -12,6 +12,8 @@ import java.util.regex.Pattern;
 import org.json.JSONArray;
 import org.json.JSONException;
 
+import com.groupagendas.groupagenda.error.report.Reporter;
+
 import android.graphics.Bitmap;
 import android.text.format.DateFormat;
 
@@ -27,6 +29,7 @@ public class Utils {
 				os.write(bytes, 0, count);
 			}
 		} catch (Exception ex) {
+			Reporter.reportError(Utils.class.toString(), Thread.currentThread().getStackTrace()[2].getMethodName().toString(), ex.getMessage());
 		}
 	}
 
@@ -46,6 +49,7 @@ public class Utils {
 			Date date = (Date) formatter.parse(date_str);
 			calendar.setTime(date);
 		} catch (ParseException e) {
+			Reporter.reportError(Utils.class.toString(), Thread.currentThread().getStackTrace()[2].getMethodName().toString(), e.getMessage());
 		}
 		return calendar;
 	}
@@ -57,6 +61,7 @@ public class Utils {
 			Date date = (Date) formatter.parse(date_str);
 			calendar.setTime(date);
 		} catch (ParseException e) {
+			Reporter.reportError(Utils.class.toString(), Thread.currentThread().getStackTrace()[2].getMethodName().toString(), e.getMessage());
 		}
 		return calendar;
 	}
