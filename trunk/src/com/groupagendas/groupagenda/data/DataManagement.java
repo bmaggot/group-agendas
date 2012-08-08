@@ -147,6 +147,7 @@ public class DataManagement {
 
 		} catch (Exception ex) {
 			Data.setERROR(ex.getMessage());
+			Reporter.reportError(this.getClass().toString(), Thread.currentThread().getStackTrace()[2].getMethodName().toString(), ex.getMessage());
 		}
 
 		// image
@@ -188,6 +189,7 @@ public class DataManagement {
 
 		} catch (Exception ex) {
 			Data.setERROR(ex.getMessage());
+			Reporter.reportError(this.getClass().toString(), Thread.currentThread().getStackTrace()[2].getMethodName().toString(), ex.getMessage());
 		}
 		return success;
 	}
@@ -223,70 +225,83 @@ public class DataManagement {
 							u.user_id = profile.getInt("user_id");
 							cv.put(AccountProvider.AMetaData.AccountMetaData.A_ID, u.user_id);
 						} catch (JSONException e) {
+							Reporter.reportError(this.getClass().toString(), Thread.currentThread().getStackTrace()[2].getMethodName().toString(), e.getMessage());
 						}
 
 						try {
 							u.name = profile.getString("name");
 							cv.put(AccountProvider.AMetaData.AccountMetaData.NAME, u.name);
 						} catch (JSONException e) {
+							Reporter.reportError(this.getClass().toString(), Thread.currentThread().getStackTrace()[2].getMethodName().toString(), e.getMessage());
 						}
 						try {
 							u.fullname = profile.getString("fullname");
 							cv.put(AccountProvider.AMetaData.AccountMetaData.FULLNAME, u.fullname);
 						} catch (JSONException e) {
+							Reporter.reportError(this.getClass().toString(), Thread.currentThread().getStackTrace()[2].getMethodName().toString(), e.getMessage());
 						}
 
 						try {
 							u.birthdate = profile.getString("birthdate");
 							cv.put(AccountProvider.AMetaData.AccountMetaData.BIRTHDATE, u.birthdate);
 						} catch (JSONException e) {
+							Reporter.reportError(this.getClass().toString(), Thread.currentThread().getStackTrace()[2].getMethodName().toString(), e.getMessage());
 						}
 						try {
 							u.sex = profile.getString("sex");
 							cv.put(AccountProvider.AMetaData.AccountMetaData.SEX, u.sex);
 						} catch (JSONException e) {
+							Reporter.reportError(this.getClass().toString(), Thread.currentThread().getStackTrace()[2].getMethodName().toString(), e.getMessage());
 						}
 
 						try {
 							u.email = profile.getString("email");
 							cv.put(AccountProvider.AMetaData.AccountMetaData.EMAIL, u.email);
 						} catch (JSONException e) {
+							Reporter.reportError(this.getClass().toString(), Thread.currentThread().getStackTrace()[2].getMethodName().toString(), e.getMessage());
 						}
 						try {
 							u.email2 = profile.getString("email2");
 							cv.put(AccountProvider.AMetaData.AccountMetaData.EMAIL2, u.email2);
 						} catch (JSONException e) {
+							Reporter.reportError(this.getClass().toString(), Thread.currentThread().getStackTrace()[2].getMethodName().toString(), e.getMessage());
 						}
 						try {
 							u.email3 = profile.getString("email3");
 							cv.put(AccountProvider.AMetaData.AccountMetaData.EMAIL3, u.email3);
 						} catch (JSONException e) {
+							Reporter.reportError(this.getClass().toString(), Thread.currentThread().getStackTrace()[2].getMethodName().toString(), e.getMessage());
 						}
 						try {
 							u.email4 = profile.getString("email4");
 							cv.put(AccountProvider.AMetaData.AccountMetaData.EMAIL4, u.email4);
 						} catch (JSONException e) {
+							Reporter.reportError(this.getClass().toString(), Thread.currentThread().getStackTrace()[2].getMethodName().toString(), e.getMessage());
 						}
 						try {
 							u.phone1 = profile.getString("phone1");
 							cv.put(AccountProvider.AMetaData.AccountMetaData.PHONE1, u.phone1);
 						} catch (JSONException e) {
+							Reporter.reportError(this.getClass().toString(), Thread.currentThread().getStackTrace()[2].getMethodName().toString(), e.getMessage());
 						}
 						try {
 							u.phone2 = profile.getString("phone2");
 							cv.put(AccountProvider.AMetaData.AccountMetaData.PHONE2, u.phone2);
 						} catch (JSONException e) {
+							Reporter.reportError(this.getClass().toString(), Thread.currentThread().getStackTrace()[2].getMethodName().toString(), e.getMessage());
 						}
 						try {
 							u.phone3 = profile.getString("phone3");
 							cv.put(AccountProvider.AMetaData.AccountMetaData.PHONE3, u.phone3);
 						} catch (JSONException e) {
+							Reporter.reportError(this.getClass().toString(), Thread.currentThread().getStackTrace()[2].getMethodName().toString(), e.getMessage());
 						}
 
 						try {
 							u.image = profile.getBoolean("image");
 							cv.put(AccountProvider.AMetaData.AccountMetaData.IMAGE, u.image);
 						} catch (JSONException e) {
+							Reporter.reportError(this.getClass().toString(), Thread.currentThread().getStackTrace()[2].getMethodName().toString(), e.getMessage());
 						}
 						try {
 							u.image_url = profile.getString("image_url");
@@ -295,123 +310,145 @@ public class DataManagement {
 							u.image_bytes = imageToBytes(u.image_url);
 							cv.put(AccountProvider.AMetaData.AccountMetaData.IMAGE_BYTES, u.image_bytes);
 						} catch (JSONException e) {
+							Reporter.reportError(this.getClass().toString(), Thread.currentThread().getStackTrace()[2].getMethodName().toString(), e.getMessage());
 						}
 						try {
 							u.image_thumb_url = profile.getString("image_thumb_url");
 							cv.put(AccountProvider.AMetaData.AccountMetaData.IMAGE_THUMB_URL, u.image_thumb_url);
 						} catch (JSONException e) {
+							Reporter.reportError(this.getClass().toString(), Thread.currentThread().getStackTrace()[2].getMethodName().toString(), e.getMessage());
 						}
 
 						try {
 							u.country = profile.getString("country");
 							cv.put(AccountProvider.AMetaData.AccountMetaData.COUNTRY, u.country);
 						} catch (JSONException e) {
+							Reporter.reportError(this.getClass().toString(), Thread.currentThread().getStackTrace()[2].getMethodName().toString(), e.getMessage());
 						}
 						try {
 							u.city = profile.getString("city");
 							cv.put(AccountProvider.AMetaData.AccountMetaData.CITY, u.city);
 						} catch (JSONException e) {
+							Reporter.reportError(this.getClass().toString(), Thread.currentThread().getStackTrace()[2].getMethodName().toString(), e.getMessage());
 						}
 						try {
 							u.street = profile.getString("street");
 							cv.put(AccountProvider.AMetaData.AccountMetaData.STREET, u.street);
 						} catch (JSONException e) {
+							Reporter.reportError(this.getClass().toString(), Thread.currentThread().getStackTrace()[2].getMethodName().toString(), e.getMessage());
 						}
 						try {
 							u.zip = profile.getString("zip");
 							cv.put(AccountProvider.AMetaData.AccountMetaData.ZIP, u.zip);
 						} catch (JSONException e) {
+							Reporter.reportError(this.getClass().toString(), Thread.currentThread().getStackTrace()[2].getMethodName().toString(), e.getMessage());
 						}
 
 						try {
 							u.timezone = profile.getString("timezone");
 							cv.put(AccountProvider.AMetaData.AccountMetaData.TIMEZONE, u.timezone);
 						} catch (JSONException e) {
+							Reporter.reportError(this.getClass().toString(), Thread.currentThread().getStackTrace()[2].getMethodName().toString(), e.getMessage());
 						}
 						try {
 							u.local_time = profile.getString("local_time");
 							cv.put(AccountProvider.AMetaData.AccountMetaData.LOCAL_TIME, u.local_time);
 						} catch (JSONException e) {
+							Reporter.reportError(this.getClass().toString(), Thread.currentThread().getStackTrace()[2].getMethodName().toString(), e.getMessage());
 						}
 						try {
 							u.language = profile.getString("language");
 							cv.put(AccountProvider.AMetaData.AccountMetaData.LANGUAGE, u.language);
 						} catch (JSONException e) {
+							Reporter.reportError(this.getClass().toString(), Thread.currentThread().getStackTrace()[2].getMethodName().toString(), e.getMessage());
 						}
 
 						try {
 							u.setting_default_view = profile.getString("setting_default_view");
 							cv.put(AccountProvider.AMetaData.AccountMetaData.SETTING_DEFAULT_VIEW, u.setting_default_view);
 						} catch (JSONException e) {
+							Reporter.reportError(this.getClass().toString(), Thread.currentThread().getStackTrace()[2].getMethodName().toString(), e.getMessage());
 						}
 						try {
 							u.setting_date_format = profile.getString("setting_date_format");
 							cv.put(AccountProvider.AMetaData.AccountMetaData.SETTING_DATE_FORMAT, u.setting_date_format);
 						} catch (JSONException e) {
+							Reporter.reportError(this.getClass().toString(), Thread.currentThread().getStackTrace()[2].getMethodName().toString(), e.getMessage());
 						}
 						try {
 							u.setting_ampm = profile.getInt("setting_ampm");
 							cv.put(AccountProvider.AMetaData.AccountMetaData.SETTING_AMPM, u.setting_ampm);
 						} catch (JSONException e) {
+							Reporter.reportError(this.getClass().toString(), Thread.currentThread().getStackTrace()[2].getMethodName().toString(), e.getMessage());
 						}
 
 						try {
 							u.google_calendar_link = profile.getString("google_calendar_link");
 							cv.put(AccountProvider.AMetaData.AccountMetaData.GOOGLE_CALENDAR_LINK, u.google_calendar_link);
 						} catch (JSONException e) {
+							Reporter.reportError(this.getClass().toString(), Thread.currentThread().getStackTrace()[2].getMethodName().toString(), e.getMessage());
 						}
 
 						try {
 							u.color_my_event = profile.getString("color_my_event");
 							cv.put(AccountProvider.AMetaData.AccountMetaData.COLOR_MY_EVENT, u.color_my_event);
 						} catch (JSONException e) {
+							Reporter.reportError(this.getClass().toString(), Thread.currentThread().getStackTrace()[2].getMethodName().toString(), e.getMessage());
 						}
 						try {
 							u.color_attending = profile.getString("color_attending");
 							cv.put(AccountProvider.AMetaData.AccountMetaData.COLOR_ATTENDING, u.color_attending);
 						} catch (JSONException e) {
+							Reporter.reportError(this.getClass().toString(), Thread.currentThread().getStackTrace()[2].getMethodName().toString(), e.getMessage());
 						}
 						try {
 							u.color_pending = profile.getString("color_pending");
 							cv.put(AccountProvider.AMetaData.AccountMetaData.COLOR_PENDING, u.color_pending);
 						} catch (JSONException e) {
+							Reporter.reportError(this.getClass().toString(), Thread.currentThread().getStackTrace()[2].getMethodName().toString(), e.getMessage());
 						}
 						try {
 							u.color_invitation = profile.getString("color_invitation");
 							cv.put(AccountProvider.AMetaData.AccountMetaData.COLOR_INVINTATION, u.color_invitation);
 						} catch (JSONException e) {
+							Reporter.reportError(this.getClass().toString(), Thread.currentThread().getStackTrace()[2].getMethodName().toString(), e.getMessage());
 						}
 						try {
 							u.color_notes = profile.getString("color_notes");
 							cv.put(AccountProvider.AMetaData.AccountMetaData.COLOR_NOTES, u.color_notes);
 						} catch (JSONException e) {
+							Reporter.reportError(this.getClass().toString(), Thread.currentThread().getStackTrace()[2].getMethodName().toString(), e.getMessage());
 						}
 						try {
 							u.color_birthday = profile.getString("color_birthday");
 							cv.put(AccountProvider.AMetaData.AccountMetaData.COLOR_BIRTHDAY, u.color_birthday);
 						} catch (JSONException e) {
+							Reporter.reportError(this.getClass().toString(), Thread.currentThread().getStackTrace()[2].getMethodName().toString(), e.getMessage());
 						}
 
 						try {
 							u.created = profile.getString("created");
 							cv.put(AccountProvider.AMetaData.AccountMetaData.CREATED, u.created);
 						} catch (JSONException e) {
+							Reporter.reportError(this.getClass().toString(), Thread.currentThread().getStackTrace()[2].getMethodName().toString(), e.getMessage());
 						}
 						try {
 							u.modified = profile.getString("modified");
 							cv.put(AccountProvider.AMetaData.AccountMetaData.MODIFIED, u.modified);
 						} catch (JSONException e) {
+							Reporter.reportError(this.getClass().toString(), Thread.currentThread().getStackTrace()[2].getMethodName().toString(), e.getMessage());
 						}
 
 						Data.getmContext().getContentResolver().insert(AccountProvider.AMetaData.AccountMetaData.CONTENT_URI, cv);
 
 					} else {
 						Data.setERROR(object.getJSONObject("error").getString("reason"));
+						Reporter.reportError(this.getClass().toString(), Thread.currentThread().getStackTrace()[2].getMethodName().toString(), object.getJSONObject("error").getString("reason"));
 					}
 				}
 			}
 		} catch (Exception ex) {
-			Log.e("getAccountInfo", ex.getMessage() + "!!!");
+			Reporter.reportError(this.getClass().toString(), Thread.currentThread().getStackTrace()[2].getMethodName().toString(), ex.getMessage());
 		}
 		Data.setAccount(u);
 		Data.setLoadAccountData(false);
@@ -524,7 +561,7 @@ public class DataManagement {
 			}
 
 		} catch (Exception ex) {
-			Log.e("registerAccount", ex.getMessage());
+			Reporter.reportError(this.getClass().toString(), Thread.currentThread().getStackTrace()[2].getMethodName().toString(), ex.getMessage());
 		}
 
 		return success;
@@ -566,6 +603,7 @@ public class DataManagement {
 
 		} catch (Exception ex) {
 			Data.setERROR(ex.getMessage());
+			Reporter.reportError(this.getClass().toString(), Thread.currentThread().getStackTrace()[2].getMethodName().toString(), ex.getMessage());
 		}
 
 		return success;
@@ -605,7 +643,7 @@ public class DataManagement {
 //				Data.getUnuploadedData().add(uplooad);
 			}
 		} catch (Exception ex) {
-			Log.e("Edit settings ERROR", ex.getMessage() + "!!!");
+			Reporter.reportError(this.getClass().toString(), Thread.currentThread().getStackTrace()[2].getMethodName().toString(), ex.getMessage());
 			success = false;
 		}
 
@@ -638,7 +676,7 @@ public class DataManagement {
 					if (resp != null) {
 						JSONObject object = new JSONObject(resp);
 						success = object.getBoolean("success");
-						Log.i("response", resp);
+						Reporter.reportError(this.getClass().toString(), Thread.currentThread().getStackTrace()[2].getMethodName().toString(), resp);
 						if (success == true) {
 							token = object.getString("token");
 							JSONObject profile = object.getJSONObject("profile");
@@ -700,7 +738,7 @@ public class DataManagement {
 	
 			} catch (Exception ex) {
 				Data.setERROR(ex.getMessage());
-				Log.e("login2", Data.getERROR() + "!!!");
+				Reporter.reportError(this.getClass().toString(), Thread.currentThread().getStackTrace()[2].getMethodName().toString(), ex.getMessage());
 			}
 		} else {
 			if(Data.getEmail().equals(email) && Data.getPassword().equals(password)){
@@ -739,7 +777,7 @@ public class DataManagement {
 
 			return telephonyManager.getDeviceId();
 		} catch (Exception ex) {
-			ex.printStackTrace();
+			Reporter.reportError(DataManagement.class.toString(), Thread.currentThread().getStackTrace()[2].getMethodName().toString(), ex.getMessage());
 		}
 
 		return "";
@@ -812,7 +850,7 @@ public class DataManagement {
 			return connection;
 
 		} catch (Exception ex) {
-			ex.printStackTrace();
+			Reporter.reportError(DataManagement.class.toString(), Thread.currentThread().getStackTrace()[2].getMethodName().toString(), ex.getMessage());
 		}
 
 		return null;
@@ -835,7 +873,7 @@ public class DataManagement {
 			HttpResponse rp = hc.execute(post);
 
 		} catch (Exception ex) {
-			ex.printStackTrace();
+			Reporter.reportError(DataManagement.class.toString(), Thread.currentThread().getStackTrace()[2].getMethodName().toString(), ex.getMessage());
 		}
 	}
 
@@ -884,7 +922,7 @@ public class DataManagement {
 			}
 
 		} catch (Exception ex) {
-			Log.e("setAutoIcon", ex.getMessage() + "!!!");
+			Reporter.reportError(this.getClass().toString(), Thread.currentThread().getStackTrace()[2].getMethodName().toString(), ex.getMessage());
 			return false;
 		}
 
@@ -960,7 +998,7 @@ public class DataManagement {
 			}
 
 		} catch (Exception ex) {
-			Log.e("setAutoColor", ex.getMessage() + "!!!");
+			Reporter.reportError(this.getClass().toString(), Thread.currentThread().getStackTrace()[2].getMethodName().toString(), ex.getMessage());
 			return false;
 		}
 
@@ -1110,70 +1148,83 @@ public class DataManagement {
 									contact.contact_id = c.getInt(ContactsProvider.CMetaData.ContactsMetaData.C_ID);
 									cv.put(ContactsProvider.CMetaData.ContactsMetaData.C_ID, contact.contact_id);
 								} catch (JSONException e) {
+									Reporter.reportError(this.getClass().toString(), Thread.currentThread().getStackTrace()[2].getMethodName().toString(), e.getMessage());
 								}
 
 								try {
 									contact.name = c.getString(ContactsProvider.CMetaData.ContactsMetaData.NAME);
 									cv.put(ContactsProvider.CMetaData.ContactsMetaData.NAME, contact.name);
 								} catch (JSONException e) {
+									Reporter.reportError(this.getClass().toString(), Thread.currentThread().getStackTrace()[2].getMethodName().toString(), e.getMessage());
 								}
 
 								try {
 									contact.lastname = c.getString(ContactsProvider.CMetaData.ContactsMetaData.LASTNAME);
 									cv.put(ContactsProvider.CMetaData.ContactsMetaData.LASTNAME, contact.lastname);
 								} catch (JSONException e) {
+									Reporter.reportError(this.getClass().toString(), Thread.currentThread().getStackTrace()[2].getMethodName().toString(), e.getMessage());
 								}
 								try {
 									contact.email = c.getString(ContactsProvider.CMetaData.ContactsMetaData.EMAIL);
 									cv.put(ContactsProvider.CMetaData.ContactsMetaData.EMAIL, contact.email);
 								} catch (JSONException e) {
+									Reporter.reportError(this.getClass().toString(), Thread.currentThread().getStackTrace()[2].getMethodName().toString(), e.getMessage());
 								}
 								try {
 									contact.phone1 = c.getString(ContactsProvider.CMetaData.ContactsMetaData.PHONE);
 									cv.put(ContactsProvider.CMetaData.ContactsMetaData.PHONE, contact.phone1);
 								} catch (JSONException e) {
+									Reporter.reportError(this.getClass().toString(), Thread.currentThread().getStackTrace()[2].getMethodName().toString(), e.getMessage());
 								}
 								try {
 									contact.birthdate = c.getString(ContactsProvider.CMetaData.ContactsMetaData.BIRTHDATE);
 									cv.put(ContactsProvider.CMetaData.ContactsMetaData.BIRTHDATE, contact.birthdate);
 								} catch (JSONException e) {
+									Reporter.reportError(this.getClass().toString(), Thread.currentThread().getStackTrace()[2].getMethodName().toString(), e.getMessage());
 								}
 								try {
 									contact.country = c.getString(ContactsProvider.CMetaData.ContactsMetaData.COUNTRY);
 									cv.put(ContactsProvider.CMetaData.ContactsMetaData.COUNTRY, contact.country);
 								} catch (JSONException e) {
+									Reporter.reportError(this.getClass().toString(), Thread.currentThread().getStackTrace()[2].getMethodName().toString(), e.getMessage());
 								}
 								try {
 									contact.city = c.getString(ContactsProvider.CMetaData.ContactsMetaData.CITY);
 									cv.put(ContactsProvider.CMetaData.ContactsMetaData.CITY, contact.city);
 								} catch (JSONException e) {
+									Reporter.reportError(this.getClass().toString(), Thread.currentThread().getStackTrace()[2].getMethodName().toString(), e.getMessage());
 								}
 								try {
 									contact.street = c.getString(ContactsProvider.CMetaData.ContactsMetaData.STREET);
 									cv.put(ContactsProvider.CMetaData.ContactsMetaData.STREET, contact.street);
 								} catch (JSONException e) {
+									Reporter.reportError(this.getClass().toString(), Thread.currentThread().getStackTrace()[2].getMethodName().toString(), e.getMessage());
 								}
 								try {
 									contact.zip = c.getString(ContactsProvider.CMetaData.ContactsMetaData.ZIP);
 									cv.put(ContactsProvider.CMetaData.ContactsMetaData.ZIP, contact.zip);
 								} catch (JSONException e) {
+									Reporter.reportError(this.getClass().toString(), Thread.currentThread().getStackTrace()[2].getMethodName().toString(), e.getMessage());
 								}
 								try {
 									contact.visibility = c.getString(ContactsProvider.CMetaData.ContactsMetaData.VISIBILITY);
 									cv.put(ContactsProvider.CMetaData.ContactsMetaData.VISIBILITY, contact.visibility);
 								} catch (JSONException e) {
+									Reporter.reportError(this.getClass().toString(), Thread.currentThread().getStackTrace()[2].getMethodName().toString(), e.getMessage());
 								}
 
 								try {
 									contact.image = c.getBoolean(ContactsProvider.CMetaData.ContactsMetaData.IMAGE);
 									cv.put(ContactsProvider.CMetaData.ContactsMetaData.IMAGE, contact.image);
 								} catch (JSONException e) {
+									Reporter.reportError(this.getClass().toString(), Thread.currentThread().getStackTrace()[2].getMethodName().toString(), e.getMessage());
 									contact.image = false;
 								}
 								try {
 									contact.image_thumb_url = c.getString(ContactsProvider.CMetaData.ContactsMetaData.IMAGE_THUMB_URL);
 									cv.put(ContactsProvider.CMetaData.ContactsMetaData.IMAGE_THUMB_URL, contact.image_thumb_url);
 								} catch (JSONException e) {
+									Reporter.reportError(this.getClass().toString(), Thread.currentThread().getStackTrace()[2].getMethodName().toString(), e.getMessage());
 									contact.image_thumb_url = "false";
 								}
 								try {
@@ -1184,6 +1235,7 @@ public class DataManagement {
 										cv.put(ContactsProvider.CMetaData.ContactsMetaData.IMAGE_BYTES, contact.image_bytes);
 									}
 								} catch (JSONException e) {
+									Reporter.reportError(this.getClass().toString(), Thread.currentThread().getStackTrace()[2].getMethodName().toString(), e.getMessage());
 									contact.image_url = "false";
 								}
 
@@ -1191,26 +1243,31 @@ public class DataManagement {
 									contact.created = c.getString(ContactsProvider.CMetaData.ContactsMetaData.CREATED);
 									cv.put(ContactsProvider.CMetaData.ContactsMetaData.CREATED, contact.created);
 								} catch (JSONException e) {
+									Reporter.reportError(this.getClass().toString(), Thread.currentThread().getStackTrace()[2].getMethodName().toString(), e.getMessage());
 								}
 								try {
 									contact.modified = c.getString(ContactsProvider.CMetaData.ContactsMetaData.MODOFIED);
 									cv.put(ContactsProvider.CMetaData.ContactsMetaData.MODOFIED, contact.modified);
 								} catch (JSONException e) {
+									Reporter.reportError(this.getClass().toString(), Thread.currentThread().getStackTrace()[2].getMethodName().toString(), e.getMessage());
 								}
 								try {
 									contact.agenda_view = c.getString(ContactsProvider.CMetaData.ContactsMetaData.AGENDA_VIEW);
 									cv.put(ContactsProvider.CMetaData.ContactsMetaData.AGENDA_VIEW, contact.agenda_view);
 								} catch (JSONException e) {
+									Reporter.reportError(this.getClass().toString(), Thread.currentThread().getStackTrace()[2].getMethodName().toString(), e.getMessage());
 								}
 								try {
 									contact.registered = c.getString(ContactsProvider.CMetaData.ContactsMetaData.REGISTERED);
 									cv.put(ContactsProvider.CMetaData.ContactsMetaData.REGISTERED, contact.registered);
 								} catch (JSONException e) {
+									Reporter.reportError(this.getClass().toString(), Thread.currentThread().getStackTrace()[2].getMethodName().toString(), e.getMessage());
 								}
 								try {
 									contact.email = c.getString(ContactsProvider.CMetaData.ContactsMetaData.EMAIL);
 									cv.put(ContactsProvider.CMetaData.ContactsMetaData.EMAIL, contact.email);
 								} catch (JSONException e) {
+									Reporter.reportError(this.getClass().toString(), Thread.currentThread().getStackTrace()[2].getMethodName().toString(), e.getMessage());
 								}
 
 								try {
@@ -1227,9 +1284,11 @@ public class DataManagement {
 														MapUtils.mapToString(contact.groups));
 											}
 										} catch (JSONException e) {
+											Reporter.reportError(this.getClass().toString(), Thread.currentThread().getStackTrace()[2].getMethodName().toString(), e.getMessage());
 										}
 									}
 								} catch (JSONException e) {
+									Reporter.reportError(this.getClass().toString(), Thread.currentThread().getStackTrace()[2].getMethodName().toString(), e.getMessage());
 								}
 								contacts.add(contact);
 								Data.getmContext().getContentResolver().insert(ContactsProvider.CMetaData.ContactsMetaData.CONTENT_URI, cv);
@@ -1240,7 +1299,7 @@ public class DataManagement {
 
 			}
 		} catch (Exception ex) {
-			Log.e("getContactList", ex.getMessage() + " !!!");
+			Reporter.reportError(this.getClass().toString(), Thread.currentThread().getStackTrace()[2].getMethodName().toString(), ex.getMessage());
 		}
 		Data.setContacts(contacts);
 		Data.setLoadContactsData(false);
@@ -1319,7 +1378,7 @@ public class DataManagement {
 				Data.getUnuploadedData().add(uplooad);
 			}
 		} catch (Exception ex) {
-			Log.e("removeContact", ex.getMessage() + "!!!");
+			Reporter.reportError(this.getClass().toString(), Thread.currentThread().getStackTrace()[2].getMethodName().toString(), ex.getMessage());
 			return false;
 		}
 		return success;
@@ -1393,7 +1452,7 @@ public class DataManagement {
 				Data.getUnuploadedData().add(uplooad);
 			}
 		} catch (Exception ex) {
-			Log.e("editContact - error: ", ex.getMessage() + " !!!");
+			Reporter.reportError(this.getClass().toString(), Thread.currentThread().getStackTrace()[2].getMethodName().toString(), ex.getMessage());
 			return false;
 		}
 		return success;
@@ -1413,7 +1472,7 @@ public class DataManagement {
 					ByteArrayBody bab = new ByteArrayBody(c.image_bytes, "image");
 					reqEntity.addPart("image", bab);
 				} catch (Exception e) {
-					Log.e("IMAGE ERROR", e.getMessage());
+					Reporter.reportError(this.getClass().toString(), Thread.currentThread().getStackTrace()[2].getMethodName().toString(), e.getMessage());
 				}
 			}
 
@@ -1463,7 +1522,7 @@ public class DataManagement {
 				Data.getUnuploadedData().add(uplooad);
 			}
 		} catch (Exception ex) {
-			Log.e("createContact", ex.getMessage() + " !!!");
+			Reporter.reportError(this.getClass().toString(), Thread.currentThread().getStackTrace()[2].getMethodName().toString(), ex.getMessage());
 			return false;
 		}
 		return success;
@@ -1587,27 +1646,32 @@ public class DataManagement {
 									group.group_id = g.getInt("group_id");
 									cv.put(ContactsProvider.CMetaData.GroupsMetaData.G_ID, group.group_id);
 								} catch (JSONException e) {
+									Reporter.reportError(this.getClass().toString(), Thread.currentThread().getStackTrace()[2].getMethodName().toString(), e.getMessage());
 								}
 								try {
 									group.title = g.getString("title");
 									cv.put(ContactsProvider.CMetaData.GroupsMetaData.TITLE, group.title);
 								} catch (JSONException e) {
+									Reporter.reportError(this.getClass().toString(), Thread.currentThread().getStackTrace()[2].getMethodName().toString(), e.getMessage());
 								}
 								try {
 									group.created = g.getString("created");
 									cv.put(ContactsProvider.CMetaData.GroupsMetaData.CREATED, group.created);
 								} catch (JSONException e) {
+									Reporter.reportError(this.getClass().toString(), Thread.currentThread().getStackTrace()[2].getMethodName().toString(), e.getMessage());
 								}
 
 								try {
 									group.modified = g.getString("modified");
 									cv.put(ContactsProvider.CMetaData.GroupsMetaData.MODIFIED, group.modified);
 								} catch (JSONException e) {
+									Reporter.reportError(this.getClass().toString(), Thread.currentThread().getStackTrace()[2].getMethodName().toString(), e.getMessage());
 								}
 								try {
 									group.deleted = g.getString("deleted");
 									cv.put(ContactsProvider.CMetaData.GroupsMetaData.DELETED, group.deleted);
 								} catch (JSONException e) {
+									Reporter.reportError(this.getClass().toString(), Thread.currentThread().getStackTrace()[2].getMethodName().toString(), e.getMessage());
 								}
 
 								try {
@@ -1615,11 +1679,13 @@ public class DataManagement {
 									cv.put(ContactsProvider.CMetaData.GroupsMetaData.IMAGE, group.image);
 									cv.put(ContactsProvider.CMetaData.GroupsMetaData.REMOVE_IMAGE, false);
 								} catch (JSONException e) {
+									Reporter.reportError(this.getClass().toString(), Thread.currentThread().getStackTrace()[2].getMethodName().toString(), e.getMessage());
 								}
 								try {
 									group.image_thumb_url = g.getString("image_thumb_url");
 									cv.put(ContactsProvider.CMetaData.GroupsMetaData.IMAGE_THUMB_URL, group.image_thumb_url);
 								} catch (JSONException e) {
+									Reporter.reportError(this.getClass().toString(), Thread.currentThread().getStackTrace()[2].getMethodName().toString(), e.getMessage());
 								}
 								try {
 									group.image_url = g.getString("image_url");
@@ -1628,12 +1694,14 @@ public class DataManagement {
 									group.image_bytes = imageToBytes(group.image_url);
 									cv.put(ContactsProvider.CMetaData.GroupsMetaData.IMAGE_BYTES, group.image_bytes);
 								} catch (JSONException e) {
+									Reporter.reportError(this.getClass().toString(), Thread.currentThread().getStackTrace()[2].getMethodName().toString(), e.getMessage());
 								}
 
 								try {
 									group.contact_count = g.getInt("contact_count");
 									cv.put(ContactsProvider.CMetaData.GroupsMetaData.CONTACTS_COUNT, group.contact_count);
 								} catch (JSONException e) {
+									Reporter.reportError(this.getClass().toString(), Thread.currentThread().getStackTrace()[2].getMethodName().toString(), e.getMessage());
 									group.contact_count = 0;
 								}
 								try {
@@ -1652,9 +1720,11 @@ public class DataManagement {
 														MapUtils.mapToString(group.contacts));
 											}
 										} catch (JSONException e) {
+											Reporter.reportError(this.getClass().toString(), Thread.currentThread().getStackTrace()[2].getMethodName().toString(), e.getMessage());
 										}
 									}
 								} catch (JSONException e) {
+									Reporter.reportError(this.getClass().toString(), Thread.currentThread().getStackTrace()[2].getMethodName().toString(), e.getMessage());
 								}
 
 								if (group.deleted == null || group.deleted.equals("null")) {
@@ -1669,7 +1739,7 @@ public class DataManagement {
 
 			}
 		} catch (Exception ex) {
-			Log.e("getGroupList", ex.getMessage() + " !!!");
+			Reporter.reportError(this.getClass().toString(), Thread.currentThread().getStackTrace()[2].getMethodName().toString(), ex.getMessage());
 		}
 		Data.setGroups(groups);
 		Data.setLoadGroupsData(false);
@@ -1739,7 +1809,7 @@ public class DataManagement {
 				Data.getUnuploadedData().add(uplooad);
 			}
 		} catch (Exception ex) {
-			Log.e("removeGroup", ex.getMessage() + " !!!");
+			Reporter.reportError(this.getClass().toString(), Thread.currentThread().getStackTrace()[2].getMethodName().toString(), ex.getMessage());
 			return false;
 		}
 		return success;
@@ -1803,7 +1873,7 @@ public class DataManagement {
 				Data.getUnuploadedData().add(uplooad);
 			}
 		} catch (Exception ex) {
-			Log.e("editGroup - error: ", ex.getMessage() + " !!!");
+			Reporter.reportError(this.getClass().toString(), Thread.currentThread().getStackTrace()[2].getMethodName().toString(), ex.getMessage());
 			return false;
 		}
 		return success;
@@ -1823,7 +1893,7 @@ public class DataManagement {
 					ByteArrayBody bab = new ByteArrayBody(g.image_bytes, "image");
 					reqEntity.addPart("image", bab);
 				} catch (Exception e) {
-					Log.e("IMAGE ERROR", e.getMessage());
+					Reporter.reportError(this.getClass().toString(), Thread.currentThread().getStackTrace()[2].getMethodName().toString(), e.getMessage());
 				}
 			}
 
@@ -1863,7 +1933,7 @@ public class DataManagement {
 				Data.getUnuploadedData().add(uplooad);
 			}
 		} catch (Exception ex) {
-			Log.e("createGroup - error: ", ex.getMessage() + " !!!");
+			Reporter.reportError(this.getClass().toString(), Thread.currentThread().getStackTrace()[2].getMethodName().toString(), ex.getMessage());
 			return false;
 		}
 		return success;
@@ -1959,118 +2029,140 @@ public class DataManagement {
 								event.event_id = e.getInt("event_id");
 								cv.put(EventsProvider.EMetaData.EventsMetaData.E_ID, event.event_id);
 							} catch (JSONException ex) {
+								Reporter.reportError(this.getClass().toString(), Thread.currentThread().getStackTrace()[2].getMethodName().toString(), ex.getMessage());
 							}
 							try {
 								event.user_id = e.getInt("user_id");
 								cv.put(EventsProvider.EMetaData.EventsMetaData.USER_ID, event.user_id);
 							} catch (JSONException ex) {
+								Reporter.reportError(this.getClass().toString(), Thread.currentThread().getStackTrace()[2].getMethodName().toString(), ex.getMessage());
 							}
 
 							try {
 								event.status = e.getInt("status");
 								cv.put(EventsProvider.EMetaData.EventsMetaData.STATUS, event.status);
 							} catch (JSONException ex) {
+								Reporter.reportError(this.getClass().toString(), Thread.currentThread().getStackTrace()[2].getMethodName().toString(), ex.getMessage());
 							}
 							try {
 								int is_owner = e.getInt("is_owner");
 								event.is_owner = is_owner == 1;
 								cv.put(EventsProvider.EMetaData.EventsMetaData.IS_OWNER, event.is_owner);
 							} catch (JSONException ex) {
+								Reporter.reportError(this.getClass().toString(), Thread.currentThread().getStackTrace()[2].getMethodName().toString(), ex.getMessage());
 							}
 							try {
 								event.type = e.getString("type");
 								cv.put(EventsProvider.EMetaData.EventsMetaData.TYPE, event.type);
 							} catch (JSONException ex) {
+								Reporter.reportError(this.getClass().toString(), Thread.currentThread().getStackTrace()[2].getMethodName().toString(), ex.getMessage());
 							}
 
 							try {
 								event.title = e.getString("title");
 								cv.put(EventsProvider.EMetaData.EventsMetaData.TITLE, event.title);
 							} catch (JSONException ex) {
+								Reporter.reportError(this.getClass().toString(), Thread.currentThread().getStackTrace()[2].getMethodName().toString(), ex.getMessage());
 							}
 							try {
 								event.icon = e.getString("icon");
 								cv.put(EventsProvider.EMetaData.EventsMetaData.ICON, event.icon);
 							} catch (JSONException ex) {
+								Reporter.reportError(this.getClass().toString(), Thread.currentThread().getStackTrace()[2].getMethodName().toString(), ex.getMessage());
 							}
 							try {
 								event.color = e.getString("color");
 								cv.put(EventsProvider.EMetaData.EventsMetaData.COLOR, event.color);
 							} catch (JSONException ex) {
+								Reporter.reportError(this.getClass().toString(), Thread.currentThread().getStackTrace()[2].getMethodName().toString(), ex.getMessage());
 							}
 							try {
 								event.description_ = e.getString("description");
 								cv.put(EventsProvider.EMetaData.EventsMetaData.DESC, event.description_);
 							} catch (JSONException ex) {
+								Reporter.reportError(this.getClass().toString(), Thread.currentThread().getStackTrace()[2].getMethodName().toString(), ex.getMessage());
 							}
 
 							try {
 								event.location = e.getString("location");
 								cv.put(EventsProvider.EMetaData.EventsMetaData.LOCATION, event.location);
 							} catch (JSONException ex) {
+								Reporter.reportError(this.getClass().toString(), Thread.currentThread().getStackTrace()[2].getMethodName().toString(), ex.getMessage());
 							}
 							try {
 								event.accomodation = e.getString("accomodation");
 								cv.put(EventsProvider.EMetaData.EventsMetaData.ACCOMODATION, event.accomodation);
 							} catch (JSONException ex) {
+								Reporter.reportError(this.getClass().toString(), Thread.currentThread().getStackTrace()[2].getMethodName().toString(), ex.getMessage());
 							}
 
 							try {
 								event.cost = e.getString("cost");
 								cv.put(EventsProvider.EMetaData.EventsMetaData.COST, event.cost);
 							} catch (JSONException ex) {
+								Reporter.reportError(this.getClass().toString(), Thread.currentThread().getStackTrace()[2].getMethodName().toString(), ex.getMessage());
 							}
 							try {
 								event.take_with_you = e.getString("take_with_you");
 								cv.put(EventsProvider.EMetaData.EventsMetaData.TAKE_WITH_YOU, event.take_with_you);
 							} catch (JSONException ex) {
+								Reporter.reportError(this.getClass().toString(), Thread.currentThread().getStackTrace()[2].getMethodName().toString(), ex.getMessage());
 							}
 							try {
 								event.go_by = e.getString("go_by");
 								cv.put(EventsProvider.EMetaData.EventsMetaData.GO_BY, event.go_by);
 							} catch (JSONException ex) {
+								Reporter.reportError(this.getClass().toString(), Thread.currentThread().getStackTrace()[2].getMethodName().toString(), ex.getMessage());
 							}
 
 							try {
 								event.country = e.getString("country");
 								cv.put(EventsProvider.EMetaData.EventsMetaData.COUNTRY, event.country);
 							} catch (JSONException ex) {
+								Reporter.reportError(this.getClass().toString(), Thread.currentThread().getStackTrace()[2].getMethodName().toString(), ex.getMessage());
 							}
 							try {
 								event.city = e.getString("city");
 								cv.put(EventsProvider.EMetaData.EventsMetaData.CITY, event.city);
 							} catch (JSONException ex) {
+								Reporter.reportError(this.getClass().toString(), Thread.currentThread().getStackTrace()[2].getMethodName().toString(), ex.getMessage());
 							}
 							try {
 								event.street = e.getString("street");
 								cv.put(EventsProvider.EMetaData.EventsMetaData.STREET, event.street);
 							} catch (JSONException ex) {
+								Reporter.reportError(this.getClass().toString(), Thread.currentThread().getStackTrace()[2].getMethodName().toString(), ex.getMessage());
 							}
 							try {
 								event.zip = e.getString("zip");
 								cv.put(EventsProvider.EMetaData.EventsMetaData.ZIP, event.zip);
 							} catch (JSONException ex) {
+								Reporter.reportError(this.getClass().toString(), Thread.currentThread().getStackTrace()[2].getMethodName().toString(), ex.getMessage());
 							}
 
 							try {
 								event.timezone = e.getString("timezone");
 								cv.put(EventsProvider.EMetaData.EventsMetaData.TIMEZONE, event.timezone);
 							} catch (JSONException ex) {
+								Reporter.reportError(this.getClass().toString(), Thread.currentThread().getStackTrace()[2].getMethodName().toString(), ex.getMessage());
 							}
 							try {
 								event.time_start = e.getString("time_start");
 								cv.put(EventsProvider.EMetaData.EventsMetaData.TIME_START, event.time_start);
 							} catch (JSONException ex) {
+								Reporter.reportError(this.getClass().toString(), Thread.currentThread().getStackTrace()[2].getMethodName().toString(), ex.getMessage());
 							}
 							try {
 								event.time_end = e.getString("time_end");
 								cv.put(EventsProvider.EMetaData.EventsMetaData.TIME_END, event.time_end);
 							} catch (JSONException ex) {
+								Reporter.reportError(this.getClass().toString(), Thread.currentThread().getStackTrace()[2].getMethodName().toString(), ex.getMessage());
 							}
 							try {
 								event.time = e.getString("time");
 								cv.put(EventsProvider.EMetaData.EventsMetaData.TIME, event.time);
 							} catch (JSONException ex) {
+								Reporter.reportError(this.getClass().toString(), Thread.currentThread().getStackTrace()[2].getMethodName().toString(), ex.getMessage());
 							}
 							try {
 								event.my_time_start = e.getString("my_time_start");
@@ -2079,6 +2171,7 @@ public class DataManagement {
 								
 
 							} catch (JSONException ex) {
+								Reporter.reportError(this.getClass().toString(), Thread.currentThread().getStackTrace()[2].getMethodName().toString(), ex.getMessage());
 							}
 							try {
 								event.my_time_end = e.getString("my_time_end");
@@ -2086,54 +2179,64 @@ public class DataManagement {
 								event.endCalendar = Utils.stringToCalendar(event.my_time_end, Utils.date_format);
 								
 							} catch (JSONException ex) {
+								Reporter.reportError(this.getClass().toString(), Thread.currentThread().getStackTrace()[2].getMethodName().toString(), ex.getMessage());
 							}
 
 							try {
 								event.reminder1 = e.getString("reminder1");
 								cv.put(EventsProvider.EMetaData.EventsMetaData.REMINDER1, event.reminder1);
 							} catch (JSONException ex) {
+								Reporter.reportError(this.getClass().toString(), Thread.currentThread().getStackTrace()[2].getMethodName().toString(), ex.getMessage());
 							}
 							try {
 								event.reminder2 = e.getString("reminder2");
 								cv.put(EventsProvider.EMetaData.EventsMetaData.REMINDER2, event.reminder2);
 							} catch (JSONException ex) {
+								Reporter.reportError(this.getClass().toString(), Thread.currentThread().getStackTrace()[2].getMethodName().toString(), ex.getMessage());
 							}
 							try {
 								event.reminder3 = e.getString("reminder3");
 								cv.put(EventsProvider.EMetaData.EventsMetaData.REMINDER3, event.reminder3);
 							} catch (JSONException ex) {
+								Reporter.reportError(this.getClass().toString(), Thread.currentThread().getStackTrace()[2].getMethodName().toString(), ex.getMessage());
 							}
 
 							try {
 								event.created = e.getString("created");
 								cv.put(EventsProvider.EMetaData.EventsMetaData.CREATED, event.created);
 							} catch (JSONException ex) {
+								Reporter.reportError(this.getClass().toString(), Thread.currentThread().getStackTrace()[2].getMethodName().toString(), ex.getMessage());
 							}
 							try {
 								event.modified = e.getString("modified");
 								cv.put(EventsProvider.EMetaData.EventsMetaData.MODIFIED, event.modified);
 							} catch (JSONException ex) {
+								Reporter.reportError(this.getClass().toString(), Thread.currentThread().getStackTrace()[2].getMethodName().toString(), ex.getMessage());
 							}
 
 							try {
 								event.attendant_1_count = e.getInt("attendant_1_count");
 								cv.put(EventsProvider.EMetaData.EventsMetaData.ATTENDANT_1_COUNT, event.attendant_1_count);
 							} catch (JSONException ex) {
+								Reporter.reportError(this.getClass().toString(), Thread.currentThread().getStackTrace()[2].getMethodName().toString(), ex.getMessage());
 							}
 							try {
 								event.attendant_2_count = e.getInt("attendant_2_count");
 								cv.put(EventsProvider.EMetaData.EventsMetaData.ATTENDANT_2_COUNT, event.attendant_2_count);
 							} catch (JSONException ex) {
+								Reporter.reportError(this.getClass().toString(), Thread.currentThread().getStackTrace()[2].getMethodName().toString(), ex.getMessage());
 							}
 							try {
 								event.attendant_0_count = e.getInt("attendant_0_count");
 								cv.put(EventsProvider.EMetaData.EventsMetaData.ATTENDANT_0_COUNT, event.attendant_0_count);
 							} catch (JSONException ex) {
+								Reporter.reportError(this.getClass().toString(), Thread.currentThread().getStackTrace()[2].getMethodName().toString(), ex.getMessage());
 							}
 							try {
 								event.attendant_4_count = e.getInt("attendant_4_count");
 								cv.put(EventsProvider.EMetaData.EventsMetaData.ATTENDANT_4_COUNT, event.attendant_4_count);
 							} catch (JSONException ex) {
+								Reporter.reportError(this.getClass().toString(), Thread.currentThread().getStackTrace()[2].getMethodName().toString(), ex.getMessage());
 							}
 
 							try {
@@ -2141,40 +2244,47 @@ public class DataManagement {
 								event.is_sports_event = is_sports_event == 1;
 								cv.put(EventsProvider.EMetaData.EventsMetaData.IS_SPORTS_EVENT, event.is_sports_event);
 							} catch (JSONException ex) {
+								Reporter.reportError(this.getClass().toString(), Thread.currentThread().getStackTrace()[2].getMethodName().toString(), ex.getMessage());
 							}
 							try {
 								event.creator_fullname = e.getString("creator_fullname");
 								cv.put(EventsProvider.EMetaData.EventsMetaData.CREATOR_FULLNAME, event.creator_fullname);
 							} catch (JSONException ex) {
+								Reporter.reportError(this.getClass().toString(), Thread.currentThread().getStackTrace()[2].getMethodName().toString(), ex.getMessage());
 							}
 							try {
 								event.creator_contact_id = e.getInt("creator_contact_id");
 								cv.put(EventsProvider.EMetaData.EventsMetaData.CREATOR_CONTACT_ID, event.creator_contact_id);
 							} catch (JSONException ex) {
+								Reporter.reportError(this.getClass().toString(), Thread.currentThread().getStackTrace()[2].getMethodName().toString(), ex.getMessage());
 							}
 
 							try {
 								String assigned_contacts = e.getString("assigned_contacts");
 								cv.put(EventsProvider.EMetaData.EventsMetaData.ASSIGNED_CONTACTS, assigned_contacts);
 							} catch (JSONException ex) {
+								Reporter.reportError(this.getClass().toString(), Thread.currentThread().getStackTrace()[2].getMethodName().toString(), ex.getMessage());
 							}
 
 							try {
 								String assigned_groups = e.getString("assigned_groups");
 								cv.put(EventsProvider.EMetaData.EventsMetaData.ASSIGNED_GROUPS, assigned_groups);
 							} catch (JSONException ex) {
+								Reporter.reportError(this.getClass().toString(), Thread.currentThread().getStackTrace()[2].getMethodName().toString(), ex.getMessage());
 							}
 
 							try {
 								String invited = e.getString("invited");
 								cv.put(EventsProvider.EMetaData.EventsMetaData.INVITED, invited);
 							} catch (JSONException ex) {
+								Reporter.reportError(this.getClass().toString(), Thread.currentThread().getStackTrace()[2].getMethodName().toString(), ex.getMessage());
 							}
 
 							try {
 								int all_day = e.getInt("all_day");
 								event.is_all_day = all_day == 1;
 							} catch (JSONException ex) {
+								Reporter.reportError(this.getClass().toString(), Thread.currentThread().getStackTrace()[2].getMethodName().toString(), ex.getMessage());
 							}
 
 							// //
@@ -2185,7 +2295,7 @@ public class DataManagement {
 				}
 			}
 		} catch (Exception ex) {
-			Log.e("getEventList", ex.getMessage() + " !!!");
+			Reporter.reportError(this.getClass().toString(), Thread.currentThread().getStackTrace()[2].getMethodName().toString(), ex.getMessage());
 		}
 		Data.setLoadEventsData(false);
 		sortEvents(events);
@@ -2515,6 +2625,7 @@ public class DataManagement {
 				try {
 					item.assigned_contacts = Utils.jsonStringToArray(assigned_contacts);
 				} catch (JSONException e) {
+					Reporter.reportError(this.getClass().toString(), Thread.currentThread().getStackTrace()[2].getMethodName().toString(), e.getMessage());
 					item.assigned_contacts = null;
 				}
 			}
@@ -2524,6 +2635,7 @@ public class DataManagement {
 				try {
 					item.assigned_groups = Utils.jsonStringToArray(assigned_groups);
 				} catch (JSONException e) {
+					Reporter.reportError(this.getClass().toString(), Thread.currentThread().getStackTrace()[2].getMethodName().toString(), e.getMessage());
 					item.assigned_groups = null;
 				}
 			}
@@ -2553,6 +2665,7 @@ public class DataManagement {
 								invited.status = Data.getmContext().getString(statusId);
 							}
 						} catch (JSONException ex) {
+							Reporter.reportError(this.getClass().toString(), Thread.currentThread().getStackTrace()[2].getMethodName().toString(), ex.getMessage());
 						}
 
 						try {
@@ -2561,11 +2674,13 @@ public class DataManagement {
 							invited.email = contact.email;
 							invited.name = contact.name + " " + contact.lastname;
 						} catch (JSONException ex) {
+							Reporter.reportError(this.getClass().toString(), Thread.currentThread().getStackTrace()[2].getMethodName().toString(), ex.getMessage());
 						}
 
 						item.invited.add(invited);
 					}
 				} catch (JSONException e) {
+					Reporter.reportError(this.getClass().toString(), Thread.currentThread().getStackTrace()[2].getMethodName().toString(), e.getMessage());
 				}
 			}
 		}
@@ -2602,20 +2717,23 @@ public class DataManagement {
 							int is_sports_event = e.getInt("is_sports_event");
 							event.is_sports_event = is_sports_event == 1;
 						} catch (JSONException ex) {
+							Reporter.reportError(this.getClass().toString(), Thread.currentThread().getStackTrace()[2].getMethodName().toString(), ex.getMessage());
 						}
 						try {
 							event.creator_fullname = e.getString("creator_fullname");
 						} catch (JSONException ex) {
+							Reporter.reportError(this.getClass().toString(), Thread.currentThread().getStackTrace()[2].getMethodName().toString(), ex.getMessage());
 						}
 						try {
 							event.creator_contact_id = e.getInt("creator_contact_id");
 						} catch (JSONException ex) {
+							Reporter.reportError(this.getClass().toString(), Thread.currentThread().getStackTrace()[2].getMethodName().toString(), ex.getMessage());
 						}
 					}
 				}
 			}
 		} catch (Exception ex) {
-			Log.e("getEventInfo", ex.getMessage());
+			Reporter.reportError(this.getClass().toString(), Thread.currentThread().getStackTrace()[2].getMethodName().toString(), ex.getMessage());
 		}
 		return event;
 	}
@@ -2697,6 +2815,7 @@ public class DataManagement {
 				Data.getUnuploadedData().add(uplooad);
 			}
 		} catch (Exception ex) {
+			Reporter.reportError(this.getClass().toString(), Thread.currentThread().getStackTrace()[2].getMethodName().toString(), ex.getMessage());
 			success = false;
 		}
 
@@ -2789,7 +2908,7 @@ public class DataManagement {
 				Data.getUnuploadedData().add(uplooad);
 			}
 		} catch (Exception ex) {
-			Log.e("createEvent ex", ex.getMessage() + "!!!");
+			Reporter.reportError(this.getClass().toString(), Thread.currentThread().getStackTrace()[2].getMethodName().toString(), ex.getMessage());
 		}
 		return success;
 		// return event_id;
@@ -2841,7 +2960,7 @@ public class DataManagement {
 				Data.getUnuploadedData().add(uplooad);
 			}
 		} catch (Exception ex) {
-			Log.e("removeEvent ex", ex.getMessage());
+			Reporter.reportError(this.getClass().toString(), Thread.currentThread().getStackTrace()[2].getMethodName().toString(), ex.getMessage());
 		}
 		return success;
 	}
@@ -2879,7 +2998,7 @@ public class DataManagement {
 				Data.getUnuploadedData().add(uplooad);
 			}
 		} catch (Exception ex) {
-			Log.e("Edit event status ERROR", ex.getMessage() + "!!!");
+			Reporter.reportError(this.getClass().toString(), Thread.currentThread().getStackTrace()[2].getMethodName().toString(), ex.getMessage());
 			success = false;
 		}
 		return success;
@@ -2900,9 +3019,9 @@ public class DataManagement {
 				}
 			}
 		} catch (ClientProtocolException e) {
-			e.printStackTrace();
+			Reporter.reportError(this.getClass().toString(), Thread.currentThread().getStackTrace()[2].getMethodName().toString(), e.getMessage());
 		} catch (IOException e) {
-			e.printStackTrace();
+			Reporter.reportError(this.getClass().toString(), Thread.currentThread().getStackTrace()[2].getMethodName().toString(), e.getMessage());
 		}
 		return new byte[0];
 	}
