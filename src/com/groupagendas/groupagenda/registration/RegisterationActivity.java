@@ -3,6 +3,7 @@ package com.groupagendas.groupagenda.registration;
 import java.util.Locale;
 import java.util.concurrent.ExecutionException;
 
+import android.accounts.AccountManager;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
@@ -66,6 +67,7 @@ public class RegisterationActivity extends Activity {
 	private CheckBox chkStatement;
 	private AlertDialog mDialog;
 	private String localCountry;
+	private String defaultEmailAddress;
 
 	private final int DIALOG_SUCCESS = 0;
 	private final int DIALOG_ERROR = 1;
@@ -163,6 +165,12 @@ public class RegisterationActivity extends Activity {
 		nameView = (EditText) findViewById(R.id.nameView);
 		lastnameView = (EditText) findViewById(R.id.lastnameView);
 		emailView = (EditText) findViewById(R.id.emailView);
+		
+		if (AccountManager.get(getApplicationContext()).getAccountsByType("com.google").length > 0) {
+			defaultEmailAddress = AccountManager.get(getApplicationContext()).getAccountsByType("com.google")[0].name;
+			if ((defaultEmailAddress != null) && (!defaultEmailAddress.equals("")))
+				emailView.setText(defaultEmailAddress);
+		}
 		
 		phonecodeView = (EditText) findViewById(R.id.phonecodeView);
 		try {
