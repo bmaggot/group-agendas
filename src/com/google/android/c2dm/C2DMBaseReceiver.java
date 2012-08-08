@@ -18,6 +18,8 @@ package com.google.android.c2dm;
 
 import java.io.IOException;
 
+import com.groupagendas.groupagenda.error.report.Reporter;
+
 import android.app.AlarmManager;
 import android.app.IntentService;
 import android.app.PendingIntent;
@@ -188,7 +190,7 @@ public abstract class C2DMBaseReceiver extends IntentService {
                 onRegistered(context, registrationId);
                 C2DMessaging.setRegistrationId(context, registrationId);
             } catch (IOException ex) {
-                Log.e(TAG, "Registration error " + ex.getMessage());
+            	Reporter.reportError(this.getClass().toString(), Thread.currentThread().getStackTrace()[2].getMethodName().toString(), ex.getMessage());
             }
         }
     }

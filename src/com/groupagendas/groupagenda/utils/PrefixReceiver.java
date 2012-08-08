@@ -33,7 +33,7 @@ public class PrefixReceiver extends AsyncTask <String, Void, String> {
 		try {
 			reqEntity.addPart("country_name", new StringBody(country[0]));
 		} catch (UnsupportedEncodingException e1) {
-			Reporter.reportError(RegisterationActivity.class.toString(), "PrefixReceiver().execute(countryArray[pos]).get()", e1.getMessage());
+			Reporter.reportError(this.getClass().toString(), Thread.currentThread().getStackTrace()[2].getMethodName().toString(), e1.getMessage());
 		}
 		post.setEntity(reqEntity);
 		HttpResponse rp;
@@ -47,11 +47,11 @@ public class PrefixReceiver extends AsyncTask <String, Void, String> {
 				}
 			}
 		} catch (ClientProtocolException e) {
-			Reporter.reportError(RegisterationActivity.class.toString(), "PrefixReceiver().execute(countryArray[pos]).get()", e.getMessage());
+			Reporter.reportError(this.getClass().toString(), Thread.currentThread().getStackTrace()[2].getMethodName().toString(), e.getMessage());
 		} catch (IOException e) {
-			Reporter.reportError(RegisterationActivity.class.toString(), "PrefixReceiver().execute(countryArray[pos]).get()", e.getMessage());
+			Reporter.reportError(this.getClass().toString(), Thread.currentThread().getStackTrace()[2].getMethodName().toString(), e.getMessage());
 		} catch (JSONException e) {
-			Reporter.reportError(RegisterationActivity.class.toString(), "PrefixReceiver().execute(countryArray[pos]).get()", e.getMessage());
+			Reporter.reportError(this.getClass().toString(), Thread.currentThread().getStackTrace()[2].getMethodName().toString(), e.getMessage());
 		}
 		Data.localPrefix = phonePrefix;
 		return phonePrefix;

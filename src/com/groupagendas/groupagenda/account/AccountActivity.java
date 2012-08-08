@@ -41,6 +41,7 @@ import android.widget.Toast;
 
 import com.groupagendas.groupagenda.R;
 import com.groupagendas.groupagenda.data.DataManagement;
+import com.groupagendas.groupagenda.error.report.Reporter;
 import com.groupagendas.groupagenda.timezone.TimezoneManager;
 import com.groupagendas.groupagenda.utils.CountryManager;
 import com.groupagendas.groupagenda.utils.Utils;
@@ -362,7 +363,7 @@ public class AccountActivity extends Activity implements OnClickListener{
 
 							startActivityForResult(intent, PICK_FROM_CAMERA);
 						} catch (ActivityNotFoundException e) {
-							e.printStackTrace();
+							Reporter.reportError(this.getClass().toString(), Thread.currentThread().getStackTrace()[2].getMethodName().toString(), e.getMessage());
 						}
 					} else { // pick from file
 						Intent intent = new Intent();

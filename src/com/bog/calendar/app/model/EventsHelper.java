@@ -9,6 +9,7 @@ import java.util.List;
 
 import android.graphics.Color;
 
+import com.groupagendas.groupagenda.error.report.Reporter;
 import com.groupagendas.groupagenda.events.Event;
 
 /**
@@ -237,7 +238,7 @@ public class EventsHelper {
         	
             return event;
         } catch (Exception ex) {
-            ex.printStackTrace();
+        	Reporter.reportError(EventsHelper.class.toString(), Thread.currentThread().getStackTrace()[2].getMethodName().toString(), ex.getMessage());
             return null;
         }
     }
@@ -268,7 +269,7 @@ public class EventsHelper {
             event.setEndTime(endEventTime.getTimeInMillis());
             return event;
         } catch (Exception ex) {
-            ex.printStackTrace();
+        	Reporter.reportError(EventsHelper.class.toString(), Thread.currentThread().getStackTrace()[2].getMethodName().toString(), ex.getMessage());
             return null;
         }
     }

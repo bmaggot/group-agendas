@@ -8,6 +8,7 @@ import java.util.Date;
 import android.content.Context;
 
 import com.groupagendas.groupagenda.account.AccountProvider;
+import com.groupagendas.groupagenda.error.report.Reporter;
 
 public class DateTimeUtils {
 	public static final String DEFAULT_DATETIME = "yyyy-MM-dd HH:mm:ss";
@@ -60,6 +61,7 @@ public class DateTimeUtils {
 			Date dateObj = dDateFormater.parse(date);
 			formatedDate = mDateFormater.format(dateObj);
 		} catch (ParseException e) {
+			Reporter.reportError(this.getClass().toString(), Thread.currentThread().getStackTrace()[2].getMethodName().toString(), e.getMessage());
 		}
 
 		return formatedDate;
@@ -83,6 +85,7 @@ public class DateTimeUtils {
 			Date dateObj = mDateFormater.parse(date);
 			c.setTime(dateObj);
 		} catch (ParseException e) {
+			Reporter.reportError(this.getClass().toString(), Thread.currentThread().getStackTrace()[2].getMethodName().toString(), e.getMessage());
 		}
 		return c;
 	}
@@ -93,6 +96,7 @@ public class DateTimeUtils {
 			Date dateObj = dDateTimeFormater.parse(date);
 			formatedDate = mDateTimeFormater.format(dateObj);
 		} catch (ParseException e) {
+			Reporter.reportError(this.getClass().toString(), Thread.currentThread().getStackTrace()[2].getMethodName().toString(), e.getMessage());
 		}
 
 		return formatedDate;

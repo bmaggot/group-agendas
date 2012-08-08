@@ -6,6 +6,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 
+import com.groupagendas.groupagenda.error.report.Reporter;
+
 import android.content.Context;
 import android.os.Environment;
 
@@ -45,6 +47,7 @@ public class DBUtils {
 			myOutput.close();
 			myInput.close();
 		} catch (IOException e) {
+			Reporter.reportError(this.getClass().toString(), Thread.currentThread().getStackTrace()[2].getMethodName().toString(), e.getMessage());
 		}
 	}
 }

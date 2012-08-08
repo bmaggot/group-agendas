@@ -21,6 +21,8 @@ import org.apache.http.params.HttpConnectionParams;
 import org.apache.http.params.HttpParams;
 import org.json.JSONObject;
 
+import com.groupagendas.groupagenda.error.report.Reporter;
+
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -94,18 +96,15 @@ public class httpRequestes {
                     responseBody = httpclient.execute(httppost, responseHandler);
 
                 } catch (ClientProtocolException e) {
-
-                    // TODO Auto-generated catch block
-                    e.printStackTrace();
+                	Reporter.reportError(this.getClass().toString(), Thread.currentThread().getStackTrace()[2].getMethodName().toString(), e.getMessage());
                 } catch (IOException e) {
-                    // TODO Auto-generated catch block
-                    e.printStackTrace();
+                	Reporter.reportError(this.getClass().toString(), Thread.currentThread().getStackTrace()[2].getMethodName().toString(), e.getMessage());
                 }
                 // Log.i(getClass().getSimpleName(), "send  task - end");
 
             } catch (Throwable t) {
                 responseBody="-1";
-                // Toast.makeText(this, "Request failed: " + t.toString(), Toast.LENGTH_LONG).show();
+                Reporter.reportError(this.getClass().toString(), Thread.currentThread().getStackTrace()[2].getMethodName().toString(), t.getMessage());
             }
 
 
@@ -133,7 +132,8 @@ public class httpRequestes {
                 con.finish();
             }
             }catch (Exception e){
-                showMessage("Error parsing"); return;
+            	Reporter.reportError(this.getClass().toString(), Thread.currentThread().getStackTrace()[2].getMethodName().toString(), e.getMessage()); 
+                return;
             }
             //super.onPostExecute(result);
         }

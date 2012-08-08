@@ -138,9 +138,9 @@ public class RegisterationActivity extends Activity {
 					try {
 						Data.localPrefix = new PrefixReceiver().execute(countryArray[pos]).get();
 					} catch (InterruptedException e) {
-						Reporter.reportError(RegisterationActivity.class.toString(), "PrefixReceiver().execute(countryArray[pos]).get()", e.getMessage());
+						Reporter.reportError(this.getClass().toString(), Thread.currentThread().getStackTrace()[2].getMethodName().toString(), e.getMessage());
 					} catch (ExecutionException e) {
-						Reporter.reportError(RegisterationActivity.class.toString(), "PrefixReceiver().execute(countryArray[pos]).get()", e.getMessage());
+						Reporter.reportError(this.getClass().toString(), Thread.currentThread().getStackTrace()[2].getMethodName().toString(), e.getMessage());
 					}
 					
 					if (Data.localPrefix != null) {
@@ -176,9 +176,9 @@ public class RegisterationActivity extends Activity {
 		try {
 			Data.localPrefix = new PrefixReceiver().execute(localCountry).get();
 		} catch (InterruptedException e) {
-			Reporter.reportError(RegisterationActivity.class.toString(), "PrefixReceiver().execute(countryArray[pos]).get()", e.getMessage());
+			Reporter.reportError(this.getClass().toString(), Thread.currentThread().getStackTrace()[2].getMethodName().toString(), e.getMessage());
 		} catch (ExecutionException e) {
-			Reporter.reportError(RegisterationActivity.class.toString(), "PrefixReceiver().execute(countryArray[pos]).get()", e.getMessage());
+			Reporter.reportError(this.getClass().toString(), Thread.currentThread().getStackTrace()[2].getMethodName().toString(), e.getMessage());
 		}
 		
 		if (Data.localPrefix != null) {
