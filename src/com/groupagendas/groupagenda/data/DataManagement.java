@@ -676,7 +676,6 @@ public class DataManagement {
 					if (resp != null) {
 						JSONObject object = new JSONObject(resp);
 						success = object.getBoolean("success");
-						Reporter.reportError(this.getClass().toString(), Thread.currentThread().getStackTrace()[2].getMethodName().toString(), resp);
 						if (success == true) {
 							token = object.getString("token");
 							JSONObject profile = object.getJSONObject("profile");
