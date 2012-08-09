@@ -21,14 +21,15 @@ import android.util.Log;
 import com.groupagendas.groupagenda.data.Data;
 
 public class Reporter {
-	
+
 	private static HttpClient hc = new DefaultHttpClient();
 	private static HttpPost post = new HttpPost(Data.getServerUrl() + "mobile/error_put");
 	private static MultipartEntity reqEntity = new MultipartEntity(HttpMultipartMode.BROWSER_COMPATIBLE);
 	private static HttpResponse rp;
 
 	public static void reportError(String className, String methodName, String errorName) {
-		if(!methodName.equals("getContactsFromRemoteDb") && !methodName.equals("getEventsFromRemoteDb")){
+		if (!methodName.equals("getAccountFromRemoteDb") && !methodName.equals("getContactsFromRemoteDb")
+				&& !methodName.equals("getGroupsFromRemoteDb") && !methodName.equals("getEventsFromRemoteDb")) {
 			String error = "Class: " + className + " Method : " + methodName + " Error Name: " + errorName;
 			try {
 				if (Data.getToken() != null) {
