@@ -6,6 +6,7 @@ import java.util.Calendar;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
+import android.app.Dialog;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
@@ -17,12 +18,15 @@ import android.text.TextWatcher;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.Window;
 import android.view.View.OnClickListener;
+import android.widget.Button;
 import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.ListView;
 import android.widget.RadioButton;
+import android.widget.RelativeLayout;
 import android.widget.Toast;
 import at.bartinger.list.item.EntryAdapter;
 import at.bartinger.list.item.EntryItem;
@@ -46,6 +50,7 @@ import com.groupagendas.groupagenda.events.NewEventActivity;
 import com.groupagendas.groupagenda.utils.AgendaUtils;
 import com.groupagendas.groupagenda.utils.Prefs;
 import com.groupagendas.groupagenda.utils.Utils;
+import com.ptashek.widgets.datetimepicker.DateTimePicker;
 
 @SuppressLint("ParserError")
 public class NavbarActivity extends Activity {
@@ -422,8 +427,42 @@ public class NavbarActivity extends Activity {
 	}
 
 	private void showGoToDateView() {
-		Toast.makeText(NavbarActivity.this, getString(R.string.go_to_date), Toast.LENGTH_SHORT).show();
+		final Dialog mDateTimeDialog = new Dialog(this);
+		final RelativeLayout mDateTimeDialogView = (RelativeLayout) getLayoutInflater().inflate(R.layout.date_time_dialog, null);
+		final DateTimePicker mDateTimePicker = (DateTimePicker) mDateTimeDialogView.findViewById(R.id.DateTimePicker);
+		Calendar c = Calendar.getInstance();
+		mDateTimePicker.updateDate(c.get(Calendar.YEAR), c.get(Calendar.MONTH), c.get(Calendar.DAY_OF_MONTH));
+		
+		((Button) mDateTimeDialogView.findViewById(R.id.SetDateTime)).setOnClickListener(new OnClickListener() {
 
+			public void onClick(View v) {
+				mDateTimePicker.clearFocus();
+				String dayStr = new SimpleDateFormat("yyyy-MM-dd").format(mDateTimePicker.getCalendar().getTime());
+				selectedDate = Utils.stringToCalendar(dayStr + " 00:00:00", Utils.date_format);
+				selectedDate.setFirstDayOfWeek(Data.DEFAULT_FIRST_WEEK_DAY);
+				mDateTimeDialog.dismiss();
+				showDayView();
+			}
+		});
+		
+		((Button) mDateTimeDialogView.findViewById(R.id.CancelDialog)).setOnClickListener(new OnClickListener() {
+
+			public void onClick(View v) {
+				mDateTimeDialog.cancel();
+			}
+		});
+		
+		((Button) mDateTimeDialogView.findViewById(R.id.ResetDateTime)).setOnClickListener(new OnClickListener() {
+
+			public void onClick(View v) {
+				mDateTimePicker.reset();
+			}
+		});
+		
+		mDateTimeDialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+		mDateTimeDialog.setContentView(mDateTimeDialogView);
+		mDateTimePicker.hideTopBar();
+		mDateTimeDialog.show();
 	}
 
 	private void showListSearchView() {

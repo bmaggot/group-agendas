@@ -44,6 +44,7 @@ public class DateTimePicker extends RelativeLayout implements View.OnClickListen
 	private ViewSwitcher	viewSwitcher;
 	// Calendar reference
 	private Calendar		mCalendar;
+	LinearLayout pickerTopBar;
 
 	// Constructor start
 	public DateTimePicker(Context context) {
@@ -65,12 +66,13 @@ public class DateTimePicker extends RelativeLayout implements View.OnClickListen
 		// Inflate the date and time picker views
 		final LinearLayout datePickerView = (LinearLayout) inflater.inflate(R.layout.datepicker, null);
 		final LinearLayout timePickerView = (LinearLayout) inflater.inflate(R.layout.timepicker, null);
+		pickerTopBar = (LinearLayout) findViewById(R.id.ViewSwitchButtons);
 
 		// Grab a Calendar instance
 		mCalendar = Calendar.getInstance();
 		// Grab the ViewSwitcher so we can attach our picker views to it
 		viewSwitcher = (ViewSwitcher) this.findViewById(R.id.DateTimePickerVS);
-
+		
 		// Init date picker
 		datePicker = (DatePicker) datePickerView.findViewById(R.id.DatePicker);
 		datePicker.init(mCalendar.get(Calendar.YEAR), mCalendar.get(Calendar.MONTH), mCalendar.get(Calendar.DAY_OF_MONTH), this);
@@ -78,6 +80,7 @@ public class DateTimePicker extends RelativeLayout implements View.OnClickListen
 		// Init time picker
 		timePicker = (TimePicker) timePickerView.findViewById(R.id.TimePicker);
 		timePicker.setOnTimeChangedListener(this);
+
 
 		// Handle button clicks
 		((Button) findViewById(R.id.SwitchToTime)).setOnClickListener(this); // shows the time picker
@@ -141,7 +144,9 @@ public class DateTimePicker extends RelativeLayout implements View.OnClickListen
 
 	// Convenience wrapper for internal TimePicker instance
 	public void setIs24HourView(boolean is24HourView) {
-		timePicker.setIs24HourView(is24HourView);
+		if(timePicker != null){
+			timePicker.setIs24HourView(is24HourView);
+		}
 	}
 	
 	// Convenience wrapper for internal TimePicker instance
@@ -151,12 +156,20 @@ public class DateTimePicker extends RelativeLayout implements View.OnClickListen
 
 	// Convenience wrapper for internal DatePicker instance
 	public void updateDate(int year, int monthOfYear, int dayOfMonth) {
-		datePicker.updateDate(year, monthOfYear, dayOfMonth);
+		if(datePicker != null){
+			datePicker.updateDate(year, monthOfYear, dayOfMonth);
+		}
 	}
 
 	// Convenience wrapper for internal TimePicker instance
 	public void updateTime(int currentHour, int currentMinute) {
-		timePicker.setCurrentHour(currentHour);
-		timePicker.setCurrentMinute(currentMinute);
+		if(timePicker != null){
+			timePicker.setCurrentHour(currentHour);
+			timePicker.setCurrentMinute(currentMinute);
+		}
+	}
+
+	public void hideTopBar(){
+		pickerTopBar.setVisibility(View.GONE);
 	}
 }
