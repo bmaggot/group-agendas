@@ -2668,10 +2668,14 @@ public class DataManagement {
 						}
 
 						try {
-							invited.my_contact_id = obj.getInt("my_contact_id");
-							Contact contact = getContact(invited.my_contact_id);
-							invited.email = contact.email;
-							invited.name = contact.name + " " + contact.lastname;
+							if(!obj.getString("my_contact_id").equals("null")){
+								invited.my_contact_id = obj.getInt("my_contact_id");
+								Contact contact = getContact(invited.my_contact_id);
+								invited.email = contact.email;
+								invited.name = contact.name + " " + contact.lastname;
+							} else {
+								invited.name = obj.getString("gname");
+							}
 						} catch (JSONException ex) {
 							Reporter.reportError(this.getClass().toString(), Thread.currentThread().getStackTrace()[2].getMethodName().toString(), ex.getMessage());
 						}

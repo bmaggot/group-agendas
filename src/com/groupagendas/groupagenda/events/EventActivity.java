@@ -13,6 +13,7 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.text.DynamicLayout;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.LayoutInflater;
@@ -39,6 +40,7 @@ import android.widget.Toast;
 
 import com.groupagendas.groupagenda.R;
 import com.groupagendas.groupagenda.data.DataManagement;
+import com.groupagendas.groupagenda.events.EventsAdapter.ViewHolder;
 import com.groupagendas.groupagenda.settings.AutoColorItem;
 import com.groupagendas.groupagenda.settings.AutoIconItem;
 import com.groupagendas.groupagenda.timezone.TimezoneManager;
@@ -427,6 +429,13 @@ public class EventActivity extends Activity {
 			if(result.invited != null){
 				invitesLine = (LinearLayout) findViewById(R.id.invitesLine);
 				invitesLine.setVisibility(View.VISIBLE);
+				
+//				final ViewHolder holder = new ViewHolder();
+//				holder.button_yes = (TextView) findViewById(R.id.button_yes);
+//				holder.button_maybe = (TextView) findViewById(R.id.button_maybe);
+//				holder.button_no = (TextView) findViewById(R.id.button_no);
+//				View responsePanel = (View) findViewById(R.layout.response_to_invite_panel);
+//				responsePanel.setVisibility(View.VISIBLE);
 				
 				LayoutInflater inflater = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 				
