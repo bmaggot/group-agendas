@@ -404,6 +404,8 @@
                 android:layout_margin="10dp"
                 android:orientation="vertical"
                 android:visibility="gone" >
+                
+                <include layout="@layout/response_to_invite_panel"/>
 
                 <TextView
                     android:layout_width="fill_parent"
