@@ -66,6 +66,7 @@
     <string name="delete_group">Delete Group</string>
     <string name="visibility">Visibility</string>
     <string name="get_events">Get events</string>
+    <string name="you">You</string>
     <string name="created_by">Created by </string>
     <string name="search">Search…</string>
     <string name="events">Events</string>
@@ -85,7 +86,6 @@
     <string name="phone3">Phone #3</string>
     <string name="sex">Sex</string>
     <string name="timezone">Timezone</string>
-    <string name="you">You</string>
     <string name="title">Title</string>
     <string name="choose_icon">Choose icon</string>
     <string name="choose_color">Choose color</string>
@@ -100,7 +100,7 @@
     <string name="take_with_you">Take with you</string>
     <string name="cost">Cost</string>
     <string name="accomodation">Accomodation</string>
-    <string name="invites">Invites</string>
+    <string name="invited_people">Invited people</string>
     <string name="loading_data">Loading data...</string>
     <string name="loading_accaunt">Loading Account info…</string>
     <string name="loading_contacts">Loading Contacts…</string>

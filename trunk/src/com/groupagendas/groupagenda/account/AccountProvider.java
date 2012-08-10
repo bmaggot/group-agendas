@@ -39,6 +39,7 @@ public class AccountProvider extends ContentProvider{
 			public static final String A_ID = "user_id";
 			
 			public static final String NAME 	= "name";
+			public static final String LASTNAME = "lastname";
 			public static final String FULLNAME = "fullname";
 			
 			public static final String BIRTHDATE	= "birthdate";
@@ -125,6 +126,7 @@ public class AccountProvider extends ContentProvider{
 		AM.put(AMetaData.AccountMetaData.A_ID, AMetaData.AccountMetaData.A_ID);
 		
 		AM.put(AMetaData.AccountMetaData.NAME, AMetaData.AccountMetaData.NAME);
+		AM.put(AMetaData.AccountMetaData.LASTNAME, AMetaData.AccountMetaData.LASTNAME);
 		AM.put(AMetaData.AccountMetaData.FULLNAME, AMetaData.AccountMetaData.FULLNAME);
 		
 		AM.put(AMetaData.AccountMetaData.BIRTHDATE, AMetaData.AccountMetaData.BIRTHDATE);
@@ -370,6 +372,7 @@ private static class DatabaseHelper extends SQLiteOpenHelper {
 				+AMetaData.ACCOUNT_TABLE+" ("
 				+AMetaData.AccountMetaData.A_ID+" INTEGER PRIMARY KEY,"
 				+AMetaData.AccountMetaData.NAME+" TEXT ,"
+				+AMetaData.AccountMetaData.LASTNAME+" TEXT ,"
 				+AMetaData.AccountMetaData.FULLNAME+" TEXT ,"
 				
 				+AMetaData.AccountMetaData.BIRTHDATE+" TEXT ,"

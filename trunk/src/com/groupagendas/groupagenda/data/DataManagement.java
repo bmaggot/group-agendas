@@ -235,6 +235,12 @@ public class DataManagement {
 							Reporter.reportError(this.getClass().toString(), Thread.currentThread().getStackTrace()[2].getMethodName().toString(), e.getMessage());
 						}
 						try {
+							u.lastname = profile.getString("lastname");
+							cv.put(AccountProvider.AMetaData.AccountMetaData.LASTNAME, u.lastname);
+						} catch (JSONException e) {
+							Reporter.reportError(this.getClass().toString(), Thread.currentThread().getStackTrace()[2].getMethodName().toString(), e.getMessage());
+						}
+						try {
 							u.fullname = profile.getString("fullname");
 							cv.put(AccountProvider.AMetaData.AccountMetaData.FULLNAME, u.fullname);
 						} catch (JSONException e) {
@@ -2655,7 +2661,7 @@ public class DataManagement {
 							invited.status_id = obj.getInt("status");
 
 							if (invited.status_id == 4) {
-								invited.status = Data.getmContext().getString(R.string.new_invite);
+								invited.status = Data.getmContext().getString(R.string.status_2);
 							} else {
 								String statusStr = new StringBuilder("status_").append(invited.status_id).toString();
 								int statusId = Data.getmContext().getResources()
@@ -2673,7 +2679,9 @@ public class DataManagement {
 								Contact contact = getContact(invited.my_contact_id);
 								invited.email = contact.email;
 								invited.name = contact.name + " " + contact.lastname;
-							} else {
+							} else if(Data.getAccount().fullname.equals(obj.getString("gname"))){
+								invited.name = Data.getmContext().getString(R.string.you);
+							}else {
 								invited.name = obj.getString("gname");
 							}
 						} catch (JSONException ex) {
