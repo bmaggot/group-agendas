@@ -5,6 +5,7 @@ public class Account extends Object{
 	public int    user_id;
 	
 	public String name;
+	public String lastname;
 	public String fullname;
 	
 	public String birthdate;
