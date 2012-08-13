@@ -1975,7 +1975,7 @@ public class DataManagement {
 			} else {
 				eventsSize = events.size();
 			}
-			if (onlyInvites.size() > 0){
+			if (onlyInvites != null && onlyInvites.size() > 0){
 				updateEventsAdapter(onlyInvites, eAdapter);
 			} else {
 				updateEventsAdapter(events, eAdapter);
