@@ -56,12 +56,15 @@
 
         <Button
             android:id="@+id/import_button"
-            style="?android:attr/buttonStyleSmall"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_alignParentBottom="true"
-            android:layout_alignParentRight="true"
-            android:text="import" />
+            android:layout_marginTop="7dp"
+			android:gravity="center"
+			android:minHeight="28dp"
+			android:padding="5dp"
+			android:layout_alignParentRight="true"
+	        android:text="@string/contact_import_button" />
+        
     </RelativeLayout>
 
     <RelativeLayout

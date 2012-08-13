@@ -408,12 +408,7 @@
                 <include layout="@layout/response_to_invite_panel"
                     android:id="@+id/response_to_invitation"/>
 
-                <TextView
-                    android:layout_width="fill_parent"
-                    android:layout_height="wrap_content"
-                    android:gravity="center_horizontal"
-                    android:text="@string/invited_people"
-                    android:textColor="@android:color/black" />
+                <include layout="@layout/event_invitatation_section" />
 
                 <View
                     android:layout_width="fill_parent"

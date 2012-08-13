@@ -100,8 +100,8 @@
     <string name="take_with_you">Take with you</string>
     <string name="cost">Cost</string>
     <string name="accomodation">Accomodation</string>
-    <string name="invited_people">Invited people</string>
-    <string name="loading_data">Loading data...</string>
+    <string name="invite_people">Invite people</string>
+    <string name="loading_data">Loading data…</string>
     <string name="loading_accaunt">Loading Account info…</string>
     <string name="loading_contacts">Loading Contacts…</string>
     <string name="loading_groups">Loading Groups…</string>
@@ -186,5 +186,9 @@
     <string name="registration_address_city_holder">City</string>
     <string name="registration_error_val_too_short">Following value\'s too short :</string>
     <string name="registration_error_val_wrong_type">Following value\'s wrong type :</string>
-
+    <string name="contact_import_button_from_google_a">Authenticate Google Account</string>
+    <string name="contact_import_button_from_google_i">Import contacts from Google Account</string>
+    <string name="contact_import_button">Import</string>
+    <string name="contact_import_button_clear_auth">Clear credentials</string>
+    
 </resources>

@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<selector xmlns:android="http://schemas.android.com/apk/res/android" >
+	<!-- State: pressed (clicked) -->
+	<item android:state_pressed="true" android:drawable="@drawable/event_invite_people_button_standalone_c" />
+	<!-- State: focused (selected) -->
+	<item android:state_focused="true" android:drawable="@drawable/event_invite_people_button_standalone_f" />
+	<!-- State: normal (default) -->
+	<item android:drawable="@drawable/event_invite_people_button_standalone_i" />
+</selector>
