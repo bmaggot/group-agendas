@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.TimeZone;
 
+import org.w3c.dom.UserDataHandler;
+
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
@@ -404,14 +406,33 @@ public class NewEventActivity extends Activity {
 			event.type = temp;
 			cv.put(EventsProvider.EMetaData.EventsMetaData.TYPE, temp);
 			
-			event.startCalendar = startCalendar;
-			event.endCalendar = endCalendar;
-//			TODO SET CALENDAR TIMEZONE to local time!!!!!!!
-//			Account user = dm.getAccount();
-//			System.out.println("is kompo: "+ TimeZone.getTimeZone("UTC"));
-//			System.out.println("timezone " + user.timezone);
 			
-			if(startCalendar.getTimeInMillis() != endCalendar.getTimeInMillis()){	
+
+			Account user = dm.getAccount();
+			
+			
+			
+			
+			
+			if(startCalendar.getTimeInMillis() < endCalendar.getTimeInMillis()){	
+				
+				
+				if (!user.timezone.equalsIgnoreCase(event.timezone)){
+					Calendar remoteTimeStart = Calendar.getInstance(TimeZone.getTimeZone(event.timezone));
+					remoteTimeStart.set(startCalendar.get(Calendar.YEAR), startCalendar.get(Calendar.MONTH),
+							startCalendar.get(Calendar.DATE), startCalendar.get(Calendar.HOUR_OF_DAY), startCalendar.get(Calendar.MINUTE), startCalendar.get(Calendar.SECOND));
+					remoteTimeStart.clear(Calendar.MILLISECOND);
+					
+					Calendar remoteTimeEnd = Calendar.getInstance(TimeZone.getTimeZone(event.timezone));
+					remoteTimeEnd.set(endCalendar.get(Calendar.YEAR), endCalendar.get(Calendar.MONTH),
+							endCalendar.get(Calendar.DATE), endCalendar.get(Calendar.HOUR_OF_DAY), endCalendar.get(Calendar.MINUTE), endCalendar.get(Calendar.SECOND));
+					remoteTimeEnd.clear(Calendar.MILLISECOND);
+					startCalendar.setTimeInMillis(remoteTimeStart.getTimeInMillis());
+					endCalendar.setTimeInMillis(remoteTimeEnd.getTimeInMillis());
+				}
+					event.startCalendar = startCalendar;
+					event.endCalendar = endCalendar;
+				
 				
 				event.my_time_start = dtUtils.formatDateTimeToDefault(startCalendar.getTime());
 				event.my_time_end = dtUtils.formatDateTimeToDefault(endCalendar.getTime());
@@ -421,7 +442,7 @@ public class NewEventActivity extends Activity {
 				check = false;
 				errorStr = getString(R.string.start_equals_end);
 			}
-			event.endCalendar = Utils.stringToCalendar(event.my_time_end, Utils.date_format); 
+
 			
 			event.country = countryArray[countrySpinner.getSelectedItemPosition()];
 			cv.put(EventsProvider.EMetaData.EventsMetaData.COUNTRY, event.country);
