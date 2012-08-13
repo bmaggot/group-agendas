@@ -244,7 +244,7 @@ public class CalendarYearView extends FrameLayout {
     @SuppressWarnings("unused")
 	private int mCurrentScrollState = OnScrollListener.SCROLL_STATE_IDLE;
     
-    //TODO
+   
     private boolean isDrawEventsPoint = false;
     private ArrayList<Event> mEvents = new ArrayList<Event>();
     private Calendar selectedDate = null;
@@ -456,7 +456,7 @@ public class CalendarYearView extends FrameLayout {
         return mAdapter.mSelectedDate.getTimeInMillis();
     }
     
-    //TODO
+  
     public void setSelectedDate(Calendar c){
     	if(selectedDate == null) selectedDate = Calendar.getInstance();
     	selectedDate.setTimeInMillis(c.getTimeInMillis());
