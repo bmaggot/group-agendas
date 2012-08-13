@@ -416,22 +416,18 @@ public class NewEventActivity extends Activity {
 			
 			if(startCalendar.getTimeInMillis() < endCalendar.getTimeInMillis()){	
 				
+				event.startCalendar = startCalendar;
+				event.endCalendar = endCalendar;
 				
-				if (!user.timezone.equalsIgnoreCase(event.timezone)){
-					Calendar remoteTimeStart = Calendar.getInstance(TimeZone.getTimeZone(event.timezone));
-					remoteTimeStart.set(startCalendar.get(Calendar.YEAR), startCalendar.get(Calendar.MONTH),
-							startCalendar.get(Calendar.DATE), startCalendar.get(Calendar.HOUR_OF_DAY), startCalendar.get(Calendar.MINUTE), startCalendar.get(Calendar.SECOND));
-					remoteTimeStart.clear(Calendar.MILLISECOND);
+//				if (!user.timezone.equalsIgnoreCase(event.timezone)){
+//					event.setLocalCalendars();
+//				}else {
+//					event.localStartCalendar = startCalendar;
+//					event.localEndCalendar = endCalendar;
+//				}
 					
-					Calendar remoteTimeEnd = Calendar.getInstance(TimeZone.getTimeZone(event.timezone));
-					remoteTimeEnd.set(endCalendar.get(Calendar.YEAR), endCalendar.get(Calendar.MONTH),
-							endCalendar.get(Calendar.DATE), endCalendar.get(Calendar.HOUR_OF_DAY), endCalendar.get(Calendar.MINUTE), endCalendar.get(Calendar.SECOND));
-					remoteTimeEnd.clear(Calendar.MILLISECOND);
-					startCalendar.setTimeInMillis(remoteTimeStart.getTimeInMillis());
-					endCalendar.setTimeInMillis(remoteTimeEnd.getTimeInMillis());
-				}
-					event.startCalendar = startCalendar;
-					event.endCalendar = endCalendar;
+					
+			
 				
 				
 				event.my_time_start = dtUtils.formatDateTimeToDefault(startCalendar.getTime());
