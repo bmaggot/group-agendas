@@ -8,7 +8,14 @@
     <color name="event_color_start">#676F7F</color>
     <color name="event_color_center">#687392</color>
     <color name="event_color_end">#818DA5</color>
-
+    <color name="shadowed_background">#AFAFAFAF</color>
+    <color name="red_lighter">#FFEEEE</color>
+    <color name="red_darker">#FF002D</color>
+    
+    <color name="event_invite_button_c_gradstart">#058CF5</color>
+    <color name="event_invite_button_c_gradend">#015DE6</color>
+    <color name="event_invite_button_i_background">#F7F7F7</color>
+    
     <drawable name="empty">#00000000</drawable>
 
     <color name="mainBgLineColor">#aaaaaa</color>

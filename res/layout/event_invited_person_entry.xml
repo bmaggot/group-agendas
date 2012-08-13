@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:background="@color/event_invite_button_i_background"
+    android:padding="10dp"
+    android:layout_height="50dp"
+    android:orientation="vertical" >
+    
+    <TextView android:id="@+id/invited_fullname"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentLeft="true"
+        android:paddingBottom="3dp"
+		android:background="@drawable/transparent" 
+        android:layout_height="20dp"
+        android:layout_width="wrap_content"
+        android:textColor="@color/black"
+        android:textStyle="bold"
+        android:textSize="16dp" />
+    
+    <TextView android:id="@+id/invited_available_email"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentLeft="true"
+		android:background="@drawable/transparent" 
+        android:layout_height="15dp"
+        android:layout_width="wrap_content"
+        android:textColor="@color/darker_gray"
+        android:textStyle="normal"
+        android:textSize="14dp" />
+    
+    <TextView android:id="@+id/invited_status"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentRight="true"
+        android:background="@color/mainBgLineColor" 
+        android:layout_height="wrap_content"
+        android:padding="2dp"
+        android:layout_width="wrap_content"
+        android:textColor="@color/white"
+        android:textStyle="bold"
+        android:textSize="12dp" />
+    
+
+</RelativeLayout>

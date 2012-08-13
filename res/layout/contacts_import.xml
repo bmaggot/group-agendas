@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="fill_parent"
+    android:orientation="vertical"
+    android:background="@drawable/transparent"
+    android:gravity="center_horizontal|bottom" >
+    
+    <Button android:id="@+id/contact_import_button_gauth"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="5dp"
+        android:padding="5dp"
+        android:minHeight="40dp"
+        android:background="@drawable/contact_import_button_bg_gray"
+        android:text="@string/contact_import_button_from_google_a"
+        android:textSize="16dp"
+        android:textStyle="bold" />
+
+    <Button android:id="@+id/contact_import_button_gimp"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="5dp"
+        android:padding="5dp"
+        android:minHeight="40dp"
+        android:background="@drawable/contact_import_button_bg_gray"
+        android:text="@string/contact_import_button_from_google_i"
+        android:textSize="16dp"
+        android:textStyle="bold" />
+
+    <Button android:id="@+id/contact_import_button_clear_auth"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="5dp"
+        android:padding="5dp"
+        android:minHeight="40dp"
+        android:background="@drawable/contact_import_button_bg_red"
+        android:text="@string/contact_import_button_clear_auth"
+        android:textSize="16dp"
+        android:textColor="@color/white"
+        android:textStyle="bold" />
+
+</LinearLayout>
