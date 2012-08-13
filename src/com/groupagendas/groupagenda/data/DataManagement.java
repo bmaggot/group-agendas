@@ -2681,6 +2681,7 @@ public class DataManagement {
 								invited.name = contact.name + " " + contact.lastname;
 							} else if(Data.getAccount().fullname.equals(obj.getString("gname"))){
 								invited.name = Data.getmContext().getString(R.string.you);
+								invited.email = Data.getEmail();
 							}else {
 								invited.name = obj.getString("gname");
 							}

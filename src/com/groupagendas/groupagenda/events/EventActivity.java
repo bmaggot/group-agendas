@@ -521,7 +521,21 @@ public class EventActivity extends Activity {
 					emailView.setText(invited.email);
 					
 					final TextView statusView = (TextView) view.findViewById(R.id.statusView);
-					statusView.setText(invited.status);
+					
+					switch(invited.status_id){
+					case 0:
+						statusView.setText(mContext.getString(R.string.status_0));
+						break;
+					case 1:
+						statusView.setText(mContext.getString(R.string.status_1));
+						break;
+					case 2:
+						statusView.setText(mContext.getString(R.string.status_2));
+						break;
+					case 4:
+						statusView.setText(mContext.getString(R.string.new_invite));
+						break;
+					}
 					
 					invitesLine.addView(view);
 				}
@@ -544,7 +558,10 @@ public class EventActivity extends Activity {
 			}
 			String where = EventsProvider.EMetaData.EventsMetaData.E_ID+"="+event_id;
 			mContext.getContentResolver().update(EventsProvider.EMetaData.EventsMetaData.CONTENT_URI, values, where, null);
+			dm.getEventsFromRemoteDb("");
 		}
+		
+		
 	}
 	
 	private TextWatcher filterTextWatcher = new TextWatcher() {
