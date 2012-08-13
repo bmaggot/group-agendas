@@ -66,6 +66,7 @@ public class EventsActivity extends ListActivity {
 		setListAdapter(eventsAdapter);
 		dm.loadEvents(this, eventsAdapter);
 		if(NavbarActivity.showInvites && AgendaUtils.newInvites != 0){
+			NavbarActivity.showInvites = false;
 			changeTitle(getString(R.string.status_4, AgendaUtils.newInvites));
 		}
 	}
@@ -108,6 +109,7 @@ public class EventsActivity extends ListActivity {
 
 						@Override
 						public void onClick(View v) {
+							dm.loadEvents(getParent(), eventsAdapter);
 							changeTitle(getString(R.string.status_4, AgendaUtils.newInvites));
 							qa.dismiss();
 							eventsAdapter.getFilter().filter("4");
@@ -121,6 +123,7 @@ public class EventsActivity extends ListActivity {
 
 						@Override
 						public void onClick(View v) {
+							dm.loadEvents(getParent(), eventsAdapter);
 							changeTitle(getString(R.string.status_0));
 							qa.dismiss();
 							eventsAdapter.getFilter().filter("0");
@@ -134,6 +137,7 @@ public class EventsActivity extends ListActivity {
 
 						@Override
 						public void onClick(View v) {
+							dm.loadEvents(getParent(), eventsAdapter);
 							changeTitle(getString(R.string.status_1));
 							qa.dismiss();
 							eventsAdapter.getFilter().filter("1");
@@ -147,6 +151,7 @@ public class EventsActivity extends ListActivity {
 
 						@Override
 						public void onClick(View v) {
+							dm.loadEvents(getParent(), eventsAdapter);
 							changeTitle(getString(R.string.status_2));
 							qa.dismiss();
 							eventsAdapter.getFilter().filter("2");
