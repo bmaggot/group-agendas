@@ -3126,4 +3126,8 @@ public class DataManagement {
 			eAdapter.notifyDataSetChanged();
 		}
 	}
+	
+	public Context getmContext(){
+		return Data.getmContext();
+	}
 }
