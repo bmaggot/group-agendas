@@ -13,7 +13,6 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.text.DynamicLayout;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.LayoutInflater;
@@ -136,6 +135,10 @@ public class EventActivity extends Activity {
 	}
 
 	class GetEventTask extends AsyncTask<Integer, Event, Event> {
+		
+		final DataManagement dm = DataManagement.getInstance(getParent());
+		final Context mContext = dm.getmContext();
+		
 		@Override
 		protected void onPreExecute() {
 			pb.setVisibility(View.VISIBLE);
@@ -430,12 +433,79 @@ public class EventActivity extends Activity {
 				invitesLine = (LinearLayout) findViewById(R.id.invitesLine);
 				invitesLine.setVisibility(View.VISIBLE);
 				
-//				final ViewHolder holder = new ViewHolder();
-//				holder.button_yes = (TextView) findViewById(R.id.button_yes);
-//				holder.button_maybe = (TextView) findViewById(R.id.button_maybe);
-//				holder.button_no = (TextView) findViewById(R.id.button_no);
-//				View responsePanel = (View) findViewById(R.layout.response_to_invite_panel);
-//				responsePanel.setVisibility(View.VISIBLE);
+				final ViewHolder holder = new ViewHolder();
+				holder.status = (TextView) findViewById(R.id.status);
+				holder.button_yes = (TextView) findViewById(R.id.button_yes);
+				holder.button_maybe = (TextView) findViewById(R.id.button_maybe);
+				holder.button_no = (TextView) findViewById(R.id.button_no);
+				View responsePanel = (View) findViewById(R.id.response_to_invitation);
+				responsePanel.setVisibility(View.VISIBLE);
+				
+				switch (event.status) {
+				case 0:
+					holder.status.setText(mContext.getString(R.string.status_0));
+					holder.button_yes.setVisibility(View.VISIBLE);
+					holder.button_maybe.setVisibility(View.VISIBLE);
+					holder.button_no.setVisibility(View.INVISIBLE);
+					break;
+				case 1:
+					holder.status.setText(mContext.getString(R.string.status_1));
+					holder.button_yes.setVisibility(View.INVISIBLE);
+					holder.button_maybe.setVisibility(View.VISIBLE);
+					holder.button_no.setVisibility(View.VISIBLE);
+					break;
+				case 2:
+					holder.status.setText(mContext.getString(R.string.status_2));
+					holder.button_yes.setVisibility(View.VISIBLE);
+					holder.button_maybe.setVisibility(View.INVISIBLE);
+					holder.button_no.setVisibility(View.VISIBLE);
+					break;
+				case 4:
+					holder.status.setText(mContext.getString(R.string.new_invite));
+					holder.button_yes.setVisibility(View.VISIBLE);
+					holder.button_maybe.setVisibility(View.VISIBLE);
+					holder.button_no.setVisibility(View.VISIBLE);
+					break;
+				}
+				
+				holder.button_yes.setOnClickListener(new OnClickListener() {
+					@Override
+					public void onClick(View arg0) {
+						boolean success = dm.changeEventStatus(event.event_id, "1");
+						holder.button_yes.setVisibility(View.INVISIBLE);
+						holder.button_maybe.setVisibility(View.VISIBLE);
+						holder.button_no.setVisibility(View.VISIBLE);
+						holder.status.setText(mContext.getString(R.string.status_1));
+						editDb(event.event_id, 1, success);
+						event.status = 1;
+					}
+				});
+				
+				holder.button_maybe.setOnClickListener(new OnClickListener() {
+					@Override
+					public void onClick(View arg0) {
+						boolean success = dm.changeEventStatus(event.event_id, "2");
+						holder.button_yes.setVisibility(View.VISIBLE);
+						holder.button_maybe.setVisibility(View.INVISIBLE);
+						holder.button_no.setVisibility(View.VISIBLE);
+						holder.status.setText(mContext.getString(R.string.status_2));
+						editDb(event.event_id, 2, success);
+						event.status = 2;
+					}
+				});
+				
+				holder.button_no.setOnClickListener(new OnClickListener() {
+					@Override
+					public void onClick(View arg0) {
+						boolean success = dm.changeEventStatus(event.event_id, "0");
+						holder.button_yes.setVisibility(View.VISIBLE);
+						holder.button_maybe.setVisibility(View.VISIBLE);
+						holder.button_no.setVisibility(View.INVISIBLE);
+						holder.status.setText(mContext.getString(R.string.status_0));
+						editDb(event.event_id, 0, success);
+						event.status = 0;
+					}
+				});
 				
 				LayoutInflater inflater = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 				
@@ -464,6 +534,16 @@ public class EventActivity extends Activity {
 			/////////////
 			pb.setVisibility(View.INVISIBLE);
 			super.onPostExecute(result);
+		}
+		
+		private void editDb(int event_id, int status, boolean success){
+			ContentValues values = new ContentValues();
+			values.put(EventsProvider.EMetaData.EventsMetaData.STATUS, status);
+			if(!success){
+				values.put(EventsProvider.EMetaData.EventsMetaData.NEED_UPDATE, 4);
+			}
+			String where = EventsProvider.EMetaData.EventsMetaData.E_ID+"="+event_id;
+			mContext.getContentResolver().update(EventsProvider.EMetaData.EventsMetaData.CONTENT_URI, values, where, null);
 		}
 	}
 	
