@@ -36,7 +36,7 @@ public class HourEventsTimetable {
 		}
 		
 		Calendar start = Utils.stringToCalendar(event.my_time_start, Utils.date_format);
-		if (start.before(todayStart)){//TODO cia jeigu eventas prasideda ne sita diena, o anksciau
+		if (start.before(todayStart)){// cia jeigu eventas prasideda ne sita diena, o anksciau
 			start = (Calendar) todayStart.clone();
 			end = todayEnd;
 			end.set(start.get(Calendar.YEAR), start.get(Calendar.MONTH), start.get(Calendar.DAY_OF_MONTH));
@@ -85,7 +85,8 @@ public class HourEventsTimetable {
 		ArrayList<Event> hourEvents = eventsTimetable[startHour];
 
 		int index = hourEvents.indexOf(event);
-		if (index > 0) return hourEvents.get(index -1).event_id;  
+//		We use event object JAVA HASH code for Relative Layout id;
+		if (index > 0) return hourEvents.get(index -1).hashCode();  
 		else return 0;
 	}
 
