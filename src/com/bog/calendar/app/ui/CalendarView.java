@@ -273,7 +273,7 @@ public class CalendarView extends FrameLayout {
 
     private View weekNumBgPanel;
     
-    //TODO
+   
     private boolean isDrawEventsPoint = false;
     private ArrayList<Event> mEvents = new ArrayList<Event>();
     private ListView selectedDayEventsList = null;
@@ -468,7 +468,6 @@ public class CalendarView extends FrameLayout {
      *                                  minimal or after the maximal date.
      * @see #setDate(long, boolean, boolean)
      */
-    //TODO
     public void setDate(long date, boolean events, ListView view) {
     	isDrawEventsPoint = events;
     	selectedDayEventsList = view;
@@ -859,7 +858,7 @@ public class CalendarView extends FrameLayout {
             mFocusedMonth = month;
             notifyDataSetChanged();
         }
-        //TODO
+      
         @Override
         public boolean onTouch(View v, MotionEvent event) {
             if (mListView.isEnabled() && mGestureDetector.onTouchEvent(event)) {
@@ -1167,7 +1166,7 @@ public class CalendarView extends FrameLayout {
                 mMonthNumDrawPaint.setColor(mFocusDay[i] ? mFocusedMonthDateColor : mUnfocusedMonthDateColor);
                 int x = (2 * i + 1) * mWidth / divisor;
                 canvas.drawText(mDayNumbers[i], x, y, mMonthNumDrawPaint);
-                //TODO
+           
                 if(isDrawEventsPoint){
                 	if(!mDayNumbers[i].equals("")){
                     	int row = 0;
