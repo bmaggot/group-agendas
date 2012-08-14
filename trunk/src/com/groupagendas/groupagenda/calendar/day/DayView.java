@@ -17,6 +17,7 @@ import android.widget.RelativeLayout;
 import android.widget.ScrollView;
 import android.widget.TextView;
 
+import com.groupagendas.groupagenda.NavbarActivity;
 import com.groupagendas.groupagenda.R;
 
 
@@ -28,33 +29,19 @@ import com.groupagendas.groupagenda.events.Event;
 
 public class DayView extends AbstractCalendarView {
 	
-	private static final float DEFAULT_TIME_TO_SCROLL = 7.5f; //DEFAULT HOUR TO SCROLL. 7.5f = 7:30
-	public static final int hourLineHeightDP = 23;  //HEIGHT OF ONE HOUR LINE IN DIP
-
-	
 	DayInstance selectedDay;
 	
 	boolean am_pmEnabled;
 
-	ImageButton prevDayButton;
-	ImageButton nextDaybutton;
-	Rect prevDayButtonBounds;
-	Rect nextDayButtonBounds;
-	TouchDelegate prevDayButtonDelegate;
-	TouchDelegate nextDayButtonDelegate;
-	TextView topPanelTitle;
-	
 
 	String[] WeekDayNames;
 	String[] MonthNames;
 	String[] HourNames;
 	
-	
 
 	private HourEventsPanel hourEventsPanel;
 	private ListView allDayEventsPanel;
 	private LinearLayout hourList;
-	private float densityFactor = getResources().getDisplayMetrics().density;
 	private AllDayEventsAdapter allDayEventAdapter;
 	
 
@@ -66,6 +53,8 @@ public class DayView extends AbstractCalendarView {
 
 		super(context, attrs);
 		
+		this.selectedDay = new DayInstance(context, ((NavbarActivity)context).getSelectedDate());	
+		
 		am_pmEnabled =  DataManagement.getInstance(getContext()).getAccount().setting_ampm != 0;
 		WeekDayNames = getResources().getStringArray(R.array.week_days_names);
 		MonthNames = getResources().getStringArray(R.array.month_names);
@@ -75,22 +64,23 @@ public class DayView extends AbstractCalendarView {
 		else{
 			HourNames = getResources().getStringArray(R.array.hour_names);
 		}
-		
-		selectedDay = null; 
+
 		allDayEventAdapter = new AllDayEventsAdapter(getContext(), new ArrayList<Event>());
 
 	}
 
 
 	public void init(Calendar selectedDate) {
-		this.selectedDay = new DayInstance(getContext(), selectedDate);
-		setUpSwipeGestureListener();
-		setupViewItems();
-		drawHourList();
-		updateEventLists();
-		scrollHourPanel();
+		
+		super.init();
+		
+//		setupViewItems();
+//		drawHourList();
+//		updateEventLists();
+//		scrollHourPanel();
 		
 	}
+	
 
 	private void scrollHourPanel() {
 		final float hour;
@@ -229,54 +219,20 @@ public class DayView extends AbstractCalendarView {
 		drawHourEvents(); // Drawing hour-long events
 	}
 
-	public void setupViewItems() {
-		prevDayButton = (ImageButton) findViewById(R.id.prevDay);
-		nextDaybutton = (ImageButton) findViewById(R.id.nextDay);
+//	public void setupViewItems() {
+//		prevButton = (ImageButton) findViewById(R.id.prevDay);
+//		nextButton = (ImageButton) findViewById(R.id.nextDay);
+//		
+//		prevButtonBounds = new Rect();
+//		nextDayButtonBounds = new Rect();
+
 		
-		prevDayButtonBounds = new Rect();
-		nextDayButtonBounds = new Rect();
-
-		hourEventsPanel = (HourEventsPanel) findViewById(R.id.hour_events);
-		hourEventsPanel.setSwipeGestureDetector(new GestureDetector(new HourEventsPanelMotionListener(this, selectedDay.getSelectedDate())));
-		hourEventsPanel.setOnTouchListener(new OnTouchListener() {
-			@Override
-			public boolean onTouch(View v, MotionEvent event) {
-				if (hourEventsPanel.getSwipeGestureDetector().onTouchEvent(event)) {
-				     return false;
-				    } else {
-				     return true;
-				    }
-			}
-		});
-
-		allDayEventsPanel = (ListView) findViewById(R.id.allday_events);
-		allDayEventsPanel.setAdapter(allDayEventAdapter);
-		
-		hourList = (LinearLayout) findViewById(R.id.hour_list);
-		hourList.setClickable(false);
 
 
-		topPanelTitle = (TextView) findViewById(R.id.top_panel_title);
-		updateTopPanelTitle(selectedDay.getSelectedDate());
-		
-		prevDayButton.setOnClickListener(new OnClickListener() {
-
-			@Override
-			public void onClick(View v) {
-				goPrev();
-			}
-		});
-		
-		nextDaybutton.setOnClickListener(new OnClickListener() {
-
-			@Override
-			public void onClick(View v) {
-				goNext();
-			}
-		});
-		
-		setupDelegates();
-	}
+//		topPanelTitle = (TextView) findViewById(R.id.top_panel_title);
+//		updateTopPanelTitle(selectedDay.getSelectedDate());
+			
+//	}
 	
 	public void goPrev(){
 		selectedDay.goPrev();
@@ -297,33 +253,45 @@ public class DayView extends AbstractCalendarView {
 		title += ", ";
 		title += selectedDate.get(Calendar.YEAR);
 
-		topPanelTitle.setText(title);
+		this.getTopPanelTitle().setText(title);
 	}
 
-	private void setupDelegates() {
-		int[] tmpCoords = new int[2];
-		int screenWidth = getResources().getDisplayMetrics().widthPixels;
-		View calNavbar = (View) findViewById(R.id.calendar_navbar);
-		calNavbar.getLocationOnScreen(tmpCoords);
-		prevDayButton.getHitRect(prevDayButtonBounds);
-		prevDayButtonBounds.right = tmpCoords[0]+50;
-		prevDayButtonBounds.left = tmpCoords[0];
-		prevDayButtonBounds.top = tmpCoords[1];
-		prevDayButtonBounds.bottom = tmpCoords[1]+50;
-		prevDayButtonDelegate = new TouchDelegate(prevDayButtonBounds, prevDayButton);
+
+
+	@Override
+	protected void setTopPanelTitle() {
+		updateTopPanelTitle(selectedDay.getSelectedDate());
+	}
+
+	@Override
+	public void setupView() {
 		
-		nextDaybutton.getHitRect(nextDayButtonBounds);
-		nextDayButtonBounds.right = tmpCoords[0]+screenWidth;
-		nextDayButtonBounds.left = tmpCoords[0]+screenWidth-50;
-		nextDayButtonBounds.top = tmpCoords[1];
-		nextDayButtonBounds.bottom = tmpCoords[1]+50;		
-		nextDayButtonDelegate = new TouchDelegate(nextDayButtonBounds, nextDaybutton);
-
-		if (View.class.isInstance(calNavbar)) {
-			calNavbar.setTouchDelegate(prevDayButtonDelegate);
-			calNavbar.setTouchDelegate(nextDayButtonDelegate);
-		}
-
+		allDayEventsPanel = (ListView) findViewById(R.id.allday_events);
+		allDayEventsPanel.setAdapter(allDayEventAdapter);
+		
+//		init column with hour titles
+		hourList = (LinearLayout) findViewById(R.id.hour_list);
+		hourList.setClickable(false);
+		drawHourList();
+		
+		//init hour event panel
+		hourEventsPanel = (HourEventsPanel) findViewById(R.id.hour_events);
+		hourEventsPanel.setSwipeGestureDetector(new GestureDetector(new HourEventsPanelMotionListener(this, selectedDay.getSelectedDate())));
+		hourEventsPanel.setOnTouchListener(new OnTouchListener() {
+			@Override
+			public boolean onTouch(View v, MotionEvent event) {
+				if (hourEventsPanel.getSwipeGestureDetector().onTouchEvent(event)) {
+				     return false;
+				    } else {
+				     return true;
+				    }
+			}
+		});
+		
+		updateEventLists();
+		scrollHourPanel();	
 	}
+
+
 
 }
