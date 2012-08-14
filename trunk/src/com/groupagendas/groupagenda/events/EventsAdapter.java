@@ -18,6 +18,7 @@ import android.widget.TextView;
 import com.groupagendas.groupagenda.R;
 import com.groupagendas.groupagenda.data.DataManagement;
 import com.groupagendas.groupagenda.utils.DateTimeUtils;
+import com.groupagendas.groupagenda.utils.EventStatusUpdater;
 
 public class EventsAdapter extends BaseAdapter implements Filterable{
 	private List<Event> events;
@@ -155,13 +156,15 @@ public class EventsAdapter extends BaseAdapter implements Filterable{
 	}
 	
 	private void editDb(int event_id, int status, boolean success){
-		ContentValues values = new ContentValues();
-		values.put(EventsProvider.EMetaData.EventsMetaData.STATUS, status);
-		if(!success){
-			values.put(EventsProvider.EMetaData.EventsMetaData.NEED_UPDATE, 4);
-		}
-		String where = EventsProvider.EMetaData.EventsMetaData.E_ID+"="+event_id;
-		mContext.getContentResolver().update(EventsProvider.EMetaData.EventsMetaData.CONTENT_URI, values, where, null);
+		Object[] array = {event_id, status, success, dm};
+		new EventStatusUpdater().execute(array);
+//		ContentValues values = new ContentValues();
+//		values.put(EventsProvider.EMetaData.EventsMetaData.STATUS, status);
+//		if(!success){
+//			values.put(EventsProvider.EMetaData.EventsMetaData.NEED_UPDATE, 4);
+//		}
+//		String where = EventsProvider.EMetaData.EventsMetaData.E_ID+"="+event_id;
+//		mContext.getContentResolver().update(EventsProvider.EMetaData.EventsMetaData.CONTENT_URI, values, where, null);
 	}
 	
 	static class ViewHolder {

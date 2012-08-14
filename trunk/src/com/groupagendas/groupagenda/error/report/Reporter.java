@@ -16,6 +16,7 @@ import org.apache.http.util.EntityUtils;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import android.os.AsyncTask;
 import android.util.Log;
 
 import com.groupagendas.groupagenda.data.Data;
@@ -31,6 +32,20 @@ public class Reporter {
 		if (!methodName.equals("getAccountFromRemoteDb") && !methodName.equals("getContactsFromRemoteDb")
 				&& !methodName.equals("getGroupsFromRemoteDb") && !methodName.equals("getEventsFromRemoteDb")) {
 			String error = "Class: " + className + " Method : " + methodName + " Error Name: " + errorName;
+			Reporter reporter = new Reporter();
+			reporter.report(error);
+		}
+	}
+	
+	public void report(String error){
+		new ErrorReporter().execute(error);
+	}
+	
+	class ErrorReporter extends AsyncTask<String, Void, Void> {
+
+		@Override
+		protected Void doInBackground(String... params) {
+			String error = params[0];
 			try {
 				if (Data.getToken() != null) {
 					reqEntity.addPart("token", new StringBody(Data.getToken()));
@@ -70,6 +85,7 @@ public class Reporter {
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
+			return null;
 		}
 	}
 }

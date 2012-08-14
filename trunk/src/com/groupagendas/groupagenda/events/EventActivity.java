@@ -45,6 +45,7 @@ import com.groupagendas.groupagenda.settings.AutoIconItem;
 import com.groupagendas.groupagenda.timezone.TimezoneManager;
 import com.groupagendas.groupagenda.utils.CountryManager;
 import com.groupagendas.groupagenda.utils.DateTimeUtils;
+import com.groupagendas.groupagenda.utils.EventStatusUpdater;
 import com.groupagendas.groupagenda.utils.Utils;
 import com.ptashek.widgets.datetimepicker.DateTimePicker;
 
@@ -551,14 +552,8 @@ public class EventActivity extends Activity {
 		}
 		
 		private void editDb(int event_id, int status, boolean success){
-			ContentValues values = new ContentValues();
-			values.put(EventsProvider.EMetaData.EventsMetaData.STATUS, status);
-			if(!success){
-				values.put(EventsProvider.EMetaData.EventsMetaData.NEED_UPDATE, 4);
-			}
-			String where = EventsProvider.EMetaData.EventsMetaData.E_ID+"="+event_id;
-			mContext.getContentResolver().update(EventsProvider.EMetaData.EventsMetaData.CONTENT_URI, values, where, null);
-			dm.getEventsFromRemoteDb("");
+			Object[] array = {event_id, status, success, dm};
+			new EventStatusUpdater().execute(array);
 		}
 		
 		
