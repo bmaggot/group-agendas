@@ -11,6 +11,7 @@ import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.ContentValues;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.text.Editable;
@@ -31,9 +32,12 @@ import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.Spinner;
 
+import com.groupagendas.groupagenda.NavbarActivity;
 import com.groupagendas.groupagenda.R;
 import com.groupagendas.groupagenda.account.Account;
 import com.groupagendas.groupagenda.contacts.Contact;
+import com.groupagendas.groupagenda.contacts.ContactsActivity;
+import com.groupagendas.groupagenda.data.Data;
 import com.groupagendas.groupagenda.data.DataManagement;
 import com.groupagendas.groupagenda.settings.AutoColorItem;
 import com.groupagendas.groupagenda.settings.AutoIconItem;
@@ -107,6 +111,7 @@ public class NewEventActivity extends Activity {
 	
 	private ArrayList<AutoColorItem> autoColors = null;
 	private ArrayList<AutoIconItem> autoIcons = null;
+	
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -303,12 +308,20 @@ public class NewEventActivity extends Activity {
 		accomodationView = (EditText) findViewById(R.id.accomodationView);
 
 		// contacts
+		Data.selectedContacts = new ArrayList<Contact>();
 		contactsBlock = (LinearLayout) findViewById(R.id.contactsBlock);
 		contactsButton = (Button) findViewById(R.id.contactsButton);
 		contactsButton.setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View arg0) {
-				showDialog(CHOOSE_CONTACTS_DIALOG);
+				Data.newEventPar = true;
+				
+				
+				startActivity(new Intent(NewEventActivity.this, ContactsActivity.class));
+				
+				//showDialog(CHOOSE_CONTACTS_DIALOG);
+				
+				//if (Data.selectedContacts.size() > );
 			}
 		});
 	}
@@ -490,7 +503,7 @@ public class NewEventActivity extends Activity {
 				getContentResolver().insert(EventsProvider.EMetaData.EventsMetaData.CONTENT_URI, cv);
 				dm.putEventIntoTreeMap(event);
 			}
-
+			Data.selectedContacts = new ArrayList<Contact>();
 			return check;
 		}
 
@@ -660,4 +673,9 @@ public class NewEventActivity extends Activity {
 		// Display the dialog
 		mDateTimeDialog.show();
 	}
+	
+	
+		
+	
+
 }

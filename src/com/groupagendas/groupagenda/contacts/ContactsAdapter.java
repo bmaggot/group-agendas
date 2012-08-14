@@ -6,6 +6,7 @@ import java.util.List;
 import android.app.Activity;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Color;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -16,6 +17,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.groupagendas.groupagenda.R;
+import com.groupagendas.groupagenda.data.Data;
 import com.groupagendas.groupagenda.utils.Utils;
 
 public class ContactsAdapter extends BaseAdapter implements Filterable {
@@ -36,9 +38,12 @@ public class ContactsAdapter extends BaseAdapter implements Filterable {
 		if (convertView == null) {
 			convertView = mInflater.inflate(R.layout.list_contact_entry, null);
 			holder = new ViewHolder();
-			holder.email = (TextView) convertView.findViewById(R.id.list_contacts_email);
-			holder.name = (TextView) convertView.findViewById(R.id.list_contacts_name);
-			holder.image = (ImageView) convertView.findViewById(R.id.contact_icon);
+			holder.email = (TextView) convertView
+					.findViewById(R.id.list_contacts_email);
+			holder.name = (TextView) convertView
+					.findViewById(R.id.list_contacts_name);
+			holder.image = (ImageView) convertView
+					.findViewById(R.id.contact_icon);
 
 			convertView.setTag(holder);
 		} else {
@@ -47,20 +52,40 @@ public class ContactsAdapter extends BaseAdapter implements Filterable {
 
 		final Contact contact = contacts.get(position);
 		StringBuilder sb = new StringBuilder(contact.name);
-		if(contact.lastname != null && !contact.lastname.equals("null"))	sb.append(" ").append(contact.lastname);
+		if (contact.lastname != null && !contact.lastname.equals("null"))
+			sb.append(" ").append(contact.lastname);
 		holder.name.setText(sb.toString());
 
 		/*
-		 * This section of code is disabled in order not to display contact's email address.
+		 * This section of code is disabled in order not to display contact's
+		 * email address.
 		 */
-		
-//		if(contact.email != null && !contact.email.equals("null"))	holder.email.setText(contact.email);
+
+		// if(contact.email != null && !contact.email.equals("null"))
+		// holder.email.setText(contact.email);
 
 		if (contact.image) {
-			Bitmap bitmap = Utils.getResizedBitmap(BitmapFactory.decodeByteArray(contact.image_bytes, 0, contact.image_bytes.length), 72, 72);
+			Bitmap bitmap = Utils.getResizedBitmap(BitmapFactory
+					.decodeByteArray(contact.image_bytes, 0,
+							contact.image_bytes.length), 72, 72);
 			holder.image.setImageBitmap(bitmap);
 		} else {
 			holder.image.setImageResource(R.drawable.group_icon);
+		}
+
+		if (Data.newEventPar) {
+			if (Data.selectedContacts.size() > 0){
+				int i;
+				for (i = 0; i < Data.selectedContacts.size(); i++) {
+					System.out.println(Data.selectedContacts.get(i).contact_id + " = " + contact.contact_id);
+					if (Data.selectedContacts.get(i).contact_id == contact.contact_id) {
+						System.out.println("Found");
+						convertView.setBackgroundColor(Color.GREEN);
+						convertView.setDrawingCacheBackgroundColor(Color.TRANSPARENT);
+						//break;
+					}
+				}
+			}
 		}
 
 		return convertView;
@@ -86,8 +111,8 @@ public class ContactsAdapter extends BaseAdapter implements Filterable {
 	public long getItemId(int position) {
 		return position;
 	}
-	
-	public void setItems(List<Contact> items){
+
+	public void setItems(List<Contact> items) {
 		contacts = items;
 		contactsAll = items;
 	}
@@ -97,7 +122,8 @@ public class ContactsAdapter extends BaseAdapter implements Filterable {
 		return new Filter() {
 			@SuppressWarnings("unchecked")
 			@Override
-			protected void publishResults(CharSequence constraint, FilterResults results) {
+			protected void publishResults(CharSequence constraint,
+					FilterResults results) {
 				contacts = (List<Contact>) results.values;
 				notifyDataSetChanged();
 			}
@@ -117,8 +143,10 @@ public class ContactsAdapter extends BaseAdapter implements Filterable {
 				List<Contact> filtereItems = new ArrayList<Contact>();
 
 				for (int i = 0; i < items.size(); i++) {
-					if (items.get(i).name.toLowerCase().startsWith(constraint.toString().toLowerCase())
-							|| items.get(i).lastname.toLowerCase().startsWith(constraint.toString().toLowerCase())) {
+					if (items.get(i).name.toLowerCase().startsWith(
+							constraint.toString().toLowerCase())
+							|| items.get(i).lastname.toLowerCase().startsWith(
+									constraint.toString().toLowerCase())) {
 						filtereItems.add(items.get(i));
 					}
 				}
@@ -127,7 +155,7 @@ public class ContactsAdapter extends BaseAdapter implements Filterable {
 			}
 		};
 	}
-	
+
 	@Override
 	public void notifyDataSetChanged() {
 		super.notifyDataSetChanged();

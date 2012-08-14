@@ -384,25 +384,26 @@
                     android:textSize="12dp" />
             </LinearLayout>
 
-            <LinearLayout
-                android:id="@+id/contactsBlock"
-                android:layout_width="fill_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:visibility="gone" >
-
+			<LinearLayout
+				android:id="@+id/contactsBlock"
+				android:layout_width="fill_parent"
+				android:layout_height="wrap_content"
+				android:orientation="horizontal"
+				android:visibility="visible" >
+			</LinearLayout>
+			
                 <TextView
                     android:layout_width="80dp"
                     android:layout_height="wrap_content"
                     android:text="@string/select_contacts"
                     android:textColor="@android:color/black" />
 
-                <Button
-                    android:id="@+id/contactsButton"
-                    android:layout_width="100dp"
-                    android:layout_height="wrap_content"
-                    android:text="@string/choose" />
-            </LinearLayout>
+				<Button
+					android:id="@+id/contactsButton"
+					android:layout_width="100dp"
+					android:layout_height="wrap_content"
+					android:text="@string/choose" />
+			
 
             <View
                 android:layout_width="fill_parent"

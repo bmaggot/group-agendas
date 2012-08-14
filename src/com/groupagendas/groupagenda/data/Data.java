@@ -68,6 +68,9 @@ public class Data {
 	public static boolean needToClearData = true;
 	public static String localPrefix = "";
 	
+	public static boolean newEventPar = false;
+	public static ArrayList<Contact> selectedContacts = new ArrayList<Contact>();
+	
 	//getters'n'setters
 	
 	protected static int getDEFAULT_FIRST_WEEK_DAY() {
@@ -325,11 +328,12 @@ public class Data {
 			return;
 		_editor.commit();
 	}
-	
+
 	public static void clearData(){
 		account = new Account();
 		contacts = new ArrayList<Contact>();
 		groups = new ArrayList<Group>();
 		events = new ArrayList<Event>();
 	}
+
 }

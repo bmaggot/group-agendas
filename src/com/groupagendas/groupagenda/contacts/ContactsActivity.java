@@ -6,6 +6,7 @@ import java.util.TreeMap;
 import android.app.ListActivity;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.text.Editable;
@@ -31,6 +32,7 @@ import android.widget.TextView;
 
 import com.groupagendas.groupagenda.R;
 import com.groupagendas.groupagenda.contacts.importer.ImportActivity;
+import com.groupagendas.groupagenda.data.Data;
 import com.groupagendas.groupagenda.data.DataManagement;
 import com.makeramen.segmented.SegmentedRadioGroup;
 
@@ -70,7 +72,10 @@ public class ContactsActivity extends ListActivity implements OnCheckedChangeLis
 	private ContactsAdapter cAdapter;
 	private GroupsAdapter gAdapter;
 	
+	
 	private Button importButton;
+	
+
 
 	@Override
 	public void onWindowFocusChanged(boolean hasFocus) {
@@ -124,7 +129,7 @@ public class ContactsActivity extends ListActivity implements OnCheckedChangeLis
 					// now you know coordinates of touch
 					sideIndexX = event.getX();
 					sideIndexY = event.getY();
-
+				
 					// and can display a proper item it country list
 					displayListItem(0);
 
@@ -296,18 +301,55 @@ public class ContactsActivity extends ListActivity implements OnCheckedChangeLis
 	}
 
 	public void onListItemClick(ListView parent, View v, int position, long id) {
-
-		if (CURRENT_LIST == CONTACTS_LIST) {
-			Intent contactIntent = new Intent(ContactsActivity.this, ContactInfoActivity.class);
-			StringBuilder sb = new StringBuilder(dm.getContacts().get(position).name).append(" ").append(dm.getContacts().get(position).lastname);
-			contactIntent.putExtra("contactName", sb.toString());
-			contactIntent.putExtra("contactId", dm.getContacts().get(position).contact_id);
-			startActivity(contactIntent);
-		} else if (CURRENT_LIST == GROUPS_LIST) {
-			Intent groupIntent = new Intent(ContactsActivity.this, GroupContactsActivity.class);
-			groupIntent.putExtra("groupName", dm.getGroups().get(position).title);
-			groupIntent.putExtra("groupId", dm.getGroups().get(position).group_id);
-			startActivity(groupIntent);
+		v.setDrawingCacheBackgroundColor(Color.TRANSPARENT);
+		v.setDrawingCacheEnabled(false);
+		if (Data.newEventPar){
+			if (CURRENT_LIST == CONTACTS_LIST) {
+				boolean selected = false;
+				int i;
+				if (Data.selectedContacts.size() > 0){
+					for (i = 0; i < Data.selectedContacts.size(); i++){
+						if (Data.selectedContacts.get(i).contact_id == dm.getContacts().get(position).contact_id){
+							selected = true;
+							break;
+						}
+					}
+					if (selected){
+						Data.selectedContacts.remove(i);
+						v.setBackgroundColor(Color.WHITE);
+					} else {
+						Data.selectedContacts.add(dm.getContacts().get(position));
+						v.setBackgroundColor(Color.LTGRAY);
+					}
+				} else {
+					Data.selectedContacts.add(dm.getContacts().get(position));
+					v.setBackgroundColor(Color.LTGRAY);
+				}
+				
+				//Intent contactIntent = new Intent(ContactsActivity.this, ContactInfoActivity.class);
+				//StringBuilder sb = new StringBuilder(dm.getContacts().get(position).name).append(" ").append(dm.getContacts().get(position).lastname);
+				//contactIntent.putExtra("contactName", sb.toString());
+				//contactIntent.putExtra("contactId", dm.getContacts().get(position).contact_id);
+				//startActivity(contactIntent);
+			} else if (CURRENT_LIST == GROUPS_LIST) {
+				Intent groupIntent = new Intent(ContactsActivity.this, GroupContactsActivity.class);
+				groupIntent.putExtra("groupName", dm.getGroups().get(position).title);
+				groupIntent.putExtra("groupId", dm.getGroups().get(position).group_id);
+				startActivity(groupIntent);
+			}
+		} else {
+			if (CURRENT_LIST == CONTACTS_LIST) {
+				Intent contactIntent = new Intent(ContactsActivity.this, ContactInfoActivity.class);
+				StringBuilder sb = new StringBuilder(dm.getContacts().get(position).name).append(" ").append(dm.getContacts().get(position).lastname);
+				contactIntent.putExtra("contactName", sb.toString());
+				contactIntent.putExtra("contactId", dm.getContacts().get(position).contact_id);
+				startActivity(contactIntent);
+			} else if (CURRENT_LIST == GROUPS_LIST) {
+				Intent groupIntent = new Intent(ContactsActivity.this, GroupContactsActivity.class);
+				groupIntent.putExtra("groupName", dm.getGroups().get(position).title);
+				groupIntent.putExtra("groupId", dm.getGroups().get(position).group_id);
+				startActivity(groupIntent);
+			}
 		}
 	}
 
