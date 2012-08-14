@@ -21,6 +21,7 @@ public class EventStatusUpdater extends AsyncTask<Object, Void, Void>{
 		}
 		String where = EventsProvider.EMetaData.EventsMetaData.E_ID+"="+event_id;
 		dm.getmContext().getContentResolver().update(EventsProvider.EMetaData.EventsMetaData.CONTENT_URI, values, where, null);
+		dm.updateEventByIdFromRemoteDb(event_id);
 		return null;
 	}
 }

@@ -597,6 +597,7 @@ public class NavbarActivity extends Activity {
 					startActivity(new Intent(NavbarActivity.this, CalendarsActivity.class));
 					break;
 				case R.id.btnContacts:
+					Data.newEventPar = false;
 					startActivity(new Intent(NavbarActivity.this, ContactsActivity.class));
 					break;
 				case R.id.btnEvents:

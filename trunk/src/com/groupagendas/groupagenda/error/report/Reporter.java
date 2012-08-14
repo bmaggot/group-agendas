@@ -30,7 +30,7 @@ public class Reporter {
 
 	public static void reportError(String className, String methodName, String errorName) {
 		if (!methodName.equals("getAccountFromRemoteDb") && !methodName.equals("getContactsFromRemoteDb")
-				&& !methodName.equals("getGroupsFromRemoteDb") && !methodName.equals("getEventsFromRemoteDb")) {
+				&& !methodName.equals("getGroupsFromRemoteDb") && !methodName.equals("getEventsFromRemoteDb")&& !methodName.equals("doInBackground")) {
 			String error = "Class: " + className + " Method : " + methodName + " Error Name: " + errorName;
 			Reporter reporter = new Reporter();
 			reporter.report(error);
