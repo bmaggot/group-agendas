@@ -39,6 +39,7 @@ import com.bog.calendar.app.model.CalendarMonth;
 import com.bog.calendar.app.model.CalendarYear;
 import com.groupagendas.groupagenda.account.AccountProvider;
 import com.groupagendas.groupagenda.calendar.day.DayView;
+import com.groupagendas.groupagenda.calendar.week.WeekView;
 import com.groupagendas.groupagenda.contacts.ContactsActivity;
 import com.groupagendas.groupagenda.contacts.ContactsProvider;
 import com.groupagendas.groupagenda.data.Data;
@@ -387,10 +388,13 @@ public class NavbarActivity extends Activity {
 		if (viewState == null) {
 			if (dm.getAccount() != null) {
 				String dw = dm.getAccount().setting_default_view;
+				
+//				TODO isn't that hardcode? :) DEFAULT VIEW SHOULD BE CONSTANT THAT IS SET SOMEWHERE ELSE....
+				if (dw == null) dw = "m";
+				else if(dw.equalsIgnoreCase("null")) dw = "m";
+				
 				viewState = ViewState.getValueByString(dw);
-			} else {
-				viewState = ViewState.getValueByString("m");
-			}
+			} 
 		}
 		switch (viewState) {
 		case TODAY:
@@ -476,7 +480,10 @@ public class NavbarActivity extends Activity {
 	}
 
 	private void showWeekView() {
-		Toast.makeText(NavbarActivity.this, getString(R.string.week), Toast.LENGTH_SHORT).show();
+		calendarContainer.removeAllViews();
+		mInflater.inflate(R.layout.calendar_week, calendarContainer);
+		WeekView view = (WeekView) calendarContainer.getChildAt(0);
+		view.init();
 
 	}
 
@@ -718,5 +725,11 @@ public class NavbarActivity extends Activity {
 	public FrameLayout getCalendarContainer() {
 		return calendarContainer;
 	}
+
+	public Calendar getSelectedDate() {
+		return selectedDate;
+	}
+	
+	
 
 }
