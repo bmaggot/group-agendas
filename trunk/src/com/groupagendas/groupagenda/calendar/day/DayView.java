@@ -4,13 +4,10 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import android.app.Activity;
 import android.content.Context;
-import android.graphics.Rect;
 import android.util.AttributeSet;
 import android.view.GestureDetector;
 import android.view.MotionEvent;
-import android.view.TouchDelegate;
 import android.view.View;
-import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
@@ -22,12 +19,13 @@ import com.groupagendas.groupagenda.R;
 
 
 import com.groupagendas.groupagenda.calendar.AbstractCalendarView;
+import com.groupagendas.groupagenda.calendar.AbstractCalendarViewWithAllDayAndHourEvents;
 import com.groupagendas.groupagenda.calendar.adapters.AllDayEventsAdapter;
 import com.groupagendas.groupagenda.data.DataManagement;
 import com.groupagendas.groupagenda.events.Event;
 
 
-public class DayView extends AbstractCalendarView {
+public class DayView extends AbstractCalendarViewWithAllDayAndHourEvents {
 	
 	DayInstance selectedDay;
 	
@@ -88,6 +86,12 @@ public class DayView extends AbstractCalendarView {
 		
 		allDayEventsPanel = (ListView) findViewById(R.id.allday_events);
 		allDayEventsPanel.setAdapter(allDayEventAdapter);
+		setAllDayEventsPanelHeight(selectedDay.getAllDayEvents().size());
+		
+		
+		
+		
+		
 		
 //		init column with hour titles
 		hourList = (LinearLayout) findViewById(R.id.hour_list);
@@ -111,6 +115,8 @@ public class DayView extends AbstractCalendarView {
 		updateEventLists();
 		scrollHourPanel();	
 	}
+
+
 //	@Override
 	public void goPrev(){
 		selectedDay.goPrev();
@@ -147,10 +153,7 @@ public class DayView extends AbstractCalendarView {
 		    	int y = (int) (hour * Math.round(hourLineHeightDP * densityFactor));
 		        scrollPanel.scrollTo(0, y);
 		    } 
-		});
-
-
-		
+		});	
 	}
 
 	private void drawHourList() {
@@ -173,7 +176,6 @@ public class DayView extends AbstractCalendarView {
 	}
 
 	public void drawHourEvents() {
-//	todo add new event when clicked on empty space
 		hourEventsPanel.removeAllViews();
 		if (selectedDay.hasHourEvents()){
 			ArrayList<Event> hourEventsList = selectedDay.getHourEvents();
@@ -200,7 +202,6 @@ public class DayView extends AbstractCalendarView {
 		
 		final float scale = getContext().getResources().getDisplayMetrics().density;
 		int lineHeight = (int) (hourLineHeightDP * scale + 0.5f);
-//		int oneDP = (int) (1 * scale + 0.5f);
  
 	
 		HourEventView eventFrame = new HourEventView(getContext(), event, this.am_pmEnabled);
@@ -241,25 +242,9 @@ public class DayView extends AbstractCalendarView {
 		
 	}
 
-	private void updateEventLists() {
+	protected void updateEventLists() {
 		allDayEventAdapter.setList(selectedDay.getAllDayEvents());
 		allDayEventAdapter.notifyDataSetChanged();
-
-		// VERY CIOTKIJ HARDCORD. Za Yeah! Peace!
-		LinearLayout allDayEventsContainer = (LinearLayout) findViewById(R.id.allday_container);
-		if (selectedDay.getAllDayEvents().size() < 10) {
-			if (selectedDay.getAllDayEvents().size() == 0) {
-				LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(LayoutParams.FILL_PARENT,  Math.round(18*densityFactor)); 
-				allDayEventsContainer.setLayoutParams(layoutParams);
-			} else {
-				LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(LayoutParams.FILL_PARENT, Math.round(selectedDay.getAllDayEvents().size()*18*densityFactor)); 
-				allDayEventsContainer.setLayoutParams(layoutParams);
-			}
-		} else {
-			LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(LayoutParams.FILL_PARENT, Math.round(180*densityFactor)); 
-			allDayEventsContainer.setLayoutParams(layoutParams);
-		}
-
 		drawHourEvents(); // Drawing hour-long events
 	}
 
