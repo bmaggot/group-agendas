@@ -68,19 +68,63 @@ public class DayView extends AbstractCalendarView {
 		allDayEventAdapter = new AllDayEventsAdapter(getContext(), new ArrayList<Event>());
 
 	}
+	
+	@Override
+	protected void setTopPanelTitle() {
+		Calendar selectedDate = selectedDay.getSelectedDate();
+		String title = WeekDayNames[selectedDate.get(Calendar.DAY_OF_WEEK) - 1];
+		title += ", ";
+		title += MonthNames[selectedDate.get(Calendar.MONTH)] + " " + selectedDate.get(Calendar.DAY_OF_MONTH);
+		title += ", ";
+		title += selectedDate.get(Calendar.YEAR);
 
-
-	public void init(Calendar selectedDate) {
-		
-		super.init();
-		
-//		setupViewItems();
-//		drawHourList();
-//		updateEventLists();
-//		scrollHourPanel();
+		this.getTopPanelTitle().setText(title);
 		
 	}
+
+
+	@Override
+	public void setupView() {
+		
+		allDayEventsPanel = (ListView) findViewById(R.id.allday_events);
+		allDayEventsPanel.setAdapter(allDayEventAdapter);
+		
+//		init column with hour titles
+		hourList = (LinearLayout) findViewById(R.id.hour_list);
+		hourList.setClickable(false);
+		drawHourList();
+		
+		//init hour event panel
+		hourEventsPanel = (HourEventsPanel) findViewById(R.id.hour_events);
+		hourEventsPanel.setSwipeGestureDetector(new GestureDetector(new HourEventsPanelMotionListener(this, selectedDay.getSelectedDate())));
+		hourEventsPanel.setOnTouchListener(new OnTouchListener() {
+			@Override
+			public boolean onTouch(View v, MotionEvent event) {
+				if (hourEventsPanel.getSwipeGestureDetector().onTouchEvent(event)) {
+				     return false;
+				    } else {
+				     return true;
+				    }
+			}
+		});
+		
+		updateEventLists();
+		scrollHourPanel();	
+	}
+//	@Override
+	public void goPrev(){
+		selectedDay.goPrev();
+		setTopPanelTitle(); //adjust top panel title accordingly
+		updateEventLists();
+	}
 	
+//	@Override
+	public void goNext(){
+		selectedDay.goNext();
+		setTopPanelTitle(); //adjust top panel title accordingly
+		updateEventLists();
+	}
+
 
 	private void scrollHourPanel() {
 		final float hour;
@@ -219,78 +263,12 @@ public class DayView extends AbstractCalendarView {
 		drawHourEvents(); // Drawing hour-long events
 	}
 
-//	public void setupViewItems() {
-//		prevButton = (ImageButton) findViewById(R.id.prevDay);
-//		nextButton = (ImageButton) findViewById(R.id.nextDay);
-//		
-//		prevButtonBounds = new Rect();
-//		nextDayButtonBounds = new Rect();
-
-		
-
-
-//		topPanelTitle = (TextView) findViewById(R.id.top_panel_title);
-//		updateTopPanelTitle(selectedDay.getSelectedDate());
-			
-//	}
 	
-	public void goPrev(){
-		selectedDay.goPrev();
-		updateTopPanelTitle(selectedDay.getSelectedDate());
-		updateEventLists();
-	}
 	
-	public void goNext(){
-		selectedDay.goNext();
-		updateTopPanelTitle(selectedDay.getSelectedDate());
-		updateEventLists();
-	}
-
-	private void updateTopPanelTitle(Calendar selectedDate) {
-		String title = WeekDayNames[selectedDate.get(Calendar.DAY_OF_WEEK) - 1];
-		title += ", ";
-		title += MonthNames[selectedDate.get(Calendar.MONTH)] + " " + selectedDate.get(Calendar.DAY_OF_MONTH);
-		title += ", ";
-		title += selectedDate.get(Calendar.YEAR);
-
-		this.getTopPanelTitle().setText(title);
-	}
 
 
 
-	@Override
-	protected void setTopPanelTitle() {
-		updateTopPanelTitle(selectedDay.getSelectedDate());
-	}
 
-	@Override
-	public void setupView() {
-		
-		allDayEventsPanel = (ListView) findViewById(R.id.allday_events);
-		allDayEventsPanel.setAdapter(allDayEventAdapter);
-		
-//		init column with hour titles
-		hourList = (LinearLayout) findViewById(R.id.hour_list);
-		hourList.setClickable(false);
-		drawHourList();
-		
-		//init hour event panel
-		hourEventsPanel = (HourEventsPanel) findViewById(R.id.hour_events);
-		hourEventsPanel.setSwipeGestureDetector(new GestureDetector(new HourEventsPanelMotionListener(this, selectedDay.getSelectedDate())));
-		hourEventsPanel.setOnTouchListener(new OnTouchListener() {
-			@Override
-			public boolean onTouch(View v, MotionEvent event) {
-				if (hourEventsPanel.getSwipeGestureDetector().onTouchEvent(event)) {
-				     return false;
-				    } else {
-				     return true;
-				    }
-			}
-		});
-		
-		updateEventLists();
-		scrollHourPanel();	
-	}
 
 
 

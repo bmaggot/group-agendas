@@ -508,7 +508,7 @@ public class NavbarActivity extends Activity {
 		calendarContainer.removeAllViews();
 		mInflater.inflate(R.layout.calendar_day, calendarContainer);
 		DayView view = (DayView) calendarContainer.getChildAt(0);
-		view.init(selectedDate);
+		view.init();
 
 	}
 
