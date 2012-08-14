@@ -222,6 +222,21 @@
             android:screenOrientation="portrait"
             android:theme="@android:style/Theme.NoTitleBar"
             android:windowSoftInputMode="stateVisible" />
-    </application>
-
+        <activity
+            android:name="com.groupagendas.groupagenda.contacts.importer.ImportActivity"
+            android:configChanges="keyboardHidden|orientation"
+            android:theme="@android:style/Theme.NoTitleBar">
+        </activity>
+        <activity
+            android:name=".contacts.importer.RequestTokenActivity"
+            android:launchMode="singleTask"
+            android:theme="@android:style/Theme.NoTitleBar" >
+           	<intent-filter>
+		        <action android:name="android.intent.action.VIEW" />
+		        <category android:name="android.intent.category.DEFAULT" />
+		        <category android:name="android.intent.category.BROWSABLE" />
+		        <data android:scheme="import-activity" android:host="callback"/>
+			</intent-filter>
+        </activity>
+	</application>
 </manifest>
