@@ -27,8 +27,6 @@ public abstract class AbstractCalendarView extends LinearLayout {
 	TextView topPanelTitle;
 	
 	protected final float densityFactor = getResources().getDisplayMetrics().density;
-	public static final float DEFAULT_TIME_TO_SCROLL = 7.5f; //DEFAULT HOUR TO SCROLL. 7.5f = 7:30
-	public static final int hourLineHeightDP = 23;  //HEIGHT OF ONE HOUR LINE IN DIP
 	
 	protected abstract void setTopPanelTitle(); 	//Sets up top panel title text in every view differently
 
