@@ -15,6 +15,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
+import java.util.concurrent.ExecutionException;
 
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
@@ -72,6 +73,7 @@ import com.groupagendas.groupagenda.utils.Utils;
 public class DataManagement {
 	
 	public static boolean networkAvailable = true;
+	public static boolean eventStatusChanged = false;
 
 	private DataManagement(Activity c) {
 		Data.setPrefs(new Prefs(c));
@@ -2978,42 +2980,66 @@ public class DataManagement {
 	}
 
 	public boolean changeEventStatus(int event_id, String status) {
-		boolean success = false;
-
+		Object[] array = {event_id, status};
 		try {
-			HttpClient hc = new DefaultHttpClient();
-			HttpPost post = new HttpPost(Data.getServerUrl() + "mobile/set_event_status");
-
-			MultipartEntity reqEntity = new MultipartEntity(HttpMultipartMode.BROWSER_COMPATIBLE);
-
-			reqEntity.addPart("token", new StringBody(Data.getToken()));
-			reqEntity.addPart("event_id", new StringBody(String.valueOf(event_id)));
-			reqEntity.addPart("status", new StringBody(status));
-
-			post.setEntity(reqEntity);
-			if (networkAvailable) {
-				HttpResponse rp = hc.execute(post);
+			new ChangeEventStatus().execute(array).get();
+		} catch (InterruptedException e) {
+			Reporter.reportError(this.getClass().toString(), Thread.currentThread().getStackTrace()[2].getMethodName().toString(), e.getMessage());
+		} catch (ExecutionException e) {
+			Reporter.reportError(this.getClass().toString(), Thread.currentThread().getStackTrace()[2].getMethodName().toString(), e.getMessage());
+		}
+		return DataManagement.eventStatusChanged;
+	}
 	
-				if (rp.getStatusLine().getStatusCode() == HttpStatus.SC_OK) {
-					String resp = EntityUtils.toString(rp.getEntity());
-					if (resp != null) {
-//						Log.e("respSt", resp);
-						JSONObject object = new JSONObject(resp);
-						success = object.getBoolean("success");
-						if (!success) {
-							Log.e("Edit event status ERROR", object.getJSONObject("error").getString("reason"));
+	private class ChangeEventStatus extends AsyncTask<Object, Void, Void>{
+
+		private boolean success = false;
+		
+		@Override
+		protected Void doInBackground(Object... params) {
+			try {
+				int event_id = (Integer) params[0];
+				String status = (String) params[1];
+				HttpClient hc = new DefaultHttpClient();
+				HttpPost post = new HttpPost(Data.getServerUrl() + "mobile/set_event_status");
+
+				MultipartEntity reqEntity = new MultipartEntity(HttpMultipartMode.BROWSER_COMPATIBLE);
+
+				reqEntity.addPart("token", new StringBody(Data.getToken()));
+				reqEntity.addPart("event_id", new StringBody(String.valueOf(event_id)));
+				reqEntity.addPart("status", new StringBody(status));
+
+				post.setEntity(reqEntity);
+				if (networkAvailable) {
+					HttpResponse rp = hc.execute(post);
+		
+					if (rp.getStatusLine().getStatusCode() == HttpStatus.SC_OK) {
+						String resp = EntityUtils.toString(rp.getEntity());
+						if (resp != null) {
+//							Log.e("respSt", resp);
+							JSONObject object = new JSONObject(resp);
+							success = object.getBoolean("success");
+							if (!success) {
+								Log.e("Edit event status ERROR", object.getJSONObject("error").getString("reason"));
+							}
 						}
 					}
+				} else {
+					OfflineData uplooad = new OfflineData("mobile/set_event_status", reqEntity);
+					Data.getUnuploadedData().add(uplooad);
 				}
-			} else {
-				OfflineData uplooad = new OfflineData("mobile/set_event_status", reqEntity);
-				Data.getUnuploadedData().add(uplooad);
+			} catch (Exception ex) {
+				Reporter.reportError(this.getClass().toString(), Thread.currentThread().getStackTrace()[2].getMethodName().toString(), ex.getMessage());
+				success = false;
 			}
-		} catch (Exception ex) {
-			Reporter.reportError(this.getClass().toString(), Thread.currentThread().getStackTrace()[2].getMethodName().toString(), ex.getMessage());
-			success = false;
+			if(success){
+				DataManagement.eventStatusChanged = true;
+			} else {
+				DataManagement.eventStatusChanged = false;
+			}
+			return null;
 		}
-		return success;
+		
 	}
 
 	// /////////////////////////////////////
