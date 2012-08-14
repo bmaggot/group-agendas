@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.groupagendas.groupagenda.calendar.week.WeekView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:orientation="vertical" >
+
+    <!-- TOP NAVBAR BEGIN -->
+
+    <include
+        android:id="@+id/calendar_navbar"
+        android:layout_gravity="center_horizontal"
+        layout="@layout/calendar_top_bar" />
+    <!-- TOP NAVBAR END -->
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="2dp"
+        android:background="@color/darker_gray" />
+
+    <!-- ALL-DAY EVENTS BEGIN -->
+
+    <include layout="@layout/calendar_weekview_allday_section" />
+    <!-- ALL-DAY EVENTS END -->
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@drawable/border_darkgray"
+        android:gravity="center_horizontal" />
+
+    <!-- HOUR-LONG EVENTS BEGIN -->
+
+    <include layout="@layout/calendar_weekview_hourevent_section" />
+    <!-- HOUR-LONG EVENTS END -->
+
+    <TextView
+        style="?android:attr/listSeparatorTextViewStyle"
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:gravity="center_horizontal"
+        android:paddingTop="5dip"
+        android:color="@color/black" />
+
+</com.groupagendas.groupagenda.calendar.week.WeekView>
