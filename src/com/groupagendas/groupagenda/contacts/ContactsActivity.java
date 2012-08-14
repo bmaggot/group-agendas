@@ -29,23 +29,12 @@ import android.widget.RadioGroup;
 import android.widget.RadioGroup.OnCheckedChangeListener;
 import android.widget.TextView;
 
-import com.google.api.client.extensions.android2.AndroidHttp;
-import com.google.api.client.googleapis.auth.oauth2.GoogleCredential;
-import com.google.api.client.googleapis.extensions.android2.auth.GoogleAccountManager;
-import com.google.api.client.http.HttpTransport;
 import com.groupagendas.groupagenda.R;
+import com.groupagendas.groupagenda.contacts.importer.ImportActivity;
 import com.groupagendas.groupagenda.data.DataManagement;
 import com.makeramen.segmented.SegmentedRadioGroup;
 
-import java.io.IOException;
-import java.net.URL;
-
 public class ContactsActivity extends ListActivity implements OnCheckedChangeListener {
-	private HttpTransport transport = AndroidHttp.newCompatibleTransport();
-	private GoogleCredential credential = new GoogleCredential();
-	private GoogleAccountManager accountManager;
-	
-
 	private SegmentedRadioGroup segmentedButtons;
 
 	private DataManagement dm;
@@ -184,7 +173,7 @@ public class ContactsActivity extends ListActivity implements OnCheckedChangeLis
 			
 			@Override
 			public void onClick(View v) {
-//				printAllContacts(myService);
+				startActivity(new Intent(ContactsActivity.this, ImportActivity.class));
 			}
 		});
 		
@@ -223,6 +212,8 @@ public class ContactsActivity extends ListActivity implements OnCheckedChangeLis
 		
 		cAdapter = new ContactsAdapter(dm.getContacts(), this);
 		gAdapter = new GroupsAdapter(dm.getGroups(), this);
+		
+		
 	}
 
 	@Override
