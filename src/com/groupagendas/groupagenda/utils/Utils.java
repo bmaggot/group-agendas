@@ -135,8 +135,8 @@ public class Utils {
 	}
 /**
  * @author justinas.marcinka@gmail.com
- * @param date
- * Sets given calendar to first day of week accordingly to Calendar.FIRST_DAY_OF_WEEK field
+ * @param date calendar that will be set to first day of week
+ * @return Sets given calendar to first day of week accordingly to Calendar.FIRST_DAY_OF_WEEK field
  */
 	public static void setCalendarToFirstDayOfWeek(Calendar date) {
 		int firstDayofWeek = date.getFirstDayOfWeek();
