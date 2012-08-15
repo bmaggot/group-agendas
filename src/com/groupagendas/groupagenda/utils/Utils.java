@@ -133,7 +133,11 @@ public class Utils {
 		dateFormat.setTimeZone(TimeZone.getTimeZone(timezone));
 		return dateFormat.format(tmpCalendar.getTime());
 	}
-
+/**
+ * @author justinas.marcinka@gmail.com
+ * @param date
+ * Sets given calendar to first day of week accordingly to Calendar.FIRST_DAY_OF_WEEK field
+ */
 	public static void setCalendarToFirstDayOfWeek(Calendar date) {
 		int firstDayofWeek = date.getFirstDayOfWeek();
 		while (date.get(Calendar.DAY_OF_WEEK) != firstDayofWeek)
