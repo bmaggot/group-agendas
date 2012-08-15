@@ -37,7 +37,7 @@ public class HourEventView extends RelativeLayout {
 	
 	
 
-	public HourEventView(Context context, Event e, boolean usesAMPM) {
+	public HourEventView(Context context, Event e, boolean usesAMPM, boolean showEventIcon) {
 		super(context);
 		
 		this.usesAMPM = usesAMPM;
@@ -80,7 +80,7 @@ public class HourEventView extends RelativeLayout {
 		icon = (ImageView) titleHolder.findViewById(R.id.hour_event_icon);
 		if(e.icon == null) e.icon = "null";
 		
-		 if (e.icon.equalsIgnoreCase("null")){
+		 if (e.icon.equalsIgnoreCase("null") || !showEventIcon){
 				icon.setVisibility(GONE);
 			}else{
 				int imgID = getResources().getIdentifier(e.icon, "drawable", getContext().getPackageName());
