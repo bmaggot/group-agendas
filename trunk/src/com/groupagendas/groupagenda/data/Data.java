@@ -63,7 +63,7 @@ public class Data {
 	private static ArrayList<Event> events;
 	private static TreeMap<Calendar, ArrayList<Event>> sortedEvents;
 	
-	public static final int DEFAULT_FIRST_WEEK_DAY = 1;
+	public static final int DEFAULT_FIRST_WEEK_DAY = Calendar.MONDAY;
 	public static ArrayList<OfflineData> unuploadedData = new ArrayList<OfflineData>();
 	public static boolean needToClearData = true;
 	public static String localPrefix = "";
