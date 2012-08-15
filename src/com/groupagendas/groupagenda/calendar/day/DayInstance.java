@@ -16,11 +16,6 @@ import com.groupagendas.groupagenda.utils.Utils;
 
 public class DayInstance  {
 
-
-
-
-
-
 		private List<Event> allDayEvents; 
 		private HourEventsTimetable hourEventsTimetable;
 		private ArrayList<Event> hourEventsList;
