@@ -25,13 +25,14 @@
             android:background="@color/darker_gray" />
         <!-- SCREEN SECTION SEPARATOR -->
 
-        <com.groupagendas.groupagenda.calendar.day.HourEventsPanel
+        <LinearLayout
             android:id="@+id/hour_events"
             android:layout_width="0dip"
             android:layout_height="560dp"
             android:layout_weight="9"
+            android:orientation="horizontal"
             android:background="@drawable/calendar_dayview_secondcolumn_background" >
-        </com.groupagendas.groupagenda.calendar.day.HourEventsPanel>
+        </LinearLayout>
     </LinearLayout>
 
 </ScrollView>
