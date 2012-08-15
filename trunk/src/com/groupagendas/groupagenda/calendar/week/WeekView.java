@@ -36,6 +36,7 @@ import com.groupagendas.groupagenda.calendar.adapters.AllDayEventsAdapter;
 import com.groupagendas.groupagenda.calendar.day.DayInstance;
 import com.groupagendas.groupagenda.calendar.day.HourEventsPanel;
 import com.groupagendas.groupagenda.calendar.day.HourEventsPanelMotionListener;
+import com.groupagendas.groupagenda.calendar.day.HourEventsTimetable;
 import com.groupagendas.groupagenda.data.DataManagement;
 import com.groupagendas.groupagenda.events.Event;
 import com.groupagendas.groupagenda.events.EventActivity;
@@ -237,20 +238,25 @@ public class WeekView extends AbstractCalendarViewWithAllDayAndHourEvents {
 	@Override
 	protected void updateEventLists() {
 		
-		drawAllDayEvents();
-		drawHourEvents();
+		for (int i = 0; i < daysShown.getDaysToShow(); i++){
+			DayInstance day = daysShown.getDayInstance(i);
+			
+			LinearLayout AllDayContainer = (LinearLayout)allDayEventsPanel.getChildAt(i * 2);
+			AllDayContainer.removeAllViews();
+			drawAllDayEvents(AllDayContainer, day);
+			
+			RelativeLayout HourContainer = (RelativeLayout)hourEventsPanel.getChildAt(i * 2);
+			HourContainer.removeAllViews();
+			drawHourEvents(HourContainer, day);
+		}
+		
+		
 		
 	}
 
-	private void drawAllDayEvents() {
-		for (int i = 0; i < daysShown.getDaysToShow(); i++){
-			LinearLayout container = (LinearLayout)allDayEventsPanel.getChildAt(i * 2);
-			container.removeAllViews();
-			drawAllDayEvents(container, daysShown.getDayInstance(i));
-		}
-	}
-	private void drawAllDayEvents(LinearLayout container, DayInstance dayInstance) {
-		List<Event> events = dayInstance.getAllDayEvents();
+
+	private void drawAllDayEvents(LinearLayout container, DayInstance day) {
+		List<Event> events = day.getAllDayEvents();
 		if (!events.isEmpty()){
 			
 			for (final Event event : events){
@@ -276,8 +282,22 @@ public class WeekView extends AbstractCalendarViewWithAllDayAndHourEvents {
 
 	}
 
-	private void drawHourEvents() {
-		// TODO Auto-generated method stub
+	private void drawHourEvents(RelativeLayout container, DayInstance day) {
+		int containerWidth = Math.round(EVENTS_COLUMN_WIDTH / (float)daysShown.getDaysToShow());
+		
+		if (day.hasHourEvents()){
+			ArrayList<Event> hourEventsList = day.getHourEvents();
+			HourEventsTimetable hourEventsTimetable = day.getHourEventsTimeTable();
+			
+			for (int i = 0; i < hourEventsList.size(); i++){
+				Event e = hourEventsList.get(i);
+				int neighbourId = hourEventsTimetable.getNeighbourId(e);
+				int divider = hourEventsTimetable.getWidthDivider(e);
+				drawHourEvent(e, divider, neighbourId, container, containerWidth, day);
+			}
+		
+		}
+		
 		
 	}
 
