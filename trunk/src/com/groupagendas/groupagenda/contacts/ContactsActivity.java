@@ -24,6 +24,7 @@ import android.view.View.OnTouchListener;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
+import android.widget.Toast;
 import android.widget.LinearLayout.LayoutParams;
 import android.widget.ListView;
 import android.widget.RadioGroup;
@@ -181,6 +182,23 @@ public class ContactsActivity extends ListActivity implements OnCheckedChangeLis
 				startActivity(new Intent(ContactsActivity.this, ImportActivity.class));
 			}
 		});
+		
+		if (Data.returnedFromContactImport) {
+        	if ((Data.importStats != null) && (Data.importStats[0] > 0)) {
+        		Toast.makeText(this.getApplicationContext(), "Successfully imported " + Data.importStats[0] + "/" + Data.importStats[2] + " contacts.", Toast.LENGTH_LONG).show();
+        	}
+
+        	if ((Data.importStats != null) && (Data.importStats[1] > 0)) {
+        		Toast.makeText(this.getApplicationContext(), "Failed to import " + Data.importStats[1] + "/" + Data.importStats[2] + " contacts.", Toast.LENGTH_LONG).show();
+        	}
+
+        	Data.returnedFromContactImport = false;
+		}
+		
+		if (Data.credentialsClear) {
+    		Toast.makeText(this.getApplicationContext(), "Successfully cleared import credentials.", Toast.LENGTH_LONG).show();
+    		Data.credentialsClear = false;
+		}
 		
 	}
 	

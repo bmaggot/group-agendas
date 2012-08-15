@@ -15,25 +15,23 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import com.groupagendas.groupagenda.R;
-import com.groupagendas.groupagenda.contacts.Contact;
-import com.groupagendas.groupagenda.data.DataManagement;
-import com.groupagendas.groupagenda.error.report.Reporter;
-
-
 import android.app.Activity;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
-import android.database.Cursor;
-import android.net.Uri;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
-import android.provider.Contacts.People;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
+import android.widget.Toast;
+
+import com.groupagendas.groupagenda.R;
+import com.groupagendas.groupagenda.contacts.Contact;
+import com.groupagendas.groupagenda.data.Data;
+import com.groupagendas.groupagenda.data.DataManagement;
+import com.groupagendas.groupagenda.error.report.Reporter;
 
 
 public class ImportActivity extends Activity {
@@ -64,27 +62,37 @@ public class ImportActivity extends Activity {
         clearCredentials.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
             	clearCredentials();
-            	console.setText("Tokens deleted, getContacts call should fail now.");
+        		Data.credentialsClear = true;
+            	finish();
             }
         });
         
         getContacts.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
-            	getContacts();
+            	Data.importStats = getContacts();
+            	Data.returnedFromContactImport = true;
+            	finish();
             }
         });
    
     }
 
-	private void getContacts() {
+	private int[] getContacts() {
 		String jsonOutput = "";
+		int[] importStats = new int[3]; 
+		int importedContactAmount = 0;
+		int unimportedContactAmount = 0;
+		int totalEntries = 0;
 
 		try {
         	jsonOutput = makeSecuredReq(C.GET_CONTACTS_FROM_GOOGLE_REQUEST,getConsumer(this.prefs));
          	JSONObject jsonResponse = new JSONObject(jsonOutput);
         	JSONObject m = (JSONObject)jsonResponse.get("feed");
         	JSONArray entries =(JSONArray)m.getJSONArray("entry");
-        	for (int i=0 ; i<entries.length() ; i++) {
+        	
+        	totalEntries = entries.length();
+        	
+        	for (int i=0 ; i < totalEntries; i++) {
         		Contact tempContact = new Contact();
         		JSONObject entry = entries.getJSONObject(i);
 // TODO YEAH-BAT'! HARDCODE CATCH 'EM ALL, bleat'.         		
@@ -189,15 +197,22 @@ public class ImportActivity extends Activity {
     				Reporter.reportError(this.getClass().toString(), Thread.currentThread().getStackTrace()[2].getMethodName().toString(), e.getMessage());
 	    		}
         		
-        		tempContact.visibility = "n";        		
-        		DataManagement.getInstance(this).createContact(tempContact);
+        		tempContact.visibility = "n";
+        		
+        		if (DataManagement.getInstance(this).createContact(tempContact)) {
+        			importedContactAmount++;
+        		} else {
+        			unimportedContactAmount++;
+        		}
         	}
-        	
+        	importStats[0] = importedContactAmount;
+        	importStats[1] = unimportedContactAmount;
+        	importStats[2] = totalEntries;
 		} catch (Exception e) {
 			Log.e(C.TAG, "Error executing request",e);
 			Reporter.reportError(this.getClass().toString(), Thread.currentThread().getStackTrace()[2].getMethodName().toString(), e.getMessage());
 		}
-		finish();
+		return importStats;
 	}
 	
 	@Override

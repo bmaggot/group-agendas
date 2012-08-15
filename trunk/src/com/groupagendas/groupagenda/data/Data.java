@@ -71,6 +71,12 @@ public class Data {
 	public static boolean newEventPar = false;
 	public static ArrayList<Contact> selectedContacts = new ArrayList<Contact>();
 	
+	
+	// Contact import parameters
+	public static boolean returnedFromContactImport = false;
+	public static boolean credentialsClear = false;
+	public static int[] importStats = null;
+	
 	//getters'n'setters
 	
 	protected static int getDEFAULT_FIRST_WEEK_DAY() {
