@@ -34,6 +34,7 @@ public class WeekInstance {
 
 
 	private void updateEventLists() {
+		maxAllDayEventsCount = 1;
 		for (int i = 0; i < daysToShow; i++ ){
 			Calendar tmp = (Calendar) shownDate.clone();
 			tmp.add(Calendar.DATE, i);

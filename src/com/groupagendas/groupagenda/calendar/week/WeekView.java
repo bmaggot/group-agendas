@@ -108,7 +108,6 @@ public class WeekView extends AbstractCalendarViewWithAllDayAndHourEvents {
 	public void setupView() {
 		
 		allDayEventsPanel = (LinearLayout) findViewById(R.id.allday_events);
-		setAllDayEventsPanelHeight(daysShown.getMaxAllDayEventsCount());
 		allDayEventsPanel.setOrientation(LinearLayout.HORIZONTAL);
 		
 		hourEventsPanel = (LinearLayout) findViewById(R.id.hour_events);
@@ -210,13 +209,7 @@ public class WeekView extends AbstractCalendarViewWithAllDayAndHourEvents {
 		daysShown.nextPage();
 		setTopPanelTitle();
 		updateEventLists();
-	}
-	
-	
-	
-	
-	
-	
+	}	
 	private void scrollHourPanel() {
 		final float hour = DEFAULT_TIME_TO_SCROLL;
 		
@@ -237,7 +230,7 @@ public class WeekView extends AbstractCalendarViewWithAllDayAndHourEvents {
 
 	@Override
 	protected void updateEventLists() {
-		
+		setAllDayEventsPanelHeight(daysShown.getMaxAllDayEventsCount());
 		for (int i = 0; i < daysShown.getDaysToShow(); i++){
 			DayInstance day = daysShown.getDayInstance(i);
 			
@@ -296,9 +289,7 @@ public class WeekView extends AbstractCalendarViewWithAllDayAndHourEvents {
 				drawHourEvent(e, divider, neighbourId, container, containerWidth, day);
 			}
 		
-		}
-		
-		
+		}		
 	}
 
 
