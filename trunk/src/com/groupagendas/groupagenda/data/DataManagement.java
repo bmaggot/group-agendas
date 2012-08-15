@@ -2452,8 +2452,6 @@ public class DataManagement {
 		Calendar event_end = null;
 		Calendar tmp_event_start = null;
 		for (Event event : events) {
-			System.out.println(event.event_id);
-			System.out.println(event.title);
 			if (!event.my_time_end.equals("null") && !event.my_time_start.equals("null")) {
 				event_start = Utils.stringToCalendar(event.my_time_start, event.timezone, Utils.date_format);
 				event_end = Utils.stringToCalendar(event.my_time_end, event.timezone, Utils.date_format);
