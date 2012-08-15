@@ -28,8 +28,6 @@ import com.groupagendas.groupagenda.events.Event;
 public class DayView extends AbstractCalendarViewWithAllDayAndHourEvents {
 	
 	DayInstance selectedDay;
-	
-	boolean am_pmEnabled;
 
 
 	String[] WeekDayNames;
@@ -50,10 +48,8 @@ public class DayView extends AbstractCalendarViewWithAllDayAndHourEvents {
 	public DayView(Context context, AttributeSet attrs) {
 
 		super(context, attrs);
-		
+		showHourEventsIcon = true;
 		this.selectedDay = new DayInstance(context, ((NavbarActivity)context).getSelectedDate());	
-		
-		am_pmEnabled =  DataManagement.getInstance(getContext()).getAccount().setting_ampm != 0;
 		WeekDayNames = getResources().getStringArray(R.array.week_days_names);
 		MonthNames = getResources().getStringArray(R.array.month_names);
 		if(am_pmEnabled){
@@ -62,7 +58,6 @@ public class DayView extends AbstractCalendarViewWithAllDayAndHourEvents {
 		else{
 			HourNames = getResources().getStringArray(R.array.hour_names);
 		}
-
 		allDayEventAdapter = new AllDayEventsAdapter(getContext(), new ArrayList<Event>());
 
 	}
@@ -185,7 +180,7 @@ public class DayView extends AbstractCalendarViewWithAllDayAndHourEvents {
 				Event e = hourEventsList.get(i);
 				int neighbourId = hourEventsTimetable.getNeighbourId(e);
 				int divider = hourEventsTimetable.getWidthDivider(e);
-				drawEvent(e, divider, neighbourId);
+				drawHourEvent(e, divider, neighbourId, hourEventsPanel, EVENTS_COLUMN_WIDTH, selectedDay);
 			}
 		
 		}
@@ -194,53 +189,7 @@ public class DayView extends AbstractCalendarViewWithAllDayAndHourEvents {
 	}
 
 
-	private void drawEvent(final Event event, int divider, int neighbourId) {
-
-		int dispWidth = ((Activity)getContext()).getWindowManager().getDefaultDisplay().getWidth();
-		int panelWidth =  Math.round(0.9f * dispWidth - 1);
-		
-		
-		final float scale = getContext().getResources().getDisplayMetrics().density;
-		int lineHeight = (int) (hourLineHeightDP * scale + 0.5f);
- 
 	
-		HourEventView eventFrame = new HourEventView(getContext(), event, this.am_pmEnabled);
-		
-		float startTimeHours = 0; 
-		float endTimeHours = 24;
-		
-		if (selectedDay.getSelectedDate().before(event.startCalendar)) {
-			startTimeHours = event.startCalendar.get(Calendar.HOUR_OF_DAY);
-			float minutes = event.startCalendar.get(Calendar.MINUTE);
-			startTimeHours += minutes / 60;
-		} else eventFrame.setStartTime(selectedDay.getSelectedDate()); //set event start hour 0:00 to show
-		
-		if (selectedDay.getSelectedDate().get(Calendar.DAY_OF_MONTH) == event.endCalendar.get(Calendar.DAY_OF_MONTH)){
-			if (selectedDay.getSelectedDate().get(Calendar.MONTH) == event.endCalendar.get(Calendar.MONTH)){
-				endTimeHours = event.endCalendar.get(Calendar.HOUR_OF_DAY);
-				float minutes = event.endCalendar.get(Calendar.MINUTE);
-				endTimeHours += minutes / 60;
-									
-				}			
-		}
-		
-		float duration = endTimeHours - startTimeHours ;
-		
-//		if event lasts less than one hour, it's resized to half of hour pane to make text visible at all :)
-		if (duration <= 0.5f) duration = 0.55f;   
-		
-	
-		RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(panelWidth/divider, (int)(lineHeight * duration));	
-	
-		params.topMargin = (int) (lineHeight * startTimeHours);
-		
-		if (neighbourId != 0) {
-			params.addRule(RelativeLayout.RIGHT_OF, neighbourId);
-		}
-		
-		hourEventsPanel.addView(eventFrame, params);
-		
-	}
 
 	protected void updateEventLists() {
 		allDayEventAdapter.setList(selectedDay.getAllDayEvents());
