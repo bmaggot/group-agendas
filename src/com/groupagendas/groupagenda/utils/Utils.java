@@ -12,6 +12,7 @@ import java.util.regex.Pattern;
 import org.json.JSONArray;
 import org.json.JSONException;
 
+import com.groupagendas.groupagenda.data.Data;
 import com.groupagendas.groupagenda.error.report.Reporter;
 
 import android.graphics.Bitmap;
@@ -131,6 +132,12 @@ public class Utils {
 		SimpleDateFormat dateFormat = new SimpleDateFormat(Utils.date_format);
 		dateFormat.setTimeZone(TimeZone.getTimeZone(timezone));
 		return dateFormat.format(tmpCalendar.getTime());
+	}
+
+	public static void setCalendarToFirstDayOfWeek(Calendar date) {
+		int firstDayofWeek = date.getFirstDayOfWeek();
+		while (date.get(Calendar.DAY_OF_WEEK) != firstDayofWeek)
+			date.add(Calendar.DATE, -1);
 	}
 
 }
