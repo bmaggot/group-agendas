@@ -3,15 +3,15 @@ package com.groupagendas.groupagenda.calendar;
 
 import com.groupagendas.groupagenda.R;
 
+import android.app.Activity;
 import android.content.Context;
 import android.graphics.Rect;
 import android.util.AttributeSet;
 import android.view.GestureDetector;
+import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.TouchDelegate;
 import android.view.View;
-import android.view.View.OnClickListener;
-import android.view.View.OnTouchListener;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -27,6 +27,7 @@ public abstract class AbstractCalendarView extends LinearLayout {
 	TextView topPanelTitle;
 	
 	protected final float densityFactor = getResources().getDisplayMetrics().density;
+	protected LayoutInflater mInflater;
 	
 	protected abstract void setTopPanelTitle(); 	//Sets up top panel title text in every view differently
 
@@ -43,6 +44,7 @@ public abstract class AbstractCalendarView extends LinearLayout {
 	
 	public AbstractCalendarView(Context context, AttributeSet attrs) {
 		super(context, attrs);
+		mInflater = (LayoutInflater)((Activity)context).getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 	}
 
 	public AbstractCalendarView(Context context) {
