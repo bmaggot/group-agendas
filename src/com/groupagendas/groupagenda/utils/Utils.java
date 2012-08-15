@@ -118,4 +118,19 @@ public class Utils {
 		return (String) DateFormat.format(format, c.getTimeInMillis());
 	}
 
+	public static String getStringDateInDifferentLocale(Calendar calendarInUserLocale,
+			String timezone) {
+		Calendar tmpCalendar = Calendar.getInstance();
+		tmpCalendar.set(calendarInUserLocale.get(Calendar.YEAR), 
+						calendarInUserLocale.get(Calendar.MONTH), 
+						calendarInUserLocale.get(Calendar.DATE), 
+						calendarInUserLocale.get(Calendar.HOUR_OF_DAY),
+						calendarInUserLocale.get(Calendar.MINUTE), 
+						calendarInUserLocale.get(Calendar.SECOND));
+
+		SimpleDateFormat dateFormat = new SimpleDateFormat(Utils.date_format);
+		dateFormat.setTimeZone(TimeZone.getTimeZone(timezone));
+		return dateFormat.format(tmpCalendar.getTime());
+	}
+
 }
