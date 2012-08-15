@@ -2,11 +2,17 @@ package com.groupagendas.groupagenda.calendar.week;
 
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.List;
+
 import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
+import android.graphics.Color;
 import android.graphics.Rect;
+import android.graphics.drawable.GradientDrawable;
 import android.util.AttributeSet;
 import android.view.GestureDetector;
+import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.TouchDelegate;
 import android.view.View;
@@ -20,16 +26,19 @@ import android.widget.TextView;
 import android.widget.LinearLayout.LayoutParams;
 
 import com.groupagendas.groupagenda.NavbarActivity;
+import com.groupagendas.groupagenda.EventActivityOnClickListener;
 import com.groupagendas.groupagenda.R;
 
 
 import com.groupagendas.groupagenda.calendar.AbstractCalendarView;
 import com.groupagendas.groupagenda.calendar.AbstractCalendarViewWithAllDayAndHourEvents;
 import com.groupagendas.groupagenda.calendar.adapters.AllDayEventsAdapter;
+import com.groupagendas.groupagenda.calendar.day.DayInstance;
 import com.groupagendas.groupagenda.calendar.day.HourEventsPanel;
 import com.groupagendas.groupagenda.calendar.day.HourEventsPanelMotionListener;
 import com.groupagendas.groupagenda.data.DataManagement;
 import com.groupagendas.groupagenda.events.Event;
+import com.groupagendas.groupagenda.events.EventActivity;
 
 
 public class WeekView extends AbstractCalendarViewWithAllDayAndHourEvents {
@@ -38,6 +47,7 @@ public class WeekView extends AbstractCalendarViewWithAllDayAndHourEvents {
 	public static final int hourLineHeightDP = 23;  //HEIGHT OF ONE HOUR LINE IN DIP
 
 	WeekInstance daysShown;
+	
 	
 	
 	boolean am_pmEnabled;
@@ -51,12 +61,9 @@ public class WeekView extends AbstractCalendarViewWithAllDayAndHourEvents {
 	
 	
 
-	private HourEventsPanel hourEventsPanel;
-	private RelativeLayout allDayEventsPanel;
+	private LinearLayout hourEventsPanel;
+	private LinearLayout allDayEventsPanel;
 	private LinearLayout hourList;
-	
-
-//	private AllDayEventsAdapter allDayEventAdapter;
 	
 
 	public WeekView(Context context) {
@@ -77,8 +84,6 @@ public class WeekView extends AbstractCalendarViewWithAllDayAndHourEvents {
 		}
 		
 		this.daysShown = new WeekInstance(context, ((NavbarActivity)context).getSelectedDate());
-//		allDayEventAdapter = new AllDayEventsAdapter(getContext(), new ArrayList<Event>());
-
 	}
 
 	//adjusts top panel title accordingly to selectedDate field
@@ -100,32 +105,98 @@ public class WeekView extends AbstractCalendarViewWithAllDayAndHourEvents {
 
 	@Override
 	public void setupView() {
-		allDayEventsPanel = (RelativeLayout) findViewById(R.id.allday_events);
-		setAllDayEventsPanelHeight(daysShown.getMaxAllDayEventCount());
-
 		
-//		initialize column with hour titles
+		allDayEventsPanel = (LinearLayout) findViewById(R.id.allday_events);
+		setAllDayEventsPanelHeight(daysShown.getMaxAllDayEventsCount());
+		allDayEventsPanel.setOrientation(LinearLayout.HORIZONTAL);
+		
+		hourEventsPanel = (LinearLayout) findViewById(R.id.hour_events);
+		
 		hourList = (LinearLayout) findViewById(R.id.hour_list);
 		hourList.setClickable(false);
+		
+//		setting up panels frames
+		View child;
+		LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(LayoutParams.FILL_PARENT, LayoutParams.FILL_PARENT);
+		params.weight = 1;
+		
+//		adding day frames and listeners from first to last-1 of shown days
+		for (int i = 0; i < daysShown.getDaysToShow() - 1; i++){
+//			Add events and separator to AlldayPanel
+			child = createNewAllDayEventFrame();			
+			allDayEventsPanel.addView(child, params);
+			allDayEventsPanel.addView(new VerticalDaysSeparator(getContext()));
+//			Add events and separator to HoureventsPanel
+			child = createNewHourEventFrame();
+			hourEventsPanel.addView(child, params);
+			hourEventsPanel.addView(new VerticalDaysSeparator(getContext()));
+		}
+		
+//		add last shown day without separators to both panels
+		child = createNewAllDayEventFrame();
+		allDayEventsPanel.addView(child, params);
+		child = createNewHourEventFrame();
+		hourEventsPanel.addView(child, params);
+		
+//		initialize column with hour titles		
 		drawHourList();
 		
-//		TODO initialize hour event panel
-//		hourEventsPanel = (HourEventsPanel) findViewById(R.id.hour_events);
-//		hourEventsPanel.setSwipeGestureDetector(new GestureDetector(new HourEventsPanelMotionListener(this, selectedDay.getSelectedDate())));
-//		hourEventsPanel.setOnTouchListener(new OnTouchListener() {
-//			@Override
-//			public boolean onTouch(View v, MotionEvent event) {
-//				if (hourEventsPanel.getSwipeGestureDetector().onTouchEvent(event)) {
-//				     return false;
-//				    } else {
-//				     return true;
-//				    }
-//			}
-//		});
-//		
-//		updateEventLists();
+		addSwipeListeners();
+		updateEventLists();
 		scrollHourPanel();	
 	}
+	
+
+	private void drawHourList() {
+		
+
+		/*
+		 * 
+		 * A-CHU-JE-NAI, DACHUJA ZAJABYS.
+		 * 
+		 */
+		
+		for (int i=0; i<24; i++) {
+			TextView label = new TextView(getContext());
+			label.setTextAppearance(getContext(), R.style.dayView_hourEvent_firstColumn_entryText);
+			label.setText(HourNames[i]);
+			label.setGravity(android.view.Gravity.CENTER_HORIZONTAL);
+			label.setHeight(Math.round(hourLineHeightDP * densityFactor));
+			label.setWidth(LayoutParams.FILL_PARENT);
+			hourList.addView(label);
+		}
+	}
+	private void addSwipeListeners() {
+		// TODO Auto-generated method stub
+//		hourEventsPanel.setSwipeGestureDetector(new GestureDetector(new HourEventsPanelMotionListener(this, selectedDay.getSelectedDate())));
+//	hourEventsPanel.setOnTouchListener(new OnTouchListener() {
+//		@Override
+//		public boolean onTouch(View v, MotionEvent event) {
+//			if (hourEventsPanel.getSwipeGestureDetector().onTouchEvent(event)) {
+//			     return false;
+//			    } else {
+//			     return true;
+//			    }
+//		}
+//	});
+		
+	}
+
+	private LinearLayout createNewAllDayEventFrame() {
+		LinearLayout child = new LinearLayout(getContext());		
+		child.setOrientation(LinearLayout.VERTICAL);
+		return child;
+	}
+	
+	
+	
+	private RelativeLayout createNewHourEventFrame() {
+		RelativeLayout child = new RelativeLayout(getContext());
+		RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(LayoutParams.FILL_PARENT, LayoutParams.FILL_PARENT);
+		child.setLayoutParams(params);		
+		return child;
+	}
+
 	@Override
 	public void goPrev(){
 		daysShown.prevPage();
@@ -143,24 +214,7 @@ public class WeekView extends AbstractCalendarViewWithAllDayAndHourEvents {
 	
 	
 	
-	private void drawHourList() {
-
-		/*
-		 * 
-		 * A-CHU-JE-NAI, DACHUJA ZAJABYS.
-		 * 
-		 */
-		
-		for (int i=0; i<24; i++) {
-			TextView label = new TextView(getContext());
-			label.setTextAppearance(getContext(), R.style.dayView_hourEvent_firstColumn_entryText);
-			label.setText(HourNames[i]);
-			label.setGravity(android.view.Gravity.CENTER_HORIZONTAL);
-			label.setHeight(Math.round(hourLineHeightDP*densityFactor));
-			label.setWidth(LayoutParams.FILL_PARENT);
-			hourList.addView(label);
-		}
-	}
+	
 	
 	private void scrollHourPanel() {
 		final float hour = DEFAULT_TIME_TO_SCROLL;
@@ -182,6 +236,47 @@ public class WeekView extends AbstractCalendarViewWithAllDayAndHourEvents {
 
 	@Override
 	protected void updateEventLists() {
+		
+		drawAllDayEvents();
+		drawHourEvents();
+		
+	}
+
+	private void drawAllDayEvents() {
+		for (int i = 0; i < daysShown.getDaysToShow(); i++){
+			LinearLayout container = (LinearLayout)allDayEventsPanel.getChildAt(i * 2);
+			container.removeAllViews();
+			drawAllDayEvents(container, daysShown.getDayInstance(i));
+		}
+	}
+	private void drawAllDayEvents(LinearLayout container, DayInstance dayInstance) {
+		List<Event> events = dayInstance.getAllDayEvents();
+		if (!events.isEmpty()){
+			
+			for (final Event event : events){
+				View view = mInflater.inflate(R.layout.calendar_dayview_allday_listentry, null);
+				TextView title = (TextView) view.findViewById(R.id.allday_eventtitle);
+				title.setText(event.title);
+				GradientDrawable sd = (GradientDrawable)getContext().getResources().getDrawable(R.drawable.calendar_dayview_secondcolumn_entrybackground);
+				
+				if (!event.color.equalsIgnoreCase("null")){
+					sd.setColor(Color.parseColor("#BF" + event.color));
+					sd.setStroke(1, Color.parseColor("#" + event.color));
+				}else {
+					sd.setColor(getContext().getResources().getColor(R.color.defaultAllDayEventColor));
+				}	
+				title.setBackgroundDrawable(sd);
+				view.setOnClickListener(new EventActivityOnClickListener(getContext(), event));
+				container.addView(view);
+			}
+		}
+
+
+
+
+	}
+
+	private void drawHourEvents() {
 		// TODO Auto-generated method stub
 		
 	}

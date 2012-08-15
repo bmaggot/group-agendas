@@ -20,11 +20,16 @@
         android:layout_height="match_parent"
         android:background="@color/darker_gray" />
 
-    <RelativeLayout
-        android:id="@+id/allday_events"
-        style="@style/dayView_hourEvent_secondColumn">
-<!--         android:divider="@null" -->
-<!--         android:dividerHeight="0dp"  --> 
-    </RelativeLayout>
+    <FrameLayout 
+        style="@style/dayView_hourEvent_secondColumn"
+        >
+	    <LinearLayout
+	        android:orientation="horizontal"
+	        android:layout_width="match_parent"
+        	android:layout_height="match_parent"
+	        android:id="@+id/allday_events"
+	        >
 
+	    </LinearLayout>
+	</FrameLayout>
 </LinearLayout>
