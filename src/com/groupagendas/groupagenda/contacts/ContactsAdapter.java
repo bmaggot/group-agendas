@@ -38,12 +38,9 @@ public class ContactsAdapter extends BaseAdapter implements Filterable {
 		if (convertView == null) {
 			convertView = mInflater.inflate(R.layout.list_contact_entry, null);
 			holder = new ViewHolder();
-			holder.email = (TextView) convertView
-					.findViewById(R.id.list_contacts_email);
-			holder.name = (TextView) convertView
-					.findViewById(R.id.list_contacts_name);
-			holder.image = (ImageView) convertView
-					.findViewById(R.id.contact_icon);
+			holder.email = (TextView) convertView.findViewById(R.id.list_contacts_email);
+			holder.name = (TextView) convertView.findViewById(R.id.list_contacts_name);
+			holder.image = (ImageView) convertView.findViewById(R.id.contact_icon);
 
 			convertView.setTag(holder);
 		} else {
@@ -65,24 +62,24 @@ public class ContactsAdapter extends BaseAdapter implements Filterable {
 		// holder.email.setText(contact.email);
 
 		if (contact.image) {
-			Bitmap bitmap = Utils.getResizedBitmap(BitmapFactory
-					.decodeByteArray(contact.image_bytes, 0,
-							contact.image_bytes.length), 72, 72);
+			Bitmap bitmap = Utils.getResizedBitmap(BitmapFactory.decodeByteArray(contact.image_bytes, 0, contact.image_bytes.length), 72,
+					72);
 			holder.image.setImageBitmap(bitmap);
 		} else {
 			holder.image.setImageResource(R.drawable.group_icon);
 		}
 
 		if (Data.newEventPar) {
-			if (Data.selectedContacts.size() > 0){
-				int i;
-				for (i = 0; i < Data.selectedContacts.size(); i++) {
-					System.out.println(Data.selectedContacts.get(i).contact_id + " = " + contact.contact_id);
+			if (Data.selectedContacts.size() > 0) {
+				for (int i = 0; i < Data.selectedContacts.size(); i++) {
 					if (Data.selectedContacts.get(i).contact_id == contact.contact_id) {
-						System.out.println("Found");
+						System.out.println(contact.name);
+						System.out.println(position);
 						convertView.setBackgroundColor(Color.GREEN);
 						convertView.setDrawingCacheBackgroundColor(Color.TRANSPARENT);
-						//break;
+						break;
+					} else {
+						convertView.setBackgroundColor(Color.WHITE);
 					}
 				}
 			}
@@ -122,8 +119,7 @@ public class ContactsAdapter extends BaseAdapter implements Filterable {
 		return new Filter() {
 			@SuppressWarnings("unchecked")
 			@Override
-			protected void publishResults(CharSequence constraint,
-					FilterResults results) {
+			protected void publishResults(CharSequence constraint, FilterResults results) {
 				contacts = (List<Contact>) results.values;
 				notifyDataSetChanged();
 			}
@@ -143,10 +139,8 @@ public class ContactsAdapter extends BaseAdapter implements Filterable {
 				List<Contact> filtereItems = new ArrayList<Contact>();
 
 				for (int i = 0; i < items.size(); i++) {
-					if (items.get(i).name.toLowerCase().startsWith(
-							constraint.toString().toLowerCase())
-							|| items.get(i).lastname.toLowerCase().startsWith(
-									constraint.toString().toLowerCase())) {
+					if (items.get(i).name.toLowerCase().startsWith(constraint.toString().toLowerCase())
+							|| items.get(i).lastname.toLowerCase().startsWith(constraint.toString().toLowerCase())) {
 						filtereItems.add(items.get(i));
 					}
 				}

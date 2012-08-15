@@ -305,21 +305,17 @@ public class ContactsActivity extends ListActivity implements OnCheckedChangeLis
 		v.setDrawingCacheEnabled(false);
 		if (Data.newEventPar){
 			if (CURRENT_LIST == CONTACTS_LIST) {
-				boolean selected = false;
-				int i;
 				if (Data.selectedContacts.size() > 0){
-					for (i = 0; i < Data.selectedContacts.size(); i++){
+					for (int i = 0; i < Data.selectedContacts.size(); i++){
 						if (Data.selectedContacts.get(i).contact_id == dm.getContacts().get(position).contact_id){
-							selected = true;
+							Data.selectedContacts.remove(i);
+							v.setBackgroundColor(Color.WHITE);
+							break;
+						} else {
+							Data.selectedContacts.add(dm.getContacts().get(position));
+							v.setBackgroundColor(Color.LTGRAY);
 							break;
 						}
-					}
-					if (selected){
-						Data.selectedContacts.remove(i);
-						v.setBackgroundColor(Color.WHITE);
-					} else {
-						Data.selectedContacts.add(dm.getContacts().get(position));
-						v.setBackgroundColor(Color.LTGRAY);
 					}
 				} else {
 					Data.selectedContacts.add(dm.getContacts().get(position));

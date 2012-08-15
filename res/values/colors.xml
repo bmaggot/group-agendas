@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <color name="white">#fff</color>
+    <color name="white">#FFFFFF</color>
     <color name="lighter_gray">#ddd</color>
     <color name="darker_gray">#aaa</color>
     <color name="black">#000000</color>
@@ -33,6 +33,7 @@
     <color name="red">#FF0000</color>
     <color name="defaultAllDayEventColor">#21C0DB</color>
     <color name="defaultHourEventColorTransparent">#BF21C0DB</color>
+    <color name="mainBackgroundBlue">#21C0DB</color>
 
     <string-array name="colors_values">
         <item>000000</item>
