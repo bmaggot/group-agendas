@@ -2,6 +2,8 @@ package com.groupagendas.groupagenda.calendar.day;
 
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.List;
+
 import android.app.Activity;
 import android.content.Context;
 import android.util.AttributeSet;
@@ -81,7 +83,6 @@ public class DayView extends AbstractCalendarViewWithAllDayAndHourEvents {
 		
 		allDayEventsPanel = (ListView) findViewById(R.id.allday_events);
 		allDayEventsPanel.setAdapter(allDayEventAdapter);
-		setAllDayEventsPanelHeight(selectedDay.getAllDayEvents().size());
 		
 		
 		
@@ -132,7 +133,7 @@ public class DayView extends AbstractCalendarViewWithAllDayAndHourEvents {
 		
 		if (selectedDay.isToday()){
 			Calendar tmp = Calendar.getInstance();
-			hour = tmp.get(Calendar.HOUR_OF_DAY) + tmp.get(Calendar.MINUTE)/60.0f;
+			hour = tmp.get(Calendar.HOUR_OF_DAY) + tmp.get(Calendar.MINUTE) / 60.0f;
 		}else{
 			hour = DEFAULT_TIME_TO_SCROLL;
 		}
@@ -164,7 +165,7 @@ public class DayView extends AbstractCalendarViewWithAllDayAndHourEvents {
 			label.setTextAppearance(getContext(), R.style.dayView_hourEvent_firstColumn_entryText);
 			label.setText(HourNames[i]);
 			label.setGravity(android.view.Gravity.CENTER_HORIZONTAL);
-			label.setHeight(Math.round(hourLineHeightDP*densityFactor));
+			label.setHeight(Math.round(hourLineHeightDP * densityFactor));
 			label.setWidth(LayoutParams.FILL_PARENT);
 			hourList.addView(label);
 		}
@@ -192,7 +193,10 @@ public class DayView extends AbstractCalendarViewWithAllDayAndHourEvents {
 	
 
 	protected void updateEventLists() {
-		allDayEventAdapter.setList(selectedDay.getAllDayEvents());
+		
+		List<Event> events = selectedDay.getAllDayEvents();
+		setAllDayEventsPanelHeight(events.size());
+		allDayEventAdapter.setList(events);
 		allDayEventAdapter.notifyDataSetChanged();
 		drawHourEvents(); // Drawing hour-long events
 	}
