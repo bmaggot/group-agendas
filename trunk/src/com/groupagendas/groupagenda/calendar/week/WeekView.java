@@ -37,9 +37,8 @@ public class WeekView extends AbstractCalendarViewWithAllDayAndHourEvents {
 	private static final float DEFAULT_TIME_TO_SCROLL = 7.5f; //DEFAULT HOUR TO SCROLL. 7.5f = 7:30
 	public static final int hourLineHeightDP = 23;  //HEIGHT OF ONE HOUR LINE IN DIP
 
-	int daysPerScreen = 7;
-	Calendar selectedDate;
-
+	WeekInstance daysShown;
+	
 	
 	boolean am_pmEnabled;
 //
@@ -77,21 +76,23 @@ public class WeekView extends AbstractCalendarViewWithAllDayAndHourEvents {
 			HourNames = getResources().getStringArray(R.array.hour_names);
 		}
 		
-		this.selectedDate = ((NavbarActivity)context).getSelectedDate();
+		this.daysShown = new WeekInstance(context, ((NavbarActivity)context).getSelectedDate());
 //		allDayEventAdapter = new AllDayEventsAdapter(getContext(), new ArrayList<Event>());
 
 	}
 
+	//adjusts top panel title accordingly to selectedDate field
 	@Override
 	protected void setTopPanelTitle() {
-//		TODO
-		String title = "WEEK " + selectedDate.get(Calendar.WEEK_OF_YEAR);
-//				WeekDayNames[selectedDate.get(Calendar.DAY_OF_WEEK) - 1];
-//		title += ", ";
-//		title += MonthNames[selectedDate.get(Calendar.MONTH)] + " " + selectedDate.get(Calendar.DAY_OF_MONTH);
-//		title += ", ";
-//		title += selectedDate.get(Calendar.YEAR);
-
+		Calendar selectedDate = daysShown.getShownDate();
+		
+		String title = getResources().getString(R.string.week);
+		title += " ";
+		title += selectedDate.get(Calendar.WEEK_OF_YEAR);
+		title += ", ";
+		title += MonthNames[selectedDate.get(Calendar.MONTH)];
+		title += " ";
+		title += selectedDate.get(Calendar.YEAR);
 		this.getTopPanelTitle().setText(title);
 		
 	}
@@ -99,18 +100,16 @@ public class WeekView extends AbstractCalendarViewWithAllDayAndHourEvents {
 
 	@Override
 	public void setupView() {
-		
 		allDayEventsPanel = (RelativeLayout) findViewById(R.id.allday_events);
-//		TODO count max number of events in that week
-		setAllDayEventsPanelHeight(1);
-//		allDayEventsPanel.setAdapter(allDayEventAdapter);
+		setAllDayEventsPanelHeight(daysShown.getMaxAllDayEventCount());
+
 		
-//		init column with hour titles
+//		initialize column with hour titles
 		hourList = (LinearLayout) findViewById(R.id.hour_list);
 		hourList.setClickable(false);
 		drawHourList();
 		
-//		init hour event panel
+//		TODO initialize hour event panel
 //		hourEventsPanel = (HourEventsPanel) findViewById(R.id.hour_events);
 //		hourEventsPanel.setSwipeGestureDetector(new GestureDetector(new HourEventsPanelMotionListener(this, selectedDay.getSelectedDate())));
 //		hourEventsPanel.setOnTouchListener(new OnTouchListener() {
@@ -127,18 +126,18 @@ public class WeekView extends AbstractCalendarViewWithAllDayAndHourEvents {
 //		updateEventLists();
 		scrollHourPanel();	
 	}
-//	@Override
+	@Override
 	public void goPrev(){
-//		selectedDay.goPrev();
-		setTopPanelTitle(); //adjust top panel title accordingly
-//		updateEventLists();
+		daysShown.prevPage();
+		setTopPanelTitle(); 
+		updateEventLists();
 	}
 	
-//	@Override
+	@Override
 	public void goNext(){
-//		selectedDay.goNext();
-		setTopPanelTitle(); //adjust top panel title accordingly
-//		updateEventLists();
+		daysShown.nextPage();
+		setTopPanelTitle();
+		updateEventLists();
 	}
 	
 	
