@@ -3,6 +3,7 @@ package com.groupagendas.groupagenda.calendar.day;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 
+import com.groupagendas.groupagenda.EventActivityOnClickListener;
 import com.groupagendas.groupagenda.R;
 import com.groupagendas.groupagenda.events.Event;
 import com.groupagendas.groupagenda.events.EventActivity;
@@ -119,20 +120,7 @@ public class HourEventView extends RelativeLayout {
 		this.setBackgroundDrawable(sd);
 		
 //		Add listener
-		
-		this.setOnClickListener(new OnClickListener() {
-			
-			@Override
-			public void onClick(View v) {
-				Intent intent = new Intent(getContext(), EventActivity.class);
-	      		intent.putExtra("event_id", event.event_id);
-	      		intent.putExtra("type", event.type);
-	      		intent.putExtra("isNative", event.isNative);
-	      		
-	      		getContext().startActivity(intent);
-				
-			}
-		});
+		this.setOnClickListener(new EventActivityOnClickListener(getContext(), event));
 	}
 	
 	

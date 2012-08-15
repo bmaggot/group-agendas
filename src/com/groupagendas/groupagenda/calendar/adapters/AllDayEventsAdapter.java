@@ -2,6 +2,7 @@ package com.groupagendas.groupagenda.calendar.adapters;
 
 import java.util.List;
 
+import com.groupagendas.groupagenda.EventActivityOnClickListener;
 import com.groupagendas.groupagenda.R;
 import com.groupagendas.groupagenda.events.Event;
 import com.groupagendas.groupagenda.events.EventActivity;
@@ -44,17 +45,7 @@ public class AllDayEventsAdapter extends AbstractAdapter<Event> {
 		title.setBackgroundDrawable(sd);
 		
 		
-		view.setOnClickListener(new View.OnClickListener() {
-          @Override
-          public void onClick(View view) {
-          	Intent intent = new Intent(context, EventActivity.class);
-      		intent.putExtra("event_id", event.event_id);
-      		intent.putExtra("type", event.type);
-      		intent.putExtra("isNative", event.isNative);
-      		
-      		context.startActivity(intent);
-          }
-      });
+		view.setOnClickListener(new EventActivityOnClickListener(context, event));
 		return view;
 	}
 
