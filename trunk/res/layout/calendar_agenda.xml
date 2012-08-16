@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="utf-8"?>
+<TableLayout xmlns:android="http://schemas.android.com/apk/res/android"
+	android:layout_width="fill_parent"
+	android:layout_height="fill_parent"
+	android:background="@color/white"
+	android:orientation="vertical" >
+	
+	<TableRow android:layout_width="fill_parent"
+	    android:layout_height="0dp"
+	    android:layout_weight="1">
+	    <LinearLayout
+	        android:background="@color/event_invite_button_c_gradend"
+	        android:layout_height="fill_parent"
+	        android:layout_width="0dp"
+	        android:layout_weight="1" />
+	    <LinearLayout
+	        android:background="@color/event_invite_button_c_gradstart"
+	        android:layout_height="fill_parent"
+	        android:layout_width="0dp"
+	        android:layout_weight="1" />
+	</TableRow>
+	
+	<TableRow  android:layout_width="fill_parent"
+	    android:layout_height="0dp"
+	    android:layout_weight="1">
+	    <LinearLayout
+	        android:background="@color/darker_gray"
+	        android:layout_height="fill_parent"
+	        android:layout_width="0dp"
+	        android:layout_weight="1" />
+	    <LinearLayout
+	        android:background="@color/lighter_gray"
+	        android:layout_height="fill_parent"
+	        android:layout_width="0dp"
+	        android:layout_weight="1" />
+	</TableRow>
+	
+	<TableRow  android:layout_width="fill_parent"
+		android:layout_height="0dp"
+		android:layout_weight="1">
+		<LinearLayout
+			android:background="@color/red"
+			android:layout_height="fill_parent"
+			android:layout_width="0dp"
+			android:layout_weight="1" />
+		<LinearLayout
+			android:layout_height="fill_parent"
+			android:layout_width="0dp"
+			android:layout_weight="1"
+			android:orientation="vertical">
+			<LinearLayout
+				android:background="@color/red_darker"
+				android:layout_height="0dp"
+				android:layout_width="fill_parent"
+				android:layout_weight="1" />
+    		<LinearLayout
+				android:background="@color/red_lighter"
+				android:layout_height="0dp"
+				android:layout_width="fill_parent"
+				android:layout_weight="1" />
+					
+		</LinearLayout>
+	</TableRow>
+</TableLayout>
