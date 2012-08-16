@@ -52,7 +52,7 @@
 	        android:src="@drawable/right" />
   
     
-    <FrameLayout android:id="@+id/top_bar_bottom_line"
+    <FrameLayout android:id="@+id/top_bar_bottom_line_frame"
         android:layout_alignParentBottom="true"
         android:orientation="horizontal"
         android:layout_width="fill_parent"
