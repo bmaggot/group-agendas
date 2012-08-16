@@ -406,14 +406,10 @@
                 android:visibility="gone" >
                 
                 <include layout="@layout/response_to_invite_panel"
-                    android:id="@+id/response_to_invitation"/>
+                    android:layout_marginBottom="10dp"
+                    android:id="@+id/response_to_invitation" />
 
-                <include layout="@layout/event_invitatation_section" />
-
-                <View
-                    android:layout_width="fill_parent"
-                    android:layout_height="1dp"
-                    android:background="#FF909090" />
+                <include layout="@layout/event_invitation_section" />
             </LinearLayout>
 
             <LinearLayout

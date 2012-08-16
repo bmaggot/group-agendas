@@ -392,23 +392,15 @@
 				android:visibility="visible" >
 			</LinearLayout>
 			
-                <TextView
-                    android:layout_width="80dp"
-                    android:layout_height="wrap_content"
-                    android:text="@string/select_contacts"
-                    android:textColor="@android:color/black" />
-
-				<Button
-					android:id="@+id/contactsButton"
-					android:layout_width="100dp"
-					android:layout_height="wrap_content"
-					android:text="@string/choose" />
-			
-
-            <View
-                android:layout_width="fill_parent"
-                android:layout_height="1dp"
-                android:background="#FF909090" />
+		    <Button android:id="@+id/contactsButton"
+		        android:background="@drawable/event_invite_people_button_standalone"
+		        android:layout_marginTop="10dp"
+		        android:layout_marginBottom="10dp"
+		        android:layout_height="40dp"
+		        android:layout_width="fill_parent"
+		        android:text="@string/invite_people"
+		        android:textStyle="bold"
+		        android:textSize="16dp" />
 
             <LinearLayout
                 android:id="@+id/saveBlock"
