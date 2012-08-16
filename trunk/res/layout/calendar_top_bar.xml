@@ -11,17 +11,17 @@
 	        android:layout_alignParentLeft="true"
 	        android:background="@null"
 	        android:contentDescription="@string/calendar_dayView_navigateLeft"
-	        android:paddingTop="5dp"
+	        android:paddingTop="10dp"
 	        android:paddingLeft="10dp"
 	        android:paddingRight="10dp"
-	        android:paddingBottom="5dp"
+	        android:paddingBottom="0dp"
 	        android:src="@drawable/left" />
 	
 	    <LinearLayout android:layout_width="wrap_content"
 	        android:layout_height="wrap_content"
 	        android:layout_centerHorizontal="true"
-	        android:layout_marginTop="5dp"
-	        android:layout_marginBottom="5dp"
+	        android:layout_marginTop="10dp"
+	        android:layout_marginBottom="0dp"
 	        android:orientation="vertical" >
 	
 	        <TextView android:id="@+id/top_panel_title"
@@ -30,7 +30,11 @@
 	            android:gravity="top"
 	            android:textColor="#3B4959"
 	            android:textSize="16dp"
-	            android:textStyle="bold" />
+	            android:textStyle="bold"
+	            android:shadowColor="@color/white"
+	            android:shadowRadius="1.5"
+			    android:shadowDx="0"
+			    android:shadowDy="1" />
 	    </LinearLayout>
 	
 	    <ImageButton android:id="@+id/nextView"
@@ -40,10 +44,10 @@
 	        android:layout_gravity="center_vertical"
 	        android:background="@null"
 	        android:contentDescription="@string/calendar_dayView_navigateRight"
-	        android:paddingTop="5dp"
+	        android:paddingTop="10dp"
 	        android:paddingLeft="10dp"
 	        android:paddingRight="10dp"
-	        android:paddingBottom="5dp"
+	        android:paddingBottom="0dp"
 	        android:gravity="center_vertical"
 	        android:src="@drawable/right" />
   
