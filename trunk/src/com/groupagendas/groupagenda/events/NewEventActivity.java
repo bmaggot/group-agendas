@@ -315,13 +315,7 @@ public class NewEventActivity extends Activity {
 			@Override
 			public void onClick(View arg0) {
 				Data.newEventPar = true;
-				
-				
 				startActivity(new Intent(NewEventActivity.this, ContactsActivity.class));
-				
-				//showDialog(CHOOSE_CONTACTS_DIALOG);
-				
-				//if (Data.selectedContacts.size() > );
 			}
 		});
 	}
