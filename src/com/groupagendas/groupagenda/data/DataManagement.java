@@ -3070,6 +3070,8 @@ public class DataManagement {
 						if (success == false) {
 							Log.e("Create event error", object.getJSONObject("error").getString("reason"));
 						}
+						int event_id = object.getInt("event_id");
+						updateEventByIdFromRemoteDb(event_id);
 					}
 				} else {
 					Log.e("createEvent - status", rp.getStatusLine().getStatusCode() + "");
@@ -3555,13 +3557,18 @@ public class DataManagement {
 	}
 	
 	public void updateEventInsideLocalDb(Event event){
+		boolean foundEventInLocalDB = false;
 		ArrayList<Event> localEvents = Data.getEvents();
 		for(Event tmpEvent : localEvents){
 			if(event.event_id == tmpEvent.event_id){
+				foundEventInLocalDB = true;
 				localEvents.remove(tmpEvent);
 				localEvents.add(event);
 				break;
 			}
+		}
+		if(!foundEventInLocalDB){
+			localEvents.add(event);
 		}
 		Data.setEvents(localEvents);
 		sortEvents(Data.getEvents());
