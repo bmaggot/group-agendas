@@ -5,7 +5,7 @@
     android:background="@drawable/transparent"
     android:textStyle="bold"
     android:textSize="9dp"
-    android:textColor="@color/darker_gray"
+    android:textColor="#3B4959"
     android:paddingTop="1dp"
     android:paddingBottom="2dp"
     android:paddingLeft="2dp"
@@ -14,4 +14,4 @@
     android:shadowColor="@color/white"
     android:shadowRadius="1.5"
     android:shadowDx="0"
-    android:shadowDy="1" />
+    android:shadowDy="2" />
