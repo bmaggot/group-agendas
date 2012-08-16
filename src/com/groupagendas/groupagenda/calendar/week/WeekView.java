@@ -4,45 +4,35 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 
-import android.app.Activity;
+
 import android.content.Context;
-import android.content.Intent;
 import android.graphics.Color;
-import android.graphics.Rect;
 import android.graphics.drawable.GradientDrawable;
 import android.util.AttributeSet;
 import android.view.GestureDetector;
-import android.view.LayoutInflater;
 import android.view.MotionEvent;
-import android.view.TouchDelegate;
 import android.view.View;
 import android.view.View.OnTouchListener;
-import android.widget.ImageButton;
 import android.widget.LinearLayout;
-import android.widget.ListView;
 import android.widget.RelativeLayout;
 import android.widget.ScrollView;
 import android.widget.TextView;
-import android.widget.LinearLayout.LayoutParams;
 
 import com.groupagendas.groupagenda.NavbarActivity;
 import com.groupagendas.groupagenda.EventActivityOnClickListener;
 import com.groupagendas.groupagenda.R;
 
 
-import com.groupagendas.groupagenda.calendar.AbstractCalendarView;
 import com.groupagendas.groupagenda.calendar.AbstractCalendarViewWithAllDayAndHourEvents;
-import com.groupagendas.groupagenda.calendar.adapters.AllDayEventsAdapter;
 import com.groupagendas.groupagenda.calendar.day.DayInstance;
-import com.groupagendas.groupagenda.calendar.day.HourEventsPanel;
 import com.groupagendas.groupagenda.calendar.day.HourEventsPanelMotionListener;
 import com.groupagendas.groupagenda.calendar.day.HourEventsTimetable;
 import com.groupagendas.groupagenda.data.DataManagement;
 import com.groupagendas.groupagenda.events.Event;
-import com.groupagendas.groupagenda.events.EventActivity;
 
 
 public class WeekView extends AbstractCalendarViewWithAllDayAndHourEvents {
+	
 	
 	private static final float DEFAULT_TIME_TO_SCROLL = 7.5f; //DEFAULT HOUR TO SCROLL. 7.5f = 7:30
 	public static final int hourLineHeightDP = 23;  //HEIGHT OF ONE HOUR LINE IN DIP
@@ -173,7 +163,7 @@ public class WeekView extends AbstractCalendarViewWithAllDayAndHourEvents {
 //		initialize column with hour titles		
 		drawHourList();
 		
-		addSwipeListeners();
+		addMotionListeners();
 		updateEventLists();
 		scrollHourPanel();	
 	}
@@ -198,21 +188,24 @@ public class WeekView extends AbstractCalendarViewWithAllDayAndHourEvents {
 			hourList.addView(label);
 		}
 	}
-	private void addSwipeListeners() {
-		// TODO Auto-generated method stub
-//		hourEventsPanel.setSwipeGestureDetector(new GestureDetector(new HourEventsPanelMotionListener(this, selectedDay.getSelectedDate())));
-//	hourEventsPanel.setOnTouchListener(new OnTouchListener() {
-//		@Override
-//		public boolean onTouch(View v, MotionEvent event) {
-//			if (hourEventsPanel.getSwipeGestureDetector().onTouchEvent(event)) {
-//			     return false;
-//			    } else {
-//			     return true;
-//			    }
-//		}
-//	});
+	private void addMotionListeners() {
+//	TODO
+		//Add swipe listener for hourEvent and allDayEvent panels
+	
+	allDayEventsPanel.setOnTouchListener(createListener(swipeGestureDetector));
+	hourEventsPanel.setOnTouchListener(createListener(swipeGestureDetector));
+	for (int i = 0; i < daysShown.getDaysToShow(); i++){
+		RelativeLayout child = (RelativeLayout) hourEventsPanel.getChildAt(i * 2);
+		Calendar date = (Calendar) daysShown.getShownDate().clone();
+		date.add(Calendar.DATE, i);
+		HourEventsPanelMotionListener listener = new HourEventsPanelMotionListener(this, date);
+		listener.setListenToSwipe(false); //we do not need to listen to swipe inside day cells
+		child.setOnTouchListener(createListener(new GestureDetector(listener)));
+	}
+	
 		
 	}
+
 
 	private LinearLayout createNewAllDayEventFrame() {
 		LinearLayout child = new LinearLayout(getContext());		
