@@ -287,6 +287,7 @@ public class NavbarActivity extends Activity {
 			@Override
 			public void onClick(View v) {
 				qa.dismiss();
+				viewState = ViewState.WEEK;
 				showWeekView();
 			}
 		});
