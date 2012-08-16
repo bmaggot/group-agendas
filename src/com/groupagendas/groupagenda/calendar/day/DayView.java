@@ -65,7 +65,7 @@ public class DayView extends AbstractCalendarViewWithAllDayAndHourEvents {
 	}
 	
 	@Override
-	protected void setTopPanelTitle() {
+	protected void setTopPanel() {
 		Calendar selectedDate = selectedDay.getSelectedDate();
 		String title = WeekDayNames[selectedDate.get(Calendar.DAY_OF_WEEK) - 1];
 		title += ", ";
@@ -116,14 +116,14 @@ public class DayView extends AbstractCalendarViewWithAllDayAndHourEvents {
 //	@Override
 	public void goPrev(){
 		selectedDay.goPrev();
-		setTopPanelTitle(); //adjust top panel title accordingly
+		setTopPanel(); //adjust top panel title accordingly
 		updateEventLists();
 	}
 	
 //	@Override
 	public void goNext(){
 		selectedDay.goNext();
-		setTopPanelTitle(); //adjust top panel title accordingly
+		setTopPanel(); //adjust top panel title accordingly
 		updateEventLists();
 	}
 

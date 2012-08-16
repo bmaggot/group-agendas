@@ -25,11 +25,12 @@ public abstract class AbstractCalendarView extends LinearLayout {
 	protected TouchDelegate prevButtonDelegate;
 	protected TouchDelegate nextButtonDelegate;
 	TextView topPanelTitle;
+	private LinearLayout topPanelBottomLine;
 	
 	protected final float densityFactor = getResources().getDisplayMetrics().density;
 	protected LayoutInflater mInflater;
 	
-	protected abstract void setTopPanelTitle(); 	//Sets up top panel title text in every view differently
+	protected abstract void setTopPanel(); 	//Sets up top panel title text in every view differently
 
 	public abstract void goPrev();					//switch to prev View
 	
@@ -56,6 +57,11 @@ public abstract class AbstractCalendarView extends LinearLayout {
 		return topPanelTitle;
 	}
 	
+	
+	public LinearLayout getTopPanelBottomLine() {
+		return topPanelBottomLine;
+	}
+
 	public void init(){
 		setupTopPanel();
 		setUpSwipeGestureListener();
@@ -64,18 +70,19 @@ public abstract class AbstractCalendarView extends LinearLayout {
 	}
 	
 
-	protected void setupTopPanel() {
+	private final void setupTopPanel() {
 		
 		prevButton = (ImageButton) findViewById(R.id.prevView);
 		nextButton = (ImageButton) findViewById(R.id.nextView);
 		topPanelTitle = (TextView) findViewById(R.id.top_panel_title);
+		topPanelBottomLine = (LinearLayout) findViewById(R.id.top_bar_bottom_line);
 		
 		prevButtonBounds = new Rect();
 		nextButtonBounds = new Rect();
 		
 		
 		
-		setTopPanelTitle();
+		setTopPanel();
 		
 		prevButton.setOnClickListener(new OnClickListener() {
 

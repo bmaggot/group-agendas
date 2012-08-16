@@ -87,9 +87,9 @@ public class WeekView extends AbstractCalendarViewWithAllDayAndHourEvents {
 		this.daysShown = new WeekInstance(context, ((NavbarActivity)context).getSelectedDate());
 	}
 
-	//adjusts top panel title accordingly to selectedDate field
+	//adjusts top panel title accordingly to shownDate field in WeekInstance class
 	@Override
-	protected void setTopPanelTitle() {
+	protected void setTopPanel() {
 		Calendar selectedDate = daysShown.getShownDate();
 		
 		String title = getResources().getString(R.string.week);
@@ -100,6 +100,25 @@ public class WeekView extends AbstractCalendarViewWithAllDayAndHourEvents {
 		title += " ";
 		title += selectedDate.get(Calendar.YEAR);
 		this.getTopPanelTitle().setText(title);
+		
+		LinearLayout bottomBar = getTopPanelBottomLine();
+		bottomBar.removeAllViews();
+		TextView entry = new TextView(getContext());
+		entry.setWidth(Math.round(HOUR_COLUMN_WIDTH));
+		bottomBar.addView(entry);
+		for (int i = 0; i < daysShown.getDaysToShow(); i++){
+			entry = new TextView(getContext());
+//			TODO SUSETTINTI BOTOM LINE
+			
+			entry.setText("day " + i);
+//			entry.setTextAppearance(getContext(), R.style.calendarTopbarBottomline);
+			entry.setWidth(Math.round(EVENTS_COLUMN_WIDTH / (float)daysShown.getDaysToShow()));
+			entry.setBackgroundColor(Color.RED);
+			entry.setHeight(LayoutParams.WRAP_CONTENT);
+			bottomBar.addView(entry);
+		}
+		
+		
 		
 	}
 
@@ -200,14 +219,14 @@ public class WeekView extends AbstractCalendarViewWithAllDayAndHourEvents {
 	@Override
 	public void goPrev(){
 		daysShown.prevPage();
-		setTopPanelTitle(); 
+		setTopPanel(); 
 		updateEventLists();
 	}
 	
 	@Override
 	public void goNext(){
 		daysShown.nextPage();
-		setTopPanelTitle();
+		setTopPanel();
 		updateEventLists();
 	}	
 	private void scrollHourPanel() {
