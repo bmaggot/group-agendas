@@ -409,7 +409,8 @@
                     android:layout_marginBottom="10dp"
                     android:id="@+id/response_to_invitation" />
 
-                <include layout="@layout/event_invitation_section" />
+                <include layout="@layout/event_invitation_section"
+					android:id="@+id/invited_person_list" />
             </LinearLayout>
 
             <LinearLayout
