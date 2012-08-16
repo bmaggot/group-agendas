@@ -75,7 +75,7 @@ public class WeekView extends AbstractCalendarViewWithAllDayAndHourEvents {
 
 		super(context, attrs);
 		am_pmEnabled =  DataManagement.getInstance(getContext()).getAccount().setting_ampm != 0;
-		WeekDayNames = getResources().getStringArray(R.array.week_days_names);
+		WeekDayNames = getResources().getStringArray(R.array.week_days_title);
 		MonthNames = getResources().getStringArray(R.array.month_names);
 		if(am_pmEnabled){
 			HourNames = getResources().getStringArray(R.array.hour_names_am_pm);
@@ -87,6 +87,16 @@ public class WeekView extends AbstractCalendarViewWithAllDayAndHourEvents {
 		this.daysShown = new WeekInstance(context, ((NavbarActivity)context).getSelectedDate());
 	}
 
+	
+	@Override
+	protected void instantiateTopPanelBottomLine() {
+		LinearLayout calendarTopPanelBottomLine = new LinearLayout(getContext());
+		LayoutParams params = new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT);
+		calendarTopPanelBottomLine.setOrientation(LinearLayout.HORIZONTAL);
+		calendarTopPanelBottomLine.setLayoutParams(params);
+		getTopPanelBottomLine().addView(calendarTopPanelBottomLine);
+		
+	}
 	//adjusts top panel title accordingly to shownDate field in WeekInstance class
 	@Override
 	protected void setTopPanel() {
@@ -101,20 +111,23 @@ public class WeekView extends AbstractCalendarViewWithAllDayAndHourEvents {
 		title += selectedDate.get(Calendar.YEAR);
 		this.getTopPanelTitle().setText(title);
 		
-		LinearLayout bottomBar = getTopPanelBottomLine();
+		LinearLayout bottomBar = (LinearLayout)getTopPanelBottomLine().getChildAt(0);
 		bottomBar.removeAllViews();
+		
 		TextView entry = new TextView(getContext());
+//		Add empty space
 		entry.setWidth(Math.round(HOUR_COLUMN_WIDTH));
 		bottomBar.addView(entry);
+		
+		Calendar tmp = (Calendar) daysShown.getShownDate().clone();
+//		add view for every day
 		for (int i = 0; i < daysShown.getDaysToShow(); i++){
-			entry = new TextView(getContext());
-//			TODO SUSETTINTI BOTOM LINE
+			entry = (TextView) mInflater.inflate(R.layout.calendar_top_bar_bottomline_entry, null);
 			
-			entry.setText("day " + i);
-//			entry.setTextAppearance(getContext(), R.style.calendarTopbarBottomline);
+			String text = (tmp.get(Calendar.DATE) + " " + WeekDayNames[tmp.get(Calendar.DAY_OF_WEEK) - 1]);
+			tmp.add(Calendar.DATE, 1);
+			entry.setText(text);
 			entry.setWidth(Math.round(EVENTS_COLUMN_WIDTH / (float)daysShown.getDaysToShow()));
-			entry.setBackgroundColor(Color.RED);
-			entry.setHeight(LayoutParams.WRAP_CONTENT);
 			bottomBar.addView(entry);
 		}
 		
@@ -310,6 +323,8 @@ public class WeekView extends AbstractCalendarViewWithAllDayAndHourEvents {
 		
 		}		
 	}
+
+	
 
 
 }
