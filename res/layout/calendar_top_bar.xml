@@ -34,7 +34,7 @@
 	            android:shadowColor="@color/white"
 	            android:shadowRadius="1.5"
 			    android:shadowDx="0"
-			    android:shadowDy="1" />
+			    android:shadowDy="2" />
 	    </LinearLayout>
 	
 	    <ImageButton android:id="@+id/nextView"
