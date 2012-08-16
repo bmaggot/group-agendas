@@ -83,6 +83,7 @@ public class DayView extends AbstractCalendarViewWithAllDayAndHourEvents {
 		
 		allDayEventsPanel = (ListView) findViewById(R.id.allday_events);
 		allDayEventsPanel.setAdapter(allDayEventAdapter);
+		allDayEventsPanel.setOnTouchListener(createListener(swipeGestureDetector));
 		
 		
 		
