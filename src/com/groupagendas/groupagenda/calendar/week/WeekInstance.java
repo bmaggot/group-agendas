@@ -18,7 +18,7 @@ public class WeekInstance {
 	private Calendar shownDate;
 	private int maxAllDayEventsCount;
 	
-//	TODO change dynamically on pinch also, adjust selectedDate accordingly;
+//	TODO change dynamically on pinch also, adjust shownDate accordingly;
 	private int daysToShow = 7;
 	
 	

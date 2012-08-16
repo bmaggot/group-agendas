@@ -1,5 +1,7 @@
 package com.groupagendas.groupagenda.calendar;
-
+/**
+ * @author justinas.marcinka@gmail.com
+ */
 
 import com.groupagendas.groupagenda.R;
 
@@ -12,6 +14,7 @@ import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.TouchDelegate;
 import android.view.View;
+import android.widget.FrameLayout;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -25,7 +28,7 @@ public abstract class AbstractCalendarView extends LinearLayout {
 	protected TouchDelegate prevButtonDelegate;
 	protected TouchDelegate nextButtonDelegate;
 	TextView topPanelTitle;
-	private LinearLayout topPanelBottomLine;
+	private FrameLayout topPanelBottomLineFrame;
 	
 	protected final float densityFactor = getResources().getDisplayMetrics().density;
 	protected LayoutInflater mInflater;
@@ -39,8 +42,12 @@ public abstract class AbstractCalendarView extends LinearLayout {
 	public abstract void setupView();			//setup specific part of view
 	
 	
-	
-	
+	/**
+	 * @return puts Top Panel Bottom Line view into frame. Child classes which need it, must override this method;
+	 **/	 
+	protected void instantiateTopPanelBottomLine(){
+		return;
+	}	
 	
 	
 	public AbstractCalendarView(Context context, AttributeSet attrs) {
@@ -58,8 +65,8 @@ public abstract class AbstractCalendarView extends LinearLayout {
 	}
 	
 	
-	public LinearLayout getTopPanelBottomLine() {
-		return topPanelBottomLine;
+	public FrameLayout getTopPanelBottomLine() {
+		return topPanelBottomLineFrame;
 	}
 
 	public void init(){
@@ -75,7 +82,8 @@ public abstract class AbstractCalendarView extends LinearLayout {
 		prevButton = (ImageButton) findViewById(R.id.prevView);
 		nextButton = (ImageButton) findViewById(R.id.nextView);
 		topPanelTitle = (TextView) findViewById(R.id.top_panel_title);
-		topPanelBottomLine = (LinearLayout) findViewById(R.id.top_bar_bottom_line);
+		topPanelBottomLineFrame = (FrameLayout) findViewById(R.id.top_bar_bottom_line_frame);
+		instantiateTopPanelBottomLine();
 		
 		prevButtonBounds = new Rect();
 		nextButtonBounds = new Rect();
@@ -104,6 +112,7 @@ public abstract class AbstractCalendarView extends LinearLayout {
 		
 	}
 	
+
 	private void setupDelegates() {
 		int[] tmpCoords = new int[2];
 		int screenWidth = getResources().getDisplayMetrics().widthPixels;
