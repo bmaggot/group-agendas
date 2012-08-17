@@ -2,7 +2,6 @@ package com.groupagendas.groupagenda.data;
 
 import java.io.DataOutputStream;
 import java.io.IOException;
-import java.io.UnsupportedEncodingException;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.text.SimpleDateFormat;
@@ -2555,10 +2554,10 @@ public class DataManagement {
 				item.time = result.getString(result.getColumnIndex(EventsProvider.EMetaData.EventsMetaData.TIME));
 				item.my_time_start = result.getString(result.getColumnIndex(EventsProvider.EMetaData.EventsMetaData.MY_TIME_START));
 				item.startCalendar = Utils.stringToCalendar(item.my_time_start, Utils.date_format);
-				item.startCalendar.add(Calendar.DATE, -1);
+				// item.startCalendar.add(Calendar.DATE, -1);
 				item.my_time_end = result.getString(result.getColumnIndex(EventsProvider.EMetaData.EventsMetaData.MY_TIME_END));
 				item.endCalendar = Utils.stringToCalendar(item.my_time_end, Utils.date_format);
-				item.endCalendar.add(Calendar.DATE, 1);
+				// item.endCalendar.add(Calendar.DATE, 1);
 
 				item.reminder1 = result.getString(result.getColumnIndex(EventsProvider.EMetaData.EventsMetaData.REMINDER1));
 				item.reminder2 = result.getString(result.getColumnIndex(EventsProvider.EMetaData.EventsMetaData.REMINDER2));
@@ -3031,10 +3030,10 @@ public class DataManagement {
 			if (e.accomodation.length() > 0)
 				reqEntity.addPart("accomodation", new StringBody(e.accomodation));
 
-			if(Data.selectedContacts != null && !Data.selectedContacts.isEmpty()){
+			if (Data.selectedContacts != null && !Data.selectedContacts.isEmpty()) {
 				e.assigned_contacts = new int[Data.selectedContacts.size()];
 				int i = 0;
-				for(Contact contact : Data.selectedContacts){
+				for (Contact contact : Data.selectedContacts) {
 					e.assigned_contacts[i] = contact.contact_id;
 					i++;
 				}
@@ -3071,6 +3070,7 @@ public class DataManagement {
 							Log.e("Create event error", object.getJSONObject("error").getString("reason"));
 						}
 						int event_id = object.getInt("event_id");
+						e.event_id = event_id;
 						updateEventByIdFromRemoteDb(event_id);
 					}
 				} else {
@@ -3206,7 +3206,7 @@ public class DataManagement {
 
 	}
 
-	public Event updateEventByIdFromRemoteDb(int event_id) {
+	public Event updateEventByIdFromRemoteDb(int event_id) throws ExecutionException, InterruptedException {
 		new UpdateEventByIdFromRemoteDb().execute(event_id);
 		return null;
 	}
@@ -3543,7 +3543,14 @@ public class DataManagement {
 
 							// //
 							Data.getmContext().getContentResolver().insert(EventsProvider.EMetaData.EventsMetaData.CONTENT_URI, cv);
-							updateEventInsideLocalDb(getEventFromDb(event_id));
+							Event tmpEvent = getEventFromDb(event_id);
+							if (tmpEvent.startCalendar == null) {
+								tmpEvent.startCalendar = Utils.stringToCalendar(event.my_time_start, Utils.date_format);
+							}
+							if (tmpEvent.endCalendar == null) {
+								tmpEvent.endCalendar = Utils.stringToCalendar(event.my_time_end, Utils.date_format);
+							}
+							updateEventInsideLocalDb(tmpEvent);
 						}
 					}
 				}
@@ -3555,19 +3562,19 @@ public class DataManagement {
 		}
 
 	}
-	
-	public void updateEventInsideLocalDb(Event event){
+
+	public void updateEventInsideLocalDb(Event event) {
 		boolean foundEventInLocalDB = false;
 		ArrayList<Event> localEvents = Data.getEvents();
-		for(Event tmpEvent : localEvents){
-			if(event.event_id == tmpEvent.event_id){
+		for (Event tmpEvent : localEvents) {
+			if (event.event_id == tmpEvent.event_id) {
 				foundEventInLocalDB = true;
 				localEvents.remove(tmpEvent);
 				localEvents.add(event);
 				break;
 			}
 		}
-		if(!foundEventInLocalDB){
+		if (!foundEventInLocalDB) {
 			localEvents.add(event);
 		}
 		Data.setEvents(localEvents);

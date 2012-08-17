@@ -134,7 +134,11 @@ public class EventActivity extends Activity {
 		}
 		
 		event_id = intent.getIntExtra("event_id", 0);
-		if (event_id > 0) new GetEventTask().execute(event_id);
+		if (event_id > 0) {
+			new GetEventTask().execute(event_id);
+		} else{
+			
+		}
 	}
 
 	class GetEventTask extends AsyncTask<Integer, Event, Event> {
