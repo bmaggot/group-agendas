@@ -15,13 +15,11 @@ public abstract class AbstractAdapter<T> extends BaseAdapter {
     protected Context context;
     protected LayoutInflater mInflater;
     protected List<T> list;
-    protected DateTimeUtils dt;
     
     public AbstractAdapter(Context context, List<T> list) {
         this.context = context;
         this.list = list;
         mInflater = LayoutInflater.from(context);
-        dt = new DateTimeUtils(context);
     }
     
 	@Override
