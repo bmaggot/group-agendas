@@ -75,7 +75,7 @@ public class AgendaView extends AbstractCalendarView {
 		        1.0f);
 		
 		TableRow.LayoutParams cellLp = new TableRow.LayoutParams(
-		        ViewGroup.LayoutParams.FILL_PARENT,
+		        DISPLAY_WIDTH / 2,
 		        ViewGroup.LayoutParams.FILL_PARENT,
 		        1.0f);
 		
