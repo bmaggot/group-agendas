@@ -151,4 +151,10 @@ public class AgendaView extends AbstractCalendarView {
 		
 	}
 
+	@Override
+	protected void updateEventLists() {
+		// TODO Auto-generated method stub
+		
+	}
+
 }
