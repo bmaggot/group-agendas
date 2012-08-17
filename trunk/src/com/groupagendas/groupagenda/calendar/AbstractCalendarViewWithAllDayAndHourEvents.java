@@ -46,7 +46,7 @@ public abstract class AbstractCalendarViewWithAllDayAndHourEvents extends Abstra
 	protected boolean am_pmEnabled;
 	protected String[] HourNames;
 	
-	protected abstract void updateEventLists();
+	
 	
 	protected void setAllDayEventsPanelHeight(int allDayEventsCount) {
 		LinearLayout allDayEventsContainer = (LinearLayout) findViewById(R.id.allday_container);		
