@@ -143,5 +143,17 @@ public class Utils {
 		while (date.get(Calendar.DAY_OF_WEEK) != firstDayofWeek)
 			date.add(Calendar.DATE, -1);
 	}
+	/**
+	 * @author justinas.marcinka@gmail.com
+	 * @param date that needs to be checked
+	 * @return true if selectedDate is today
+	 */
+	public static boolean isToday(Calendar selectedDate) {
+		Calendar tmp = Calendar.getInstance();
+		return tmp.get(Calendar.ERA) == selectedDate.get(Calendar.ERA) &&
+                tmp.get(Calendar.YEAR) == selectedDate.get(Calendar.YEAR) &&
+                tmp.get(Calendar.DAY_OF_YEAR) == selectedDate.get(Calendar.DAY_OF_YEAR);
+	
+	}
 
 }

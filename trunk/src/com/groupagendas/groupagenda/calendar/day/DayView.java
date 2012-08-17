@@ -25,6 +25,7 @@ import com.groupagendas.groupagenda.calendar.AbstractCalendarViewWithAllDayAndHo
 import com.groupagendas.groupagenda.calendar.adapters.AllDayEventsAdapter;
 import com.groupagendas.groupagenda.data.DataManagement;
 import com.groupagendas.groupagenda.events.Event;
+import com.groupagendas.groupagenda.utils.Utils;
 
 
 public class DayView extends AbstractCalendarViewWithAllDayAndHourEvents {
@@ -127,7 +128,7 @@ public class DayView extends AbstractCalendarViewWithAllDayAndHourEvents {
 	private void scrollHourPanel() {
 		final float hour;
 		
-		if (selectedDay.isToday()){
+		if (Utils.isToday(selectedDay.getSelectedDate())){
 			Calendar tmp = Calendar.getInstance();
 			hour = tmp.get(Calendar.HOUR_OF_DAY) + tmp.get(Calendar.MINUTE) / 60.0f;
 		}else{
