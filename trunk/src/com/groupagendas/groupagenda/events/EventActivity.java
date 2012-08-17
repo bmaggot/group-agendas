@@ -142,24 +142,26 @@ public class EventActivity extends Activity {
 		int invitedListSize = 0;
 		Button inviteButton = (Button) findViewById(R.id.invite_button);
 		final Context mContext = dm.getmContext();
+
 		event_id = intent.getIntExtra("event_id", 0);
-		if (event_id > 0) {
-			new GetEventTask().execute(event_id);
-		}
-		if (event == null) {
+
+		if ((event == null) && (event_id > 0)) {
 			event = dm.getEventFromDb(event_id);
 		}
+
 		if (event.invited != null && !event.invited.isEmpty()) {
 			invitedListSize = event.invited.size();
 		}
+
 		if (invitedListSize == 0) {
 			inviteButton.setBackgroundResource(R.drawable.event_invite_people_button_standalone);
-		} else if(invitesColumn == null){
+		} else if (invitesColumn == null) {
 			invitesColumn = (LinearLayout) findViewById(R.id.invitesLine);
 			invitesColumn.setVisibility(View.VISIBLE);
 			inviteButton.setBackgroundResource(R.drawable.event_invite_people_button_notalone);
 			LinearLayout invitedPersonList = (LinearLayout) findViewById(R.id.invited_person_list);
 			LayoutInflater inflater = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+
 			for (int i = 0, l = event.invited.size(); i < l; i++) {
 				final Invited invited = event.invited.get(i);
 
@@ -175,12 +177,13 @@ public class EventActivity extends Activity {
 
 				invitesColumn.addView(getInvitedView(invited, inflater, view, mContext));
 			}
-		} else if(invitesColumn != null){
+		} else if (invitesColumn != null) {
 			LayoutInflater inflater = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 			final View view = inflater.inflate(R.layout.event_invited_person_entry, invitedPersonList, false);
 			Invited invited = new Invited();
-			if(Data.selectedContacts != null && Data.selectedContacts.isEmpty()){
-				for(Contact contact : Data.selectedContacts){
+
+			if (Data.selectedContacts != null && Data.selectedContacts.isEmpty()) {
+				for (Contact contact : Data.selectedContacts) {
 					invited.name = contact.name;
 					invited.email = contact.email;
 					invited.status_id = 4;
@@ -188,10 +191,90 @@ public class EventActivity extends Activity {
 				}
 			}
 		}
+
+		final View holder = findViewById(R.id.response_to_invitation);
+		if (holder != null) {
+			final TextView myButton_status = (TextView) findViewById(R.id.status);
+			final TextView myButton_yes = (TextView) findViewById(R.id.button_yes);
+			final TextView myButton_maybe = (TextView) findViewById(R.id.button_maybe);
+			final TextView myButton_no = (TextView) findViewById(R.id.button_no);
+
+			myButton_yes.setOnClickListener(new OnClickListener() {
+				@Override
+				public void onClick(View arg0) {
+					boolean success = dm.changeEventStatus(event.event_id, "1");
+					View view = findViewById(R.id.invited_person_list);
+					TextView myStatus = (TextView) view.findViewWithTag("my_event_status");
+
+					if (myStatus == null)
+						myStatus = (TextView) findViewById(99999).findViewById(R.id.invited_status);
+					
+					myButton_yes.setVisibility(View.INVISIBLE);
+					myButton_maybe.setVisibility(View.VISIBLE);
+					myButton_no.setVisibility(View.VISIBLE);
+					myButton_status.setText(mContext.getString(R.string.status_1));
+					editDb(event.event_id, 1, success);
+					event.status = 1;
+
+					if (myStatus != null)
+						myStatus.setText(R.string.status_1);
+				}
+			});
+
+			myButton_maybe.setOnClickListener(new OnClickListener() {
+				@Override
+				public void onClick(View arg0) {
+					boolean success = dm.changeEventStatus(event.event_id, "2");
+					View view = findViewById(R.id.invited_person_list);
+					TextView myStatus = (TextView) view.findViewWithTag("my_event_status");
+
+					if (myStatus == null)
+						myStatus = (TextView) findViewById(99999).findViewById(R.id.invited_status);
+
+					myButton_yes.setVisibility(View.VISIBLE);
+					myButton_maybe.setVisibility(View.INVISIBLE);
+					myButton_no.setVisibility(View.VISIBLE);
+					myButton_status.setText(mContext.getString(R.string.status_2));
+					editDb(event.event_id, 2, success);
+					event.status = 2;
+
+					if (myStatus != null)
+						myStatus.setText(R.string.status_2);
+				}
+			});
+
+			myButton_no.setOnClickListener(new OnClickListener() {
+				@Override
+				public void onClick(View arg0) {
+					boolean success = dm.changeEventStatus(event.event_id, "0");
+					View view = findViewById(R.id.invited_person_list);
+					TextView myStatus = (TextView) view.findViewWithTag("my_event_status");
+
+					if (myStatus == null)
+						myStatus = (TextView) findViewById(99999).findViewById(R.id.invited_status);
+
+					myButton_yes.setVisibility(View.VISIBLE);
+					myButton_maybe.setVisibility(View.VISIBLE);
+					myButton_no.setVisibility(View.INVISIBLE);
+					myButton_status.setText(mContext.getString(R.string.status_0));
+					editDb(event.event_id, 0, success);
+					event.status = 0;
+
+					if (myStatus != null)
+						myStatus.setText(R.string.status_0);
+				}
+			});
+		}
+
+		
+		if (event_id > 0) {
+			new GetEventTask().execute(event_id);
+		}
+
 		super.onResume();
 	}
-	
-	public View getInvitedView(Invited invited, LayoutInflater inflater, View view, Context mContext){
+
+	public View getInvitedView(Invited invited, LayoutInflater inflater, View view, Context mContext) {
 		final TextView nameView = (TextView) view.findViewById(R.id.invited_fullname);
 		nameView.setText(invited.name);
 
@@ -214,10 +297,12 @@ public class EventActivity extends Activity {
 			statusView.setText(mContext.getString(R.string.new_invite));
 			break;
 		}
-		
-		if(invited.me){
+
+		if (invited.me) {
 			view.setTag("my_event_status");
+			view.setId(99999);
 		}
+
 		return view;
 	}
 
@@ -550,13 +635,13 @@ public class EventActivity extends Activity {
 			// invitedPersonList = (LinearLayout)
 			// findViewById(R.id.invited_person_list);
 			//
-			// final ViewHolder holder = new ViewHolder();
-			// holder.status = (TextView) findViewById(R.id.status);
-			// holder.button_yes = (TextView) findViewById(R.id.button_yes);
-			// holder.button_maybe = (TextView) findViewById(R.id.button_maybe);
-			// holder.button_no = (TextView) findViewById(R.id.button_no);
-			//
-			// responsePanel.setVisibility(View.VISIBLE);
+			final ViewHolder holder = new ViewHolder();
+			holder.status = (TextView) findViewById(R.id.status);
+			holder.button_yes = (TextView) findViewById(R.id.button_yes);
+			holder.button_maybe = (TextView) findViewById(R.id.button_maybe);
+			holder.button_no = (TextView) findViewById(R.id.button_no);
+
+			responsePanel.setVisibility(View.VISIBLE);
 			//
 			// LayoutInflater inflater = (LayoutInflater)
 			// getSystemService(Context.LAYOUT_INFLATER_SERVICE);
@@ -604,40 +689,40 @@ public class EventActivity extends Activity {
 			//
 			// invitesColumn.addView(view);
 			// }
-			//
-			// switch (event.status) {
-			// case 0:
-			// holder.status.setText(mContext.getString(R.string.status_0));
-			// holder.button_yes.setVisibility(View.VISIBLE);
-			// holder.button_maybe.setVisibility(View.VISIBLE);
-			// holder.button_no.setVisibility(View.INVISIBLE);
-			// break;
-			// case 1:
-			// holder.status.setText(mContext.getString(R.string.status_1));
-			// holder.button_yes.setVisibility(View.INVISIBLE);
-			// holder.button_maybe.setVisibility(View.VISIBLE);
-			// holder.button_no.setVisibility(View.VISIBLE);
-			// break;
-			// case 2:
-			// holder.status.setText(mContext.getString(R.string.status_2));
-			// holder.button_yes.setVisibility(View.VISIBLE);
-			// holder.button_maybe.setVisibility(View.INVISIBLE);
-			// holder.button_no.setVisibility(View.VISIBLE);
-			// break;
-			// case 4:
-			// holder.status.setText(mContext.getString(R.string.new_invite));
-			// holder.button_yes.setVisibility(View.VISIBLE);
-			// holder.button_maybe.setVisibility(View.VISIBLE);
-			// holder.button_no.setVisibility(View.VISIBLE);
-			// break;
-			// }
-			//
+
+			switch (event.status) {
+			case 0:
+				holder.status.setText(mContext.getString(R.string.status_0));
+				holder.button_yes.setVisibility(View.VISIBLE);
+				holder.button_maybe.setVisibility(View.VISIBLE);
+				holder.button_no.setVisibility(View.INVISIBLE);
+				break;
+			case 1:
+				holder.status.setText(mContext.getString(R.string.status_1));
+				holder.button_yes.setVisibility(View.INVISIBLE);
+				holder.button_maybe.setVisibility(View.VISIBLE);
+				holder.button_no.setVisibility(View.VISIBLE);
+				break;
+			case 2:
+				holder.status.setText(mContext.getString(R.string.status_2));
+				holder.button_yes.setVisibility(View.VISIBLE);
+				holder.button_maybe.setVisibility(View.INVISIBLE);
+				holder.button_no.setVisibility(View.VISIBLE);
+				break;
+			case 4:
+				holder.status.setText(mContext.getString(R.string.new_invite));
+				holder.button_yes.setVisibility(View.VISIBLE);
+				holder.button_maybe.setVisibility(View.VISIBLE);
+				holder.button_no.setVisibility(View.VISIBLE);
+				break;
+			}
+
 			// holder.button_yes.setOnClickListener(new OnClickListener() {
 			// @Override
 			// public void onClick(View arg0) {
 			// boolean success = dm.changeEventStatus(event.event_id, "1");
-			// LinearLayout statusLayout = (LinearLayout)
-			// findViewById(R.id.invited_person_list);
+			// TextView myStatus = (TextView)
+			// findViewById(R.id.invited_person_list).findViewWithTag("my_event_status");
 			//
 			// holder.button_yes.setVisibility(View.INVISIBLE);
 			// holder.button_maybe.setVisibility(View.VISIBLE);
@@ -645,17 +730,9 @@ public class EventActivity extends Activity {
 			// holder.status.setText(mContext.getString(R.string.status_1));
 			// editDb(event.event_id, 1, success);
 			// event.status = 1;
-			// for (int iterator = 0, childAmount =
-			// statusLayout.getChildCount(); iterator < childAmount;
-			// childAmount++) {
-			// TextView fullnameView = (TextView)
-			// statusLayout.getChildAt(iterator).findViewById(R.id.invited_fullname);
-			// if (fullnameView.getText().equals("You")) {
-			// TextView statusView = (TextView)
-			// statusLayout.getChildAt(iterator).findViewById(R.id.invited_status);
-			// statusView.setText(mContext.getString(R.string.status_1));
-			// }
-			// }
+			//
+			// if (myStatus != null)
+			// myStatus.setText(R.string.status_1);
 			// }
 			// });
 			//
@@ -663,8 +740,8 @@ public class EventActivity extends Activity {
 			// @Override
 			// public void onClick(View arg0) {
 			// boolean success = dm.changeEventStatus(event.event_id, "2");
-			// LinearLayout statusLayout = (LinearLayout)
-			// findViewById(R.id.invited_person_list);
+			// TextView myStatus = (TextView)
+			// findViewById(R.id.invited_person_list).findViewWithTag("my_event_status");
 			//
 			// holder.button_yes.setVisibility(View.VISIBLE);
 			// holder.button_maybe.setVisibility(View.INVISIBLE);
@@ -672,17 +749,9 @@ public class EventActivity extends Activity {
 			// holder.status.setText(mContext.getString(R.string.status_2));
 			// editDb(event.event_id, 2, success);
 			// event.status = 2;
-			// for (int iterator = 0, childAmount =
-			// statusLayout.getChildCount(); iterator < childAmount;
-			// childAmount++) {
-			// TextView fullnameView = (TextView)
-			// statusLayout.getChildAt(iterator).findViewById(R.id.invited_fullname);
-			// if (fullnameView.getText().equals("You")) {
-			// TextView statusView = (TextView)
-			// statusLayout.getChildAt(iterator).findViewById(R.id.invited_status);
-			// statusView.setText(mContext.getString(R.string.status_2));
-			// }
-			// }
+			//
+			// if (myStatus != null)
+			// myStatus.setText(R.string.status_2);
 			// }
 			// });
 			//
@@ -690,8 +759,10 @@ public class EventActivity extends Activity {
 			// @Override
 			// public void onClick(View arg0) {
 			// boolean success = dm.changeEventStatus(event.event_id, "0");
-			// LinearLayout statusLayout = (LinearLayout)
-			// findViewById(R.id.invited_person_list);
+			// View view = findViewById(R.id.invited_person_list);
+			//
+			// TextView myStatus = (TextView)
+			// findViewById(R.id.invited_person_list).findViewWithTag("my_event_status");
 			//
 			// holder.button_yes.setVisibility(View.VISIBLE);
 			// holder.button_maybe.setVisibility(View.VISIBLE);
@@ -699,17 +770,9 @@ public class EventActivity extends Activity {
 			// holder.status.setText(mContext.getString(R.string.status_0));
 			// editDb(event.event_id, 0, success);
 			// event.status = 0;
-			// for (int iterator = 0, childAmount =
-			// statusLayout.getChildCount(); iterator < childAmount;
-			// childAmount++) {
-			// TextView fullnameView = (TextView)
-			// statusLayout.getChildAt(iterator).findViewById(R.id.invited_fullname);
-			// if (fullnameView.getText().equals("You")) {
-			// TextView statusView = (TextView)
-			// statusLayout.getChildAt(iterator).findViewById(R.id.invited_status);
-			// statusView.setText(mContext.getString(R.string.status_0));
-			// }
-			// }
+			//
+			// if (myStatus != null)
+			// myStatus.setText(R.string.status_0);
 			// }
 			// });
 			// }
@@ -724,11 +787,11 @@ public class EventActivity extends Activity {
 			super.onPostExecute(result);
 		}
 
-		private void editDb(int event_id, int status, boolean success) {
-			Object[] array = { event_id, status, success, dm };
-			new EventStatusUpdater().execute(array);
-		}
+	}
 
+	private void editDb(int event_id, int status, boolean success) {
+		Object[] array = { event_id, status, success, dm };
+		new EventStatusUpdater().execute(array);
 	}
 
 	private TextWatcher filterTextWatcher = new TextWatcher() {
