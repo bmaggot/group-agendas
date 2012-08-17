@@ -1,9 +1,12 @@
 package com.groupagendas.groupagenda.utils;
 
+import java.util.concurrent.ExecutionException;
+
 import android.content.ContentValues;
 import android.os.AsyncTask;
 
 import com.groupagendas.groupagenda.data.DataManagement;
+import com.groupagendas.groupagenda.error.report.Reporter;
 import com.groupagendas.groupagenda.events.EventsProvider;
 
 public class EventStatusUpdater extends AsyncTask<Object, Void, Void>{
@@ -21,7 +24,14 @@ public class EventStatusUpdater extends AsyncTask<Object, Void, Void>{
 		}
 		String where = EventsProvider.EMetaData.EventsMetaData.E_ID+"="+event_id;
 		dm.getmContext().getContentResolver().update(EventsProvider.EMetaData.EventsMetaData.CONTENT_URI, values, where, null);
-		dm.updateEventByIdFromRemoteDb(event_id);
+		try {
+			dm.updateEventByIdFromRemoteDb(event_id);
+		} catch (ExecutionException e) {
+			Reporter.reportError(this.getClass().toString(), Thread.currentThread().getStackTrace()[2].getMethodName()
+					.toString(), e.getMessage());
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		}
 		return null;
 	}
 }

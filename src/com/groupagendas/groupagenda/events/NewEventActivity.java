@@ -3,6 +3,7 @@ package com.groupagendas.groupagenda.events;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.TimeZone;
+import java.util.concurrent.ExecutionException;
 
 import org.w3c.dom.UserDataHandler;
 
@@ -31,6 +32,7 @@ import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.Spinner;
+import android.widget.Toast;
 
 import com.groupagendas.groupagenda.NavbarActivity;
 import com.groupagendas.groupagenda.R;
@@ -359,7 +361,15 @@ public class NewEventActivity extends Activity {
 	
 	
 	public void saveEvent(View v) {
-		new NewEventTask().execute();
+		Toast.makeText(this, R.string.saving_new_event, Toast.LENGTH_LONG).show();
+		try {
+			new NewEventTask().execute().get();
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		} catch (ExecutionException e) {
+			e.printStackTrace();
+		}
+		Toast.makeText(this, R.string.new_event_saved, Toast.LENGTH_LONG).show();
 	}
 
 	class NewEventTask extends AsyncTask<Event, Void, Boolean> {
@@ -489,7 +499,7 @@ public class NewEventActivity extends Activity {
 
 			if (check) {
 				success = dm.createEvent(event);
-
+				
 				if (!success) {
 					cv.put(EventsProvider.EMetaData.EventsMetaData.NEED_UPDATE, 2);
 				}
@@ -511,6 +521,7 @@ public class NewEventActivity extends Activity {
 				saveButton.setText(getString(R.string.save));
 			}
 			super.onPostExecute(result);
+			onBackPressed();
 		}
 
 	}
