@@ -15,7 +15,6 @@ import com.groupagendas.groupagenda.utils.Utils;
 public class HourEventsPanelMotionListener extends SwipeOnGestureListener {
 
 	private Calendar selectedDate;
-	private boolean listenToSwipe = true;	//indicates if this listener should catch swipe motion. Not needed in week view 
 
 	public HourEventsPanelMotionListener(AbstractCalendarView parent, Calendar selectedDate) {
 		super(parent);
@@ -46,14 +45,9 @@ public class HourEventsPanelMotionListener extends SwipeOnGestureListener {
 		return true;
 	}
 
-	public void setListenToSwipe(boolean listenToSwipe) {
-		this.listenToSwipe = listenToSwipe;
-	}
-
 	public boolean onFling(MotionEvent e1, MotionEvent e2, float velocityX, float velocityY) {
-		if (listenToSwipe)
 		return super.onFling(e1, e2, velocityX, velocityY);
-		return false;
+
 	}
 
 }
