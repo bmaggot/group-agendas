@@ -43,6 +43,7 @@ public abstract class AbstractCalendarView extends LinearLayout {
 	public abstract void goPrev();					//switch to prev View	
 	public abstract void goNext();				//switch to next View	
 	public abstract void setupView();			//setup specific part of view
+	protected abstract void updateEventLists();
 	
 	
 	/**
