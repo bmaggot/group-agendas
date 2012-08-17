@@ -404,13 +404,23 @@
                 android:layout_margin="10dp"
                 android:orientation="vertical"
                 android:visibility="gone" >
-                
-                <include layout="@layout/response_to_invite_panel"
-                    android:layout_marginBottom="10dp"
-                    android:id="@+id/response_to_invitation" />
 
-                <include layout="@layout/event_invitation_section"
-					android:id="@+id/invited_person_list" />
+                <include
+                    android:id="@+id/response_to_invitation"
+                    android:layout_marginBottom="10dp"
+                    layout="@layout/response_to_invite_panel" />
+
+                <Button
+                    android:id="@+id/invite_button"
+                    android:layout_width="fill_parent"
+                    android:layout_height="40dp"
+                    android:text="@string/invite_people"
+                    android:textSize="16dp"
+                    android:textStyle="bold" />
+
+                <include
+                    android:id="@+id/invited_person_list"
+                    layout="@layout/event_invitation_section" />
             </LinearLayout>
 
             <LinearLayout
