@@ -31,11 +31,6 @@ import com.groupagendas.groupagenda.utils.Utils;
 public class DayView extends AbstractCalendarViewWithAllDayAndHourEvents {
 	
 	DayInstance selectedDay;
-
-
-	String[] WeekDayNames;
-	String[] MonthNames;
-	String[] HourNames;
 	
 
 	private HourEventsPanel hourEventsPanel;
