@@ -15,6 +15,7 @@ import android.widget.TextView;
 import com.groupagendas.groupagenda.NavbarActivity;
 import com.groupagendas.groupagenda.R;
 import com.groupagendas.groupagenda.calendar.AbstractCalendarView;
+import com.groupagendas.groupagenda.data.Data;
 import com.groupagendas.groupagenda.utils.Utils;
 
 public class AgendaView extends AbstractCalendarView {
@@ -24,7 +25,7 @@ public class AgendaView extends AbstractCalendarView {
 	public int TABLE_ROWS_COUNT = 3;
 	public int SHOWN_DAYS_COUNT = 7;
 	
-	ArrayList<LinearLayout> daysList = new ArrayList<LinearLayout>();
+	ArrayList<AgendaFrame> daysList = new ArrayList<AgendaFrame>();
 	
 	private TableLayout agendaTable;
 
@@ -55,6 +56,7 @@ public class AgendaView extends AbstractCalendarView {
 		shownDate.add(Calendar.DATE, -1 * SHOWN_DAYS_COUNT);
 		setTopPanel();
 		setDaysTitles();
+		updateEventLists();
 
 	}
 
@@ -63,6 +65,7 @@ public class AgendaView extends AbstractCalendarView {
 		shownDate.add(Calendar.DATE, SHOWN_DAYS_COUNT);
 		setTopPanel();
 		setDaysTitles();
+		updateEventLists();
 
 	}
 
@@ -95,14 +98,14 @@ public class AgendaView extends AbstractCalendarView {
 		agendaTable.addView(row, rowLp);
 		
 		setDaysTitles();
-		
+		updateEventLists();
 
 	}
 
 	private void setDaysTitles() {
 		int day = 0;
-		for (LinearLayout frame : daysList){
-			TextView dayTitle = (TextView) frame.findViewById(R.id.agenda_day_title);
+		for (AgendaFrame frame : daysList){
+			TextView dayTitle = (TextView) frame.getDayContainer().findViewById(R.id.agenda_day_title);
 			Calendar tmp = (Calendar) shownDate.clone();
 			tmp.add(Calendar.DATE, day);
 			day++;
@@ -135,11 +138,11 @@ public class AgendaView extends AbstractCalendarView {
 		
 		LinearLayout saturday = (LinearLayout) mInflater.inflate(R.layout.calendar_agenda_day_container, null);
 		weekEndFrame.addView(saturday, params);
-		daysList.add(saturday);
+		daysList.add(new AgendaFrame(saturday, getContext()));
 		
 		LinearLayout sunday = (LinearLayout) mInflater.inflate(R.layout.calendar_agenda_day_container, null);
 		weekEndFrame.addView(sunday, params);
-		daysList.add(sunday);
+		daysList.add(new AgendaFrame(sunday, getContext()));
 		
 		row.addView(weekEndFrame, cellLp);	
 	}
@@ -147,13 +150,18 @@ public class AgendaView extends AbstractCalendarView {
 	private void addWorkingDay(TableRow row, android.widget.TableRow.LayoutParams cellLp) {
 		LinearLayout workingDayFrame = (LinearLayout) mInflater.inflate(R.layout.calendar_agenda_day_container, null);
 		row.addView(workingDayFrame, cellLp);
-		daysList.add(workingDayFrame);
+		daysList.add(new AgendaFrame(workingDayFrame, getContext()));
 		
 	}
 
 	@Override
 	protected void updateEventLists() {
-		// TODO Auto-generated method stub
+		Calendar tmp = (Calendar) shownDate.clone();
+		for (AgendaFrame frame : daysList){	
+			frame.setEventList(Data.getEventByDate(tmp));
+			tmp.add(Calendar.DATE, 1);
+			frame.UpdateList();
+		}
 		
 	}
 
