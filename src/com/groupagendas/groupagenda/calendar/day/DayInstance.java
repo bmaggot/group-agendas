@@ -109,13 +109,6 @@ public class DayInstance  {
 		}
 
 
-		public boolean isToday() {
-			Calendar tmp = Calendar.getInstance();
-			return tmp.get(Calendar.ERA) == selectedDate.get(Calendar.ERA) &&
-	                tmp.get(Calendar.YEAR) == selectedDate.get(Calendar.YEAR) &&
-	                tmp.get(Calendar.DAY_OF_YEAR) == selectedDate.get(Calendar.DAY_OF_YEAR);
-		
-		}
 
 		
 		
