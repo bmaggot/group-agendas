@@ -30,6 +30,7 @@ public abstract class AbstractCalendarView extends LinearLayout {
 	TextView topPanelTitle;
 	private FrameLayout topPanelBottomLineFrame;
 	
+	protected final int DISPLAY_WIDTH = ((Activity)getContext()).getWindowManager().getDefaultDisplay().getWidth();
 	protected final float densityFactor = getResources().getDisplayMetrics().density;
 	protected LayoutInflater mInflater;
 	

@@ -34,7 +34,7 @@ public abstract class AbstractCalendarViewWithAllDayAndHourEvents extends Abstra
 		}
 	}
 
-	protected final int DISPLAY_WIDTH = ((Activity)getContext()).getWindowManager().getDefaultDisplay().getWidth();
+	
 	protected final int EVENTS_COLUMN_WIDTH =  Math.round(0.9f * DISPLAY_WIDTH - 1);
 	protected final int HOUR_COLUMN_WIDTH =  DISPLAY_WIDTH - EVENTS_COLUMN_WIDTH;
 	
