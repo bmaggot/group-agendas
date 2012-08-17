@@ -2,6 +2,7 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
+    android:gravity="center_vertical"
     android:background="@android:color/white" >
 
     <RelativeLayout
@@ -407,7 +408,6 @@
 
                 <include
                     android:id="@+id/response_to_invitation"
-                    android:layout_marginBottom="10dp"
                     layout="@layout/response_to_invite_panel" />
 
                 <Button
