@@ -81,7 +81,7 @@ public class MonthView extends View {
     private void initCalendarView() {
         mCells = new MonthCell[6][isShowWeekNumbers ? 8 : 7];
         mHelper = new MonthDisplayHelper(mRightNow.get(Calendar.YEAR), mRightNow.get(Calendar.MONTH), Calendar.MONDAY);
-        weekTitle = getResources().getStringArray(R.array.week_days_title);
+        weekTitle = getResources().getStringArray(R.array.week_days_short);
         weekTitlePaint = new Paint();
         weekTitlePaint.setColor(getResources().getColor(R.color.monthWeekTextColor));
         weekTitlePaint.setTextAlign(Paint.Align.CENTER);

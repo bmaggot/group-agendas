@@ -86,7 +86,7 @@ public class CalendarViewRewrite extends FrameLayout {
 	private void updateWeekTitles() {
 		int firstDayOfWeek = currentDate.getFirstDayOfWeek();
 
-		String[] labels = getContext().getResources().getStringArray(R.array.week_days_title);
+		String[] labels = getContext().getResources().getStringArray(R.array.week_days_short);
 		//array that holds week days label	
 		String[] mDayLabels = new String[LENGTH_OF_WEEK];
 		
