@@ -171,7 +171,7 @@ public class WeekView extends AbstractCalendarViewWithAllDayAndHourEvents {
 	}
 	private void addMotionListeners() {
 //	TODO
-		//Add swipe listener for hourEvent and allDayEvent panels
+		//Add swipe listener for hourEvent panel
 	
 	allDayEventsPanel.setOnTouchListener(createListener(swipeGestureDetector));
 	hourEventsPanel.setOnTouchListener(createListener(swipeGestureDetector));
