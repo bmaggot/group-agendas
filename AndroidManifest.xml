@@ -223,7 +223,7 @@
             android:theme="@android:style/Theme.NoTitleBar"
             android:windowSoftInputMode="stateVisible" />
         <activity
-            android:name="com.groupagendas.groupagenda.contacts.importer.ImportActivity"
+            android:name=".contacts.importer.ImportActivity"
             android:configChanges="keyboardHidden|orientation"
             android:theme="@android:style/Theme.NoTitleBar">
         </activity>
