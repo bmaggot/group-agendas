@@ -114,7 +114,11 @@ public class AgendaView extends AbstractCalendarView {
 			title += tmp.get(Calendar.DATE);
 			title += ", ";
 			title += tmp.get(Calendar.YEAR);
-			dayTitle.setText(title);			
+			
+			dayTitle.setText(title);
+			if (Utils.isToday(tmp)){
+				dayTitle.setBackgroundColor(getResources().getColor(R.color.darker_gray));
+			}
 		}
 		
 	}
