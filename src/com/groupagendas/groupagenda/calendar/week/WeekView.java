@@ -33,23 +33,10 @@ import com.groupagendas.groupagenda.events.Event;
 
 public class WeekView extends AbstractCalendarViewWithAllDayAndHourEvents {
 	
-	
 	private static final float DEFAULT_TIME_TO_SCROLL = 7.5f; //DEFAULT HOUR TO SCROLL. 7.5f = 7:30
 	public static final int hourLineHeightDP = 23;  //HEIGHT OF ONE HOUR LINE IN DIP
 
 	WeekInstance daysShown;
-	
-	
-	
-	boolean am_pmEnabled;
-//
-
-	
-
-	String[] WeekDayNames;
-	String[] MonthNames;
-	String[] HourNames;
-	
 	
 
 	private LinearLayout hourEventsPanel;
@@ -64,15 +51,9 @@ public class WeekView extends AbstractCalendarViewWithAllDayAndHourEvents {
 	public WeekView(Context context, AttributeSet attrs) {
 
 		super(context, attrs);
-		am_pmEnabled =  DataManagement.getInstance(getContext()).getAccount().setting_ampm != 0;
-		WeekDayNames = getResources().getStringArray(R.array.week_days_title);
+		WeekDayNames = getResources().getStringArray(R.array.week_days_short);
 		MonthNames = getResources().getStringArray(R.array.month_names);
-		if(am_pmEnabled){
-			HourNames = getResources().getStringArray(R.array.hour_names_am_pm);
-		}
-		else{
-			HourNames = getResources().getStringArray(R.array.hour_names);
-		}
+		
 		
 		this.daysShown = new WeekInstance(context, ((NavbarActivity)context).getSelectedDate());
 	}
@@ -198,9 +179,9 @@ public class WeekView extends AbstractCalendarViewWithAllDayAndHourEvents {
 		RelativeLayout child = (RelativeLayout) hourEventsPanel.getChildAt(i * 2);
 		Calendar date = (Calendar) daysShown.getShownDate().clone();
 		date.add(Calendar.DATE, i);
-		HourEventsPanelMotionListener listener = new HourEventsPanelMotionListener(this, date);
-		listener.setListenToSwipe(false); //we do not need to listen to swipe inside day cells
-		child.setOnTouchListener(createListener(new GestureDetector(listener)));
+//		HourEventsPanelMotionListener listener = new HourEventsPanelMotionListener(this, date);
+//		listener.setListenToSwipe(false); //we do not need to listen to swipe inside day cells
+		child.setOnTouchListener(createListener(new GestureDetector(new WeekDayTouchListener(this, date))));
 	}
 	
 		
