@@ -38,6 +38,7 @@ import az.mecid.android.QuickAction;
 import com.bog.calendar.app.model.CalendarMonth;
 import com.bog.calendar.app.model.CalendarYear;
 import com.groupagendas.groupagenda.account.AccountProvider;
+import com.groupagendas.groupagenda.calendar.agenda.AgendaView;
 import com.groupagendas.groupagenda.calendar.day.DayView;
 import com.groupagendas.groupagenda.calendar.week.WeekView;
 import com.groupagendas.groupagenda.contacts.ContactsActivity;
@@ -311,6 +312,7 @@ public class NavbarActivity extends Activity {
 			@Override
 			public void onClick(View v) {
 				qa.dismiss();
+				viewState = ViewState.AGENDA;
 				showAgendaView();
 			}
 		});
@@ -501,7 +503,10 @@ public class NavbarActivity extends Activity {
 	}
 
 	private void showAgendaView() {
-		Toast.makeText(NavbarActivity.this, getString(R.string.agenda), Toast.LENGTH_SHORT).show();
+		calendarContainer.removeAllViews();
+		mInflater.inflate(R.layout.calendar_agenda, calendarContainer);
+		AgendaView view = (AgendaView) calendarContainer.getChildAt(0);
+		view.init();
 
 	}
 
