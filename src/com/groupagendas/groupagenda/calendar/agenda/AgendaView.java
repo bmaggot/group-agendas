@@ -118,6 +118,8 @@ public class AgendaView extends AbstractCalendarView {
 			dayTitle.setText(title);
 			if (Utils.isToday(tmp)){
 				dayTitle.setBackgroundColor(getResources().getColor(R.color.darker_gray));
+			} else{
+				dayTitle.setBackgroundColor(getResources().getColor(R.color.lighter_gray));
 			}
 		}
 		
