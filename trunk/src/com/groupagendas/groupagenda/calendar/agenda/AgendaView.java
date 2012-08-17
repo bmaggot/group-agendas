@@ -127,11 +127,11 @@ public class AgendaView extends AbstractCalendarView {
 		LinearLayout weekEndFrame = new LinearLayout(getContext());
 		weekEndFrame.setOrientation(VERTICAL);
 		
-		LinearLayout saturday = (LinearLayout) mInflater.inflate(R.layout.calendar_agenda_nd_container, null);
+		LinearLayout saturday = (LinearLayout) mInflater.inflate(R.layout.calendar_agenda_day_container, null);
 		weekEndFrame.addView(saturday, params);
 		daysList.add(saturday);
 		
-		LinearLayout sunday = (LinearLayout) mInflater.inflate(R.layout.calendar_agenda_nd_container, null);
+		LinearLayout sunday = (LinearLayout) mInflater.inflate(R.layout.calendar_agenda_day_container, null);
 		weekEndFrame.addView(sunday, params);
 		daysList.add(sunday);
 		
@@ -139,7 +139,7 @@ public class AgendaView extends AbstractCalendarView {
 	}
 
 	private void addWorkingDay(TableRow row, android.widget.TableRow.LayoutParams cellLp) {
-		LinearLayout workingDayFrame = (LinearLayout) mInflater.inflate(R.layout.calendar_agenda_wd_container, null);
+		LinearLayout workingDayFrame = (LinearLayout) mInflater.inflate(R.layout.calendar_agenda_day_container, null);
 		row.addView(workingDayFrame, cellLp);
 		daysList.add(workingDayFrame);
 		
