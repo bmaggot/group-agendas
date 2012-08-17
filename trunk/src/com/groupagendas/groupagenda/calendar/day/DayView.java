@@ -54,12 +54,7 @@ public class DayView extends AbstractCalendarViewWithAllDayAndHourEvents {
 		this.selectedDay = new DayInstance(context, ((NavbarActivity)context).getSelectedDate());	
 		WeekDayNames = getResources().getStringArray(R.array.week_days_names);
 		MonthNames = getResources().getStringArray(R.array.month_names);
-		if(am_pmEnabled){
-			HourNames = getResources().getStringArray(R.array.hour_names_am_pm);
-		}
-		else{
-			HourNames = getResources().getStringArray(R.array.hour_names);
-		}
+		
 		allDayEventAdapter = new AllDayEventsAdapter(getContext(), new ArrayList<Event>());
 
 	}

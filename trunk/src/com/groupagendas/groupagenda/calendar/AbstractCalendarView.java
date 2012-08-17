@@ -33,12 +33,14 @@ public abstract class AbstractCalendarView extends LinearLayout {
 	protected final float densityFactor = getResources().getDisplayMetrics().density;
 	protected LayoutInflater mInflater;
 	
+	protected String[] WeekDayNames;
+	protected String[] MonthNames;
+	
+	
 	protected abstract void setTopPanel(); 	//Sets up top panel title text in every view differently
 
-	public abstract void goPrev();					//switch to prev View
-	
-	public abstract void goNext();				//switch to next View
-	
+	public abstract void goPrev();					//switch to prev View	
+	public abstract void goNext();				//switch to next View	
 	public abstract void setupView();			//setup specific part of view
 	
 	
