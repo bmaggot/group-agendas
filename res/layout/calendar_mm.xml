@@ -1,0 +1,22 @@
+<com.groupagendas.groupagenda.calendar.minimonth.MiniMonthView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:orientation="vertical" >
+
+<!--     TOP NAVBAR BEGIN -->
+
+    <include
+        android:id="@+id/calendar_navbar"
+        android:layout_gravity="center_horizontal"
+        layout="@layout/calendar_top_bar" />
+<!--     TOP NAVBAR END -->
+
+<TableLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/agenda_table"
+	android:layout_width="fill_parent"
+	android:layout_height="fill_parent"
+	android:background="@color/white"
+	android:orientation="vertical" >
+</TableLayout>
+
+</com.groupagendas.groupagenda.calendar.minimonth.MiniMonthView>
