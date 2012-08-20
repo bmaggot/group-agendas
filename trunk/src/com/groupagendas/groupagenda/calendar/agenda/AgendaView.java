@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.Calendar;
 
 import android.content.Context;
-import android.graphics.Color;
 import android.util.AttributeSet;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
@@ -20,10 +19,11 @@ import com.groupagendas.groupagenda.utils.Utils;
 
 public class AgendaView extends AbstractCalendarView {
 	
+	private static final int FRAMES_PER_ROW = 2;
 	private Calendar selectedDay;
 	private Calendar shownDate;
-	public int TABLE_ROWS_COUNT = 3;
-	public int SHOWN_DAYS_COUNT = 7;
+	private static final int TABLE_ROWS_COUNT = 3;
+	private static final int SHOWN_DAYS_COUNT = 7;
 	
 	ArrayList<AgendaFrame> daysList = new ArrayList<AgendaFrame>();
 	
@@ -72,14 +72,15 @@ public class AgendaView extends AbstractCalendarView {
 	@Override
 	public void setupView() {
 		agendaTable = (TableLayout) findViewById(R.id.agenda_table);
+		agendaTable.setOnTouchListener(createListener(swipeGestureDetector));
 		TableLayout.LayoutParams rowLp = new TableLayout.LayoutParams(
 		        ViewGroup.LayoutParams.FILL_PARENT,
 		        ViewGroup.LayoutParams.FILL_PARENT,
 		        1.0f);
 		
 		TableRow.LayoutParams cellLp = new TableRow.LayoutParams(
-		        DISPLAY_WIDTH / 2,
-		        ViewGroup.LayoutParams.FILL_PARENT,
+		        VIEW_WIDTH / FRAMES_PER_ROW,
+		        VIEW_HEIGHT/TABLE_ROWS_COUNT,
 		        1.0f);
 		
 
@@ -164,5 +165,6 @@ public class AgendaView extends AbstractCalendarView {
 		}
 		
 	}
+	
 
 }
