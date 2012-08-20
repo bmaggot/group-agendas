@@ -44,16 +44,16 @@ public class DayView extends AbstractCalendarViewWithAllDayAndHourEvents {
 	}
 
 	public DayView(Context context, AttributeSet attrs) {
-
 		super(context, attrs);
-		showHourEventsIcon = true;
-		this.selectedDay = new DayInstance(context, ((NavbarActivity)context).getSelectedDate());	
+		showHourEventsIcon = true;	
 		WeekDayNames = getResources().getStringArray(R.array.week_days_names);
 		MonthNames = getResources().getStringArray(R.array.month_names);
 		
 		allDayEventAdapter = new AllDayEventsAdapter(getContext(), new ArrayList<Event>());
 
 	}
+	
+
 	
 	@Override
 	protected void setTopPanel() {
@@ -191,6 +191,17 @@ public class DayView extends AbstractCalendarViewWithAllDayAndHourEvents {
 		allDayEventAdapter.setList(events);
 		allDayEventAdapter.notifyDataSetChanged();
 		drawHourEvents(); // Drawing hour-long events
+	}
+
+	@Override
+	public Calendar getDateToResume() {
+		return selectedDay.getSelectedDate();
+	}
+
+	@Override
+	protected void setupSelectedDate(Calendar initializationDate) {
+		this.selectedDay = new DayInstance(getContext(), initializationDate);
+		
 	}
 
 	

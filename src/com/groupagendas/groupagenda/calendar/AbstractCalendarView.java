@@ -3,6 +3,8 @@ package com.groupagendas.groupagenda.calendar;
  * @author justinas.marcinka@gmail.com
  */
 
+import java.util.Calendar;
+
 import com.groupagendas.groupagenda.R;
 
 import android.app.Activity;
@@ -23,7 +25,11 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 public abstract class AbstractCalendarView extends LinearLayout {
+	
 	protected GestureDetector swipeGestureDetector;
+	
+	protected Calendar selectedDate;
+	
 	ImageButton prevButton;
 	ImageButton nextButton;
 	Rect prevButtonBounds;
@@ -51,6 +57,8 @@ public abstract class AbstractCalendarView extends LinearLayout {
 	public abstract void goNext();				//switch to next View	
 	public abstract void setupView();			//setup specific part of view
 	protected abstract void updateEventLists();
+	protected abstract void setupSelectedDate(Calendar initializationDate); //method to set up date that will be used for calendar
+	public abstract Calendar getDateToResume(); //returns date that should be saved in Activity instance state
 	
 	
 	/**
@@ -85,7 +93,8 @@ public abstract class AbstractCalendarView extends LinearLayout {
 		return topPanelBottomLineFrame;
 	}
 
-	public void init(){
+	public void init(Calendar initializationDate){
+		setupSelectedDate(initializationDate);
 		setupTopPanel();
 		setUpSwipeGestureListener();
 		setupView();
