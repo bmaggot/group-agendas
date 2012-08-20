@@ -35,8 +35,8 @@ public abstract class AbstractCalendarViewWithAllDayAndHourEvents extends Abstra
 	}
 
 	
-	protected final int EVENTS_COLUMN_WIDTH =  Math.round(0.9f * DISPLAY_WIDTH - 1);
-	protected final int HOUR_COLUMN_WIDTH =  DISPLAY_WIDTH - EVENTS_COLUMN_WIDTH;
+	protected final int EVENTS_COLUMN_WIDTH =  Math.round(0.9f * VIEW_WIDTH - 1);
+	protected final int HOUR_COLUMN_WIDTH =  VIEW_WIDTH - EVENTS_COLUMN_WIDTH;
 	
 	public static final float DEFAULT_TIME_TO_SCROLL = 7.5f; //DEFAULT HOUR TO SCROLL. 7.5f = 7:30
 	public static final int hourLineHeightDP = 23;  //HEIGHT OF ONE HOUR LINE IN DIP for day and week view
