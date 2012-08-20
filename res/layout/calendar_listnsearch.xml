@@ -1,21 +1,23 @@
 <?xml version="1.0" encoding="utf-8"?>
 <com.groupagendas.groupagenda.calendar.listnsearch.ListnSearchView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:background="@drawable/search_field_background"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
     android:orientation="vertical" >
 
 	<EditText android:id="@+id/listnsearch_search"
-	    android:background="@drawable/search_field_background"
 	    android:layout_width="fill_parent"
 	    android:layout_height="wrap_content"
-	    android:paddingLeft="10dp"
-	    android:paddingRight="10dp"
-	    android:paddingTop="4dp"
-	    android:paddingBottom="4dp"
+	    android:layout_gravity="center"
+	    android:layout_marginLeft="10dp"
+	    android:layout_marginRight="10dp"
+	    android:layout_marginTop="5dp"
+	    android:layout_marginBottom="2dp"
 	    android:hint="@string/search"
 	    android:singleLine="true" />
 
     <FrameLayout android:id="@+id/listView"
+        android:background="@color/white"
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
         android:orientation="vertical" >
