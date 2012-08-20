@@ -404,38 +404,74 @@ public class NewEventActivity extends Activity {
 	
 	public void showAddressPanel(){
 		addressPanelVisible = true;
-		timezoneSpinner.setVisibility(View.VISIBLE);
-		countrySpinner.setVisibility(View.VISIBLE);
-		cityView.setVisibility(View.VISIBLE);
-		streetView.setVisibility(View.VISIBLE);
-		zipView.setVisibility(View.VISIBLE);
+		LinearLayout timezoneSpinnerBlock = (LinearLayout) findViewById(R.id.timezoneSpinnerBlock);
+		timezoneSpinnerBlock.setVisibility(View.VISIBLE);
+		
+		LinearLayout countrySpinnerBlock = (LinearLayout) findViewById(R.id.countrySpinnerBlock);
+		countrySpinnerBlock.setVisibility(View.VISIBLE);
+		
+		LinearLayout cityViewBlock = (LinearLayout) findViewById(R.id.cityViewBlock);
+		cityViewBlock.setVisibility(View.VISIBLE);
+		
+		LinearLayout streetViewBlock = (LinearLayout) findViewById(R.id.streetViewBlock);
+		streetViewBlock.setVisibility(View.VISIBLE);
+		
+		LinearLayout zipViewBlock = (LinearLayout) findViewById(R.id.zipViewBlock);
+		zipViewBlock.setVisibility(View.VISIBLE);
 	}
 	
 	public void hideAddressPanel(){
 		addressPanelVisible = false;
-		timezoneSpinner.setVisibility(View.GONE);
-		countrySpinner.setVisibility(View.GONE);
-		cityView.setVisibility(View.GONE);
-		streetView.setVisibility(View.GONE);
-		zipView.setVisibility(View.GONE);
+		LinearLayout timezoneSpinnerBlock = (LinearLayout) findViewById(R.id.timezoneSpinnerBlock);
+		timezoneSpinnerBlock.setVisibility(View.GONE);
+		
+		LinearLayout countrySpinnerBlock = (LinearLayout) findViewById(R.id.countrySpinnerBlock);
+		countrySpinnerBlock.setVisibility(View.GONE);
+		
+		LinearLayout cityViewBlock = (LinearLayout) findViewById(R.id.cityViewBlock);
+		cityViewBlock.setVisibility(View.GONE);
+		
+		LinearLayout streetViewBlock = (LinearLayout) findViewById(R.id.streetViewBlock);
+		streetViewBlock.setVisibility(View.GONE);
+		
+		LinearLayout zipViewBlock = (LinearLayout) findViewById(R.id.zipViewBlock);
+		zipViewBlock.setVisibility(View.GONE);
 	}
 	
 	public void showDetailsPanel(){
 		detailsPanelVisible = true;
-		locationView.setVisibility(View.VISIBLE);
-		gobyView.setVisibility(View.VISIBLE);
-		takewithyouView.setVisibility(View.VISIBLE);
-		costView.setVisibility(View.VISIBLE);
-		accomodationView.setVisibility(View.VISIBLE);
+		LinearLayout locationViewBlock = (LinearLayout) findViewById(R.id.locationViewBlock);
+		locationViewBlock.setVisibility(View.VISIBLE);
+		
+		LinearLayout gobyViewBlock = (LinearLayout) findViewById(R.id.gobyViewBlock);
+		gobyViewBlock.setVisibility(View.VISIBLE);
+		
+		LinearLayout takewithyouViewBlock = (LinearLayout) findViewById(R.id.takewithyouViewBlock);
+		takewithyouViewBlock.setVisibility(View.VISIBLE);
+		
+		LinearLayout costViewBlock = (LinearLayout) findViewById(R.id.costViewBlock);
+		costViewBlock.setVisibility(View.VISIBLE);
+		
+		LinearLayout accomodationViewBlock = (LinearLayout) findViewById(R.id.accomodationViewBlock);
+		accomodationViewBlock.setVisibility(View.VISIBLE);
 	}
 	
 	public void hideDetailsPanel(){
 		detailsPanelVisible = false;
-		locationView.setVisibility(View.GONE);
-		gobyView.setVisibility(View.GONE);
-		takewithyouView.setVisibility(View.GONE);
-		costView.setVisibility(View.GONE);
-		accomodationView.setVisibility(View.GONE);
+		LinearLayout locationViewBlock = (LinearLayout) findViewById(R.id.locationViewBlock);
+		locationViewBlock.setVisibility(View.GONE);
+		
+		LinearLayout gobyViewBlock = (LinearLayout) findViewById(R.id.gobyViewBlock);
+		gobyViewBlock.setVisibility(View.GONE);
+		
+		LinearLayout takewithyouViewBlock = (LinearLayout) findViewById(R.id.takewithyouViewBlock);
+		takewithyouViewBlock.setVisibility(View.GONE);
+		
+		LinearLayout costViewBlock = (LinearLayout) findViewById(R.id.costViewBlock);
+		costViewBlock.setVisibility(View.GONE);
+		
+		LinearLayout accomodationViewBlock = (LinearLayout) findViewById(R.id.accomodationViewBlock);
+		accomodationViewBlock.setVisibility(View.GONE);
 	}
 
 	class NewEventTask extends AsyncTask<Event, Void, Boolean> {
