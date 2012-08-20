@@ -170,6 +170,10 @@ public class Utils {
 	public static Calendar createNewTodayCalendar() {
 		Calendar tmp = Calendar.getInstance();
 		tmp.setFirstDayOfWeek(FIRST_DAY_OF_WEEK);
+		tmp.set(Calendar.HOUR_OF_DAY, 0);
+		tmp.set(Calendar.MINUTE, 0);
+		tmp.set(Calendar.SECOND, 0);
+		tmp.set(Calendar.MILLISECOND, 0);
 		return tmp;
 	}
 	
