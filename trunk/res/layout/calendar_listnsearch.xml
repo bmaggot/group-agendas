@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.groupagendas.groupagenda.calendar.listnsearch.ListnSearchView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:orientation="vertical" >
+
+    <!-- TOP NAVBAR BEGIN -->
+
+    <include
+        android:id="@+id/calendar_navbar"
+        android:layout_gravity="center_horizontal"
+        layout="@layout/calendar_top_bar" />
+    <!-- TOP NAVBAR END -->
+
+    <FrameLayout android:id="@+id/listView"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:orientation="vertical" >
+
+        <com.groupagendas.groupagenda.calendar.listnsearch.SectionListView android:id="@+id/section_list_view"
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent" >
+        </com.groupagendas.groupagenda.calendar.listnsearch.SectionListView>
+    </FrameLayout>
+</com.groupagendas.groupagenda.calendar.listnsearch.ListnSearchView>
