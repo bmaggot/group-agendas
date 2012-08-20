@@ -40,6 +40,7 @@ import android.widget.Toast;
 
 import com.groupagendas.groupagenda.R;
 import com.groupagendas.groupagenda.contacts.Contact;
+import com.groupagendas.groupagenda.contacts.ContactsActivity;
 import com.groupagendas.groupagenda.data.Data;
 import com.groupagendas.groupagenda.data.DataManagement;
 import com.groupagendas.groupagenda.events.EventsAdapter.ViewHolder;
@@ -191,6 +192,15 @@ public class EventActivity extends Activity {
 				}
 			}
 		}
+		
+		inviteButton.setOnClickListener(new OnClickListener() {
+			
+			@Override
+			public void onClick(View v) {
+				Data.newEventPar = true;
+				startActivity(new Intent(EventActivity.this, ContactsActivity.class));
+			}
+		});
 
 		final View holder = findViewById(R.id.response_to_invitation);
 		if (holder != null) {
@@ -304,6 +314,18 @@ public class EventActivity extends Activity {
 		}
 
 		return view;
+	}
+	
+	public void editEventAfterConstactSelection(){
+		if(Data.selectedContacts != null && Data.selectedContacts.isEmpty()){
+			event.assigned_contacts = new int[Data.selectedContacts.size()];
+			int i = 0;
+			for (Contact contact : Data.selectedContacts) {
+				event.assigned_contacts[i] = contact.contact_id;
+				i++;
+			}
+		}
+		dm.editEvent(event);
 	}
 
 	class GetEventTask extends AsyncTask<Integer, Event, Event> {
