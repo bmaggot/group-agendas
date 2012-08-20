@@ -2,6 +2,8 @@ package com.groupagendas.groupagenda.calendar.minimonth;
 
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.List;
+import java.util.ListIterator;
 
 import android.content.Context;
 import android.util.AttributeSet;
@@ -15,6 +17,8 @@ import com.groupagendas.groupagenda.NavbarActivity;
 import com.groupagendas.groupagenda.R;
 import com.groupagendas.groupagenda.calendar.AbstractCalendarView;
 import com.groupagendas.groupagenda.calendar.agenda.AgendaFrame;
+import com.groupagendas.groupagenda.data.Data;
+import com.groupagendas.groupagenda.events.Event;
 import com.groupagendas.groupagenda.utils.Utils;
 
 public class MiniMonthView extends AbstractCalendarView {
@@ -25,9 +29,14 @@ public class MiniMonthView extends AbstractCalendarView {
 	
 	
 	
-	ArrayList<MiniMonthFrame> daysList = new ArrayList<MiniMonthFrame>();
+	ArrayList<AgendaFrame> daysList = new ArrayList<AgendaFrame>();
 	
 	private TableLayout miniMonthTable;
+
+
+
+
+	private Calendar firstShownDate;
 
 
 	public MiniMonthView(Context context) {
@@ -39,10 +48,12 @@ public class MiniMonthView extends AbstractCalendarView {
 		MonthNames = getResources().getStringArray(R.array.month_names);
 
 		this.selectedDay = ((NavbarActivity)context).getSelectedDate();
+		firstShownDate = updateShownDate();
 
 		
 	}
 
+	
 	@Override
 	protected void setTopPanel() {
 		String title = MonthNames[selectedDay.get(Calendar.MONTH) - 1];
@@ -56,6 +67,7 @@ public class MiniMonthView extends AbstractCalendarView {
 	public void goPrev() {
 		int LastMonthWeeksCount = selectedDay.getActualMaximum(Calendar.WEEK_OF_MONTH);
 		selectedDay.add(Calendar.MONTH, -1);
+		updateShownDate();
 		setTopPanel();
 		if(LastMonthWeeksCount != selectedDay.getActualMaximum(Calendar.WEEK_OF_MONTH)){
 			paintTable(selectedDay);
@@ -70,11 +82,12 @@ public class MiniMonthView extends AbstractCalendarView {
 	public void goNext() {
 		int LastMonthWeeksCount = selectedDay.getActualMaximum(Calendar.WEEK_OF_MONTH);
 		selectedDay.add(Calendar.MONTH, 1);
-		
+		updateShownDate();
 		setTopPanel();
 		if(LastMonthWeeksCount != selectedDay.getActualMaximum(Calendar.WEEK_OF_MONTH)){
 			paintTable(selectedDay);
 		}
+		
 		setDaysTitles();
 		updateEventLists();
 
@@ -121,17 +134,16 @@ public class MiniMonthView extends AbstractCalendarView {
 			android.widget.TableRow.LayoutParams cellLp) {
 		LinearLayout dayFrame = (LinearLayout) mInflater.inflate(R.layout.calendar_mm_day_container, null);
 		row.addView(dayFrame, cellLp);
-		daysList.add(new MiniMonthFrame(dayFrame, getContext()));
+		daysList.add(new AgendaFrame(dayFrame, getContext()));
 		
 	}
 	
 	private void setDaysTitles() {
 		
-		Calendar tmp = (Calendar) selectedDay.clone();
+		Calendar tmp = (Calendar) firstShownDate.clone();
 		int firstDayOfWeek = tmp.getFirstDayOfWeek();
-		Utils.setCalendarToFirstDayOfMonth(tmp);
-		Utils.setCalendarToFirstDayOfWeek(tmp);
-		for (MiniMonthFrame frame : daysList){
+		
+		for (AgendaFrame frame : daysList){
 			TextView dayTitle = (TextView) frame.getDayContainer().findViewById(R.id.agenda_day_title);		
 			String title = "" + tmp.get(Calendar.DATE);
 			dayTitle.setText(title);
@@ -154,8 +166,26 @@ public class MiniMonthView extends AbstractCalendarView {
 	}
 	@Override
 	protected void updateEventLists() {
-		// TODO Auto-generated method stub
-
+		Calendar tmp = (Calendar) firstShownDate.clone();
+		
+		for (AgendaFrame frame : daysList){	
+			if (tmp.get(Calendar.MONTH) == selectedDay.get(Calendar.MONTH)){
+				frame.setEventList(Data.getEventByDate(tmp));
+			}else {
+				frame.setEventList(new ArrayList<Event>());
+			}
+			frame.UpdateList();
+			tmp.add(Calendar.DATE, 1);
+		}
 	}
+	
+	private Calendar updateShownDate() {
+		Calendar tmp = (Calendar) selectedDay.clone();
+		Utils.setCalendarToFirstDayOfMonth(tmp);
+		Utils.setCalendarToFirstDayOfWeek(tmp);
+		return tmp;
+	}
+	
+	
 
 }

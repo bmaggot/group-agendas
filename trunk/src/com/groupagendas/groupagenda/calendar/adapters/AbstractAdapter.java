@@ -53,4 +53,10 @@ public abstract class AbstractAdapter<T> extends BaseAdapter {
 	public void setList(List<T> list) {
 		this.list = list;
 	}
+
+	public Context getContext() {
+		return context;
+	}
+
+	
 }
