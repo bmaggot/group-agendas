@@ -3,10 +3,20 @@ package com.groupagendas.groupagenda.contacts;
 import java.util.ArrayList;
 import java.util.TreeMap;
 
+import org.apache.http.HttpResponse;
+import org.apache.http.HttpStatus;
+import org.apache.http.client.HttpClient;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.entity.mime.HttpMultipartMode;
+import org.apache.http.entity.mime.MultipartEntity;
+import org.apache.http.entity.mime.content.StringBody;
+import org.apache.http.impl.client.DefaultHttpClient;
+
 import android.app.ListActivity;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Color;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.text.Editable;
@@ -35,6 +45,8 @@ import com.groupagendas.groupagenda.R;
 import com.groupagendas.groupagenda.contacts.importer.ImportActivity;
 import com.groupagendas.groupagenda.data.Data;
 import com.groupagendas.groupagenda.data.DataManagement;
+import com.groupagendas.groupagenda.error.report.Reporter;
+import com.groupagendas.groupagenda.events.EventActivity;
 import com.makeramen.segmented.SegmentedRadioGroup;
 
 public class ContactsActivity extends ListActivity implements OnCheckedChangeListener {
@@ -175,13 +187,26 @@ public class ContactsActivity extends ListActivity implements OnCheckedChangeLis
 		}
 		
 		importButton = (Button) findViewById(R.id.import_button);
-		importButton.setOnClickListener(new OnClickListener() {
-			
-			@Override
-			public void onClick(View v) {
-				startActivity(new Intent(ContactsActivity.this, ImportActivity.class));
-			}
-		});
+		if(!Data.showSaveButtonInContactsForm){
+			importButton.setText(R.string.contact_import_button);
+			importButton.setOnClickListener(new OnClickListener() {
+				
+				@Override
+				public void onClick(View v) {
+					startActivity(new Intent(ContactsActivity.this, ImportActivity.class));
+				}
+			});
+		} else {
+			importButton.setText(R.string.contact_invite_save_button);
+			importButton.setOnClickListener(new OnClickListener() {
+				
+				@Override
+				public void onClick(View v) {
+					new AddNewContactsToEvent().execute();
+					finish();
+				}
+			});
+		}
 		
 		if (Data.returnedFromContactImport) {
         	if ((Data.importStats != null) && (Data.importStats[0] > 0)) {
@@ -466,5 +491,68 @@ public class ContactsActivity extends ListActivity implements OnCheckedChangeLis
 
 		ListView listView = (ListView) getListView();
 		listView.setSelection(indexMin);
+	}
+	
+	public class AddNewContactsToEvent extends AsyncTask<Void, Void, Void>{
+
+		@Override
+		protected Void doInBackground(Void... params) {
+			if (Data.eventForSavingNewInvitedPersons != null) {
+				if (Data.selectedContacts != null && !Data.selectedContacts.isEmpty()) {
+					try {
+						HttpClient hc = new DefaultHttpClient();
+						HttpPost post = new HttpPost(Data.getServerUrl() + "mobile/events_invite_extra");
+
+						MultipartEntity reqEntity = new MultipartEntity(HttpMultipartMode.BROWSER_COMPATIBLE);
+
+						reqEntity.addPart("token", new StringBody(Data.getToken()));
+						reqEntity.addPart("event_id", new StringBody(String.valueOf(Data.eventForSavingNewInvitedPersons.event_id)));
+
+						int[] assigned_contacts = new int[Data.selectedContacts.size()];
+						int i = 0;
+						for (Contact contact : Data.selectedContacts) {
+							assigned_contacts[i] = contact.contact_id;
+							i++;
+						}
+						if (assigned_contacts.length != 0) {
+							for (int c = 0, l = assigned_contacts.length; c < l; c++) {
+								reqEntity.addPart("contacts[]", new StringBody(String.valueOf(assigned_contacts[c])));
+							}
+						} else {
+							reqEntity.addPart("contacts[]", new StringBody(""));
+						}
+
+						int[] assigned_groups = new int[Data.selectedGroups.size()];
+						int i2 = 0;
+						for (Group group : Data.selectedGroups) {
+							assigned_groups[i2] = group.group_id;
+							i2++;
+						}
+						if (assigned_groups.length != 0) {
+							for (int g = 0, l = assigned_groups.length; g < l; g++) {
+								reqEntity.addPart("groups[]", new StringBody(String.valueOf(assigned_groups[g])));
+							}
+						} else {
+							reqEntity.addPart("groups[]", new StringBody(""));
+						}
+
+						post.setEntity(reqEntity);
+						HttpResponse rp = null;
+						rp = hc.execute(post);
+						if (rp.getStatusLine().getStatusCode() == HttpStatus.SC_OK) {
+							dm.updateEventByIdFromRemoteDb(Data.eventForSavingNewInvitedPersons.event_id);
+							Data.showSaveButtonInContactsForm = false;
+							Data.eventForSavingNewInvitedPersons = null;
+							Data.selectedContacts = new ArrayList<Contact>();
+							Data.selectedGroups = new ArrayList<Group>();
+						}
+					} catch (Exception e) {
+						Reporter.reportError(this.getClass().toString(), Thread.currentThread().getStackTrace()[2].getMethodName().toString(),
+								e.getMessage());
+					}
+				}
+			}
+			return null;
+		}
 	}
 }
