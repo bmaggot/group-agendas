@@ -7,6 +7,7 @@ import com.groupagendas.groupagenda.R;
 
 import android.app.Activity;
 import android.content.Context;
+import android.graphics.Path.FillType;
 import android.graphics.Rect;
 import android.util.AttributeSet;
 import android.view.GestureDetector;
@@ -14,9 +15,11 @@ import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.TouchDelegate;
 import android.view.View;
+import android.view.ViewGroup.LayoutParams;
 import android.widget.FrameLayout;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 public abstract class AbstractCalendarView extends LinearLayout {
@@ -33,12 +36,9 @@ public abstract class AbstractCalendarView extends LinearLayout {
 	protected final int DISPLAY_WIDTH = ((Activity)getContext()).getWindowManager().getDefaultDisplay().getWidth();
 	protected final float densityFactor = getResources().getDisplayMetrics().density;
 	protected final int VIEW_WIDTH = ((Activity)getContext()).getWindowManager().getDefaultDisplay().getWidth();
-	/**
-	 * HARDCODED VALUES:
-	 * NAVBAR height - 45dp
-	 * CALENDAR_TOPBAR height - 50dp 
-	 */
-	protected final int VIEW_HEIGHT = ((Activity)getContext()).getWindowManager().getDefaultDisplay().getHeight() - Math.round((45 + 50) * densityFactor);
+
+	protected final int VIEW_HEIGHT = ((Activity)getContext()).getWindowManager().getDefaultDisplay().getHeight()
+			- Math.round((getResources().getInteger(R.integer.CALENDAR_TOPBAR_HEIGHT) + getResources().getInteger(R.integer.NAVBAR_HEIGHT)) * densityFactor);
 	protected LayoutInflater mInflater;
 	
 	protected String[] WeekDayNames;
@@ -64,6 +64,11 @@ public abstract class AbstractCalendarView extends LinearLayout {
 	public AbstractCalendarView(Context context, AttributeSet attrs) {
 		super(context, attrs);
 		mInflater = (LayoutInflater)((Activity)context).getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+//		TODO Set calendar_top_bar height in code
+//		RelativeLayout topPanel = (RelativeLayout) this.findViewById(R.layout.calendar_top_bar);
+//		LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(LayoutParams.FILL_PARENT, Math.round(getResources().getInteger(R.integer.CALENDAR_TOPBAR_HEIGHT)* densityFactor));
+//		topPanel.setLayoutParams(params);
+//		topP
 	}
 
 	public AbstractCalendarView(Context context) {

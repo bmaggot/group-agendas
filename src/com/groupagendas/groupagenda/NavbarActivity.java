@@ -24,8 +24,10 @@ import android.widget.Button;
 import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.FrameLayout;
+import android.widget.LinearLayout.LayoutParams;
 import android.widget.ListView;
 import android.widget.RadioButton;
+import android.widget.RadioGroup;
 import android.widget.RelativeLayout;
 import android.widget.Toast;
 import at.bartinger.list.item.EntryAdapter;
@@ -210,6 +212,12 @@ public class NavbarActivity extends Activity {
 		dm = DataManagement.getInstance(this);
 		
 		setContentView(R.layout.actnavbar);
+		
+		RadioGroup radiogroup = (RadioGroup) this.findViewById(R.id.radiogroup);
+		android.widget.RelativeLayout.LayoutParams params = (android.widget.RelativeLayout.LayoutParams) radiogroup.getLayoutParams();
+		params.height = Math.round(getResources().getInteger(R.integer.NAVBAR_HEIGHT) * getResources().getDisplayMetrics().density);
+
+		
 		if (savedInstanceState == null){     //if no selectedDate will be restored we create today's date
 			String dayStr = new SimpleDateFormat("yyyy-MM-dd").format(Calendar.getInstance().getTime());
 			selectedDate = Utils.stringToCalendar(dayStr + " 00:00:00", Utils.date_format);
