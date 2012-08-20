@@ -70,6 +70,7 @@ public class Data {
 	
 	public static boolean newEventPar = false;
 	public static ArrayList<Contact> selectedContacts = new ArrayList<Contact>();
+	public static boolean showSaveButtonInContactsForm = false;
 	
 	
 	// Contact import parameters
