@@ -251,6 +251,7 @@ public class NavbarActivity extends Activity {
 			@Override
 			public void onClick(View v) {
 				qa.dismiss();
+				viewState = ViewState.YEAR;
 				showListSearchView();
 			}
 		});
@@ -494,7 +495,9 @@ public class NavbarActivity extends Activity {
 	}
 
 	private void showListSearchView() {
-		new GetAllEventsTask().execute();
+		calendarContainer.removeAllViews();
+		mInflater.inflate(R.layout.calendar_listnsearch, calendarContainer);
+//		new GetAllEventsTask().execute();
 
 	}
 
