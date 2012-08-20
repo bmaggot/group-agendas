@@ -56,14 +56,24 @@
 
         <Button
             android:id="@+id/import_button"
+            android:background="@drawable/contacts_save_import_button"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="7dp"
+            android:layout_height="33dp"
+            android:layout_marginTop="8dp"
 			android:gravity="center"
-			android:minHeight="28dp"
-			android:padding="5dp"
+			android:paddingTop="5dp"
+			android:paddingRight="4dp"
+			android:paddingBottom="5dp"
+			android:paddingLeft="4dp"
 			android:layout_alignParentRight="true"
-	        android:text="@string/contact_import_button" />
+	        android:text="@string/contact_import_button"
+	        android:textColor="@color/white"
+	        android:textStyle="bold"
+	        android:textSize="14dp"
+	        android:shadowColor="@color/black"
+	        android:shadowDx="0"
+	        android:shadowDy="2"
+	        android:shadowRadius="1.5" />
         
     </RelativeLayout>
 
