@@ -198,6 +198,7 @@ public class EventActivity extends Activity {
 			@Override
 			public void onClick(View v) {
 				Data.newEventPar = true;
+				Data.showSaveButtonInContactsForm = true;
 				startActivity(new Intent(EventActivity.this, ContactsActivity.class));
 			}
 		});
@@ -317,6 +318,7 @@ public class EventActivity extends Activity {
 	}
 	
 	public void editEventAfterConstactSelection(){
+		Data.showSaveButtonInContactsForm = false;
 		if(Data.selectedContacts != null && Data.selectedContacts.isEmpty()){
 			event.assigned_contacts = new int[Data.selectedContacts.size()];
 			int i = 0;
