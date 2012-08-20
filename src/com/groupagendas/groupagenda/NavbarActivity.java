@@ -24,7 +24,6 @@ import android.widget.Button;
 import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.FrameLayout;
-import android.widget.LinearLayout.LayoutParams;
 import android.widget.ListView;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
@@ -38,7 +37,6 @@ import az.mecid.android.ActionItem;
 import az.mecid.android.QuickAction;
 
 import com.bog.calendar.app.model.CalendarMonth;
-import com.bog.calendar.app.model.CalendarYear;
 import com.groupagendas.groupagenda.account.AccountProvider;
 import com.groupagendas.groupagenda.calendar.AbstractCalendarView;
 import com.groupagendas.groupagenda.calendar.agenda.AgendaView;
@@ -89,6 +87,7 @@ public class NavbarActivity extends Activity {
 	private EntryAdapter entryAdapter;
 	private ViewState viewState;
 
+//	TODO investigate WHY IS this shit created
 	private Prefs prefs;
 
 	private boolean dataLoaded = false;
@@ -642,108 +641,6 @@ public class NavbarActivity extends Activity {
 		}
 	};
 
-	
-	/** Nested class that performs progress calculations (counting) */
-	// private class ProgressThread extends Thread {
-	// Handler mHandler;
-	// final static int STATE_DONE = 0;
-	//
-	// final static int STATE_RUNNING = 1;
-	//
-	// @SuppressWarnings("unused")
-	// int mState;
-	// int total;
-	//
-	// ProgressThread(Handler h) {
-	// mHandler = h;
-	// }
-	//
-	// public void run() {
-	// mState = STATE_RUNNING;
-	// total = 0;
-	//
-	// // Delete old data
-	// getContentResolver().delete(AccountProvider.AMetaData.AccountMetaData.CONTENT_URI,
-	// "", null);
-	// getContentResolver().delete(ContactsProvider.CMetaData.ContactsMetaData.CONTENT_URI,
-	// "", null);
-	// getContentResolver().delete(ContactsProvider.CMetaData.GroupsMetaData.CONTENT_URI,
-	// "", null);
-	// getContentResolver().delete(EventsProvider.EMetaData.EventsMetaData.CONTENT_URI,
-	// "", null);
-	// getContentResolver().getType(EventsProvider.EMetaData.EventsMetaData.CONTENT_URI);
-	// if(Data.needToClearData){
-	// Data.clearData();
-	// }
-	//
-	// setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_NOSENSOR);
-	// total = 20;
-	// Message msg = mHandler.obtainMessage();
-	// msg.arg1 = total;
-	// mHandler.sendMessage(msg);
-	//
-	// // Load account
-	// dm.getAccountFromRemoteDb();
-	// total = 40;
-	// msg = mHandler.obtainMessage();
-	// msg.arg1 = total;
-	// mHandler.sendMessage(msg);
-	//
-	// // Load contacts
-	// dm.getContactsFromRemoteDb(null);
-	// total = 60;
-	// msg = mHandler.obtainMessage();
-	// msg.arg1 = total;
-	// mHandler.sendMessage(msg);
-	//
-	// // Load groups
-	// dm.getGroupsFromRemoteDb();
-	// total = 80;
-	// msg = mHandler.obtainMessage();
-	// msg.arg1 = total;
-	// mHandler.sendMessage(msg);
-	//
-	// // Load events
-	// dm.getEventsFromRemoteDb("");
-	// total = 100;
-	// msg = mHandler.obtainMessage();
-	// msg.arg1 = total;
-	// mHandler.sendMessage(msg);
-	//
-	// // View test = calendarContainer.getChildAt(0);
-	// // switchToView();
-	// }
-	//
-	// class initContactsScreen extends AsyncTask<Void, ArrayList<Contact>,
-	// ArrayList<Item>>{
-	//
-	// @Override
-	// protected ArrayList<Item> doInBackground(Void... params) {
-	// // TODO Auto-generated method stub
-	// return null;
-	// }
-	//
-	//
-	// }
-	//
-	// class initEventsScreen extends AsyncTask<Void, ArrayList<Event>,
-	// ArrayList<Item>>{
-	//
-	// @Override
-	// protected ArrayList<Item> doInBackground(Void... params) {
-	// // TODO Auto-generated method stub
-	// return null;
-	// }
-	//
-	//
-	// }
-	//
-	// /* sets the current state for the thread,
-	// * used to stop the thread */
-	// public void setState(int state) {
-	// mState = state;
-	// }
-	// }
 	@Override
 	public boolean onKeyDown(int keyCode, KeyEvent event) {
 		if (keyCode == KeyEvent.KEYCODE_BACK) {
