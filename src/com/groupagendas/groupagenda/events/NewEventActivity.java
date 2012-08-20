@@ -115,6 +115,9 @@ public class NewEventActivity extends Activity {
 	private ArrayList<AutoColorItem> autoColors = null;
 	private ArrayList<AutoIconItem> autoIcons = null;
 	
+	boolean addressPanelVisible = false;
+	boolean detailsPanelVisible = false;
+	
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -258,6 +261,18 @@ public class NewEventActivity extends Activity {
 		descView = (EditText) findViewById(R.id.descView);
 
 		// Address
+		LinearLayout addressPanel = (LinearLayout) findViewById(R.id.addressLine);
+		addressPanel.setOnClickListener(new OnClickListener() {
+			
+			@Override
+			public void onClick(View v) {
+				if(addressPanelVisible){
+					hideAddressPanel();
+				} else {
+					showAddressPanel();
+				}
+			}
+		});
 		// timezone
 		timezoneSpinner = (Spinner) findViewById(R.id.timezoneSpinner);
 		
@@ -299,6 +314,18 @@ public class NewEventActivity extends Activity {
 		zipView = (EditText) findViewById(R.id.zipView);		
 		
 		// Details
+		LinearLayout detailsPanel = (LinearLayout) findViewById(R.id.detailsLine);
+		detailsPanel.setOnClickListener(new OnClickListener() {
+			
+			@Override
+			public void onClick(View v) {
+				if(detailsPanelVisible){
+					hideDetailsPanel();
+				} else {
+					showDetailsPanel();
+				}
+			}
+		});
 		// location
 		locationView = (EditText) findViewById(R.id.locationView);
 		// Go by
@@ -321,6 +348,8 @@ public class NewEventActivity extends Activity {
 				startActivity(new Intent(NewEventActivity.this, ContactsActivity.class));
 			}
 		});
+		hideAddressPanel();
+		hideDetailsPanel();
 	}
 	
 	private TextWatcher filterTextWatcher = new TextWatcher() {
@@ -374,6 +403,7 @@ public class NewEventActivity extends Activity {
 	}
 	
 	public void showAddressPanel(){
+		addressPanelVisible = true;
 		timezoneSpinner.setVisibility(View.VISIBLE);
 		countrySpinner.setVisibility(View.VISIBLE);
 		cityView.setVisibility(View.VISIBLE);
@@ -382,6 +412,7 @@ public class NewEventActivity extends Activity {
 	}
 	
 	public void hideAddressPanel(){
+		addressPanelVisible = false;
 		timezoneSpinner.setVisibility(View.GONE);
 		countrySpinner.setVisibility(View.GONE);
 		cityView.setVisibility(View.GONE);
@@ -390,6 +421,7 @@ public class NewEventActivity extends Activity {
 	}
 	
 	public void showDetailsPanel(){
+		detailsPanelVisible = true;
 		locationView.setVisibility(View.VISIBLE);
 		gobyView.setVisibility(View.VISIBLE);
 		takewithyouView.setVisibility(View.VISIBLE);
@@ -398,6 +430,7 @@ public class NewEventActivity extends Activity {
 	}
 	
 	public void hideDetailsPanel(){
+		detailsPanelVisible = false;
 		locationView.setVisibility(View.GONE);
 		gobyView.setVisibility(View.GONE);
 		takewithyouView.setVisibility(View.GONE);
