@@ -13,6 +13,7 @@ import android.app.Dialog;
 import android.content.ContentValues;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.opengl.Visibility;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.text.Editable;
@@ -370,6 +371,38 @@ public class NewEventActivity extends Activity {
 			e.printStackTrace();
 		}
 		Toast.makeText(this, R.string.new_event_saved, Toast.LENGTH_LONG).show();
+	}
+	
+	public void showAddressPanel(){
+		timezoneSpinner.setVisibility(View.VISIBLE);
+		countrySpinner.setVisibility(View.VISIBLE);
+		cityView.setVisibility(View.VISIBLE);
+		streetView.setVisibility(View.VISIBLE);
+		zipView.setVisibility(View.VISIBLE);
+	}
+	
+	public void hideAddressPanel(){
+		timezoneSpinner.setVisibility(View.GONE);
+		countrySpinner.setVisibility(View.GONE);
+		cityView.setVisibility(View.GONE);
+		streetView.setVisibility(View.GONE);
+		zipView.setVisibility(View.GONE);
+	}
+	
+	public void showDetailsPanel(){
+		locationView.setVisibility(View.VISIBLE);
+		gobyView.setVisibility(View.VISIBLE);
+		takewithyouView.setVisibility(View.VISIBLE);
+		costView.setVisibility(View.VISIBLE);
+		accomodationView.setVisibility(View.VISIBLE);
+	}
+	
+	public void hideDetailsPanel(){
+		locationView.setVisibility(View.GONE);
+		gobyView.setVisibility(View.GONE);
+		takewithyouView.setVisibility(View.GONE);
+		costView.setVisibility(View.GONE);
+		accomodationView.setVisibility(View.GONE);
 	}
 
 	class NewEventTask extends AsyncTask<Event, Void, Boolean> {
