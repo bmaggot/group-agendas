@@ -53,9 +53,6 @@ public class WeekView extends AbstractCalendarViewWithAllDayAndHourEvents {
 		super(context, attrs);
 		WeekDayNames = getResources().getStringArray(R.array.week_days_short);
 		MonthNames = getResources().getStringArray(R.array.month_names);
-		
-		
-		this.daysShown = new WeekInstance(context, ((NavbarActivity)context).getSelectedDate());
 	}
 
 	
@@ -296,6 +293,17 @@ public class WeekView extends AbstractCalendarViewWithAllDayAndHourEvents {
 			}
 		
 		}		
+	}
+
+	@Override
+	protected void setupSelectedDate(Calendar initializationDate) {
+		this.daysShown = new WeekInstance(getContext(), initializationDate);
+		
+	}
+
+	@Override
+	public Calendar getDateToResume() {
+		return daysShown.getShownDate();
 	}
 
 	

@@ -37,9 +37,6 @@ public class AgendaView extends AbstractCalendarView {
 		super(context, attrs);
 		WeekDayNames = getResources().getStringArray(R.array.week_days_short);
 		MonthNames = getResources().getStringArray(R.array.month_names_short);
-		this.selectedDay = ((NavbarActivity)context).getSelectedDate();
-		this.shownDate = (Calendar)selectedDay.clone();
-		Utils.setCalendarToFirstDayOfWeek(this.shownDate);
 	}
 
 	@Override
@@ -163,6 +160,19 @@ public class AgendaView extends AbstractCalendarView {
 			tmp.add(Calendar.DATE, 1);
 			frame.UpdateList();
 		}
+		
+	}
+
+	@Override
+	public Calendar getDateToResume() {
+		return shownDate;
+	}
+
+	@Override
+	protected void setupSelectedDate(Calendar initializationDate) {
+		this.selectedDay = initializationDate;
+		this.shownDate = (Calendar)selectedDay.clone();
+		Utils.setCalendarToFirstDayOfWeek(this.shownDate);
 		
 	}
 	

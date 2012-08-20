@@ -40,6 +40,7 @@ import az.mecid.android.QuickAction;
 import com.bog.calendar.app.model.CalendarMonth;
 import com.bog.calendar.app.model.CalendarYear;
 import com.groupagendas.groupagenda.account.AccountProvider;
+import com.groupagendas.groupagenda.calendar.AbstractCalendarView;
 import com.groupagendas.groupagenda.calendar.agenda.AgendaView;
 import com.groupagendas.groupagenda.calendar.day.DayView;
 import com.groupagendas.groupagenda.calendar.minimonth.MiniMonthView;
@@ -273,6 +274,7 @@ public class NavbarActivity extends Activity {
 			@Override
 			public void onClick(View v) {
 				qa.dismiss();
+				selectedDate = Utils.createNewTodayCalendar();
 				viewState = ViewState.YEAR;
 				showYearView();
 			}
@@ -285,6 +287,7 @@ public class NavbarActivity extends Activity {
 			@Override
 			public void onClick(View v) {
 				viewState = ViewState.MONTH;
+				selectedDate = Utils.createNewTodayCalendar();
 				qa.dismiss();
 				showMonthView();
 			}
@@ -297,6 +300,7 @@ public class NavbarActivity extends Activity {
 			@Override
 			public void onClick(View v) {
 				qa.dismiss();
+				selectedDate = Utils.createNewTodayCalendar();
 				viewState = ViewState.WEEK;
 				showWeekView();
 			}
@@ -309,6 +313,7 @@ public class NavbarActivity extends Activity {
 			@Override
 			public void onClick(View v) {
 				qa.dismiss();
+				selectedDate = Utils.createNewTodayCalendar();
 				viewState = ViewState.DAY;
 				showDayView();
 			}
@@ -321,6 +326,7 @@ public class NavbarActivity extends Activity {
 			@Override
 			public void onClick(View v) {
 				qa.dismiss();
+				selectedDate = Utils.createNewTodayCalendar();
 				viewState = ViewState.AGENDA;
 				showAgendaView();
 			}
@@ -333,6 +339,7 @@ public class NavbarActivity extends Activity {
 			@Override
 			public void onClick(View v) {
 				qa.dismiss();
+				selectedDate = Utils.createNewTodayCalendar();
 				viewState = ViewState.MINI_MONTH;
 				showMiniMonthView();
 			}
@@ -345,7 +352,8 @@ public class NavbarActivity extends Activity {
 			@Override
 			public void onClick(View v) {
 				qa.dismiss();
-				showTodayView();
+				selectedDate = Utils.createNewTodayCalendar();
+				switchToView();
 
 			}
 		});
@@ -381,6 +389,10 @@ public class NavbarActivity extends Activity {
 	     outState.putBoolean("isDataLoaded", dataLoaded);
 	     outState.putString("loadPhase", Integer.toString(loadPhase));
 	     outState.putString("viewState", "" + viewState);
+	     if(calendarContainer.getChildAt(0) instanceof AbstractCalendarView){
+	    	 selectedDate = ((AbstractCalendarView)calendarContainer.getChildAt(0)).getDateToResume();
+	     }
+	     
 	     String dateStr = new SimpleDateFormat(Utils.date_format).format(selectedDate.getTime());			
 	     outState.putString("selectedDate", dateStr);
 	  }
@@ -488,15 +500,17 @@ public class NavbarActivity extends Activity {
 	}
 
 	private void showTodayView() {
-		Toast.makeText(NavbarActivity.this, getString(R.string.today), Toast.LENGTH_SHORT).show();
-
+		calendarContainer.removeAllViews();
+		mInflater.inflate(R.layout.calendar_day, calendarContainer);
+		DayView view = (DayView) calendarContainer.getChildAt(0);
+		view.init(Utils.createNewTodayCalendar());
 	}
 
 	private void showWeekView() {
 		calendarContainer.removeAllViews();
 		mInflater.inflate(R.layout.calendar_week, calendarContainer);
 		WeekView view = (WeekView) calendarContainer.getChildAt(0);
-		view.init();
+		view.init(selectedDate);
 
 	}
 
@@ -504,22 +518,19 @@ public class NavbarActivity extends Activity {
 		calendarContainer.removeAllViews();
 		mInflater.inflate(R.layout.calendar_mm, calendarContainer);
 		MiniMonthView view = (MiniMonthView) calendarContainer.getChildAt(0);
-		view.init();
+		view.init(selectedDate);
 
 	}
 
 	private void showYearView() {
-		calendarContainer.removeAllViews();
-		mInflater.inflate(R.layout.calendar_year, calendarContainer);
-		new CalendarYear(NavbarActivity.this);
-
+		Toast.makeText(NavbarActivity.this, getString(R.string.year) + " Not yet implemented", Toast.LENGTH_SHORT).show();
 	}
 
 	private void showAgendaView() {
 		calendarContainer.removeAllViews();
 		mInflater.inflate(R.layout.calendar_agenda, calendarContainer);
 		AgendaView view = (AgendaView) calendarContainer.getChildAt(0);
-		view.init();
+		view.init(selectedDate);
 
 	}
 
@@ -527,7 +538,7 @@ public class NavbarActivity extends Activity {
 		calendarContainer.removeAllViews();
 		mInflater.inflate(R.layout.calendar_day, calendarContainer);
 		DayView view = (DayView) calendarContainer.getChildAt(0);
-		view.init();
+		view.init(selectedDate);
 
 	}
 
