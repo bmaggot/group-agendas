@@ -25,7 +25,6 @@ public class AgendaDayAdapter extends AbstractAdapter<Event> {
 		final Event event = list.get(i);
 		TextView tmp = (TextView) view;
 		tmp.setText(event.title);
-//		tmp.setTextAppearance(context, R.style.dayView_hourEvent_firstColumn_entryText);
 		tmp.setOnClickListener(new EventActivityOnClickListener(context, event));
 		return tmp;
 	}
