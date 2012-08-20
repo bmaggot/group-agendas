@@ -32,6 +32,13 @@ public abstract class AbstractCalendarView extends LinearLayout {
 	
 	protected final int DISPLAY_WIDTH = ((Activity)getContext()).getWindowManager().getDefaultDisplay().getWidth();
 	protected final float densityFactor = getResources().getDisplayMetrics().density;
+	protected final int VIEW_WIDTH = ((Activity)getContext()).getWindowManager().getDefaultDisplay().getWidth();
+	/**
+	 * HARDCODED VALUES:
+	 * NAVBAR height - 45dp
+	 * CALENDAR_TOPBAR height - 50dp 
+	 */
+	protected final int VIEW_HEIGHT = ((Activity)getContext()).getWindowManager().getDefaultDisplay().getHeight() - Math.round((45 + 50) * densityFactor);
 	protected LayoutInflater mInflater;
 	
 	protected String[] WeekDayNames;
