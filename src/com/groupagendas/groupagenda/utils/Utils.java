@@ -35,6 +35,7 @@ public class Utils {
 	}
 
 	public final static String date_format = "yyyy-MM-dd HH:mm:ss";
+	public static int FIRST_DAY_OF_WEEK = Data.DEFAULT_FIRST_WEEK_DAY;
 	
 	public static String formatDateTime(String date_str, String startPattern, String endPattern){
 		Calendar calendar = stringToCalendar(date_str, startPattern);
@@ -143,6 +144,16 @@ public class Utils {
 		while (date.get(Calendar.DAY_OF_WEEK) != firstDayofWeek)
 			date.add(Calendar.DATE, -1);
 	}
+	
+	/**
+	 * @author justinas.marcinka@gmail.com
+	 * @param date calendar that will be set to first day of month
+	 * @return Sets given calendar to first day of month
+	 */
+		public static void setCalendarToFirstDayOfMonth(Calendar date) {
+			while (date.get(Calendar.DAY_OF_MONTH) != 1)
+				date.add(Calendar.DATE, -1);
+		}
 	/**
 	 * @author justinas.marcinka@gmail.com
 	 * @param date that needs to be checked
@@ -155,5 +166,13 @@ public class Utils {
                 tmp.get(Calendar.DAY_OF_YEAR) == selectedDate.get(Calendar.DAY_OF_YEAR);
 	
 	}
+	
+	public static Calendar createNewTodayCalendar() {
+		Calendar tmp = Calendar.getInstance();
+		tmp.setFirstDayOfWeek(FIRST_DAY_OF_WEEK);
+		return tmp;
+	}
+	
+	
 
 }
