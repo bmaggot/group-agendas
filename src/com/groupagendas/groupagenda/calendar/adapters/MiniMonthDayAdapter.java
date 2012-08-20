@@ -1,0 +1,32 @@
+package com.groupagendas.groupagenda.calendar.adapters;
+
+import java.util.List;
+
+import android.content.Context;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.TextView;
+
+import com.groupagendas.groupagenda.EventActivityOnClickListener;
+import com.groupagendas.groupagenda.R;
+import com.groupagendas.groupagenda.events.Event;
+
+public class MiniMonthDayAdapter extends AbstractAdapter<Event> {
+
+	public MiniMonthDayAdapter(Context context, List<Event> list) {
+		super(context, list);
+	}
+
+	@Override
+	public View getView(int i, View view, ViewGroup viewGroup) {
+		if (view == null) {
+			view = mInflater.inflate(R.layout.calendar_mm_entry, null);
+        }
+		final Event event = list.get(i);
+		TextView tmp = (TextView) view;
+		tmp.setText(event.title);
+		tmp.setOnClickListener(new EventActivityOnClickListener(context, event));
+		return tmp;
+	}
+
+}
