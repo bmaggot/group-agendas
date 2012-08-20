@@ -199,6 +199,7 @@ public class EventActivity extends Activity {
 			public void onClick(View v) {
 				Data.newEventPar = true;
 				Data.showSaveButtonInContactsForm = true;
+				Data.eventForSavingNewInvitedPersons = event;
 				startActivity(new Intent(EventActivity.this, ContactsActivity.class));
 			}
 		});
@@ -315,19 +316,6 @@ public class EventActivity extends Activity {
 		}
 
 		return view;
-	}
-	
-	public void editEventAfterConstactSelection(){
-		Data.showSaveButtonInContactsForm = false;
-		if(Data.selectedContacts != null && Data.selectedContacts.isEmpty()){
-			event.assigned_contacts = new int[Data.selectedContacts.size()];
-			int i = 0;
-			for (Contact contact : Data.selectedContacts) {
-				event.assigned_contacts[i] = contact.contact_id;
-				i++;
-			}
-		}
-		dm.editEvent(event);
 	}
 
 	class GetEventTask extends AsyncTask<Integer, Event, Event> {

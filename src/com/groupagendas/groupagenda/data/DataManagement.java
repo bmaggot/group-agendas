@@ -73,8 +73,6 @@ public class DataManagement {
 
 	public static boolean networkAvailable = true;
 	public static boolean eventStatusChanged = false;
-	private Event tmpEvent = new Event();
-
 	private DataManagement(Activity c) {
 		Data.setPrefs(new Prefs(c));
 		Data.set_prefs(c.getSharedPreferences("PREFS_PRIVATE", Context.MODE_PRIVATE));
@@ -2954,7 +2952,6 @@ public class DataManagement {
 				}
 			} else {
 				reqEntity.addPart("groups[]", new StringBody(""));
-				// }
 			}
 
 			post.setEntity(reqEntity);
@@ -3581,6 +3578,8 @@ public class DataManagement {
 		Data.setEvents(localEvents);
 		sortEvents(Data.getEvents());
 	}
+	
+	
 
 	// /////////////////////////////////////
 
