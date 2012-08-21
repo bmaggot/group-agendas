@@ -122,7 +122,6 @@ public void init(){
 }
 
 private SectionListItem[] filterEvents (String filterString, SectionListItem[] eventsArray){
-//	TODO
 	ArrayList<SectionListItem> tmpList = new ArrayList<SectionListItem>();
 	
 	for (int i = 0; i < eventsArray.length; i++){
