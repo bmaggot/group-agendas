@@ -69,6 +69,12 @@ public class Event extends Object{
 	
 	public boolean is_all_day;
 	
+	@Override
+	public String toString(){
+		String text = this.title;
+		return text;
+	}
+	
 
 //	public Calendar getStartTimeInUserTimezone(String userLocale){
 //		Calendar ret;
