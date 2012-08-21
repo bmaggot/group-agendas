@@ -143,8 +143,8 @@ public class SectionListAdapter extends BaseAdapter implements ListAdapter,
     }
 
     protected void setSectionText(final String section, final View sectionView) {
-// TODO       final TextView textView = (TextView) sectionView.findViewById(R.id.listTextView);
-//        textView.setText(section);
+    	final TextView textView = (TextView) sectionView.findViewById(R.id.listTextView);
+        textView.setText(section);
     }
 
     protected synchronized void replaceSectionViewsInMaps(final String section,
@@ -156,8 +156,7 @@ public class SectionListAdapter extends BaseAdapter implements ListAdapter,
     }
 
     protected View createNewSectionView() {
-// TODO       return inflater.inflate(R.layout.section_view, null);
-    	return null;
+    	return inflater.inflate(R.layout.calendar_listnsearch_section_view, null);
     }
 
     @Override

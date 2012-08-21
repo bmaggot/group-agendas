@@ -20,16 +20,19 @@ public class SectionListView extends ListView implements OnScrollListener {
     public SectionListView(final Context context, final AttributeSet attrs,
             final int defStyle) {
         super(context, attrs, defStyle);
+        System.out.println("konstruktorius 1");
         commonInitialisation();
     }
 
     public SectionListView(final Context context, final AttributeSet attrs) {
         super(context, attrs);
+        System.out.println("konstruktorius 2");
         commonInitialisation();
     }
 
     public SectionListView(final Context context) {
         super(context);
+        System.out.println("konstruktorius 3");
         commonInitialisation();
     }
 
