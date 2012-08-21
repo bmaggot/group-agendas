@@ -37,7 +37,7 @@ public class SectionListAdapter extends BaseAdapter implements ListAdapter,
     };
 
     private final ListAdapter linkedAdapter;
-    private final Map<Integer, String> sectionPositions = new LinkedHashMap<Integer, String>();
+    private final Map<Integer, String> sectionNames = new LinkedHashMap<Integer, String>();
     private final Map<Integer, Integer> itemPositions = new LinkedHashMap<Integer, Integer>();
     private final Map<View, String> currentViewSections = new HashMap<View, String>();
     private int viewTypeCount;
@@ -66,7 +66,7 @@ public class SectionListAdapter extends BaseAdapter implements ListAdapter,
 
     private synchronized void updateSessionCache() {
         int currentPosition = 0;
-        sectionPositions.clear();
+        sectionNames.clear();
         itemPositions.clear();
         viewTypeCount = linkedAdapter.getViewTypeCount() + 1;
         String currentSection = null;
@@ -75,7 +75,7 @@ public class SectionListAdapter extends BaseAdapter implements ListAdapter,
             final SectionListItem item = (SectionListItem) linkedAdapter
                     .getItem(i);
             if (!isTheSame(currentSection, item.section)) {
-                sectionPositions.put(currentPosition, item.section);
+                sectionNames.put(currentPosition, item.section);
                 currentSection = item.section;
                 currentPosition++;
             }
@@ -86,13 +86,13 @@ public class SectionListAdapter extends BaseAdapter implements ListAdapter,
 
     @Override
     public synchronized int getCount() {
-        return sectionPositions.size() + itemPositions.size();
+        return sectionNames.size() + itemPositions.size();
     }
 
     @Override
     public synchronized Object getItem(final int position) {
         if (isSection(position)) {
-            return sectionPositions.get(position);
+            return sectionNames.get(position);
         } else {
             final int linkedItemPosition = getLinkedPosition(position);
             return linkedAdapter.getItem(linkedItemPosition);
@@ -100,12 +100,12 @@ public class SectionListAdapter extends BaseAdapter implements ListAdapter,
     }
 
     public synchronized boolean isSection(final int position) {
-        return sectionPositions.containsKey(position);
+        return sectionNames.containsKey(position);
     }
 
     public synchronized String getSectionName(final int position) {
         if (isSection(position)) {
-            return sectionPositions.get(position);
+            return sectionNames.get(position);
         } else {
             return null;
         }
@@ -114,7 +114,7 @@ public class SectionListAdapter extends BaseAdapter implements ListAdapter,
     @Override
     public long getItemId(final int position) {
         if (isSection(position)) {
-            return sectionPositions.get(position).hashCode();
+            return sectionNames.get(position).hashCode();
         } else {
             return linkedAdapter.getItemId(getLinkedPosition(position));
         }
@@ -163,7 +163,7 @@ public class SectionListAdapter extends BaseAdapter implements ListAdapter,
     public View getView(final int position, final View convertView,
             final ViewGroup parent) {
         if (isSection(position)) {
-            return getSectionView(convertView, sectionPositions.get(position));
+            return getSectionView(convertView, sectionNames.get(position));
         }
         return linkedAdapter.getView(getLinkedPosition(position), convertView,
                 parent);
@@ -222,7 +222,7 @@ public class SectionListAdapter extends BaseAdapter implements ListAdapter,
                 itemView.getKey().setVisibility(View.VISIBLE);
             }
         }
-        for (final Entry<Integer, String> entry : sectionPositions.entrySet()) {
+        for (final Entry<Integer, String> entry : sectionNames.entrySet()) {
             if (entry.getKey() > firstVisibleItem + 1) {
                 break;
             }
