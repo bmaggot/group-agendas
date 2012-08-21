@@ -41,6 +41,7 @@ import com.groupagendas.groupagenda.account.AccountProvider;
 import com.groupagendas.groupagenda.calendar.AbstractCalendarView;
 import com.groupagendas.groupagenda.calendar.agenda.AgendaView;
 import com.groupagendas.groupagenda.calendar.day.DayView;
+import com.groupagendas.groupagenda.calendar.listnsearch.ListnSearchView;
 import com.groupagendas.groupagenda.calendar.minimonth.MiniMonthView;
 import com.groupagendas.groupagenda.calendar.week.WeekView;
 import com.groupagendas.groupagenda.contacts.ContactsActivity;
@@ -497,6 +498,8 @@ public class NavbarActivity extends Activity {
 	private void showListSearchView() {
 		calendarContainer.removeAllViews();
 		mInflater.inflate(R.layout.calendar_listnsearch, calendarContainer);
+		ListnSearchView view = (ListnSearchView) calendarContainer.getChildAt(0);
+		view.init();
 //		new GetAllEventsTask().execute();
 
 	}
