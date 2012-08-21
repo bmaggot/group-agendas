@@ -1,26 +1,27 @@
 package com.groupagendas.groupagenda.calendar.listnsearch;
 
-import java.text.SimpleDateFormat;
+
 import java.util.ArrayList;
 import java.util.Calendar;
 
+import com.groupagendas.groupagenda.EventActivityOnClickListener;
 import com.groupagendas.groupagenda.R;
 import com.groupagendas.groupagenda.data.Data;
 import com.groupagendas.groupagenda.events.Event;
 import com.groupagendas.groupagenda.utils.Utils;
 
-import android.app.Activity;
+
 import android.content.Context;
-import android.os.Bundle;
+import android.graphics.Color;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
-import android.view.Menu;
-import android.view.MenuInflater;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
@@ -94,15 +95,47 @@ public void init(){
 	sectionAdapter = new SectionListAdapter(mInflater, arrayAdapter);
 	listView = (SectionListView) findViewById(R.id.section_list_view);
 	listView.setAdapter(sectionAdapter);
+	listView.setDrawingCacheBackgroundColor(Color.TRANSPARENT);
 	
 	searchField = (EditText) findViewById(R.id.listnsearch_search);
+	searchField.addTextChangedListener(new TextWatcher() {
+		
+		String prevEntry;
+		@Override
+		public void onTextChanged(CharSequence s, int start, int before, int count) {
+		}
+		
+		@Override
+		public void beforeTextChanged(CharSequence s, int start, int count,
+				int after) {
+			prevEntry = s.toString();			
+		}
+		
+		@Override
+		public void afterTextChanged(Editable s) {
+			if (!prevEntry.equalsIgnoreCase(s.toString())){
+				arrayAdapter.setList(filterEvents(s.toString(), eventsArray));
+			}
+		}
+	});
 	
 }
 
-private void filter (String filterString){
+private SectionListItem[] filterEvents (String filterString, SectionListItem[] eventsArray){
+//	TODO
+	ArrayList<SectionListItem> tmpList = new ArrayList<SectionListItem>();
 	
-	SectionListItem[] items = new SectionListItem[0];
-	arrayAdapter.setList(items );
+	for (int i = 0; i < eventsArray.length; i++){
+		String eventTitle = eventsArray[i].item.toString();
+		if (eventTitle.contains(filterString))tmpList.add(eventsArray[i]);
+	}
+			
+
+	
+	
+
+	return tmpList.toArray(new SectionListItem[tmpList.size()]);
+	
 }
 
 
@@ -138,11 +171,19 @@ private void filter (String filterString){
 		public StandardArrayAdapter(final Context context, final int textViewResourceId, final SectionListItem[] items) {
 			super(context, textViewResourceId, items);
 			this.items = items;
-		}
-		
+		}		
+
 		public void setList(SectionListItem[] items){
 			this.items = items;
-			notifyDataSetChanged();
+			this.notifyDataSetChanged();
+		}
+		
+		public int getCount(){
+			return items.length;
+		}
+		
+		public SectionListItem getItem (int i){
+			return items[i];	
 		}
 
 		@Override
@@ -152,13 +193,29 @@ private void filter (String filterString){
 				final LayoutInflater vi = (LayoutInflater) getContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
  				view = vi.inflate(R.layout.calendar_listnsearch_list_view, null);
 			}
+			view.setDrawingCacheBackgroundColor(Color.TRANSPARENT);
 			final SectionListItem currentItem = items[position];
 			if (currentItem != null) {
+				
 				final TextView textView = (TextView) view.findViewById(R.id.example_text_view);
 				if (textView != null) {
 					textView.setText(currentItem.item.toString());
 				}
+				
+				if (currentItem.item instanceof Event){
+					Event event = (Event) currentItem.item;
+					ImageView bubble = (ImageView) view
+							.findViewById(R.id.listnsearch_entry_icon_placeholder);
+
+					String bubbletitle = "calendarbubble_" + event.color + "_";
+					int imgID = getContext().getResources().getIdentifier(
+							bubbletitle, "drawable",
+							getContext().getPackageName());
+					bubble.setImageResource(imgID);
+
+					view.setOnClickListener(new EventActivityOnClickListener(getContext(), event));}
 			}
+			
 			return view;
 		}
 	}
@@ -176,7 +233,7 @@ private void filter (String filterString){
 //	@Override
 //	public boolean onCreateOptionsMenu(Menu menu) {
 //		MenuInflater inflater = getMenuInflater();
-//		// TODO		inflater.inflate(R.menu.test_menu, menu);
+//		inflater.inflate(R.menu.test_menu, menu);
 //		return true;
 //	}
 
