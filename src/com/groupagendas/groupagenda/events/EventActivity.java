@@ -4,6 +4,15 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.concurrent.ExecutionException;
 
+import org.apache.http.HttpResponse;
+import org.apache.http.HttpStatus;
+import org.apache.http.client.HttpClient;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.entity.mime.HttpMultipartMode;
+import org.apache.http.entity.mime.MultipartEntity;
+import org.apache.http.entity.mime.content.StringBody;
+import org.apache.http.impl.client.DefaultHttpClient;
+
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
@@ -41,8 +50,10 @@ import android.widget.Toast;
 import com.groupagendas.groupagenda.R;
 import com.groupagendas.groupagenda.contacts.Contact;
 import com.groupagendas.groupagenda.contacts.ContactsActivity;
+import com.groupagendas.groupagenda.contacts.Group;
 import com.groupagendas.groupagenda.data.Data;
 import com.groupagendas.groupagenda.data.DataManagement;
+import com.groupagendas.groupagenda.error.report.Reporter;
 import com.groupagendas.groupagenda.events.EventsAdapter.ViewHolder;
 import com.groupagendas.groupagenda.settings.AutoColorItem;
 import com.groupagendas.groupagenda.settings.AutoIconItem;
@@ -201,6 +212,7 @@ public class EventActivity extends Activity {
 				Data.showSaveButtonInContactsForm = true;
 				Data.eventForSavingNewInvitedPersons = event;
 				startActivity(new Intent(EventActivity.this, ContactsActivity.class));
+				new AddNewContactsToEvent().execute();
 			}
 		});
 
@@ -1124,6 +1136,69 @@ public class EventActivity extends Activity {
 			return true;
 		default:
 			return super.onOptionsItemSelected(item);
+		}
+	}
+	
+	public class AddNewContactsToEvent extends AsyncTask<Void, Void, Void>{
+		
+		@Override
+		protected Void doInBackground(Void... params) {
+			if (Data.eventForSavingNewInvitedPersons != null) {
+				if (Data.selectedContacts != null && !Data.selectedContacts.isEmpty()) {
+					try {
+						HttpClient hc = new DefaultHttpClient();
+						HttpPost post = new HttpPost(Data.getServerUrl() + "mobile/events_invite_extra");
+
+						MultipartEntity reqEntity = new MultipartEntity(HttpMultipartMode.BROWSER_COMPATIBLE);
+
+						reqEntity.addPart("token", new StringBody(Data.getToken()));
+						reqEntity.addPart("event_id", new StringBody(String.valueOf(Data.eventForSavingNewInvitedPersons.event_id)));
+
+						int[] assigned_contacts = new int[Data.selectedContacts.size()];
+						int i = 0;
+						for (Contact contact : Data.selectedContacts) {
+							assigned_contacts[i] = contact.contact_id;
+							i++;
+						}
+						if (assigned_contacts.length != 0) {
+							for (int c = 0, l = assigned_contacts.length; c < l; c++) {
+								reqEntity.addPart("contacts[]", new StringBody(String.valueOf(assigned_contacts[c])));
+							}
+						} else {
+							reqEntity.addPart("contacts[]", new StringBody(""));
+						}
+
+						int[] assigned_groups = new int[Data.selectedGroups.size()];
+						int i2 = 0;
+						for (Group group : Data.selectedGroups) {
+							assigned_groups[i2] = group.group_id;
+							i2++;
+						}
+						if (assigned_groups.length != 0) {
+							for (int g = 0, l = assigned_groups.length; g < l; g++) {
+								reqEntity.addPart("groups[]", new StringBody(String.valueOf(assigned_groups[g])));
+							}
+						} else {
+							reqEntity.addPart("groups[]", new StringBody(""));
+						}
+
+						post.setEntity(reqEntity);
+						HttpResponse rp = null;
+						rp = hc.execute(post);
+						if (rp.getStatusLine().getStatusCode() == HttpStatus.SC_OK) {
+							dm.updateEventByIdFromRemoteDb(Data.eventForSavingNewInvitedPersons.event_id);
+							Data.showSaveButtonInContactsForm = false;
+							Data.eventForSavingNewInvitedPersons = null;
+							Data.selectedContacts = new ArrayList<Contact>();
+							Data.selectedGroups = new ArrayList<Group>();
+						}
+					} catch (Exception e) {
+						Reporter.reportError(this.getClass().toString(), Thread.currentThread().getStackTrace()[2].getMethodName().toString(),
+								e.getMessage());
+					}
+				}
+			}
+			return null;
 		}
 	}
 }
