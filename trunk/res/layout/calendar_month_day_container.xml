@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+	android:layout_height="fill_parent"
+	android:layout_width="fill_parent"
+	android:background="@color/white" >
+    	
+    <TextView android:id="@+id/agenda_day_title"
+        android:background="@drawable/transparent"
+        android:gravity="center"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom"
+        android:padding="2dp"
+        android:shadowColor="@color/white"
+        android:shadowRadius="1.5"
+        android:shadowDx="0"
+        android:shadowDy="2"
+        android:text="4"
+        android:textStyle="bold"
+        android:textColor="#3B4959"
+        android:textSize="16dp" />
+
+</LinearLayout>
