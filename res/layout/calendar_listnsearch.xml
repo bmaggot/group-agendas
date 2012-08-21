@@ -1,30 +1,36 @@
 <?xml version="1.0" encoding="utf-8"?>
 <com.groupagendas.groupagenda.calendar.listnsearch.ListnSearchView xmlns:android="http://schemas.android.com/apk/res/android"
-    android:background="@drawable/search_field_background"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
+    android:background="@drawable/search_field_background"
     android:orientation="vertical" >
 
-	<EditText android:id="@+id/listnsearch_search"
-	    android:layout_width="fill_parent"
-	    android:layout_height="wrap_content"
-	    android:layout_gravity="center"
-	    android:layout_marginLeft="10dp"
-	    android:layout_marginRight="10dp"
-	    android:layout_marginTop="5dp"
-	    android:layout_marginBottom="2dp"
-	    android:hint="@string/search"
-	    android:singleLine="true" />
+    <EditText
+        android:id="@+id/listnsearch_search"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:layout_marginBottom="2dp"
+        android:layout_marginLeft="10dp"
+        android:layout_marginRight="10dp"
+        android:layout_marginTop="5dp"
+        android:hint="@string/search"
+        android:singleLine="true" />
 
-    <FrameLayout android:id="@+id/listView"
+    <FrameLayout
+        android:id="@+id/listView"
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
         android:background="@color/white"
         android:orientation="vertical" >
 
-        <com.groupagendas.groupagenda.calendar.listnsearch.SectionListView android:id="@+id/section_list_view"
+        <com.groupagendas.groupagenda.calendar.listnsearch.SectionListView
+            android:id="@+id/section_list_view"
             android:layout_width="fill_parent"
-            android:layout_height="fill_parent" >
+            android:layout_height="fill_parent"
+            android:divider="@null"
+            android:dividerHeight="0dp" >
         </com.groupagendas.groupagenda.calendar.listnsearch.SectionListView>
     </FrameLayout>
+
 </com.groupagendas.groupagenda.calendar.listnsearch.ListnSearchView>

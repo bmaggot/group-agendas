@@ -7,12 +7,23 @@
     android:background="@drawable/calendar_listnsearch_list_selector_background"
     android:orientation="horizontal" >
 
+    <ImageView
+        android:id="@+id/listnsearch_entry_icon_placeholder"
+        android:layout_width="10dp"
+        android:layout_height="10dp"
+        android:layout_gravity="center_vertical|left"
+        android:contentDescription="Placeholder for event's bubble."
+        android:layout_marginTop="3dp"
+        android:layout_marginRight="3dp"
+        android:layout_marginBottom="3dp"
+        android:src="@null" />
+
     <TextView android:id="@+id/example_text_view"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:padding="2dp"
         android:text="TextView"
-        android:textSize="16dp"
+        android:textSize="15dp"
         android:textStyle="bold"
         android:textColor="@color/black" >
     </TextView>

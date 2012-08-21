@@ -1,19 +1,22 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:background="#AA21C0DB"
+ 	android:background="@drawable/calendar_listnsearch_section_view_background"
     android:padding="2dp"
     android:layout_width="fill_parent"
     android:layout_height="wrap_content"
     android:orientation="vertical" >
 
-    <TextView
-        android:id="@+id/listTextView"
+    <TextView android:id="@+id/listTextView"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:padding="2dp"
+        android:paddingLeft="10dp"
         android:text="Section"
         android:textColor="@color/white"
         android:textStyle="bold"
-        android:textSize="18dp" />
+        android:textSize="16dp"
+        android:shadowColor="@color/black"
+        android:shadowDx="0"
+        android:shadowDy="1"
+        android:shadowRadius="1.5" />
 
 </LinearLayout>
