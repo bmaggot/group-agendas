@@ -1,59 +1,26 @@
-<?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:CustomCalendar="http://schemas.android.com/apk/res/com.bog.calendar.app"
+<com.groupagendas.groupagenda.calendar.month.MonthView xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
-    android:background="@color/white"
     android:orientation="vertical" >
 
-    <FrameLayout
-        android:layout_width="fill_parent"
-        android:layout_height="60dip"
-        android:background="@drawable/top_panel"
-        android:paddingBottom="10dip"
-        android:paddingLeft="10dip"
-        android:paddingRight="10dip" >
+<!--     TOP NAVBAR BEGIN -->
+    <include android:id="@+id/calendar_navbar"
+        android:layout_gravity="center_horizontal"
+        layout="@layout/calendar_top_bar" />
+<!--     TOP NAVBAR END -->
 
-        <ImageView
-            android:id="@+id/prev_month_button"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center_vertical|left"
-            android:padding="10dip"
-            android:src="@drawable/left" />
+	<com.groupagendas.groupagenda.calendar.month.MonthTable android:id="@+id/month_table"
+		android:layout_width="fill_parent"
+		android:layout_height="wrap_content"
+		android:background="@color/white"
+		android:orientation="vertical">
+	</com.groupagendas.groupagenda.calendar.month.MonthTable>
 
-        <TextView
-            android:id="@+id/top_panel_title"
-            style="@style/titleTextStyle"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:text="Week 12, June 2012" />
+	<ListView android:id="@+id/month_list"
+   		android:layout_width="fill_parent"
+		android:layout_height="fill_parent"
+		android:background="@color/white"
+		android:cacheColorHint="#00000000" >
+	</ListView>
 
-        <ImageView
-            android:id="@+id/next_month_button"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center_vertical|right"
-            android:padding="10dip"
-            android:src="@drawable/right" />
-    </FrameLayout>
-
-    <com.bog.calendar.app.ui.CalendarView
-        android:id="@+id/calendar_view"
-        android:layout_width="fill_parent"
-        android:layout_height="300dip" />
-
-    <View
-        android:layout_width="fill_parent"
-        android:layout_height="2dp"
-        android:background="@color/monthCellBorderColor" />
-
-    <ListView
-        android:id="@+id/current_events_list"
-        android:layout_width="fill_parent"
-        android:layout_height="0dip"
-        android:layout_weight="1"
-        android:fadingEdgeLength="0px" />
-
-</LinearLayout>
+</com.groupagendas.groupagenda.calendar.month.MonthView>
