@@ -302,6 +302,10 @@ public class Data {
 		Data.sortedEvents = sortedEvents;
 	}
 	
+	public static Calendar lastEventsKey(){
+		return Data.sortedEvents.lastKey();
+	}
+	
 	public static ArrayList<Event> getEventByDate(Calendar date){
 		if(sortedEvents.containsKey(date)){
 			return sortedEvents.get(date);
