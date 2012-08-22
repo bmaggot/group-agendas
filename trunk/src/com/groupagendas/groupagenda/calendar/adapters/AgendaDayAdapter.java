@@ -33,9 +33,8 @@ public class AgendaDayAdapter extends AbstractAdapter<Event> {
 		
 		ImageView bubble = (ImageView) view.findViewById(R.id.agenda_entry_icon_placeholder);
 		
-		String bubbletitle = "calendarbubble_" + event.color + "_";
-		int imgID = getContext().getResources().getIdentifier(bubbletitle, "drawable", getContext().getPackageName());
-		bubble.setImageResource(imgID);
+		
+		bubble.setImageResource(event.getColorBubbleId(getContext()));
 		return view;
 		
 	}
