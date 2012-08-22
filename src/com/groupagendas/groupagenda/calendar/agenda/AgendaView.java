@@ -20,7 +20,6 @@ import com.groupagendas.groupagenda.utils.Utils;
 public class AgendaView extends AbstractCalendarView {
 	
 	private static final int FRAMES_PER_ROW = 2;
-	private Calendar selectedDay;
 	private Calendar shownDate;
 	private static final int TABLE_ROWS_COUNT = 3;
 	private static final int SHOWN_DAYS_COUNT = 7;
@@ -170,8 +169,8 @@ public class AgendaView extends AbstractCalendarView {
 
 	@Override
 	protected void setupSelectedDate(Calendar initializationDate) {
-		this.selectedDay = initializationDate;
-		this.shownDate = (Calendar)selectedDay.clone();
+		this.selectedDate = initializationDate;
+		this.shownDate = (Calendar)selectedDate.clone();
 		Utils.setCalendarToFirstDayOfWeek(this.shownDate);
 		
 	}
