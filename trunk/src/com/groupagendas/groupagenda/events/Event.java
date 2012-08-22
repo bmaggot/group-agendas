@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.TimeZone;
 
+import android.content.Context;
+
 
 
 
@@ -73,6 +75,16 @@ public class Event extends Object{
 	public String toString(){
 		String text = this.title;
 		return text;
+	}
+	
+	public int getColorBubbleId(Context context){
+		String bubbletitle = "calendarbubble_" + this.color + "_";
+		int imgID = context.getResources().getIdentifier(bubbletitle, "drawable", context.getPackageName());
+		return imgID;
+	}
+
+	public int getIconId(Context context) {
+		return context.getResources().getIdentifier(this.icon, "drawable", context.getPackageName());
 	}
 	
 
