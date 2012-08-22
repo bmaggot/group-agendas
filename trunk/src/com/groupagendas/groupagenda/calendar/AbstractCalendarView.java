@@ -6,6 +6,7 @@ package com.groupagendas.groupagenda.calendar;
 import java.util.Calendar;
 
 import com.groupagendas.groupagenda.R;
+import com.groupagendas.groupagenda.data.DataManagement;
 
 import android.app.Activity;
 import android.content.Context;
@@ -47,6 +48,9 @@ public abstract class AbstractCalendarView extends LinearLayout {
 			- Math.round((getResources().getInteger(R.integer.CALENDAR_TOPBAR_HEIGHT) + getResources().getInteger(R.integer.NAVBAR_HEIGHT)) * densityFactor);
 	protected LayoutInflater mInflater;
 	
+	
+	protected boolean am_pmEnabled;
+	protected String[] HourNames;
 	protected String[] WeekDayNames;
 	protected String[] MonthNames;
 	
@@ -72,6 +76,13 @@ public abstract class AbstractCalendarView extends LinearLayout {
 	public AbstractCalendarView(Context context, AttributeSet attrs) {
 		super(context, attrs);
 		mInflater = (LayoutInflater)((Activity)context).getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+		am_pmEnabled =  DataManagement.getInstance(getContext()).getAccount().setting_ampm != 0;
+		if(am_pmEnabled){
+			HourNames = getResources().getStringArray(R.array.hour_names_am_pm);
+		}
+		else{
+			HourNames = getResources().getStringArray(R.array.hour_names);
+		}
 //		TODO Set calendar_top_bar height in code
 //		RelativeLayout topPanel = (RelativeLayout) this.findViewById(R.layout.calendar_top_bar);
 //		LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(LayoutParams.FILL_PARENT, Math.round(getResources().getInteger(R.integer.CALENDAR_TOPBAR_HEIGHT)* densityFactor));

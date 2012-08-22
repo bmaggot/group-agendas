@@ -24,14 +24,6 @@ public abstract class AbstractCalendarViewWithAllDayAndHourEvents extends Abstra
 	public AbstractCalendarViewWithAllDayAndHourEvents(Context context,
 			AttributeSet attrs) {
 		super(context, attrs);
-		
-		am_pmEnabled =  DataManagement.getInstance(getContext()).getAccount().setting_ampm != 0;
-		if(am_pmEnabled){
-			HourNames = getResources().getStringArray(R.array.hour_names_am_pm);
-		}
-		else{
-			HourNames = getResources().getStringArray(R.array.hour_names);
-		}
 	}
 
 	
@@ -43,8 +35,7 @@ public abstract class AbstractCalendarViewWithAllDayAndHourEvents extends Abstra
 	public static final int allDayLineHeightDP = 18;
 	
 	protected boolean showHourEventsIcon = false;
-	protected boolean am_pmEnabled;
-	protected String[] HourNames;
+	
 	
 	
 	
