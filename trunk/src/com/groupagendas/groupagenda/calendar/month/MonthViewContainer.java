@@ -37,7 +37,7 @@ public class MonthViewContainer extends LinearLayout {
 		
 		selectedDate.setTimeInMillis(currentDate.getTimeInMillis());
 		mInflater = (LayoutInflater) getContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-		mInflater.inflate(R.layout.calendar_month_rewrite, this);
+//		mInflater.inflate(R.layout.calendar_month_rewrite, this);
 		setMonthViewTitle(currentDate);
 		
 		ImageView prevButton = (ImageView) this.findViewById(R.id.prev_month_button);
@@ -67,7 +67,7 @@ public class MonthViewContainer extends LinearLayout {
 			}
 		});
 		
-		calendarView = (CalendarViewRewrite)this.findViewById(R.id.calendar_view_rewrite);
+//		calendarView = (CalendarViewRewrite)this.findViewById(R.id.calendar_view_rewrite);
 		initEventListAdapter(selectedDate);
 		
 	}
