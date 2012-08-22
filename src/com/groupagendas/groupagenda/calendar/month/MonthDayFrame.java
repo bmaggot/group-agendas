@@ -6,15 +6,16 @@ import com.groupagendas.groupagenda.R;
 
 import android.content.Context;
 import android.util.AttributeSet;
-import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
-public class MonthDayFrame extends LinearLayout {
+public class MonthDayFrame extends RelativeLayout {
 	
 
 	TextView dayTitle;
 	private boolean isToday;
 	private boolean isSelected;
+	private boolean isOtherMonth;
 	
 	public MonthDayFrame(Context context) {
 		this(context, null);
@@ -23,6 +24,8 @@ public class MonthDayFrame extends LinearLayout {
 		super(context, attrs);
 		isSelected = false;
 		isToday = false;
+		isOtherMonth = false;
+		setBackground();
 		
 	}
 	
@@ -35,22 +38,49 @@ public class MonthDayFrame extends LinearLayout {
 //		TODO
 //		
 	}
+	
+	private void setBackground(){
+		if (isSelected){
+			this.setBackgroundResource(R.drawable.calendar_month_day_selected);
+//			dayTitle.setTextAppearance(getContext(),)
+			return;
+		}
+		if (isToday){
+			this.setBackgroundResource(R.drawable.calendar_month_day_today);
+			return;
+		}
+		this.setBackgroundResource(R.drawable.calendar_month_day_inactive);
+		if (isOtherMonth){
+			
+		}
+		
+	}
 	/**
 	 * @author
 	 */
 	public void setSelected(boolean bool) {
 		if (bool != isSelected) {
+			isOtherMonth = false;
 			isSelected = bool;
-			// TODO
+			setBackground();
 		}
 	}
 	public void setToday(boolean bool){
+		isOtherMonth = false;
 		if (bool != isToday) {
+			isOtherMonth = false;
 			isToday = bool;
-//			TODO selected stiliaus prioritetas aukstesnis nei today
+			setBackground();
 		}
 	}
-		
+	public void setOtherMonth(boolean isOtherMonth) {
+		this.isOtherMonth = isOtherMonth;
+		isSelected = false;
+		isToday = false;
+		setBackground();
+	}
+	
+	
 //	public void setToday(boolean bool){
 //			if (bool != isToday) {
 //				isToday = bool;
