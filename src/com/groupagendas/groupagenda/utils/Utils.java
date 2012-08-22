@@ -167,6 +167,19 @@ public class Utils {
 	
 	}
 	
+	/**
+	 * @author justinas.marcinka@gmail.com
+	 * @param dates that need to be checked
+	 * @return true if dates are on the same day
+	 */
+	
+	public static boolean isSameDay(Calendar date1, Calendar date2){
+		return date1.get(Calendar.ERA) == date2.get(Calendar.ERA) &&
+                date1.get(Calendar.YEAR) == date2.get(Calendar.YEAR) &&
+                date1.get(Calendar.DAY_OF_YEAR) == date2.get(Calendar.DAY_OF_YEAR);
+	
+	}
+	
 	public static Calendar createNewTodayCalendar() {
 		Calendar tmp = Calendar.getInstance();
 		tmp.setFirstDayOfWeek(FIRST_DAY_OF_WEEK);
