@@ -8,4 +8,5 @@ public class Invited extends Object{
 	public String email;
 	public String status;
 	public boolean me = false;
+	public int contactId;
 }
