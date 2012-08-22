@@ -10,6 +10,7 @@
     <!-- TOP NAVBAR END -->
 
 	<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+	    android:background="@drawable/calendar_month_table"
 	    android:orientation="horizontal"
 	    android:layout_width="fill_parent"
 	    android:layout_height="wrap_content">
