@@ -83,9 +83,9 @@ public class HourEventView extends RelativeLayout {
 		 if (e.icon.equalsIgnoreCase("null") || !showEventIcon){
 				icon.setVisibility(GONE);
 			}else{
-				int imgID = getResources().getIdentifier(e.icon, "drawable", getContext().getPackageName());
 				
-				icon.setImageResource(imgID);
+				
+				icon.setImageResource(e.getIconId(getContext()));
 			}
 		
 		
