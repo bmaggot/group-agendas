@@ -2820,6 +2820,7 @@ public class DataManagement {
 								Contact contact = getContact(invited.my_contact_id);
 								invited.email = contact.email;
 								invited.name = contact.name + " " + contact.lastname;
+								invited.contactId = contact.contact_id;
 							} else if (Data.getAccount().fullname.equals(obj.getString("gname"))) {
 								invited.name = Data.getmContext().getString(R.string.you);
 								invited.email = Data.getEmail();
@@ -3555,6 +3556,9 @@ public class DataManagement {
 			} catch (Exception e) {
 				Reporter.reportError(this.getClass().toString(), Thread.currentThread().getStackTrace()[2].getMethodName().toString(),
 						e.getMessage());
+			}
+			if(Data.selectedContacts != null){
+				Data.selectedContacts.clear();
 			}
 			return null;
 		}

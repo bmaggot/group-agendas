@@ -31,6 +31,7 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.view.ViewManager;
 import android.view.Window;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
@@ -187,32 +188,47 @@ public class EventActivity extends Activity {
 						view.setBackgroundResource(R.drawable.event_invited_entry_notalone_background);
 				}
 
-				invitesColumn.addView(getInvitedView(invited, inflater, view, mContext));
+				invitedPersonList.addView(getInvitedView(invited, inflater, view, mContext));
 			}
 		} else if (invitesColumn != null) {
-			LayoutInflater inflater = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-			final View view = inflater.inflate(R.layout.event_invited_person_entry, invitedPersonList, false);
-			Invited invited = new Invited();
+			invitesColumn = (LinearLayout) findViewById(R.id.invitesLine);
+			invitesColumn.setVisibility(View.VISIBLE);
+			inviteButton.setBackgroundResource(R.drawable.event_invite_people_button_notalone);
+			LinearLayout invitedPersonList = (LinearLayout) findViewById(R.id.invited_person_list);
+			invitedPersonList.removeAllViews();
+			final LayoutInflater inflater = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 
-			if (Data.selectedContacts != null && Data.selectedContacts.isEmpty()) {
-				for (Contact contact : Data.selectedContacts) {
-					invited.name = contact.name;
-					invited.email = contact.email;
-					invited.status_id = 4;
-					invitesColumn.addView(getInvitedView(invited, inflater, view, mContext));
+			if (Data.eventForSavingNewInvitedPersons != null && Data.eventForSavingNewInvitedPersons.invited != null
+					&& !Data.eventForSavingNewInvitedPersons.invited.isEmpty()) {
+				this.event = Data.eventForSavingNewInvitedPersons;
+				Data.eventForSavingNewInvitedPersons = null;
+			}
+
+			for (int i = 0, l = event.invited.size(); i < l; i++) {
+				final Invited invited = event.invited.get(i);
+
+				final View view = inflater.inflate(R.layout.event_invited_person_entry, invitedPersonList, false);
+				if (l == 1) {
+					view.setBackgroundResource(R.drawable.event_invited_entry_last_background);
+				} else {
+					if (i == l - 1)
+						view.setBackgroundResource(R.drawable.event_invited_entry_last_background);
+					else
+						view.setBackgroundResource(R.drawable.event_invited_entry_notalone_background);
 				}
+
+				invitedPersonList.addView(getInvitedView(invited, inflater, view, mContext));
 			}
 		}
-		
+
 		inviteButton.setOnClickListener(new OnClickListener() {
-			
+
 			@Override
 			public void onClick(View v) {
 				Data.newEventPar = true;
 				Data.showSaveButtonInContactsForm = true;
 				Data.eventForSavingNewInvitedPersons = event;
 				startActivity(new Intent(EventActivity.this, ContactsActivity.class));
-				new AddNewContactsToEvent().execute();
 			}
 		});
 
@@ -232,7 +248,7 @@ public class EventActivity extends Activity {
 
 					if (myStatus == null)
 						myStatus = (TextView) findViewById(99999).findViewById(R.id.invited_status);
-					
+
 					myButton_yes.setVisibility(View.INVISIBLE);
 					myButton_maybe.setVisibility(View.VISIBLE);
 					myButton_no.setVisibility(View.VISIBLE);
@@ -290,7 +306,6 @@ public class EventActivity extends Activity {
 			});
 		}
 
-		
 		if (event_id > 0) {
 			new GetEventTask().execute(event_id);
 		}
@@ -652,13 +667,6 @@ public class EventActivity extends Activity {
 			if (result.is_owner)
 				showView(accomodationView, detailsLine);
 
-			// if(result.invited != null){
-			// invitesColumn = (LinearLayout) findViewById(R.id.invitesLine);
-			// invitesColumn.setVisibility(View.VISIBLE);
-			//
-			// invitedPersonList = (LinearLayout)
-			// findViewById(R.id.invited_person_list);
-			//
 			final ViewHolder holder = new ViewHolder();
 			holder.status = (TextView) findViewById(R.id.status);
 			holder.button_yes = (TextView) findViewById(R.id.button_yes);
@@ -666,53 +674,6 @@ public class EventActivity extends Activity {
 			holder.button_no = (TextView) findViewById(R.id.button_no);
 
 			responsePanel.setVisibility(View.VISIBLE);
-			//
-			// LayoutInflater inflater = (LayoutInflater)
-			// getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-			//
-			// for(int i=0, l=result.invited.size(); i<l; i++){
-			// final Invited invited = result.invited.get(i);
-			//
-			// final View view =
-			// inflater.inflate(R.layout.event_invited_person_entry,
-			// invitedPersonList, false);
-			// if (l == 1) {
-			// view.setBackgroundResource(R.drawable.event_invited_entry_last_background);
-			// } else {
-			// if (i == l-1)
-			// view.setBackgroundResource(R.drawable.event_invited_entry_last_background);
-			// else
-			// view.setBackgroundResource(R.drawable.event_invited_entry_notalone_background);
-			// }
-			//
-			// final TextView nameView = (TextView)
-			// view.findViewById(R.id.invited_fullname);
-			// nameView.setText(invited.name);
-			//
-			// final TextView emailView = (TextView)
-			// view.findViewById(R.id.invited_available_email);
-			// emailView.setText(invited.email);
-			//
-			// final TextView statusView = (TextView)
-			// view.findViewById(R.id.invited_status);
-			//
-			// switch(invited.status_id){
-			// case 0:
-			// statusView.setText(mContext.getString(R.string.status_0));
-			// break;
-			// case 1:
-			// statusView.setText(mContext.getString(R.string.status_1));
-			// break;
-			// case 2:
-			// statusView.setText(mContext.getString(R.string.status_2));
-			// break;
-			// case 4:
-			// statusView.setText(mContext.getString(R.string.new_invite));
-			// break;
-			// }
-			//
-			// invitesColumn.addView(view);
-			// }
 
 			switch (event.status) {
 			case 0:
@@ -741,72 +702,6 @@ public class EventActivity extends Activity {
 				break;
 			}
 
-			// holder.button_yes.setOnClickListener(new OnClickListener() {
-			// @Override
-			// public void onClick(View arg0) {
-			// boolean success = dm.changeEventStatus(event.event_id, "1");
-			// TextView myStatus = (TextView)
-			// findViewById(R.id.invited_person_list).findViewWithTag("my_event_status");
-			//
-			// holder.button_yes.setVisibility(View.INVISIBLE);
-			// holder.button_maybe.setVisibility(View.VISIBLE);
-			// holder.button_no.setVisibility(View.VISIBLE);
-			// holder.status.setText(mContext.getString(R.string.status_1));
-			// editDb(event.event_id, 1, success);
-			// event.status = 1;
-			//
-			// if (myStatus != null)
-			// myStatus.setText(R.string.status_1);
-			// }
-			// });
-			//
-			// holder.button_maybe.setOnClickListener(new OnClickListener() {
-			// @Override
-			// public void onClick(View arg0) {
-			// boolean success = dm.changeEventStatus(event.event_id, "2");
-			// TextView myStatus = (TextView)
-			// findViewById(R.id.invited_person_list).findViewWithTag("my_event_status");
-			//
-			// holder.button_yes.setVisibility(View.VISIBLE);
-			// holder.button_maybe.setVisibility(View.INVISIBLE);
-			// holder.button_no.setVisibility(View.VISIBLE);
-			// holder.status.setText(mContext.getString(R.string.status_2));
-			// editDb(event.event_id, 2, success);
-			// event.status = 2;
-			//
-			// if (myStatus != null)
-			// myStatus.setText(R.string.status_2);
-			// }
-			// });
-			//
-			// holder.button_no.setOnClickListener(new OnClickListener() {
-			// @Override
-			// public void onClick(View arg0) {
-			// boolean success = dm.changeEventStatus(event.event_id, "0");
-			// View view = findViewById(R.id.invited_person_list);
-			//
-			// TextView myStatus = (TextView)
-			// findViewById(R.id.invited_person_list).findViewWithTag("my_event_status");
-			//
-			// holder.button_yes.setVisibility(View.VISIBLE);
-			// holder.button_maybe.setVisibility(View.VISIBLE);
-			// holder.button_no.setVisibility(View.INVISIBLE);
-			// holder.status.setText(mContext.getString(R.string.status_0));
-			// editDb(event.event_id, 0, success);
-			// event.status = 0;
-			//
-			// if (myStatus != null)
-			// myStatus.setText(R.string.status_0);
-			// }
-			// });
-			// }
-			//
-			// // Save
-			// LinearLayout saveBlock = (LinearLayout)
-			// findViewById(R.id.saveBlock);
-			// if(result.is_owner) saveBlock.setVisibility(View.VISIBLE);
-			//
-			// ///////////
 			pb.setVisibility(View.INVISIBLE);
 			super.onPostExecute(result);
 		}
@@ -1136,69 +1031,6 @@ public class EventActivity extends Activity {
 			return true;
 		default:
 			return super.onOptionsItemSelected(item);
-		}
-	}
-	
-	public class AddNewContactsToEvent extends AsyncTask<Void, Void, Void>{
-		
-		@Override
-		protected Void doInBackground(Void... params) {
-			if (Data.eventForSavingNewInvitedPersons != null) {
-				if (Data.selectedContacts != null && !Data.selectedContacts.isEmpty()) {
-					try {
-						HttpClient hc = new DefaultHttpClient();
-						HttpPost post = new HttpPost(Data.getServerUrl() + "mobile/events_invite_extra");
-
-						MultipartEntity reqEntity = new MultipartEntity(HttpMultipartMode.BROWSER_COMPATIBLE);
-
-						reqEntity.addPart("token", new StringBody(Data.getToken()));
-						reqEntity.addPart("event_id", new StringBody(String.valueOf(Data.eventForSavingNewInvitedPersons.event_id)));
-
-						int[] assigned_contacts = new int[Data.selectedContacts.size()];
-						int i = 0;
-						for (Contact contact : Data.selectedContacts) {
-							assigned_contacts[i] = contact.contact_id;
-							i++;
-						}
-						if (assigned_contacts.length != 0) {
-							for (int c = 0, l = assigned_contacts.length; c < l; c++) {
-								reqEntity.addPart("contacts[]", new StringBody(String.valueOf(assigned_contacts[c])));
-							}
-						} else {
-							reqEntity.addPart("contacts[]", new StringBody(""));
-						}
-
-						int[] assigned_groups = new int[Data.selectedGroups.size()];
-						int i2 = 0;
-						for (Group group : Data.selectedGroups) {
-							assigned_groups[i2] = group.group_id;
-							i2++;
-						}
-						if (assigned_groups.length != 0) {
-							for (int g = 0, l = assigned_groups.length; g < l; g++) {
-								reqEntity.addPart("groups[]", new StringBody(String.valueOf(assigned_groups[g])));
-							}
-						} else {
-							reqEntity.addPart("groups[]", new StringBody(""));
-						}
-
-						post.setEntity(reqEntity);
-						HttpResponse rp = null;
-						rp = hc.execute(post);
-						if (rp.getStatusLine().getStatusCode() == HttpStatus.SC_OK) {
-							dm.updateEventByIdFromRemoteDb(Data.eventForSavingNewInvitedPersons.event_id);
-							Data.showSaveButtonInContactsForm = false;
-							Data.eventForSavingNewInvitedPersons = null;
-							Data.selectedContacts = new ArrayList<Contact>();
-							Data.selectedGroups = new ArrayList<Group>();
-						}
-					} catch (Exception e) {
-						Reporter.reportError(this.getClass().toString(), Thread.currentThread().getStackTrace()[2].getMethodName().toString(),
-								e.getMessage());
-					}
-				}
-			}
-			return null;
 		}
 	}
 }

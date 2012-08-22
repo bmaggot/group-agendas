@@ -73,11 +73,11 @@ public class ContactsAdapter extends BaseAdapter implements Filterable {
 			if (Data.selectedContacts.size() > 0) {
 				for (int i = 0; i < Data.selectedContacts.size(); i++) {
 					if (Data.selectedContacts.get(i).contact_id == contact.contact_id) {
-						convertView.setBackgroundColor(Color.GREEN);
-						convertView.setDrawingCacheBackgroundColor(Color.TRANSPARENT);
+						convertView.setBackgroundColor(-14565157);
+						convertView.setDrawingCacheBackgroundColor(0);
 						break;
 					} else {
-						convertView.setBackgroundColor(Color.WHITE);
+						convertView.setBackgroundColor(-1);
 					}
 				}
 			}
