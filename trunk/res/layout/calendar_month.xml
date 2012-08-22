@@ -3,24 +3,36 @@
     android:layout_height="fill_parent"
     android:orientation="vertical" >
 
-<!--     TOP NAVBAR BEGIN -->
+    <!-- TOP NAVBAR BEGIN -->
     <include android:id="@+id/calendar_navbar"
         android:layout_gravity="center_horizontal"
         layout="@layout/calendar_top_bar" />
-<!--     TOP NAVBAR END -->
+    <!-- TOP NAVBAR END -->
 
-	<TableLayout android:id="@+id/month_table"
-		android:layout_width="fill_parent"
-		android:layout_height="wrap_content"
-		android:background="@color/white"
-		android:orientation="vertical">
-	</TableLayout>
+	<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+	    android:orientation="horizontal"
+	    android:layout_width="fill_parent"
+	    android:layout_height="wrap_content">
+	    
+		<LinearLayout android:id="@+id/month_weeknumbers_container"
+		    android:layout_width="wrap_content"
+		    android:layout_height="wrap_content"
+		    android:orientation="vertical" />
 
-	<ListView android:id="@+id/month_list"
-   		android:layout_width="fill_parent"
-		android:layout_height="fill_parent"
-		android:background="@color/white"
-		android:cacheColorHint="#00000000" >
-	</ListView>
+		<TableLayout android:id="@+id/month_table"
+			android:layout_width="fill_parent"
+			android:layout_height="wrap_content"
+			android:background="@color/white"
+			android:orientation="vertical" />
+
+	</LinearLayout>
+
+    <ListView
+        android:id="@+id/month_list"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:background="@color/white"
+        android:cacheColorHint="#00000000" >
+    </ListView>
 
 </com.groupagendas.groupagenda.calendar.month.MonthView>

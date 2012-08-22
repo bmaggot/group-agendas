@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-	android:layout_height="fill_parent"
-	android:layout_width="fill_parent"
+	android:layout_height="60dp"
+	android:layout_width="60dp"
 	android:background="@color/white" >
-    	
+
     <TextView android:id="@+id/agenda_day_title"
         android:background="@drawable/transparent"
         android:gravity="center"
@@ -19,5 +19,4 @@
         android:textStyle="bold"
         android:textColor="#3B4959"
         android:textSize="16dp" />
-
 </LinearLayout>
