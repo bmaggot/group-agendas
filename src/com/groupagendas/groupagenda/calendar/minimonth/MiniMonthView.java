@@ -64,7 +64,7 @@ public class MiniMonthView extends AbstractCalendarView {
 	public void goPrev() {
 		int LastMonthWeeksCount = selectedMonth.getActualMaximum(Calendar.WEEK_OF_MONTH);
 		selectedMonth.add(Calendar.MONTH, -1);
-		updateShownDate();
+		firstShownDate = updateShownDate();
 		setTopPanel();
 		if(LastMonthWeeksCount != selectedMonth.getActualMaximum(Calendar.WEEK_OF_MONTH)){
 			paintTable(selectedMonth);
@@ -79,7 +79,7 @@ public class MiniMonthView extends AbstractCalendarView {
 	public void goNext() {
 		int LastMonthWeeksCount = selectedMonth.getActualMaximum(Calendar.WEEK_OF_MONTH);
 		selectedMonth.add(Calendar.MONTH, 1);
-		updateShownDate();
+		firstShownDate = updateShownDate();
 		setTopPanel();
 		if(LastMonthWeeksCount != selectedMonth.getActualMaximum(Calendar.WEEK_OF_MONTH)){
 			paintTable(selectedMonth);
