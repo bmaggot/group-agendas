@@ -6,8 +6,16 @@
     android:orientation="horizontal"
     android:background="@drawable/calendar_agenda_entry" >
     
-    <LinearLayout android:orientation="vertical"
+    <ImageView android:id="@+id/month_entry_color_placeholder"
+        android:layout_width="10dp"
+        android:layout_height="10dp"
         android:layout_gravity="center_vertical|left"
+        android:contentDescription="Placeholder for event's bubble."
+        android:layout_marginLeft="5dp"
+        android:src="@null" />
+    
+    <LinearLayout android:orientation="vertical"
+        android:layout_gravity="center_vertical"
         android:layout_marginLeft="5dp"
         android:layout_height="wrap_content"
         android:layout_width="wrap_content">
@@ -41,7 +49,7 @@
         android:layout_width="10dp"
         android:layout_height="10dp"
         android:layout_gravity="center_vertical"
-        android:contentDescription="Placeholder for event's bubble."
+        android:contentDescription="Placeholder for event's icon."
         android:layout_margin="3dp"
         android:src="@null" />
     
