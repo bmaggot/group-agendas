@@ -52,7 +52,7 @@ public class HourEventView extends RelativeLayout {
 		 lp = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.WRAP_CONTENT, RelativeLayout.LayoutParams.WRAP_CONTENT);
 		
 		
-		Calendar startTime  = Utils.stringToCalendar(e.my_time_start, Utils.date_format);
+		Calendar startTime  = (Calendar) e.startCalendar.clone();
 		Calendar endTime = e.endCalendar;
 		
 		SimpleDateFormat df;
