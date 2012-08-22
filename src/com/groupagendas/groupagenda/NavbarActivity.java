@@ -43,6 +43,7 @@ import com.groupagendas.groupagenda.calendar.agenda.AgendaView;
 import com.groupagendas.groupagenda.calendar.day.DayView;
 import com.groupagendas.groupagenda.calendar.listnsearch.ListnSearchView;
 import com.groupagendas.groupagenda.calendar.minimonth.MiniMonthView;
+import com.groupagendas.groupagenda.calendar.month.MonthView;
 import com.groupagendas.groupagenda.calendar.week.WeekView;
 import com.groupagendas.groupagenda.contacts.ContactsActivity;
 import com.groupagendas.groupagenda.contacts.ContactsProvider;
@@ -550,7 +551,8 @@ public class NavbarActivity extends Activity {
 	private void showMonthView() {
 		calendarContainer.removeAllViews();
 		mInflater.inflate(R.layout.calendar_month, calendarContainer);
-		new CalendarMonth(NavbarActivity.this);
+		MonthView view = (MonthView) calendarContainer.getChildAt(0);
+		view.init(selectedDate);
 
 	}
 
