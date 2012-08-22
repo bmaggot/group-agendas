@@ -45,7 +45,7 @@ public class CalendarMonth {
 		prevMonth.setOnClickListener(prevButtonClickListener);
 
 		currentDate = Calendar.getInstance();
-		calendarView = (CalendarView) activity.findViewById(R.id.calendar_view);
+//		calendarView = (CalendarView) activity.findViewById(R.id.calendar_view);
 		calendarView.setShowWeekNumber(true);
 		calendarView.setSelectedDate(today);
 
