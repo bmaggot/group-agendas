@@ -152,6 +152,36 @@
                     android:inputType="textMultiLine" />
             </LinearLayout>
 
+            <RelativeLayout
+                android:id="@+id/addressDetailsLine"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="5dp"
+                android:layout_marginRight="25dp"
+                android:layout_marginBottom="5dp"
+                android:layout_marginLeft="25dp"
+                android:visibility="gone"
+                android:orientation="horizontal" >
+
+                <TextView android:background="@drawable/event_invite_people_button_standalone"
+                    android:id="@+id/addressTrigger"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:padding="5dp"
+                    android:layout_alignParentLeft="true"
+                    android:text="@string/address"
+                    android:textColor="@android:color/black" />
+
+                <TextView android:background="@drawable/event_invite_people_button_standalone"
+                    android:id="@+id/detailsTrigger"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:padding="5dp"
+                    android:layout_alignParentRight="true"
+                    android:text="@string/details"
+                    android:textColor="@android:color/black" />
+            </RelativeLayout>
+            
             <LinearLayout
                 android:id="@+id/addressLine"
                 android:layout_width="fill_parent"
