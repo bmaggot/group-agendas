@@ -31,6 +31,8 @@ public class MonthView extends AbstractCalendarView {
 	private TableLayout monthTable;
 	private ListView eventsList;
 	private MonthAdapter eventsAdapter;
+	private int FRAME_WIDTH;
+	protected boolean redrawBubbles = true; //indicates whether to redraw color bubbles
 
 
     public MonthView(Context context) {
@@ -66,10 +68,8 @@ public class MonthView extends AbstractCalendarView {
 		LinearLayout bottomBar = (LinearLayout)getTopPanelBottomLine().getChildAt(0);
 		bottomBar.removeAllViews();
 		
-		TextView entry = new TextView(getContext());
-//		Add week number title
+		TextView entry = (TextView) mInflater.inflate(R.layout.calendar_top_bar_bottomline_entry, null);
 		int weekTitleWidthPx = Math.round(WEEK_TITLE_WIDTH_DP * densityFactor);
-		entry.setWidth(weekTitleWidthPx);
 		entry.setText(R.string.week_title);
 		bottomBar.addView(entry);
 		
@@ -89,6 +89,7 @@ public class MonthView extends AbstractCalendarView {
 
 	@Override
 	public void goPrev() {
+		redrawBubbles = true;
 		int LastMonthWeeksCount = selectedDate.getActualMaximum(Calendar.WEEK_OF_MONTH);
 		selectedDate.add(Calendar.MONTH, -1);
 		updateShownDate();
@@ -103,6 +104,7 @@ public class MonthView extends AbstractCalendarView {
 
 	@Override
 	public void goNext() {
+		redrawBubbles = true;
 		int LastMonthWeeksCount = selectedDate.getActualMaximum(Calendar.WEEK_OF_MONTH);
 		selectedDate.add(Calendar.MONTH, 1);
 		updateShownDate();
@@ -157,12 +159,12 @@ public class MonthView extends AbstractCalendarView {
 			frame.setOtherMonth(selectedDate.get(Calendar.MONTH) != tmp.get(Calendar.MONTH));
 			frame.refreshStyle();
 			
-			ArrayList<String> bubbleColorsArray = new ArrayList<String>();
-			for (Event e : Data.getEventByDate(tmp)){
-				bubbleColorsArray.add(e.color);
+
+			if(!frame.hasBubbles){				
+				ArrayList<Event> eventColorsArray =  Data.getEventByDate(tmp);
+				frame.DrawColourBubbles(eventColorsArray, FRAME_WIDTH);
 			}
 			
-			frame.DrawColourBubbles(bubbleColorsArray);
 			tmp.add(Calendar.DATE, 1);
 		}
 		
@@ -173,6 +175,7 @@ public class MonthView extends AbstractCalendarView {
 		daysList = new ArrayList<MonthDayFrame>();
 		int FRAMES_PER_ROW = date.getMaximum(Calendar.DAY_OF_WEEK);
 		int TABLE_ROWS_COUNT = date.getActualMaximum(Calendar.WEEK_OF_MONTH);
+		FRAME_WIDTH = VIEW_WIDTH / FRAMES_PER_ROW;
 
 		System.out.println("ROWS: " + TABLE_ROWS_COUNT);
 		LinearLayout month_weeknumbers_container = (LinearLayout) findViewById(R.id.month_weeknumbers_container);
@@ -186,7 +189,7 @@ public class MonthView extends AbstractCalendarView {
 		        1.0f);		
 		
 		TableRow.LayoutParams cellLp = new TableRow.LayoutParams(
-		        VIEW_WIDTH / FRAMES_PER_ROW,
+		        FRAME_WIDTH,
 		        TABLE_ROW_HEIGHT, 
 		        1.0f);		
 
@@ -225,6 +228,8 @@ public class MonthView extends AbstractCalendarView {
 			
 			dayFrame.setOnClickListener(new OnClickListener() {
 	
+				
+
 				@Override
 				public void onClick(View v) {
 					
@@ -247,7 +252,7 @@ public class MonthView extends AbstractCalendarView {
 					
 					if (frame.isOtherMonth()) {
 						
-
+						redrawBubbles = true;
 						setTopPanel();
 						
 						if (LastMonthWeeksCount != selectedDate
