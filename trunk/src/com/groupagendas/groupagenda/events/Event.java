@@ -4,12 +4,17 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.TimeZone;
 
+import com.groupagendas.groupagenda.R;
+
+import android.content.ContentProviderResult;
 import android.content.Context;
 
 
 
 
 public class Event extends Object{
+//	TODO set all default fields and getters
+	public static String DEFAULT_COLOR = "21C0DB";
 	
 	public int event_id;
 	public int user_id;
@@ -78,13 +83,26 @@ public class Event extends Object{
 	}
 	
 	public int getColorBubbleId(Context context){
-		String bubbletitle = "calendarbubble_" + this.color + "_";
+		
+		String color = this.color;
+		
+		if (color == null) color = "";
+		if (color.equalsIgnoreCase("null")) color = "";
+		
+		String bubbletitle = "calendarbubble_" + color + "_";
+		
 		int imgID = context.getResources().getIdentifier(bubbletitle, "drawable", context.getPackageName());
 		return imgID;
 	}
 
 	public int getIconId(Context context) {
 		return context.getResources().getIdentifier(this.icon, "drawable", context.getPackageName());
+	}
+
+	public String getColor() {
+		if (color == null) return DEFAULT_COLOR;
+		if (color.equalsIgnoreCase("null")) return DEFAULT_COLOR;
+		return color;
 	}
 	
 
