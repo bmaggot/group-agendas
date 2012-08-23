@@ -194,5 +194,7 @@
     <string name="saving_new_event">Saving new event!</string>
     <string name="new_event_saved">Your new event is saved!</string>
     <string name="new_contacts_invited">You have invited new persons to event!</string>
+    <string name="messenger">Messenger</string>
+    <string name="share">Share</string>
     
 </resources>

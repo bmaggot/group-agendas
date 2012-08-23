@@ -2,8 +2,8 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
-    android:gravity="center_vertical"
-    android:background="@android:color/white" >
+    android:background="@android:color/white"
+    android:gravity="center_vertical" >
 
     <RelativeLayout
         android:id="@+id/topBar"
@@ -84,23 +84,6 @@
                 <TextView
                     android:layout_width="80dp"
                     android:layout_height="wrap_content"
-                    android:text="@string/type"
-                    android:textColor="@android:color/black" />
-
-                <Spinner
-                    android:id="@+id/typeSpinner"
-                    android:layout_width="fill_parent"
-                    android:layout_height="wrap_content" />
-            </LinearLayout>
-
-            <LinearLayout
-                android:layout_width="fill_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal" >
-
-                <TextView
-                    android:layout_width="80dp"
-                    android:layout_height="wrap_content"
                     android:text="@string/start_time"
                     android:textColor="@android:color/black" />
 
@@ -154,7 +137,7 @@
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
-                android:visibility="gone" >
+                android:visibility="visible" >
 
                 <TextView
                     android:layout_width="80dp"
@@ -175,7 +158,7 @@
                 android:layout_height="wrap_content"
                 android:layout_margin="10dp"
                 android:orientation="vertical"
-                android:visibility="gone" >
+                android:visibility="visible" >
 
                 <TextView
                     android:layout_width="fill_parent"
@@ -190,10 +173,11 @@
             </LinearLayout>
 
             <LinearLayout
+                android:id="@+id/countryBlock"
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
-                android:visibility="gone" >
+                android:visibility="visible" >
 
                 <TextView
                     android:layout_width="80dp"
@@ -208,10 +192,11 @@
             </LinearLayout>
 
             <LinearLayout
+                android:id="@+id/cityBlock"
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
-                android:visibility="gone" >
+                android:visibility="visible" >
 
                 <TextView
                     android:layout_width="80dp"
@@ -227,10 +212,11 @@
             </LinearLayout>
 
             <LinearLayout
+                android:id="@+id/streetBlock"
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
-                android:visibility="gone" >
+                android:visibility="visible" >
 
                 <TextView
                     android:layout_width="80dp"
@@ -246,10 +232,11 @@
             </LinearLayout>
 
             <LinearLayout
+                android:id="@+id/zipBlock"
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
-                android:visibility="gone" >
+                android:visibility="visible" >
 
                 <TextView
                     android:layout_width="80dp"
@@ -265,10 +252,11 @@
             </LinearLayout>
 
             <LinearLayout
+                android:id="@+id/timezoneBlock"
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
-                android:visibility="gone" >
+                android:visibility="visible" >
 
                 <TextView
                     android:layout_width="80dp"
@@ -288,7 +276,7 @@
                 android:layout_height="wrap_content"
                 android:layout_margin="10dp"
                 android:orientation="vertical"
-                android:visibility="gone" >
+                android:visibility="visible" >
 
                 <TextView
                     android:layout_width="fill_parent"
@@ -303,10 +291,11 @@
             </LinearLayout>
 
             <LinearLayout
+                android:id="@+id/locationBlock"
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
-                android:visibility="gone" >
+                android:visibility="visible" >
 
                 <TextView
                     android:layout_width="80dp"
@@ -322,10 +311,11 @@
             </LinearLayout>
 
             <LinearLayout
+                android:id="@+id/go_byBlock"
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
-                android:visibility="gone" >
+                android:visibility="visible" >
 
                 <TextView
                     android:layout_width="80dp"
@@ -341,10 +331,11 @@
             </LinearLayout>
 
             <LinearLayout
+                android:id="@+id/take_with_youBlock"
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
-                android:visibility="gone" >
+                android:visibility="visible" >
 
                 <TextView
                     android:layout_width="80dp"
@@ -360,10 +351,11 @@
             </LinearLayout>
 
             <LinearLayout
+                android:id="@+id/costBlock"
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
-                android:visibility="gone" >
+                android:visibility="visible" >
 
                 <TextView
                     android:layout_width="80dp"
@@ -379,10 +371,11 @@
             </LinearLayout>
 
             <LinearLayout
+                android:id="@+id/accomodationBlock"
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
-                android:visibility="gone" >
+                android:visibility="visible" >
 
                 <TextView
                     android:layout_width="80dp"
@@ -398,13 +391,31 @@
                     android:textSize="12dp" />
             </LinearLayout>
 
+            <Button
+                android:id="@+id/messenger_button"
+                android:layout_width="fill_parent"
+                android:layout_height="40dp"
+                android:background="@drawable/event_invite_people_button_standalone"
+                android:text="@string/messenger"
+                android:textSize="16dp"
+                android:textStyle="bold" />
+
+            <Button
+                android:id="@+id/share_button"
+                android:layout_width="fill_parent"
+                android:layout_height="40dp"
+                android:background="@drawable/event_invite_people_button_standalone"
+                android:text="@string/share"
+                android:textSize="16dp"
+                android:textStyle="bold" />
+
             <LinearLayout
                 android:id="@+id/invitesLine"
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
                 android:layout_margin="10dp"
                 android:orientation="vertical"
-                android:visibility="gone" >
+                android:visibility="visible" >
 
                 <include
                     android:id="@+id/response_to_invitation"
