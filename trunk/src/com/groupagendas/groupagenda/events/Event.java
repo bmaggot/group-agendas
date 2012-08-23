@@ -31,6 +31,10 @@ public class Event extends Object{
 	
 	public String title;
 	public String icon;
+	
+	/**
+	 * @deprecated Use getter instead of direct call. Will be set to private in future
+	 */
 	public String color;
 	public String description_;
 	
