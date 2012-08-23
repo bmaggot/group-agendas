@@ -3,6 +3,7 @@ package com.groupagendas.groupagenda.calendar.month;
 import java.util.ArrayList;
 
 import com.groupagendas.groupagenda.R;
+import com.groupagendas.groupagenda.calendar.MonthCellState;
 import com.groupagendas.groupagenda.events.Event;
 
 import android.content.Context;
@@ -30,6 +31,7 @@ public class MonthDayFrame extends RelativeLayout {
 	private boolean otherMonth;
 	public boolean hasBubbles =  false;
 	private LinearLayout allBubblesContainer;
+	private MonthCellState state = MonthCellState.DEFAULT;
 	
 	public MonthDayFrame(Context context) {
 		this(context, null);
@@ -106,52 +108,60 @@ public class MonthDayFrame extends RelativeLayout {
 	}
 	
 //	Must be called after inflate, because dayTitle cannot be null
-	public void refreshStyle(){
-		
-		if (selected){
+	private void refresh(){
+		switch (state){
+		case SELECTED:
 			this.setBackgroundResource(R.drawable.calendar_month_day_selected);
 			dayTitle.setTextAppearance(getContext(), R.style.monthview_daynumber_selectedday);
-			return;
-		}
-		if (today){
+			break;
+		case TODAY:
 			this.setBackgroundResource(R.drawable.calendar_month_day_today);
 			dayTitle.setTextAppearance(getContext(), R.style.monthview_daynumber_today);
-			return;
-		}
-		
-		this.setBackgroundResource(R.drawable.calendar_month_day_inactive);		
-		if (otherMonth){
+			break;
+		case OTHER_MONTH:
+			this.setBackgroundResource(R.drawable.calendar_month_day_inactive);	
 			dayTitle.setTextAppearance(getContext(), R.style.monthview_daynumber_othermonth);
-		}else dayTitle.setTextAppearance(getContext(), R.style.monthview_daynumber_thismonth);
-		
+			break;
+		default:
+			this.setBackgroundResource(R.drawable.calendar_month_day_inactive);	
+			dayTitle.setTextAppearance(getContext(), R.style.monthview_daynumber_thismonth);
+			break;		
+		}		
 	}
 	/**
 	 * @author
 	 */
-	public void setSelected(boolean bool) {
-		
-			this.selected = bool;
-	}
-	public void setToday(boolean bool){
+//	public void setSelected(boolean bool) {
+//		
+//			this.selected = bool;
+//	}
+//	public void setToday(boolean bool){
+//	
+//			this.today = bool;
+//	}
+//	public void setOtherMonth(boolean bool) {
+//	
+//		this.otherMonth = bool;
+//		if (bool) {
+//			selected = false;
+//			today = false;
+//		}
+//	}
 	
-			this.today = bool;
-	}
-	public void setOtherMonth(boolean bool) {
 	
-		this.otherMonth = bool;
-		if (bool) {
-			selected = false;
-			today = false;
-		}
+	
+	public void setState(MonthCellState state) {
+		this.state = state;
+		refresh();
 	}
 	public boolean isToday() {
-		return today;
+		return state == MonthCellState.TODAY;
 	}
 	public boolean isSelected() {
-		return selected;
+		return state == MonthCellState.SELECTED;
 	}
 	public boolean isOtherMonth() {
-		return otherMonth;
+		return state == MonthCellState.OTHER_MONTH;
 	}
 	public boolean hasBubbles() {
 		if (allBubblesContainer == null) return false;

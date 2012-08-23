@@ -1,7 +1,6 @@
 package com.groupagendas.groupagenda.calendar.month;
 
 
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 
@@ -17,6 +16,7 @@ import android.widget.TextView;
 
 import com.groupagendas.groupagenda.R;
 import com.groupagendas.groupagenda.calendar.AbstractCalendarView;
+import com.groupagendas.groupagenda.calendar.MonthCellState;
 import com.groupagendas.groupagenda.calendar.adapters.MonthAdapter;
 import com.groupagendas.groupagenda.data.Data;
 import com.groupagendas.groupagenda.events.Event;
@@ -154,10 +154,20 @@ public class MonthView extends AbstractCalendarView {
 			String title = "" + tmp.get(Calendar.DATE);
 			
 			frame.setDayTitle(title);
-			frame.setToday(Utils.isToday(tmp));
-			frame.setSelected(Utils.isSameDay(tmp, selectedDate));
-			frame.setOtherMonth(selectedDate.get(Calendar.MONTH) != tmp.get(Calendar.MONTH));
-			frame.refreshStyle();
+			
+			MonthCellState state = MonthCellState.DEFAULT;
+			if (selectedDate.get(Calendar.MONTH) != tmp.get(Calendar.MONTH)) {
+				state = MonthCellState.OTHER_MONTH;
+			} else {
+				if (Utils.isToday(tmp))
+					state = MonthCellState.TODAY;
+				if (Utils.isSameDay(tmp, selectedDate))
+					state = MonthCellState.SELECTED;
+			}
+			
+			
+
+			frame.setState(state);
 			
 
 			if(!frame.hasBubbles){				
