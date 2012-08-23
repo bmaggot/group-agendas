@@ -2,10 +2,7 @@ package com.groupagendas.groupagenda.events;
 
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.TimeZone;
 import java.util.concurrent.ExecutionException;
-
-import org.w3c.dom.UserDataHandler;
 
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -13,7 +10,6 @@ import android.app.Dialog;
 import android.content.ContentValues;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.opengl.Visibility;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.text.Editable;
@@ -33,9 +29,9 @@ import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.Spinner;
+import android.widget.TextView;
 import android.widget.Toast;
 
-import com.groupagendas.groupagenda.NavbarActivity;
 import com.groupagendas.groupagenda.R;
 import com.groupagendas.groupagenda.account.Account;
 import com.groupagendas.groupagenda.contacts.Contact;
@@ -118,6 +114,9 @@ public class NewEventActivity extends Activity {
 	boolean addressPanelVisible = false;
 	boolean detailsPanelVisible = false;
 	
+	private RelativeLayout addressDetailsPanel;
+	TextView addressTrigger;
+	TextView detailsTrigger;
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -261,18 +260,7 @@ public class NewEventActivity extends Activity {
 		descView = (EditText) findViewById(R.id.descView);
 
 		// Address
-		LinearLayout addressPanel = (LinearLayout) findViewById(R.id.addressLine);
-		addressPanel.setOnClickListener(new OnClickListener() {
-			
-			@Override
-			public void onClick(View v) {
-				if(addressPanelVisible){
-					hideAddressPanel();
-				} else {
-					showAddressPanel();
-				}
-			}
-		});
+		final LinearLayout addressPanel = (LinearLayout) findViewById(R.id.addressLine);
 		// timezone
 		timezoneSpinner = (Spinner) findViewById(R.id.timezoneSpinner);
 		
@@ -314,15 +302,26 @@ public class NewEventActivity extends Activity {
 		zipView = (EditText) findViewById(R.id.zipView);		
 		
 		// Details
-		LinearLayout detailsPanel = (LinearLayout) findViewById(R.id.detailsLine);
+		final LinearLayout detailsPanel = (LinearLayout) findViewById(R.id.detailsLine);
 		detailsPanel.setOnClickListener(new OnClickListener() {
 			
 			@Override
 			public void onClick(View v) {
 				if(detailsPanelVisible){
-					hideDetailsPanel();
+					hideDetailsPanel(addressPanel, detailsPanel);
 				} else {
 					showDetailsPanel();
+				}
+			}
+		});
+		addressPanel.setOnClickListener(new OnClickListener() {
+			
+			@Override
+			public void onClick(View v) {
+				if(addressPanelVisible){
+					hideAddressPanel(addressPanel, detailsPanel);
+				} else {
+					showAddressPanel();
 				}
 			}
 		});
@@ -348,8 +347,36 @@ public class NewEventActivity extends Activity {
 				startActivity(new Intent(NewEventActivity.this, ContactsActivity.class));
 			}
 		});
-		hideAddressPanel();
-		hideDetailsPanel();
+		
+		
+		hideAddressPanel(addressPanel, detailsPanel);
+		hideDetailsPanel(addressPanel, detailsPanel);
+		addressDetailsPanel = (RelativeLayout) findViewById(R.id.addressDetailsLine);
+		addressPanel.setVisibility(View.GONE);
+		detailsPanel.setVisibility(View.GONE);
+		addressDetailsPanel.setVisibility(View.VISIBLE);
+		addressTrigger = (TextView) addressDetailsPanel.findViewById(R.id.addressTrigger);
+		addressTrigger.setOnClickListener(new OnClickListener() {
+			
+			@Override
+			public void onClick(View v) {
+				addressDetailsPanel.setVisibility(View.GONE);
+				addressPanel.setVisibility(View.VISIBLE);
+				detailsPanel.setVisibility(View.VISIBLE);
+				showAddressPanel();
+			}
+		});
+		detailsTrigger = (TextView) addressDetailsPanel.findViewById(R.id.detailsTrigger);
+		detailsTrigger.setOnClickListener(new OnClickListener() {
+			
+			@Override
+			public void onClick(View v) {
+				addressDetailsPanel.setVisibility(View.GONE);
+				addressPanel.setVisibility(View.VISIBLE);
+				detailsPanel.setVisibility(View.VISIBLE);
+				showDetailsPanel();
+			}
+		});
 	}
 	
 	private TextWatcher filterTextWatcher = new TextWatcher() {
@@ -420,8 +447,13 @@ public class NewEventActivity extends Activity {
 		zipViewBlock.setVisibility(View.VISIBLE);
 	}
 	
-	public void hideAddressPanel(){
+	public void hideAddressPanel(LinearLayout addressPanel, LinearLayout detailsPanel){
 		addressPanelVisible = false;
+		if(!detailsPanelVisible && addressDetailsPanel != null && addressPanel != null && detailsPanel != null){
+			addressDetailsPanel.setVisibility(View.VISIBLE);
+			addressPanel.setVisibility(View.GONE);
+			detailsPanel.setVisibility(View.GONE);
+		}
 		LinearLayout timezoneSpinnerBlock = (LinearLayout) findViewById(R.id.timezoneSpinnerBlock);
 		timezoneSpinnerBlock.setVisibility(View.GONE);
 		
@@ -456,8 +488,13 @@ public class NewEventActivity extends Activity {
 		accomodationViewBlock.setVisibility(View.VISIBLE);
 	}
 	
-	public void hideDetailsPanel(){
+	public void hideDetailsPanel(LinearLayout addressPanel, LinearLayout detailsPanel){
 		detailsPanelVisible = false;
+		if(!addressPanelVisible && addressDetailsPanel != null && addressPanel != null && detailsPanel != null){
+			addressDetailsPanel.setVisibility(View.VISIBLE);
+			addressPanel.setVisibility(View.GONE);
+			detailsPanel.setVisibility(View.GONE);
+		}
 		LinearLayout locationViewBlock = (LinearLayout) findViewById(R.id.locationViewBlock);
 		locationViewBlock.setVisibility(View.GONE);
 		

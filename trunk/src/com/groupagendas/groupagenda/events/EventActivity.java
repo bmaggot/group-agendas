@@ -113,6 +113,10 @@ public class EventActivity extends Activity {
 	
 	private boolean addressPanelVisible = true;
 	private boolean detailsPanelVisible = true;
+	
+	private RelativeLayout addressDetailsPanel;
+	TextView addressTrigger;
+	TextView detailsTrigger;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -282,8 +286,58 @@ public class EventActivity extends Activity {
 		
 		super.onResume();
 
-		hideAddressPanel();
-		hideDetailsPanel();
+		final LinearLayout addressPanel = (LinearLayout) findViewById(R.id.addressLine);
+		final LinearLayout detailsPanel = (LinearLayout) findViewById(R.id.detailsLine);
+		detailsPanel.setOnClickListener(new OnClickListener() {
+			
+			@Override
+			public void onClick(View v) {
+				if(detailsPanelVisible){
+					hideDetailsPanel(addressPanel, detailsPanel);
+				} else {
+					showDetailsPanel();
+				}
+			}
+		});
+		addressPanel.setOnClickListener(new OnClickListener() {
+			
+			@Override
+			public void onClick(View v) {
+				if(addressPanelVisible){
+					hideAddressPanel(addressPanel, detailsPanel);
+				} else {
+					showAddressPanel();
+				}
+			}
+		});
+		hideAddressPanel(addressPanel, detailsPanel);
+		hideDetailsPanel(addressPanel, detailsPanel);
+		addressDetailsPanel = (RelativeLayout) findViewById(R.id.addressDetailsLine);
+		addressPanel.setVisibility(View.GONE);
+		detailsPanel.setVisibility(View.GONE);
+		addressDetailsPanel.setVisibility(View.VISIBLE);
+		addressTrigger = (TextView) addressDetailsPanel.findViewById(R.id.addressTrigger);
+		addressTrigger.setOnClickListener(new OnClickListener() {
+			
+			@Override
+			public void onClick(View v) {
+				addressDetailsPanel.setVisibility(View.GONE);
+				addressPanel.setVisibility(View.VISIBLE);
+				detailsPanel.setVisibility(View.VISIBLE);
+				showAddressPanel();
+			}
+		});
+		detailsTrigger = (TextView) addressDetailsPanel.findViewById(R.id.detailsTrigger);
+		detailsTrigger.setOnClickListener(new OnClickListener() {
+			
+			@Override
+			public void onClick(View v) {
+				addressDetailsPanel.setVisibility(View.GONE);
+				addressPanel.setVisibility(View.VISIBLE);
+				detailsPanel.setVisibility(View.VISIBLE);
+				showDetailsPanel();
+			}
+		});
 	}
 
 	public View getInvitedView(Invited invited, LayoutInflater inflater, View view, Context mContext) {
@@ -490,18 +544,18 @@ public class EventActivity extends Activity {
 			}
 
 			// Address
-			addressLine = (LinearLayout) findViewById(R.id.addressLine);
-			addressLine.setOnClickListener(new OnClickListener() {
-				
-				@Override
-				public void onClick(View v) {
-					if(addressPanelVisible){
-						hideAddressPanel();
-					} else {
-						showAddressPanel();
-					}
-				}
-			});
+//			addressLine = (LinearLayout) findViewById(R.id.addressLine);
+//			addressLine.setOnClickListener(new OnClickListener() {
+//				
+//				@Override
+//				public void onClick(View v) {
+//					if(addressPanelVisible){
+//						hideAddressPanel(ad);
+//					} else {
+//						showAddressPanel();
+//					}
+//				}
+//			});
 			// timezone
 			timezoneSpinner = (Spinner) findViewById(R.id.timezoneSpinner);
 			if (result.is_owner)
@@ -593,19 +647,19 @@ public class EventActivity extends Activity {
 			if (result.is_owner)
 				showView(zipView, addressLine);
 
-			// Details
-			detailsLine = (LinearLayout) findViewById(R.id.detailsLine);
-			detailsLine.setOnClickListener(new OnClickListener() {
-				
-				@Override
-				public void onClick(View v) {
-					if(detailsPanelVisible){
-						hideDetailsPanel();
-					} else {
-						showDetailsPanel();
-					}
-				}
-			});
+//			// Details
+//			detailsLine = (LinearLayout) findViewById(R.id.detailsLine);
+//			detailsLine.setOnClickListener(new OnClickListener() {
+//				
+//				@Override
+//				public void onClick(View v) {
+//					if(detailsPanelVisible){
+//						hideDetailsPanel();
+//					} else {
+//						showDetailsPanel();
+//					}
+//				}
+//			});
 			// location
 			locationView = (EditText) findViewById(R.id.locationView);
 			if (result.location != null && !result.location.equals("null")) {
@@ -935,14 +989,16 @@ public class EventActivity extends Activity {
 	}
 
 	private void showView(View view, LinearLayout line) {
-		if(addressPanelVisible){
-			line.setVisibility(View.VISIBLE);
-			LinearLayout parent = (LinearLayout) view.getParent();
-			parent.setVisibility(View.VISIBLE);
-		} else if(!addressPanelVisible) {
-			line.setVisibility(View.VISIBLE);
-			LinearLayout parent = (LinearLayout) view.getParent();
-			parent.setVisibility(View.GONE);
+		if(line != null){
+			if(addressPanelVisible){
+				line.setVisibility(View.VISIBLE);
+				LinearLayout parent = (LinearLayout) view.getParent();
+				parent.setVisibility(View.VISIBLE);
+			} else if(!addressPanelVisible) {
+				line.setVisibility(View.VISIBLE);
+				LinearLayout parent = (LinearLayout) view.getParent();
+				parent.setVisibility(View.GONE);
+			}
 		}
 	}
 
@@ -1051,8 +1107,13 @@ public class EventActivity extends Activity {
 		zipViewBlock.setVisibility(View.VISIBLE);
 	}
 	
-	public void hideAddressPanel(){
+	public void hideAddressPanel(LinearLayout addressPanel, LinearLayout detailsPanel){
 		addressPanelVisible = false;
+		if(!detailsPanelVisible && addressDetailsPanel != null && addressPanel != null && detailsPanel != null){
+			addressDetailsPanel.setVisibility(View.VISIBLE);
+			addressPanel.setVisibility(View.GONE);
+			detailsPanel.setVisibility(View.GONE);
+		}
 		LinearLayout timezoneSpinnerBlock = (LinearLayout) findViewById(R.id.countryBlock);
 		timezoneSpinnerBlock.setVisibility(View.GONE);
 		
@@ -1087,8 +1148,13 @@ public class EventActivity extends Activity {
 		accomodationViewBlock.setVisibility(View.VISIBLE);
 	}
 	
-	public void hideDetailsPanel(){
+	public void hideDetailsPanel(LinearLayout addressPanel, LinearLayout detailsPanel){
 		detailsPanelVisible = false;
+		if(!addressPanelVisible && addressDetailsPanel != null && addressPanel != null && detailsPanel != null){
+			addressDetailsPanel.setVisibility(View.VISIBLE);
+			addressPanel.setVisibility(View.GONE);
+			detailsPanel.setVisibility(View.GONE);
+		}
 		LinearLayout locationViewBlock = (LinearLayout) findViewById(R.id.locationBlock);
 		locationViewBlock.setVisibility(View.GONE);
 		
