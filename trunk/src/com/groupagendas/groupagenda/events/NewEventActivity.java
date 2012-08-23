@@ -206,26 +206,26 @@ public class NewEventActivity extends Activity {
 		titleView.addTextChangedListener(filterTextWatcher);
 
 		// type
-		typeSpinner = (Spinner) findViewById(R.id.typeSpinner);
-		ArrayAdapter<CharSequence> adapterType = ArrayAdapter.createFromResource(NewEventActivity.this, R.array.type_labels,
-				android.R.layout.simple_spinner_item);
-		adapterType.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-		typeSpinner.setAdapter(adapterType);
-		typeArray = getResources().getStringArray(R.array.type_values);
-		typeSpinner.setOnItemSelectedListener(new OnItemSelectedListener() {
-			@Override
-			public void onItemSelected(AdapterView<?> arg0, View arg1, int pos, long arg3) {
-				if (pos > 1) {
-					contactsBlock.setVisibility(View.VISIBLE);
-				} else {
-					contactsBlock.setVisibility(View.GONE);
-				}
-			}
-
-			@Override
-			public void onNothingSelected(AdapterView<?> arg0) {
-			}
-		});
+//		typeSpinner = (Spinner) findViewById(R.id.typeSpinner);
+//		ArrayAdapter<CharSequence> adapterType = ArrayAdapter.createFromResource(NewEventActivity.this, R.array.type_labels,
+//				android.R.layout.simple_spinner_item);
+//		adapterType.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+//		typeSpinner.setAdapter(adapterType);
+//		typeArray = getResources().getStringArray(R.array.type_values);
+//		typeSpinner.setOnItemSelectedListener(new OnItemSelectedListener() {
+//			@Override
+//			public void onItemSelected(AdapterView<?> arg0, View arg1, int pos, long arg3) {
+//				if (pos > 1) {
+//					contactsBlock.setVisibility(View.VISIBLE);
+//				} else {
+//					contactsBlock.setVisibility(View.GONE);
+//				}
+//			}
+//
+//			@Override
+//			public void onNothingSelected(AdapterView<?> arg0) {
+//			}
+//		});
 
 		// Time
 		String strTime = getIntent().getStringExtra(EXTRA_STRING_FOR_START_CALENDAR);
@@ -520,9 +520,7 @@ public class NewEventActivity extends Activity {
 			cv.put(EventsProvider.EMetaData.EventsMetaData.ICON, event.icon);
 			
 			cv.put(EventsProvider.EMetaData.EventsMetaData.COLOR, event.color);
-			
-			temp = typeArray[typeSpinner.getSelectedItemPosition()];
-			event.type = temp;
+
 			cv.put(EventsProvider.EMetaData.EventsMetaData.TYPE, temp);
 			
 			

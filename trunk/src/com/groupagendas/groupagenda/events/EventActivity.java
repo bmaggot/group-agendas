@@ -2,16 +2,6 @@ package com.groupagendas.groupagenda.events;
 
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.concurrent.ExecutionException;
-
-import org.apache.http.HttpResponse;
-import org.apache.http.HttpStatus;
-import org.apache.http.client.HttpClient;
-import org.apache.http.client.methods.HttpPost;
-import org.apache.http.entity.mime.HttpMultipartMode;
-import org.apache.http.entity.mime.MultipartEntity;
-import org.apache.http.entity.mime.content.StringBody;
-import org.apache.http.impl.client.DefaultHttpClient;
 
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -31,7 +21,6 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
-import android.view.ViewManager;
 import android.view.Window;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
@@ -49,12 +38,9 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.groupagendas.groupagenda.R;
-import com.groupagendas.groupagenda.contacts.Contact;
 import com.groupagendas.groupagenda.contacts.ContactsActivity;
-import com.groupagendas.groupagenda.contacts.Group;
 import com.groupagendas.groupagenda.data.Data;
 import com.groupagendas.groupagenda.data.DataManagement;
-import com.groupagendas.groupagenda.error.report.Reporter;
 import com.groupagendas.groupagenda.events.EventsAdapter.ViewHolder;
 import com.groupagendas.groupagenda.settings.AutoColorItem;
 import com.groupagendas.groupagenda.settings.AutoIconItem;
@@ -124,6 +110,9 @@ public class EventActivity extends Activity {
 	private ArrayList<AutoIconItem> autoIcons = null;
 
 	private Intent intent;
+	
+	private boolean addressPanelVisible = true;
+	private boolean detailsPanelVisible = true;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -290,8 +279,11 @@ public class EventActivity extends Activity {
 		if (event_id > 0) {
 			new GetEventTask().execute(event_id);
 		}
-
+		
 		super.onResume();
+
+		hideAddressPanel();
+		hideDetailsPanel();
 	}
 
 	public View getInvitedView(Invited invited, LayoutInflater inflater, View view, Context mContext) {
@@ -436,19 +428,19 @@ public class EventActivity extends Activity {
 			}
 
 			// type
-			typeSpinner = (Spinner) findViewById(R.id.typeSpinner);
-			ArrayAdapter<CharSequence> adapterType = ArrayAdapter.createFromResource(EventActivity.this, R.array.type_labels,
-					android.R.layout.simple_spinner_item);
-			adapterType.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-			typeSpinner.setAdapter(adapterType);
-			typeArray = getResources().getStringArray(R.array.type_values);
-
-			if (result.type != null && !result.type.equals("null")) {
-				int pos = Utils.getArrayIndex(typeArray, result.type);
-				typeSpinner.setSelection(pos);
-				if (!result.is_owner)
-					typeSpinner.setEnabled(false);
-			}
+//			typeSpinner = (Spinner) findViewById(R.id.typeSpinner);
+//			ArrayAdapter<CharSequence> adapterType = ArrayAdapter.createFromResource(EventActivity.this, R.array.type_labels,
+//					android.R.layout.simple_spinner_item);
+//			adapterType.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+//			typeSpinner.setAdapter(adapterType);
+//			typeArray = getResources().getStringArray(R.array.type_values);
+//
+//			if (result.type != null && !result.type.equals("null")) {
+//				int pos = Utils.getArrayIndex(typeArray, result.type);
+//				typeSpinner.setSelection(pos);
+//				if (!result.is_owner)
+//					typeSpinner.setEnabled(false);
+//			}
 
 			// Time
 			startView = (EditText) findViewById(R.id.startView);
@@ -495,12 +487,21 @@ public class EventActivity extends Activity {
 				LinearLayout parent = (LinearLayout) descView.getParent();
 				parent.setVisibility(View.VISIBLE);
 				descView.setText(result.description_);
-				if (!result.is_owner)
-					descView.setEnabled(false);
 			}
 
 			// Address
 			addressLine = (LinearLayout) findViewById(R.id.addressLine);
+			addressLine.setOnClickListener(new OnClickListener() {
+				
+				@Override
+				public void onClick(View v) {
+					if(addressPanelVisible){
+						hideAddressPanel();
+					} else {
+						showAddressPanel();
+					}
+				}
+			});
 			// timezone
 			timezoneSpinner = (Spinner) findViewById(R.id.timezoneSpinner);
 			if (result.is_owner)
@@ -594,6 +595,17 @@ public class EventActivity extends Activity {
 
 			// Details
 			detailsLine = (LinearLayout) findViewById(R.id.detailsLine);
+			detailsLine.setOnClickListener(new OnClickListener() {
+				
+				@Override
+				public void onClick(View v) {
+					if(detailsPanelVisible){
+						hideDetailsPanel();
+					} else {
+						showDetailsPanel();
+					}
+				}
+			});
 			// location
 			locationView = (EditText) findViewById(R.id.locationView);
 			if (result.location != null && !result.location.equals("null")) {
@@ -923,9 +935,15 @@ public class EventActivity extends Activity {
 	}
 
 	private void showView(View view, LinearLayout line) {
-		line.setVisibility(View.VISIBLE);
-		LinearLayout parent = (LinearLayout) view.getParent();
-		parent.setVisibility(View.VISIBLE);
+		if(addressPanelVisible){
+			line.setVisibility(View.VISIBLE);
+			LinearLayout parent = (LinearLayout) view.getParent();
+			parent.setVisibility(View.VISIBLE);
+		} else if(!addressPanelVisible) {
+			line.setVisibility(View.VISIBLE);
+			LinearLayout parent = (LinearLayout) view.getParent();
+			parent.setVisibility(View.GONE);
+		}
 	}
 
 	private void showDateTimeDialog(final EditText view, final int id) {
@@ -1013,5 +1031,77 @@ public class EventActivity extends Activity {
 		default:
 			return super.onOptionsItemSelected(item);
 		}
+	}
+	
+	public void showAddressPanel(){
+		addressPanelVisible = true;
+		LinearLayout timezoneSpinnerBlock = (LinearLayout) findViewById(R.id.countryBlock);
+		timezoneSpinnerBlock.setVisibility(View.VISIBLE);
+		
+		LinearLayout countrySpinnerBlock = (LinearLayout) findViewById(R.id.cityBlock);
+		countrySpinnerBlock.setVisibility(View.VISIBLE);
+		
+		LinearLayout cityViewBlock = (LinearLayout) findViewById(R.id.streetBlock);
+		cityViewBlock.setVisibility(View.VISIBLE);
+		
+		LinearLayout streetViewBlock = (LinearLayout) findViewById(R.id.zipBlock);
+		streetViewBlock.setVisibility(View.VISIBLE);
+		
+		LinearLayout zipViewBlock = (LinearLayout) findViewById(R.id.timezoneBlock);
+		zipViewBlock.setVisibility(View.VISIBLE);
+	}
+	
+	public void hideAddressPanel(){
+		addressPanelVisible = false;
+		LinearLayout timezoneSpinnerBlock = (LinearLayout) findViewById(R.id.countryBlock);
+		timezoneSpinnerBlock.setVisibility(View.GONE);
+		
+		LinearLayout countrySpinnerBlock = (LinearLayout) findViewById(R.id.cityBlock);
+		countrySpinnerBlock.setVisibility(View.GONE);
+		
+		LinearLayout cityViewBlock = (LinearLayout) findViewById(R.id.streetBlock);
+		cityViewBlock.setVisibility(View.GONE);
+		
+		LinearLayout streetViewBlock = (LinearLayout) findViewById(R.id.zipBlock);
+		streetViewBlock.setVisibility(View.GONE);
+		
+		LinearLayout zipViewBlock = (LinearLayout) findViewById(R.id.timezoneBlock);
+		zipViewBlock.setVisibility(View.GONE);
+	}
+	
+	public void showDetailsPanel(){
+		detailsPanelVisible = true;
+		LinearLayout locationViewBlock = (LinearLayout) findViewById(R.id.locationBlock);
+		locationViewBlock.setVisibility(View.VISIBLE);
+		
+		LinearLayout gobyViewBlock = (LinearLayout) findViewById(R.id.go_byBlock);
+		gobyViewBlock.setVisibility(View.VISIBLE);
+		
+		LinearLayout takewithyouViewBlock = (LinearLayout) findViewById(R.id.take_with_youBlock);
+		takewithyouViewBlock.setVisibility(View.VISIBLE);
+		
+		LinearLayout costViewBlock = (LinearLayout) findViewById(R.id.costBlock);
+		costViewBlock.setVisibility(View.VISIBLE);
+		
+		LinearLayout accomodationViewBlock = (LinearLayout) findViewById(R.id.accomodationBlock);
+		accomodationViewBlock.setVisibility(View.VISIBLE);
+	}
+	
+	public void hideDetailsPanel(){
+		detailsPanelVisible = false;
+		LinearLayout locationViewBlock = (LinearLayout) findViewById(R.id.locationBlock);
+		locationViewBlock.setVisibility(View.GONE);
+		
+		LinearLayout gobyViewBlock = (LinearLayout) findViewById(R.id.go_byBlock);
+		gobyViewBlock.setVisibility(View.GONE);
+		
+		LinearLayout takewithyouViewBlock = (LinearLayout) findViewById(R.id.take_with_youBlock);
+		takewithyouViewBlock.setVisibility(View.GONE);
+		
+		LinearLayout costViewBlock = (LinearLayout) findViewById(R.id.costBlock);
+		costViewBlock.setVisibility(View.GONE);
+		
+		LinearLayout accomodationViewBlock = (LinearLayout) findViewById(R.id.accomodationBlock);
+		accomodationViewBlock.setVisibility(View.GONE);
 	}
 }

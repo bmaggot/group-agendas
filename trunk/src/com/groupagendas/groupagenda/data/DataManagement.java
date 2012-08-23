@@ -2994,8 +2994,6 @@ public class DataManagement {
 
 			reqEntity.addPart("token", new StringBody(Data.getToken()));
 
-			reqEntity.addPart("event_type", new StringBody(e.type));
-
 			if (e.icon != null)
 				reqEntity.addPart("icon", new StringBody(e.icon));
 			if (e.color != null)
