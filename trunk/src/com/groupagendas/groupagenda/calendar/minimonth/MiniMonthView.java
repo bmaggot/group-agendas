@@ -121,7 +121,7 @@ public class MiniMonthView extends AbstractCalendarView {
 	
 	private void paintTable(Calendar date) {
 		miniMonthTable.removeAllViews();
-		
+		daysList = new ArrayList<AgendaFrame>();
 		
 		
 //	TODO	miniMonthTable.setOnTouchListener(createListener(swipeGestureDetector));
