@@ -2,6 +2,7 @@ package com.groupagendas.groupagenda.contacts;
 
 import java.util.ArrayList;
 import java.util.TreeMap;
+import java.util.concurrent.ExecutionException;
 
 import org.apache.http.HttpResponse;
 import org.apache.http.HttpStatus;
@@ -11,8 +12,12 @@ import org.apache.http.entity.mime.HttpMultipartMode;
 import org.apache.http.entity.mime.MultipartEntity;
 import org.apache.http.entity.mime.content.StringBody;
 import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.util.EntityUtils;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import android.app.ListActivity;
+import android.content.ContentValues;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Color;
@@ -21,6 +26,7 @@ import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.util.TypedValue;
 import android.view.GestureDetector;
 import android.view.Gravity;
@@ -45,8 +51,13 @@ import com.groupagendas.groupagenda.R;
 import com.groupagendas.groupagenda.contacts.importer.ImportActivity;
 import com.groupagendas.groupagenda.data.Data;
 import com.groupagendas.groupagenda.data.DataManagement;
+import com.groupagendas.groupagenda.data.OfflineData;
+import com.groupagendas.groupagenda.data.DataManagement.UpdateEventByIdFromRemoteDb;
 import com.groupagendas.groupagenda.error.report.Reporter;
+import com.groupagendas.groupagenda.events.Event;
 import com.groupagendas.groupagenda.events.EventActivity;
+import com.groupagendas.groupagenda.events.EventsProvider;
+import com.groupagendas.groupagenda.utils.Utils;
 import com.makeramen.segmented.SegmentedRadioGroup;
 
 public class ContactsActivity extends ListActivity implements OnCheckedChangeListener {
@@ -65,7 +76,7 @@ public class ContactsActivity extends ListActivity implements OnCheckedChangeLis
 	private int GROUPS_LIST = 1;
 	private int CURRENT_LIST = CONTACTS_LIST;
 
-//	private ProgressBar pb;
+	// private ProgressBar pb;
 
 	private GestureDetector mGestureDetector;
 
@@ -84,11 +95,8 @@ public class ContactsActivity extends ListActivity implements OnCheckedChangeLis
 
 	private ContactsAdapter cAdapter;
 	private GroupsAdapter gAdapter;
-	
-	
-	private Button importButton;
-	
 
+	private Button importButton;
 
 	@Override
 	public void onWindowFocusChanged(boolean hasFocus) {
@@ -142,7 +150,7 @@ public class ContactsActivity extends ListActivity implements OnCheckedChangeLis
 					// now you know coordinates of touch
 					sideIndexX = event.getX();
 					sideIndexY = event.getY();
-				
+
 					// and can display a proper item it country list
 					displayListItem(0);
 
@@ -172,11 +180,11 @@ public class ContactsActivity extends ListActivity implements OnCheckedChangeLis
 		CURRENT_LIST = preferences.getInt("ContactsActivityList", CURRENT_LIST);
 		CURRENT_TASK = preferences.getString("ContactsActivityTask", CURRENT_TASK);
 		sideIndex.setVisibility(View.GONE);
-		
+
 		if (CURRENT_TASK.equals(CONTACTS_TASK)) {
 			setListAdapter(cAdapter);
 
-			//TO DO: put this shit into the right place. \m/
+			// TO DO: put this shit into the right place. \m/
 			if (dm.loadContacts(this, cAdapter) > 10) {
 				indexList = createIndex();
 				sideIndex.setVisibility(View.VISIBLE);
@@ -185,12 +193,12 @@ public class ContactsActivity extends ListActivity implements OnCheckedChangeLis
 			setListAdapter(gAdapter);
 			dm.loadGroups(this, gAdapter);
 		}
-		
+
 		importButton = (Button) findViewById(R.id.import_button);
-		if(!Data.showSaveButtonInContactsForm){
+		if (!Data.showSaveButtonInContactsForm) {
 			importButton.setText(R.string.contact_import_button);
 			importButton.setOnClickListener(new OnClickListener() {
-				
+
 				@Override
 				public void onClick(View v) {
 					startActivity(new Intent(ContactsActivity.this, ImportActivity.class));
@@ -199,33 +207,52 @@ public class ContactsActivity extends ListActivity implements OnCheckedChangeLis
 		} else {
 			importButton.setText(R.string.contact_invite_save_button);
 			importButton.setOnClickListener(new OnClickListener() {
-				
+
 				@Override
 				public void onClick(View v) {
+					try {
+						new AddNewPersonsToEvent().execute().get();
+					} catch (InterruptedException e) {
+						e.printStackTrace();
+					} catch (ExecutionException e) {
+						e.printStackTrace();
+					}
+					if(Data.eventForSavingNewInvitedPersons!= null){
+						try {
+							new UpdateEventByIdFromRemoteDb().execute(Data.eventForSavingNewInvitedPersons.event_id).get();
+						} catch (InterruptedException e) {
+							e.printStackTrace();
+						} catch (ExecutionException e) {
+							e.printStackTrace();
+						}
+					}
 					finish();
 				}
 			});
 		}
-		
+
 		if (Data.returnedFromContactImport) {
-        	if ((Data.importStats != null) && (Data.importStats[0] > 0)) {
-        		Toast.makeText(this.getApplicationContext(), "Successfully imported " + Data.importStats[0] + "/" + Data.importStats[2] + " contacts.", Toast.LENGTH_LONG).show();
-        	}
+			if ((Data.importStats != null) && (Data.importStats[0] > 0)) {
+				Toast.makeText(this.getApplicationContext(),
+						"Successfully imported " + Data.importStats[0] + "/" + Data.importStats[2] + " contacts.", Toast.LENGTH_LONG)
+						.show();
+			}
 
-        	if ((Data.importStats != null) && (Data.importStats[1] > 0)) {
-        		Toast.makeText(this.getApplicationContext(), "Failed to import " + Data.importStats[1] + "/" + Data.importStats[2] + " contacts.", Toast.LENGTH_LONG).show();
-        	}
+			if ((Data.importStats != null) && (Data.importStats[1] > 0)) {
+				Toast.makeText(this.getApplicationContext(),
+						"Failed to import " + Data.importStats[1] + "/" + Data.importStats[2] + " contacts.", Toast.LENGTH_LONG).show();
+			}
 
-        	Data.returnedFromContactImport = false;
+			Data.returnedFromContactImport = false;
 		}
-		
+
 		if (Data.credentialsClear) {
-    		Toast.makeText(this.getApplicationContext(), "Successfully cleared import credentials.", Toast.LENGTH_LONG).show();
-    		Data.credentialsClear = false;
+			Toast.makeText(this.getApplicationContext(), "Successfully cleared import credentials.", Toast.LENGTH_LONG).show();
+			Data.credentialsClear = false;
 		}
-		
+
 	}
-	
+
 	public void onPause() {
 		super.onPause();
 		editor.putString("ContactsActivityTask", CURRENT_TASK);
@@ -237,7 +264,8 @@ public class ContactsActivity extends ListActivity implements OnCheckedChangeLis
 		super.onCreate(savedInstanceState);
 		this.setContentView(R.layout.contacts);
 
-//		Toast.makeText(this, "Loading contacts... wait", Toast.LENGTH_LONG).show();
+		// Toast.makeText(this, "Loading contacts... wait",
+		// Toast.LENGTH_LONG).show();
 		preferences = PreferenceManager.getDefaultSharedPreferences(this);
 		editor = preferences.edit();
 
@@ -250,17 +278,16 @@ public class ContactsActivity extends ListActivity implements OnCheckedChangeLis
 		segmentedButtons = (SegmentedRadioGroup) findViewById(R.id.segmentedButtons);
 		segmentedButtons.setOnCheckedChangeListener(this);
 
-//		pb = (ProgressBar) findViewById(R.id.progress);
+		// pb = (ProgressBar) findViewById(R.id.progress);
 
 		searchView = (EditText) findViewById(R.id.search);
 		searchView.addTextChangedListener(filterTextWatcher);
 
 		mGestureDetector = new GestureDetector(this, new SideIndexGestureListener());
-		
+
 		cAdapter = new ContactsAdapter(dm.getContacts(), this);
 		gAdapter = new GroupsAdapter(dm.getGroups(), this);
-		
-		
+
 	}
 
 	@Override
@@ -294,7 +321,7 @@ public class ContactsActivity extends ListActivity implements OnCheckedChangeLis
 
 	private TreeMap<Integer, String> createIndex() {
 		ArrayList<Contact> contactList = dm.getContacts();
-		
+
 		if (contactList != null) {
 			TreeMap<Integer, String> tmpIndexList = new TreeMap<Integer, String>();
 
@@ -345,11 +372,11 @@ public class ContactsActivity extends ListActivity implements OnCheckedChangeLis
 	public void onListItemClick(ListView parent, View v, int position, long id) {
 		v.setDrawingCacheBackgroundColor(Color.TRANSPARENT);
 		v.setDrawingCacheEnabled(false);
-		if (Data.newEventPar){
+		if (Data.newEventPar) {
 			if (CURRENT_LIST == CONTACTS_LIST) {
-				if (Data.selectedContacts.size() > 0){
-					for (int i = 0; i < Data.selectedContacts.size(); i++){
-						if (Data.selectedContacts.get(i).contact_id == dm.getContacts().get(position).contact_id){
+				if (Data.selectedContacts.size() > 0) {
+					for (int i = 0; i < Data.selectedContacts.size(); i++) {
+						if (Data.selectedContacts.get(i).contact_id == dm.getContacts().get(position).contact_id) {
 							Data.selectedContacts.remove(i);
 							v.setBackgroundColor(Color.WHITE);
 							break;
@@ -363,12 +390,15 @@ public class ContactsActivity extends ListActivity implements OnCheckedChangeLis
 					Data.selectedContacts.add(dm.getContacts().get(position));
 					v.setBackgroundColor(Color.LTGRAY);
 				}
-				
-				//Intent contactIntent = new Intent(ContactsActivity.this, ContactInfoActivity.class);
-				//StringBuilder sb = new StringBuilder(dm.getContacts().get(position).name).append(" ").append(dm.getContacts().get(position).lastname);
-				//contactIntent.putExtra("contactName", sb.toString());
-				//contactIntent.putExtra("contactId", dm.getContacts().get(position).contact_id);
-				//startActivity(contactIntent);
+
+				// Intent contactIntent = new Intent(ContactsActivity.this,
+				// ContactInfoActivity.class);
+				// StringBuilder sb = new
+				// StringBuilder(dm.getContacts().get(position).name).append(" ").append(dm.getContacts().get(position).lastname);
+				// contactIntent.putExtra("contactName", sb.toString());
+				// contactIntent.putExtra("contactId",
+				// dm.getContacts().get(position).contact_id);
+				// startActivity(contactIntent);
 			} else if (CURRENT_LIST == GROUPS_LIST) {
 				Intent groupIntent = new Intent(ContactsActivity.this, GroupContactsActivity.class);
 				groupIntent.putExtra("groupName", dm.getGroups().get(position).title);
@@ -378,7 +408,8 @@ public class ContactsActivity extends ListActivity implements OnCheckedChangeLis
 		} else {
 			if (CURRENT_LIST == CONTACTS_LIST) {
 				Intent contactIntent = new Intent(ContactsActivity.this, ContactInfoActivity.class);
-				StringBuilder sb = new StringBuilder(dm.getContacts().get(position).name).append(" ").append(dm.getContacts().get(position).lastname);
+				StringBuilder sb = new StringBuilder(dm.getContacts().get(position).name).append(" ").append(
+						dm.getContacts().get(position).lastname);
 				contactIntent.putExtra("contactName", sb.toString());
 				contactIntent.putExtra("contactId", dm.getContacts().get(position).contact_id);
 				startActivity(contactIntent);
@@ -397,35 +428,39 @@ public class ContactsActivity extends ListActivity implements OnCheckedChangeLis
 		if (group == segmentedButtons) {
 			sideIndex.setVisibility(View.GONE);
 			switch (checkedId) {
-				case R.id.contacts:
-					CURRENT_LIST = CONTACTS_LIST;
-					CURRENT_TASK = CONTACTS_TASK;
-//					Toast.makeText(this, getString(R.string.waiting_for_contacts_load), Toast.LENGTH_SHORT).show();
-					setListAdapter(cAdapter);
+			case R.id.contacts:
+				CURRENT_LIST = CONTACTS_LIST;
+				CURRENT_TASK = CONTACTS_TASK;
+				// Toast.makeText(this,
+				// getString(R.string.waiting_for_contacts_load),
+				// Toast.LENGTH_SHORT).show();
+				setListAdapter(cAdapter);
 
-					if (dm.loadContacts(this, cAdapter) > 10)
-						sideIndex.setVisibility(View.VISIBLE);
+				if (dm.loadContacts(this, cAdapter) > 10)
+					sideIndex.setVisibility(View.VISIBLE);
 
-					editor.putString("ContactsActivityTask", CONTACTS_TASK);
-					editor.putInt("ContactsActivityList", CONTACTS_LIST);
-					editor.commit();
-					break;
-				
-				case R.id.groups:
-					CURRENT_LIST = GROUPS_LIST;
-					CURRENT_TASK = GROUPS_TASK;
-//					Toast.makeText(this, getString(R.string.waiting_for_groups_load), Toast.LENGTH_SHORT).show();
-					setListAdapter(gAdapter);
-					dm.loadGroups(this, gAdapter);
+				editor.putString("ContactsActivityTask", CONTACTS_TASK);
+				editor.putInt("ContactsActivityList", CONTACTS_LIST);
+				editor.commit();
+				break;
 
-					editor.putString("ContactsActivityTask", GROUPS_TASK);
-					editor.putInt("ContactsActivityList", GROUPS_LIST);
-					editor.commit();
-					break;
+			case R.id.groups:
+				CURRENT_LIST = GROUPS_LIST;
+				CURRENT_TASK = GROUPS_TASK;
+				// Toast.makeText(this,
+				// getString(R.string.waiting_for_groups_load),
+				// Toast.LENGTH_SHORT).show();
+				setListAdapter(gAdapter);
+				dm.loadGroups(this, gAdapter);
+
+				editor.putString("ContactsActivityTask", GROUPS_TASK);
+				editor.putInt("ContactsActivityList", GROUPS_LIST);
+				editor.commit();
+				break;
 			}
 		}
 	}
-	
+
 	class SideIndexGestureListener extends GestureDetector.SimpleOnGestureListener {
 
 		@Override
@@ -445,9 +480,8 @@ public class ContactsActivity extends ListActivity implements OnCheckedChangeLis
 			return super.onScroll(e1, e2, distanceX, distanceY);
 		}
 	}
-		
 
-	public void displayListItem (int state) {
+	public void displayListItem(int state) {
 		int itemPosition = 0;
 
 		// compute number of pixels for every side index item
@@ -456,7 +490,7 @@ public class ContactsActivity extends ListActivity implements OnCheckedChangeLis
 
 		switch (state) {
 		case 0:
-			if(displayedIndexListSize != 0){
+			if (displayedIndexListSize != 0) {
 				factor = indexListSize / displayedIndexListSize;
 			} else {
 				factor = 1;
@@ -483,12 +517,415 @@ public class ContactsActivity extends ListActivity implements OnCheckedChangeLis
 		} else {
 			itemPosition = (int) (sideIndexY / pixelPerDisplayedItem);
 		}
-		
+
 		int indexMin = 0;
 		if (itemPosition <= indexListSize)
 			indexMin = Integer.parseInt(indexList.keySet().toArray()[(itemPosition - 1) * factor].toString());
 
 		ListView listView = (ListView) getListView();
 		listView.setSelection(indexMin);
+	}
+
+	public class AddNewPersonsToEvent extends AsyncTask<Void, Void, Void> {
+
+		@Override
+		protected Void doInBackground(Void... params) {
+			try {
+				HttpClient hc = new DefaultHttpClient();
+				HttpPost post = new HttpPost(Data.getServerUrl() + "mobile/events_invite_extra");
+
+				MultipartEntity reqEntity = new MultipartEntity(HttpMultipartMode.BROWSER_COMPATIBLE);
+				reqEntity.addPart("token", new StringBody(Data.getToken()));
+				if(Data.eventForSavingNewInvitedPersons != null){
+					reqEntity.addPart("event_id", new StringBody(String.valueOf(Data.eventForSavingNewInvitedPersons.event_id)));
+				}
+				if(Data.selectedContacts != null && !Data.selectedContacts.isEmpty()){
+					for (int i = 0, l = Data.selectedContacts.size(); i < l; i++) {
+						reqEntity.addPart("contacts[]", new StringBody(String.valueOf(Data.selectedContacts.get(i).contact_id)));
+					}
+				}
+				if(Data.selectedGroups != null && !Data.selectedGroups.isEmpty()){
+					for (int i = 0, l = Data.selectedGroups.size(); i < l; i++) {
+						reqEntity.addPart("groups[]", new StringBody(String.valueOf(Data.selectedGroups.get(i).group_id)));
+					}
+				}
+				post.setEntity(reqEntity);
+				if(DataManagement.networkAvailable){
+					HttpResponse rp = hc.execute(post);
+					if (rp.getStatusLine().getStatusCode() == HttpStatus.SC_OK) {
+						String resp = EntityUtils.toString(rp.getEntity());
+						if (resp != null) {
+							JSONObject object = new JSONObject(resp);
+							boolean success = object.getBoolean("success");
+							if (!success) {
+								Log.e("Adding new contacts to event ERROR", object.getJSONObject("error").getString("reason"));
+							}
+						}
+					}
+				} else {
+					OfflineData uplooad = new OfflineData("mobile/events_invite_extra", reqEntity);
+					Data.getUnuploadedData().add(uplooad);
+				}
+			} catch (Exception e) {
+
+			}
+			return null;
+		}
+
+	}
+
+	public class UpdateEventByIdFromRemoteDb extends AsyncTask<Integer, Void, Void> {
+
+		@Override
+		protected Void doInBackground(Integer... params) {
+			try {
+				int event_id = params[0];
+				HttpClient hc = new DefaultHttpClient();
+				HttpPost post = new HttpPost(Data.getServerUrl() + "mobile/events_get");
+
+				MultipartEntity reqEntity = new MultipartEntity(HttpMultipartMode.BROWSER_COMPATIBLE);
+
+				reqEntity.addPart("token", new StringBody(Data.getToken()));
+				reqEntity.addPart("event_id", new StringBody(String.valueOf(event_id)));
+
+				post.setEntity(reqEntity);
+				HttpResponse rp = null;
+				rp = hc.execute(post);
+				if (rp.getStatusLine().getStatusCode() == HttpStatus.SC_OK) {
+					String resp = EntityUtils.toString(rp.getEntity());
+					if (resp != null) {
+						JSONObject e1 = new JSONObject(resp);
+						boolean success = e1.getBoolean("success");
+						if (!success) {
+							Log.e("Edit event status ERROR", e1.getJSONObject("error").getString("reason"));
+						} else {
+							JSONObject e = e1.getJSONObject("event");
+							Event event = new Event();
+							ContentValues cv = new ContentValues();
+
+							try {
+								event.event_id = e.getInt("event_id");
+								cv.put(EventsProvider.EMetaData.EventsMetaData.E_ID, event.event_id);
+							} catch (JSONException ex) {
+								Reporter.reportError(this.getClass().toString(), Thread.currentThread().getStackTrace()[2].getMethodName()
+										.toString(), ex.getMessage());
+							}
+							try {
+								event.user_id = e.getInt("user_id");
+								cv.put(EventsProvider.EMetaData.EventsMetaData.USER_ID, event.user_id);
+							} catch (JSONException ex) {
+								Reporter.reportError(this.getClass().toString(), Thread.currentThread().getStackTrace()[2].getMethodName()
+										.toString(), ex.getMessage());
+							}
+
+							try {
+								event.status = e.getInt("status");
+								cv.put(EventsProvider.EMetaData.EventsMetaData.STATUS, event.status);
+							} catch (JSONException ex) {
+								Reporter.reportError(this.getClass().toString(), Thread.currentThread().getStackTrace()[2].getMethodName()
+										.toString(), ex.getMessage());
+							}
+							try {
+								int is_owner = e.getInt("is_owner");
+								event.is_owner = is_owner == 1;
+								cv.put(EventsProvider.EMetaData.EventsMetaData.IS_OWNER, event.is_owner);
+							} catch (JSONException ex) {
+								Reporter.reportError(this.getClass().toString(), Thread.currentThread().getStackTrace()[2].getMethodName()
+										.toString(), ex.getMessage());
+							}
+							try {
+								event.type = e.getString("type");
+								cv.put(EventsProvider.EMetaData.EventsMetaData.TYPE, event.type);
+							} catch (JSONException ex) {
+								Reporter.reportError(this.getClass().toString(), Thread.currentThread().getStackTrace()[2].getMethodName()
+										.toString(), ex.getMessage());
+							}
+
+							try {
+								event.title = e.getString("title");
+								cv.put(EventsProvider.EMetaData.EventsMetaData.TITLE, event.title);
+							} catch (JSONException ex) {
+								Reporter.reportError(this.getClass().toString(), Thread.currentThread().getStackTrace()[2].getMethodName()
+										.toString(), ex.getMessage());
+							}
+							try {
+								event.icon = e.getString("icon");
+								cv.put(EventsProvider.EMetaData.EventsMetaData.ICON, event.icon);
+							} catch (JSONException ex) {
+								Reporter.reportError(this.getClass().toString(), Thread.currentThread().getStackTrace()[2].getMethodName()
+										.toString(), ex.getMessage());
+							}
+							try {
+								event.color = e.getString("color");
+								cv.put(EventsProvider.EMetaData.EventsMetaData.COLOR, event.color);
+							} catch (JSONException ex) {
+								Reporter.reportError(this.getClass().toString(), Thread.currentThread().getStackTrace()[2].getMethodName()
+										.toString(), ex.getMessage());
+							}
+							try {
+								event.description_ = e.getString("description");
+								cv.put(EventsProvider.EMetaData.EventsMetaData.DESC, event.description_);
+							} catch (JSONException ex) {
+								Reporter.reportError(this.getClass().toString(), Thread.currentThread().getStackTrace()[2].getMethodName()
+										.toString(), ex.getMessage());
+							}
+
+							try {
+								event.location = e.getString("location");
+								cv.put(EventsProvider.EMetaData.EventsMetaData.LOCATION, event.location);
+							} catch (JSONException ex) {
+								Reporter.reportError(this.getClass().toString(), Thread.currentThread().getStackTrace()[2].getMethodName()
+										.toString(), ex.getMessage());
+							}
+							try {
+								event.accomodation = e.getString("accomodation");
+								cv.put(EventsProvider.EMetaData.EventsMetaData.ACCOMODATION, event.accomodation);
+							} catch (JSONException ex) {
+								Reporter.reportError(this.getClass().toString(), Thread.currentThread().getStackTrace()[2].getMethodName()
+										.toString(), ex.getMessage());
+							}
+
+							try {
+								event.cost = e.getString("cost");
+								cv.put(EventsProvider.EMetaData.EventsMetaData.COST, event.cost);
+							} catch (JSONException ex) {
+								Reporter.reportError(this.getClass().toString(), Thread.currentThread().getStackTrace()[2].getMethodName()
+										.toString(), ex.getMessage());
+							}
+							try {
+								event.take_with_you = e.getString("take_with_you");
+								cv.put(EventsProvider.EMetaData.EventsMetaData.TAKE_WITH_YOU, event.take_with_you);
+							} catch (JSONException ex) {
+								Reporter.reportError(this.getClass().toString(), Thread.currentThread().getStackTrace()[2].getMethodName()
+										.toString(), ex.getMessage());
+							}
+							try {
+								event.go_by = e.getString("go_by");
+								cv.put(EventsProvider.EMetaData.EventsMetaData.GO_BY, event.go_by);
+							} catch (JSONException ex) {
+								Reporter.reportError(this.getClass().toString(), Thread.currentThread().getStackTrace()[2].getMethodName()
+										.toString(), ex.getMessage());
+							}
+
+							try {
+								event.country = e.getString("country");
+								cv.put(EventsProvider.EMetaData.EventsMetaData.COUNTRY, event.country);
+							} catch (JSONException ex) {
+								Reporter.reportError(this.getClass().toString(), Thread.currentThread().getStackTrace()[2].getMethodName()
+										.toString(), ex.getMessage());
+							}
+							try {
+								event.city = e.getString("city");
+								cv.put(EventsProvider.EMetaData.EventsMetaData.CITY, event.city);
+							} catch (JSONException ex) {
+								Reporter.reportError(this.getClass().toString(), Thread.currentThread().getStackTrace()[2].getMethodName()
+										.toString(), ex.getMessage());
+							}
+							try {
+								event.street = e.getString("street");
+								cv.put(EventsProvider.EMetaData.EventsMetaData.STREET, event.street);
+							} catch (JSONException ex) {
+								Reporter.reportError(this.getClass().toString(), Thread.currentThread().getStackTrace()[2].getMethodName()
+										.toString(), ex.getMessage());
+							}
+							try {
+								event.zip = e.getString("zip");
+								cv.put(EventsProvider.EMetaData.EventsMetaData.ZIP, event.zip);
+							} catch (JSONException ex) {
+								Reporter.reportError(this.getClass().toString(), Thread.currentThread().getStackTrace()[2].getMethodName()
+										.toString(), ex.getMessage());
+							}
+
+							try {
+								event.timezone = e.getString("timezone");
+								cv.put(EventsProvider.EMetaData.EventsMetaData.TIMEZONE, event.timezone);
+							} catch (JSONException ex) {
+								Reporter.reportError(this.getClass().toString(), Thread.currentThread().getStackTrace()[2].getMethodName()
+										.toString(), ex.getMessage());
+							}
+							try {
+								event.time_start = e.getString("time_start");
+								cv.put(EventsProvider.EMetaData.EventsMetaData.TIME_START, event.time_start);
+							} catch (JSONException ex) {
+								Reporter.reportError(this.getClass().toString(), Thread.currentThread().getStackTrace()[2].getMethodName()
+										.toString(), ex.getMessage());
+							}
+							try {
+								event.time_end = e.getString("time_end");
+								cv.put(EventsProvider.EMetaData.EventsMetaData.TIME_END, event.time_end);
+							} catch (JSONException ex) {
+								Reporter.reportError(this.getClass().toString(), Thread.currentThread().getStackTrace()[2].getMethodName()
+										.toString(), ex.getMessage());
+							}
+							try {
+								event.time = e.getString("time");
+								cv.put(EventsProvider.EMetaData.EventsMetaData.TIME, event.time);
+							} catch (JSONException ex) {
+								Reporter.reportError(this.getClass().toString(), Thread.currentThread().getStackTrace()[2].getMethodName()
+										.toString(), ex.getMessage());
+							}
+							try {
+								event.my_time_start = e.getString("my_time_start");
+								cv.put(EventsProvider.EMetaData.EventsMetaData.MY_TIME_START, event.my_time_start);
+								event.startCalendar = Utils.stringToCalendar(event.my_time_start, Utils.date_format);
+
+							} catch (JSONException ex) {
+								Reporter.reportError(this.getClass().toString(), Thread.currentThread().getStackTrace()[2].getMethodName()
+										.toString(), ex.getMessage());
+							}
+							try {
+								event.my_time_end = e.getString("my_time_end");
+								cv.put(EventsProvider.EMetaData.EventsMetaData.MY_TIME_END, event.my_time_end);
+								event.endCalendar = Utils.stringToCalendar(event.my_time_end, Utils.date_format);
+
+							} catch (JSONException ex) {
+								Reporter.reportError(this.getClass().toString(), Thread.currentThread().getStackTrace()[2].getMethodName()
+										.toString(), ex.getMessage());
+							}
+
+							try {
+								event.reminder1 = e.getString("reminder1");
+								cv.put(EventsProvider.EMetaData.EventsMetaData.REMINDER1, event.reminder1);
+							} catch (JSONException ex) {
+								Reporter.reportError(this.getClass().toString(), Thread.currentThread().getStackTrace()[2].getMethodName()
+										.toString(), ex.getMessage());
+							}
+							try {
+								event.reminder2 = e.getString("reminder2");
+								cv.put(EventsProvider.EMetaData.EventsMetaData.REMINDER2, event.reminder2);
+							} catch (JSONException ex) {
+								Reporter.reportError(this.getClass().toString(), Thread.currentThread().getStackTrace()[2].getMethodName()
+										.toString(), ex.getMessage());
+							}
+							try {
+								event.reminder3 = e.getString("reminder3");
+								cv.put(EventsProvider.EMetaData.EventsMetaData.REMINDER3, event.reminder3);
+							} catch (JSONException ex) {
+								Reporter.reportError(this.getClass().toString(), Thread.currentThread().getStackTrace()[2].getMethodName()
+										.toString(), ex.getMessage());
+							}
+
+							try {
+								event.created = e.getString("created");
+								cv.put(EventsProvider.EMetaData.EventsMetaData.CREATED, event.created);
+							} catch (JSONException ex) {
+								Reporter.reportError(this.getClass().toString(), Thread.currentThread().getStackTrace()[2].getMethodName()
+										.toString(), ex.getMessage());
+							}
+							try {
+								event.modified = e.getString("modified");
+								cv.put(EventsProvider.EMetaData.EventsMetaData.MODIFIED, event.modified);
+							} catch (JSONException ex) {
+								Reporter.reportError(this.getClass().toString(), Thread.currentThread().getStackTrace()[2].getMethodName()
+										.toString(), ex.getMessage());
+							}
+
+							try {
+								event.attendant_1_count = e.getInt("attendant_1_count");
+								cv.put(EventsProvider.EMetaData.EventsMetaData.ATTENDANT_1_COUNT, event.attendant_1_count);
+							} catch (JSONException ex) {
+								Reporter.reportError(this.getClass().toString(), Thread.currentThread().getStackTrace()[2].getMethodName()
+										.toString(), ex.getMessage());
+							}
+							try {
+								event.attendant_2_count = e.getInt("attendant_2_count");
+								cv.put(EventsProvider.EMetaData.EventsMetaData.ATTENDANT_2_COUNT, event.attendant_2_count);
+							} catch (JSONException ex) {
+								Reporter.reportError(this.getClass().toString(), Thread.currentThread().getStackTrace()[2].getMethodName()
+										.toString(), ex.getMessage());
+							}
+							try {
+								event.attendant_0_count = e.getInt("attendant_0_count");
+								cv.put(EventsProvider.EMetaData.EventsMetaData.ATTENDANT_0_COUNT, event.attendant_0_count);
+							} catch (JSONException ex) {
+								Reporter.reportError(this.getClass().toString(), Thread.currentThread().getStackTrace()[2].getMethodName()
+										.toString(), ex.getMessage());
+							}
+							try {
+								event.attendant_4_count = e.getInt("attendant_4_count");
+								cv.put(EventsProvider.EMetaData.EventsMetaData.ATTENDANT_4_COUNT, event.attendant_4_count);
+							} catch (JSONException ex) {
+								Reporter.reportError(this.getClass().toString(), Thread.currentThread().getStackTrace()[2].getMethodName()
+										.toString(), ex.getMessage());
+							}
+
+							try {
+								int is_sports_event = e.getInt("is_sports_event");
+								event.is_sports_event = is_sports_event == 1;
+								cv.put(EventsProvider.EMetaData.EventsMetaData.IS_SPORTS_EVENT, event.is_sports_event);
+							} catch (JSONException ex) {
+								Reporter.reportError(this.getClass().toString(), Thread.currentThread().getStackTrace()[2].getMethodName()
+										.toString(), ex.getMessage());
+							}
+							try {
+								event.creator_fullname = e.getString("creator_fullname");
+								cv.put(EventsProvider.EMetaData.EventsMetaData.CREATOR_FULLNAME, event.creator_fullname);
+							} catch (JSONException ex) {
+								Reporter.reportError(this.getClass().toString(), Thread.currentThread().getStackTrace()[2].getMethodName()
+										.toString(), ex.getMessage());
+							}
+							try {
+								event.creator_contact_id = e.getInt("creator_contact_id");
+								cv.put(EventsProvider.EMetaData.EventsMetaData.CREATOR_CONTACT_ID, event.creator_contact_id);
+							} catch (JSONException ex) {
+								Reporter.reportError(this.getClass().toString(), Thread.currentThread().getStackTrace()[2].getMethodName()
+										.toString(), ex.getMessage());
+							}
+
+							try {
+								String assigned_contacts = e.getString("assigned_contacts");
+								cv.put(EventsProvider.EMetaData.EventsMetaData.ASSIGNED_CONTACTS, assigned_contacts);
+							} catch (JSONException ex) {
+								Reporter.reportError(this.getClass().toString(), Thread.currentThread().getStackTrace()[2].getMethodName()
+										.toString(), ex.getMessage());
+							}
+
+							try {
+								String assigned_groups = e.getString("assigned_groups");
+								cv.put(EventsProvider.EMetaData.EventsMetaData.ASSIGNED_GROUPS, assigned_groups);
+							} catch (JSONException ex) {
+								Reporter.reportError(this.getClass().toString(), Thread.currentThread().getStackTrace()[2].getMethodName()
+										.toString(), ex.getMessage());
+							}
+
+							try {
+								String invited = e.getString("invited");
+								cv.put(EventsProvider.EMetaData.EventsMetaData.INVITED, invited);
+							} catch (JSONException ex) {
+								Reporter.reportError(this.getClass().toString(), Thread.currentThread().getStackTrace()[2].getMethodName()
+										.toString(), ex.getMessage());
+							}
+
+							try {
+								int all_day = e.getInt("all_day");
+								event.is_all_day = all_day == 1;
+							} catch (JSONException ex) {
+								Reporter.reportError(this.getClass().toString(), Thread.currentThread().getStackTrace()[2].getMethodName()
+										.toString(), ex.getMessage());
+							}
+
+							// //
+							dm.getmContext().getContentResolver().insert(EventsProvider.EMetaData.EventsMetaData.CONTENT_URI, cv);
+							Event tmpEvent = dm.getEventFromDb(event_id);
+							if (tmpEvent.startCalendar == null) {
+								tmpEvent.startCalendar = Utils.stringToCalendar(event.my_time_start, Utils.date_format);
+							}
+							if (tmpEvent.endCalendar == null) {
+								tmpEvent.endCalendar = Utils.stringToCalendar(event.my_time_end, Utils.date_format);
+							}
+							dm.updateEventInsideLocalDb(tmpEvent);
+						}
+					}
+				}
+			} catch (Exception e) {
+				Reporter.reportError(this.getClass().toString(), Thread.currentThread().getStackTrace()[2].getMethodName().toString(),
+						e.getMessage());
+			}
+			if(Data.selectedContacts != null){
+				Data.selectedContacts.clear();
+			}
+			return null;
+		}
+
 	}
 }

@@ -158,10 +158,9 @@ public class EventActivity extends Activity {
 
 		event_id = intent.getIntExtra("event_id", 0);
 
-		if ((event == null) && (event_id > 0)) {
+		if ((event_id > 0)) {
 			event = dm.getEventFromDb(event_id);
 		}
-
 		if (event.invited != null && !event.invited.isEmpty()) {
 			invitedListSize = event.invited.size();
 		}
@@ -197,12 +196,6 @@ public class EventActivity extends Activity {
 			LinearLayout invitedPersonList = (LinearLayout) findViewById(R.id.invited_person_list);
 			invitedPersonList.removeAllViews();
 			final LayoutInflater inflater = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-
-			if (Data.eventForSavingNewInvitedPersons != null && Data.eventForSavingNewInvitedPersons.invited != null
-					&& !Data.eventForSavingNewInvitedPersons.invited.isEmpty()) {
-				this.event = Data.eventForSavingNewInvitedPersons;
-				Data.eventForSavingNewInvitedPersons = null;
-			}
 
 			for (int i = 0, l = event.invited.size(); i < l; i++) {
 				final Invited invited = event.invited.get(i);
@@ -243,11 +236,7 @@ public class EventActivity extends Activity {
 				@Override
 				public void onClick(View arg0) {
 					boolean success = dm.changeEventStatus(event.event_id, "1");
-					View view = findViewById(R.id.invited_person_list);
-					TextView myStatus = (TextView) view.findViewWithTag("my_event_status");
-
-					if (myStatus == null)
-						myStatus = (TextView) findViewById(99999).findViewById(R.id.invited_status);
+					TextView myStatus = (TextView) findViewById(99999).findViewById(R.id.invited_status);
 
 					myButton_yes.setVisibility(View.INVISIBLE);
 					myButton_maybe.setVisibility(View.VISIBLE);
@@ -265,11 +254,7 @@ public class EventActivity extends Activity {
 				@Override
 				public void onClick(View arg0) {
 					boolean success = dm.changeEventStatus(event.event_id, "2");
-					View view = findViewById(R.id.invited_person_list);
-					TextView myStatus = (TextView) view.findViewWithTag("my_event_status");
-
-					if (myStatus == null)
-						myStatus = (TextView) findViewById(99999).findViewById(R.id.invited_status);
+					TextView myStatus = (TextView) findViewById(99999).findViewById(R.id.invited_status);
 
 					myButton_yes.setVisibility(View.VISIBLE);
 					myButton_maybe.setVisibility(View.INVISIBLE);
@@ -287,11 +272,7 @@ public class EventActivity extends Activity {
 				@Override
 				public void onClick(View arg0) {
 					boolean success = dm.changeEventStatus(event.event_id, "0");
-					View view = findViewById(R.id.invited_person_list);
-					TextView myStatus = (TextView) view.findViewWithTag("my_event_status");
-
-					if (myStatus == null)
-						myStatus = (TextView) findViewById(99999).findViewById(R.id.invited_status);
+					TextView myStatus = (TextView) findViewById(99999).findViewById(R.id.invited_status);
 
 					myButton_yes.setVisibility(View.VISIBLE);
 					myButton_maybe.setVisibility(View.VISIBLE);
