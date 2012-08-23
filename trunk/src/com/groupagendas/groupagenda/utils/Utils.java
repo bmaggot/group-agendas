@@ -34,8 +34,9 @@ public class Utils {
 		}
 	}
 
-	public final static String date_format = "yyyy-MM-dd HH:mm:ss";
+	public static String date_format = "yyyy-MM-dd HH:mm:ss";
 	public static int FIRST_DAY_OF_WEEK = Data.DEFAULT_FIRST_WEEK_DAY;
+	private static SimpleDateFormat date_formatter = new SimpleDateFormat(date_format);
 	
 	public static String formatDateTime(String date_str, String startPattern, String endPattern){
 		Calendar calendar = stringToCalendar(date_str, startPattern);
@@ -189,7 +190,14 @@ public class Utils {
 		tmp.set(Calendar.MILLISECOND, 0);
 		return tmp;
 	}
+
+	public static void setDate_format(String date_format) {
+		Utils.date_format = date_format;
+		date_formatter = new SimpleDateFormat(date_format);
+	}
 	
-	
+	public static String formatCalendar(Calendar calendar){
+		return date_formatter.format(calendar.getTime());
+	}
 
 }
