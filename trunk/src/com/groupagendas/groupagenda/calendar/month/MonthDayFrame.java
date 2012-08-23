@@ -13,20 +13,18 @@ public class MonthDayFrame extends RelativeLayout {
 	
 
 	TextView dayTitle;
-	private boolean isToday;
-	private boolean isSelected;
-	private boolean isOtherMonth;
+	private boolean today;
+	private boolean selected;
+	private boolean otherMonth;
 	
 	public MonthDayFrame(Context context) {
 		this(context, null);
 	}
 	public MonthDayFrame(Context context, AttributeSet attrs) {
 		super(context, attrs);
-		isSelected = false;
-		isToday = false;
-		isOtherMonth = false;
-		setBackground();
-		
+		selected = false;
+		today = false;
+		otherMonth = false;
 	}
 	
 	public void setDayTitle (String title){
@@ -39,54 +37,55 @@ public class MonthDayFrame extends RelativeLayout {
 //		
 	}
 	
-	private void setBackground(){
-		if (isSelected){
+//	Must be called after inflate, because dayTitle cannot be null
+	public void refreshStyle(){
+		
+		if (selected){
 			this.setBackgroundResource(R.drawable.calendar_month_day_selected);
-//			dayTitle.setTextAppearance(getContext(),)
+			dayTitle.setTextAppearance(getContext(), R.style.monthview_daynumber_selectedday);
 			return;
 		}
-		if (isToday){
+		if (today){
 			this.setBackgroundResource(R.drawable.calendar_month_day_today);
+			dayTitle.setTextAppearance(getContext(), R.style.monthview_daynumber_today);
 			return;
 		}
-		this.setBackgroundResource(R.drawable.calendar_month_day_inactive);
-		if (isOtherMonth){
-			
-		}
+		
+		this.setBackgroundResource(R.drawable.calendar_month_day_inactive);		
+		if (otherMonth){
+			dayTitle.setTextAppearance(getContext(), R.style.monthview_daynumber_othermonth);
+		}else dayTitle.setTextAppearance(getContext(), R.style.monthview_daynumber_thismonth);
 		
 	}
 	/**
 	 * @author
 	 */
 	public void setSelected(boolean bool) {
-		if (bool != isSelected) {
-			isOtherMonth = false;
-			isSelected = bool;
-			setBackground();
-		}
+		
+			this.selected = bool;
 	}
 	public void setToday(boolean bool){
-		isOtherMonth = false;
-		if (bool != isToday) {
-			isOtherMonth = false;
-			isToday = bool;
-			setBackground();
+	
+			this.today = bool;
+	}
+	public void setOtherMonth(boolean bool) {
+	
+		this.otherMonth = bool;
+		if (bool) {
+			selected = false;
+			today = false;
 		}
 	}
-	public void setOtherMonth(boolean isOtherMonth) {
-		this.isOtherMonth = isOtherMonth;
-		isSelected = false;
-		isToday = false;
-		setBackground();
+	public boolean isToday() {
+		return today;
+	}
+	public boolean isSelected() {
+		return selected;
+	}
+	public boolean isOtherMonth() {
+		return otherMonth;
 	}
 	
 	
-//	public void setToday(boolean bool){
-//			if (bool != isToday) {
-//				isToday = bool;
-////				TODO selected stiliaus prioritetas aukstesnis nei today
-//			}
-//
-//	}
 
 }

@@ -1,19 +1,19 @@
 package com.groupagendas.groupagenda.calendar.month;
 
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+
 import android.content.Context;
 import android.util.AttributeSet;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
-import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.TableLayout;
 import android.widget.TableRow;
 import android.widget.TextView;
-import android.widget.LinearLayout.LayoutParams;
 
 import com.groupagendas.groupagenda.R;
 import com.groupagendas.groupagenda.calendar.AbstractCalendarView;
@@ -138,7 +138,7 @@ public class MonthView extends AbstractCalendarView {
 	@Override
 	protected void setupSelectedDate(Calendar initializationDate) {
 		this.selectedDate = initializationDate;
-		firstShownDate = updateShownDate();
+		updateShownDate();
 		
 	}
 
@@ -150,7 +150,12 @@ public class MonthView extends AbstractCalendarView {
 		Calendar tmp = (Calendar) firstShownDate.clone();		
 		for (MonthDayFrame frame : daysList){
 			String title = "" + tmp.get(Calendar.DATE);
+			
 			frame.setDayTitle(title);
+			frame.setToday(Utils.isToday(tmp));
+			frame.setSelected(Utils.isSameDay(tmp, selectedDate));
+			frame.setOtherMonth(selectedDate.get(Calendar.MONTH) != tmp.get(Calendar.MONTH));
+			frame.refreshStyle();
 			
 			ArrayList<String> bubbleColorsArray = new ArrayList<String>();
 			for (Event e : Data.getEventByDate(tmp)){
@@ -165,8 +170,13 @@ public class MonthView extends AbstractCalendarView {
 
 	private void paintTable(Calendar date) {
 		monthTable.removeAllViews();
+		daysList = new ArrayList<MonthDayFrame>();
 		int FRAMES_PER_ROW = date.getMaximum(Calendar.DAY_OF_WEEK);
 		int TABLE_ROWS_COUNT = date.getActualMaximum(Calendar.WEEK_OF_MONTH);
+
+		System.out.println("ROWS: " + TABLE_ROWS_COUNT);
+		LinearLayout month_weeknumbers_container = (LinearLayout) findViewById(R.id.month_weeknumbers_container);
+		month_weeknumbers_container.removeAllViews();
 		
 		
 //	TODO	add GESTURE LISTENER
@@ -177,15 +187,29 @@ public class MonthView extends AbstractCalendarView {
 		
 		TableRow.LayoutParams cellLp = new TableRow.LayoutParams(
 		        VIEW_WIDTH / FRAMES_PER_ROW,
-		        TABLE_ROW_HEIGHT, //TODO leave some space for list view
+		        TABLE_ROW_HEIGHT, 
 		        1.0f);		
 
 //		Adding rows
 		TableRow row;
+		Calendar tmp = (Calendar) firstShownDate.clone();
 		for (int i = 0; i < TABLE_ROWS_COUNT; i++){
+			
+			TextView weekNum = (TextView) mInflater.inflate(R.layout.calendar_month_week_container, null);
+			weekNum.setText("" + tmp.get(Calendar.WEEK_OF_YEAR));
+			weekNum.setHeight(TABLE_ROW_HEIGHT);
+			weekNum.setBackgroundResource(R.drawable.calendar_month_day_inactive);
+			month_weeknumbers_container.addView(weekNum);
+			
+			
+			
 			row = (TableRow) mInflater.inflate(R.layout.calendar_month_row, null);
-			for (int j = 0; j < FRAMES_PER_ROW; j++)
-			addDay(row, cellLp);
+			
+			for (int j = 0; j < FRAMES_PER_ROW; j++){
+				addDay(row, cellLp);
+				tmp.add(Calendar.DATE, 1);
+			}
+			
 			monthTable.addView(row, rowLp);
 		}		
 		
@@ -193,55 +217,63 @@ public class MonthView extends AbstractCalendarView {
 
 	private void addDay(TableRow row,
 			android.widget.TableRow.LayoutParams cellLp) {
-		MonthDayFrame dayFrame = (MonthDayFrame) mInflater.inflate(R.layout.calendar_month_day_container, null);
+			MonthDayFrame dayFrame = (MonthDayFrame) mInflater.inflate(
+				R.layout.calendar_month_day_container, null);
+		
+			row.addView(dayFrame, cellLp);			
+			daysList.add(dayFrame);
+			
 			dayFrame.setOnClickListener(new OnClickListener() {
-				
+	
 				@Override
 				public void onClick(View v) {
-				int clickedDayPos = daysList.indexOf(v);
-				System.out.println("clickedDayid: " + clickedDayPos);
+					
+				MonthDayFrame frame = (MonthDayFrame) v;
+				int clickedDayPos = daysList.indexOf(frame);
+				
 				Calendar clickedDate = (Calendar) firstShownDate.clone();
 				clickedDate.add(Calendar.DATE, clickedDayPos);
 				
-				int LastMonthWeeksCount = 0;
 				
-				if (!Utils.isSameDay(selectedDate, clickedDate)) {
-					boolean monthChanged = false;
-					if (clickedDate.get(Calendar.MONTH) != selectedDate
-							.get(Calendar.MONTH)) {
-						monthChanged = true;
-						LastMonthWeeksCount = selectedDate
-								.getActualMaximum(Calendar.WEEK_OF_MONTH);
-					}
-
+				
+				int LastMonthWeeksCount = selectedDate
+						.getActualMaximum(Calendar.WEEK_OF_MONTH);
+				
+				if (!frame.isSelected()) {
+					
 					selectedDate = clickedDate;
 					updateShownDate();
 					
 					
-					if (monthChanged) {
+					if (frame.isOtherMonth()) {
+						
+
 						setTopPanel();
+						
 						if (LastMonthWeeksCount != selectedDate
 								.getActualMaximum(Calendar.WEEK_OF_MONTH)) {
 							paintTable(selectedDate);
 						}
-						setDayFrames();
-					}
-
-					updateEventLists();
+						
 						
 					}
+					
+					setDayFrames(); //TODO optimize: now all day frames are redrawn
+					updateEventLists();
+
 				}
+			}
 			});
 			
 			
-			row.addView(dayFrame, cellLp);
-			daysList.add(dayFrame);
+			
 	}
 
-	private Calendar updateShownDate() {
-		Calendar tmp = (Calendar) selectedDate.clone();
-		Utils.setCalendarToFirstDayOfMonth(tmp);
-		Utils.setCalendarToFirstDayOfWeek(tmp);
-		return tmp;
+	private void updateShownDate() {
+		firstShownDate = (Calendar) selectedDate.clone();
+		
+		Utils.setCalendarToFirstDayOfMonth(firstShownDate);
+		Utils.setCalendarToFirstDayOfWeek(firstShownDate);
+	
 	}
 }
