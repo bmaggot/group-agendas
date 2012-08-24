@@ -36,7 +36,6 @@ import at.bartinger.list.item.SectionItem;
 import az.mecid.android.ActionItem;
 import az.mecid.android.QuickAction;
 
-import com.bog.calendar.app.model.CalendarMonth;
 import com.groupagendas.groupagenda.account.AccountProvider;
 import com.groupagendas.groupagenda.calendar.AbstractCalendarView;
 import com.groupagendas.groupagenda.calendar.agenda.AgendaView;
@@ -45,6 +44,7 @@ import com.groupagendas.groupagenda.calendar.listnsearch.ListnSearchView;
 import com.groupagendas.groupagenda.calendar.minimonth.MiniMonthView;
 import com.groupagendas.groupagenda.calendar.month.MonthView;
 import com.groupagendas.groupagenda.calendar.week.WeekView;
+import com.groupagendas.groupagenda.calendar.year.YearView;
 import com.groupagendas.groupagenda.contacts.ContactsActivity;
 import com.groupagendas.groupagenda.contacts.ContactsProvider;
 import com.groupagendas.groupagenda.data.Data;
@@ -76,7 +76,7 @@ public class NavbarActivity extends Activity {
 	private ActionItem agenda;
 	private ActionItem mini_month;
 	private ActionItem today;
-
+	
 	private Calendar selectedDate = null;
 
 	static final int PROGRESS_DIALOG = 0;
@@ -89,7 +89,7 @@ public class NavbarActivity extends Activity {
 	private EntryAdapter entryAdapter;
 	private ViewState viewState;
 
-	// TODO investigate WHY IS this shit created
+//	TODO investigate WHY IS this shit created
 	private Prefs prefs;
 
 	private boolean dataLoaded = false;
@@ -209,11 +209,11 @@ public class NavbarActivity extends Activity {
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-
+		
 		dm = DataManagement.getInstance(this);
-
+		
 		setContentView(R.layout.actnavbar);
-
+		
 		RadioGroup radiogroup = (RadioGroup) this.findViewById(R.id.radiogroup);
 		android.widget.RelativeLayout.LayoutParams params = (android.widget.RelativeLayout.LayoutParams) radiogroup.getLayoutParams();
 		params.height = Math.round(getResources().getInteger(R.integer.NAVBAR_HEIGHT) * getResources().getDisplayMetrics().density);
@@ -226,7 +226,7 @@ public class NavbarActivity extends Activity {
 		}
 
 		restoreMe(savedInstanceState);
-
+		
 		if (!dataLoaded && (progressDialog == null)) {
 
 			new LoadViewTask().execute();
@@ -384,29 +384,29 @@ public class NavbarActivity extends Activity {
 	}
 
 	@Override
-	protected void onSaveInstanceState(Bundle outState) {
-		super.onSaveInstanceState(outState);
-		outState.putBoolean("isDataLoaded", dataLoaded);
-		outState.putString("loadPhase", Integer.toString(loadPhase));
-		outState.putString("viewState", "" + viewState);
-		if (calendarContainer.getChildAt(0) instanceof AbstractCalendarView) {
-			selectedDate = ((AbstractCalendarView) calendarContainer.getChildAt(0)).getDateToResume();
-		}
-
-		String dateStr = new SimpleDateFormat(Utils.date_format).format(selectedDate.getTime());
-		outState.putString("selectedDate", dateStr);
-	}
-
-	private void restoreMe(Bundle state) {
-
-		if (state != null) {
-			dataLoaded = state.getBoolean("isDataLoaded");
-			loadPhase = state.getInt("loadPhase");
-			viewState = ViewState.getValueByString(state.getString("viewState"));
-			selectedDate = Utils.stringToCalendar(state.getString("selectedDate"), Utils.date_format);
-			selectedDate.setFirstDayOfWeek(Data.DEFAULT_FIRST_WEEK_DAY);
-		}
-	}
+	  protected void onSaveInstanceState(Bundle outState) {
+	    super.onSaveInstanceState(outState);
+	     outState.putBoolean("isDataLoaded", dataLoaded);
+	     outState.putString("loadPhase", Integer.toString(loadPhase));
+	     outState.putString("viewState", "" + viewState);
+	     if(calendarContainer.getChildAt(0) instanceof AbstractCalendarView){
+	    	 selectedDate = ((AbstractCalendarView)calendarContainer.getChildAt(0)).getDateToResume();
+	     }
+	     
+	     String dateStr = new SimpleDateFormat(Utils.date_format).format(selectedDate.getTime());			
+	     outState.putString("selectedDate", dateStr);
+	  }
+	
+	 private void restoreMe(Bundle state) {
+		    
+		    if (state!=null) {
+		      dataLoaded = state.getBoolean("isDataLoaded");
+		      loadPhase = state.getInt("loadPhase");
+		      viewState = ViewState.getValueByString(state.getString("viewState"));
+		      selectedDate = Utils.stringToCalendar(state.getString("selectedDate"), Utils.date_format);
+		      selectedDate.setFirstDayOfWeek(Data.DEFAULT_FIRST_WEEK_DAY);  
+		    }
+		  }
 
 	private void switchToView() {
 
@@ -486,7 +486,7 @@ public class NavbarActivity extends Activity {
 				mDateTimePicker.reset();
 			}
 		});
-
+		
 		mDateTimeDialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
 		mDateTimeDialog.setContentView(mDateTimeDialogView);
 		mDateTimePicker.hideTopBar();
@@ -498,7 +498,7 @@ public class NavbarActivity extends Activity {
 		mInflater.inflate(R.layout.calendar_listnsearch, calendarContainer);
 		ListnSearchView view = (ListnSearchView) calendarContainer.getChildAt(0);
 		view.init();
-		// new GetAllEventsTask().execute();
+//		new GetAllEventsTask().execute();
 
 	}
 
@@ -526,7 +526,10 @@ public class NavbarActivity extends Activity {
 	}
 
 	private void showYearView() {
-		Toast.makeText(NavbarActivity.this, getString(R.string.year) + " Not yet implemented", Toast.LENGTH_SHORT).show();
+		calendarContainer.removeAllViews();
+		mInflater.inflate(R.layout.calendar_year, calendarContainer);
+		YearView view = (YearView) calendarContainer.getChildAt(0);
+		view.init(selectedDate);
 	}
 
 	private void showAgendaView() {
