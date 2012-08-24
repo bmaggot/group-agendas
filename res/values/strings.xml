@@ -93,8 +93,8 @@
     <string name="end_time">End time</string>
     <string name="date">Date</string>
     <string name="desc">Description</string>
-    <string name="address">Address</string>
-    <string name="details">Details</string>
+    <string name="address">Address »</string>
+    <string name="details">Details »</string>
     <string name="location">Location</string>
     <string name="go_by">Go by</string>
     <string name="take_with_you">Take with you</string>
