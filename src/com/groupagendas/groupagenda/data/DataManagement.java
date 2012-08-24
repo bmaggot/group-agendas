@@ -73,6 +73,7 @@ public class DataManagement {
 
 	public static boolean networkAvailable = true;
 	public static boolean eventStatusChanged = false;
+
 	private DataManagement(Activity c) {
 		Data.setPrefs(new Prefs(c));
 		Data.set_prefs(c.getSharedPreferences("PREFS_PRIVATE", Context.MODE_PRIVATE));
@@ -3564,7 +3565,7 @@ public class DataManagement {
 				Reporter.reportError(this.getClass().toString(), Thread.currentThread().getStackTrace()[2].getMethodName().toString(),
 						e.getMessage());
 			}
-			if(Data.selectedContacts != null){
+			if (Data.selectedContacts != null) {
 				Data.selectedContacts.clear();
 			}
 			return null;
@@ -3589,31 +3590,32 @@ public class DataManagement {
 		Data.setEvents(localEvents);
 		sortEvents(Data.getEvents());
 	}
-	
-	
 
 	// /////////////////////////////////////
 
 	private byte[] imageToBytes(String image_url) {
-		DefaultHttpClient mHttpClient = new DefaultHttpClient();
-		HttpGet mHttpGet = new HttpGet(image_url);
-		HttpResponse mHttpResponse;
-		try {
-			mHttpResponse = mHttpClient.execute(mHttpGet);
-			if (mHttpResponse.getStatusLine().getStatusCode() == HttpStatus.SC_OK) {
-				HttpEntity entity = mHttpResponse.getEntity();
-				if (entity != null) {
-					return EntityUtils.toByteArray(entity);
+		if(image_url != null && !image_url.equals("null")){
+			DefaultHttpClient mHttpClient = new DefaultHttpClient();
+			HttpGet mHttpGet = new HttpGet(image_url);
+			HttpResponse mHttpResponse;
+			try {
+				mHttpResponse = mHttpClient.execute(mHttpGet);
+				if (mHttpResponse.getStatusLine().getStatusCode() == HttpStatus.SC_OK) {
+					HttpEntity entity = mHttpResponse.getEntity();
+					if (entity != null) {
+						return EntityUtils.toByteArray(entity);
+					}
 				}
+			} catch (ClientProtocolException e) {
+				Reporter.reportError(this.getClass().toString(), Thread.currentThread().getStackTrace()[2].getMethodName().toString(),
+						e.getMessage());
+			} catch (IOException e) {
+				Reporter.reportError(this.getClass().toString(), Thread.currentThread().getStackTrace()[2].getMethodName().toString(),
+						e.getMessage());
 			}
-		} catch (ClientProtocolException e) {
-			Reporter.reportError(this.getClass().toString(), Thread.currentThread().getStackTrace()[2].getMethodName().toString(),
-					e.getMessage());
-		} catch (IOException e) {
-			Reporter.reportError(this.getClass().toString(), Thread.currentThread().getStackTrace()[2].getMethodName().toString(),
-					e.getMessage());
-		}
-		return new byte[0];
+			return new byte[0];
+	}
+		return null;
 	}
 
 	public String getError() {
