@@ -242,7 +242,10 @@ public class ContactsActivity extends ListActivity implements OnCheckedChangeLis
 			Toast.makeText(this.getApplicationContext(), "Successfully cleared import credentials.", Toast.LENGTH_LONG).show();
 			Data.credentialsClear = false;
 		}
-
+		
+		if(Data.newEventPar){
+			Data.selectedContacts.clear();
+		}
 	}
 
 	public void onPause() {
