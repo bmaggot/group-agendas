@@ -60,7 +60,6 @@ public class MonthDayFrame extends RelativeLayout {
 		allBubblesContainer.addView(line);
 		
 		int maxChildren = frameWidth / (BUBBLE_WIDTH_PX + BUBBLE_MARGIN_PX); 
-		System.out.println("max vaiku: " + maxChildren);
 		
 		for (Event event : eventColorsArray){
 			while (!addBubbleToLine(line, maxChildren, event)){
