@@ -129,7 +129,7 @@ public class EventActivity extends Activity {
 		intent = getIntent();
 
 		pb = (ProgressBar) findViewById(R.id.progress);
-		saveButton = (Button) findViewById(R.id.saveButton);
+		saveButton = (Button) findViewById(R.id.save_button);
 		topText = (TextView) findViewById(R.id.topText);
 
 		String typeStr = "";
@@ -859,10 +859,6 @@ public class EventActivity extends Activity {
 			cv.put(EventsProvider.EMetaData.EventsMetaData.ICON, event.icon);
 
 			cv.put(EventsProvider.EMetaData.EventsMetaData.COLOR, event.color);
-
-			temp = typeArray[typeSpinner.getSelectedItemPosition()];
-			event.type = temp;
-			cv.put(EventsProvider.EMetaData.EventsMetaData.TYPE, temp);
 
 			event.my_time_start = dtUtils.formatDateTimeToDefault(startCalendar.getTime());
 			cv.put(EventsProvider.EMetaData.EventsMetaData.MY_TIME_START, event.my_time_start);
