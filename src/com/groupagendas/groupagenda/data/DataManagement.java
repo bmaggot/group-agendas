@@ -810,7 +810,6 @@ public class DataManagement {
 			getImei(Data.getmContext());
 			Data.setPushId(C2DMessaging.getRegistrationId(Data.getmContext()));
 			if (Data.getPushId() == "") {
-				System.out.println("C2DMessaging.register()");
 
 				C2DMessaging.register(Data.getmContext(), "group.agenda.c2dm@gmail.com");
 			} else {
