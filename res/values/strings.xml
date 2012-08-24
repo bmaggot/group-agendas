@@ -190,7 +190,7 @@
     <string name="contact_import_button_from_google_i">Import contacts from Google Account</string>
     <string name="contact_import_button">Import</string>
     <string name="contact_import_button_clear_auth">Clear credentials</string>
-    <string name="contact_invite_save_button">Save</string>
+    <string name="contact_invite_save_button">Invite</string>
     <string name="saving_new_event">Saving new event!</string>
     <string name="new_event_saved">Your new event is saved!</string>
     <string name="new_contacts_invited">You have invited new persons to event!</string>

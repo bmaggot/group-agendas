@@ -208,15 +208,9 @@ public class ContactsActivity extends ListActivity implements OnCheckedChangeLis
 
 				@Override
 				public void onClick(View v) {
-					try {
-						new AddNewPersonsToEvent().execute().get();
-					} catch (InterruptedException e) {
-						e.printStackTrace();
-					} catch (ExecutionException e) {
-						e.printStackTrace();
-					}
-					if(Data.eventForSavingNewInvitedPersons!= null){
+					if (Data.eventForSavingNewInvitedPersons != null && !Data.eventForSavingNewInvitedPersons.is_owner) {
 						try {
+							new AddNewPersonsToEvent().execute().get();
 							new UpdateEventByIdFromRemoteDb().execute(Data.eventForSavingNewInvitedPersons.event_id).get();
 						} catch (InterruptedException e) {
 							e.printStackTrace();
@@ -388,15 +382,6 @@ public class ContactsActivity extends ListActivity implements OnCheckedChangeLis
 					Data.selectedContacts.add(dm.getContacts().get(position));
 					v.setBackgroundColor(Color.LTGRAY);
 				}
-
-				// Intent contactIntent = new Intent(ContactsActivity.this,
-				// ContactInfoActivity.class);
-				// StringBuilder sb = new
-				// StringBuilder(dm.getContacts().get(position).name).append(" ").append(dm.getContacts().get(position).lastname);
-				// contactIntent.putExtra("contactName", sb.toString());
-				// contactIntent.putExtra("contactId",
-				// dm.getContacts().get(position).contact_id);
-				// startActivity(contactIntent);
 			} else if (CURRENT_LIST == GROUPS_LIST) {
 				Intent groupIntent = new Intent(ContactsActivity.this, GroupContactsActivity.class);
 				groupIntent.putExtra("groupName", dm.getGroups().get(position).title);
@@ -534,21 +519,21 @@ public class ContactsActivity extends ListActivity implements OnCheckedChangeLis
 
 				MultipartEntity reqEntity = new MultipartEntity(HttpMultipartMode.BROWSER_COMPATIBLE);
 				reqEntity.addPart("token", new StringBody(Data.getToken()));
-				if(Data.eventForSavingNewInvitedPersons != null){
+				if (Data.eventForSavingNewInvitedPersons != null) {
 					reqEntity.addPart("event_id", new StringBody(String.valueOf(Data.eventForSavingNewInvitedPersons.event_id)));
 				}
-				if(Data.selectedContacts != null && !Data.selectedContacts.isEmpty()){
+				if (Data.selectedContacts != null && !Data.selectedContacts.isEmpty()) {
 					for (int i = 0, l = Data.selectedContacts.size(); i < l; i++) {
 						reqEntity.addPart("contacts[]", new StringBody(String.valueOf(Data.selectedContacts.get(i).contact_id)));
 					}
 				}
-				if(Data.selectedGroups != null && !Data.selectedGroups.isEmpty()){
+				if (Data.selectedGroups != null && !Data.selectedGroups.isEmpty()) {
 					for (int i = 0, l = Data.selectedGroups.size(); i < l; i++) {
 						reqEntity.addPart("groups[]", new StringBody(String.valueOf(Data.selectedGroups.get(i).group_id)));
 					}
 				}
 				post.setEntity(reqEntity);
-				if(DataManagement.networkAvailable){
+				if (DataManagement.networkAvailable) {
 					HttpResponse rp = hc.execute(post);
 					if (rp.getStatusLine().getStatusCode() == HttpStatus.SC_OK) {
 						String resp = EntityUtils.toString(rp.getEntity());
@@ -919,7 +904,7 @@ public class ContactsActivity extends ListActivity implements OnCheckedChangeLis
 				Reporter.reportError(this.getClass().toString(), Thread.currentThread().getStackTrace()[2].getMethodName().toString(),
 						e.getMessage());
 			}
-			if(Data.selectedContacts != null){
+			if (Data.selectedContacts != null) {
 				Data.selectedContacts.clear();
 			}
 			return null;
