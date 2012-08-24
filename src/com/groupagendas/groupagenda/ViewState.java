@@ -8,11 +8,11 @@ public enum ViewState {
 		if (defaultCalendarView.equalsIgnoreCase("DAY") || defaultCalendarView.equalsIgnoreCase("D")) return DAY;
 		if (defaultCalendarView.equalsIgnoreCase("WEEK")|| defaultCalendarView.equalsIgnoreCase("W")) return WEEK;
 		if (defaultCalendarView.equalsIgnoreCase("MONTH")|| defaultCalendarView.equalsIgnoreCase("M")) return MONTH;
-		if (defaultCalendarView.equalsIgnoreCase("MINI_MONTH")) return MINI_MONTH;
-		if (defaultCalendarView.equalsIgnoreCase("YEAR")) return YEAR;
-		if (defaultCalendarView.equalsIgnoreCase("AGENDA")) return AGENDA;
-		if (defaultCalendarView.equalsIgnoreCase("GO_TO_DATE")) return GO_TO_DATE;
-		if (defaultCalendarView.equalsIgnoreCase("LIST_SEARCH")) return LIST_SEARCH;
+		if (defaultCalendarView.equalsIgnoreCase("MINI_MONTH")|| defaultCalendarView.equalsIgnoreCase("MM")) return MINI_MONTH;
+		if (defaultCalendarView.equalsIgnoreCase("YEAR")|| defaultCalendarView.equalsIgnoreCase("Y")) return YEAR;
+		if (defaultCalendarView.equalsIgnoreCase("AGENDA")|| defaultCalendarView.equalsIgnoreCase("A")) return AGENDA;
+		if (defaultCalendarView.equalsIgnoreCase("GO_TO_DATE")|| defaultCalendarView.equalsIgnoreCase("G")) return GO_TO_DATE;
+		if (defaultCalendarView.equalsIgnoreCase("LIST_SEARCH")|| defaultCalendarView.equalsIgnoreCase("L")) return LIST_SEARCH;
 		return null;
 	}
 }
