@@ -15,7 +15,7 @@
         android:textSize="10dp"
         android:background="@color/lighter_gray"/>
     
-    <TableLayout android:id="@+id/year_month_table"
+    <LinearLayout android:id="@+id/year_month_table"
         android:layout_width="match_parent"
         android:layout_height="fill_parent"
         android:background="@null"

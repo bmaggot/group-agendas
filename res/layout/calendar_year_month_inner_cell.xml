@@ -4,7 +4,7 @@
     android:layout_height="10dp"
     android:background="@null"
     android:orientation="vertical" >
-    
+
     <ImageView android:src="@drawable/calendarbubble_000000_"
         android:id="@+id/indicator"
         android:layout_marginTop="1dp"
