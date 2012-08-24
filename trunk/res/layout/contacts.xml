@@ -22,7 +22,7 @@
 
             <RadioButton
                 android:id="@+id/contacts"
-                android:layout_width="100dp"
+                android:layout_width="90dp"
                 android:layout_height="match_parent"
                 android:button="@null"
                 android:gravity="center"
@@ -34,7 +34,7 @@
 
             <RadioButton
                 android:id="@+id/groups"
-                android:layout_width="100dp"
+                android:layout_width="90dp"
                 android:button="@null"
                 android:gravity="center"
                 android:minHeight="33dip"
@@ -60,7 +60,7 @@
             android:layout_width="wrap_content"
             android:layout_height="33dp"
             android:layout_marginTop="8dp"
-            android:layout_marginRight="1dp"
+            android:layout_marginRight="5dp"
 			android:gravity="center"
 			android:paddingTop="5dp"
 			android:paddingRight="4dp"
