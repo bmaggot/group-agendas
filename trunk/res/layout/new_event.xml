@@ -198,8 +198,7 @@
                     android:layout_height="wrap_content"
                     android:text="@string/address"
                     android:textColor="@android:color/black" />
-
-             </LinearLayout>
+            </LinearLayout>
 
             <LinearLayout
                 android:id="@+id/countrySpinnerBlock"
@@ -306,7 +305,6 @@
                     android:layout_height="wrap_content"
                     android:text="@string/details"
                     android:textColor="@android:color/black" />
-
             </LinearLayout>
 
             <LinearLayout

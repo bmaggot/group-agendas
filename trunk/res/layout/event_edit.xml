@@ -33,6 +33,28 @@
             android:layout_centerInParent="true"
             android:layout_marginRight="20dp"
             android:visibility="gone" />
+
+        <Button
+            android:id="@+id/import_button"
+            android:layout_width="wrap_content"
+            android:layout_height="33dp"
+            android:layout_alignParentRight="true"
+            android:layout_marginRight="1dp"
+            android:layout_marginTop="8dp"
+            android:background="@drawable/contacts_save_import_button"
+            android:gravity="center"
+            android:paddingBottom="5dp"
+            android:paddingLeft="4dp"
+            android:paddingRight="4dp"
+            android:paddingTop="5dp"
+            android:shadowColor="@color/black"
+            android:shadowDx="0"
+            android:shadowDy="2"
+            android:shadowRadius="1.5"
+            android:text="@string/save"
+            android:textColor="@color/white"
+            android:textSize="14dp"
+            android:textStyle="bold" />
     </RelativeLayout>
 
     <ScrollView
@@ -201,7 +223,6 @@
                     android:layout_height="wrap_content"
                     android:text="@string/address"
                     android:textColor="@android:color/black" />
-
             </LinearLayout>
 
             <LinearLayout
@@ -315,7 +336,6 @@
                     android:layout_height="wrap_content"
                     android:text="@string/details"
                     android:textColor="@android:color/black" />
-
             </LinearLayout>
 
             <LinearLayout
