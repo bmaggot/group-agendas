@@ -13,6 +13,28 @@
     <TableLayout android:id="@+id/year_table"
         android:background="@drawable/calendar_month_table"
         android:layout_width="match_parent"
-        android:layout_height="fill_parent" />
+        android:layout_height="fill_parent">
+        
+        <TableRow android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:background="@null" />
+        
+        <TableRow android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:background="@null" />
+        
+        <TableRow android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:background="@null" />
+        
+        <TableRow android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:background="@null" />
+        
+    </TableLayout>
 
 </com.groupagendas.groupagenda.calendar.year.YearView>
