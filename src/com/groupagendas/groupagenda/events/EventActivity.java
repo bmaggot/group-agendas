@@ -2,6 +2,7 @@ package com.groupagendas.groupagenda.events;
 
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.concurrent.ExecutionException;
 
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -833,7 +834,9 @@ public class EventActivity extends Activity {
 				temp = timezoneArray[timezoneSpinner.getSelectedItemPosition()];
 				event.timezone = temp;
 				cv.put(EventsProvider.EMetaData.EventsMetaData.TIMEZONE, temp);
-			} else {
+			} else if(event.timezone != null || !event.timezone.equals("null")){
+				cv.put(EventsProvider.EMetaData.EventsMetaData.TIMEZONE, event.timezone);
+			}else if(event.timezone == null || event.timezone.equals("null")) {
 				check = false;
 				errorStr = getString(R.string.timezone_required);
 			}
@@ -905,6 +908,13 @@ public class EventActivity extends Activity {
 				Uri uri = Uri.parse(EventsProvider.EMetaData.EventsMetaData.CONTENT_URI + "/" + event.event_id);
 				getContentResolver().update(uri, cv, null, null);
 				success = dm.editEvent(event);
+				try {
+					dm.updateEventByIdFromRemoteDb(event.event_id);
+				} catch (ExecutionException e) {
+					e.printStackTrace();
+				} catch (InterruptedException e) {
+					e.printStackTrace();
+				}
 
 				if (!success) {
 					cv = new ContentValues();

@@ -2940,6 +2940,14 @@ public class DataManagement {
 			reqEntity.addPart("reminder2", new StringBody(e.reminder2));
 			reqEntity.addPart("reminder3", new StringBody(e.reminder3));
 
+			if (Data.selectedContacts != null && !Data.selectedContacts.isEmpty()) {
+				e.assigned_contacts = new int[Data.selectedContacts.size()];
+				int i = 0;
+				for (Contact contact : Data.selectedContacts) {
+					e.assigned_contacts[i] = contact.contact_id;
+					i++;
+				}
+			}
 			if (e.assigned_contacts != null) {
 				for (int i = 0, l = e.assigned_contacts.length; i < l; i++) {
 					reqEntity.addPart("contacts[]", new StringBody(String.valueOf(e.assigned_contacts[i])));
@@ -2947,6 +2955,7 @@ public class DataManagement {
 			} else {
 				reqEntity.addPart("contacts[]", new StringBody(""));
 			}
+
 			if (e.assigned_groups != null) {
 				for (int i = 0, l = e.assigned_groups.length; i < l; i++) {
 					reqEntity.addPart("groups[]", new StringBody(String.valueOf(e.assigned_groups[i])));
