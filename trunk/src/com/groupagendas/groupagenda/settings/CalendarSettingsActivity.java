@@ -1,4 +1,4 @@
-              package com.groupagendas.groupagenda.settings;
+package com.groupagendas.groupagenda.settings;
 
 import android.app.Activity;
 import android.content.ContentValues;
@@ -19,58 +19,60 @@ import com.groupagendas.groupagenda.data.DataManagement;
 import com.groupagendas.groupagenda.utils.Prefs;
 import com.groupagendas.groupagenda.utils.Utils;
 
-public class CalendarSettingsActivity extends Activity{
+public class CalendarSettingsActivity extends Activity {
 	private Button saveButton;
-	
+
 	private ToggleButton am_pmToggle;
-	
+
 	private Spinner defaultviewSpinner;
 	private String[] defaultviewArray;
-	
+
 	private Spinner dateformatSpinner;
 	private String[] dateformatArray;
-	
+
 	private DataManagement dm;
 	private ProgressBar pb;
-	
+
 	private Prefs prefs;
+
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.settings_calendar);
-		
+
 		prefs = new Prefs(this);
-		
+
 		dm = DataManagement.getInstance(this);
 		pb = (ProgressBar) findViewById(R.id.progress);
-		
+
 		new GetAccountFromDBTask().execute();
-		
+
 		am_pmToggle = (ToggleButton) findViewById(R.id.am_pm);
 		am_pmToggle.setChecked(dm.getAccount().setting_ampm != 0);
-		
+
 		defaultviewSpinner = (Spinner) findViewById(R.id.defaultviewSpinner);
-		ArrayAdapter<CharSequence> adapterDefaultview = ArrayAdapter.createFromResource(this, R.array.agenda_views_labels, android.R.layout.simple_spinner_item);
+		ArrayAdapter<CharSequence> adapterDefaultview = ArrayAdapter.createFromResource(this, R.array.agenda_views_labels,
+				android.R.layout.simple_spinner_item);
 		adapterDefaultview.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
 		defaultviewSpinner.setAdapter(adapterDefaultview);
 		defaultviewArray = getResources().getStringArray(R.array.agenda_views_values);
 		String dw = dm.getAccount().setting_default_view;
-		for (int i = 0; i < defaultviewArray.length; i++){
-			if (dw.equalsIgnoreCase(defaultviewArray[i])){
+		for (int i = 0; i < defaultviewArray.length; i++) {
+			if (dw.equalsIgnoreCase(defaultviewArray[i])) {
 				defaultviewSpinner.setSelection(i);
 				break;
 			}
 		}
-		
-		
+
 		dateformatSpinner = (Spinner) findViewById(R.id.dateformatSpinner);
-		ArrayAdapter<CharSequence> adapterDateformat = ArrayAdapter.createFromResource(this, R.array.date_format_values, android.R.layout.simple_spinner_item);
+		ArrayAdapter<CharSequence> adapterDateformat = ArrayAdapter.createFromResource(this, R.array.date_format_values,
+				android.R.layout.simple_spinner_item);
 		adapterDateformat.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
 		dateformatSpinner.setAdapter(adapterDateformat);
 		dateformatArray = getResources().getStringArray(R.array.date_format_values);
 		String df = dm.getAccount().setting_default_view;
-		for (int i = 0; i < dateformatArray.length; i++){
-			if (df.equalsIgnoreCase(dateformatArray[i])){
+		for (int i = 0; i < dateformatArray.length; i++) {
+			if (df.equalsIgnoreCase(dateformatArray[i])) {
 				dateformatSpinner.setSelection(i);
 				break;
 			}
@@ -83,25 +85,25 @@ public class CalendarSettingsActivity extends Activity{
 			}
 		});
 	}
-	
-	class SaveTask extends AsyncTask<Void, Boolean, Boolean>{
-		
+
+	class SaveTask extends AsyncTask<Void, Boolean, Boolean> {
+
 		@Override
 		protected void onPreExecute() {
 			pb.setVisibility(View.VISIBLE);
 			saveButton.setText(getString(R.string.saving));
 			super.onPreExecute();
 		}
-		
+
 		@Override
 		protected Boolean doInBackground(Void... params) {
 			boolean success = true;
-			
-			int am_pm = am_pmToggle.isChecked()?1:0;
-			String am_pmStr = am_pmToggle.isChecked()?"true":"false";
+
+			int am_pm = am_pmToggle.isChecked() ? 1 : 0;
+			String am_pmStr = am_pmToggle.isChecked() ? "true" : "false";
 			String dateformat = dateformatArray[dateformatSpinner.getSelectedItemPosition()];
 			String defaultview = defaultviewArray[defaultviewSpinner.getSelectedItemPosition()];
-			
+
 			ContentValues values = new ContentValues();
 			values.put(AccountProvider.AMetaData.AccountMetaData.SETTING_AMPM, am_pm);
 			prefs.setValue(AccountProvider.AMetaData.AccountMetaData.SETTING_AMPM, am_pmStr);
@@ -109,50 +111,50 @@ public class CalendarSettingsActivity extends Activity{
 			prefs.setValue(AccountProvider.AMetaData.AccountMetaData.SETTING_DATE_FORMAT, dateformat);
 			values.put(AccountProvider.AMetaData.AccountMetaData.SETTING_DEFAULT_VIEW, defaultview);
 			prefs.setValue(AccountProvider.AMetaData.AccountMetaData.SETTING_DEFAULT_VIEW, defaultview);
-			
+
 			prefs.save();
-			
+
 			success = dm.changeCalendarSettings(am_pm, defaultview, dateformat);
-			
-			if(!success){
+
+			if (!success) {
 				values.put(AccountProvider.AMetaData.AccountMetaData.NEED_UPDATE, 2);
 			}
 			getContentResolver().update(AccountProvider.AMetaData.AccountMetaData.CONTENT_URI, values, null, null);
 			return true;
 		}
-		
+
 		@Override
 		protected void onPostExecute(Boolean result) {
-			if(result){
+			if (result) {
 				finish();
 			}
 			super.onPostExecute(result);
 		}
-		
+
 	}
-	
+
 	private void feelFields(Account account) {
-		
-		if(account.setting_ampm == 1){
+
+		if (account.setting_ampm == 1) {
 			am_pmToggle.setChecked(true);
-		}else{
+		} else {
 			am_pmToggle.setChecked(false);
 		}
-		
-		if (account.setting_default_view != null && !account.setting_default_view.equals("null")){
+
+		if (account.setting_default_view != null && !account.setting_default_view.equals("null")) {
 			int pos = Utils.getArrayIndex(defaultviewArray, account.setting_default_view);
 			defaultviewSpinner.setSelection(pos);
 			prefs.setValue(AccountProvider.AMetaData.AccountMetaData.SETTING_DEFAULT_VIEW, account.setting_default_view);
 		}
-		
-		if (account.setting_date_format != null && !account.setting_date_format.equals("null")){
+
+		if (account.setting_date_format != null && !account.setting_date_format.equals("null")) {
 			int pos = Utils.getArrayIndex(dateformatArray, account.setting_date_format);
 			dateformatSpinner.setSelection(pos);
 		}
-		
+
 		prefs.save();
 	}
-	
+
 	class GetAccountFromDBTask extends AsyncTask<Void, Account, Account> {
 
 		protected void onPreExecute() {
@@ -174,7 +176,7 @@ public class CalendarSettingsActivity extends Activity{
 		}
 
 	}
-	
+
 	class GetAccountTask extends AsyncTask<Void, Account, Account> {
 
 		protected void onPreExecute() {
