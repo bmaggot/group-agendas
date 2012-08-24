@@ -1,4 +1,4 @@
-<com.groupagendas.groupagenda.calendar.year.YearView xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
     android:background="@color/white"
@@ -41,4 +41,4 @@
             android:orientation="horizontal" />
     </LinearLayout>
 
-</com.groupagendas.groupagenda.calendar.year.YearView>
+</LinearLayout>
