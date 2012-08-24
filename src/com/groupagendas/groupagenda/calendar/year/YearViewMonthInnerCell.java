@@ -4,14 +4,15 @@ import com.groupagendas.groupagenda.R;
 import com.groupagendas.groupagenda.calendar.MonthCellState;
 
 import android.content.Context;
+import android.graphics.Color;
 import android.util.AttributeSet;
-import android.widget.FrameLayout;
+import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 public class YearViewMonthInnerCell extends RelativeLayout {
 	TextView text;
-	FrameLayout BubbleContainer;
+	ImageView eventsIndicator;
 	boolean isWeekNum;
 	boolean hasEvents = false;
 	MonthCellState state = MonthCellState.DEFAULT;
@@ -27,7 +28,6 @@ public class YearViewMonthInnerCell extends RelativeLayout {
 	public YearViewMonthInnerCell(Context context, AttributeSet attrs,
 			int defStyle) {
 		super(context, attrs, defStyle);
-		// TODO Auto-generated constructor stub
 	}
 	/**
 	 * Used to setup weekNUm
@@ -35,48 +35,76 @@ public class YearViewMonthInnerCell extends RelativeLayout {
 	 * @param text
 	 */
 	public void setupWeekNum(String text){
+		initTextField();
 		this.isWeekNum = true;
 		this.text.setText(text);
+		refresh();
 	}
-	
-	public void setup(String text, MonthCellState state){
+	/**
+	 * Used to setup day celll
+	 * @param isWeekNum
+	 * @param text
+	 */
+	public void setupDayCell(String text, MonthCellState state){
+		initTextField();
+		this.eventsIndicator = (ImageView) findViewById(R.id.indicator);
 		this.isWeekNum = false;
 		this.text.setText(text);
+		setState(state);
 	}
 	
 	public void setHasEvents(boolean bool){
+		if (isWeekNum) return;
 		hasEvents = bool;
 		if (hasEvents){
-			drawEventBubble();
+			eventsIndicator.setVisibility(VISIBLE);
+		}else{
+			eventsIndicator.setVisibility(INVISIBLE);
 		}
 	}
 	
-	
+	private void initTextField(){
+		if (text == null){
+			text = (TextView) findViewById(R.id.year_daynumber);
+		}
+	}
 
 	public void setState(MonthCellState state) {
+		
 		this.state = state;
 		refresh();
 	}
 
 	private void refresh() {
+		this.setVisibility(VISIBLE);
+		if (isWeekNum){
+			text.setTextAppearance(getContext(), R.style.yearview_monthviewinnercell_w);
+			this.setBackgroundColor(R.color.lighter_gray);
+			return;
+		}
+		
 		switch (state){
 		case SELECTED:
-//			this.setBackgroundResource(R.drawable.calendar_month_day_selected);
-//			dayTitle.setTextAppearance(getContext(), R.style.monthview_daynumber_selectedday);
+			this.setBackgroundColor(R.color.event_invite_button_c_gradstart);
+			text.setTextColor(R.color.white);
 			break;
 		case TODAY:
-//			this.setBackgroundResource(R.drawable.calendar_month_day_today);
-//			dayTitle.setTextAppearance(getContext(), R.style.monthview_daynumber_today);
+			this.setBackgroundColor(R.color.darker_gray);
+			text.setTextColor(R.color.white);
 			break;
 		case OTHER_MONTH:
-//			this.setBackgroundResource(R.drawable.calendar_month_day_inactive);	
-//			dayTitle.setTextAppearance(getContext(), R.style.monthview_daynumber_othermonth);
+			this.setVisibility(INVISIBLE);
+			break;
+		case WEEK_END:
+			this.setBackgroundColor(Color.TRANSPARENT);	
+			text.setTextAppearance(getContext(), R.style.yearview_monthviewinnercell_nd);
 			break;
 		default:
-//			this.setBackgroundResource(R.drawable.calendar_month_day_inactive);	
-//			dayTitle.setTextAppearance(getContext(), R.style.monthview_daynumber_thismonth);
+			this.setBackgroundColor(Color.TRANSPARENT);	
+			text.setTextAppearance(getContext(), R.style.yearview_monthviewinnercell_wd);
 			break;		
 		}
+		
 		
 	}
 
