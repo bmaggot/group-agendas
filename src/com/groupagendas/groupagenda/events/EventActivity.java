@@ -39,6 +39,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.groupagendas.groupagenda.R;
+import com.groupagendas.groupagenda.contacts.Contact;
 import com.groupagendas.groupagenda.contacts.ContactsActivity;
 import com.groupagendas.groupagenda.data.Data;
 import com.groupagendas.groupagenda.data.DataManagement;
@@ -111,10 +112,10 @@ public class EventActivity extends Activity {
 	private ArrayList<AutoIconItem> autoIcons = null;
 
 	private Intent intent;
-	
+
 	private boolean addressPanelVisible = true;
 	private boolean detailsPanelVisible = true;
-	
+
 	private RelativeLayout addressDetailsPanel;
 	TextView addressTrigger;
 	TextView detailsTrigger;
@@ -155,10 +156,10 @@ public class EventActivity extends Activity {
 		if ((event_id > 0)) {
 			event = dm.getEventFromDb(event_id);
 		}
-		if(event.is_owner){
+		if (event.is_owner) {
 			saveButton.setVisibility(View.VISIBLE);
 			saveButton.setOnClickListener(new OnClickListener() {
-				
+
 				@Override
 				public void onClick(View v) {
 					saveEvent(v);
@@ -195,6 +196,16 @@ public class EventActivity extends Activity {
 
 				invitedPersonList.addView(getInvitedView(invited, inflater, view, mContext));
 			}
+			if (Data.selectedContacts != null && !Data.selectedContacts.isEmpty()) {
+				for (Contact contact : Data.selectedContacts) {
+					final View view = inflater.inflate(R.layout.event_invited_person_entry, invitedPersonList, false);
+					Invited invited = new Invited();
+					invited.name = contact.name;
+					invited.email = contact.email;
+					invited.status_id = 4;
+					invitedPersonList.addView(getInvitedView(invited, inflater, view, mContext));
+				}
+			}
 		} else if (invitesColumn != null) {
 			invitesColumn = (LinearLayout) findViewById(R.id.invitesLine);
 			invitesColumn.setVisibility(View.VISIBLE);
@@ -210,13 +221,41 @@ public class EventActivity extends Activity {
 				if (l == 1) {
 					view.setBackgroundResource(R.drawable.event_invited_entry_last_background);
 				} else {
-					if (i == l - 1)
+					if (i == l - 1 && Data.selectedContacts.isEmpty())
 						view.setBackgroundResource(R.drawable.event_invited_entry_last_background);
 					else
 						view.setBackgroundResource(R.drawable.event_invited_entry_notalone_background);
 				}
 
 				invitedPersonList.addView(getInvitedView(invited, inflater, view, mContext));
+			}
+			if (Data.selectedContacts != null && !Data.selectedContacts.isEmpty()) {
+				for (int i = 0, l = Data.selectedContacts.size(); i < l; i++) {
+					boolean needToShow = true;
+					Contact contact = Data.selectedContacts.get(i);
+					final View view = inflater.inflate(R.layout.event_invited_person_entry, invitedPersonList, false);
+					if (l == 1) {
+						view.setBackgroundResource(R.drawable.event_invited_entry_last_background);
+					} else {
+						if (i == l - 1)
+							view.setBackgroundResource(R.drawable.event_invited_entry_last_background);
+						else
+							view.setBackgroundResource(R.drawable.event_invited_entry_notalone_background);
+					}
+					Invited invited = new Invited();
+					invited.name = contact.name;
+					for (Invited displayedInvited : event.invited) {
+						if (displayedInvited != null && contact != null && displayedInvited.email != null
+								&& !displayedInvited.email.equals("null") && displayedInvited.email.equals(contact.email)) {
+							needToShow = false;
+						}
+					}
+					invited.email = contact.email;
+					invited.status_id = 4;
+					if (needToShow) {
+						invitedPersonList.addView(getInvitedView(invited, inflater, view, mContext));
+					}
+				}
 			}
 		}
 
@@ -296,16 +335,16 @@ public class EventActivity extends Activity {
 		if (event_id > 0) {
 			new GetEventTask().execute(event_id);
 		}
-		
+
 		super.onResume();
 
 		final LinearLayout addressPanel = (LinearLayout) findViewById(R.id.addressLine);
 		final LinearLayout detailsPanel = (LinearLayout) findViewById(R.id.detailsLine);
 		detailsPanel.setOnClickListener(new OnClickListener() {
-			
+
 			@Override
 			public void onClick(View v) {
-				if(detailsPanelVisible){
+				if (detailsPanelVisible) {
 					hideDetailsPanel(addressPanel, detailsPanel);
 				} else {
 					showDetailsPanel();
@@ -313,10 +352,10 @@ public class EventActivity extends Activity {
 			}
 		});
 		addressPanel.setOnClickListener(new OnClickListener() {
-			
+
 			@Override
 			public void onClick(View v) {
-				if(addressPanelVisible){
+				if (addressPanelVisible) {
 					hideAddressPanel(addressPanel, detailsPanel);
 				} else {
 					showAddressPanel();
@@ -331,7 +370,7 @@ public class EventActivity extends Activity {
 		addressDetailsPanel.setVisibility(View.VISIBLE);
 		addressTrigger = (TextView) addressDetailsPanel.findViewById(R.id.addressTrigger);
 		addressTrigger.setOnClickListener(new OnClickListener() {
-			
+
 			@Override
 			public void onClick(View v) {
 				addressDetailsPanel.setVisibility(View.GONE);
@@ -342,7 +381,7 @@ public class EventActivity extends Activity {
 		});
 		detailsTrigger = (TextView) addressDetailsPanel.findViewById(R.id.detailsTrigger);
 		detailsTrigger.setOnClickListener(new OnClickListener() {
-			
+
 			@Override
 			public void onClick(View v) {
 				addressDetailsPanel.setVisibility(View.GONE);
@@ -495,19 +534,21 @@ public class EventActivity extends Activity {
 			}
 
 			// type
-//			typeSpinner = (Spinner) findViewById(R.id.typeSpinner);
-//			ArrayAdapter<CharSequence> adapterType = ArrayAdapter.createFromResource(EventActivity.this, R.array.type_labels,
-//					android.R.layout.simple_spinner_item);
-//			adapterType.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-//			typeSpinner.setAdapter(adapterType);
-//			typeArray = getResources().getStringArray(R.array.type_values);
-//
-//			if (result.type != null && !result.type.equals("null")) {
-//				int pos = Utils.getArrayIndex(typeArray, result.type);
-//				typeSpinner.setSelection(pos);
-//				if (!result.is_owner)
-//					typeSpinner.setEnabled(false);
-//			}
+			// typeSpinner = (Spinner) findViewById(R.id.typeSpinner);
+			// ArrayAdapter<CharSequence> adapterType =
+			// ArrayAdapter.createFromResource(EventActivity.this,
+			// R.array.type_labels,
+			// android.R.layout.simple_spinner_item);
+			// adapterType.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+			// typeSpinner.setAdapter(adapterType);
+			// typeArray = getResources().getStringArray(R.array.type_values);
+			//
+			// if (result.type != null && !result.type.equals("null")) {
+			// int pos = Utils.getArrayIndex(typeArray, result.type);
+			// typeSpinner.setSelection(pos);
+			// if (!result.is_owner)
+			// typeSpinner.setEnabled(false);
+			// }
 
 			// Time
 			startView = (EditText) findViewById(R.id.startView);
@@ -557,18 +598,18 @@ public class EventActivity extends Activity {
 			}
 
 			// Address
-//			addressLine = (LinearLayout) findViewById(R.id.addressLine);
-//			addressLine.setOnClickListener(new OnClickListener() {
-//				
-//				@Override
-//				public void onClick(View v) {
-//					if(addressPanelVisible){
-//						hideAddressPanel(ad);
-//					} else {
-//						showAddressPanel();
-//					}
-//				}
-//			});
+			// addressLine = (LinearLayout) findViewById(R.id.addressLine);
+			// addressLine.setOnClickListener(new OnClickListener() {
+			//
+			// @Override
+			// public void onClick(View v) {
+			// if(addressPanelVisible){
+			// hideAddressPanel(ad);
+			// } else {
+			// showAddressPanel();
+			// }
+			// }
+			// });
 			// timezone
 			timezoneSpinner = (Spinner) findViewById(R.id.timezoneSpinner);
 			if (result.is_owner)
@@ -660,19 +701,19 @@ public class EventActivity extends Activity {
 			if (result.is_owner)
 				showView(zipView, addressLine);
 
-//			// Details
-//			detailsLine = (LinearLayout) findViewById(R.id.detailsLine);
-//			detailsLine.setOnClickListener(new OnClickListener() {
-//				
-//				@Override
-//				public void onClick(View v) {
-//					if(detailsPanelVisible){
-//						hideDetailsPanel();
-//					} else {
-//						showDetailsPanel();
-//					}
-//				}
-//			});
+			// // Details
+			// detailsLine = (LinearLayout) findViewById(R.id.detailsLine);
+			// detailsLine.setOnClickListener(new OnClickListener() {
+			//
+			// @Override
+			// public void onClick(View v) {
+			// if(detailsPanelVisible){
+			// hideDetailsPanel();
+			// } else {
+			// showDetailsPanel();
+			// }
+			// }
+			// });
 			// location
 			locationView = (EditText) findViewById(R.id.locationView);
 			if (result.location != null && !result.location.equals("null")) {
@@ -834,9 +875,9 @@ public class EventActivity extends Activity {
 				temp = timezoneArray[timezoneSpinner.getSelectedItemPosition()];
 				event.timezone = temp;
 				cv.put(EventsProvider.EMetaData.EventsMetaData.TIMEZONE, temp);
-			} else if(event.timezone != null || !event.timezone.equals("null")){
+			} else if (event.timezone != null || !event.timezone.equals("null")) {
 				cv.put(EventsProvider.EMetaData.EventsMetaData.TIMEZONE, event.timezone);
-			}else if(event.timezone == null || event.timezone.equals("null")) {
+			} else if (event.timezone == null || event.timezone.equals("null")) {
 				check = false;
 				errorStr = getString(R.string.timezone_required);
 			}
@@ -1007,12 +1048,12 @@ public class EventActivity extends Activity {
 	}
 
 	private void showView(View view, LinearLayout line) {
-		if(line != null){
-			if(addressPanelVisible){
+		if (line != null) {
+			if (addressPanelVisible) {
 				line.setVisibility(View.VISIBLE);
 				LinearLayout parent = (LinearLayout) view.getParent();
 				parent.setVisibility(View.VISIBLE);
-			} else if(!addressPanelVisible) {
+			} else if (!addressPanelVisible) {
 				line.setVisibility(View.VISIBLE);
 				LinearLayout parent = (LinearLayout) view.getParent();
 				parent.setVisibility(View.GONE);
@@ -1106,85 +1147,85 @@ public class EventActivity extends Activity {
 			return super.onOptionsItemSelected(item);
 		}
 	}
-	
-	public void showAddressPanel(){
+
+	public void showAddressPanel() {
 		addressPanelVisible = true;
 		LinearLayout timezoneSpinnerBlock = (LinearLayout) findViewById(R.id.countryBlock);
 		timezoneSpinnerBlock.setVisibility(View.VISIBLE);
-		
+
 		LinearLayout countrySpinnerBlock = (LinearLayout) findViewById(R.id.cityBlock);
 		countrySpinnerBlock.setVisibility(View.VISIBLE);
-		
+
 		LinearLayout cityViewBlock = (LinearLayout) findViewById(R.id.streetBlock);
 		cityViewBlock.setVisibility(View.VISIBLE);
-		
+
 		LinearLayout streetViewBlock = (LinearLayout) findViewById(R.id.zipBlock);
 		streetViewBlock.setVisibility(View.VISIBLE);
-		
+
 		LinearLayout zipViewBlock = (LinearLayout) findViewById(R.id.timezoneBlock);
 		zipViewBlock.setVisibility(View.VISIBLE);
 	}
-	
-	public void hideAddressPanel(LinearLayout addressPanel, LinearLayout detailsPanel){
+
+	public void hideAddressPanel(LinearLayout addressPanel, LinearLayout detailsPanel) {
 		addressPanelVisible = false;
-		if(!detailsPanelVisible && addressDetailsPanel != null && addressPanel != null && detailsPanel != null){
+		if (!detailsPanelVisible && addressDetailsPanel != null && addressPanel != null && detailsPanel != null) {
 			addressDetailsPanel.setVisibility(View.VISIBLE);
 			addressPanel.setVisibility(View.GONE);
 			detailsPanel.setVisibility(View.GONE);
 		}
 		LinearLayout timezoneSpinnerBlock = (LinearLayout) findViewById(R.id.countryBlock);
 		timezoneSpinnerBlock.setVisibility(View.GONE);
-		
+
 		LinearLayout countrySpinnerBlock = (LinearLayout) findViewById(R.id.cityBlock);
 		countrySpinnerBlock.setVisibility(View.GONE);
-		
+
 		LinearLayout cityViewBlock = (LinearLayout) findViewById(R.id.streetBlock);
 		cityViewBlock.setVisibility(View.GONE);
-		
+
 		LinearLayout streetViewBlock = (LinearLayout) findViewById(R.id.zipBlock);
 		streetViewBlock.setVisibility(View.GONE);
-		
+
 		LinearLayout zipViewBlock = (LinearLayout) findViewById(R.id.timezoneBlock);
 		zipViewBlock.setVisibility(View.GONE);
 	}
-	
-	public void showDetailsPanel(){
+
+	public void showDetailsPanel() {
 		detailsPanelVisible = true;
 		LinearLayout locationViewBlock = (LinearLayout) findViewById(R.id.locationBlock);
 		locationViewBlock.setVisibility(View.VISIBLE);
-		
+
 		LinearLayout gobyViewBlock = (LinearLayout) findViewById(R.id.go_byBlock);
 		gobyViewBlock.setVisibility(View.VISIBLE);
-		
+
 		LinearLayout takewithyouViewBlock = (LinearLayout) findViewById(R.id.take_with_youBlock);
 		takewithyouViewBlock.setVisibility(View.VISIBLE);
-		
+
 		LinearLayout costViewBlock = (LinearLayout) findViewById(R.id.costBlock);
 		costViewBlock.setVisibility(View.VISIBLE);
-		
+
 		LinearLayout accomodationViewBlock = (LinearLayout) findViewById(R.id.accomodationBlock);
 		accomodationViewBlock.setVisibility(View.VISIBLE);
 	}
-	
-	public void hideDetailsPanel(LinearLayout addressPanel, LinearLayout detailsPanel){
+
+	public void hideDetailsPanel(LinearLayout addressPanel, LinearLayout detailsPanel) {
 		detailsPanelVisible = false;
-		if(!addressPanelVisible && addressDetailsPanel != null && addressPanel != null && detailsPanel != null){
+		if (!addressPanelVisible && addressDetailsPanel != null && addressPanel != null && detailsPanel != null) {
 			addressDetailsPanel.setVisibility(View.VISIBLE);
 			addressPanel.setVisibility(View.GONE);
 			detailsPanel.setVisibility(View.GONE);
 		}
 		LinearLayout locationViewBlock = (LinearLayout) findViewById(R.id.locationBlock);
 		locationViewBlock.setVisibility(View.GONE);
-		
+
 		LinearLayout gobyViewBlock = (LinearLayout) findViewById(R.id.go_byBlock);
 		gobyViewBlock.setVisibility(View.GONE);
-		
+
 		LinearLayout takewithyouViewBlock = (LinearLayout) findViewById(R.id.take_with_youBlock);
 		takewithyouViewBlock.setVisibility(View.GONE);
-		
+
 		LinearLayout costViewBlock = (LinearLayout) findViewById(R.id.costBlock);
 		costViewBlock.setVisibility(View.GONE);
-		
+
 		LinearLayout accomodationViewBlock = (LinearLayout) findViewById(R.id.accomodationBlock);
 		accomodationViewBlock.setVisibility(View.GONE);
 	}

@@ -8,12 +8,14 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.ContentValues;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.Window;
@@ -380,6 +382,68 @@ public class NewEventActivity extends Activity {
 		});
 	}
 	
+	@Override
+	public void onResume(){
+		if(Data.selectedContacts != null && !Data.selectedContacts.isEmpty()){
+			LinearLayout invitedPersonList = (LinearLayout) findViewById(R.id.invited_person_list);
+			invitedPersonList.removeAllViews();
+			final LayoutInflater inflater = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+			for(int i = 0, l = Data.selectedContacts.size(); i < l; i++){
+				Contact contact = Data.selectedContacts.get(i);
+				final View view = inflater.inflate(R.layout.event_invited_person_entry, invitedPersonList, false);
+				if (l == 1) {
+					view.setBackgroundResource(R.drawable.event_invited_entry_last_background);
+				} else {
+					if (i == l - 1)
+						view.setBackgroundResource(R.drawable.event_invited_entry_last_background);
+					else
+						view.setBackgroundResource(R.drawable.event_invited_entry_notalone_background);
+				}
+				Invited invited = new Invited();
+				invited.name = contact.name;
+				invited.email = contact.email;
+				invited.status_id = 4;
+				invitedPersonList.addView(getInvitedView(invited, inflater, view, dm.getmContext()));
+			}
+		} else {
+			LinearLayout invitedPersonList = (LinearLayout) findViewById(R.id.invited_person_list);
+			invitedPersonList.removeAllViews();
+		}
+		super.onResume();
+	}
+	
+	public View getInvitedView(Invited invited, LayoutInflater inflater, View view, Context mContext) {
+		final TextView nameView = (TextView) view.findViewById(R.id.invited_fullname);
+		nameView.setText(invited.name);
+
+		final TextView emailView = (TextView) view.findViewById(R.id.invited_available_email);
+		emailView.setText(invited.email);
+
+		final TextView statusView = (TextView) view.findViewById(R.id.invited_status);
+
+		switch (invited.status_id) {
+		case 0:
+			statusView.setText(mContext.getString(R.string.status_0));
+			break;
+		case 1:
+			statusView.setText(mContext.getString(R.string.status_1));
+			break;
+		case 2:
+			statusView.setText(mContext.getString(R.string.status_2));
+			break;
+		case 4:
+			statusView.setText(mContext.getString(R.string.new_invite));
+			break;
+		}
+
+		if (invited.me) {
+			view.setTag("my_event_status");
+			view.setId(99999);
+		}
+
+		return view;
+	}
+	
 	private TextWatcher filterTextWatcher = new TextWatcher() {
 
 		public void afterTextChanged(Editable s) {
@@ -644,8 +708,8 @@ public class NewEventActivity extends Activity {
 
 				getContentResolver().insert(EventsProvider.EMetaData.EventsMetaData.CONTENT_URI, cv);
 				dm.putEventIntoTreeMap(event);
+				Data.selectedContacts = new ArrayList<Contact>();
 			}
-			Data.selectedContacts = new ArrayList<Contact>();
 			return check;
 		}
 
