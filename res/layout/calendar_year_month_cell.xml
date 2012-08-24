@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:background="@color/white"
+    android:orientation="vertical" >
+    
+    <TextView android:id="@+id/year_month_name"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:paddingTop="2dp"
+        android:paddingBottom="2dp"
+        android:textAppearance="@style/yearview_monthviewinnercell_w"
+        android:textSize="10dp"
+        android:background="@color/lighter_gray"/>
+    
+    <TableLayout android:id="@+id/year_month_table"
+        android:layout_width="match_parent"
+        android:layout_height="fill_parent"
+        android:background="@null"
+        android:orientation="vertical" />
+
+</LinearLayout>
