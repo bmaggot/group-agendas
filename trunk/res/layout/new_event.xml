@@ -166,7 +166,6 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_alignParentLeft="true"
-                    android:background="@drawable/event_invite_people_button_standalone"
                     android:paddingBottom="5dp"
                     android:paddingLeft="25dp"
                     android:paddingRight="25dp"
@@ -179,7 +178,6 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_alignParentRight="true"
-                    android:background="@drawable/event_invite_people_button_standalone"
                     android:paddingBottom="5dp"
                     android:paddingLeft="25dp"
                     android:paddingRight="25dp"
@@ -201,11 +199,7 @@
                     android:text="@string/address"
                     android:textColor="@android:color/black" />
 
-                <View
-                    android:layout_width="fill_parent"
-                    android:layout_height="1dp"
-                    android:background="#FF909090" />
-            </LinearLayout>
+             </LinearLayout>
 
             <LinearLayout
                 android:id="@+id/countrySpinnerBlock"
@@ -313,10 +307,6 @@
                     android:text="@string/details"
                     android:textColor="@android:color/black" />
 
-                <View
-                    android:layout_width="fill_parent"
-                    android:layout_height="1dp"
-                    android:background="#FF909090" />
             </LinearLayout>
 
             <LinearLayout
