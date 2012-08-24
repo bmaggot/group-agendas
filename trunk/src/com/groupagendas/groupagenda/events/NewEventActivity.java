@@ -344,6 +344,7 @@ public class NewEventActivity extends Activity {
 			@Override
 			public void onClick(View arg0) {
 				Data.newEventPar = true;
+				Data.showSaveButtonInContactsForm = true;
 				startActivity(new Intent(NewEventActivity.this, ContactsActivity.class));
 			}
 		});
