@@ -154,6 +154,18 @@ public class EventActivity extends Activity {
 		if ((event_id > 0)) {
 			event = dm.getEventFromDb(event_id);
 		}
+		if(event.is_owner){
+			saveButton.setVisibility(View.VISIBLE);
+			saveButton.setOnClickListener(new OnClickListener() {
+				
+				@Override
+				public void onClick(View v) {
+					saveEvent(v);
+				}
+			});
+		} else {
+			saveButton.setVisibility(View.GONE);
+		}
 		if (event.invited != null && !event.invited.isEmpty()) {
 			invitedListSize = event.invited.size();
 		}
