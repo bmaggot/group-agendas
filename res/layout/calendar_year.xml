@@ -9,5 +9,10 @@
         android:layout_gravity="center_horizontal"
         layout="@layout/calendar_top_bar" />
     <!-- TOP NAVBAR END -->
+    
+    <TableLayout android:id="@+id/year_table"
+        android:background="@drawable/calendar_month_table"
+        android:layout_width="match_parent"
+        android:layout_height="fill_parent" />
 
 </com.groupagendas.groupagenda.calendar.year.YearView>
