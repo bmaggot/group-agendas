@@ -408,6 +408,7 @@
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
+                android:layout_marginBottom="10dp"
                 android:visibility="visible" >
             </LinearLayout>
 
@@ -417,6 +418,7 @@
                 android:layout_height="40dp"
                 android:background="@drawable/event_invite_people_button_standalone"
                 android:text="@string/messenger"
+                android:layout_margin="10dp"
                 android:textSize="16dp"
                 android:textStyle="bold" />
 
@@ -425,6 +427,7 @@
                 android:layout_width="fill_parent"
                 android:layout_height="40dp"
                 android:background="@drawable/event_invite_people_button_standalone"
+                android:layout_margin="10dp"
                 android:text="@string/share"
                 android:textSize="16dp"
                 android:textStyle="bold" />
@@ -441,8 +444,6 @@
                     android:id="@+id/contactsButton"
                     android:layout_width="fill_parent"
                     android:layout_height="40dp"
-                    android:layout_marginBottom="10dp"
-                    android:layout_marginTop="10dp"
                     android:background="@drawable/event_invite_people_button_standalone"
                     android:text="@string/invite_people"
                     android:textSize="16dp"
@@ -457,7 +458,6 @@
                 android:id="@+id/saveBlock"
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="10dp"
                 android:gravity="center_horizontal"
                 android:orientation="horizontal" >
 
