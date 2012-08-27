@@ -16,6 +16,7 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -392,6 +393,15 @@ public class EventActivity extends Activity {
 		});
 	}
 
+	@Override
+	public boolean onKeyDown(int keyCode, KeyEvent event) {
+		if (keyCode == KeyEvent.KEYCODE_BACK) {
+			Data.selectedContacts.clear();
+		}
+		finish();
+		return true;
+	}
+	
 	public View getInvitedView(Invited invited, LayoutInflater inflater, View view, Context mContext) {
 		final TextView nameView = (TextView) view.findViewById(R.id.invited_fullname);
 		nameView.setText(invited.name);
