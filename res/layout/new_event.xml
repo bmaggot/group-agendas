@@ -407,8 +407,8 @@
                 android:id="@+id/contactsBlock"
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal"
                 android:layout_marginBottom="10dp"
+                android:orientation="horizontal"
                 android:visibility="visible" >
             </LinearLayout>
 
@@ -448,117 +448,116 @@
                     android:textColor="@android:color/black" />
             </RelativeLayout>
 
-            <LinearLayout
-                android:layout_width="fill_parent"
-                android:background="@drawable/event_invite_people_button_standalone"
-                android:layout_marginLeft="10dp"
-                android:layout_marginRight="10dp"
-                android:layout_marginBottom="10dp"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal" >
-
-                <TextView
-                    android:layout_marginLeft="10dp"
-	                android:layout_marginTop="10dp"
-	                android:layout_marginBottom="15dp"
-                    android:layout_width="80dp"
-                    android:layout_height="wrap_content"
-                    android:textStyle="bold"
-                    android:textSize="15dp"
-                    android:text="@string/end_time"
-                    android:textColor="@android:color/black" />
-
-                <EditText
-                    android:id="@+id/reminder1"
-                    android:background="@null"
+            <LinearLayout android:id="@+id/reminder_block"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+                <LinearLayout
                     android:layout_width="fill_parent"
                     android:layout_height="wrap_content"
-                    android:textStyle="normal"
-                    android:textSize="15dp"
-                    android:textColor="@color/black"
-                    android:editable="false"
-                    android:enabled="false"
-                    android:inputType="date" />
-                
+                    android:layout_marginBottom="10dp"
+                    android:layout_marginLeft="10dp"
+                    android:layout_marginRight="10dp"
+                    android:background="@drawable/event_invite_people_button_standalone"
+                    android:orientation="horizontal" >
+
+                    <TextView
+                        android:layout_width="80dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginBottom="15dp"
+                        android:layout_marginLeft="10dp"
+                        android:layout_marginTop="10dp"
+                        android:text="@string/end_time"
+                        android:textColor="@android:color/black"
+                        android:textSize="15dp"
+                        android:textStyle="bold" />
+
+                    <EditText
+                        android:id="@+id/reminder1"
+                        android:layout_width="fill_parent"
+                        android:layout_height="wrap_content"
+                        android:background="@null"
+                        android:editable="false"
+                        android:enabled="false"
+                        android:inputType="date"
+                        android:textColor="@color/black"
+                        android:textSize="15dp"
+                        android:textStyle="normal" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="10dp"
+                    android:layout_marginLeft="10dp"
+                    android:layout_marginRight="10dp"
+                    android:background="@drawable/event_invite_people_button_standalone"
+                    android:orientation="horizontal" >
+
+                    <TextView
+                        android:layout_width="80dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginBottom="15dp"
+                        android:layout_marginLeft="10dp"
+                        android:layout_marginTop="10dp"
+                        android:text="@string/end_time"
+                        android:textColor="@android:color/black"
+                        android:textSize="15dp"
+                        android:textStyle="bold" />
+
+                    <EditText
+                        android:id="@+id/reminder2"
+                        android:layout_width="fill_parent"
+                        android:layout_height="wrap_content"
+                        android:background="@null"
+                        android:editable="false"
+                        android:enabled="false"
+                        android:inputType="date"
+                        android:textColor="@color/black"
+                        android:textSize="15dp"
+                        android:textStyle="normal" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="10dp"
+                    android:layout_marginLeft="10dp"
+                    android:layout_marginRight="10dp"
+                    android:background="@drawable/event_invite_people_button_standalone"
+                    android:orientation="horizontal" >
+
+                    <TextView
+                        android:layout_width="80dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginBottom="15dp"
+                        android:layout_marginLeft="10dp"
+                        android:layout_marginTop="10dp"
+                        android:text="@string/end_time"
+                        android:textColor="@android:color/black"
+                        android:textSize="15dp"
+                        android:textStyle="bold" />
+
+                    <EditText
+                        android:id="@+id/reminder3"
+                        android:layout_width="fill_parent"
+                        android:layout_height="wrap_content"
+                        android:background="@null"
+                        android:editable="false"
+                        android:enabled="false"
+                        android:inputType="date"
+                        android:textColor="@color/black"
+                        android:textSize="15dp"
+                        android:textStyle="normal" />
+                </LinearLayout>
             </LinearLayout>
 
-                        <LinearLayout
-                android:layout_width="fill_parent"
-                android:background="@drawable/event_invite_people_button_standalone"
-                android:layout_marginLeft="10dp"
-                android:layout_marginRight="10dp"
-                android:layout_marginBottom="10dp"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal" >
-
-                <TextView
-                    android:layout_marginLeft="10dp"
-	                android:layout_marginTop="10dp"
-	                android:layout_marginBottom="15dp"
-                    android:layout_width="80dp"
-                    android:layout_height="wrap_content"
-                    android:textStyle="bold"
-                    android:textSize="15dp"
-                    android:text="@string/end_time"
-                    android:textColor="@android:color/black" />
-
-                <EditText
-                    android:id="@+id/reminder2"
-                    android:background="@null"
-                    android:layout_width="fill_parent"
-                    android:layout_height="wrap_content"
-                    android:textStyle="normal"
-                    android:textSize="15dp"
-                    android:textColor="@color/black"
-                    android:editable="false"
-                    android:enabled="false"
-                    android:inputType="date" />
-                
-            </LinearLayout>            
-            
-            <LinearLayout
-                android:layout_width="fill_parent"
-                android:background="@drawable/event_invite_people_button_standalone"
-                android:layout_marginLeft="10dp"
-                android:layout_marginRight="10dp"
-                android:layout_marginBottom="10dp"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal" >
-
-                <TextView
-                    android:layout_marginLeft="10dp"
-	                android:layout_marginTop="10dp"
-	                android:layout_marginBottom="15dp"
-                    android:layout_width="80dp"
-                    android:layout_height="wrap_content"
-                    android:textStyle="bold"
-                    android:textSize="15dp"
-                    android:text="@string/end_time"
-                    android:textColor="@android:color/black" />
-
-                <EditText
-                    android:id="@+id/reminder3"
-                    android:background="@null"
-                    android:layout_width="fill_parent"
-                    android:layout_height="wrap_content"
-                    android:textStyle="normal"
-                    android:textSize="15dp"
-                    android:textColor="@color/black"
-                    android:editable="false"
-                    android:enabled="false"
-                    android:inputType="date" />
-                
-            </LinearLayout>            
-                        
-                        
-            
             <Button
                 android:id="@+id/messenger_button"
                 android:layout_width="fill_parent"
                 android:layout_height="40dp"
+                android:layout_margin="10dp"
                 android:background="@drawable/event_invite_people_button_standalone"
                 android:text="@string/messenger"
-                android:layout_margin="10dp"
                 android:textSize="16dp"
                 android:textStyle="bold" />
 
@@ -566,8 +565,8 @@
                 android:id="@+id/share_button"
                 android:layout_width="fill_parent"
                 android:layout_height="40dp"
-                android:background="@drawable/event_invite_people_button_standalone"
                 android:layout_margin="10dp"
+                android:background="@drawable/event_invite_people_button_standalone"
                 android:text="@string/share"
                 android:textSize="16dp"
                 android:textStyle="bold" />
