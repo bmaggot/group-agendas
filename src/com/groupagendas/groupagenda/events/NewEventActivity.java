@@ -384,10 +384,14 @@ public class NewEventActivity extends Activity {
 	
 	@Override
 	public void onResume(){
+		
 		if(Data.selectedContacts != null && !Data.selectedContacts.isEmpty()){
 			LinearLayout invitedPersonList = (LinearLayout) findViewById(R.id.invited_person_list);
 			invitedPersonList.removeAllViews();
 			final LayoutInflater inflater = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+			
+			contactsButton.setBackgroundResource(R.drawable.event_invite_people_button_notalone);
+
 			for(int i = 0, l = Data.selectedContacts.size(); i < l; i++){
 				Contact contact = Data.selectedContacts.get(i);
 				final View view = inflater.inflate(R.layout.event_invited_person_entry, invitedPersonList, false);
@@ -406,6 +410,7 @@ public class NewEventActivity extends Activity {
 				invitedPersonList.addView(getInvitedView(invited, inflater, view, dm.getmContext()));
 			}
 		} else {
+			contactsButton.setBackgroundResource(R.drawable.event_invite_people_button_standalone);
 			LinearLayout invitedPersonList = (LinearLayout) findViewById(R.id.invited_person_list);
 			invitedPersonList.removeAllViews();
 		}
