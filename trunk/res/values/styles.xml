@@ -188,7 +188,7 @@
     </style>
 
     <style name="yearview_monthviewinnercell_nd">
-        <item name="android:textColor">@color/lighter_gray</item>
+        <item name="android:textColor">@color/darker_gray</item>
         <item name="android:textStyle">normal</item>
         <item name="android:textSize">5dp</item>
     </style>

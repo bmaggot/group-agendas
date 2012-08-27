@@ -18,8 +18,7 @@
 		android:layout_height="match_parent"
         android:layout_width="match_parent"
         android:textColor="@color/lighter_gray"
-        android:textSize="5dp"
-        android:textStyle="bold"
+		android:textAppearance="@style/yearview_monthviewinnercell_wd"
         android:gravity="center" />
 
 </com.groupagendas.groupagenda.calendar.year.YearViewMonthInnerCell>
