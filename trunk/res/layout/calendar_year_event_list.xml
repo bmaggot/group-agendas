@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_gravity="bottom"
+    android:background="@color/darker_gray"
+    android:paddingLeft="10dp"
+    android:paddingRight="10dp"
+    android:paddingBottom="5dp"
+    android:orientation="vertical"
+    android:gravity="center_horizontal" >
+    
+    <ListView android:id="@+id/year_event_list"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content" />
+
+    <Button android:layout_width="fill_parent"
+        android:layout_height="40dp"
+        android:layout_marginTop="10dp"
+        android:layout_marginBottom="5dp"
+        android:background="@drawable/event_invite_people_button_standalone"
+        android:text="@string/create_new_event"
+        android:textSize="16dp"
+        android:textStyle="bold" />
+    
+</LinearLayout>
