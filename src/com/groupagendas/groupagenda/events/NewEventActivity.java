@@ -593,12 +593,12 @@ public class NewEventActivity extends Activity {
 		Toast.makeText(this, R.string.saving_new_event, Toast.LENGTH_LONG).show();
 		try {
 			new NewEventTask().execute().get();
+			Toast.makeText(this, R.string.new_event_saved, Toast.LENGTH_LONG).show();
 		} catch (InterruptedException e) {
 			e.printStackTrace();
 		} catch (ExecutionException e) {
 			e.printStackTrace();
 		}
-		Toast.makeText(this, R.string.new_event_saved, Toast.LENGTH_LONG).show();
 	}
 
 	public void showAddressPanel() {
@@ -734,17 +734,10 @@ public class NewEventActivity extends Activity {
 
 			Account user = dm.getAccount();
 
-			if (startCalendar.getTimeInMillis() < endCalendar.getTimeInMillis()) {
+			if (startCalendar.getTime().before(endCalendar.getTime())) {
 
 				event.startCalendar = startCalendar;
 				event.endCalendar = endCalendar;
-
-				// if (!user.timezone.equalsIgnoreCase(event.timezone)){
-				// event.setLocalCalendars();
-				// }else {
-				// event.localStartCalendar = startCalendar;
-				// event.localEndCalendar = endCalendar;
-				// }
 
 				event.my_time_start = dtUtils.formatDateTimeToDefault(startCalendar.getTime());
 				event.my_time_end = dtUtils.formatDateTimeToDefault(endCalendar.getTime());
@@ -819,7 +812,7 @@ public class NewEventActivity extends Activity {
 
 				getContentResolver().insert(EventsProvider.EMetaData.EventsMetaData.CONTENT_URI, cv);
 				dm.putEventIntoTreeMap(event);
-				Data.selectedContacts = new ArrayList<Contact>();
+				Data.selectedContacts.clear();
 			}
 			return check;
 		}
@@ -963,9 +956,16 @@ public class NewEventActivity extends Activity {
 
 			public void onClick(View v) {
 				mDateTimePicker.clearFocus();
+				boolean timeSet = false;
 				switch (id) {
 				case DIALOG_START:
 					startCalendar = mDateTimePicker.getCalendar();
+					startView.setText(dtUtils.formatDateTime(startCalendar.getTime()));
+					endCalendar = Calendar.getInstance();
+					endCalendar.setTime(mDateTimePicker.getCalendar().getTime());
+					endCalendar.add(Calendar.MINUTE, DEFAULT_EVENT_DURATION_IN_MINS);
+					endView.setText(dtUtils.formatDateTime(endCalendar.getTime()));
+					timeSet = true;
 					break;
 				case DIALOG_END:
 					endCalendar = mDateTimePicker.getCalendar();
@@ -980,7 +980,9 @@ public class NewEventActivity extends Activity {
 					reminder3time = mDateTimePicker.getCalendar();
 					break;
 				}
-				view.setText(dtUtils.formatDateTime(mDateTimePicker.getCalendar().getTime()));
+				if(!timeSet){
+					view.setText(dtUtils.formatDateTime(mDateTimePicker.getCalendar().getTime()));
+				}
 				mDateTimeDialog.dismiss();
 			}
 		});
