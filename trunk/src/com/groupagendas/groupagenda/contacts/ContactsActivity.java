@@ -505,7 +505,7 @@ public class ContactsActivity extends ListActivity implements OnCheckedChangeLis
 		}
 
 		int indexMin = 0;
-		if (itemPosition <= indexListSize)
+		if (itemPosition <= indexListSize) // TODO Find out why sometimes it gets NullPointerException
 			indexMin = Integer.parseInt(indexList.keySet().toArray()[(itemPosition - 1) * factor].toString());
 
 		ListView listView = (ListView) getListView();
