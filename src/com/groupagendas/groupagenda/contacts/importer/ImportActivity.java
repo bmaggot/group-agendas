@@ -19,6 +19,7 @@ import android.app.Activity;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.util.Log;
@@ -85,7 +86,8 @@ public class ImportActivity extends Activity {
 		int totalEntries = 0;
 
 		try {
-        	jsonOutput = makeSecuredReq(C.GET_CONTACTS_FROM_GOOGLE_REQUEST,getConsumer(this.prefs));
+			Object[] params = {C.GET_CONTACTS_FROM_GOOGLE_REQUEST, getConsumer(this.prefs)};
+        	jsonOutput = new makeSecuredReqTask().execute(params).get();
          	JSONObject jsonResponse = new JSONObject(jsonOutput);
         	JSONObject m = (JSONObject)jsonResponse.get("feed");
         	JSONArray entries =(JSONArray)m.getJSONArray("entry");
@@ -199,7 +201,8 @@ public class ImportActivity extends Activity {
         		
         		tempContact.visibility = "n";
         		
-        		if (DataManagement.getInstance(this).createContact(tempContact)) {
+        		Object[] submitParams = {this, tempContact};
+        		if (new createContactTask().execute(submitParams).get()) {
         			importedContactAmount++;
         		} else {
         			unimportedContactAmount++;
@@ -217,10 +220,9 @@ public class ImportActivity extends Activity {
 	
 	@Override
 	protected void onResume() {
-		// TODO Auto-generated method stub
 		super.onResume();
+		
 		if (isOAuthSuccessful()) {
-//			OAuth successful, try getting the contacts
     		console.setText("OAuth successful, try getting the contacts");
     	} else {
     		console.setText("OAuth failed, no tokens, Click on the Do OAuth Button.");
@@ -269,5 +271,39 @@ public class ImportActivity extends Activity {
             Log.i(C.TAG,"Response : " + responseBuilder.toString());
         }
         return responseBuilder.toString();
-	}	
+	}
+	
+	private class makeSecuredReqTask extends AsyncTask<Object, Void, String> {
+		String url;
+		OAuthConsumer consumer;
+		
+		protected void onPreExecute() {
+		}
+		
+		@Override
+		protected String doInBackground (Object... objects) {
+			String result = "";
+			
+			this.url = objects[0].toString();
+			this.consumer = (OAuthConsumer) objects[1];
+			
+			try {
+				result = makeSecuredReq(url, consumer);
+			} catch (Exception e) {
+				e.printStackTrace(); // TODO Auto-generated catch block
+			}
+			
+			return result;
+		}
+		
+		protected void onPostExecute (String result) {
+		}
+	}
+	
+	private class createContactTask extends AsyncTask<Object, Void, Boolean> {
+		@Override
+		protected Boolean doInBackground(Object... params) {
+			return DataManagement.getInstance((Activity) params[0]).createContact((Contact) params[1]);
+		}
+	}
 }
