@@ -199,5 +199,10 @@
     <string name="new_contacts_invited">You have invited new persons to event!</string>
     <string name="messenger">Messenger</string>
     <string name="share">Share</string>
+    <string name="new_event_reminder1">Reminder 1:</string>
+    <string name="new_event_reminder2">Reminder 2:</string>
+    <string name="new_event_reminder3">Reminder 3:</string>
+    <string name="event_icons_placeholder">Placeholder for event\'s icon</string>
+    <string name="event_color_placeholder">Placeholder for event\'s color</string>
     
 </resources>
