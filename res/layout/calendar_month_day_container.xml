@@ -21,7 +21,7 @@
         android:shadowRadius="1.5"
         android:shadowDx="0"
         android:shadowDy="2"
-        android:text="4"
+        android:text=""
         android:textStyle="bold"
         android:textColor="#3B4959"
         android:textSize="16dp" />
