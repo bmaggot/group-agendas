@@ -284,6 +284,21 @@ public class NewEventActivity extends Activity {
 		adapterCountry.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
 		countrySpinner.setAdapter(adapterCountry);
 		countryArray = CountryManager.getCountryValues(this);
+		String curentCountry = dm.getmContext().getResources().getConfiguration().locale.getISO3Country();
+		int i = 0;
+		for(String tmpCountry : countryArray){
+			i++;
+			if(tmpCountry.equals(curentCountry)){
+				timezoneSpinner.setEnabled(true);
+				String[] timezoneLabels = TimezoneManager.getTimezones(NewEventActivity.this, countryArray[i]);
+				ArrayAdapter<String> adapterTimezone = new ArrayAdapter<String>(NewEventActivity.this,
+						android.R.layout.simple_spinner_item, timezoneLabels);
+				adapterTimezone.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+				timezoneSpinner.setAdapter(adapterTimezone);
+
+				timezoneArray = TimezoneManager.getTimezonesValues(NewEventActivity.this, countryArray[i]);
+			}
+		}
 		countrySpinner.setOnItemSelectedListener(new OnItemSelectedListener() {
 
 			@Override
