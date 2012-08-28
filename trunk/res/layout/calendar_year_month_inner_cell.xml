@@ -6,6 +6,7 @@
     android:orientation="vertical" >
 
     <ImageView android:src="@drawable/calendarbubble_000000_"
+        android:contentDescription="@string/event_color_placeholder"
         android:id="@+id/indicator"
         android:layout_marginTop="1dp"
         android:visibility="gone"
