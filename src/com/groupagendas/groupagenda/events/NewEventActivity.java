@@ -105,6 +105,12 @@ public class NewEventActivity extends Activity {
 	private String errorStr = "";
 	private final int DIALOG_ERROR = 0;
 	private final int CHOOSE_CONTACTS_DIALOG = 1;
+	private final int REMINDER1 = 11;
+	private Calendar reminder1time;
+	private final int REMINDER2 = 22;
+	private Calendar reminder2time;
+	private final int REMINDER3 = 33;
+	private Calendar reminder3time;
 
 	private Prefs prefs;
 
@@ -119,8 +125,8 @@ public class NewEventActivity extends Activity {
 	private RelativeLayout addressDetailsPanel;
 	TextView addressTrigger;
 	TextView detailsTrigger;
-	
-	private boolean reminderShown = false;
+
+	private boolean remindersShown = false;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -389,28 +395,79 @@ public class NewEventActivity extends Activity {
 				showDetailsPanel();
 			}
 		});
-	}
 
-	@Override
-	public void onResume() {
+		// reminders
 		final LinearLayout reminderBlock = (LinearLayout) findViewById(R.id.reminder_block);
 		TextView setReminderTrigger = (TextView) findViewById(R.id.setReminderTrigger);
-		
-		EditText reminder1= (EditText) findViewById(R.id.reminder1);
-		TextView reminder1text = (TextView) findViewById(R.id.reminder1text);
 		setReminderTrigger.setOnClickListener(new OnClickListener() {
-			
+
 			@Override
 			public void onClick(View v) {
-				if(reminderShown){
-					reminderShown = false;
+				if (remindersShown) {
+					remindersShown = false;
 					reminderBlock.setVisibility(View.GONE);
 				} else {
-					reminderShown = true;
+					remindersShown = true;
 					reminderBlock.setVisibility(View.VISIBLE);
 				}
 			}
 		});
+
+		LinearLayout reminder1container = (LinearLayout) findViewById(R.id.reminder_container1);
+		final EditText reminder1 = (EditText) findViewById(R.id.reminder1);
+		reminder1.setText("");
+		reminder1container.setOnClickListener(new OnClickListener() {
+
+			@Override
+			public void onClick(View v) {
+				showDateTimeDialog(reminder1, REMINDER1);
+			}
+		});
+		reminder1.setOnClickListener(new OnClickListener() {
+
+			@Override
+			public void onClick(View v) {
+				showDateTimeDialog(reminder1, REMINDER1);
+			}
+		});
+
+		LinearLayout reminder2container = (LinearLayout) findViewById(R.id.reminder_container2);
+		final EditText reminder2 = (EditText) findViewById(R.id.reminder2);
+		reminder2container.setOnClickListener(new OnClickListener() {
+
+			@Override
+			public void onClick(View v) {
+				showDateTimeDialog(reminder2, REMINDER2);
+			}
+		});
+		reminder2.setOnClickListener(new OnClickListener() {
+
+			@Override
+			public void onClick(View v) {
+				showDateTimeDialog(reminder2, REMINDER2);
+			}
+		});
+
+		LinearLayout reminder3container = (LinearLayout) findViewById(R.id.reminder_container3);
+		final EditText reminder3 = (EditText) findViewById(R.id.reminder3);
+		reminder3container.setOnClickListener(new OnClickListener() {
+
+			@Override
+			public void onClick(View v) {
+				showDateTimeDialog(reminder3, REMINDER3);
+			}
+		});
+		reminder3.setOnClickListener(new OnClickListener() {
+
+			@Override
+			public void onClick(View v) {
+				showDateTimeDialog(reminder3, REMINDER3);
+			}
+		});
+	}
+
+	@Override
+	public void onResume() {
 		if (Data.selectedContacts != null && !Data.selectedContacts.isEmpty()) {
 			LinearLayout invitedPersonList = (LinearLayout) findViewById(R.id.invited_person_list);
 			invitedPersonList.removeAllViews();
@@ -718,6 +775,21 @@ public class NewEventActivity extends Activity {
 			// user_id
 			cv.put(EventsProvider.EMetaData.EventsMetaData.USER_ID, prefs.getUserId());
 
+			// reminders
+			if (reminder1time != null && reminder1time.after(Calendar.getInstance())) {
+				event.reminder1 = dtUtils.formatDateTimeToDefault(reminder1time.getTime());
+				cv.put(EventsProvider.EMetaData.EventsMetaData.REMINDER1, dtUtils.formatDateTimeToDefault(reminder1time.getTime()));
+			}
+			if (reminder2time != null && reminder2time.after(Calendar.getInstance()) && !reminder2time.equals(reminder1time)) {
+				event.reminder2 = dtUtils.formatDateTimeToDefault(reminder2time.getTime());
+				cv.put(EventsProvider.EMetaData.EventsMetaData.REMINDER2, dtUtils.formatDateTimeToDefault(reminder2time.getTime()));
+			}
+			if (reminder3time != null && reminder3time.after(Calendar.getInstance()) && !reminder3time.equals(reminder1time)
+					&& !reminder3time.equals(reminder2time)) {
+				event.reminder3 = dtUtils.formatDateTimeToDefault(reminder3time.getTime());
+				cv.put(EventsProvider.EMetaData.EventsMetaData.REMINDER3, dtUtils.formatDateTimeToDefault(reminder3time.getTime()));
+			}
+
 			if (check) {
 				success = dm.createEvent(event);
 
@@ -878,6 +950,15 @@ public class NewEventActivity extends Activity {
 					break;
 				case DIALOG_END:
 					endCalendar = mDateTimePicker.getCalendar();
+					break;
+				case REMINDER1:
+					reminder1time = mDateTimePicker.getCalendar();
+					break;
+				case REMINDER2:
+					reminder2time = mDateTimePicker.getCalendar();
+					break;
+				case REMINDER3:
+					reminder3time = mDateTimePicker.getCalendar();
 					break;
 				}
 				view.setText(dtUtils.formatDateTime(mDateTimePicker.getCalendar().getTime()));
