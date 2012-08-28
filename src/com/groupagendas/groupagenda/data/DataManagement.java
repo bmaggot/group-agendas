@@ -3058,6 +3058,16 @@ public class DataManagement {
 			} else {
 				reqEntity.addPart("groups[]", new StringBody(""));
 			}
+			
+			if(e.reminder1 != null){
+				reqEntity.addPart("reminder1", new StringBody(e.reminder1));
+			}
+			if(e.reminder2 != null){
+				reqEntity.addPart("reminder2", new StringBody(e.reminder2));
+			}
+			if(e.reminder3 != null){
+				reqEntity.addPart("reminder3", new StringBody(e.reminder3));
+			}
 			post.setEntity(reqEntity);
 
 			if (networkAvailable) {
