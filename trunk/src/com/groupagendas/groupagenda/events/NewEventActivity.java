@@ -119,6 +119,8 @@ public class NewEventActivity extends Activity {
 	private RelativeLayout addressDetailsPanel;
 	TextView addressTrigger;
 	TextView detailsTrigger;
+	
+	private boolean reminderShown = false;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -391,7 +393,24 @@ public class NewEventActivity extends Activity {
 
 	@Override
 	public void onResume() {
-
+		final LinearLayout reminderBlock = (LinearLayout) findViewById(R.id.reminder_block);
+		TextView setReminderTrigger = (TextView) findViewById(R.id.setReminderTrigger);
+		
+		EditText reminder1= (EditText) findViewById(R.id.reminder1);
+		TextView reminder1text = (TextView) findViewById(R.id.reminder1text);
+		setReminderTrigger.setOnClickListener(new OnClickListener() {
+			
+			@Override
+			public void onClick(View v) {
+				if(reminderShown){
+					reminderShown = false;
+					reminderBlock.setVisibility(View.GONE);
+				} else {
+					reminderShown = true;
+					reminderBlock.setVisibility(View.VISIBLE);
+				}
+			}
+		});
 		if (Data.selectedContacts != null && !Data.selectedContacts.isEmpty()) {
 			LinearLayout invitedPersonList = (LinearLayout) findViewById(R.id.invited_person_list);
 			invitedPersonList.removeAllViews();
