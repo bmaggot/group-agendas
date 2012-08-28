@@ -476,11 +476,11 @@
 
                     <EditText
                         android:id="@+id/reminder1"
-                        android:layout_width="fill_parent"
+                        android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_gravity="center_vertical"
+                        android:gravity="center"
                         android:background="@null"
-                        android:enabled="false"
                         android:inputType="date"
                         android:textColor="@android:color/darker_gray"
                         android:textSize="15dp"
@@ -509,11 +509,11 @@
 
                     <EditText
                         android:id="@+id/reminder2"
-                        android:layout_width="fill_parent"
+                        android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_gravity="center_vertical"
+                        android:gravity="center"
                         android:background="@null"
-                        android:enabled="false"
                         android:inputType="date"
                         android:textColor="@android:color/darker_gray"
                         android:textSize="15dp"
@@ -543,11 +543,11 @@
 
                     <EditText
                         android:id="@+id/reminder3"
-                        android:layout_width="fill_parent"
+                        android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_gravity="center_vertical"
+                        android:gravity="center"
                         android:background="@null"
-                        android:enabled="false"
                         android:inputType="date"
                         android:textColor="@color/darker_gray"
                         android:textSize="15dp"
