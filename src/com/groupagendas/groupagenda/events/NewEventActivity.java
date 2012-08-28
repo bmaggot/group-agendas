@@ -127,6 +127,7 @@ public class NewEventActivity extends Activity {
 	TextView detailsTrigger;
 
 	private boolean remindersShown = false;
+	private boolean countrySelected = false;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -287,8 +288,9 @@ public class NewEventActivity extends Activity {
 		String curentCountry = dm.getmContext().getResources().getConfiguration().locale.getISO3Country();
 		int i = 0;
 		for(String tmpCountry : countryArray){
-			i++;
 			if(tmpCountry.equals(curentCountry)){
+				countrySpinner.setSelection(i);
+				countrySelected = true;
 				timezoneSpinner.setEnabled(true);
 				String[] timezoneLabels = TimezoneManager.getTimezones(NewEventActivity.this, countryArray[i]);
 				ArrayAdapter<String> adapterTimezone = new ArrayAdapter<String>(NewEventActivity.this,
@@ -298,18 +300,21 @@ public class NewEventActivity extends Activity {
 
 				timezoneArray = TimezoneManager.getTimezonesValues(NewEventActivity.this, countryArray[i]);
 			}
+			i++;
 		}
 		countrySpinner.setOnItemSelectedListener(new OnItemSelectedListener() {
 
 			@Override
 			public void onItemSelected(AdapterView<?> arg0, View arg1, int pos, long arg3) {
 				if (pos == 0) {
-					ArrayAdapter<String> adapterTimezone = new ArrayAdapter<String>(NewEventActivity.this,
-							android.R.layout.simple_spinner_item, new String[0]);
-					adapterTimezone.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-					timezoneSpinner.setAdapter(adapterTimezone);
-					timezoneSpinner.setEnabled(false);
-					timezoneArray = null;
+					if(!countrySelected){
+						ArrayAdapter<String> adapterTimezone = new ArrayAdapter<String>(NewEventActivity.this,
+								android.R.layout.simple_spinner_item, new String[0]);
+						adapterTimezone.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+						timezoneSpinner.setAdapter(adapterTimezone);
+						timezoneSpinner.setEnabled(false);
+						timezoneArray = null;
+					}
 				} else {
 					timezoneSpinner.setEnabled(true);
 					String[] timezoneLabels = TimezoneManager.getTimezones(NewEventActivity.this, countryArray[pos]);
@@ -829,7 +834,6 @@ public class NewEventActivity extends Activity {
 				saveButton.setText(getString(R.string.save));
 			}
 			super.onPostExecute(result);
-			onBackPressed();
 		}
 
 	}
