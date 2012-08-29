@@ -149,9 +149,7 @@ public class MonthInstance implements OnTouchListener{
 							.getChildAt(i)).getChildAt(j);
 					dayCell.setDayNum("" + day);
 					dayCell.setState(MonthCellState.DEFAULT);
-					if(!Data.getEventByDate(tmp).isEmpty()) {
 					dayCell.setHasEvents(!Data.getEventByDate(tmp).isEmpty() && SHOW_BUBBLES);
-					}
 					day++;
 					tmp.add(Calendar.DATE, 1);
 					if (day > date.getActualMaximum(Calendar.DAY_OF_MONTH))
