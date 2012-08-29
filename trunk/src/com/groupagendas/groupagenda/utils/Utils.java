@@ -200,4 +200,16 @@ public class Utils {
 		return date_formatter.format(calendar.getTime());
 	}
 
+	public static int getDayOfWeek(Calendar date) {
+		
+		Calendar tmp = (Calendar) date.clone();
+		
+		int i = 1;
+		while (tmp.get(Calendar.DAY_OF_WEEK) != FIRST_DAY_OF_WEEK){
+			tmp.add(Calendar.DATE, - 1);
+			i++;
+		}
+		return i;
+	}
+
 }
