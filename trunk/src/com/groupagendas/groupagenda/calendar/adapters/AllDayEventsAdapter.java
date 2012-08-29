@@ -35,7 +35,7 @@ public class AllDayEventsAdapter extends AbstractAdapter<Event> {
 		title.setText(event.title);
 		GradientDrawable sd = (GradientDrawable)context.getResources().getDrawable(R.drawable.calendar_dayview_secondcolumn_entrybackground);
 		
-		if (!event.color.equalsIgnoreCase("null")){
+		if (event.color != null && !event.color.equalsIgnoreCase("null")){
 			sd.setColor(Color.parseColor("#BF" + event.color));
 			sd.setStroke(1, Color.parseColor("#" + event.color));
 		}else {

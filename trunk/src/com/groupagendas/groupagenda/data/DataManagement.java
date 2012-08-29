@@ -65,6 +65,7 @@ import com.groupagendas.groupagenda.events.Invited;
 import com.groupagendas.groupagenda.settings.AutoColorItem;
 import com.groupagendas.groupagenda.settings.AutoIconItem;
 import com.groupagendas.groupagenda.utils.AgendaUtils;
+import com.groupagendas.groupagenda.utils.DateTimeUtils;
 import com.groupagendas.groupagenda.utils.MapUtils;
 import com.groupagendas.groupagenda.utils.Prefs;
 import com.groupagendas.groupagenda.utils.Utils;
@@ -73,6 +74,7 @@ public class DataManagement {
 
 	public static boolean networkAvailable = true;
 	public static boolean eventStatusChanged = false;
+	public static ArrayList<Event> contactsBirthdays = new ArrayList<Event>();
 
 	private DataManagement(Activity c) {
 		Data.setPrefs(new Prefs(c));
@@ -1242,6 +1244,22 @@ public class DataManagement {
 								}
 								try {
 									contact.birthdate = c.getString(ContactsProvider.CMetaData.ContactsMetaData.BIRTHDATE);
+									Calendar birthdateCalendar;
+									if (!contact.birthdate.equals("null")) {
+										birthdateCalendar = Utils.stringToCalendar(contact.birthdate, DateTimeUtils.DEFAULT_DATE);
+										birthdateCalendar.set(Calendar.YEAR, Calendar.getInstance().get(Calendar.YEAR));
+										Event birthdayEvent = new Event();
+										birthdayEvent.title = contact.name + " " + contact.lastname + " "
+												+ Data.getmContext().getString(R.string.contact_birthday);
+										birthdayEvent.startCalendar = birthdateCalendar;
+										birthdayEvent.endCalendar = birthdateCalendar;
+										birthdayEvent.my_time_start = Utils.formatCalendar(birthdateCalendar);
+										birthdayEvent.my_time_end = Utils.formatCalendar(birthdateCalendar);
+										birthdayEvent.is_all_day = true;
+										birthdayEvent.timezone = getAccount().timezone;
+										System.out.println(birthdayEvent.my_time_start);
+										contactsBirthdays.add(birthdayEvent);
+									}
 									cv.put(ContactsProvider.CMetaData.ContactsMetaData.BIRTHDATE, contact.birthdate);
 								} catch (JSONException e) {
 									Reporter.reportError(this.getClass().toString(), Thread.currentThread().getStackTrace()[2]
@@ -2440,6 +2458,9 @@ public class DataManagement {
 					ex.getMessage());
 		}
 		Data.setLoadEventsData(false);
+		if(contactsBirthdays != null && !contactsBirthdays.isEmpty()){
+			events.addAll(contactsBirthdays);
+		}
 		sortEvents(events);
 		return getNaviveCalendarEvents(events);
 	}
@@ -3062,14 +3083,14 @@ public class DataManagement {
 			} else {
 				reqEntity.addPart("groups[]", new StringBody(""));
 			}
-			
-			if(e.reminder1 != null){
+
+			if (e.reminder1 != null) {
 				reqEntity.addPart("reminder1", new StringBody(e.reminder1));
 			}
-			if(e.reminder2 != null){
+			if (e.reminder2 != null) {
 				reqEntity.addPart("reminder2", new StringBody(e.reminder2));
 			}
-			if(e.reminder3 != null){
+			if (e.reminder3 != null) {
 				reqEntity.addPart("reminder3", new StringBody(e.reminder3));
 			}
 			post.setEntity(reqEntity);
@@ -3608,7 +3629,7 @@ public class DataManagement {
 	// /////////////////////////////////////
 
 	private byte[] imageToBytes(String image_url) {
-		if(image_url != null && !image_url.equals("null")){
+		if (image_url != null && !image_url.equals("null")) {
 			DefaultHttpClient mHttpClient = new DefaultHttpClient();
 			HttpGet mHttpGet = new HttpGet(image_url);
 			HttpResponse mHttpResponse;
@@ -3628,7 +3649,7 @@ public class DataManagement {
 						e.getMessage());
 			}
 			return new byte[0];
-	}
+		}
 		return null;
 	}
 
