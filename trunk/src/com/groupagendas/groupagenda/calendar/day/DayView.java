@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 
-import android.app.Activity;
 import android.content.Context;
 import android.util.AttributeSet;
 import android.view.GestureDetector;
@@ -12,18 +11,12 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.ListView;
-import android.widget.RelativeLayout;
 import android.widget.ScrollView;
 import android.widget.TextView;
 
-import com.groupagendas.groupagenda.NavbarActivity;
 import com.groupagendas.groupagenda.R;
-
-
-import com.groupagendas.groupagenda.calendar.AbstractCalendarView;
 import com.groupagendas.groupagenda.calendar.AbstractCalendarViewWithAllDayAndHourEvents;
 import com.groupagendas.groupagenda.calendar.adapters.AllDayEventsAdapter;
-import com.groupagendas.groupagenda.data.DataManagement;
 import com.groupagendas.groupagenda.events.Event;
 import com.groupagendas.groupagenda.utils.Utils;
 
