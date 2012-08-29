@@ -104,7 +104,7 @@ public class YearView extends AbstractCalendarView {
 			} 	 	
 		}
 		
-		selectDate(selectedDate, null);
+		
 		
 		
 		
@@ -134,7 +134,8 @@ public class YearView extends AbstractCalendarView {
 				if (clickedDay.getState() != MonthCellState.OTHER_MONTH){
 						unselectDate(selectedDate);
 						selectDate(date, clickedDay);
-//						TODO CALL DIALOG
+						YearViewOnClickDialog dialog = new YearViewOnClickDialog(getContext(), selectedDate);
+						dialog.show();
 				}
 			}
 			
@@ -146,10 +147,11 @@ public class YearView extends AbstractCalendarView {
 	private void refresh() {
 		Calendar tmp = (Calendar) selectedDate.clone();
 		Utils.setCalendarToFirstDayOfYear(tmp);
-		for (int i = 1; i < months.length; i++){
+		for (int i = 0; i < months.length; i++){
 			months[i].setNewDate((Calendar) tmp.clone());
 			tmp.add(Calendar.MONTH, 1);
 		}
+		selectDate(selectedDate, null);
 		
 	}
 
