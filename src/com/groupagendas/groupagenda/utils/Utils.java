@@ -12,6 +12,7 @@ import java.util.regex.Pattern;
 import org.json.JSONArray;
 import org.json.JSONException;
 
+import com.groupagendas.groupagenda.data.CalendarSettings;
 import com.groupagendas.groupagenda.data.Data;
 import com.groupagendas.groupagenda.error.report.Reporter;
 
@@ -34,9 +35,7 @@ public class Utils {
 		}
 	}
 
-	public static String date_format = "yyyy-MM-dd HH:mm:ss";
-	public static int FIRST_DAY_OF_WEEK = Data.DEFAULT_FIRST_WEEK_DAY;
-	private static SimpleDateFormat date_formatter = new SimpleDateFormat(date_format);
+
 	
 	public static String formatDateTime(String date_str, String startPattern, String endPattern){
 		Calendar calendar = stringToCalendar(date_str, startPattern);
@@ -131,7 +130,7 @@ public class Utils {
 						calendarInUserLocale.get(Calendar.MINUTE), 
 						calendarInUserLocale.get(Calendar.SECOND));
 
-		SimpleDateFormat dateFormat = new SimpleDateFormat(Utils.date_format);
+		SimpleDateFormat dateFormat = new SimpleDateFormat(CalendarSettings.getDateFormat());
 		dateFormat.setTimeZone(TimeZone.getTimeZone(timezone));
 		return dateFormat.format(tmpCalendar.getTime());
 	}
@@ -183,7 +182,7 @@ public class Utils {
 	
 	public static Calendar createNewTodayCalendar() {
 		Calendar tmp = Calendar.getInstance();
-		tmp.setFirstDayOfWeek(FIRST_DAY_OF_WEEK);
+		tmp.setFirstDayOfWeek(CalendarSettings.getFirstDayofWeek());
 		tmp.set(Calendar.HOUR_OF_DAY, 0);
 		tmp.set(Calendar.MINUTE, 0);
 		tmp.set(Calendar.SECOND, 0);
@@ -191,13 +190,10 @@ public class Utils {
 		return tmp;
 	}
 
-	public static void setDate_format(String date_format) {
-		Utils.date_format = date_format;
-		date_formatter = new SimpleDateFormat(date_format);
-	}
+	
 	
 	public static String formatCalendar(Calendar calendar){
-		return date_formatter.format(calendar.getTime());
+		return CalendarSettings.dateFormatter.format(calendar.getTime());
 	}
 
 	public static int getDayOfWeek(Calendar date) {
@@ -205,7 +201,8 @@ public class Utils {
 		Calendar tmp = (Calendar) date.clone();
 		
 		int i = 1;
-		while (tmp.get(Calendar.DAY_OF_WEEK) != FIRST_DAY_OF_WEEK){
+		int firstDayofWeek = CalendarSettings.getFirstDayofWeek();
+		while (tmp.get(Calendar.DAY_OF_WEEK) != firstDayofWeek){
 			tmp.add(Calendar.DATE, - 1);
 			i++;
 		}

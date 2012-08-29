@@ -5,6 +5,7 @@ import java.util.Calendar;
 
 import com.groupagendas.groupagenda.calendar.AbstractCalendarView;
 import com.groupagendas.groupagenda.calendar.day.DayView;
+import com.groupagendas.groupagenda.data.CalendarSettings;
 import com.groupagendas.groupagenda.events.NewEventActivity;
 import com.groupagendas.groupagenda.utils.Utils;
 
@@ -40,7 +41,7 @@ public class WeekDayTouchListener extends SimpleOnGestureListener {
 			tmp.add(Calendar.MINUTE, 30);
 		}
 
-		SimpleDateFormat df = new SimpleDateFormat(Utils.date_format);
+		SimpleDateFormat df = CalendarSettings.dateFormatter;
 
 		intent.putExtra(NewEventActivity.EXTRA_STRING_FOR_START_CALENDAR, df.format(tmp.getTime()));
 
