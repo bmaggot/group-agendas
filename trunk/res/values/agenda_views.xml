@@ -12,14 +12,13 @@
         <item>L</item>
     </string-array>
     <string-array name="agenda_views_labels">
-        <item>Day</item>
-        <item>Week</item>
-        <item>Agenda</item>
-        <item>Month</item>
-        <item>Mini-Month</item>
-        <item>Year</item>
-        <item>Go To Date</item>
-        <item>List Search</item>
+        <item>@string/day</item>
+        <item>@string/week</item>
+        <item>@string/agenda</item>
+        <item>@string/month</item>
+        <item>@string/mini_month</item>
+        <item>@string/year</item>
+        <item>@string/list_search</item>
     </string-array>
     <string-array name="date_format_values">
         <item>yyyy-mm-dd</item>
