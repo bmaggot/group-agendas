@@ -154,6 +154,17 @@ public class Utils {
 			while (date.get(Calendar.DAY_OF_MONTH) != 1)
 				date.add(Calendar.DATE, -1);
 		}
+		
+		/**
+		 * @author justinas.marcinka@gmail.com
+		 * @param date calendar that will be set to first day of year
+		 * @return Sets given calendar to first day of year
+		 */
+		
+		public static void setCalendarToFirstDayOfYear(Calendar date) {
+			date.set(Calendar.MONTH, 0);
+			Utils.setCalendarToFirstDayOfMonth(date);
+		}
 	/**
 	 * @author justinas.marcinka@gmail.com
 	 * @param date that needs to be checked
@@ -208,5 +219,18 @@ public class Utils {
 		}
 		return i;
 	}
+
+
+
+	public static boolean isWeekend(Calendar day) {
+		for (int i = 0; i < CalendarSettings.getWeekends().length; i++)
+			if (day.get(Calendar.DAY_OF_WEEK) == CalendarSettings.getWeekends()[i]) return true;
+		return false;
+	}
+	
+
+
+
+
 
 }
