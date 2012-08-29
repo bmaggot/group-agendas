@@ -6,7 +6,6 @@ import com.groupagendas.groupagenda.calendar.MonthCellState;
 import android.content.Context;
 import android.graphics.Color;
 import android.util.AttributeSet;
-import android.view.View;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
@@ -35,8 +34,15 @@ public class YearViewMonthInnerCell extends RelativeLayout{
 		initTextField();
 		this.text.setText(text);
 	}
+	
+	
+	
+	public MonthCellState getState() {
+		return state;
+	}
+
 	/**
-	 * Used to setup day celll
+	 * Used to setup day cell
 	 * @param isWeekNum
 	 * @param text
 	 */
@@ -48,6 +54,8 @@ public class YearViewMonthInnerCell extends RelativeLayout{
 	}
 	
 	public void setHasEvents(boolean bool){
+		if(this.eventsIndicator == null)
+			this.eventsIndicator = (ImageView) findViewById(R.id.indicator);
 		hasEvents = bool;
 		if (hasEvents){
 			eventsIndicator.setVisibility(VISIBLE);
@@ -69,6 +77,7 @@ public class YearViewMonthInnerCell extends RelativeLayout{
 	}
 
 	private void refresh() {
+		initTextField();
 		this.setVisibility(VISIBLE);
 		
 		switch (state){
@@ -95,10 +104,9 @@ public class YearViewMonthInnerCell extends RelativeLayout{
 		
 		
 	}
-
-	private void drawEventBubble() {
-		// TODO Auto-generated method stub
-		
+	
+	public String getText() {
+		return (String) text.getText();
 	}
 
 }

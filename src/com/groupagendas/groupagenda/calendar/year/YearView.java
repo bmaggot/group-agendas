@@ -10,6 +10,7 @@ import android.util.AttributeSet;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup.LayoutParams;
+import android.view.ViewParent;
 import android.widget.LinearLayout;
 import android.widget.TableLayout;
 import android.widget.TableRow;
@@ -18,6 +19,7 @@ import android.widget.TextView;
 import com.groupagendas.groupagenda.R;
 import com.groupagendas.groupagenda.calendar.AbstractCalendarView;
 import com.groupagendas.groupagenda.calendar.MonthCellState;
+import com.groupagendas.groupagenda.data.CalendarSettings;
 import com.groupagendas.groupagenda.data.Data;
 import com.groupagendas.groupagenda.utils.Utils;
 
@@ -25,14 +27,16 @@ public class YearView extends AbstractCalendarView {
 
 	private static final int MonthsPerRow = 3;
 	private static final int MonthsInYear = 12;
-	private static final int DaysPerWeek = 7;
+	private static final int DAYS_PER_WEEK = 7;
 	private static final int WeeksPerMonth = 6;
-	private final int[] weekends = {1,7}; //TODO remove this hardcode
+	
 	private LinearLayout year_Table;
 	private ArrayList<LinearLayout> monthFramesList;
 	private ArrayList<ArrayList<YearViewMonthInnerCell>>yearDaysMap = new ArrayList<ArrayList<YearViewMonthInnerCell>>();
 	private LayoutParams WeekCellParams = new LayoutParams(LayoutParams.FILL_PARENT, LayoutParams.FILL_PARENT, 1);
 	private Calendar today = Utils.createNewTodayCalendar();
+	private LinearLayout monthsMap[] = new LinearLayout[MonthsInYear];
+	private MonthInstance months[] = new MonthInstance[MonthsInYear];
 	
 
 	public YearView(Context context) {
@@ -48,6 +52,7 @@ public class YearView extends AbstractCalendarView {
 		for (int i = 0; i < MonthsInYear; i++){
 		yearDaysMap.add(new ArrayList<YearViewMonthInnerCell>());
 		}
+		
 	}
 
 	@Override
@@ -61,135 +66,112 @@ public class YearView extends AbstractCalendarView {
 
 	@Override
 	public void goPrev() {
-		// TODO Auto-generated method stub
-
+		selectedDate.add(Calendar.YEAR, -1);
+		setTopPanel();
+		refresh();
 	}
+
+
 
 	@Override
 	public void goNext() {
-		// TODO Auto-generated method stub
-
+		selectedDate.add(Calendar.YEAR, 1);
+		setTopPanel();
+		refresh();
 	}
+	
+	
 
 	@Override
 	public void setupView() {
-		// TODO Auto-generated method stub
-		monthFramesList = new ArrayList<LinearLayout>();
+
 		year_Table = (LinearLayout) findViewById(R.id.year_table);
-//		LinearLayout year = (LinearLayout) findViewById(R.id.year_table);
-//		LinearLayout month = (LinearLayout) mInflater.inflate(R.layout.calendar_year_month_cell, year);
-//		((TextView)month.findViewById(R.id.year_month_name)).setText("TESTAS");
+
+		
+	
 		int MonthNr = 0;
+		Calendar tmp = (Calendar) selectedDate.clone();
+		Utils.setCalendarToFirstDayOfYear(tmp);
+		
 		for (int i = 0; i < year_Table.getChildCount(); i++){
 			LinearLayout row = (LinearLayout) year_Table.getChildAt(i);
 			for (int j = 0; j < row.getChildCount(); j++){	
-
 				LinearLayout month = (LinearLayout) row.getChildAt(j);
-
-				
-				Calendar firstDayOfMonthContainer = (Calendar) selectedDate.clone();
-				firstDayOfMonthContainer.set(Calendar.MONTH, MonthNr);
-				Utils.setCalendarToFirstDayOfMonth(firstDayOfMonthContainer);
-				initMonthCell(month, firstDayOfMonthContainer);
+				months[MonthNr] = new MonthInstance((Calendar) tmp.clone(), month, MonthNames);
+				tmp.add(Calendar.MONTH, 1);
+				month.findViewById(R.id.year_month_table).setOnTouchListener(new YearViewMonthOntouchListener(MonthNr));
 				MonthNr++;
 			} 	 	
 		}
 		
-		
-		
-		YearViewMonthInnerCell cell = getCellFromMap(selectedDate);
-		cell.setState(MonthCellState.SELECTED);
-		if (!Utils.isSameDay(today, selectedDate)){
-			cell = getCellFromMap(today);
-			cell.setState(MonthCellState.TODAY);
-			
-		
-		}
+		selectDate(selectedDate, null);
 		
 		
 		
 		
 
 	}
-
 	
-	private YearViewMonthInnerCell getCellFromMap(Calendar date) {
-		ArrayList<YearViewMonthInnerCell> monthCellsList = yearDaysMap.get(date.get(Calendar.MONTH));
-		Calendar tmp = (Calendar) date.clone();
-		Utils.setCalendarToFirstDayOfMonth(tmp);
-		Utils.setCalendarToFirstDayOfWeek(tmp);
-		int hiddenDates = tmp.getActualMaximum(Calendar.DATE) - tmp.get(Calendar.DATE);
-		
-		int day = date.get(Calendar.DATE) + hiddenDates;
-		return monthCellsList.get(day);
-	}
+	private class YearViewMonthOntouchListener implements OnTouchListener{
+		private int Id;
 
-	private void initMonthCell(LinearLayout monthContainer, Calendar firstDayOfMonthContainer) {
-		TextView title = (TextView) monthContainer.findViewById(R.id.year_month_name);
-		String text = MonthNames[firstDayOfMonthContainer.get(Calendar.MONTH)];
-		title.setText(text);
-		
-		int thisMonth = firstDayOfMonthContainer.get(Calendar.MONTH);
-		Utils.setCalendarToFirstDayOfWeek(firstDayOfMonthContainer);
+		public YearViewMonthOntouchListener(int ID) {
+			this.Id = ID;
+		}
 
-		
-		ArrayList<YearViewMonthInnerCell> dayCellsArray = yearDaysMap.get(thisMonth);
-		dayCellsArray.clear();
-		
-		
-		LinearLayout monthTable = (LinearLayout) monthContainer.findViewById(R.id.year_month_table);
-		monthTable.setOnTouchListener(new OnTouchListener() {
+		@Override
+		public boolean onTouch(View v, MotionEvent event) {
+			MonthInstance clickedMonthInstance = months[Id];
+			TextView tmpCell = (TextView) ((LinearLayout) ((LinearLayout) v).getChildAt(0)).getChildAt(0); //first cell of month table just to get dimensions
+			int cellWidth = tmpCell.getWidth();
+			int cellHeight = tmpCell.getHeight();
 			
-			@Override
-			public boolean onTouch(View v, MotionEvent event) {
-				int cellWidth = (((LinearLayout) v).getChildAt(0)).getWidth();
-				int cellHeight = (((LinearLayout) v).getChildAt(0)).getHeight();
-				System.out.println("CLICKED: " + event.getX() + " " + event.getY());
-				System.out.println("Cell: " + cellHeight + "x" + cellWidth);
-				return false;
-			}
-		});
-		for (int i = 0; i < WeeksPerMonth; i++){
-			LinearLayout row = (LinearLayout) monthTable.getChildAt(i);
-			
-			TextView weekDayNum = (TextView) row.getChildAt(0);
-			weekDayNum.setText("" + firstDayOfMonthContainer.get(Calendar.WEEK_OF_YEAR));
-			
-			YearViewMonthInnerCell monthCell = null;
-			
-			
-			for (int j = 1; j <= DaysPerWeek; j++){
-				
-				monthCell = (YearViewMonthInnerCell) row.getChildAt(j);
-				text = "" + firstDayOfMonthContainer.get(Calendar.DATE);
-				
-				MonthCellState state = MonthCellState.DEFAULT;
-				if (firstDayOfMonthContainer.get(Calendar.MONTH) != thisMonth){
-					state = MonthCellState.OTHER_MONTH;
-				} else {
-					for (int w = 0; w < weekends.length; w++)
-						if(weekends[w] == firstDayOfMonthContainer.get(Calendar.DAY_OF_WEEK)){
-							state = MonthCellState.WEEK_END;
-							break;
-						}
+			int colPos = (int) ((event.getX() / cellWidth));
+			int rowPos = (int) ((event.getY() / cellHeight));
+			Calendar date = clickedMonthInstance.getDateByCoordinates(rowPos, colPos);
+			if (colPos > 0 && colPos <= DAYS_PER_WEEK){
+				YearViewMonthInnerCell clickedDay = (YearViewMonthInnerCell) ((LinearLayout) ((LinearLayout)v).getChildAt(rowPos)).getChildAt(colPos);
+				if (clickedDay.getState() != MonthCellState.OTHER_MONTH){
+						unselectDate(selectedDate);
+						selectDate(date, clickedDay);
+//						TODO CALL DIALOG
 				}
-				
-				monthCell.setupDayCell(text, state);	
-				if (!Data.getEventByDate(firstDayOfMonthContainer).isEmpty())
-					monthCell.setHasEvents(true);
-				else monthCell.setHasEvents(false);
-				
-				dayCellsArray.add(monthCell);
-				firstDayOfMonthContainer.add(Calendar.DATE, 1);
-			}			
+			}
+			
+			return false;
 		}
 		
+	}
+
+	private void refresh() {
+		Calendar tmp = (Calendar) selectedDate.clone();
+		Utils.setCalendarToFirstDayOfYear(tmp);
+		for (int i = 1; i < months.length; i++){
+			months[i].setNewDate((Calendar) tmp.clone());
+			tmp.add(Calendar.MONTH, 1);
+		}
+		
+	}
+
+	protected void selectDate(Calendar date, YearViewMonthInnerCell clickedDay) {
+		if (clickedDay == null){
+			months[date.get(Calendar.MONTH)].getDayFrame(date).setState(MonthCellState.SELECTED);
+		}
+		else{
+			selectedDate = date;
+			clickedDay.setState(MonthCellState.SELECTED);
+		}		
+	}
+
+	protected void unselectDate(Calendar date) {
+		MonthInstance monthInstance = months[date.get(Calendar.MONTH)];
+		monthInstance.unselectDay(date);
 		
 	}
 
 	@Override
 	protected void updateEventLists() {
-		// TODO Auto-generated method stub
+		// do nothing
 	}
 
 	@Override
@@ -200,8 +182,7 @@ public class YearView extends AbstractCalendarView {
 
 	@Override
 	public Calendar getDateToResume() {
-		// TODO Auto-generated method stub
-		return null;
+		return selectedDate;
 	}
 
 }
