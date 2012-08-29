@@ -1257,7 +1257,6 @@ public class DataManagement {
 										birthdayEvent.my_time_end = Utils.formatCalendar(birthdateCalendar);
 										birthdayEvent.is_all_day = true;
 										birthdayEvent.timezone = getAccount().timezone;
-										System.out.println(birthdayEvent.my_time_start);
 										contactsBirthdays.add(birthdayEvent);
 									}
 									cv.put(ContactsProvider.CMetaData.ContactsMetaData.BIRTHDATE, contact.birthdate);
@@ -1581,15 +1580,51 @@ public class DataManagement {
 			reqEntity.addPart("token", new StringBody(Data.getToken()));
 
 			reqEntity.addPart("name", new StringBody(c.name));
-			reqEntity.addPart("lastname", new StringBody(c.lastname));
-			reqEntity.addPart("email", new StringBody(c.email));
-			reqEntity.addPart("phone1", new StringBody(c.phone1));
-			reqEntity.addPart("birthdate", new StringBody(c.birthdate));
-			reqEntity.addPart("country", new StringBody(c.country));
-			reqEntity.addPart("city", new StringBody(c.city));
-			reqEntity.addPart("street", new StringBody(c.street));
-			reqEntity.addPart("zip", new StringBody(c.zip));
-			reqEntity.addPart("visibility", new StringBody(c.visibility));
+			if(c.lastname != null){
+				reqEntity.addPart("lastname", new StringBody(c.lastname));
+			} else {
+				reqEntity.addPart("lastname", new StringBody(""));
+			}
+			if(c.email != null){
+				reqEntity.addPart("email", new StringBody(c.email));
+			} else{
+				reqEntity.addPart("email", new StringBody(""));
+			}
+			if(c.phone1 != null){
+				reqEntity.addPart("phone1", new StringBody(c.phone1));
+			} else {
+				reqEntity.addPart("phone1", new StringBody(""));
+			}
+			if(c.birthdate != null){
+				reqEntity.addPart("birthdate", new StringBody(c.birthdate));
+			} else {
+				reqEntity.addPart("birthdate", new StringBody(""));
+			}
+			if(c.country != null){
+				reqEntity.addPart("country", new StringBody(c.country));
+			} else {
+				reqEntity.addPart("country", new StringBody(""));
+			}
+			if(c.city != null){
+				reqEntity.addPart("city", new StringBody(c.city));
+			} else {
+				reqEntity.addPart("city", new StringBody(""));
+			}
+			if(c.street != null){
+				reqEntity.addPart("street", new StringBody(c.street));
+			} else {
+				reqEntity.addPart("street", new StringBody(""));
+			}
+			if(c.zip != null){
+				reqEntity.addPart("zip", new StringBody(c.zip));
+			} else {
+				reqEntity.addPart("zip", new StringBody(""));
+			}
+			if(c.visibility != null){
+				reqEntity.addPart("visibility", new StringBody(c.visibility));
+			} else {
+				reqEntity.addPart("visibility", new StringBody("n"));
+			}
 
 			Map<String, String> groups = c.groups;
 			if (groups != null) {
