@@ -18,6 +18,7 @@ import android.widget.TextView;
 import com.bog.calendar.app.ui.EventGroupView;
 import com.bog.calendar.app.ui.EventView;
 import com.groupagendas.groupagenda.R;
+import com.groupagendas.groupagenda.data.CalendarSettings;
 import com.groupagendas.groupagenda.data.DataManagement;
 import com.groupagendas.groupagenda.events.Event;
 import com.groupagendas.groupagenda.utils.DateTimeUtils;
@@ -119,10 +120,10 @@ public class CalendarDay implements OnClickListener {
 	}
 	private List<CEvent> getActualEvents(ArrayList<Event> events){
 		List<CEvent> eventsList = new ArrayList<CEvent>();
-		
+		String date_format = CalendarSettings.getDateFormat();
 		String dayStr = new SimpleDateFormat("yyyy-MM-dd").format(currentDay.getTime());
-		Calendar day_start = Utils.stringToCalendar(dayStr+" 00:00:00", Utils.date_format);
-		Calendar day_end   = Utils.stringToCalendar(dayStr+" 23:59:59", Utils.date_format);
+		Calendar day_start = Utils.stringToCalendar(dayStr+" 00:00:00", date_format);
+		Calendar day_end   = Utils.stringToCalendar(dayStr+" 23:59:59", date_format);
 		
 		Calendar calendar_start = null;
 		Calendar calendar_end = null;
@@ -134,8 +135,8 @@ public class CalendarDay implements OnClickListener {
 		for (int i = 0, l = events.size(); i < l; i++) {
 			final Event event = events.get(i);
 			if (!event.my_time_end.equals("null") && !event.my_time_start.equals("null")) {
-				calendar_start = Utils.stringToCalendar(event.my_time_start, event.timezone, Utils.date_format);
-				calendar_end = Utils.stringToCalendar(event.my_time_end, event.timezone, Utils.date_format);
+				calendar_start = Utils.stringToCalendar(event.my_time_start, event.timezone, date_format);
+				calendar_end = Utils.stringToCalendar(event.my_time_end, event.timezone, date_format);
 				
 				if(!calendar_end.before(day_start) && !calendar_start.after(day_end)){
 					

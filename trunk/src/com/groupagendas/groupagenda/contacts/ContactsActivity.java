@@ -49,6 +49,7 @@ import android.widget.Toast;
 
 import com.groupagendas.groupagenda.R;
 import com.groupagendas.groupagenda.contacts.importer.ImportActivity;
+import com.groupagendas.groupagenda.data.CalendarSettings;
 import com.groupagendas.groupagenda.data.Data;
 import com.groupagendas.groupagenda.data.DataManagement;
 import com.groupagendas.groupagenda.data.OfflineData;
@@ -565,6 +566,7 @@ public class ContactsActivity extends ListActivity implements OnCheckedChangeLis
 		@Override
 		protected Void doInBackground(Integer... params) {
 			try {
+				String date_format = CalendarSettings.getDateFormat();
 				int event_id = params[0];
 				HttpClient hc = new DefaultHttpClient();
 				HttpPost post = new HttpPost(Data.getServerUrl() + "mobile/events_get");
@@ -753,7 +755,7 @@ public class ContactsActivity extends ListActivity implements OnCheckedChangeLis
 							try {
 								event.my_time_start = e.getString("my_time_start");
 								cv.put(EventsProvider.EMetaData.EventsMetaData.MY_TIME_START, event.my_time_start);
-								event.startCalendar = Utils.stringToCalendar(event.my_time_start, Utils.date_format);
+								event.startCalendar = Utils.stringToCalendar(event.my_time_start, date_format);
 
 							} catch (JSONException ex) {
 								Reporter.reportError(this.getClass().toString(), Thread.currentThread().getStackTrace()[2].getMethodName()
@@ -762,7 +764,7 @@ public class ContactsActivity extends ListActivity implements OnCheckedChangeLis
 							try {
 								event.my_time_end = e.getString("my_time_end");
 								cv.put(EventsProvider.EMetaData.EventsMetaData.MY_TIME_END, event.my_time_end);
-								event.endCalendar = Utils.stringToCalendar(event.my_time_end, Utils.date_format);
+								event.endCalendar = Utils.stringToCalendar(event.my_time_end, date_format);
 
 							} catch (JSONException ex) {
 								Reporter.reportError(this.getClass().toString(), Thread.currentThread().getStackTrace()[2].getMethodName()
@@ -894,10 +896,10 @@ public class ContactsActivity extends ListActivity implements OnCheckedChangeLis
 							dm.getmContext().getContentResolver().insert(EventsProvider.EMetaData.EventsMetaData.CONTENT_URI, cv);
 							Event tmpEvent = dm.getEventFromDb(event_id);
 							if (tmpEvent.startCalendar == null) {
-								tmpEvent.startCalendar = Utils.stringToCalendar(event.my_time_start, Utils.date_format);
+								tmpEvent.startCalendar = Utils.stringToCalendar(event.my_time_start, date_format);
 							}
 							if (tmpEvent.endCalendar == null) {
-								tmpEvent.endCalendar = Utils.stringToCalendar(event.my_time_end, Utils.date_format);
+								tmpEvent.endCalendar = Utils.stringToCalendar(event.my_time_end, date_format);
 							}
 							dm.updateEventInsideLocalDb(tmpEvent);
 						}

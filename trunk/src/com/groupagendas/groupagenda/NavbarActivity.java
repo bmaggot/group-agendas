@@ -47,6 +47,7 @@ import com.groupagendas.groupagenda.calendar.week.WeekView;
 import com.groupagendas.groupagenda.calendar.year.YearView;
 import com.groupagendas.groupagenda.contacts.ContactsActivity;
 import com.groupagendas.groupagenda.contacts.ContactsProvider;
+import com.groupagendas.groupagenda.data.CalendarSettings;
 import com.groupagendas.groupagenda.data.Data;
 import com.groupagendas.groupagenda.data.DataManagement;
 import com.groupagendas.groupagenda.events.Event;
@@ -78,6 +79,7 @@ public class NavbarActivity extends Activity {
 	private ActionItem today;
 	
 	private Calendar selectedDate = null;
+	private String date_format = CalendarSettings.getDateFormat();
 
 	static final int PROGRESS_DIALOG = 0;
 	// private ProgressThread progressThread;
@@ -96,6 +98,7 @@ public class NavbarActivity extends Activity {
 	private int loadPhase = 0;
 
 	public static boolean showInvites = false;
+	
 
 	private class LoadViewTask extends AsyncTask<Void, Integer, Void> {
 
@@ -220,9 +223,7 @@ public class NavbarActivity extends Activity {
 
 		if (savedInstanceState == null) { // if no selectedDate will be restored
 											// we create today's date
-			String dayStr = new SimpleDateFormat("yyyy-MM-dd").format(Calendar.getInstance().getTime());
-			selectedDate = Utils.stringToCalendar(dayStr + " 00:00:00", Utils.date_format);
-			selectedDate.setFirstDayOfWeek(Data.DEFAULT_FIRST_WEEK_DAY);
+             selectedDate = Utils.createNewTodayCalendar();
 		}
 
 		restoreMe(savedInstanceState);
@@ -393,7 +394,7 @@ public class NavbarActivity extends Activity {
 	    	 selectedDate = ((AbstractCalendarView)calendarContainer.getChildAt(0)).getDateToResume();
 	     }
 	     
-	     String dateStr = new SimpleDateFormat(Utils.date_format).format(selectedDate.getTime());			
+	     String dateStr = new SimpleDateFormat(date_format).format(selectedDate.getTime());			
 	     outState.putString("selectedDate", dateStr);
 	  }
 	
@@ -403,8 +404,8 @@ public class NavbarActivity extends Activity {
 		      dataLoaded = state.getBoolean("isDataLoaded");
 		      loadPhase = state.getInt("loadPhase");
 		      viewState = ViewState.getValueByString(state.getString("viewState"));
-		      selectedDate = Utils.stringToCalendar(state.getString("selectedDate"), Utils.date_format);
-		      selectedDate.setFirstDayOfWeek(Data.DEFAULT_FIRST_WEEK_DAY);  
+		      selectedDate = Utils.stringToCalendar(state.getString("selectedDate"), date_format);
+		      selectedDate.setFirstDayOfWeek(CalendarSettings.getFirstDayofWeek());  
 		    }
 		  }
 
@@ -466,8 +467,8 @@ public class NavbarActivity extends Activity {
 			public void onClick(View v) {
 				mDateTimePicker.clearFocus();
 				String dayStr = new SimpleDateFormat("yyyy-MM-dd").format(mDateTimePicker.getCalendar().getTime());
-				selectedDate = Utils.stringToCalendar(dayStr + " 00:00:00", Utils.date_format);
-				selectedDate.setFirstDayOfWeek(Data.DEFAULT_FIRST_WEEK_DAY);
+				selectedDate = Utils.stringToCalendar(dayStr + " 00:00:00", date_format);
+				selectedDate.setFirstDayOfWeek(CalendarSettings.getFirstDayofWeek());
 				mDateTimeDialog.dismiss();
 				showDayView();
 			}
@@ -568,7 +569,7 @@ public class NavbarActivity extends Activity {
 			for (int i = 0, l = events.size(); i < l; i++) {
 				final Event event = events.get(i);
 
-				final String newtime = Utils.formatDateTime(event.my_time_start, Utils.date_format, "EEE, dd MMMM yyyy");
+				final String newtime = Utils.formatDateTime(event.my_time_start, date_format, "EEE, dd MMMM yyyy");
 				if (!time.equals(newtime)) {
 					time = newtime;
 					items.add(new SectionItem(time));

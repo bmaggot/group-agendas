@@ -8,6 +8,7 @@ import java.util.List;
 import android.app.Activity;
 import android.content.Context;
 
+import com.groupagendas.groupagenda.data.CalendarSettings;
 import com.groupagendas.groupagenda.data.Data;
 import com.groupagendas.groupagenda.events.Event;
 import com.groupagendas.groupagenda.utils.Utils;
@@ -58,7 +59,7 @@ public class DayInstance  {
 			
 			if (!e.startCalendar.after(selectedDate)){
 				String dayStr = new SimpleDateFormat("yyyy-MM-dd").format(selectedDate.getTime());
-				Calendar tmp = Utils.stringToCalendar(dayStr + " 23:59:59", Utils.date_format);
+				Calendar tmp = Utils.stringToCalendar(dayStr + " 23:59:59", CalendarSettings.getDateFormat());
 				if (!e.endCalendar.before(tmp)) return true;
 			}
 			
