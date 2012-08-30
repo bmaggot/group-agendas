@@ -8,7 +8,7 @@ public class CalendarSettings {
 	public static final int[] DEFAULT_WEEKENDS = {1,7};
 	private static  int[] weekends; //TODO remove this hardcode. should be set when loading account.
 	
-	public static final String DEFAULT_DATE_FORMAT = "yyyy-MM-dd HH:mm:ss";
+	public static final String DEFAULT_DATE_FORMAT = "yyyy-MM-dd";
 	private static String dateFormat;
 	
 	public static final int DEFAULT_FIRST_DAY_OF_WEEK = Calendar.MONDAY;
