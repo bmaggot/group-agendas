@@ -199,4 +199,14 @@
         <item name="android:textSize">5dp</item>
     </style>
     
+    <style name="yearview_eventlist_title">
+        <item name="android:textColor">@color/white</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:textSize">18dp</item>
+	</style>
+	
+    <style name="yearview_eventlist">
+        <item name="android:windowTitleStyle">@style/yearview_eventlist_title</item>
+    </style>
+    
 </resources>
