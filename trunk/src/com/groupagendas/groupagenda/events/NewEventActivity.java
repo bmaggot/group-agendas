@@ -710,13 +710,8 @@ public class NewEventActivity extends Activity {
 			}
 
 			// description
-			temp = descView.getText().toString();
-			if (temp.length() <= 0) {
-				check = false;
-				errorStr = getString(R.string.desc_is_required);
-			}
-			event.description_ = temp;
-			cv.put(EventsProvider.EMetaData.EventsMetaData.DESC, temp);
+			event.description_ = descView.getText().toString();
+			cv.put(EventsProvider.EMetaData.EventsMetaData.DESC, descView.getText().toString());
 
 			// title
 			temp = titleView.getText().toString();
