@@ -12,7 +12,10 @@
     
     <ListView android:id="@+id/year_event_list"
         android:layout_width="fill_parent"
-        android:layout_height="wrap_content" />
+        android:layout_height="wrap_content" 
+        android:divider="@null"
+        android:dividerHeight="0dp"
+        android:cacheColorHint="#00000000"/>
 
     <Button android:id="@+id/year_new_event_button" 
         android:layout_width="fill_parent"

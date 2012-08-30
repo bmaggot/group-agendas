@@ -199,13 +199,17 @@
         <item name="android:textSize">5dp</item>
     </style>
     
-    <style name="yearview_eventlist_title">
+    <style name="yearview_eventlist_title" parent="android:Widget.TextView">
         <item name="android:textColor">@color/white</item>
         <item name="android:textStyle">bold</item>
-        <item name="android:textSize">18dp</item>
+        <item name="android:textSize">20dp</item>
+        <item name="android:shadowColor">@color/darker_gray</item>
+        <item name="android:shadowDx">0</item>
+        <item name="android:shadowDy">2</item>
+        <item name="android:shadowRadius">1.5</item>
 	</style>
 	
-    <style name="yearview_eventlist">
+    <style name="yearview_eventlist" parent="@android:style/Theme.Dialog">
         <item name="android:windowTitleStyle">@style/yearview_eventlist_title</item>
     </style>
     
