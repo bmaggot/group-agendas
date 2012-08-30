@@ -21,6 +21,7 @@ import com.groupagendas.groupagenda.calendar.adapters.YearViewEventsAdapter;
 import com.groupagendas.groupagenda.data.CalendarSettings;
 import com.groupagendas.groupagenda.data.Data;
 import com.groupagendas.groupagenda.events.NewEventActivity;
+import com.groupagendas.groupagenda.utils.Utils;
 
 public class YearViewOnClickDialog extends Dialog implements android.view.View.OnClickListener{
 	
@@ -54,7 +55,7 @@ public class YearViewOnClickDialog extends Dialog implements android.view.View.O
 		this.setCanceledOnTouchOutside(true);
 		this.setContentView(R.layout.calendar_year_event_list);
 		this.selectedDate = selectedDate;
-		this.setTitle(CalendarSettings.dateFormatter.format(selectedDate.getTime()));
+		this.setTitle(Utils.formatCalendar(selectedDate));
 		
 		
 		eventsList = (ListView) findViewById(R.id.year_event_list);
@@ -70,7 +71,7 @@ public class YearViewOnClickDialog extends Dialog implements android.view.View.O
 	@Override
 	public void onClick(View v) {
 		Intent intent = new Intent(context, NewEventActivity.class);
-		intent.putExtra(NewEventActivity.EXTRA_STRING_FOR_START_CALENDAR, CalendarSettings.dateFormatter.format(selectedDate.getTime()));
+		intent.putExtra(NewEventActivity.EXTRA_STRING_FOR_START_CALENDAR, Utils.formatCalendar(selectedDate));
 		context.startActivity(intent);
 		
 	}

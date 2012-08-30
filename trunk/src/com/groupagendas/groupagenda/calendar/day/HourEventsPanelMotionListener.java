@@ -38,7 +38,7 @@ public class HourEventsPanelMotionListener extends SwipeOnGestureListener {
 			tmp.add(Calendar.MINUTE, 30);
 		}
 
-		SimpleDateFormat df = CalendarSettings.dateFormatter;
+		SimpleDateFormat df = CalendarSettings.getDateFormatter();
 
 		intent.putExtra(NewEventActivity.EXTRA_STRING_FOR_START_CALENDAR, df.format(tmp.getTime()));
 
