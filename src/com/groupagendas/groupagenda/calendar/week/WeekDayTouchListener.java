@@ -41,9 +41,7 @@ public class WeekDayTouchListener extends SimpleOnGestureListener {
 			tmp.add(Calendar.MINUTE, 30);
 		}
 
-		SimpleDateFormat df = CalendarSettings.dateFormatter;
-
-		intent.putExtra(NewEventActivity.EXTRA_STRING_FOR_START_CALENDAR, df.format(tmp.getTime()));
+		intent.putExtra(NewEventActivity.EXTRA_STRING_FOR_START_CALENDAR, Utils.formatCalendar(tmp));
 
 		navbar.startActivity(intent);
 		return true;

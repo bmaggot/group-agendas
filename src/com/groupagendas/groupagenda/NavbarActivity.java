@@ -411,18 +411,9 @@ public class NavbarActivity extends Activity {
 
 	private void switchToView() {
 
-		if (viewState == null) {
-			if (dm.getAccount() != null) {
-				String dw = dm.getAccount().setting_default_view;
-				if (dw == null) {
-					dw = "m";
-				} else if (dw.equalsIgnoreCase("null")) {
-					dw = "m";
-				}
-
-				viewState = ViewState.getValueByString(dw);
-			}
-		}
+		if (viewState == null) 
+				viewState = ViewState.getValueByString(CalendarSettings.getDefaultView());
+		
 		switch (viewState) {
 		case TODAY:
 			showTodayView();
