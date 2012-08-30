@@ -15,9 +15,14 @@ import com.groupagendas.groupagenda.R;
 import com.groupagendas.groupagenda.events.Event;
 
 public class AgendaDayAdapter extends AbstractAdapter<Event> {
+	boolean showTime = false;
 	
 	public AgendaDayAdapter(Context context, List<Event> list) {
 		super(context, list);
+	}
+	public AgendaDayAdapter(Context context, List<Event> list, boolean showTime) {
+		super(context, list);
+		this.showTime = showTime;
 	}
 
 	@Override
@@ -28,6 +33,8 @@ public class AgendaDayAdapter extends AbstractAdapter<Event> {
 
 		final Event event = list.get(i);
 		TextView text = (TextView) (view.findViewById(R.id.agenda_entry_title_placeholder));
+		String title = "";
+	
 		text.setText(event.title);
 		text.setOnClickListener(new EventActivityOnClickListener(context, event));
 		

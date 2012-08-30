@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.HashMap;
 
+import android.app.Activity;
 import android.content.Context;
 import android.graphics.Color;
 import android.util.AttributeSet;
@@ -134,7 +135,8 @@ public class YearView extends AbstractCalendarView {
 				if (clickedDay.getState() != MonthCellState.OTHER_MONTH){
 						unselectDate(selectedDate);
 						selectDate(date, clickedDay);
-						YearViewOnClickDialog dialog = new YearViewOnClickDialog(getContext(), selectedDate);
+//						Dialog f = new dia
+						YearViewOnClickDialog dialog = new YearViewOnClickDialog(getContext(), selectedDate, R.style.yearview_eventlist);
 						dialog.show();
 				}
 			}
