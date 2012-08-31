@@ -102,6 +102,9 @@ public class Event extends Object{
 	}
 
 	public String getColor() {
+		if(color == null || color.equalsIgnoreCase("null")){
+			this.color = DEFAULT_COLOR;
+		}
 		return color;
 	}
 	
