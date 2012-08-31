@@ -193,6 +193,11 @@
     <string name="contact_import_button_from_google_i">Import contacts from Google Account</string>
     <string name="contact_import_button">Import</string>
     <string name="contact_import_button_clear_auth">Clear credentials</string>
+    <string name="contact_import_dialog_welcome_message">Welcome to contact import. Please choose following task:</string>
+    <string name="contact_import_dialog_launching_auth">Launching authentication window… wait.</string>
+    <string name="contact_import_dialog_starting_gimp">Importing contacts from Gmail… wait.</string>
+    <string name="contact_import_dialog_clearing_auth">Clearing credentials… wait.</string>
+    <string name="contact_import_dialog_finished_gimp">Finished importing contacts from Gmail… Press Back button.</string>
     <string name="contact_invite_save_button">Invite</string>
     <string name="saving_new_event">Saving new event!</string>
     <string name="create_new_event">Create new event</string>
