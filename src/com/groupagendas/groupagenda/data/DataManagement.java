@@ -76,6 +76,7 @@ public class DataManagement {
 	public static boolean eventStatusChanged = false;
 	public static ArrayList<Event> contactsBirthdays = new ArrayList<Event>();
 	public static final String SERVER_TIMESTAMP_FORMAT = "yyyy-MM-dd hh:mm:ss";
+	public static final String ACCOUNT_BIRTHDATE_TIMESTAMP_FORMAT = "yyyy-MM-dd";
 
 	private DataManagement(Activity c) {
 		Data.setPrefs(new Prefs(c));
@@ -660,7 +661,8 @@ public class DataManagement {
 
 		return success;
 	}
-
+	
+	
 	public boolean changeCalendarSettings(int am_pm, String defaultview, String dateformat) {
 		boolean success = false;
 
@@ -695,6 +697,9 @@ public class DataManagement {
 				// OfflineData("mobile/settings_update", reqEntity);
 				// Data.getUnuploadedData().add(uplooad);
 			}
+			
+			
+			
 		} catch (Exception ex) {
 			Reporter.reportError(this.getClass().toString(), Thread.currentThread().getStackTrace()[2].getMethodName().toString(),
 					ex.getMessage());
@@ -1247,7 +1252,7 @@ public class DataManagement {
 									contact.birthdate = c.getString(ContactsProvider.CMetaData.ContactsMetaData.BIRTHDATE);
 									Calendar birthdateCalendar;
 									if (!contact.birthdate.equals("null")) {
-										birthdateCalendar = Utils.stringToCalendar(contact.birthdate, DateTimeUtils.DEFAULT_DATE);
+										birthdateCalendar = Utils.stringToCalendar(contact.birthdate, DataManagement.ACCOUNT_BIRTHDATE_TIMESTAMP_FORMAT);
 										birthdateCalendar.set(Calendar.YEAR, Calendar.getInstance().get(Calendar.YEAR));
 										Event birthdayEvent = new Event();
 										birthdayEvent.title = contact.name + " " + contact.lastname + " "
@@ -2233,8 +2238,8 @@ public class DataManagement {
 										.toString(), ex.getMessage());
 							}
 							try {
-								event.color = e.getString("color");
-								cv.put(EventsProvider.EMetaData.EventsMetaData.COLOR, event.color);
+								event.setColor(e.getString("color"));
+								cv.put(EventsProvider.EMetaData.EventsMetaData.COLOR, event.getColor());
 							} catch (JSONException ex) {
 								Reporter.reportError(this.getClass().toString(), Thread.currentThread().getStackTrace()[2].getMethodName()
 										.toString(), ex.getMessage());
@@ -2554,7 +2559,7 @@ public class DataManagement {
 	}
 
 	public void putEventIntoTreeMap(Event event) {
-		String date_format = CalendarSettings.getDateFormat();
+		String date_format = SERVER_TIMESTAMP_FORMAT;
 		Calendar event_start = Utils.stringToCalendar(event.my_time_start, event.timezone, date_format);
 		String dayStr = new SimpleDateFormat("yyyy-MM-dd").format(event_start.getTime());
 		Calendar event_day = Utils.stringToCalendar(dayStr + " 00:00:00", date_format);
@@ -2562,7 +2567,6 @@ public class DataManagement {
 	}
 
 	public ArrayList<Event> getEventsFromLocalDb() {
-		String date_format = CalendarSettings.getDateFormat();
 		Event item;
 		ArrayList<Event> items = new ArrayList<Event>();
 		if (Data.get_prefs().getBoolean("isAgenda", true)) {
@@ -2590,7 +2594,7 @@ public class DataManagement {
 
 				item.title = result.getString(result.getColumnIndex(EventsProvider.EMetaData.EventsMetaData.TITLE));
 				item.icon = result.getString(result.getColumnIndex(EventsProvider.EMetaData.EventsMetaData.ICON));
-				item.color = result.getString(result.getColumnIndex(EventsProvider.EMetaData.EventsMetaData.COLOR));
+				item.setColor(result.getString(result.getColumnIndex(EventsProvider.EMetaData.EventsMetaData.COLOR)));
 				item.description_ = result.getString(result.getColumnIndex(EventsProvider.EMetaData.EventsMetaData.DESC));
 
 				item.location = result.getString(result.getColumnIndex(EventsProvider.EMetaData.EventsMetaData.LOCATION));
@@ -2610,10 +2614,10 @@ public class DataManagement {
 				item.time_end = result.getString(result.getColumnIndex(EventsProvider.EMetaData.EventsMetaData.TIME_END));
 				item.time = result.getString(result.getColumnIndex(EventsProvider.EMetaData.EventsMetaData.TIME));
 				item.my_time_start = result.getString(result.getColumnIndex(EventsProvider.EMetaData.EventsMetaData.MY_TIME_START));
-				item.startCalendar = Utils.stringToCalendar(item.my_time_start, date_format);
+				item.startCalendar = Utils.stringToCalendar(item.my_time_start, SERVER_TIMESTAMP_FORMAT);
 				// item.startCalendar.add(Calendar.DATE, -1);
 				item.my_time_end = result.getString(result.getColumnIndex(EventsProvider.EMetaData.EventsMetaData.MY_TIME_END));
-				item.endCalendar = Utils.stringToCalendar(item.my_time_end, date_format);
+				item.endCalendar = Utils.stringToCalendar(item.my_time_end, SERVER_TIMESTAMP_FORMAT);
 				// item.endCalendar.add(Calendar.DATE, 1);
 
 				item.reminder1 = result.getString(result.getColumnIndex(EventsProvider.EMetaData.EventsMetaData.REMINDER1));
@@ -2690,7 +2694,7 @@ public class DataManagement {
 	}
 
 	public ArrayList<Event> getNaviveCalendarEvents(ArrayList<Event> events) {
-		SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+		SimpleDateFormat formatter = new SimpleDateFormat(SERVER_TIMESTAMP_FORMAT);
 		Cursor calendars = getNativeCalendars();
 
 		if (calendars != null) {
@@ -2788,7 +2792,7 @@ public class DataManagement {
 
 			item.title = result.getString(result.getColumnIndex(EventsProvider.EMetaData.EventsMetaData.TITLE));
 			item.icon = result.getString(result.getColumnIndex(EventsProvider.EMetaData.EventsMetaData.ICON));
-			item.color = result.getString(result.getColumnIndex(EventsProvider.EMetaData.EventsMetaData.COLOR));
+			item.setColor(result.getString(result.getColumnIndex(EventsProvider.EMetaData.EventsMetaData.COLOR)));
 			item.description_ = result.getString(result.getColumnIndex(EventsProvider.EMetaData.EventsMetaData.DESC));
 
 			item.location = result.getString(result.getColumnIndex(EventsProvider.EMetaData.EventsMetaData.LOCATION));
@@ -2973,7 +2977,7 @@ public class DataManagement {
 			reqEntity.addPart("event_type", new StringBody(e.type));
 
 			reqEntity.addPart("icon", new StringBody(e.icon));
-			reqEntity.addPart("color", new StringBody(e.color));
+			reqEntity.addPart("color", new StringBody(e.getColor()));
 
 			reqEntity.addPart("title", new StringBody(e.title));
 
@@ -3064,8 +3068,8 @@ public class DataManagement {
 
 			if (e.icon != null)
 				reqEntity.addPart("icon", new StringBody(e.icon));
-			if (e.color != null)
-				reqEntity.addPart("color", new StringBody(e.color));
+//			if (e.color != null)
+				reqEntity.addPart("color", new StringBody(e.getColor()));
 
 			reqEntity.addPart("title", new StringBody(e.title));
 
@@ -3290,7 +3294,7 @@ public class DataManagement {
 
 		@Override
 		protected Void doInBackground(Integer... params) {
-			String date_format = CalendarSettings.getDateFormat();
+			String date_format = DataManagement.SERVER_TIMESTAMP_FORMAT;
 			try {
 				int event_id = params[0];
 				HttpClient hc = new DefaultHttpClient();
@@ -3369,8 +3373,8 @@ public class DataManagement {
 										.toString(), ex.getMessage());
 							}
 							try {
-								event.color = e.getString("color");
-								cv.put(EventsProvider.EMetaData.EventsMetaData.COLOR, event.color);
+								event.setColor(e.getString("color"));
+								cv.put(EventsProvider.EMetaData.EventsMetaData.COLOR, event.getColor());
 							} catch (JSONException ex) {
 								Reporter.reportError(this.getClass().toString(), Thread.currentThread().getStackTrace()[2].getMethodName()
 										.toString(), ex.getMessage());
