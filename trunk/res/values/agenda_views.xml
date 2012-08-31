@@ -21,10 +21,10 @@
         <item>@string/list_search</item>
     </string-array>
     <string-array name="date_format_values">
-        <item>yyyy-mm-dd</item>
-        <item>dd-mm-yyyy</item>
-        <item>dd/mm/yyyy</item>
-        <item>mm/dd/yyyy</item>
+        <item>yyyy-MM-dd</item>
+        <item>dd-MM-yyyy</item>
+        <item>dd/MM/yyyy</item>
+        <item>MM/dd/yyyy</item>
     </string-array>
 
 </resources>
