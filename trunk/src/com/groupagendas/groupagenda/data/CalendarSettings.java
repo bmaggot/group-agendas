@@ -19,7 +19,7 @@ public class CalendarSettings {
 	/**
 	 * date format that is currently in use by date formatter. It may differ date format set on account.
 	 */
-	private static String dateFormat;
+	private static String formatterDateFormat;
 	
 	private static final int DEFAULT_FIRST_DAY_OF_WEEK = Calendar.MONDAY;
 	
@@ -60,13 +60,13 @@ public class CalendarSettings {
 		if (account != null) {
 			if (account.setting_date_format != null) {
 				if (!account.setting_date_format.equalsIgnoreCase("null")) {
-					dateFormat = account.setting_date_format;
-					return dateFormat;
+					formatterDateFormat = account.setting_date_format;
+					return formatterDateFormat;
 				}
 			}
 		}
-		dateFormat = DEFAULT_DATE_FORMAT;
-		return dateFormat;
+		formatterDateFormat = DEFAULT_DATE_FORMAT;
+		return formatterDateFormat;
 	}
 	
 	/**
@@ -80,9 +80,11 @@ public class CalendarSettings {
 		Account account = Data.getAccount();	
 		if (account.setting_date_format != null){
 			if (!account.setting_date_format.equalsIgnoreCase("null")){
-				if (!account.setting_date_format.equalsIgnoreCase(dateFormat)){
-					dateFormat = account.setting_date_format;
-					dateFormatter = new SimpleDateFormat(dateFormat);
+				System.out.println("acc date format  " + account.setting_date_format);
+				System.out.println("current formatter date format  " + account.setting_date_format);
+				if (!account.setting_date_format.equalsIgnoreCase(formatterDateFormat)){
+					formatterDateFormat = account.setting_date_format;
+					dateFormatter = new SimpleDateFormat(formatterDateFormat);
 				}
 			}
 		}
@@ -98,16 +100,20 @@ public class CalendarSettings {
 		if (Data.getAccount() != null) {
 			String dw = Data.getAccount().setting_default_view;
 			if (dw == null) {
-				dw = DEFAULT_DATE_FORMAT;
+				dw = DEFAULT_SETTING_DEFAULT_VIEW;
 			} else if (dw.equalsIgnoreCase("null")) {
-				dw = DEFAULT_DATE_FORMAT;
+				dw = DEFAULT_SETTING_DEFAULT_VIEW;
 			}
 			return dw;
 		}
-		return DEFAULT_DATE_FORMAT;
+		return DEFAULT_SETTING_DEFAULT_VIEW;
 	}
 
-	
+	public static void setDefaultView(String viewState) {
+		if (Data.getAccount() != null) {
+			Data.getAccount().setting_default_view = viewState;
+		}
+	}
 	
 	
 }

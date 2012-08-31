@@ -79,7 +79,7 @@ public class NavbarActivity extends Activity {
 	private ActionItem today;
 	
 	private Calendar selectedDate = null;
-	private String date_format = CalendarSettings.getDateFormat();
+	
 
 	static final int PROGRESS_DIALOG = 0;
 	// private ProgressThread progressThread;
@@ -394,7 +394,7 @@ public class NavbarActivity extends Activity {
 	    	 selectedDate = ((AbstractCalendarView)calendarContainer.getChildAt(0)).getDateToResume();
 	     }
 	     
-	     String dateStr = new SimpleDateFormat(date_format).format(selectedDate.getTime());			
+	     String dateStr = new SimpleDateFormat(DataManagement.SERVER_TIMESTAMP_FORMAT).format(selectedDate.getTime());			
 	     outState.putString("selectedDate", dateStr);
 	  }
 	
@@ -404,7 +404,7 @@ public class NavbarActivity extends Activity {
 		      dataLoaded = state.getBoolean("isDataLoaded");
 		      loadPhase = state.getInt("loadPhase");
 		      viewState = ViewState.getValueByString(state.getString("viewState"));
-		      selectedDate = Utils.stringToCalendar(state.getString("selectedDate"), date_format);
+		      selectedDate = Utils.stringToCalendar(state.getString("selectedDate"), DataManagement.SERVER_TIMESTAMP_FORMAT);
 		      selectedDate.setFirstDayOfWeek(CalendarSettings.getFirstDayofWeek());  
 		    }
 		  }
@@ -458,7 +458,7 @@ public class NavbarActivity extends Activity {
 			public void onClick(View v) {
 				mDateTimePicker.clearFocus();
 				String dayStr = new SimpleDateFormat("yyyy-MM-dd").format(mDateTimePicker.getCalendar().getTime());
-				selectedDate = Utils.stringToCalendar(dayStr + " 00:00:00", date_format);
+				selectedDate = Utils.stringToCalendar(dayStr + " 00:00:00", DataManagement.SERVER_TIMESTAMP_FORMAT);
 				selectedDate.setFirstDayOfWeek(CalendarSettings.getFirstDayofWeek());
 				mDateTimeDialog.dismiss();
 				showDayView();
@@ -560,7 +560,7 @@ public class NavbarActivity extends Activity {
 			for (int i = 0, l = events.size(); i < l; i++) {
 				final Event event = events.get(i);
 
-				final String newtime = Utils.formatDateTime(event.my_time_start, date_format, "EEE, dd MMMM yyyy");
+				final String newtime = Utils.formatDateTime(event.my_time_start, DataManagement.SERVER_TIMESTAMP_FORMAT, "EEE, dd MMMM yyyy");
 				if (!time.equals(newtime)) {
 					time = newtime;
 					items.add(new SectionItem(time));

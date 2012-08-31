@@ -196,10 +196,10 @@ public class NewEventActivity extends Activity {
 				gridview.setOnItemClickListener(new AdapterView.OnItemClickListener() {
 					@Override
 					public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-						event.color = colorsValues[position];
-						cv.put(EventsProvider.EMetaData.EventsMetaData.COLOR, event.color);
+						event.setColor(colorsValues[position]);
+						cv.put(EventsProvider.EMetaData.EventsMetaData.COLOR, event.getColor());
 
-						String nameColor = "calendarbubble_" + event.color + "_";
+						String nameColor = "calendarbubble_" + event.getColor() + "_";
 						int image = getResources().getIdentifier(nameColor, "drawable", "com.groupagendas.groupagenda");
 						colorView.setImageResource(image);
 
@@ -244,7 +244,7 @@ public class NewEventActivity extends Activity {
 		// Time
 		String strTime = getIntent().getStringExtra(EXTRA_STRING_FOR_START_CALENDAR);
 		if (strTime != null) {
-			startCalendar = Utils.stringToCalendar(strTime, CalendarSettings.getDateFormat());
+			startCalendar = Utils.stringToCalendar(strTime, DataManagement.SERVER_TIMESTAMP_FORMAT);
 			// startCalendar = dtUtils.stringDateToCalendar(strTime);
 			endCalendar.setTime(startCalendar.getTime());
 			endCalendar.add(Calendar.MINUTE, DEFAULT_EVENT_DURATION_IN_MINS);
@@ -574,17 +574,17 @@ public class NewEventActivity extends Activity {
 					}
 				}
 
-				if (event.color == null || event.color.equals("null") || event.color.equals("")) {
-					for (int i = 0, l = autoColors.size(); i < l; i++) {
-						final AutoColorItem autoColor = autoColors.get(i);
-						if (s.toString().contains(autoColor.keyword)) {
-							event.color = autoColor.color;
-							String nameColor = "calendarbubble_" + autoColor.color + "_";
-							int image = getResources().getIdentifier(nameColor, "drawable", "com.groupagendas.groupagenda");
-							colorView.setImageResource(image);
-						}
-					}
-				}
+//				if (event.color == null || event.color.equals("null") || event.color.equals("")) {
+//					for (int i = 0, l = autoColors.size(); i < l; i++) {
+//						final AutoColorItem autoColor = autoColors.get(i);
+//						if (s.toString().contains(autoColor.keyword)) {
+//							event.color = autoColor.color;
+//							String nameColor = "calendarbubble_" + autoColor.color + "_";
+//							int image = getResources().getIdentifier(nameColor, "drawable", "com.groupagendas.groupagenda");
+//							colorView.setImageResource(image);
+//						}
+//					}
+//				}
 			}
 		}
 
@@ -724,7 +724,7 @@ public class NewEventActivity extends Activity {
 
 			cv.put(EventsProvider.EMetaData.EventsMetaData.ICON, event.icon);
 
-			cv.put(EventsProvider.EMetaData.EventsMetaData.COLOR, event.color);
+			cv.put(EventsProvider.EMetaData.EventsMetaData.COLOR, event.getColor());
 
 			cv.put(EventsProvider.EMetaData.EventsMetaData.TYPE, temp);
 

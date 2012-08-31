@@ -217,11 +217,11 @@ public class EventsHelper {
         event.setDescription(e.description_);
         event.setNative(e.isNative);
         
-        if(e.color != null && !e.color.equals("null") && e.color.length() > 1){
-        	event.setColor(Integer.parseInt(e.color.replace("#", ""), 16)+0xFF000000);
-        }else{
-        	event.setColor(Color.GRAY);
-        }
+//        if(e.color != null && !e.color.equals("null") && e.color.length() > 1){
+        	event.setColor(Integer.parseInt(e.getColor().replace("#", ""), 16)+0xFF000000);
+//        }else{
+//        	event.setColor(Color.GRAY);
+//        }
         
         event.setIcon(e.icon);
                

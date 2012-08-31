@@ -120,7 +120,7 @@ public class CalendarDay implements OnClickListener {
 	}
 	private List<CEvent> getActualEvents(ArrayList<Event> events){
 		List<CEvent> eventsList = new ArrayList<CEvent>();
-		String date_format = CalendarSettings.getDateFormat();
+		String date_format = DataManagement.SERVER_TIMESTAMP_FORMAT;
 		String dayStr = new SimpleDateFormat("yyyy-MM-dd").format(currentDay.getTime());
 		Calendar day_start = Utils.stringToCalendar(dayStr+" 00:00:00", date_format);
 		Calendar day_end   = Utils.stringToCalendar(dayStr+" 23:59:59", date_format);
@@ -160,9 +160,9 @@ public class CalendarDay implements OnClickListener {
 					
 					final CEvent cevent = EventsHelper.generateDayEvent(event.event_id, event.type, event.title, event.title, startTime, endTime);
 					
-					if(event.color != null && !event.color.equals("null")){
-						cevent.setColor(Integer.parseInt(event.color, 16)+0xFF000000);
-					}
+//					if(event.color != null && !event.color.equals("null")){
+						cevent.setColor(Integer.parseInt(event.getColor(), 16)+0xFF000000);
+//					}
 					
 					eventsList.add(cevent);
 					cevent.setAllDay(allDay);

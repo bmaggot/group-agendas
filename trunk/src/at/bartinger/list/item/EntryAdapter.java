@@ -66,16 +66,16 @@ public class EntryAdapter extends BaseAdapter implements Filterable{
 				final TextView title = (TextView) v.findViewById(R.id.title);
 				title.setText(ei.event.title);
 				
-				if (!ei.event.color.equals("null")) {
+				
 					final ImageView colorView = (ImageView) v.findViewById(R.id.colorView);
-					String nameColor = "calendarbubble_"+ei.event.color+"_";
-					int image = mContext.getResources().getIdentifier(nameColor, "drawable", "com.groupagendas.groupagenda");
+					
+					int image = ei.event.getColorBubbleId(mContext);
 					colorView.setImageResource(image);
-				}
+				
 				
 				if (!ei.event.icon.equals("null")) {
 					final ImageView iconView = (ImageView) v.findViewById(R.id.iconView);
-					int image = mContext.getResources().getIdentifier(ei.event.icon, "drawable", "com.groupagendas.groupagenda");
+					image = ei.event.getIconId(mContext);
 					iconView.setImageResource(image);
 				}
 				

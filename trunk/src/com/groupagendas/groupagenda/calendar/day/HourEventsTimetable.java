@@ -6,6 +6,7 @@ import java.util.Collections;
 import java.util.List;
 
 import com.groupagendas.groupagenda.data.CalendarSettings;
+import com.groupagendas.groupagenda.data.DataManagement;
 import com.groupagendas.groupagenda.events.Event;
 import com.groupagendas.groupagenda.utils.EventStartComparator;
 import com.groupagendas.groupagenda.utils.Utils;
@@ -14,7 +15,6 @@ public class HourEventsTimetable {
 	private ArrayList<Event>[] eventsTimetable;
 	Calendar todayStart;
 	Calendar todayEnd;
-	String date_format = CalendarSettings.getDateFormat();
 	
 	public HourEventsTimetable(List<Event> hourEventsList, Calendar selectedDate) {
 		this.todayStart = selectedDate;
@@ -37,7 +37,7 @@ public class HourEventsTimetable {
 			end = todayEnd;
 		}
 		
-		Calendar start = Utils.stringToCalendar(event.my_time_start, date_format);
+		Calendar start = Utils.stringToCalendar(event.my_time_start, DataManagement.SERVER_TIMESTAMP_FORMAT);
 		if (start.before(todayStart)){// cia jeigu eventas prasideda ne sita diena, o anksciau
 			start = (Calendar) todayStart.clone();
 			end = todayEnd;
@@ -67,8 +67,8 @@ public class HourEventsTimetable {
  */
 
 	public int getWidthDivider(Event event) {
-		Calendar start = Utils.stringToCalendar(event.my_time_start, date_format);
-		Calendar end = Utils.stringToCalendar(event.my_time_end, date_format);
+		Calendar start = Utils.stringToCalendar(event.my_time_start, DataManagement.SERVER_TIMESTAMP_FORMAT);
+		Calendar end = Utils.stringToCalendar(event.my_time_end, DataManagement.SERVER_TIMESTAMP_FORMAT);
 		int ret = 1;
 		
 		while (start.before(end)){

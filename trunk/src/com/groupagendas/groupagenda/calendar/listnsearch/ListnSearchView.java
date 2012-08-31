@@ -206,10 +206,7 @@ private SectionListItem[] filterEvents (String filterString, SectionListItem[] e
 					ImageView bubble = (ImageView) view
 							.findViewById(R.id.listnsearch_entry_icon_placeholder);
 
-					String bubbletitle = "calendarbubble_" + event.color + "_";
-					int imgID = getContext().getResources().getIdentifier(
-							bubbletitle, "drawable",
-							getContext().getPackageName());
+					int imgID = event.getColorBubbleId(getContext());
 					bubble.setImageResource(imgID);
 
 					view.setOnClickListener(new EventActivityOnClickListener(getContext(), event));}

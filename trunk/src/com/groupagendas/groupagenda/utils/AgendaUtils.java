@@ -6,13 +6,14 @@ import java.util.Calendar;
 import android.content.Context;
 
 import com.groupagendas.groupagenda.data.CalendarSettings;
+import com.groupagendas.groupagenda.data.DataManagement;
 import com.groupagendas.groupagenda.events.Event;
 
 public class AgendaUtils {
 	public static int newInvites = 0;
 	public static ArrayList<Event> getActualEvents(Context context, ArrayList<Event> events) {
 		ArrayList<Event> actual_events = new ArrayList<Event>();
-		String date_format = CalendarSettings.getDateFormat();
+		String date_format = DataManagement.SERVER_TIMESTAMP_FORMAT;
 		Calendar now = Calendar.getInstance();
 		now.setTimeInMillis(System.currentTimeMillis());
 		Calendar calendar_end = null;

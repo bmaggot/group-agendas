@@ -6,6 +6,7 @@ package com.groupagendas.groupagenda.calendar;
 import java.util.Calendar;
 
 import com.groupagendas.groupagenda.R;
+import com.groupagendas.groupagenda.data.CalendarSettings;
 import com.groupagendas.groupagenda.data.DataManagement;
 
 import android.app.Activity;
@@ -76,7 +77,7 @@ public abstract class AbstractCalendarView extends LinearLayout {
 	public AbstractCalendarView(Context context, AttributeSet attrs) {
 		super(context, attrs);
 		mInflater = (LayoutInflater)((Activity)context).getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-		am_pmEnabled =  DataManagement.getInstance(getContext()).getAccount().setting_ampm != 0;
+		am_pmEnabled = CalendarSettings.isUsing_AM_PM();
 		if(am_pmEnabled){
 			HourNames = getResources().getStringArray(R.array.hour_names_am_pm);
 		}

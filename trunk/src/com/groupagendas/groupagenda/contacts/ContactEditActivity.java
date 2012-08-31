@@ -278,7 +278,7 @@ public class ContactEditActivity extends Activity implements OnClickListener, On
 			
 			if (!result.birthdate.equals("null")){
 				birthdateView.setText(dtUtils.formatDate(result.birthdate));
-				birthdateCalendar = Utils.stringToCalendar(result.birthdate, DateTimeUtils.DEFAULT_DATE);
+				birthdateCalendar = Utils.stringToCalendar(result.birthdate, DataManagement.SERVER_TIMESTAMP_FORMAT);
 			}
 			
 			
