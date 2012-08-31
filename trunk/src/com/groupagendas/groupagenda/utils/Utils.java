@@ -205,6 +205,10 @@ public class Utils {
 	public static String formatCalendar(Calendar calendar){
 		return CalendarSettings.getDateFormatter().format(calendar.getTime());
 	}
+	
+	public static String formatCalendar(Calendar calendar, String pattern){
+		return new SimpleDateFormat(pattern).format(calendar.getTime());
+	}
 
 	public static int getDayOfWeek(Calendar date) {
 		
