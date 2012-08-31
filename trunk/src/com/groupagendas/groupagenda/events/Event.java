@@ -32,10 +32,8 @@ public class Event extends Object{
 	public String title;
 	public String icon;
 	
-	/**
-	 * @deprecated Use getter instead of direct call. Will be set to private in future
-	 */
-	public String color;
+	
+	private String color;
 	public String description_;
 	
 	public String location;
@@ -104,9 +102,15 @@ public class Event extends Object{
 	}
 
 	public String getColor() {
-		if (color == null) return DEFAULT_COLOR;
-		if (color.equalsIgnoreCase("null")) return DEFAULT_COLOR;
 		return color;
+	}
+	
+	public void setColor(String color) {
+		this.color = DEFAULT_COLOR;
+		
+		if (color != null)
+			if (!color.equalsIgnoreCase("null")) this.color = color;
+		
 	}
 	
 
