@@ -10,6 +10,7 @@ import android.view.MotionEvent;
 import com.groupagendas.groupagenda.calendar.AbstractCalendarView;
 import com.groupagendas.groupagenda.calendar.SwipeOnGestureListener;
 import com.groupagendas.groupagenda.data.CalendarSettings;
+import com.groupagendas.groupagenda.data.DataManagement;
 import com.groupagendas.groupagenda.events.NewEventActivity;
 import com.groupagendas.groupagenda.utils.Utils;
 
@@ -38,9 +39,7 @@ public class HourEventsPanelMotionListener extends SwipeOnGestureListener {
 			tmp.add(Calendar.MINUTE, 30);
 		}
 
-		SimpleDateFormat df = CalendarSettings.getDateFormatter();
-
-		intent.putExtra(NewEventActivity.EXTRA_STRING_FOR_START_CALENDAR, df.format(tmp.getTime()));
+		intent.putExtra(NewEventActivity.EXTRA_STRING_FOR_START_CALENDAR, Utils.formatCalendar(tmp, DataManagement.SERVER_TIMESTAMP_FORMAT));
 
 		navbar.startActivity(intent);
 		return true;
