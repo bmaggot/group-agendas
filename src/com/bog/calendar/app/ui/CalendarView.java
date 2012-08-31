@@ -1188,16 +1188,16 @@ public class CalendarView extends FrameLayout {
                         		int yy = y-(mHeight/2)+(col*(radius*3));
                         		
                         		if(q<=23){
-                        			if(e.color != null && !e.color.equals("null") && !e.color.equals("")){
-                        				try {
-                        					eventPointPaint.setColor(Integer.parseInt(e.color, 16)+0xFF000000);
-										} catch (Exception e2) {
-											Reporter.reportError(this.getClass().toString(), Thread.currentThread().getStackTrace()[2].getMethodName().toString(), e2.getMessage());
-											eventPointPaint.setColor(getResources().getColor(R.color.monthEventPointColor));
-										}
-                        			}else{
-                        				eventPointPaint.setColor(getResources().getColor(R.color.monthEventPointColor));
-                        			}
+//                        			if(e.color != null && !e.color.equals("null") && !e.color.equals("")){
+//                        				try {
+//                        					eventPointPaint.setColor(Integer.parseInt(e.color, 16)+0xFF000000);
+//										} catch (Exception e2) {
+//											Reporter.reportError(this.getClass().toString(), Thread.currentThread().getStackTrace()[2].getMethodName().toString(), e2.getMessage());
+//											eventPointPaint.setColor(getResources().getColor(R.color.monthEventPointColor));
+//										}
+//                        			}else{
+//                        				eventPointPaint.setColor(getResources().getColor(R.color.monthEventPointColor));
+//                        			}
                         			
                         			drawEventPoints(canvas, xx, yy, radius);
                         		}

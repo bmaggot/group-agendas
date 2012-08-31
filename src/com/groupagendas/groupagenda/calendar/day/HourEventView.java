@@ -109,14 +109,14 @@ public class HourEventView extends RelativeLayout {
 		this.setPadding(layoutPadding, layoutPadding, layoutPadding, layoutPadding);
 		
 //		SET SHAPE AND COLOR
-		if (e.color == null) e.color = "null";
-		
-		if (!e.color.equalsIgnoreCase("null")){
-			sd.setColor(Color.parseColor("#BF" + e.color));
-			sd.setStroke(1, Color.parseColor("#" + e.color));
-		}else {
-			sd.setColor(context.getResources().getColor(R.color.defaultHourEventColorTransparent));
-		}
+//		if (e.color == null) e.color = "null";
+//		
+//		if (!e.color.equalsIgnoreCase("null")){
+			sd.setColor(Color.parseColor("#BF" + e.getColor()));
+			sd.setStroke(1, Color.parseColor("#" + e.getColor()));
+//		}else {
+//			sd.setColor(context.getResources().getColor(R.color.defaultHourEventColorTransparent));
+//		}
 		this.setBackgroundDrawable(sd);
 		
 //		Add listener

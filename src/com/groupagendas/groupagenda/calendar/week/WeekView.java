@@ -261,12 +261,12 @@ public class WeekView extends AbstractCalendarViewWithAllDayAndHourEvents {
 				title.setText(event.title);
 				GradientDrawable sd = (GradientDrawable)getContext().getResources().getDrawable(R.drawable.calendar_dayview_secondcolumn_entrybackground);
 				
-				if (!event.color.equalsIgnoreCase("null")){
-					sd.setColor(Color.parseColor("#BF" + event.color));
-					sd.setStroke(1, Color.parseColor("#" + event.color));
-				}else {
-					sd.setColor(getContext().getResources().getColor(R.color.defaultAllDayEventColor));
-				}	
+//				if (!event.color.equalsIgnoreCase("null")){
+					sd.setColor(Color.parseColor("#BF" + event.getColor()));
+					sd.setStroke(1, Color.parseColor("#" + event.getColor()));
+//				}else {
+//					sd.setColor(getContext().getResources().getColor(R.color.defaultAllDayEventColor));
+//				}	
 				title.setBackgroundDrawable(sd);
 				view.setOnClickListener(new EventActivityOnClickListener(getContext(), event));
 				container.addView(view);

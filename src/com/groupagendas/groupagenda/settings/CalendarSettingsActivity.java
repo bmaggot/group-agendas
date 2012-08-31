@@ -15,6 +15,7 @@ import android.widget.ToggleButton;
 import com.groupagendas.groupagenda.R;
 import com.groupagendas.groupagenda.account.Account;
 import com.groupagendas.groupagenda.account.AccountProvider;
+import com.groupagendas.groupagenda.data.CalendarSettings;
 import com.groupagendas.groupagenda.data.DataManagement;
 import com.groupagendas.groupagenda.utils.Prefs;
 import com.groupagendas.groupagenda.utils.Utils;
@@ -48,7 +49,7 @@ public class CalendarSettingsActivity extends Activity {
 		new GetAccountFromDBTask().execute();
 
 		am_pmToggle = (ToggleButton) findViewById(R.id.am_pm);
-		am_pmToggle.setChecked(dm.getAccount().setting_ampm != 0);
+		am_pmToggle.setChecked(CalendarSettings.isUsing_AM_PM());
 
 		defaultviewSpinner = (Spinner) findViewById(R.id.defaultviewSpinner);
 		ArrayAdapter<CharSequence> adapterDefaultview = ArrayAdapter.createFromResource(this, R.array.agenda_views_labels,
@@ -56,7 +57,7 @@ public class CalendarSettingsActivity extends Activity {
 		adapterDefaultview.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
 		defaultviewSpinner.setAdapter(adapterDefaultview);
 		defaultviewArray = getResources().getStringArray(R.array.agenda_views_values);
-		String dw = dm.getAccount().setting_default_view;
+		String dw = CalendarSettings.getDefaultView();
 		for (int i = 0; i < defaultviewArray.length; i++) {
 			if (dw.equalsIgnoreCase(defaultviewArray[i])) {
 				defaultviewSpinner.setSelection(i);
@@ -70,7 +71,7 @@ public class CalendarSettingsActivity extends Activity {
 		adapterDateformat.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
 		dateformatSpinner.setAdapter(adapterDateformat);
 		dateformatArray = getResources().getStringArray(R.array.date_format_values);
-		String df = dm.getAccount().setting_default_view;
+		String df = CalendarSettings.getDateFormat();
 		for (int i = 0; i < dateformatArray.length; i++) {
 			if (df.equalsIgnoreCase(dateformatArray[i])) {
 				dateformatSpinner.setSelection(i);
@@ -103,6 +104,7 @@ public class CalendarSettingsActivity extends Activity {
 			String am_pmStr = am_pmToggle.isChecked() ? "true" : "false";
 			String dateformat = dateformatArray[dateformatSpinner.getSelectedItemPosition()];
 			String defaultview = defaultviewArray[defaultviewSpinner.getSelectedItemPosition()];
+			
 
 			ContentValues values = new ContentValues();
 			values.put(AccountProvider.AMetaData.AccountMetaData.SETTING_AMPM, am_pm);
@@ -111,10 +113,14 @@ public class CalendarSettingsActivity extends Activity {
 			prefs.setValue(AccountProvider.AMetaData.AccountMetaData.SETTING_DATE_FORMAT, dateformat);
 			values.put(AccountProvider.AMetaData.AccountMetaData.SETTING_DEFAULT_VIEW, defaultview);
 			prefs.setValue(AccountProvider.AMetaData.AccountMetaData.SETTING_DEFAULT_VIEW, defaultview);
-
+			
 			prefs.save();
 
 			success = dm.changeCalendarSettings(am_pm, defaultview, dateformat);
+			//TODO this is temporary workaround for current account update. We should not store data in RAM, but get data from sqlite via providers when needed.
+			CalendarSettings.setDateFormat(dateformat);
+			CalendarSettings.setUsing_AM_PM(am_pmToggle.isChecked());
+			CalendarSettings.setDefaultView(defaultview);
 
 			if (!success) {
 				values.put(AccountProvider.AMetaData.AccountMetaData.NEED_UPDATE, 2);

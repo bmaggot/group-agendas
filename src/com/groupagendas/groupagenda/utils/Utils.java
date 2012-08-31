@@ -13,7 +13,6 @@ import org.json.JSONArray;
 import org.json.JSONException;
 
 import com.groupagendas.groupagenda.data.CalendarSettings;
-import com.groupagendas.groupagenda.data.Data;
 import com.groupagendas.groupagenda.error.report.Reporter;
 
 import android.graphics.Bitmap;

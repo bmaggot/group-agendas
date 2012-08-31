@@ -644,8 +644,8 @@ public class ContactsActivity extends ListActivity implements OnCheckedChangeLis
 										.toString(), ex.getMessage());
 							}
 							try {
-								event.color = e.getString("color");
-								cv.put(EventsProvider.EMetaData.EventsMetaData.COLOR, event.color);
+								event.setColor(e.getString("color"));
+								cv.put(EventsProvider.EMetaData.EventsMetaData.COLOR, event.getColor());
 							} catch (JSONException ex) {
 								Reporter.reportError(this.getClass().toString(), Thread.currentThread().getStackTrace()[2].getMethodName()
 										.toString(), ex.getMessage());
@@ -755,7 +755,7 @@ public class ContactsActivity extends ListActivity implements OnCheckedChangeLis
 							try {
 								event.my_time_start = e.getString("my_time_start");
 								cv.put(EventsProvider.EMetaData.EventsMetaData.MY_TIME_START, event.my_time_start);
-								event.startCalendar = Utils.stringToCalendar(event.my_time_start, date_format);
+								event.startCalendar = Utils.stringToCalendar(event.my_time_start, DataManagement.SERVER_TIMESTAMP_FORMAT);
 
 							} catch (JSONException ex) {
 								Reporter.reportError(this.getClass().toString(), Thread.currentThread().getStackTrace()[2].getMethodName()
@@ -764,7 +764,7 @@ public class ContactsActivity extends ListActivity implements OnCheckedChangeLis
 							try {
 								event.my_time_end = e.getString("my_time_end");
 								cv.put(EventsProvider.EMetaData.EventsMetaData.MY_TIME_END, event.my_time_end);
-								event.endCalendar = Utils.stringToCalendar(event.my_time_end, date_format);
+								event.endCalendar = Utils.stringToCalendar(event.my_time_end, DataManagement.SERVER_TIMESTAMP_FORMAT);
 
 							} catch (JSONException ex) {
 								Reporter.reportError(this.getClass().toString(), Thread.currentThread().getStackTrace()[2].getMethodName()

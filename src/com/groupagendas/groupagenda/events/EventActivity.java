@@ -502,11 +502,11 @@ public class EventActivity extends Activity {
 			// color
 			final String[] colorsValues = getResources().getStringArray(R.array.colors_values);
 			colorView = (ImageView) findViewById(R.id.colorView);
-			if (result.color != null && !result.color.equals("null")) {
-				String nameColor = "calendarbubble_" + result.color + "_";
-				int image = getResources().getIdentifier(nameColor, "drawable", "com.groupagendas.groupagenda");
+//			if (result.color != null && !result.color.equals("null")) {
+//				String nameColor = "calendarbubble_" + result.color + "_";
+				int image = result.getColorBubbleId(mContext);
 				colorView.setImageResource(image);
-			}
+//			}
 
 			if (result.is_owner) {
 				colorView.setOnClickListener(new OnClickListener() {
@@ -521,9 +521,9 @@ public class EventActivity extends Activity {
 
 						gridview.setOnItemClickListener(new OnItemClickListener() {
 							public void onItemClick(AdapterView<?> parent, View v, int position, long id) {
-								event.color = colorsValues[position];
-								String nameColor = "calendarbubble_" + event.color + "_";
-								int image = getResources().getIdentifier(nameColor, "drawable", "com.groupagendas.groupagenda");
+								event.setColor(colorsValues[position]);
+//								String nameColor = "calendarbubble_" + event.color + "_";
+								int image = event.getColorBubbleId(getBaseContext());//getResources().getIdentifier(nameColor, "drawable", "com.groupagendas.groupagenda");
 								colorView.setImageResource(image);
 								dialog.dismiss();
 							}
@@ -572,7 +572,7 @@ public class EventActivity extends Activity {
 			// start
 			if (result.my_time_start != null && !result.my_time_start.equals("null")) {
 				startView.setText(dtUtils.formatDateTime(result.my_time_start));
-				startCalendar = Utils.stringToCalendar(result.my_time_start, DateTimeUtils.DEFAULT_DATETIME);
+				startCalendar = Utils.stringToCalendar(result.my_time_start, DataManagement.SERVER_TIMESTAMP_FORMAT);
 			}
 
 			if (!result.is_owner) {
@@ -844,17 +844,17 @@ public class EventActivity extends Activity {
 						}
 					}
 				}
-				if (event.color == null || event.color.equals("null") || event.color.equals("")) {
-					for (int i = 0, l = autoColors.size(); i < l; i++) {
-						final AutoColorItem autoColor = autoColors.get(i);
-						if (s.toString().contains(autoColor.keyword)) {
-							event.color = autoColor.color;
-							String nameColor = "calendarbubble_" + autoColor.color + "_";
-							int image = getResources().getIdentifier(nameColor, "drawable", "com.groupagendas.groupagenda");
-							colorView.setImageResource(image);
-						}
-					}
-				}
+//				if (event.color == null || event.color.equals("null") || event.color.equals("")) {
+//					for (int i = 0, l = autoColors.size(); i < l; i++) {
+//						final AutoColorItem autoColor = autoColors.get(i);
+//						if (s.toString().contains(autoColor.keyword)) {
+//							event.setColor(autoColor.color);
+//							String nameColor = "calendarbubble_" + autoColor.color + "_";
+//							int image = getResources().getIdentifier(nameColor, "drawable", "com.groupagendas.groupagenda");
+//							colorView.setImageResource(image);
+//						}
+//					}
+//				}
 			}
 		}
 
@@ -912,7 +912,7 @@ public class EventActivity extends Activity {
 
 			cv.put(EventsProvider.EMetaData.EventsMetaData.ICON, event.icon);
 
-			cv.put(EventsProvider.EMetaData.EventsMetaData.COLOR, event.color);
+			cv.put(EventsProvider.EMetaData.EventsMetaData.COLOR, event.getColor());
 
 			event.my_time_start = dtUtils.formatDateTimeToDefault(startCalendar.getTime());
 			cv.put(EventsProvider.EMetaData.EventsMetaData.MY_TIME_START, event.my_time_start);

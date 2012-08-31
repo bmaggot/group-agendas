@@ -199,7 +199,7 @@ public class AccountActivity extends Activity implements OnClickListener{
 			phone3View.setText(account.phone3);
 
 		if (account.birthdate != null && !account.birthdate.equals("null")) {
-			final Calendar c = Utils.stringToCalendar(account.birthdate, "yyyy-MM-dd");
+			final Calendar c = Utils.stringToCalendar(account.birthdate, DataManagement.ACCOUNT_BIRTHDATE_TIMESTAMP_FORMAT);
 			mYear = c.get(Calendar.YEAR);
 			mMonth = c.get(Calendar.MONTH);
 			mDay = c.get(Calendar.DAY_OF_MONTH);
