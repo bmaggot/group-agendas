@@ -199,6 +199,8 @@
     <string name="contact_import_dialog_clearing_auth">Clearing credentials… wait.</string>
     <string name="contact_import_dialog_finished_gimp">Finished importing contacts from Gmail… Press Back button.</string>
     <string name="contact_import_dialog_gmail_title">Gmail import</string>
+    <string name="contact_import_placeholder_phone">Mobile phone</string>
+    <string name="contact_import_placeholder_gmail">Gmail account</string>
     <string name="contact_invite_save_button">Invite</string>
     <string name="saving_new_event">Saving new event!</string>
     <string name="create_new_event">Create new event</string>
