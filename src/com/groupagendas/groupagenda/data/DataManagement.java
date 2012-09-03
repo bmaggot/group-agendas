@@ -3729,10 +3729,64 @@ public class DataManagement {
 						}
 					}
 				} else {
-					OfflineData uplooad = new OfflineData("mobile/account_edit", reqEntity);
+					OfflineData uplooad = new OfflineData("mobile/chat_get", reqEntity);
 					Data.getUnuploadedData().add(uplooad);
 				}
 			} catch (Exception e) {
+				Reporter.reportError(this.getClass().toString(), Thread.currentThread().getStackTrace()[2].getMethodName().toString(),
+						e.getMessage());
+			}
+			return null;
+		}
+		
+	}
+	
+	public void postChatMessage(int event_id, String message){
+		if(event_id > 0){
+			Object[] executeArray = {event_id, message};
+			new GetChatMessages().execute(executeArray);
+		}
+	}
+	
+	public class PostChatMessage extends AsyncTask<Object, Void, Void>{
+
+		@Override
+		protected Void doInBackground(Object... params) {
+			try{
+				int event_id = (Integer) params[0];
+				String message = (String) params[1];
+				HttpClient hc = new DefaultHttpClient();
+				HttpPost post = new HttpPost(Data.getServerUrl() + "mobile/chat_get");
+
+				MultipartEntity reqEntity = new MultipartEntity(HttpMultipartMode.BROWSER_COMPATIBLE);
+
+				reqEntity.addPart("token", new StringBody(Data.getToken()));
+				reqEntity.addPart("event_id", new StringBody(String.valueOf(event_id)));
+				if(message == null){
+					reqEntity.addPart("message", new StringBody(String.valueOf("")));
+				} else {
+					reqEntity.addPart("message", new StringBody(String.valueOf(message)));
+				}
+
+				post.setEntity(reqEntity);
+				HttpResponse rp = null;
+				if(networkAvailable){
+					rp = hc.execute(post);
+					if (rp.getStatusLine().getStatusCode() == HttpStatus.SC_OK) {
+						String resp = EntityUtils.toString(rp.getEntity());
+						if (resp != null) {
+							JSONObject object = new JSONObject(resp);
+							boolean success = object.getBoolean("success");
+							if(success){
+								System.out.println("ok");
+							}
+						}
+					}
+				} else {
+					OfflineData uplooad = new OfflineData("mobile/chat_post", reqEntity);
+					Data.getUnuploadedData().add(uplooad);
+				}
+			} catch (Exception e){
 				Reporter.reportError(this.getClass().toString(), Thread.currentThread().getStackTrace()[2].getMethodName().toString(),
 						e.getMessage());
 			}
