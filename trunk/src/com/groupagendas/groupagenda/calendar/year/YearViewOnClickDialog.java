@@ -13,14 +13,20 @@ import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
 import android.view.View;
+import android.widget.AdapterView;
+import android.widget.AdapterView.OnItemClickListener;
 import android.widget.Button;
 import android.widget.ListView;
+import android.widget.Toast;
 
+import com.groupagendas.groupagenda.EventActivityOnClickListener;
 import com.groupagendas.groupagenda.R;
 import com.groupagendas.groupagenda.calendar.adapters.YearViewEventsAdapter;
 import com.groupagendas.groupagenda.data.CalendarSettings;
 import com.groupagendas.groupagenda.data.Data;
 import com.groupagendas.groupagenda.data.DataManagement;
+import com.groupagendas.groupagenda.events.Event;
+import com.groupagendas.groupagenda.events.EventActivity;
 import com.groupagendas.groupagenda.events.NewEventActivity;
 import com.groupagendas.groupagenda.utils.Utils;
 
@@ -49,7 +55,7 @@ public class YearViewOnClickDialog extends Dialog implements android.view.View.O
 	 * @param selectedDate Date that is used to fill dialog events list and title
 	 * @param styleResId custom dialog style
 	 */
-	public YearViewOnClickDialog(Context context, Calendar selectedDate,
+	public YearViewOnClickDialog (final Context context, Calendar selectedDate,
 			int styleResId) {
 		super(context, styleResId);
 		this.context = context;
@@ -60,6 +66,19 @@ public class YearViewOnClickDialog extends Dialog implements android.view.View.O
 		
 		
 		eventsList = (ListView) findViewById(R.id.year_event_list);
+//		TODO find out why this isn't working
+//		eventsList.setOnItemClickListener(new OnItemClickListener() {
+//			  @Override
+//			  public void onItemClick(AdapterView<?> parent, View view,
+//			    int position, long id) {
+//			    Toast.makeText(context.getApplicationContext(),
+//			      "Click ListItem Number " + position, Toast.LENGTH_LONG)
+//			      .show();
+//			  }
+//			}); 
+		
+		
+		
 		eventsAdapter = new YearViewEventsAdapter(context, Data.getEventByDate(selectedDate));
 		eventsList.setAdapter(eventsAdapter);
 		eventsAdapter.notifyDataSetChanged();
@@ -71,11 +90,18 @@ public class YearViewOnClickDialog extends Dialog implements android.view.View.O
 
 	@Override
 	public void onClick(View v) {
-		Intent intent = new Intent(context, NewEventActivity.class);
+			YearViewOnClickDialog.this.dismiss();
 		
-		intent.putExtra(NewEventActivity.EXTRA_STRING_FOR_START_CALENDAR, Utils.formatCalendar(selectedDate, DataManagement.SERVER_TIMESTAMP_FORMAT));
-		context.startActivity(intent);
-		
+			Intent intent = new Intent(context, NewEventActivity.class);
+			
+			intent.putExtra(NewEventActivity.EXTRA_STRING_FOR_START_CALENDAR, Utils.formatCalendar(selectedDate, DataManagement.SERVER_TIMESTAMP_FORMAT));
+			
+			context.startActivity(intent);
 	}
+
+//	@Override
+//	public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+//		
+//	}
 
 }
