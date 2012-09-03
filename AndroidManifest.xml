@@ -236,7 +236,7 @@
 		        <action android:name="android.intent.action.VIEW" />
 		        <category android:name="android.intent.category.DEFAULT" />
 		        <category android:name="android.intent.category.BROWSABLE" />
-		        <data android:scheme="import-activity" android:host="callback"/>
+		        <data android:scheme="import-activity" />
 			</intent-filter>
         </activity>
 	</application>
