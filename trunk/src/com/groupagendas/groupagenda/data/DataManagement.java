@@ -52,6 +52,7 @@ import com.groupagendas.groupagenda.NavbarActivity;
 import com.groupagendas.groupagenda.R;
 import com.groupagendas.groupagenda.account.Account;
 import com.groupagendas.groupagenda.account.AccountProvider;
+import com.groupagendas.groupagenda.chat.ChatMessageObject;
 import com.groupagendas.groupagenda.contacts.Contact;
 import com.groupagendas.groupagenda.contacts.ContactsAdapter;
 import com.groupagendas.groupagenda.contacts.ContactsProvider;
@@ -3662,6 +3663,82 @@ public class DataManagement {
 		}
 		Data.setEvents(localEvents);
 		sortEvents(Data.getEvents());
+	}
+	
+	public void getChatMessages(int event_id, String from){
+		if(event_id > 0){
+			Object[] executeArray = {event_id, from};
+			new GetChatMessages().execute(executeArray);
+		}
+	}
+	
+	private class GetChatMessages extends AsyncTask<Object, Void, Void>{
+
+		@Override
+		protected Void doInBackground(Object... params) {
+			try{
+				int event_id = (Integer) params[0];
+				String from = (String) params[1];
+				HttpClient hc = new DefaultHttpClient();
+				HttpPost post = new HttpPost(Data.getServerUrl() + "mobile/chat_get");
+
+				MultipartEntity reqEntity = new MultipartEntity(HttpMultipartMode.BROWSER_COMPATIBLE);
+
+				reqEntity.addPart("token", new StringBody(Data.getToken()));
+				reqEntity.addPart("event_id", new StringBody(String.valueOf(event_id)));
+				if(from == null){
+					reqEntity.addPart("from_datetime", new StringBody(String.valueOf("")));
+				} else {
+					reqEntity.addPart("from_datetime", new StringBody(String.valueOf(from)));
+				}
+
+				post.setEntity(reqEntity);
+				HttpResponse rp = null;
+				if(networkAvailable){
+					rp = hc.execute(post);
+					if (rp.getStatusLine().getStatusCode() == HttpStatus.SC_OK) {
+						String resp = EntityUtils.toString(rp.getEntity());
+						if (resp != null) {
+							JSONObject object = new JSONObject(resp);
+							boolean success = object.getBoolean("success");
+							if (!success) {
+								Log.e("Change account ERROR", object.getJSONObject("error").getString("reason"));
+							} else {
+								JSONArray chatMessages = object.getJSONArray("items");
+								for (int i = 0, l = chatMessages.length(); i < l; i++) {
+									final JSONObject chatMessage = chatMessages.getJSONObject(i);
+									ChatMessageObject message = new ChatMessageObject();
+									message.messageId = chatMessage.getString("message_id");
+									message.eventId = chatMessage.getString("event_id");
+									message.dateTime = chatMessage.getString("datetime");
+									message.dateTimeCalendar = Utils.stringToCalendar(message.dateTime, SERVER_TIMESTAMP_FORMAT);
+									message.userId = chatMessage.getString("user_id");
+									message.message = chatMessage.getString("message");
+									String deleted = chatMessage.getString("deleted");
+									message.deleted = deleted != null;
+									message.updated = chatMessage.getString("updated");
+									message.updatedCalendar = Utils.stringToCalendar(message.updated, SERVER_TIMESTAMP_FORMAT);
+									message.fullname = chatMessage.getString("fullname");
+									message.contactId = chatMessage.getString("contact_id");
+									message.dateTimeConverted = chatMessage.getString("datetime_conv");
+									message.dateTimeConvertedCalendar = Utils.stringToCalendar(message.dateTimeConverted, SERVER_TIMESTAMP_FORMAT);
+									message.formatedDateTime = chatMessage.getString("formatted_datetime");
+									Data.getChatMessages().add(message);
+								}
+							}
+						}
+					}
+				} else {
+					OfflineData uplooad = new OfflineData("mobile/account_edit", reqEntity);
+					Data.getUnuploadedData().add(uplooad);
+				}
+			} catch (Exception e) {
+				Reporter.reportError(this.getClass().toString(), Thread.currentThread().getStackTrace()[2].getMethodName().toString(),
+						e.getMessage());
+			}
+			return null;
+		}
+		
 	}
 
 	// /////////////////////////////////////
