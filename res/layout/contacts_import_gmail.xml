@@ -39,7 +39,7 @@
 	    android:layout_marginRight="10dp"
 	    android:layout_marginTop="5dp"
 	    android:padding="5dp"
-	    android:text="@string/contact_import_button_from_google_i"
+	    android:text="@string/contact_import_button_clear_auth"
 	    android:textSize="15dp"
 	    android:textColor="@color/black"
 	    android:textStyle="bold" />
