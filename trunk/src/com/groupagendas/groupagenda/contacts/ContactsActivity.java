@@ -180,10 +180,29 @@ public class ContactsActivity extends ListActivity implements OnCheckedChangeLis
 		CURRENT_TASK = preferences.getString("ContactsActivityTask", CURRENT_TASK);
 		sideIndex.setVisibility(View.GONE);
 
+		if (Data.returnedFromContactImport) {
+			Data.setContacts(dm.getContactsFromRemoteDb(null));
+			dm.updateContactsAdapter(Data.getContacts(), cAdapter);
+			cAdapter.notifyDataSetChanged();
+
+			if ((Data.importStats != null) && (Data.importStats[0] > 0)) {
+				Toast.makeText(this.getApplicationContext(),
+						"Successfully imported " + Data.importStats[0] + "/" + Data.importStats[2] + " contacts.", Toast.LENGTH_LONG)
+						.show();
+			}
+
+			if ((Data.importStats != null) && (Data.importStats[1] > 0)) {
+				Toast.makeText(this.getApplicationContext(),
+						"Failed to import " + Data.importStats[1] + "/" + Data.importStats[2] + " contacts.", Toast.LENGTH_LONG).show();
+			}
+
+			Data.returnedFromContactImport = false;
+		}
+
 		if (CURRENT_TASK.equals(CONTACTS_TASK)) {
 			setListAdapter(cAdapter);
 
-			// TO DO: put this shit into the right place. \m/
+			// TODO: put this shit into the right place. \m/
 			if (dm.loadContacts(this, cAdapter) > 10) {
 				indexList = createIndex();
 				sideIndex.setVisibility(View.VISIBLE);
@@ -222,21 +241,6 @@ public class ContactsActivity extends ListActivity implements OnCheckedChangeLis
 					finish();
 				}
 			});
-		}
-
-		if (Data.returnedFromContactImport) {
-			if ((Data.importStats != null) && (Data.importStats[0] > 0)) {
-				Toast.makeText(this.getApplicationContext(),
-						"Successfully imported " + Data.importStats[0] + "/" + Data.importStats[2] + " contacts.", Toast.LENGTH_LONG)
-						.show();
-			}
-
-			if ((Data.importStats != null) && (Data.importStats[1] > 0)) {
-				Toast.makeText(this.getApplicationContext(),
-						"Failed to import " + Data.importStats[1] + "/" + Data.importStats[2] + " contacts.", Toast.LENGTH_LONG).show();
-			}
-
-			Data.returnedFromContactImport = false;
 		}
 
 		if (Data.credentialsClear) {

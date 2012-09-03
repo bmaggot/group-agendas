@@ -79,6 +79,7 @@ public class Data {
 	
 	// Contact import parameters
 	public static boolean returnedFromContactImport = false;
+	public static boolean returnedFromContactAuth = false;
 	public static boolean credentialsClear = false;
 	public static int[] importStats = null;
 	

@@ -1,7 +1,7 @@
 package com.groupagendas.groupagenda.contacts.importer;
 
 public class C {	
-	public static final String TAG = "OAuthExample";
+	public static final String TAG = "ImportActivity";
 
 	public static final String CONSUMER_KEY 	= "anonymous";
 	public static final String CONSUMER_SECRET 	= "anonymous";

@@ -3,6 +3,7 @@ package com.groupagendas.groupagenda.contacts.importer;
 import java.net.URLEncoder;
 import java.util.concurrent.ExecutionException;
 
+import com.groupagendas.groupagenda.data.Data;
 import com.groupagendas.groupagenda.error.report.Reporter;
 
 import oauth.signpost.OAuth;
@@ -46,11 +47,9 @@ public class RequestTokenActivity extends Activity {
     	try {
 			new getRequestTokenTask().execute((Object) this).get();
 		} catch (InterruptedException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			e.printStackTrace(); // TODO Auto-generated catch block
 		} catch (ExecutionException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			e.printStackTrace(); // TODO Auto-generated catch block
 		}
     }
 
@@ -60,11 +59,12 @@ public class RequestTokenActivity extends Activity {
 		super.onNewIntent(intent); 
 		prefs = PreferenceManager.getDefaultSharedPreferences(this);
 		final Uri uri = intent.getData();
+		
 		if (uri != null && uri.getScheme().equals(C.OAUTH_CALLBACK_SCHEME)) {
 			Log.i(C.TAG, "Callback received : " + uri);
 			Log.i(C.TAG, "Retrieving Access Token");
 			
-			Object[] params = {(Object) uri, (Object) this};
+			Object[] params = {uri, this};
 			try {
 				new getAccessTokenTask().execute(params).get();
 			} catch (InterruptedException e) {
@@ -75,8 +75,22 @@ public class RequestTokenActivity extends Activity {
 				e.printStackTrace();
 			}
 		}
+		Data.returnedFromContactAuth = true;
+		finish();
 	}
 	
+	protected void onStop() {
+	    setResult(1);
+	    super.onStop();
+	}
+	
+	@Override
+	protected void onDestroy() {
+	    setResult(1);
+	    super.onDestroy();
+	}
+
+// TODO uncomment and call it in a corresponding AsyncTask's doInBackground.
 //	private void getRequestToken() {
 //		try {
 //			Log.d(C.TAG, "getRequestToken() called");
