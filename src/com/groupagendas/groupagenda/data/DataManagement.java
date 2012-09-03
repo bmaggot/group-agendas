@@ -3778,6 +3778,7 @@ public class DataManagement {
 							JSONObject object = new JSONObject(resp);
 							boolean success = object.getBoolean("success");
 							if(success){
+								getChatMessages(event_id, null);
 								System.out.println("ok");
 							}
 						}
