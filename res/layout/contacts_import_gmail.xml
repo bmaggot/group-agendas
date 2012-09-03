@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:gravity="center_horizontal"
+    android:orientation="vertical" >
+    
+	<Button android:id="@+id/contact_import_button_gauth"
+	    android:background="@drawable/event_invite_people_button_standalone"
+	    android:layout_width="fill_parent"
+	    android:layout_height="wrap_content"
+	    android:layout_marginLeft="10dp"
+	    android:layout_marginRight="10dp"
+	    android:layout_marginTop="5dp"
+	    android:padding="5dp"
+	    android:text="@string/contact_import_button_from_google_a"
+	    android:textSize="15dp"
+	    android:textColor="@color/black"
+	    android:textStyle="bold" />
+	
+	<Button android:id="@+id/contact_import_button_gimp_launch"
+	    android:background="@drawable/event_invite_people_button_standalone"
+	    android:layout_width="fill_parent"
+	    android:layout_height="wrap_content"
+	    android:layout_marginLeft="10dp"
+	    android:layout_marginRight="10dp"
+	    android:layout_marginTop="5dp"
+	    android:padding="5dp"
+	    android:text="@string/contact_import_button_from_google_i"
+	    android:textSize="15dp"
+	    android:textColor="@color/black"
+	    android:textStyle="bold" />
+	
+	<Button android:id="@+id/contact_import_button_clear_auth"
+	    android:background="@drawable/event_invite_people_button_standalone"
+	    android:layout_width="fill_parent"
+	    android:layout_height="wrap_content"
+	    android:layout_marginLeft="10dp"
+	    android:layout_marginRight="10dp"
+	    android:layout_marginTop="5dp"
+	    android:padding="5dp"
+	    android:text="@string/contact_import_button_from_google_i"
+	    android:textSize="15dp"
+	    android:textColor="@color/black"
+	    android:textStyle="bold" />
+
+    <TextView android:id="@+id/text_console"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:minLines="5" />
+</LinearLayout>
