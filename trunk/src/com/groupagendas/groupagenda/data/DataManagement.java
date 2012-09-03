@@ -3779,12 +3779,62 @@ public class DataManagement {
 							boolean success = object.getBoolean("success");
 							if(success){
 								getChatMessages(event_id, null);
-								System.out.println("ok");
+								System.out.println("Meesage posted");
 							}
 						}
 					}
 				} else {
 					OfflineData uplooad = new OfflineData("mobile/chat_post", reqEntity);
+					Data.getUnuploadedData().add(uplooad);
+				}
+			} catch (Exception e){
+				Reporter.reportError(this.getClass().toString(), Thread.currentThread().getStackTrace()[2].getMethodName().toString(),
+						e.getMessage());
+			}
+			return null;
+		}
+		
+	}
+	
+	public void removeChatMessage (int messageId, int event_id){
+		if(event_id > 0){
+			Object[] executeArray = {messageId, event_id};
+			new RemoveChatMessage().execute(executeArray);
+		}
+	}
+	
+	public class RemoveChatMessage extends AsyncTask<Object, Void, Void>{
+
+		@Override
+		protected Void doInBackground(Object... params) {
+			try{
+				int message_id = (Integer) params[0];
+				int event_id = (Integer) params[1];
+				HttpClient hc = new DefaultHttpClient();
+				HttpPost post = new HttpPost(Data.getServerUrl() + "mobile/chat_remove");
+
+				MultipartEntity reqEntity = new MultipartEntity(HttpMultipartMode.BROWSER_COMPATIBLE);
+
+				reqEntity.addPart("token", new StringBody(Data.getToken()));
+				reqEntity.addPart("message_id", new StringBody(String.valueOf(message_id)));
+
+				post.setEntity(reqEntity);
+				HttpResponse rp = null;
+				if(networkAvailable){
+					rp = hc.execute(post);
+					if (rp.getStatusLine().getStatusCode() == HttpStatus.SC_OK) {
+						String resp = EntityUtils.toString(rp.getEntity());
+						if (resp != null) {
+							JSONObject object = new JSONObject(resp);
+							boolean success = object.getBoolean("success");
+							if(success){
+								getChatMessages(event_id, null);
+								System.out.println("Message removed");
+							}
+						}
+					}
+				} else {
+					OfflineData uplooad = new OfflineData("mobile/chat_remove", reqEntity);
 					Data.getUnuploadedData().add(uplooad);
 				}
 			} catch (Exception e){
