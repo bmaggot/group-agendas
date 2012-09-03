@@ -147,29 +147,35 @@ public class NavbarActivity extends Activity {
 						Data.clearData();
 
 						loadPhase++;
-						total = 20;
+						total = 0;
 						publishProgress(total);
 					case 1: // Load account
 						dm.getAccountFromRemoteDb();
 						loadPhase++;
-						total = 40;
+						total = 20;
 						publishProgress(total);
 					case 2:// Load contacts
 						dm.getContactsFromRemoteDb(null);
 						loadPhase++;
-						total = 60;
+						total = 40;
 						publishProgress(total);
 					case 3:// Load groups
 						dm.getGroupsFromRemoteDb();
 						loadPhase++;
-						total = 80;
+						total = 60;
 						publishProgress(total);
 
 					case 4: // Load events
 						dm.getEventsFromRemoteDb("");
 						loadPhase++;
-						total = 100;
+						total = 80;
 						publishProgress(total);
+					
+//					case 5: // Load chat threads
+//						dm.getc
+//						loadPhase++;
+//						total = 100;
+//						publishProgress(total);
 					}
 				} else {
 
