@@ -195,4 +195,9 @@ public abstract class AbstractCalendarView extends LinearLayout {
 			}
 		};
 	}
+
+	public GestureDetector getSwipeGestureDetector() {
+		return swipeGestureDetector;
+	}
+	
 }

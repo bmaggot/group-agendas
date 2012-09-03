@@ -17,6 +17,7 @@ import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.Window;
 import android.view.View.OnClickListener;
@@ -657,5 +658,16 @@ public class NavbarActivity extends Activity {
 	public Calendar getSelectedDate() {
 		return selectedDate;
 	}
+	
+	@Override
+	public boolean dispatchTouchEvent(MotionEvent ev){
+	    super.dispatchTouchEvent(ev); 
+	    if (calendarContainer.getChildAt(0) instanceof AbstractCalendarView){
+	    	AbstractCalendarView view = (AbstractCalendarView)calendarContainer.getChildAt(0);
+	    	return view.getSwipeGestureDetector().onTouchEvent(ev);
+	    }
+	    return true;
+	}
+
 
 }
