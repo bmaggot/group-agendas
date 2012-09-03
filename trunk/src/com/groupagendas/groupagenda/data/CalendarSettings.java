@@ -80,8 +80,6 @@ public class CalendarSettings {
 		Account account = Data.getAccount();	
 		if (account.setting_date_format != null){
 			if (!account.setting_date_format.equalsIgnoreCase("null")){
-				System.out.println("acc date format  " + account.setting_date_format);
-				System.out.println("current formatter date format  " + account.setting_date_format);
 				if (!account.setting_date_format.equalsIgnoreCase(formatterDateFormat)){
 					formatterDateFormat = account.setting_date_format;
 					dateFormatter = new SimpleDateFormat(formatterDateFormat);
