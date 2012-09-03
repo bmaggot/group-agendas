@@ -914,10 +914,10 @@ public class EventActivity extends Activity {
 
 			cv.put(EventsProvider.EMetaData.EventsMetaData.COLOR, event.getColor());
 
-			event.my_time_start = dtUtils.formatDateTimeToDefault(startCalendar.getTime());
+			event.my_time_start = Utils.formatCalendar(startCalendar, DataManagement.SERVER_TIMESTAMP_FORMAT);
 			cv.put(EventsProvider.EMetaData.EventsMetaData.MY_TIME_START, event.my_time_start);
 
-			event.my_time_end = dtUtils.formatDateTimeToDefault(endCalendar.getTime());
+			event.my_time_end = Utils.formatCalendar(endCalendar, DataManagement.SERVER_TIMESTAMP_FORMAT);
 			cv.put(EventsProvider.EMetaData.EventsMetaData.MY_TIME_END, event.my_time_end);
 
 			event.country = countryArray[countrySpinner.getSelectedItemPosition()];

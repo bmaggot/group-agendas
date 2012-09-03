@@ -3295,7 +3295,6 @@ public class DataManagement {
 
 		@Override
 		protected Void doInBackground(Integer... params) {
-			String date_format = DataManagement.SERVER_TIMESTAMP_FORMAT;
 			try {
 				int event_id = params[0];
 				HttpClient hc = new DefaultHttpClient();
@@ -3485,7 +3484,7 @@ public class DataManagement {
 							try {
 								event.my_time_start = e.getString("my_time_start");
 								cv.put(EventsProvider.EMetaData.EventsMetaData.MY_TIME_START, event.my_time_start);
-								event.startCalendar = Utils.stringToCalendar(event.my_time_start, date_format);
+								event.startCalendar = Utils.stringToCalendar(event.my_time_start, SERVER_TIMESTAMP_FORMAT);
 
 							} catch (JSONException ex) {
 								Reporter.reportError(this.getClass().toString(), Thread.currentThread().getStackTrace()[2].getMethodName()
@@ -3494,7 +3493,7 @@ public class DataManagement {
 							try {
 								event.my_time_end = e.getString("my_time_end");
 								cv.put(EventsProvider.EMetaData.EventsMetaData.MY_TIME_END, event.my_time_end);
-								event.endCalendar = Utils.stringToCalendar(event.my_time_end, date_format);
+								event.endCalendar = Utils.stringToCalendar(event.my_time_end, SERVER_TIMESTAMP_FORMAT);
 
 							} catch (JSONException ex) {
 								Reporter.reportError(this.getClass().toString(), Thread.currentThread().getStackTrace()[2].getMethodName()
@@ -3626,10 +3625,10 @@ public class DataManagement {
 							Data.getmContext().getContentResolver().insert(EventsProvider.EMetaData.EventsMetaData.CONTENT_URI, cv);
 							Event tmpEvent = getEventFromDb(event_id);
 							if (tmpEvent.startCalendar == null) {
-								tmpEvent.startCalendar = Utils.stringToCalendar(event.my_time_start, date_format);
+								tmpEvent.startCalendar = Utils.stringToCalendar(event.my_time_start, SERVER_TIMESTAMP_FORMAT);
 							}
 							if (tmpEvent.endCalendar == null) {
-								tmpEvent.endCalendar = Utils.stringToCalendar(event.my_time_end, date_format);
+								tmpEvent.endCalendar = Utils.stringToCalendar(event.my_time_end, SERVER_TIMESTAMP_FORMAT);
 							}
 							updateEventInsideLocalDb(tmpEvent);
 						}
