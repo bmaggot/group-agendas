@@ -1259,10 +1259,11 @@ public class DataManagement {
 												+ Data.getmContext().getString(R.string.contact_birthday);
 										birthdayEvent.startCalendar = birthdateCalendar;
 										birthdayEvent.endCalendar = birthdateCalendar;
-										birthdayEvent.my_time_start = Utils.formatCalendar(birthdateCalendar);
-										birthdayEvent.my_time_end = Utils.formatCalendar(birthdateCalendar);
+										birthdayEvent.my_time_start = Utils.formatCalendar(birthdateCalendar, SERVER_TIMESTAMP_FORMAT);
+										birthdayEvent.my_time_end = Utils.formatCalendar(birthdateCalendar, SERVER_TIMESTAMP_FORMAT);
 										birthdayEvent.is_all_day = true;
 										birthdayEvent.timezone = getAccount().timezone;
+										createEvent(birthdayEvent);
 										contactsBirthdays.add(birthdayEvent);
 									}
 									cv.put(ContactsProvider.CMetaData.ContactsMetaData.BIRTHDATE, contact.birthdate);
