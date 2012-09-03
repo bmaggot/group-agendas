@@ -13,6 +13,7 @@ import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
 
 import com.groupagendas.groupagenda.account.Account;
+import com.groupagendas.groupagenda.chat.ChatMessageObject;
 import com.groupagendas.groupagenda.contacts.Contact;
 import com.groupagendas.groupagenda.contacts.Group;
 import com.groupagendas.groupagenda.events.Event;
@@ -62,6 +63,7 @@ public class Data {
 	private static ArrayList<Group> groups;
 	private static ArrayList<Event> events;
 	private static TreeMap<Calendar, ArrayList<Event>> sortedEvents;
+	private static ArrayList<ChatMessageObject> chatMessages;
 	
 	
 	public static ArrayList<OfflineData> unuploadedData = new ArrayList<OfflineData>();
@@ -298,6 +300,12 @@ public class Data {
 		Data.sortedEvents = sortedEvents;
 	}
 	
+	public static ArrayList<ChatMessageObject> getChatMessages() {
+		return chatMessages;
+	}
+	public static void setChatMessages(ArrayList<ChatMessageObject> chatMessages) {
+		Data.chatMessages = chatMessages;
+	}
 	public static Calendar lastEventsKey(){
 		return Data.sortedEvents.lastKey();
 	}
