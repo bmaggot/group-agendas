@@ -94,7 +94,10 @@ public class ContactsAdapter extends BaseAdapter implements Filterable {
 
 	@Override
 	public int getCount() {
-		return contacts.size();
+		if (contacts != null)
+			return contacts.size();
+		else
+			return 0;
 	}
 
 	@Override
