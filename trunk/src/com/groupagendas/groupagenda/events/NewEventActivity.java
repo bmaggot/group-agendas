@@ -735,8 +735,8 @@ public class NewEventActivity extends Activity {
 				event.startCalendar = startCalendar;
 				event.endCalendar = endCalendar;
 
-				event.my_time_start = dtUtils.formatDateTimeToDefault(startCalendar.getTime());
-				event.my_time_end = dtUtils.formatDateTimeToDefault(endCalendar.getTime());
+				event.my_time_start = Utils.formatCalendar(startCalendar, DataManagement.SERVER_TIMESTAMP_FORMAT);
+				event.my_time_end = Utils.formatCalendar(endCalendar, DataManagement.SERVER_TIMESTAMP_FORMAT);
 				cv.put(EventsProvider.EMetaData.EventsMetaData.MY_TIME_START, event.my_time_start);
 				cv.put(EventsProvider.EMetaData.EventsMetaData.MY_TIME_END, event.my_time_end);
 			} else {

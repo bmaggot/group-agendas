@@ -9,6 +9,7 @@ import java.util.List;
 
 import android.graphics.Color;
 
+import com.groupagendas.groupagenda.data.DataManagement;
 import com.groupagendas.groupagenda.error.report.Reporter;
 import com.groupagendas.groupagenda.events.Event;
 
@@ -208,7 +209,7 @@ public class EventsHelper {
      */
     public static CEvent generateEvent(Event e) {
     	Date dt;
-        SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        SimpleDateFormat formatter = new SimpleDateFormat(DataManagement.SERVER_TIMESTAMP_FORMAT);
         
         CEvent event = new CEvent();
         event.setId(e.event_id);
