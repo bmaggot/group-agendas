@@ -38,6 +38,7 @@ import org.json.JSONObject;
 import android.app.Activity;
 import android.content.ContentValues;
 import android.content.Context;
+import android.content.res.Resources.Theme;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.AsyncTask;
@@ -53,6 +54,7 @@ import com.groupagendas.groupagenda.R;
 import com.groupagendas.groupagenda.account.Account;
 import com.groupagendas.groupagenda.account.AccountProvider;
 import com.groupagendas.groupagenda.chat.ChatMessageObject;
+import com.groupagendas.groupagenda.chat.ChatThreadObject;
 import com.groupagendas.groupagenda.contacts.Contact;
 import com.groupagendas.groupagenda.contacts.ContactsAdapter;
 import com.groupagendas.groupagenda.contacts.ContactsProvider;
@@ -3854,7 +3856,137 @@ public class DataManagement {
 		@Override
 		protected Void doInBackground(Void... params) {
 			try {
+				HttpClient hc = new DefaultHttpClient();
+				HttpPost post = new HttpPost(Data.getServerUrl() + "mobile/chat_threads");
 
+				MultipartEntity reqEntity = new MultipartEntity(HttpMultipartMode.BROWSER_COMPATIBLE);
+
+				reqEntity.addPart("token", new StringBody(Data.getToken()));
+
+				post.setEntity(reqEntity);
+				HttpResponse rp = null;
+				if (networkAvailable) {
+					rp = hc.execute(post);
+					if (rp.getStatusLine().getStatusCode() == HttpStatus.SC_OK) {
+						String resp = EntityUtils.toString(rp.getEntity());
+						if (resp != null) {
+							JSONObject object = new JSONObject(resp);
+							boolean success = object.getBoolean("success");
+							if (success) {
+								JSONArray chatThreads = object.getJSONArray("items");
+								for (int i = 0, l = chatThreads.length(); i < l; i++) {
+									final JSONObject thread = chatThreads.getJSONObject(i);
+									String tmp = "";
+									ChatThreadObject chatThread = new ChatThreadObject();
+									chatThread.event_id = thread.getInt("event_id");
+									chatThread.user_id = thread.getInt("user_id");
+									chatThread.type = thread.getString("type");
+									chatThread.confirmed = thread.getString("confirmed");
+									chatThread.contact_author_id = thread.getInt("contact_author_id");
+									chatThread.title = thread.getString("title");
+									chatThread.icon = thread.getString("icon");
+									chatThread.color = thread.getString("color");
+									chatThread.description = thread.getString("description");
+									chatThread.location = thread.getString("location");
+									chatThread.accomodation = thread.getString("accomodation");
+									chatThread.cost = thread.getString("cost");
+									chatThread.take_with_you = thread.getString("take_with_you");
+									chatThread.go_by = thread.getString("go_by");
+									chatThread.country = thread.getString("country");
+									chatThread.city = thread.getString("city");
+									chatThread.street = thread.getString("street");
+									chatThread.zip = thread.getString("zip");
+									chatThread.timezone = thread.getString("timezone");
+									chatThread.time_start = thread.getString("time_start");
+									chatThread.time_startCalendar = Utils.stringToCalendar(chatThread.time_start, SERVER_TIMESTAMP_FORMAT);
+									chatThread.time_end = thread.getString("time_end");
+									chatThread.time_endCalendar = Utils.stringToCalendar(chatThread.my_time_end, SERVER_TIMESTAMP_FORMAT);
+									chatThread.all_day_event = thread.getString("all_day_event").equalsIgnoreCase("1");
+									chatThread.reminder1 = thread.getString("reminder1");
+									chatThread.reminder1calendar = Utils.stringToCalendar(chatThread.reminder1, SERVER_TIMESTAMP_FORMAT);
+									chatThread.reminder2 = thread.getString("reminder2");
+									chatThread.reminder2calendar = Utils.stringToCalendar(chatThread.reminder2, SERVER_TIMESTAMP_FORMAT);
+									chatThread.reminder3 = thread.getString("reminder3");
+									chatThread.reminder3calendar = Utils.stringToCalendar(chatThread.reminder3, SERVER_TIMESTAMP_FORMAT);
+									chatThread.google_uid = thread.getString("google_uid");
+									chatThread.native_id = thread.getString("native_id");
+									chatThread.wp = thread.getString("wp");
+									chatThread.created = thread.getString("created");
+									chatThread.createdCalendar = Utils.stringToCalendar(chatThread.created, SERVER_TIMESTAMP_FORMAT);
+									chatThread.modified = thread.getString("modified");
+									chatThread.from_feed = thread.getBoolean("from_feed");
+									chatThread.message_count = thread.getInt("message_count");
+									chatThread.message_last = thread.getString("message_last");
+									chatThread.message_lastCalendar =  Utils.stringToCalendar(chatThread.message_last, SERVER_TIMESTAMP_FORMAT);
+									chatThread.attendant_1_count = thread.getInt("attendant_1_count");
+									chatThread.attendant_2_count = thread.getInt("attendant_2_count");
+									chatThread.attendant_0_count = thread.getInt("attendant_0_count");
+									chatThread.attendant_4_count = thread.getInt("attendant_4_count");
+									chatThread.total_invited = thread.getInt("total_invited");
+									tmp = thread.getString("sport_team_id");
+									if(!tmp.equalsIgnoreCase("null")){
+										chatThread.sport_team_id = Integer.parseInt(tmp);
+									} else {
+										chatThread.sport_team_id = 0;
+									}
+									chatThread.sport_event_type = thread.getString("sport_event_type");
+									chatThread.sport_location = thread.getString("sport_location");
+									chatThread.sport_field = thread.getString("sport_field");
+									chatThread.sport_opponent = thread.getString("sport_opponent");
+									chatThread.sport_referee = thread.getString("sport_referee");
+									chatThread.sport_time_assembly = thread.getString("sport_time_assembly");
+									chatThread.sport_time_arrival = thread.getString("sport_time_arrival");
+									chatThread.sport_arrival_address = thread.getString("sport_arrival_address");
+									chatThread.sport_start_return_trip =thread.getString("sport_start_return_trip");
+									chatThread.sport_time_return = thread.getString("sport_time_return");
+									chatThread.poll_voted_count =thread.getInt("poll_voted_count");
+									chatThread.poll_pending_count = thread.getInt("poll_pending_count");
+									chatThread.poll_rejected_count = thread.getInt("poll_rejected_count");
+									chatThread.poll_invited_count = thread.getInt("poll_invited_count");
+									tmp = thread.getString("org_id");
+									if(!tmp.equalsIgnoreCase("null")){
+										chatThread.org_id = Integer.parseInt(tmp);
+									} else {
+										chatThread.org_id = 0;
+									}
+									chatThread.repeat_group = thread.getString("repeat_group");
+									chatThread.repeat_data = thread.getString("repeat_data");
+									chatThread.alarm1 = thread.getString("alarm1");
+									chatThread.alarm1calendar = Utils.stringToCalendar(chatThread.alarm1, SERVER_TIMESTAMP_FORMAT);
+									chatThread.alarm2 = thread.getString("alarm2");
+									chatThread.alarm2calendar = Utils.stringToCalendar(chatThread.alarm2, SERVER_TIMESTAMP_FORMAT);
+									chatThread.alarm3 = thread.getString("alarm3");
+									chatThread.alarm3calendar = Utils.stringToCalendar(chatThread.alarm3, SERVER_TIMESTAMP_FORMAT);
+									chatThread.alarm1_fired = thread.getString("alarm1_fired").equalsIgnoreCase("1");
+									chatThread.alarm2_fired = thread.getString("alarm2_fired").equalsIgnoreCase("1");
+									chatThread.alarm3_fired = thread.getString("alarm3_fired").equalsIgnoreCase("1");
+									chatThread.my_time_start = thread.getString("my_time_start");
+									chatThread.my_time_startCalendar = Utils.stringToCalendar(chatThread.my_time_start, SERVER_TIMESTAMP_FORMAT);
+									chatThread.my_time_end = thread.getString("my_time_end");
+									chatThread.my_time_endCalendar = Utils.stringToCalendar(chatThread.my_time_end, SERVER_TIMESTAMP_FORMAT);
+									chatThread.created_local = thread.getString("created_local");
+									chatThread.created_localCalendar = Utils.stringToCalendar(chatThread.created_local, SERVER_TIMESTAMP_FORMAT);
+									chatThread.modified_local = thread.getString("modified_local");
+									chatThread.modified_localCalendar = Utils.stringToCalendar(chatThread.modified_local, SERVER_TIMESTAMP_FORMAT);
+									chatThread.status = thread.getInt("status");
+									chatThread.is_owner = thread.getBoolean("is_owner");
+									chatThread.new_messages	= thread.getInt("new_messages");
+									chatThread.creator_fullname = thread.getString("creator_fullname");
+									tmp = thread.getString("creator_contact_id");
+									if(!tmp.equalsIgnoreCase("null")){
+										chatThread.creator_contact_id = Integer.parseInt(tmp);
+									} else {
+										chatThread.creator_contact_id = 0;
+									}
+									Data.getChatThreads().add(chatThread);
+								}
+							}
+						}
+					}
+				} else {
+					OfflineData uplooad = new OfflineData("mobile/chat_threads", reqEntity);
+					Data.getUnuploadedData().add(uplooad);
+				}
 			} catch (Exception e) {
 
 			}

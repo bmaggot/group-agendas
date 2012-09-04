@@ -34,7 +34,7 @@ public class ChatThreadObject {
 	public String reminder3;
 	public Calendar reminder3calendar;
 	public String google_uid;
-	public int native_id;
+	public String native_id;
 	public String wp;
 	public String created;
 	public Calendar createdCalendar;
