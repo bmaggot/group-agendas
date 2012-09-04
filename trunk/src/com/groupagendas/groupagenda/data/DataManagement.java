@@ -3846,13 +3846,13 @@ public class DataManagement {
 	}
 
 	public void getChatThreads() {
-
+		new GetChatThreads().execute();
 	}
 
-	public class GetChatThreads extends AsyncTask<Object, Void, Void> {
+	public class GetChatThreads extends AsyncTask<Void, Void, Void> {
 
 		@Override
-		protected Void doInBackground(Object... params) {
+		protected Void doInBackground(Void... params) {
 			try {
 
 			} catch (Exception e) {
