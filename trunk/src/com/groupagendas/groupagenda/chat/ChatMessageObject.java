@@ -3,11 +3,11 @@ package com.groupagendas.groupagenda.chat;
 import java.util.Calendar;
 
 public class ChatMessageObject {
-	public String messageId;
-	public String eventId;
+	public int messageId;
+	public int eventId;
 	public String dateTime;
 	public Calendar dateTimeCalendar;
-	public String userId;
+	public int userId;
 	public String message;
 	public boolean deleted;
 	public String updated;
