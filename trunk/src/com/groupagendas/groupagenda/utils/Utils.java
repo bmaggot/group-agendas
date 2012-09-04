@@ -56,15 +56,19 @@ public class Utils {
 	}
 
 	public static Calendar stringToCalendar(String date_str, String pattern) {
-		Calendar calendar = Calendar.getInstance();
-		try {
-			SimpleDateFormat formatter = new SimpleDateFormat(pattern);
-			Date date = (Date) formatter.parse(date_str);
-			calendar.setTime(date);
-		} catch (ParseException e) {
-			Reporter.reportError(Utils.class.toString(), Thread.currentThread().getStackTrace()[2].getMethodName().toString(), e.getMessage());
+		if(!date_str.equalsIgnoreCase("null")){
+			Calendar calendar = Calendar.getInstance();
+			try {
+				SimpleDateFormat formatter = new SimpleDateFormat(pattern);
+				Date date = (Date) formatter.parse(date_str);
+				calendar.setTime(date);
+			} catch (ParseException e) {
+				Reporter.reportError(Utils.class.toString(), Thread.currentThread().getStackTrace()[2].getMethodName().toString(), e.getMessage());
+			}
+			return calendar;
+		} else {
+			return null;
 		}
-		return calendar;
 	}
 
 	public static int getArrayIndex(String[] array, String specificValue) {

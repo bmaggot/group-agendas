@@ -3078,27 +3078,31 @@ public class DataManagement {
 			reqEntity.addPart("time_start", new StringBody(e.my_time_start));
 			reqEntity.addPart("time_end", new StringBody(e.my_time_end));
 
-			reqEntity.addPart("description", new StringBody(e.description_));
+			if(e.description_ != null){
+				reqEntity.addPart("description", new StringBody(e.description_));
+			} else {
+				reqEntity.addPart("description", new StringBody(""));
+			}
 
-			if (e.country.length() > 0)
+			if (e.country != null && e.country.length() > 0)
 				reqEntity.addPart("country", new StringBody(e.country));
-			if (e.city.length() > 0)
+			if (e.city != null && e.city.length() > 0)
 				reqEntity.addPart("city", new StringBody(e.city));
-			if (e.street.length() > 0)
+			if (e.street != null && e.street.length() > 0)
 				reqEntity.addPart("street", new StringBody(e.street));
-			if (e.zip.length() > 0)
+			if (e.zip != null && e.zip.length() > 0)
 				reqEntity.addPart("zip", new StringBody(e.zip));
 			reqEntity.addPart("timezone", new StringBody(e.timezone));
 
-			if (e.location.length() > 0)
+			if (e.location != null && e.location.length() > 0)
 				reqEntity.addPart("location", new StringBody(e.location));
-			if (e.go_by.length() > 0)
+			if (e.go_by != null && e.go_by.length() > 0)
 				reqEntity.addPart("go_by", new StringBody(e.go_by));
-			if (e.take_with_you.length() > 0)
+			if (e.take_with_you != null && e.take_with_you.length() > 0)
 				reqEntity.addPart("take_with_you", new StringBody(e.take_with_you));
-			if (e.cost.length() > 0)
+			if (e.cost != null && e.cost.length() > 0)
 				reqEntity.addPart("cost", new StringBody(e.cost));
-			if (e.accomodation.length() > 0)
+			if (e.accomodation != null && e.accomodation.length() > 0)
 				reqEntity.addPart("accomodation", new StringBody(e.accomodation));
 
 			if (Data.selectedContacts != null && !Data.selectedContacts.isEmpty()) {
@@ -3900,7 +3904,7 @@ public class DataManagement {
 									chatThread.time_start = thread.getString("time_start");
 									chatThread.time_startCalendar = Utils.stringToCalendar(chatThread.time_start, SERVER_TIMESTAMP_FORMAT);
 									chatThread.time_end = thread.getString("time_end");
-									chatThread.time_endCalendar = Utils.stringToCalendar(chatThread.my_time_end, SERVER_TIMESTAMP_FORMAT);
+									chatThread.time_endCalendar = Utils.stringToCalendar(chatThread.time_end, SERVER_TIMESTAMP_FORMAT);
 									chatThread.all_day_event = thread.getString("all_day_event").equalsIgnoreCase("1");
 									chatThread.reminder1 = thread.getString("reminder1");
 									chatThread.reminder1calendar = Utils.stringToCalendar(chatThread.reminder1, SERVER_TIMESTAMP_FORMAT);
@@ -3914,17 +3918,18 @@ public class DataManagement {
 									chatThread.created = thread.getString("created");
 									chatThread.createdCalendar = Utils.stringToCalendar(chatThread.created, SERVER_TIMESTAMP_FORMAT);
 									chatThread.modified = thread.getString("modified");
-									chatThread.from_feed = thread.getBoolean("from_feed");
+									chatThread.from_feed = thread.getString("from_feed").equals("1");
 									chatThread.message_count = thread.getInt("message_count");
 									chatThread.message_last = thread.getString("message_last");
-									chatThread.message_lastCalendar =  Utils.stringToCalendar(chatThread.message_last, SERVER_TIMESTAMP_FORMAT);
+									chatThread.message_lastCalendar = Utils.stringToCalendar(chatThread.message_last,
+											SERVER_TIMESTAMP_FORMAT);
 									chatThread.attendant_1_count = thread.getInt("attendant_1_count");
 									chatThread.attendant_2_count = thread.getInt("attendant_2_count");
 									chatThread.attendant_0_count = thread.getInt("attendant_0_count");
 									chatThread.attendant_4_count = thread.getInt("attendant_4_count");
 									chatThread.total_invited = thread.getInt("total_invited");
 									tmp = thread.getString("sport_team_id");
-									if(!tmp.equalsIgnoreCase("null")){
+									if (!tmp.equalsIgnoreCase("null")) {
 										chatThread.sport_team_id = Integer.parseInt(tmp);
 									} else {
 										chatThread.sport_team_id = 0;
@@ -3937,14 +3942,14 @@ public class DataManagement {
 									chatThread.sport_time_assembly = thread.getString("sport_time_assembly");
 									chatThread.sport_time_arrival = thread.getString("sport_time_arrival");
 									chatThread.sport_arrival_address = thread.getString("sport_arrival_address");
-									chatThread.sport_start_return_trip =thread.getString("sport_start_return_trip");
+									chatThread.sport_start_return_trip = thread.getString("sport_start_return_trip");
 									chatThread.sport_time_return = thread.getString("sport_time_return");
-									chatThread.poll_voted_count =thread.getInt("poll_voted_count");
+									chatThread.poll_voted_count = thread.getInt("poll_voted_count");
 									chatThread.poll_pending_count = thread.getInt("poll_pending_count");
 									chatThread.poll_rejected_count = thread.getInt("poll_rejected_count");
 									chatThread.poll_invited_count = thread.getInt("poll_invited_count");
 									tmp = thread.getString("org_id");
-									if(!tmp.equalsIgnoreCase("null")){
+									if (!tmp.equalsIgnoreCase("null")) {
 										chatThread.org_id = Integer.parseInt(tmp);
 									} else {
 										chatThread.org_id = 0;
@@ -3961,19 +3966,23 @@ public class DataManagement {
 									chatThread.alarm2_fired = thread.getString("alarm2_fired").equalsIgnoreCase("1");
 									chatThread.alarm3_fired = thread.getString("alarm3_fired").equalsIgnoreCase("1");
 									chatThread.my_time_start = thread.getString("my_time_start");
-									chatThread.my_time_startCalendar = Utils.stringToCalendar(chatThread.my_time_start, SERVER_TIMESTAMP_FORMAT);
+									chatThread.my_time_startCalendar = Utils.stringToCalendar(chatThread.my_time_start,
+											SERVER_TIMESTAMP_FORMAT);
 									chatThread.my_time_end = thread.getString("my_time_end");
-									chatThread.my_time_endCalendar = Utils.stringToCalendar(chatThread.my_time_end, SERVER_TIMESTAMP_FORMAT);
+									chatThread.my_time_endCalendar = Utils
+											.stringToCalendar(chatThread.my_time_end, SERVER_TIMESTAMP_FORMAT);
 									chatThread.created_local = thread.getString("created_local");
-									chatThread.created_localCalendar = Utils.stringToCalendar(chatThread.created_local, SERVER_TIMESTAMP_FORMAT);
+									chatThread.created_localCalendar = Utils.stringToCalendar(chatThread.created_local,
+											SERVER_TIMESTAMP_FORMAT);
 									chatThread.modified_local = thread.getString("modified_local");
-									chatThread.modified_localCalendar = Utils.stringToCalendar(chatThread.modified_local, SERVER_TIMESTAMP_FORMAT);
+									chatThread.modified_localCalendar = Utils.stringToCalendar(chatThread.modified_local,
+											SERVER_TIMESTAMP_FORMAT);
 									chatThread.status = thread.getInt("status");
-									chatThread.is_owner = thread.getBoolean("is_owner");
-									chatThread.new_messages	= thread.getInt("new_messages");
+									chatThread.is_owner = thread.getInt("is_owner") == 1;
+									chatThread.new_messages = thread.getInt("new_messages");
 									chatThread.creator_fullname = thread.getString("creator_fullname");
 									tmp = thread.getString("creator_contact_id");
-									if(!tmp.equalsIgnoreCase("null")){
+									if (!tmp.equalsIgnoreCase("null")) {
 										chatThread.creator_contact_id = Integer.parseInt(tmp);
 									} else {
 										chatThread.creator_contact_id = 0;
@@ -3988,7 +3997,8 @@ public class DataManagement {
 					Data.getUnuploadedData().add(uplooad);
 				}
 			} catch (Exception e) {
-
+				Reporter.reportError(this.getClass().toString(), Thread.currentThread().getStackTrace()[2].getMethodName().toString(),
+						e.getMessage());
 			}
 			return null;
 		}
