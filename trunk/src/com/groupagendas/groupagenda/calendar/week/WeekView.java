@@ -42,6 +42,7 @@ public class WeekView extends AbstractCalendarViewWithAllDayAndHourEvents {
 	private LinearLayout hourEventsPanel;
 	private LinearLayout allDayEventsPanel;
 	private LinearLayout hourList;
+	private int daysToShow = 7;
 	
 
 	public WeekView(Context context) {
@@ -109,10 +110,13 @@ public class WeekView extends AbstractCalendarViewWithAllDayAndHourEvents {
 		
 		allDayEventsPanel = (LinearLayout) findViewById(R.id.allday_events);
 		allDayEventsPanel.setOrientation(LinearLayout.HORIZONTAL);
+		allDayEventsPanel.removeAllViews();
 		
 		hourEventsPanel = (LinearLayout) findViewById(R.id.hour_events);
+		hourEventsPanel.removeAllViews();
 		
 		hourList = (LinearLayout) findViewById(R.id.hour_list);
+		hourList.removeAllViews();
 		hourList.setClickable(false);
 		
 //		setting up panels frames
@@ -297,13 +301,26 @@ public class WeekView extends AbstractCalendarViewWithAllDayAndHourEvents {
 
 	@Override
 	protected void setupSelectedDate(Calendar initializationDate) {
-		this.daysShown = new WeekInstance(getContext(), initializationDate);
+		this.daysShown = new WeekInstance(getContext(), initializationDate, daysToShow);
 		
 	}
 
 	@Override
 	public Calendar getDateToResume() {
 		return daysShown.getShownDate();
+	}
+
+	@Override
+	protected int getShownDaysCount() {
+		return daysShown.getDaysToShow();
+		
+	}
+
+	@Override
+	protected void setShownDays(int daysToShow) {
+		this.daysToShow = daysToShow;
+		Calendar shownDate = daysShown.getShownDate();
+		this.daysShown = new WeekInstance(getContext(), shownDate, daysToShow);
 	}
 
 	

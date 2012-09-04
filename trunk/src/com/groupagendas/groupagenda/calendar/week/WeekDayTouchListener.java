@@ -2,10 +2,12 @@ package com.groupagendas.groupagenda.calendar.week;
 
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.util.Currency;
 
 import com.groupagendas.groupagenda.calendar.AbstractCalendarView;
 import com.groupagendas.groupagenda.calendar.day.DayView;
 import com.groupagendas.groupagenda.data.CalendarSettings;
+import com.groupagendas.groupagenda.data.DataManagement;
 import com.groupagendas.groupagenda.events.NewEventActivity;
 import com.groupagendas.groupagenda.utils.Utils;
 
@@ -41,7 +43,7 @@ public class WeekDayTouchListener extends SimpleOnGestureListener {
 			tmp.add(Calendar.MINUTE, 30);
 		}
 
-		intent.putExtra(NewEventActivity.EXTRA_STRING_FOR_START_CALENDAR, Utils.formatCalendar(tmp));
+		intent.putExtra(NewEventActivity.EXTRA_STRING_FOR_START_CALENDAR, Utils.formatCalendar(tmp, DataManagement.SERVER_TIMESTAMP_FORMAT));
 
 		navbar.startActivity(intent);
 		return true;
