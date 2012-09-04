@@ -178,8 +178,11 @@ public abstract class AbstractCalendarView extends LinearLayout {
 	
 	
 	protected void setUpSwipeGestureListener(){
-		swipeGestureDetector = new GestureDetector(new SwipeOnGestureListener(this));
-		this.setOnTouchListener(createListener(swipeGestureDetector));
+		if (swipeGestureDetector == null) {
+			swipeGestureDetector = new GestureDetector(
+					new SwipeOnGestureListener(this));
+			this.setOnTouchListener(createListener(swipeGestureDetector));
+		}
 	}
 	
 	protected OnTouchListener createListener(final GestureDetector swipeGestureDetector) {

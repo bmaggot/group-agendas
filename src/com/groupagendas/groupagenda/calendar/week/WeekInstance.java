@@ -22,7 +22,8 @@ public class WeekInstance {
 	private int daysToShow = 7;
 	
 	
-	public WeekInstance (Context context, Calendar selectedDate){
+	public WeekInstance (Context context, Calendar selectedDate, int daysToShow){
+		this.daysToShow = daysToShow;
 		activity = (Activity) context;
 		this.selectedDate = selectedDate;
 		this.shownDate = (Calendar)selectedDate.clone();
