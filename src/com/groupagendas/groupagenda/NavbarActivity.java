@@ -171,11 +171,11 @@ public class NavbarActivity extends Activity {
 						total = 80;
 						publishProgress(total);
 					
-//					case 5: // Load chat threads
-//						dm.getc
-//						loadPhase++;
-//						total = 100;
-//						publishProgress(total);
+					case 5: // Load chat threads
+						dm.getChatThreads();
+						loadPhase++;
+						total = 100;
+						publishProgress(total);
 					}
 				} else {
 
@@ -190,7 +190,7 @@ public class NavbarActivity extends Activity {
 			// set the current progress of the progress dialog
 			progressDialog.setProgress(values[0]);
 			switch (values[0]) {
-			case 20:
+			case 0:
 				progressDialog.setMessage(getString(R.string.loading_accaunt));
 				break;
 			case 40:
@@ -201,6 +201,9 @@ public class NavbarActivity extends Activity {
 				break;
 			case 80:
 				progressDialog.setMessage(getString(R.string.loading_events));
+				break;
+			case 100:
+				progressDialog.setMessage(getString(R.string.loading_chat));
 				break;
 			}
 		}

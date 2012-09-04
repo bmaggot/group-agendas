@@ -64,8 +64,8 @@ public class Data {
 	private static ArrayList<Group> groups;
 	private static ArrayList<Event> events;
 	private static TreeMap<Calendar, ArrayList<Event>> sortedEvents;
-	private static ArrayList<ChatMessageObject> chatMessages;
-	private static ArrayList<ChatThreadObject> chatThreads;
+	private static ArrayList<ChatMessageObject> chatMessages = new ArrayList<ChatMessageObject>();
+	private static ArrayList<ChatThreadObject> chatThreads = new ArrayList<ChatThreadObject>();
 	
 	
 	public static ArrayList<OfflineData> unuploadedData = new ArrayList<OfflineData>();
