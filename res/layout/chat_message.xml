@@ -6,11 +6,9 @@
     android:orientation="vertical" >
     
     <TextView android:id="@+id/chat_message_body"
-		android:background="@null"
         android:textStyle="@style/chat_message_body" />
     
     <TextView android:id="@+id/chat_message_time"
-   		android:background="@null"
         android:textStyle="@style/chat_message_time" />
 
 </LinearLayout>
