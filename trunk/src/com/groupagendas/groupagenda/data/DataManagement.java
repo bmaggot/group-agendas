@@ -3078,7 +3078,7 @@ public class DataManagement {
 			reqEntity.addPart("time_start", new StringBody(e.my_time_start));
 			reqEntity.addPart("time_end", new StringBody(e.my_time_end));
 
-			if(e.description_ != null){
+			if (e.description_ != null) {
 				reqEntity.addPart("description", new StringBody(e.description_));
 			} else {
 				reqEntity.addPart("description", new StringBody(""));
@@ -3969,7 +3969,7 @@ public class DataManagement {
 									chatThread.poll_rejected_count = thread.getInt("poll_rejected_count");
 									chatThread.poll_invited_count = thread.getInt("poll_invited_count");
 									tmp = thread.getString("org_id");
-									if (!tmp.equalsIgnoreCase("null")) {
+									if (!tmp.equalsIgnoreCase("null") && tmp.matches("[0-9]*")) {
 										chatThread.org_id = Integer.parseInt(tmp);
 									} else {
 										chatThread.org_id = 0;
