@@ -676,7 +676,7 @@ public class NavbarActivity extends Activity {
 	    	AbstractCalendarView view = (AbstractCalendarView)calendarContainer.getChildAt(0);
 	    	return view.getSwipeGestureDetector().onTouchEvent(ev);
 	    }
-	    return true;
+	    return false;
 	}
 
 
