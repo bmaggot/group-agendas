@@ -46,6 +46,7 @@ import com.groupagendas.groupagenda.calendar.minimonth.MiniMonthView;
 import com.groupagendas.groupagenda.calendar.month.MonthView;
 import com.groupagendas.groupagenda.calendar.week.WeekView;
 import com.groupagendas.groupagenda.calendar.year.YearView;
+import com.groupagendas.groupagenda.chat.ChatThreadActivity;
 import com.groupagendas.groupagenda.contacts.ContactsActivity;
 import com.groupagendas.groupagenda.contacts.ContactsProvider;
 import com.groupagendas.groupagenda.data.CalendarSettings;
@@ -633,7 +634,7 @@ public class NavbarActivity extends Activity {
 					buttonView.setChecked(false);
 					break;
 				case R.id.btnCalendars:
-					startActivity(new Intent(NavbarActivity.this, CalendarsActivity.class));
+					startActivity(new Intent(NavbarActivity.this, ChatThreadActivity.class));
 					break;
 				case R.id.btnContacts:
 					Data.newEventPar = false;

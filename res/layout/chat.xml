@@ -17,6 +17,7 @@
         android:weightSum="10" />
     
     <LinearLayout android:orientation="horizontal"
+        android:id="@+id/chat_inputBlock"
         android:layout_gravity="bottom"
         android:gravity="center_vertical"
         android:layout_width="match_parent"
