@@ -6,8 +6,6 @@
     
     <ListView android:id="@+id/chat_message_list"
         android:cacheColorHint="#00000000"
-        android:divider="@null"
-        android:dividerHeight="0dp"
         android:fadingEdge="none"
         android:paddingLeft="10dp"
         android:paddingRight="10dp"
