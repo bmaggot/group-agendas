@@ -9,12 +9,14 @@ import android.widget.ListAdapter;
 import android.widget.ListView;
 
 import com.groupagendas.groupagenda.R;
+import com.groupagendas.groupagenda.calendar.adapters.ChatThreadAdapter;
 import com.groupagendas.groupagenda.data.Data;
 import com.groupagendas.groupagenda.data.DataManagement;
 
 public class ChatThreadActivity extends Activity {
 	private DataManagement dm;
-	ListAdapter adapter;
+	ChatThreadAdapter adapter;
+
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -22,12 +24,9 @@ public class ChatThreadActivity extends Activity {
 		LinearLayout chatInputBlock = (LinearLayout) findViewById(R.id.chat_inputBlock);
 		chatInputBlock.setVisibility(View.INVISIBLE);
 		dm = DataManagement.getInstance(this);
-		if(!Data.getChatThreads().isEmpty()){
-			adapter = new ArrayAdapter<ChatThreadObject>(this, R.layout.chat_message, Data.getChatThreads());
-		} else {
-			
-		}
+		adapter = new ChatThreadAdapter(this, Data.getChatThreads());
 		ListView chat_message_list = (ListView) findViewById(R.id.chat_message_list);
-//		chat_message_list.setAdapter(adapter);
+		chat_message_list.setAdapter(adapter);
+		adapter.notifyDataSetChanged();
 	}
 }

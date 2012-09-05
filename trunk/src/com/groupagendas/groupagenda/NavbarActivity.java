@@ -378,7 +378,7 @@ public class NavbarActivity extends Activity {
 		radioButton = (RadioButton) findViewById(R.id.btnCalendar);
 		radioButton.setChecked(false);
 		radioButton.setOnCheckedChangeListener(btnNavBarOnCheckedChangeListener);
-		radioButton = (RadioButton) findViewById(R.id.btnCalendars);
+		radioButton = (RadioButton) findViewById(R.id.btnChatThreads);
 		radioButton.setChecked(false);
 		radioButton.setOnCheckedChangeListener(btnNavBarOnCheckedChangeListener);
 		radioButton = (RadioButton) findViewById(R.id.btnContacts);
@@ -633,7 +633,7 @@ public class NavbarActivity extends Activity {
 					qa.show();
 					buttonView.setChecked(false);
 					break;
-				case R.id.btnCalendars:
+				case R.id.btnChatThreads:
 					startActivity(new Intent(NavbarActivity.this, ChatThreadActivity.class));
 					break;
 				case R.id.btnContacts:

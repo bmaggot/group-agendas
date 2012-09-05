@@ -27,7 +27,7 @@
             android:drawableTop="@drawable/different_white" />
 
         <RadioButton
-            android:id="@+id/btnCalendars"
+            android:id="@+id/btnChatThreads"
             style="@style/navbar_button"
             android:layout_marginLeft="5dp"
             android:background="@drawable/nav_backgroud"
