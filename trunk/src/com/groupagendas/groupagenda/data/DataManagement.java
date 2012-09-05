@@ -3882,11 +3882,26 @@ public class DataManagement {
 									final JSONObject thread = chatThreads.getJSONObject(i);
 									String tmp = "";
 									ChatThreadObject chatThread = new ChatThreadObject();
-									chatThread.event_id = thread.getInt("event_id");
-									chatThread.user_id = thread.getInt("user_id");
+									tmp = thread.getString("event_id");
+									if (!tmp.equalsIgnoreCase("null") && tmp.matches("[0-9]*")) {
+										chatThread.event_id = Integer.parseInt(tmp);
+									} else {
+										chatThread.event_id = 0;
+									}
+									tmp = thread.getString("user_id");
+									if (!tmp.equalsIgnoreCase("null") && tmp.matches("[0-9]*")) {
+										chatThread.user_id = Integer.parseInt(tmp);
+									} else {
+										chatThread.user_id = 0;
+									}
 									chatThread.type = thread.getString("type");
 									chatThread.confirmed = thread.getString("confirmed");
-									chatThread.contact_author_id = thread.getInt("contact_author_id");
+									tmp = thread.getString("contact_author_id");
+									if (!tmp.equalsIgnoreCase("null") && tmp.matches("[0-9]*")) {
+										chatThread.contact_author_id = Integer.parseInt(tmp);
+									} else {
+										chatThread.contact_author_id = 0;
+									}
 									chatThread.title = thread.getString("title");
 									chatThread.icon = thread.getString("icon");
 									chatThread.color = thread.getString("color");
@@ -3919,7 +3934,12 @@ public class DataManagement {
 									chatThread.createdCalendar = Utils.stringToCalendar(chatThread.created, SERVER_TIMESTAMP_FORMAT);
 									chatThread.modified = thread.getString("modified");
 									chatThread.from_feed = thread.getString("from_feed").equals("1");
-									chatThread.message_count = thread.getInt("message_count");
+									tmp = thread.getString("message_count");
+									if (!tmp.equalsIgnoreCase("null") && tmp.matches("[0-9]*")) {
+										chatThread.message_count = Integer.parseInt(tmp);
+									} else {
+										chatThread.message_count = 0;
+									}
 									chatThread.message_last = thread.getString("message_last");
 									chatThread.message_lastCalendar = Utils.stringToCalendar(chatThread.message_last,
 											SERVER_TIMESTAMP_FORMAT);

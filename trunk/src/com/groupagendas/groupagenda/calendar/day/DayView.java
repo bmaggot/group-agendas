@@ -197,6 +197,18 @@ public class DayView extends AbstractCalendarViewWithAllDayAndHourEvents {
 		
 	}
 
+	@Override
+	protected int getShownDaysCount() {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
+	@Override
+	protected void setShownDays(int daysToShow) {
+		// TODO Auto-generated method stub
+		
+	}
+
 	
 	
 
