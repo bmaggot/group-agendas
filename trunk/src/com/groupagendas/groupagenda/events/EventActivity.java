@@ -46,12 +46,13 @@ import com.groupagendas.groupagenda.contacts.ContactsActivity;
 import com.groupagendas.groupagenda.data.Data;
 import com.groupagendas.groupagenda.data.DataManagement;
 import com.groupagendas.groupagenda.events.EventsAdapter.ViewHolder;
-import com.groupagendas.groupagenda.settings.AutoColorItem;
+// TODO find out if it's still in use import com.groupagendas.groupagenda.settings.AutoColorItem;
 import com.groupagendas.groupagenda.settings.AutoIconItem;
 import com.groupagendas.groupagenda.timezone.TimezoneManager;
 import com.groupagendas.groupagenda.utils.CountryManager;
 import com.groupagendas.groupagenda.utils.DateTimeUtils;
 import com.groupagendas.groupagenda.utils.EventStatusUpdater;
+import com.groupagendas.groupagenda.utils.SearchDialog;
 import com.groupagendas.groupagenda.utils.Utils;
 import com.ptashek.widgets.datetimepicker.DateTimePicker;
 
@@ -69,8 +70,9 @@ public class EventActivity extends Activity {
 	private ImageView colorView;
 	private EditText titleView;
 
-	private Spinner typeSpinner;
-	private String[] typeArray;
+//	TODO find out if it's still in use.
+//	private Spinner typeSpinner;
+//	private String[] typeArray;
 
 	private final int DIALOG_START = 0;
 	private Calendar startCalendar = Calendar.getInstance();
@@ -102,7 +104,7 @@ public class EventActivity extends Activity {
 
 	private View responsePanel;
 	private LinearLayout invitesColumn;
-	private LinearLayout invitedPersonList;
+//	private LinearLayout invitedPersonList; TODO remove shit
 
 	private Event event;
 
@@ -117,7 +119,7 @@ public class EventActivity extends Activity {
 	private Calendar reminder3time;
 	private boolean remindersShown = false;
 
-	private ArrayList<AutoColorItem> autoColors = null;
+//	private ArrayList<AutoColorItem> autoColors = null; TODO remove shit
 	private ArrayList<AutoIconItem> autoIcons = null;
 
 	private Intent intent;
@@ -549,7 +551,7 @@ public class EventActivity extends Activity {
 
 		@Override
 		protected Event doInBackground(Integer... ids) {
-			autoColors = dm.getAutoColors();
+//			autoColors = dm.getAutoColors(); TODO remove shit
 			autoIcons = dm.getAutoIcons();
 
 			if (intent.getBooleanExtra("isNative", false)) {
@@ -604,7 +606,7 @@ public class EventActivity extends Activity {
 			// color
 			final String[] colorsValues = getResources().getStringArray(R.array.colors_values);
 			colorView = (ImageView) findViewById(R.id.colorView);
-			// if (result.color != null && !result.color.equals("null")) {
+			// if (result.color != null && !result.color.equals("null")) { TODO some more shit
 			// String nameColor = "calendarbubble_" + result.color + "_";
 			int image = result.getColorBubbleId(mContext);
 			colorView.setImageResource(image);
@@ -624,7 +626,7 @@ public class EventActivity extends Activity {
 						gridview.setOnItemClickListener(new OnItemClickListener() {
 							public void onItemClick(AdapterView<?> parent, View v, int position, long id) {
 								event.setColor(colorsValues[position]);
-								// String nameColor = "calendarbubble_" +
+								// String nameColor = "calendarbubble_" + TODO and more shit
 								// event.color + "_";
 								int image = event.getColorBubbleId(getBaseContext());// getResources().getIdentifier(nameColor,
 																						// "drawable",
@@ -648,7 +650,7 @@ public class EventActivity extends Activity {
 				titleView.addTextChangedListener(filterTextWatcher);
 			}
 
-			// type
+			// type TODO DEAD-CODE
 			// typeSpinner = (Spinner) findViewById(R.id.typeSpinner);
 			// ArrayAdapter<CharSequence> adapterType =
 			// ArrayAdapter.createFromResource(EventActivity.this,
@@ -713,6 +715,7 @@ public class EventActivity extends Activity {
 			}
 
 			// Address
+			// TODO DEAD-CODE
 			// addressLine = (LinearLayout) findViewById(R.id.addressLine);
 			// addressLine.setOnClickListener(new OnClickListener() {
 			//
@@ -731,19 +734,29 @@ public class EventActivity extends Activity {
 				showView(timezoneSpinner, addressLine);
 			// country
 			countrySpinner = (Spinner) findViewById(R.id.countrySpinner);
-			ArrayAdapter<String> adapterCountry = new ArrayAdapter<String>(EventActivity.this, android.R.layout.simple_spinner_item,
-					CountryManager.getCountries(EventActivity.this));
+			final ArrayAdapter<String> adapterCountry = new ArrayAdapter<String>(EventActivity.this, R.layout.search_dialog_item, CountryManager.getCountries(EventActivity.this));
 			adapterCountry.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
 			countrySpinner.setAdapter(adapterCountry);
 			countryArray = CountryManager.getCountryValues(EventActivity.this);
+			
+			LinearLayout countrySpinnerBlock = (LinearLayout) findViewById(R.id.countrySpinnerBlock); 
+			countrySpinnerBlock.setOnClickListener(new OnClickListener() {
+				
+				@Override
+				public void onClick(View arg0) {
+					Dialog dia = new SearchDialog(EventActivity.this, R.style.yearview_eventlist_title, adapterCountry, countrySpinner);
+					dia.show();				
+				}
+			});
+
+			
 			countrySpinner.setOnItemSelectedListener(new OnItemSelectedListener() {
 
 				@Override
 				public void onItemSelected(AdapterView<?> arg0, View arg1, int pos, long arg3) {
 
 					if (pos == 0) {
-						ArrayAdapter<String> adapterTimezone = new ArrayAdapter<String>(EventActivity.this,
-								android.R.layout.simple_spinner_item, new String[0]);
+						ArrayAdapter<String> adapterTimezone = new ArrayAdapter<String>(EventActivity.this,  R.layout.search_dialog_item, new String[0]);
 						adapterTimezone.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
 						timezoneSpinner.setAdapter(adapterTimezone);
 						timezoneSpinner.setEnabled(false);
@@ -752,8 +765,7 @@ public class EventActivity extends Activity {
 						timezoneSpinner.setEnabled(true);
 						// timezone
 						String[] timezoneLabels = TimezoneManager.getTimezones(EventActivity.this, countryArray[pos]);
-						ArrayAdapter<String> adapterTimezone = new ArrayAdapter<String>(EventActivity.this,
-								android.R.layout.simple_spinner_item, timezoneLabels);
+						ArrayAdapter<String> adapterTimezone = new ArrayAdapter<String>(EventActivity.this,  R.layout.search_dialog_item, timezoneLabels);
 						adapterTimezone.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
 						timezoneSpinner.setAdapter(adapterTimezone);
 						timezoneArray = TimezoneManager.getTimezonesValues(EventActivity.this, countryArray[pos]);
@@ -1300,19 +1312,19 @@ public class EventActivity extends Activity {
 
 	public void showAddressPanel() {
 		addressPanelVisible = true;
-		LinearLayout timezoneSpinnerBlock = (LinearLayout) findViewById(R.id.countryBlock);
+		LinearLayout timezoneSpinnerBlock = (LinearLayout) findViewById(R.id.timezoneSpinnerBlock);
 		timezoneSpinnerBlock.setVisibility(View.VISIBLE);
 
-		LinearLayout countrySpinnerBlock = (LinearLayout) findViewById(R.id.cityBlock);
+		LinearLayout countrySpinnerBlock = (LinearLayout) findViewById(R.id.countrySpinnerBlock);
 		countrySpinnerBlock.setVisibility(View.VISIBLE);
 
-		LinearLayout cityViewBlock = (LinearLayout) findViewById(R.id.streetBlock);
+		LinearLayout cityViewBlock = (LinearLayout) findViewById(R.id.cityViewBlock);
 		cityViewBlock.setVisibility(View.VISIBLE);
 
-		LinearLayout streetViewBlock = (LinearLayout) findViewById(R.id.zipBlock);
+		LinearLayout streetViewBlock = (LinearLayout) findViewById(R.id.streetViewBlock);
 		streetViewBlock.setVisibility(View.VISIBLE);
 
-		LinearLayout zipViewBlock = (LinearLayout) findViewById(R.id.timezoneBlock);
+		LinearLayout zipViewBlock = (LinearLayout) findViewById(R.id.zipViewBlock);
 		zipViewBlock.setVisibility(View.VISIBLE);
 	}
 
@@ -1323,19 +1335,19 @@ public class EventActivity extends Activity {
 			addressPanel.setVisibility(View.GONE);
 			detailsPanel.setVisibility(View.GONE);
 		}
-		LinearLayout timezoneSpinnerBlock = (LinearLayout) findViewById(R.id.countryBlock);
+		LinearLayout timezoneSpinnerBlock = (LinearLayout) findViewById(R.id.timezoneSpinnerBlock);
 		timezoneSpinnerBlock.setVisibility(View.GONE);
 
-		LinearLayout countrySpinnerBlock = (LinearLayout) findViewById(R.id.cityBlock);
+		LinearLayout countrySpinnerBlock = (LinearLayout) findViewById(R.id.countrySpinnerBlock);
 		countrySpinnerBlock.setVisibility(View.GONE);
 
-		LinearLayout cityViewBlock = (LinearLayout) findViewById(R.id.streetBlock);
+		LinearLayout cityViewBlock = (LinearLayout) findViewById(R.id.cityViewBlock);
 		cityViewBlock.setVisibility(View.GONE);
 
-		LinearLayout streetViewBlock = (LinearLayout) findViewById(R.id.zipBlock);
+		LinearLayout streetViewBlock = (LinearLayout) findViewById(R.id.streetViewBlock);
 		streetViewBlock.setVisibility(View.GONE);
 
-		LinearLayout zipViewBlock = (LinearLayout) findViewById(R.id.timezoneBlock);
+		LinearLayout zipViewBlock = (LinearLayout) findViewById(R.id.zipViewBlock);
 		zipViewBlock.setVisibility(View.GONE);
 	}
 
