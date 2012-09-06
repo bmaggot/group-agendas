@@ -16,6 +16,7 @@ import com.groupagendas.groupagenda.calendar.AbstractCalendarView;
 import com.groupagendas.groupagenda.calendar.agenda.AgendaFrame;
 import com.groupagendas.groupagenda.data.Data;
 import com.groupagendas.groupagenda.events.Event;
+import com.groupagendas.groupagenda.utils.DrawingUtils;
 import com.groupagendas.groupagenda.utils.Utils;
 
 public class MiniMonthView extends AbstractCalendarView {	
@@ -70,7 +71,7 @@ public class MiniMonthView extends AbstractCalendarView {
 			entry = (TextView) mInflater.inflate(
 					R.layout.calendar_top_bar_bottomline_entry, null);
 			entry.setText(R.string.week_title);
-			entry.setPadding(convertDPtoPX(1), 0, 0, 0);
+			entry.setPadding(DrawingUtils.convertDPtoPX(getContext(), 1), 0, 0, 0);
 			bottomBar.addView(entry);
 		}
 		Calendar tmp = (Calendar) firstShownDate.clone();
