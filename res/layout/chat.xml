@@ -3,48 +3,54 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical" >
-    
-    <ListView android:id="@+id/chat_message_list"
-        android:cacheColorHint="#00000000"
-        android:background="@color/white"
-        android:fadingEdge="none"
-        android:paddingLeft="10dp"
-        android:paddingRight="10dp"
+
+    <ListView
+        android:id="@+id/chat_message_list"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="8"
+        android:background="@color/white"
+        android:cacheColorHint="#00000000"
+        android:fadingEdge="none"
+        android:paddingLeft="10dp"
+        android:paddingRight="10dp"
         android:weightSum="10" />
-    
-    <LinearLayout android:orientation="horizontal"
+
+    <LinearLayout
         android:id="@+id/chat_inputBlock"
-        android:layout_gravity="bottom"
-        android:gravity="center_vertical"
         android:layout_width="match_parent"
         android:layout_height="0dp"
+        android:layout_gravity="bottom"
         android:layout_weight="2"
         android:background="@color/darker_gray"
-        android:paddingTop="15dp"
-        android:paddingBottom="15dp" >
-        
-        <EditText android:id="@+id/chat_input"
-            android:inputType="textMultiLine"
-            android:layout_gravity="left|center_vertical"
+        android:gravity="center_vertical"
+        android:orientation="horizontal"
+        android:paddingBottom="15dp"
+        android:paddingTop="15dp" >
+
+        <EditText
+            android:id="@+id/chat_input"
             android:layout_width="0dp"
-            android:layout_weight="8"
             android:layout_height="fill_parent"
-            android:maxLines="5"
+            android:layout_gravity="left|center_vertical"
+            android:layout_marginLeft="10dp"
             android:layout_marginRight="10dp"
-            android:layout_marginLeft="10dp"/>
-        
-        <Button android:id="@+id/chat_send"
+            android:layout_weight="8"
+            android:inputType="textMultiLine"
+            android:maxLines="5" />
+
+        <Button
+            android:id="@+id/chat_send"
             android:layout_width="0dp"
-            android:layout_weight="2"
             android:layout_height="wrap_content"
+            android:layout_gravity="right|center_vertical"
             android:layout_margin="5dp"
-            android:text="@string/chat_send"
-            android:layout_gravity="right|center_vertical" />
-        
+            android:layout_weight="2"
+            android:text="@string/chat_send" />
     </LinearLayout>
-    
+
+    <include
+        android:id="@+id/radiogroup"
+        layout="@layout/navbar_radiogroup" />
 
 </LinearLayout>
