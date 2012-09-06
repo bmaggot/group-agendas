@@ -3709,6 +3709,7 @@ public class DataManagement {
 							if (!success) {
 								Log.e("Change account ERROR", object.getJSONObject("error").getString("reason"));
 							} else {
+								Data.getChatMessages().clear();
 								JSONArray chatMessages = object.getJSONArray("items");
 								for (int i = 0, l = chatMessages.length(); i < l; i++) {
 									final JSONObject chatMessage = chatMessages.getJSONObject(i);
@@ -3720,7 +3721,7 @@ public class DataManagement {
 									message.userId = chatMessage.getInt("user_id");
 									message.message = chatMessage.getString("message");
 									String deleted = chatMessage.getString("deleted");
-									message.deleted = deleted != null;
+									message.deleted = !deleted.equals("null");
 									message.updated = chatMessage.getString("updated");
 									message.updatedCalendar = Utils.stringToCalendar(message.updated, SERVER_TIMESTAMP_FORMAT);
 									message.fullname = chatMessage.getString("fullname");
@@ -3750,7 +3751,7 @@ public class DataManagement {
 	public void postChatMessage(int event_id, String message) {
 		if (event_id > 0) {
 			Object[] executeArray = { event_id, message };
-			new GetChatMessages().execute(executeArray);
+			new PostChatMessage().execute(executeArray);
 		}
 	}
 
@@ -3762,7 +3763,7 @@ public class DataManagement {
 				int event_id = (Integer) params[0];
 				String message = (String) params[1];
 				HttpClient hc = new DefaultHttpClient();
-				HttpPost post = new HttpPost(Data.getServerUrl() + "mobile/chat_get");
+				HttpPost post = new HttpPost(Data.getServerUrl() + "mobile/chat_post");
 
 				MultipartEntity reqEntity = new MultipartEntity(HttpMultipartMode.BROWSER_COMPATIBLE);
 

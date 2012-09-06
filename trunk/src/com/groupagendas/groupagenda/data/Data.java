@@ -270,7 +270,7 @@ public class Data {
 	protected static void setColorNotes(String colorNotes) {
 		Data.colorNotes = colorNotes;
 	}
-	protected static Account getAccount() {
+	public static Account getAccount() {
 		return account;
 	}
 	protected static void setAccount(Account account) {

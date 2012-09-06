@@ -40,6 +40,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.groupagendas.groupagenda.R;
+import com.groupagendas.groupagenda.chat.ChatMessageActivity;
 import com.groupagendas.groupagenda.contacts.Contact;
 import com.groupagendas.groupagenda.contacts.ContactsActivity;
 import com.groupagendas.groupagenda.data.Data;
@@ -108,6 +109,13 @@ public class EventActivity extends Activity {
 	private String errorStr = "";
 	private final int DIALOG_ERROR = 0;
 	private final int DELETE_DIALOG = 1;
+	private final int REMINDER1 = 11;
+	private Calendar reminder1time;
+	private final int REMINDER2 = 22;
+	private Calendar reminder2time;
+	private final int REMINDER3 = 33;
+	private Calendar reminder3time;
+	private boolean remindersShown = false;
 
 	private ArrayList<AutoColorItem> autoColors = null;
 	private ArrayList<AutoIconItem> autoIcons = null;
@@ -149,6 +157,7 @@ public class EventActivity extends Activity {
 	@Override
 	public void onResume() {
 		int invitedListSize = 0;
+		Button chatMessengerButton = (Button) findViewById(R.id.messenger_button);
 		Button inviteButton = (Button) findViewById(R.id.invite_button);
 		final Context mContext = dm.getmContext();
 
@@ -156,7 +165,100 @@ public class EventActivity extends Activity {
 
 		if ((event_id > 0)) {
 			event = dm.getEventFromDb(event_id);
+			chatMessengerButton.setOnClickListener(new OnClickListener() {
+
+				@Override
+				public void onClick(View arg0) {
+					if (event_id > 0) {
+						Intent intent = new Intent(EventActivity.this, ChatMessageActivity.class);
+						intent.putExtra("event_id", event_id);
+						startActivity(intent);
+					}
+				}
+			});
 		}
+		// reminders
+		final LinearLayout reminderBlock = (LinearLayout) findViewById(R.id.reminder_block);
+		TextView setReminderTrigger = (TextView) findViewById(R.id.setReminderTrigger);
+		setReminderTrigger.setOnClickListener(new OnClickListener() {
+
+			@Override
+			public void onClick(View v) {
+				if (remindersShown) {
+					remindersShown = false;
+					reminderBlock.setVisibility(View.GONE);
+				} else {
+					remindersShown = true;
+					reminderBlock.setVisibility(View.VISIBLE);
+				}
+			}
+		});
+
+		LinearLayout reminder1container = (LinearLayout) findViewById(R.id.reminder_container1);
+		final EditText reminder1 = (EditText) findViewById(R.id.reminder1);
+		if (event != null && event.reminder1 != null) {
+			reminder1.setText(event.reminder1);
+		} else {
+			reminder1.setText("");
+		}
+		reminder1container.setOnClickListener(new OnClickListener() {
+
+			@Override
+			public void onClick(View v) {
+				showDateTimeDialog(reminder1, REMINDER1);
+			}
+		});
+		reminder1.setOnClickListener(new OnClickListener() {
+
+			@Override
+			public void onClick(View v) {
+				showDateTimeDialog(reminder1, REMINDER1);
+			}
+		});
+
+		LinearLayout reminder2container = (LinearLayout) findViewById(R.id.reminder_container2);
+		final EditText reminder2 = (EditText) findViewById(R.id.reminder2);
+		if (event != null && event.reminder2 != null) {
+			reminder2.setText(event.reminder2);
+		} else {
+			reminder2.setText("");
+		}
+		reminder2container.setOnClickListener(new OnClickListener() {
+
+			@Override
+			public void onClick(View v) {
+				showDateTimeDialog(reminder2, REMINDER2);
+			}
+		});
+		reminder2.setOnClickListener(new OnClickListener() {
+
+			@Override
+			public void onClick(View v) {
+				showDateTimeDialog(reminder2, REMINDER2);
+			}
+		});
+
+		LinearLayout reminder3container = (LinearLayout) findViewById(R.id.reminder_container3);
+		final EditText reminder3 = (EditText) findViewById(R.id.reminder3);
+		if (event != null && event.reminder3 != null) {
+			reminder3.setText(event.reminder3);
+		} else {
+			reminder3.setText("");
+		}
+		reminder3container.setOnClickListener(new OnClickListener() {
+
+			@Override
+			public void onClick(View v) {
+				showDateTimeDialog(reminder3, REMINDER3);
+			}
+		});
+		reminder3.setOnClickListener(new OnClickListener() {
+
+			@Override
+			public void onClick(View v) {
+				showDateTimeDialog(reminder3, REMINDER3);
+			}
+		});
 		if (event.is_owner) {
 			saveButton.setVisibility(View.VISIBLE);
 			saveButton.setOnClickListener(new OnClickListener() {
@@ -401,7 +503,7 @@ public class EventActivity extends Activity {
 		finish();
 		return true;
 	}
-	
+
 	public View getInvitedView(Invited invited, LayoutInflater inflater, View view, Context mContext) {
 		final TextView nameView = (TextView) view.findViewById(R.id.invited_fullname);
 		nameView.setText(invited.name);
@@ -502,11 +604,11 @@ public class EventActivity extends Activity {
 			// color
 			final String[] colorsValues = getResources().getStringArray(R.array.colors_values);
 			colorView = (ImageView) findViewById(R.id.colorView);
-//			if (result.color != null && !result.color.equals("null")) {
-//				String nameColor = "calendarbubble_" + result.color + "_";
-				int image = result.getColorBubbleId(mContext);
-				colorView.setImageResource(image);
-//			}
+			// if (result.color != null && !result.color.equals("null")) {
+			// String nameColor = "calendarbubble_" + result.color + "_";
+			int image = result.getColorBubbleId(mContext);
+			colorView.setImageResource(image);
+			// }
 
 			if (result.is_owner) {
 				colorView.setOnClickListener(new OnClickListener() {
@@ -522,8 +624,11 @@ public class EventActivity extends Activity {
 						gridview.setOnItemClickListener(new OnItemClickListener() {
 							public void onItemClick(AdapterView<?> parent, View v, int position, long id) {
 								event.setColor(colorsValues[position]);
-//								String nameColor = "calendarbubble_" + event.color + "_";
-								int image = event.getColorBubbleId(getBaseContext());//getResources().getIdentifier(nameColor, "drawable", "com.groupagendas.groupagenda");
+								// String nameColor = "calendarbubble_" +
+								// event.color + "_";
+								int image = event.getColorBubbleId(getBaseContext());// getResources().getIdentifier(nameColor,
+																						// "drawable",
+																						// "com.groupagendas.groupagenda");
 								colorView.setImageResource(image);
 								dialog.dismiss();
 							}
@@ -844,17 +949,19 @@ public class EventActivity extends Activity {
 						}
 					}
 				}
-//				if (event.color == null || event.color.equals("null") || event.color.equals("")) {
-//					for (int i = 0, l = autoColors.size(); i < l; i++) {
-//						final AutoColorItem autoColor = autoColors.get(i);
-//						if (s.toString().contains(autoColor.keyword)) {
-//							event.setColor(autoColor.color);
-//							String nameColor = "calendarbubble_" + autoColor.color + "_";
-//							int image = getResources().getIdentifier(nameColor, "drawable", "com.groupagendas.groupagenda");
-//							colorView.setImageResource(image);
-//						}
-//					}
-//				}
+				// if (event.color == null || event.color.equals("null") ||
+				// event.color.equals("")) {
+				// for (int i = 0, l = autoColors.size(); i < l; i++) {
+				// final AutoColorItem autoColor = autoColors.get(i);
+				// if (s.toString().contains(autoColor.keyword)) {
+				// event.setColor(autoColor.color);
+				// String nameColor = "calendarbubble_" + autoColor.color + "_";
+				// int image = getResources().getIdentifier(nameColor,
+				// "drawable", "com.groupagendas.groupagenda");
+				// colorView.setImageResource(image);
+				// }
+				// }
+				// }
 			}
 		}
 
@@ -954,6 +1061,21 @@ public class EventActivity extends Activity {
 			temp = accomodationView.getText().toString();
 			event.accomodation = temp;
 			cv.put(EventsProvider.EMetaData.EventsMetaData.ACCOMODATION, temp);
+
+			// reminders
+			if (reminder1time != null && reminder1time.after(Calendar.getInstance())) {
+				event.reminder1 = dtUtils.formatDateTimeToDefault(reminder1time.getTime());
+				cv.put(EventsProvider.EMetaData.EventsMetaData.REMINDER1, dtUtils.formatDateTimeToDefault(reminder1time.getTime()));
+			}
+			if (reminder2time != null && reminder2time.after(Calendar.getInstance()) && !reminder2time.equals(reminder1time)) {
+				event.reminder2 = dtUtils.formatDateTimeToDefault(reminder2time.getTime());
+				cv.put(EventsProvider.EMetaData.EventsMetaData.REMINDER2, dtUtils.formatDateTimeToDefault(reminder2time.getTime()));
+			}
+			if (reminder3time != null && reminder3time.after(Calendar.getInstance()) && !reminder3time.equals(reminder1time)
+					&& !reminder3time.equals(reminder2time)) {
+				event.reminder3 = dtUtils.formatDateTimeToDefault(reminder3time.getTime());
+				cv.put(EventsProvider.EMetaData.EventsMetaData.REMINDER3, dtUtils.formatDateTimeToDefault(reminder3time.getTime()));
+			}
 
 			if (check) {
 				Uri uri = Uri.parse(EventsProvider.EMetaData.EventsMetaData.CONTENT_URI + "/" + event.event_id);
@@ -1101,15 +1223,33 @@ public class EventActivity extends Activity {
 
 			public void onClick(View v) {
 				mDateTimePicker.clearFocus();
+				boolean timeSet = false;
 				switch (id) {
 				case DIALOG_START:
 					startCalendar = mDateTimePicker.getCalendar();
+					startView.setText(dtUtils.formatDateTime(startCalendar.getTime()));
+					endCalendar = Calendar.getInstance();
+					endCalendar.setTime(mDateTimePicker.getCalendar().getTime());
+					endCalendar.add(Calendar.MINUTE, NewEventActivity.DEFAULT_EVENT_DURATION_IN_MINS);
+					endView.setText(dtUtils.formatDateTime(endCalendar.getTime()));
+					timeSet = true;
 					break;
 				case DIALOG_END:
 					endCalendar = mDateTimePicker.getCalendar();
 					break;
+				case REMINDER1:
+					reminder1time = mDateTimePicker.getCalendar();
+					break;
+				case REMINDER2:
+					reminder2time = mDateTimePicker.getCalendar();
+					break;
+				case REMINDER3:
+					reminder3time = mDateTimePicker.getCalendar();
+					break;
 				}
-				view.setText(dtUtils.formatDateTime(mDateTimePicker.getCalendar().getTime()));
+				if (!timeSet) {
+					view.setText(dtUtils.formatDateTime(mDateTimePicker.getCalendar().getTime()));
+				}
 				mDateTimeDialog.dismiss();
 			}
 		});

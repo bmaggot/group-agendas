@@ -234,6 +234,11 @@
             android:theme="@android:style/Theme.NoTitleBar" >
         </activity>
         <activity
+            android:name=".chat.ChatMessageActivity"
+            android:configChanges="keyboardHidden|orientation"
+            android:theme="@android:style/Theme.NoTitleBar" >
+        </activity>
+        <activity
             android:name=".contacts.importer.RequestTokenActivity"
             android:launchMode="singleTask"
             android:theme="@android:style/Theme.NoTitleBar" >
