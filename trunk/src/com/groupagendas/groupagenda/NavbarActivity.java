@@ -610,13 +610,13 @@ public class NavbarActivity extends Activity {
 				case R.id.btnCalendar:
 					qa = new QuickAction(buttonView);
 					qa.addActionItem(list_search);
-					qa.addActionItem(go_date);
 					qa.addActionItem(year);
 					qa.addActionItem(month);
+					qa.addActionItem(mini_month);
+					qa.addActionItem(agenda);
 					qa.addActionItem(week);
 					qa.addActionItem(day);
-					qa.addActionItem(agenda);
-					qa.addActionItem(mini_month);
+					qa.addActionItem(go_date);
 					qa.addActionItem(today);
 
 					qa.show();
