@@ -52,6 +52,7 @@ public abstract class AbstractCalendarView extends LinearLayout {
 	
 	protected boolean am_pmEnabled;
 	protected String[] HourNames;
+	protected String[] WeekDayNamesShort;
 	protected String[] WeekDayNames;
 	protected String[] MonthNames;
 	
