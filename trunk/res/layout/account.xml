@@ -175,7 +175,7 @@
                     android:layout_margin="0dp"
                     android:paddingBottom="0dp"
                     android:paddingTop="0dp"
-                    android:text="Date" />
+                    android:text="@string/date" />
 
                 <EditText
                     android:id="@+id/birthdateView"
@@ -201,40 +201,58 @@
                     android:layout_height="wrap_content" />
             </LinearLayout>
 
-            <LinearLayout
+
+            <LinearLayout android:background="@drawable/event_invite_people_button_notalone_i"
+                android:id="@+id/countrySpinnerBlock"
+                android:paddingTop="5dp"
+                android:paddingRight="10dp"
+                android:paddingBottom="5dp"
+                android:paddingLeft="10dp"
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal" >
 
                 <TextView
-                    android:layout_width="100dp"
+                    android:layout_gravity="center_vertical"
+                    android:layout_width="80dp"
                     android:layout_height="wrap_content"
                     android:text="@string/country"
+                    android:textStyle="bold"
                     android:textColor="@android:color/black" />
 
-                <Spinner
+                <Spinner android:background="#00000000"
+                    android:clickable="false"
+                    android:layout_gravity="center_vertical"
                     android:id="@+id/countrySpinner"
-                    android:layout_width="fill_parent"
-                    android:layout_height="wrap_content" />
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textColor="@color/black" />
             </LinearLayout>
 
-            <LinearLayout
+            <LinearLayout android:background="@drawable/event_invited_entry_last_background"
+                android:paddingTop="5dp"
+                android:paddingRight="10dp"
+                android:paddingBottom="5dp"
+                android:paddingLeft="10dp"
+                android:layout_marginBottom="10dp"
+                android:id="@+id/timezoneSpinnerBlock"
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal" >
 
                 <TextView
-                    android:layout_width="100dp"
+                    android:layout_width="80dp"
                     android:layout_height="wrap_content"
                     android:text="@string/timezone"
+                    android:textStyle="bold"
                     android:textColor="@android:color/black" />
 
-                <Spinner
+                <Spinner android:background="#00000000"
                     android:id="@+id/timezoneSpinner"
                     android:layout_width="fill_parent"
-                    android:layout_height="wrap_content" />
+                    android:layout_height="wrap_content"
+                    android:textColor="@color/black" />
             </LinearLayout>
-
             <LinearLayout
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
@@ -290,7 +308,7 @@
             </LinearLayout>
 
             <LinearLayout
-                android:layout_width="fill_parent"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal" >
 
@@ -300,7 +318,7 @@
                     android:text="@string/replace_image"
                     android:textColor="@android:color/black" />
 
-                <ImageView
+                <ImageView android:contentDescription="@string/account_icon_placeholder"
                     android:id="@+id/accountImage"
                     android:layout_width="120dp"
                     android:layout_height="120dp"
