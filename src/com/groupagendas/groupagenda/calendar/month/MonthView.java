@@ -187,7 +187,6 @@ public class MonthView extends AbstractCalendarView {
 		int TABLE_ROWS_COUNT = date.getActualMaximum(Calendar.WEEK_OF_MONTH);
 		FRAME_WIDTH = VIEW_WIDTH / FRAMES_PER_ROW;
 
-		System.out.println("ROWS: " + TABLE_ROWS_COUNT);
 		LinearLayout month_weeknumbers_container = (LinearLayout) findViewById(R.id.month_weeknumbers_container);
 		month_weeknumbers_container.removeAllViews();
 		
