@@ -26,9 +26,6 @@ public class MonthDayFrame extends RelativeLayout {
 	private final int BUBBLE_WIDTH_PX;
 	private final int BUBBLE_MARGIN_PX;
 	TextView dayTitle;
-	private boolean today;
-	private boolean selected;
-	private boolean otherMonth;
 	public boolean hasBubbles =  false;
 	private LinearLayout allBubblesContainer;
 	private MonthCellState state = MonthCellState.DEFAULT;
@@ -38,10 +35,6 @@ public class MonthDayFrame extends RelativeLayout {
 	}
 	public MonthDayFrame(Context context, AttributeSet attrs) {
 		super(context, attrs);
-		
-		selected = false;
-		today = false;
-		otherMonth = false;
 		BUBBLE_WIDTH_PX = Math.round(getResources().getDisplayMetrics().density * BUBBLE_WIDTH_DP);
 		BUBBLE_MARGIN_PX = Math.round(getResources().getDisplayMetrics().density * BUBBLE_MARGIN_DP);
 	}
