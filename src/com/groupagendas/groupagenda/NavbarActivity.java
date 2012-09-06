@@ -39,12 +39,11 @@ import az.mecid.android.QuickAction;
 
 import com.groupagendas.groupagenda.account.AccountProvider;
 import com.groupagendas.groupagenda.calendar.AbstractCalendarView;
+import com.groupagendas.groupagenda.calendar.DayWeekView;
 import com.groupagendas.groupagenda.calendar.agenda.AgendaView;
-import com.groupagendas.groupagenda.calendar.day.DayView;
 import com.groupagendas.groupagenda.calendar.listnsearch.ListnSearchView;
 import com.groupagendas.groupagenda.calendar.minimonth.MiniMonthView;
 import com.groupagendas.groupagenda.calendar.month.MonthView;
-import com.groupagendas.groupagenda.calendar.week.WeekView;
 import com.groupagendas.groupagenda.calendar.year.YearView;
 import com.groupagendas.groupagenda.chat.ChatThreadActivity;
 import com.groupagendas.groupagenda.contacts.ContactsActivity;
@@ -94,7 +93,7 @@ public class NavbarActivity extends Activity {
 	private ViewState viewState;
 
 //	TODO investigate WHY IS this shit created
-	private Prefs prefs;
+//	private Prefs prefs;
 
 	private boolean dataLoaded = false;
 	private int loadPhase = 0;
@@ -426,9 +425,6 @@ public class NavbarActivity extends Activity {
 				viewState = ViewState.getValueByString(CalendarSettings.getDefaultView());
 		
 		switch (viewState) {
-		case TODAY:
-			showTodayView();
-			break;
 		case DAY:
 			showDayView();
 			break;
@@ -501,22 +497,15 @@ public class NavbarActivity extends Activity {
 		mInflater.inflate(R.layout.calendar_listnsearch, calendarContainer);
 		ListnSearchView view = (ListnSearchView) calendarContainer.getChildAt(0);
 		view.init();
-//		new GetAllEventsTask().execute();
-
 	}
 
-	private void showTodayView() {
-		calendarContainer.removeAllViews();
-		mInflater.inflate(R.layout.calendar_day, calendarContainer);
-		DayView view = (DayView) calendarContainer.getChildAt(0);
-		view.init(Utils.createNewTodayCalendar());
-	}
+
 
 	private void showWeekView() {
 		calendarContainer.removeAllViews();
 		mInflater.inflate(R.layout.calendar_week, calendarContainer);
-		WeekView view = (WeekView) calendarContainer.getChildAt(0);
-		view.init(selectedDate);
+		DayWeekView view = (DayWeekView) calendarContainer.getChildAt(0);
+		view.init(selectedDate, DayWeekView.MAX_DAYS_SHOWN);
 
 	}
 
@@ -545,9 +534,9 @@ public class NavbarActivity extends Activity {
 
 	private void showDayView() {
 		calendarContainer.removeAllViews();
-		mInflater.inflate(R.layout.calendar_day, calendarContainer);
-		DayView view = (DayView) calendarContainer.getChildAt(0);
-		view.init(selectedDate);
+		mInflater.inflate(R.layout.calendar_week, calendarContainer);
+		DayWeekView view = (DayWeekView) calendarContainer.getChildAt(0);
+		view.init(selectedDate, 1);
 
 	}
 

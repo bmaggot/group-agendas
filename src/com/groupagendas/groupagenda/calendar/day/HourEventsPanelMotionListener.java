@@ -8,6 +8,7 @@ import android.content.Intent;
 import android.view.MotionEvent;
 
 import com.groupagendas.groupagenda.calendar.AbstractCalendarView;
+import com.groupagendas.groupagenda.calendar.DayWeekView;
 import com.groupagendas.groupagenda.calendar.SwipeOnGestureListener;
 import com.groupagendas.groupagenda.data.CalendarSettings;
 import com.groupagendas.groupagenda.data.DataManagement;
@@ -27,7 +28,7 @@ public class HourEventsPanelMotionListener extends SwipeOnGestureListener {
 
 		int y = Math.round(e.getY());
 
-		float tmpF = DayView.hourLineHeightDP * parentView.getResources().getDisplayMetrics().density;
+		float tmpF = DayWeekView.hourLineHeightDP * parentView.getResources().getDisplayMetrics().density;
 		int hour = y / Math.round(tmpF);
 
 		Activity navbar = (Activity) (parentView.getContext());

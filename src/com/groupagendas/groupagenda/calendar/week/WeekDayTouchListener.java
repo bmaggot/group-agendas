@@ -5,7 +5,7 @@ import java.util.Calendar;
 import java.util.Currency;
 
 import com.groupagendas.groupagenda.calendar.AbstractCalendarView;
-import com.groupagendas.groupagenda.calendar.day.DayView;
+import com.groupagendas.groupagenda.calendar.DayWeekView;
 import com.groupagendas.groupagenda.data.CalendarSettings;
 import com.groupagendas.groupagenda.data.DataManagement;
 import com.groupagendas.groupagenda.events.NewEventActivity;
@@ -28,10 +28,9 @@ public class WeekDayTouchListener extends SimpleOnGestureListener {
 
 	@Override
 	public boolean onSingleTapUp(MotionEvent e) {
-		System.out.println("TAP");
 		int y = Math.round(e.getY());
 
-		float tmpF = DayView.hourLineHeightDP * parentView.getResources().getDisplayMetrics().density;
+		float tmpF = DayWeekView.hourLineHeightDP * parentView.getResources().getDisplayMetrics().density;
 		int hour = y / Math.round(tmpF);
 
 		Activity navbar = (Activity) (parentView.getContext());

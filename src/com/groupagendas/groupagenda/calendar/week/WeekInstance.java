@@ -14,20 +14,19 @@ public class WeekInstance {
 	
 	private Activity activity;
 	private DayInstance[] shownDays;
-	private Calendar selectedDate;
 	private Calendar shownDate;
 	private int maxAllDayEventsCount;
 	
-//	TODO change dynamically on pinch also, adjust shownDate accordingly;
-	private int daysToShow = 7;
+	private int daysToShow;
 	
 	
 	public WeekInstance (Context context, Calendar selectedDate, int daysToShow){
 		this.daysToShow = daysToShow;
 		activity = (Activity) context;
-		this.selectedDate = selectedDate;
-		this.shownDate = (Calendar)selectedDate.clone();
-		Utils.setCalendarToFirstDayOfWeek(this.shownDate);		
+		this.shownDate = selectedDate;
+		if (daysToShow == shownDate.getActualMaximum(Calendar.DAY_OF_WEEK)){
+				Utils.setCalendarToFirstDayOfWeek(this.shownDate);		
+		}
 		shownDays = new DayInstance[daysToShow];
 		maxAllDayEventsCount = 1;
 		updateEventLists();		
@@ -46,11 +45,6 @@ public class WeekInstance {
 		
 		
 		
-	}
-
-
-	public Calendar getSelectedDate() {
-		return selectedDate;
 	}
 
 
