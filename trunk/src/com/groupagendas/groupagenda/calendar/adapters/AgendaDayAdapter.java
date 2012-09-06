@@ -1,8 +1,10 @@
 package com.groupagendas.groupagenda.calendar.adapters;
 
+import java.text.SimpleDateFormat;
 import java.util.List;
 
 import android.content.Context;
+import android.opengl.Visibility;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewGroup.LayoutParams;
@@ -12,17 +14,27 @@ import android.widget.TextView;
 
 import com.groupagendas.groupagenda.EventActivityOnClickListener;
 import com.groupagendas.groupagenda.R;
+import com.groupagendas.groupagenda.account.AccountProvider.AMetaData;
+import com.groupagendas.groupagenda.data.CalendarSettings;
 import com.groupagendas.groupagenda.events.Event;
+import com.groupagendas.groupagenda.utils.Utils;
 
 public class AgendaDayAdapter extends AbstractAdapter<Event> {
 	boolean showTime = false;
+	SimpleDateFormat hoursFormatter;
 	
 	public AgendaDayAdapter(Context context, List<Event> list) {
-		super(context, list);
+		this(context, list, true);
 	}
 	public AgendaDayAdapter(Context context, List<Event> list, boolean showTime) {
 		super(context, list);
 		this.showTime = showTime;
+		
+		if (CalendarSettings.isUsing_AM_PM()){
+			hoursFormatter = new SimpleDateFormat(getContext().getString(R.string.hour_event_view_time_format_AMPM));
+		}else{
+			hoursFormatter = new SimpleDateFormat(getContext().getString(R.string.hour_event_view_time_format));
+		}
 	}
 
 	@Override
@@ -32,11 +44,20 @@ public class AgendaDayAdapter extends AbstractAdapter<Event> {
         }
 
 		final Event event = list.get(i);
-		TextView text = (TextView) (view.findViewById(R.id.agenda_entry_title_placeholder));
-		String title = "";
-	
+		TextView text = (TextView) (view.findViewById(R.id.agenda_entry_title_placeholder));	
 		text.setText(event.title);
-		text.setOnClickListener(new EventActivityOnClickListener(context, event));
+		
+		TextView timeText = (TextView) (view.findViewById(R.id.agenda_entry_time_placeholder));
+		if (showTime) {
+			timeText.setVisibility(View.VISIBLE);
+			timeText.setText(hoursFormatter.format(event.startCalendar.getTime()));
+			
+		}else{
+			timeText.setVisibility(View.GONE);
+		}
+		
+		
+		view.setOnClickListener(new EventActivityOnClickListener(context, event));
 		
 		ImageView bubble = (ImageView) view.findViewById(R.id.agenda_entry_icon_placeholder);
 		

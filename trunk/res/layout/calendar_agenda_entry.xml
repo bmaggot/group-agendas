@@ -15,6 +15,16 @@
         android:layout_marginTop="3dp"
         android:layout_marginBottom="3dp"
         android:src="@null" />
+    
+	<TextView
+        android:id="@+id/agenda_entry_time_placeholder"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_vertical|left"
+        android:paddingLeft="5dp"
+        android:textColor="@color/black"
+        android:textSize="10dp"
+        android:textStyle="bold" />
 
     <TextView
         android:id="@+id/agenda_entry_title_placeholder"
