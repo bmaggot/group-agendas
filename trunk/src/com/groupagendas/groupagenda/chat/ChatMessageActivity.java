@@ -55,12 +55,7 @@ public class ChatMessageActivity extends Activity {
 		} catch (ExecutionException e) {
 			e.printStackTrace();
 		}
-		for (ChatMessageObject cmo : Data.getChatMessages()) {
-			if (cmo.eventId == event_id) {
-				chatMessages.add(cmo);
-			}
-		}
-		adapter = new ChatMessageAdapter(this, chatMessages);
+		adapter = new ChatMessageAdapter(this, Data.getChatMessages());
 		ListView chat_message_list = (ListView) findViewById(R.id.chat_message_list);
 		chat_message_list.setAdapter(adapter);
 		adapter.notifyDataSetChanged();
@@ -80,7 +75,6 @@ public class ChatMessageActivity extends Activity {
 				new PostChatMessage().execute(executePostArray);
 				Object[] executeArray = { event_id, null };
 				new GetChatMessages().execute(executeArray);
-				onBackPressed();
 			}
 		});
 	}
@@ -155,6 +149,13 @@ public class ChatMessageActivity extends Activity {
 			}
 			return null;
 		}
+		
+		@Override
+		protected void onPostExecute(Void result){
+			if(adapter != null){
+				adapter.notifyDataSetChanged();
+			}
+		}
 
 	}
 
@@ -188,15 +189,6 @@ public class ChatMessageActivity extends Activity {
 							JSONObject object = new JSONObject(resp);
 							boolean success = object.getBoolean("success");
 							if (success) {
-								Object[] executeArray = { event_id, null };
-								try {
-									new GetChatMessages().execute(executeArray).get();
-								} catch (InterruptedException e) {
-									e.printStackTrace();
-								} catch (ExecutionException e) {
-									e.printStackTrace();
-								}
-								System.out.println("Meesage posted");
 							}
 						}
 					}
@@ -210,6 +202,5 @@ public class ChatMessageActivity extends Activity {
 			}
 			return null;
 		}
-
 	}
 }
