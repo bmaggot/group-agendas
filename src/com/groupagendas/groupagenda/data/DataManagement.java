@@ -2514,7 +2514,7 @@ public class DataManagement {
 		Calendar event_end = null;
 		Calendar tmp_event_start = null;
 		for (Event event : events) {
-			if (!event.my_time_end.equals("null") && !event.my_time_start.equals("null")) {
+			if ((event.my_time_end != null && event.my_time_start != null) && !event.my_time_end.equals("null") && !event.my_time_start.equals("null")) {
 				event_start = Utils.stringToCalendar(event.my_time_start, event.timezone, SERVER_TIMESTAMP_FORMAT);
 				event_end = Utils.stringToCalendar(event.my_time_end, event.timezone, SERVER_TIMESTAMP_FORMAT);
 				tmp_event_start = (Calendar) event_start.clone();
