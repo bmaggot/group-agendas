@@ -24,6 +24,7 @@ public class MiniMonthView extends AbstractCalendarView {
 	
 	private TableLayout miniMonthTable;
 
+	private boolean showWeekTitle = false;
 
 
 
@@ -64,7 +65,14 @@ public class MiniMonthView extends AbstractCalendarView {
 		LinearLayout bottomBar = (LinearLayout)getTopPanelBottomLine().getChildAt(0);
 		bottomBar.removeAllViews();
 		
-		TextView entry = new TextView(getContext());
+		TextView entry;
+		if (showWeekTitle) {
+			entry = (TextView) mInflater.inflate(
+					R.layout.calendar_top_bar_bottomline_entry, null);
+			entry.setText(R.string.week_title);
+			entry.setPadding(convertDPtoPX(1), 0, 0, 0);
+			bottomBar.addView(entry);
+		}
 		Calendar tmp = (Calendar) firstShownDate.clone();
 //		add view for every day
 		
@@ -80,6 +88,7 @@ public class MiniMonthView extends AbstractCalendarView {
 
 	}
 
+	
 	@Override
 	public void goPrev() {
 		int LastMonthWeeksCount = selectedDate.getActualMaximum(Calendar.WEEK_OF_MONTH);
@@ -150,7 +159,7 @@ public class MiniMonthView extends AbstractCalendarView {
 			android.widget.TableRow.LayoutParams cellLp) {
 		LinearLayout dayFrame = (LinearLayout) mInflater.inflate(R.layout.calendar_mm_day_container, null);
 		row.addView(dayFrame, cellLp);
-		daysList.add(new AgendaFrame(dayFrame, getContext()));
+		daysList.add(new AgendaFrame(dayFrame, getContext(), false));
 		
 	}
 	
