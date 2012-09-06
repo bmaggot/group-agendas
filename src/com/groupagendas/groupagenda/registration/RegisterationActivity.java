@@ -21,6 +21,7 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
+import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.Spinner;
 
@@ -31,6 +32,7 @@ import com.groupagendas.groupagenda.error.report.Reporter;
 import com.groupagendas.groupagenda.timezone.TimezoneManager;
 import com.groupagendas.groupagenda.utils.CountryManager;
 import com.groupagendas.groupagenda.utils.PrefixReceiver;
+import com.groupagendas.groupagenda.utils.SearchDialog;
 import com.groupagendas.groupagenda.utils.Utils;
 
 public class RegisterationActivity extends Activity {
@@ -106,21 +108,30 @@ public class RegisterationActivity extends Activity {
 		timezoneSpinner = (Spinner) findViewById(R.id.timezoneSpinner);
 		
 		countrySpinner = (Spinner) findViewById(R.id.countrySpinner);
-		ArrayAdapter<String> adapterCountry = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_item,
-				CountryManager.getCountries(this));
+		final ArrayAdapter<String> adapterCountry = new ArrayAdapter<String>(this, R.layout.search_dialog_item, CountryManager.getCountries(this));
 		adapterCountry.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
 		countrySpinner.setAdapter(adapterCountry);
 		countryArray = CountryManager.getCountryValues(this);
 		
 		int myCountryPos = getMyCountry(countryArray, localCountry);
 		countrySpinner.setSelection(myCountryPos);
+		
+		LinearLayout countrySpinnerBlock = (LinearLayout) findViewById(R.id.countrySpinnerBlock); 
+		countrySpinnerBlock.setOnClickListener(new OnClickListener() {
+			
+			@Override
+			public void onClick(View arg0) {
+				Dialog dia = new SearchDialog(RegisterationActivity.this, R.style.yearview_eventlist_title, adapterCountry, countrySpinner);
+				dia.show();				
+			}
+		});
+		
 		countrySpinner.setOnItemSelectedListener(new OnItemSelectedListener() {
 
 			@Override
 			public void onItemSelected(AdapterView<?> arg0, View arg1, int pos, long arg3) {
 				if (pos == 0) {
-					ArrayAdapter<String> adapterTimezone = new ArrayAdapter<String>(RegisterationActivity.this,
-							android.R.layout.simple_spinner_item, new String[0]);
+					ArrayAdapter<String> adapterTimezone = new ArrayAdapter<String>(RegisterationActivity.this,  R.layout.search_dialog_item, new String[0]);
 					adapterTimezone.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
 					timezoneSpinner.setAdapter(adapterTimezone);
 					timezoneSpinner.setEnabled(false);
@@ -128,8 +139,7 @@ public class RegisterationActivity extends Activity {
 				} else {
 					timezoneSpinner.setEnabled(true);
 					String[] timezoneLabels = TimezoneManager.getTimezones(RegisterationActivity.this, countryArray[pos]);
-					ArrayAdapter<String> adapterTimezone = new ArrayAdapter<String>(RegisterationActivity.this,
-							android.R.layout.simple_spinner_item, timezoneLabels);
+					ArrayAdapter<String> adapterTimezone = new ArrayAdapter<String>(RegisterationActivity.this,  R.layout.search_dialog_item, timezoneLabels);
 					adapterTimezone.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
 					timezoneSpinner.setAdapter(adapterTimezone);
 
