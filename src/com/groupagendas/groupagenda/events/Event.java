@@ -117,42 +117,5 @@ public class Event extends Object{
 	}
 	
 
-//	public Calendar getStartTimeInUserTimezone(String userLocale){
-//		Calendar ret;
-//		if (userLocale.equalsIgnoreCase(timezone)){
-//			ret = startCalendar;
-//		}
-//		else{
-//			ret = (Calendar) startCalendar.clone();
-//			ret.setTimeZone(TimeZone.getTimeZone(this.timezone));
-//			Calendar remoteTimeStart = Calendar.getInstance(TimeZone.getTimeZone(this.timezone));
-//			remoteTimeStart.set(startCalendar.get(Calendar.YEAR), startCalendar.get(Calendar.MONTH),
-//					startCalendar.get(Calendar.DATE), startCalendar.get(Calendar.HOUR_OF_DAY), startCalendar.get(Calendar.MINUTE), startCalendar.get(Calendar.SECOND));
-//			remoteTimeStart.clear(Calendar.MILLISECOND);
-//			ret.setTimeInMillis(remoteTimeStart.getTimeInMillis());	
-//		}
-//		 
-//		return ret;
-//	}
-//	
-//	public void setLocalCalendars() {
-//		localStartCalendar = (Calendar)startCalendar.clone();
-//		localEndCalendar = (Calendar)endCalendar.clone();
-//		
-//		Calendar remoteTimeStart = Calendar.getInstance(TimeZone.getTimeZone(this.timezone));
-//		remoteTimeStart.set(startCalendar.get(Calendar.YEAR), startCalendar.get(Calendar.MONTH),
-//				startCalendar.get(Calendar.DATE), startCalendar.get(Calendar.HOUR_OF_DAY), startCalendar.get(Calendar.MINUTE), startCalendar.get(Calendar.SECOND));
-//		remoteTimeStart.clear(Calendar.MILLISECOND);
-//		
-//		Calendar remoteTimeEnd = Calendar.getInstance(TimeZone.getTimeZone(this.timezone));
-//		remoteTimeEnd.set(endCalendar.get(Calendar.YEAR), endCalendar.get(Calendar.MONTH),
-//				endCalendar.get(Calendar.DATE), endCalendar.get(Calendar.HOUR_OF_DAY), endCalendar.get(Calendar.MINUTE), endCalendar.get(Calendar.SECOND));
-//		remoteTimeEnd.clear(Calendar.MILLISECOND);
-//		
-//		localStartCalendar.setTimeInMillis(remoteTimeStart.getTimeInMillis());
-//		localEndCalendar.setTimeInMillis(remoteTimeEnd.getTimeInMillis());
-//		
-//	}
-	
 	
 }
