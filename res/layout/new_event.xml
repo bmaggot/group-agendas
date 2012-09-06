@@ -199,25 +199,38 @@
                     android:textColor="@android:color/black" />
             </LinearLayout>
 
-            <LinearLayout
+            <LinearLayout android:background="@drawable/event_invite_people_button_notalone_i"
                 android:id="@+id/countrySpinnerBlock"
+                android:paddingTop="5dp"
+                android:paddingRight="10dp"
+                android:paddingBottom="5dp"
+                android:paddingLeft="10dp"
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal" >
 
                 <TextView
+                    android:layout_gravity="center_vertical"
                     android:layout_width="80dp"
                     android:layout_height="wrap_content"
                     android:text="@string/country"
+                    android:textStyle="bold"
                     android:textColor="@android:color/black" />
 
-                <Spinner
+                <Spinner android:background="#00000000"
+                    android:clickable="false"
+                    android:layout_gravity="center_vertical"
                     android:id="@+id/countrySpinner"
-                    android:layout_width="fill_parent"
-                    android:layout_height="wrap_content" />
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textColor="@color/black" />
             </LinearLayout>
 
-            <LinearLayout
+            <LinearLayout android:background="@drawable/event_invited_entry_notalone_background"
+                android:paddingTop="5dp"
+                android:paddingRight="10dp"
+                android:paddingBottom="5dp"
+                android:paddingLeft="10dp"
                 android:id="@+id/cityViewBlock"
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
@@ -227,16 +240,22 @@
                     android:layout_width="80dp"
                     android:layout_height="wrap_content"
                     android:text="@string/city"
+                    android:textStyle="bold"
                     android:textColor="@android:color/black" />
 
-                <EditText
+                <EditText android:background="#00000000"
                     android:id="@+id/cityView"
                     android:layout_width="fill_parent"
+                    android:textColor="@color/black"
                     android:layout_height="wrap_content"
                     android:inputType="text" />
             </LinearLayout>
 
-            <LinearLayout
+            <LinearLayout android:background="@drawable/event_invited_entry_notalone_background"
+                android:paddingTop="5dp"
+                android:paddingRight="10dp"
+                android:paddingBottom="5dp"
+                android:paddingLeft="10dp"
                 android:id="@+id/streetViewBlock"
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
@@ -246,16 +265,22 @@
                     android:layout_width="80dp"
                     android:layout_height="wrap_content"
                     android:text="@string/street"
+                    android:textStyle="bold"
                     android:textColor="@android:color/black" />
 
-                <EditText
+                <EditText android:background="#00000000"
                     android:id="@+id/streetView"
                     android:layout_width="fill_parent"
                     android:layout_height="wrap_content"
+                    android:textColor="@color/black"
                     android:inputType="text" />
             </LinearLayout>
 
-            <LinearLayout
+            <LinearLayout android:background="@drawable/event_invited_entry_notalone_background"
+                android:paddingTop="5dp"
+                android:paddingRight="10dp"
+                android:paddingBottom="5dp"
+                android:paddingLeft="10dp"
                 android:id="@+id/zipViewBlock"
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
@@ -265,16 +290,22 @@
                     android:layout_width="80dp"
                     android:layout_height="wrap_content"
                     android:text="@string/zip"
+                    android:textStyle="bold"
                     android:textColor="@android:color/black" />
 
-                <EditText
+                <EditText android:background="#00000000"
                     android:id="@+id/zipView"
                     android:layout_width="fill_parent"
                     android:layout_height="wrap_content"
+                    android:textColor="@color/black"
                     android:inputType="text" />
             </LinearLayout>
 
-            <LinearLayout
+            <LinearLayout android:background="@drawable/event_invited_entry_last_background"
+                android:paddingTop="5dp"
+                android:paddingRight="10dp"
+                android:paddingBottom="5dp"
+                android:paddingLeft="10dp"
                 android:id="@+id/timezoneSpinnerBlock"
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
@@ -284,12 +315,14 @@
                     android:layout_width="80dp"
                     android:layout_height="wrap_content"
                     android:text="@string/timezone"
+                    android:textStyle="bold"
                     android:textColor="@android:color/black" />
 
-                <Spinner
+                <Spinner android:background="#00000000"
                     android:id="@+id/timezoneSpinner"
                     android:layout_width="fill_parent"
-                    android:layout_height="wrap_content" />
+                    android:layout_height="wrap_content"
+                    android:textColor="@color/black" />
             </LinearLayout>
 
             <LinearLayout
