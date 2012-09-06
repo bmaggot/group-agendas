@@ -66,15 +66,7 @@ public abstract class AbstractCalendarView extends LinearLayout {
 	protected abstract void setupSelectedDate(Calendar initializationDate); //method to set up date that will be used for calendar
 	public abstract Calendar getDateToResume(); //returns date that should be saved in Activity instance state
 	
-	/**
-	 * method returns pixel value of given dp dimension for current device
-	 * @author justinas.marcinka@gmail.com
-	 * @param DP dimension in DP
-	 * @return dimension in pixels to particular device
-	 */
-	protected int convertDPtoPX(int DP) {
-		return Math.round(DP * densityFactor);
-	}
+
 	
 	/**
 	 * @return puts Top Panel Bottom Line view into frame. Child classes which need it, must override this method;
