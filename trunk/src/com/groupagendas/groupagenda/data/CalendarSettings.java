@@ -44,6 +44,8 @@ public class CalendarSettings {
 		if (acc != null) {
 			if (bool){
 				acc.setting_ampm = 1;
+			}else{
+				acc.setting_ampm = 0;
 			}
 		}
 	}	
@@ -110,6 +112,15 @@ public class CalendarSettings {
 	public static void setDefaultView(String viewState) {
 		if (Data.getAccount() != null) {
 			Data.getAccount().setting_default_view = viewState;
+		}
+	}
+	
+	/**
+	 * Sets default view with one defined in CalendarSettings.DEFAULT_SETTING_DEFAULT_VIEW 
+	 */
+	public static void setDefaultView() {
+		if (Data.getAccount() != null) {
+			Data.getAccount().setting_default_view = DEFAULT_SETTING_DEFAULT_VIEW;
 		}
 	}
 	
