@@ -77,7 +77,7 @@ public class GmailDialog extends Dialog {
 			public void onClick(View v) {
 				clearCredentials();
 				Data.credentialsClear = true;
-				hide();
+				dismiss();
 			}
 		});
 
@@ -94,7 +94,7 @@ public class GmailDialog extends Dialog {
 				Data.importStats = getContacts();
 				Toast.makeText(GmailDialog.this.context, R.string.contact_import_dialog_finished_gimp, Toast.LENGTH_SHORT);
 				Data.returnedFromContactImport = true;
-				hide();
+				dismiss();
 			}
 		});
 	}
@@ -351,14 +351,14 @@ public class GmailDialog extends Dialog {
 			if (Data.returnedFromContactAuth) {
 				clearCredentials();
 				Data.credentialsClear = true;
-				hide();
+				dismiss();
 			} else if (Data.returnedFromContactImport) {
 				Data.returnedFromContactImport = true;
 				clearCredentials();
 				Data.credentialsClear = true;
-				hide();
+				dismiss();
 			} else {
-				hide();
+				dismiss();
 			}
 		}
 		return true;
