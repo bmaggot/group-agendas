@@ -12,11 +12,8 @@ import android.util.Log;
 import com.google.android.c2dm.C2DMBaseReceiver;
 import com.groupagendas.groupagenda.data.DataManagement;
 import com.groupagendas.groupagenda.error.report.Reporter;
-import com.groupagendas.groupagenda.events.EventActivity;
 import com.groupagendas.groupagenda.events.EventsActivity;
-import com.groupagendas.groupagenda.timezone.TimezoneProvider;
 import com.groupagendas.groupagenda.utils.AgendaUtils;
-import com.groupagendas.groupagenda.utils.DBUtils;
 
 public class C2DMReceiver extends C2DMBaseReceiver {
 	public C2DMReceiver() {

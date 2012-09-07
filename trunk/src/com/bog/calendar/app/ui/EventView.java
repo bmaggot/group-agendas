@@ -22,8 +22,10 @@ public class EventView extends TextView {
     private float minimalEventHeight;
     private float currentEventHeight;
     private int textColor = Color.WHITE;
-    private OnClickListener clickListener;
-    private int xPos = 0;
+    @SuppressWarnings("unused")
+	private OnClickListener clickListener;
+    @SuppressWarnings("unused")
+	private int xPos = 0;
     private int yPos = 0;
     private int viewPadding = 7;
 

@@ -15,7 +15,8 @@ import com.groupagendas.groupagenda.R;
 public class EventGroupView extends LinearLayout {
     EventsGroup parentEventsGroup;
     private float minimalGroupHeight;
-    private float currentGroupHeight;
+    @SuppressWarnings("unused")
+	private float currentGroupHeight;
 
     public EventGroupView(Context context) {
         super(context);

@@ -2,11 +2,7 @@ package com.groupagendas.groupagenda.data;
 
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.HashMap;
 import java.util.TreeMap;
-
-import org.apache.http.entity.mime.MultipartEntity;
-import org.json.JSONObject;
 
 import android.content.Context;
 import android.content.SharedPreferences;
@@ -345,8 +341,9 @@ public class Data {
 		return needToClearData;
 	}
 
+
 	public void setNeedToClearData(boolean needToClearData) {
-		this.needToClearData = needToClearData;
+		Data.needToClearData = needToClearData;
 	}
 
 	public static void save() {

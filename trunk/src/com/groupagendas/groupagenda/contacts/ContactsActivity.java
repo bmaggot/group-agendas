@@ -101,7 +101,7 @@ public class ContactsActivity extends ListActivity implements OnCheckedChangeLis
 	public void onWindowFocusChanged(boolean hasFocus) {
 		super.onWindowFocusChanged(hasFocus);
 
-		final ListView listView = (ListView) findViewById(R.id.list);
+
 		LinearLayout sideIndex = (LinearLayout) findViewById(R.id.sideIndex);
 		sideIndexHeight = sideIndex.getHeight();
 		sideIndex.removeAllViews();

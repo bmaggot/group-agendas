@@ -1,16 +1,14 @@
 package com.groupagendas.groupagenda.utils;
 
-import com.groupagendas.groupagenda.R;
-import com.groupagendas.groupagenda.events.Event;
-
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.RectF;
-import android.graphics.drawable.BitmapDrawable;
-import android.widget.ImageView;
+
+import com.groupagendas.groupagenda.R;
+import com.groupagendas.groupagenda.events.Event;
 
 public class DrawingUtils {
 	

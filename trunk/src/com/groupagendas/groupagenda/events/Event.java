@@ -2,11 +2,7 @@ package com.groupagendas.groupagenda.events;
 
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.TimeZone;
 
-import com.groupagendas.groupagenda.R;
-
-import android.content.ContentProviderResult;
 import android.content.Context;
 
 

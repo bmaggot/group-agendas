@@ -12,11 +12,8 @@ import android.widget.ListView;
 import com.groupagendas.groupagenda.R;
 import com.groupagendas.groupagenda.calendar.adapters.ChatThreadAdapter;
 import com.groupagendas.groupagenda.data.Data;
-import com.groupagendas.groupagenda.data.DataManagement;
-import com.groupagendas.groupagenda.events.EventActivity;
 
 public class ChatThreadActivity extends Activity {
-	private DataManagement dm;
 	ChatThreadAdapter adapter;
 
 	@Override
@@ -25,7 +22,6 @@ public class ChatThreadActivity extends Activity {
 		setContentView(R.layout.chat);
 		LinearLayout chatInputBlock = (LinearLayout) findViewById(R.id.chat_inputBlock);
 		chatInputBlock.setVisibility(View.INVISIBLE);
-		dm = DataManagement.getInstance(this);
 		adapter = new ChatThreadAdapter(this, Data.getChatThreads());
 		ListView chat_message_list = (ListView) findViewById(R.id.chat_message_list);
 		chat_message_list.setOnItemClickListener(new OnItemClickListener() {

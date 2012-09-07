@@ -4,6 +4,18 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 
+import android.content.Context;
+import android.graphics.Color;
+import android.graphics.drawable.GradientDrawable;
+import android.util.AttributeSet;
+import android.view.GestureDetector;
+import android.view.MotionEvent;
+import android.view.View;
+import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
+import android.widget.ScrollView;
+import android.widget.TextView;
+
 import com.groupagendas.groupagenda.EventActivityOnClickListener;
 import com.groupagendas.groupagenda.R;
 import com.groupagendas.groupagenda.calendar.day.DayInstance;
@@ -12,23 +24,7 @@ import com.groupagendas.groupagenda.calendar.day.HourEventsTimetable;
 import com.groupagendas.groupagenda.calendar.week.VerticalDaysSeparator;
 import com.groupagendas.groupagenda.calendar.week.WeekDayTouchListener;
 import com.groupagendas.groupagenda.calendar.week.WeekInstance;
-import com.groupagendas.groupagenda.data.DataManagement;
 import com.groupagendas.groupagenda.events.Event;
-
-import android.app.Activity;
-import android.content.Context;
-import android.graphics.Color;
-import android.graphics.drawable.GradientDrawable;
-import android.util.AttributeSet;
-import android.util.Log;
-import android.view.GestureDetector;
-import android.view.MotionEvent;
-import android.view.View;
-import android.widget.LinearLayout;
-import android.widget.RelativeLayout;
-import android.widget.ScrollView;
-import android.widget.TextView;
-import android.widget.LinearLayout.LayoutParams;
 
 
 public class DayWeekView extends AbstractCalendarView {

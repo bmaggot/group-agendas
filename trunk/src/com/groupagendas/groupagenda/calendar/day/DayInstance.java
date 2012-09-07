@@ -8,7 +8,6 @@ import java.util.List;
 import android.app.Activity;
 import android.content.Context;
 
-import com.groupagendas.groupagenda.data.CalendarSettings;
 import com.groupagendas.groupagenda.data.Data;
 import com.groupagendas.groupagenda.data.DataManagement;
 import com.groupagendas.groupagenda.events.Event;

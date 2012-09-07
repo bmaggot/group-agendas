@@ -5,7 +5,6 @@ import java.util.Calendar;
 
 import android.content.Context;
 
-import com.groupagendas.groupagenda.data.CalendarSettings;
 import com.groupagendas.groupagenda.data.DataManagement;
 import com.groupagendas.groupagenda.events.Event;
 
