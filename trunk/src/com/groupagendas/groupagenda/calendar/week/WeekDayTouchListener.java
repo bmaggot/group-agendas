@@ -1,20 +1,17 @@
 package com.groupagendas.groupagenda.calendar.week;
 
-import java.text.SimpleDateFormat;
 import java.util.Calendar;
-import java.util.Currency;
-
-import com.groupagendas.groupagenda.calendar.AbstractCalendarView;
-import com.groupagendas.groupagenda.calendar.DayWeekView;
-import com.groupagendas.groupagenda.data.CalendarSettings;
-import com.groupagendas.groupagenda.data.DataManagement;
-import com.groupagendas.groupagenda.events.NewEventActivity;
-import com.groupagendas.groupagenda.utils.Utils;
 
 import android.app.Activity;
 import android.content.Intent;
-import android.view.MotionEvent;
 import android.view.GestureDetector.SimpleOnGestureListener;
+import android.view.MotionEvent;
+
+import com.groupagendas.groupagenda.calendar.AbstractCalendarView;
+import com.groupagendas.groupagenda.calendar.DayWeekView;
+import com.groupagendas.groupagenda.data.DataManagement;
+import com.groupagendas.groupagenda.events.NewEventActivity;
+import com.groupagendas.groupagenda.utils.Utils;
 
 public class WeekDayTouchListener extends SimpleOnGestureListener {
 

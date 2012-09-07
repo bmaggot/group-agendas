@@ -17,7 +17,8 @@ import com.bog.calendar.app.model.EventsHelper;
 import com.groupagendas.groupagenda.R;
 
 public class MonthCell {
-    private static final String TAG = "Cell";
+    @SuppressWarnings("unused")
+	private static final String TAG = "Cell";
     protected Context context;
     protected Rect mBound = null;
     protected int mYear = 0;

@@ -36,7 +36,6 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.groupagendas.groupagenda.R;
-import com.groupagendas.groupagenda.account.Account;
 import com.groupagendas.groupagenda.contacts.Contact;
 import com.groupagendas.groupagenda.contacts.ContactsActivity;
 import com.groupagendas.groupagenda.data.Data;
@@ -737,7 +736,6 @@ public class NewEventActivity extends Activity {
 
 			cv.put(EventsProvider.EMetaData.EventsMetaData.TYPE, temp);
 
-			Account user = dm.getAccount();
 
 			if (startCalendar.getTime().before(endCalendar.getTime())) {
 
