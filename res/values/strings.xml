@@ -217,9 +217,11 @@
     <string name="contact_birthday">birthday</string>
     <string name="chat_send">Send</string>
     <string name="account_icon_placeholder">Account\'s icon placeholder</string>
-    <string name="do_you_want_to_save_contact">Do You like to save contact to Your list?</string>
+    <string name="do_you_want_to_save_contact">Do You like to save</string>
+    <string name="to_your_list">to Your contact list?</string>
     <string name="invite_and_request_details">Yes and request details.</string>
     <string name="invite_and_dont_request_details">Yes don\'t request details.</string>
     <string name="dont_invite">No thank You.</string>
+    <string name="add_to_cantact_list">Add this contact.</string>
     
 </resources>

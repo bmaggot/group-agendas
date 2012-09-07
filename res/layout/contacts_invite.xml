@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:layout_gravity="center"
+    android:gravity="center_horizontal"
+    android:orientation="vertical" >
+
+    <Button
+        android:id="@+id/contact_invite_and_request"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginLeft="10dp"
+        android:layout_marginRight="10dp"
+        android:layout_marginTop="5dp"
+        android:background="@drawable/event_invite_people_button_standalone"
+        android:padding="5dp"
+        android:text="@string/invite_and_request_details"
+        android:textColor="@color/black"
+        android:textSize="15dp"
+        android:textStyle="bold" />
+
+    <Button
+        android:id="@+id/contact_only_invite"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginLeft="10dp"
+        android:layout_marginRight="10dp"
+        android:layout_marginTop="5dp"
+        android:background="@drawable/event_invite_people_button_standalone"
+        android:padding="5dp"
+        android:text="@string/invite_and_dont_request_details"
+        android:textColor="@color/black"
+        android:textSize="15dp"
+        android:textStyle="bold" />
+
+    <Button
+        android:id="@+id/contact_dont_invite"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginLeft="10dp"
+        android:layout_marginRight="10dp"
+        android:layout_marginTop="5dp"
+        android:background="@drawable/event_invite_people_button_standalone"
+        android:padding="5dp"
+        android:text="@string/dont_invite"
+        android:textColor="@color/black"
+        android:textSize="15dp"
+        android:textStyle="bold" />
+
+</LinearLayout>
