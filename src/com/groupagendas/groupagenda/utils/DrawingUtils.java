@@ -1,5 +1,6 @@
 package com.groupagendas.groupagenda.utils;
 
+import com.groupagendas.groupagenda.R;
 import com.groupagendas.groupagenda.events.Event;
 
 import android.content.Context;
@@ -12,13 +13,7 @@ import android.graphics.drawable.BitmapDrawable;
 import android.widget.ImageView;
 
 public class DrawingUtils {
-private static int ROUND_RECTANGLE_X_RADIUS_DP = 2;	
-private static int ROUND_RECTANGLE_Y_RADIUS_DP = 1;	
-
-private static int ROUND_RECTANGLE_X_RADIUS_PX = 0;	
-private static int ROUND_RECTANGLE_Y_RADIUS_PX = 0;	
-
-public static float densityFactor = 0;
+	
 
 /**
  * method returns pixel value of given dp dimension for current device
@@ -27,32 +22,44 @@ public static float densityFactor = 0;
  * @return dimension in pixels to particular device
  */
 public static int convertDPtoPX(Context context, int DP) {
-	if (densityFactor == 0) densityFactor = context.getResources().getDisplayMetrics().density;
-	return Math.round(DP * densityFactor);
+	return Math.round(DP * context.getResources().getDisplayMetrics().density);
 }
 
-public static int getRectangleRadiusX(Context context) {
-	if (ROUND_RECTANGLE_X_RADIUS_PX == 0) ROUND_RECTANGLE_X_RADIUS_PX = convertDPtoPX(context, ROUND_RECTANGLE_X_RADIUS_DP);
-	return ROUND_RECTANGLE_X_RADIUS_PX;
-}
-
-	
-public static ImageView drawColourRectangleForEvent(Context context, int widthPX, int heightPX, Event event ){	
-		ImageView img = new ImageView(context);
-		img.setBackgroundDrawable(new BitmapDrawable(getColourEventRectBitmapDrawable(context, widthPX, heightPX, event)));		
-		return img;	
-	}
-public static Bitmap getColourEventRectBitmapDrawable(Context context, int widthPX, int heightPX, Event event){
-		Bitmap bmp = Bitmap.createBitmap(widthPX, heightPX,
+	/**
+	 * Draws an round rectangle based on event color. It is accessed via other methods which set various size parameters.
+	 * @author justinas.marcinka@gmail.com
+	 * @param context - method context.
+	 * @param widthPX - rectangle width.
+	 * @param heightPX - rectangle height.
+	 * @param roundRadius - corners round radius for round rectangle.
+	 * @param event - event, for which this rectangle is drawn.
+	 * @return Bitmap that represents this rectangle.
+	 */
+private static Bitmap getRoundRectBitmap(Context context, int widthPX, int heightPX, int roundRadius, Event event){
+		
+		int shadowRadius = convertDPtoPX(context, 2);
+		int shadowOffset = convertDPtoPX(context, Math.round(heightPX * 0.1f)); 
+		
+		
+		Bitmap bmp = Bitmap.createBitmap(widthPX + shadowRadius, heightPX + shadowRadius,
 				Bitmap.Config.ARGB_8888);
 		Canvas c = new Canvas(bmp);
 		Paint p = new Paint();
 		p.setColor(Color.parseColor("#" + event.getColor()));
 		
+		p.setShadowLayer(shadowRadius, shadowOffset, shadowOffset, context.getResources().getColor(R.color.darker_gray));
 		final RectF rect = new RectF();
 		rect.set(0, 0, widthPX, heightPX);
-		c.drawRoundRect(rect, getRectangleRadiusX(context),
-				getRectangleRadiusX(context), p);
+		c.drawRoundRect(rect, roundRadius,
+				roundRadius, p);
 		return bmp;
 }
+
+public static Bitmap getEventRoundRectangle (Context context, int sizeDP, Event event){
+	int heightPX = convertDPtoPX(context, sizeDP);
+	int widthPX = heightPX / 2;
+	int roundRadius = Math.round(heightPX * 0.2f);
+	return getRoundRectBitmap(context, widthPX, heightPX, roundRadius, event);
+}
+
 }

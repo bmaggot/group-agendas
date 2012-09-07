@@ -24,8 +24,9 @@ import com.groupagendas.groupagenda.utils.Utils;
 public class AgendaDayAdapter extends AbstractAdapter<Event> {
 	boolean showTime = false;
 	SimpleDateFormat hoursFormatter;
-	private int bubbleHeight = 10;
-	private int bubbleWidth = 5; //size in DP, its converted to pixels later
+	
+	private int bubbleHeightDP = 15;
+	private int colouredRectangleMarginsDP = 2;
 	
 	public AgendaDayAdapter(Context context, List<Event> list) {
 		this(context, list, true);
@@ -39,9 +40,6 @@ public class AgendaDayAdapter extends AbstractAdapter<Event> {
 		}else{
 			hoursFormatter = new SimpleDateFormat(getContext().getString(R.string.hour_event_view_time_format));
 		}
-		//converting bubble dimensions to pixels
-		bubbleHeight = DrawingUtils.convertDPtoPX(getContext(), bubbleHeight);
-		bubbleWidth = DrawingUtils.convertDPtoPX(getContext(), bubbleWidth);
 	}
 
 	@Override
@@ -68,9 +66,9 @@ public class AgendaDayAdapter extends AbstractAdapter<Event> {
 		
 		ImageView bubble = (ImageView) view.findViewById(R.id.agenda_entry_icon_placeholder);
 		
-		bubble.setBackgroundDrawable(new BitmapDrawable(DrawingUtils.getColourEventRectBitmapDrawable(getContext(), bubbleWidth, bubbleHeight, event)));
-		LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(bubbleWidth, bubbleHeight);
-		int margins = DrawingUtils.convertDPtoPX(getContext(), 2);
+		bubble.setBackgroundDrawable(new BitmapDrawable(DrawingUtils.getEventRoundRectangle(getContext(), bubbleHeightDP, event)));
+		LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
+		int margins = DrawingUtils.convertDPtoPX(getContext(), colouredRectangleMarginsDP );
 		params.setMargins(margins, margins, 0, 0);
 		bubble.setLayoutParams(params);
 //		bubble.setImageResource(event.getColorBubbleId(getContext()));
