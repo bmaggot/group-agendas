@@ -22,18 +22,18 @@ public class ChatMessageAdapter extends AbstractAdapter<ChatMessageObject> {
 		if (view == null) {
 			view = mInflater.inflate(R.layout.chat_message, null);
 		}
+
 		ChatMessageObject chatMessage = (ChatMessageObject) this.getItem(i);
-		if(!chatMessage.deleted){
-			TextView title = (TextView) view.findViewById(R.id.chat_message_body);
-			title.setText(chatMessage.message);
+		if (!chatMessage.deleted) {
+			TextView messageBody = (TextView) view.findViewById(R.id.chat_message_body);
+			messageBody.setText(chatMessage.message);
 			TextView chatTime = (TextView) view.findViewById(R.id.chat_message_time);
 			chatTime.setText(chatMessage.dateTime);
-			if(chatMessage.userId != Data.getAccount().user_id){
-//				LinearLayout.LayoutParams params = (LinearLayout.LayoutParams) view.getLayoutParams();
-//				params.leftMargin += 100;
-//				view.setLayoutParams(params);
+			if (chatMessage.userId == Data.getAccount().user_id) {
+				view.findViewById(R.id.kubiks).setVisibility(View.VISIBLE);
 			}
 		}
+		
 		return view;
 	}
 
