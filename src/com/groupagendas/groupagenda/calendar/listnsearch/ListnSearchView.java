@@ -8,11 +8,13 @@ import com.groupagendas.groupagenda.EventActivityOnClickListener;
 import com.groupagendas.groupagenda.R;
 import com.groupagendas.groupagenda.data.Data;
 import com.groupagendas.groupagenda.events.Event;
+import com.groupagendas.groupagenda.utils.DrawingUtils;
 import com.groupagendas.groupagenda.utils.Utils;
 
 
 import android.content.Context;
 import android.graphics.Color;
+import android.graphics.drawable.BitmapDrawable;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.AttributeSet;
@@ -204,11 +206,21 @@ private SectionListItem[] filterEvents (String filterString, SectionListItem[] e
 				if (currentItem.item instanceof Event){
 					Event event = (Event) currentItem.item;
 					ImageView bubble = (ImageView) view
+							.findViewById(R.id.listnsearch_entry_color_placeholder);
+
+					
+					bubble.setBackgroundDrawable(new BitmapDrawable(DrawingUtils.getEventRoundRectangle(getContext(), 15, event, true)));
+
+					ImageView icon = (ImageView) view
 							.findViewById(R.id.listnsearch_entry_icon_placeholder);
-
-					int imgID = event.getColorBubbleId(getContext());
-					bubble.setImageResource(imgID);
-
+					if (event.hasIcon()){
+						icon.setBackgroundResource(event.getIconId(getContext()));
+						icon.setVisibility(View.VISIBLE);
+					}else{
+						icon.setVisibility(GONE);
+					}
+					
+					
 					view.setOnClickListener(new EventActivityOnClickListener(getContext(), event));}
 			}
 			
