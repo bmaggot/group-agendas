@@ -2,13 +2,11 @@ package com.groupagendas.groupagenda.calendar.week;
 
 import java.util.Calendar;
 
-import com.groupagendas.groupagenda.calendar.day.DayInstance;
-import com.groupagendas.groupagenda.data.Data;
-import com.groupagendas.groupagenda.data.DataManagement;
-import com.groupagendas.groupagenda.utils.Utils;
-
 import android.app.Activity;
 import android.content.Context;
+
+import com.groupagendas.groupagenda.calendar.day.DayInstance;
+import com.groupagendas.groupagenda.utils.Utils;
 
 public class WeekInstance {
 	

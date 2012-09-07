@@ -25,6 +25,7 @@ import android.util.Log;
 
 public class ConnectReceiver extends BroadcastReceiver {
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public void onReceive(Context context, Intent intent) {
 		ConnectivityManager conn = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);

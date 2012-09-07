@@ -2,41 +2,27 @@ package com.groupagendas.groupagenda.calendar.year;
 
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.HashMap;
 
-import android.app.Activity;
 import android.content.Context;
-import android.graphics.Color;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
 import android.view.View;
-import android.view.ViewGroup.LayoutParams;
-import android.view.ViewParent;
 import android.widget.LinearLayout;
-import android.widget.TableLayout;
-import android.widget.TableRow;
 import android.widget.TextView;
 
 import com.groupagendas.groupagenda.R;
 import com.groupagendas.groupagenda.calendar.AbstractCalendarView;
 import com.groupagendas.groupagenda.calendar.MonthCellState;
-import com.groupagendas.groupagenda.data.CalendarSettings;
-import com.groupagendas.groupagenda.data.Data;
 import com.groupagendas.groupagenda.utils.Utils;
 
 public class YearView extends AbstractCalendarView {
 
-	private static final int MonthsPerRow = 3;
+	
 	private static final int MonthsInYear = 12;
 	private static final int DAYS_PER_WEEK = 7;
-	private static final int WeeksPerMonth = 6;
 	
 	private LinearLayout year_Table;
-	private ArrayList<LinearLayout> monthFramesList;
 	private ArrayList<ArrayList<YearViewMonthInnerCell>>yearDaysMap = new ArrayList<ArrayList<YearViewMonthInnerCell>>();
-	private LayoutParams WeekCellParams = new LayoutParams(LayoutParams.FILL_PARENT, LayoutParams.FILL_PARENT, 1);
-	private Calendar today = Utils.createNewTodayCalendar();
-	private LinearLayout monthsMap[] = new LinearLayout[MonthsInYear];
 	private MonthInstance months[] = new MonthInstance[MonthsInYear];
 	
 

@@ -153,7 +153,8 @@ public class CalendarYearView extends FrameLayout {
     /**
      * The visible height of a week view.
      */
-    private int mBottomBuffer = 20;
+    @SuppressWarnings("unused")
+	private int mBottomBuffer = 20;
 
     /**
      * The number of shown weeks.

@@ -20,7 +20,6 @@ import android.os.AsyncTask;
 
 import com.groupagendas.groupagenda.data.Data;
 import com.groupagendas.groupagenda.error.report.Reporter;
-import com.groupagendas.groupagenda.registration.RegisterationActivity;
 
 public class PrefixReceiver extends AsyncTask <String, Void, String> {
 	

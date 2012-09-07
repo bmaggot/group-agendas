@@ -5,13 +5,8 @@ package com.groupagendas.groupagenda.calendar;
 
 import java.util.Calendar;
 
-import com.groupagendas.groupagenda.R;
-import com.groupagendas.groupagenda.data.CalendarSettings;
-import com.groupagendas.groupagenda.data.DataManagement;
-
 import android.app.Activity;
 import android.content.Context;
-import android.graphics.Path.FillType;
 import android.graphics.Rect;
 import android.util.AttributeSet;
 import android.view.GestureDetector;
@@ -19,12 +14,13 @@ import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.TouchDelegate;
 import android.view.View;
-import android.view.ViewGroup.LayoutParams;
 import android.widget.FrameLayout;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
+
+import com.groupagendas.groupagenda.R;
+import com.groupagendas.groupagenda.data.CalendarSettings;
 
 public abstract class AbstractCalendarView extends LinearLayout {
 	

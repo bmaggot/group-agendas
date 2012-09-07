@@ -2,9 +2,6 @@ package com.groupagendas.groupagenda.calendar.adapters;
 
 import java.util.List;
 
-import com.groupagendas.groupagenda.events.Event;
-import com.groupagendas.groupagenda.utils.DateTimeUtils;
-
 import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;

@@ -1,11 +1,6 @@
 package com.groupagendas.groupagenda.calendar;
 
 
-import com.groupagendas.groupagenda.NavbarActivity;
-import com.groupagendas.groupagenda.events.NewEventActivity;
-
-import android.app.Activity;
-import android.content.Intent;
 import android.view.GestureDetector.SimpleOnGestureListener;
 import android.view.MotionEvent;
 

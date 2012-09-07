@@ -21,7 +21,6 @@ import android.graphics.Rect;
 import android.text.format.DateUtils;
 import android.util.AttributeSet;
 import android.util.DisplayMetrics;
-import android.util.Log;
 import android.util.TypedValue;
 import android.view.GestureDetector;
 import android.view.LayoutInflater;
@@ -64,7 +63,8 @@ public class CalendarView extends FrameLayout {
     /**
      * Tag for logging.
      */
-    private static final String LOG_TAG = CalendarView.class.getSimpleName();
+    @SuppressWarnings("unused")
+	private static final String LOG_TAG = CalendarView.class.getSimpleName();
 
     /**
      * Default value whether to show week number.
@@ -193,7 +193,8 @@ public class CalendarView extends FrameLayout {
     /**
      * The name of the month to display.
      */
-    private TextView mMonthName;
+    @SuppressWarnings("unused")
+	private TextView mMonthName;
 
     /**
      * The header with week day names.
@@ -657,7 +658,8 @@ public class CalendarView extends FrameLayout {
      * @throws IllegalArgumentException of the provided date is before the
      *                                  range start of after the range end.
      */
-    private void goTo(Calendar date, boolean animate, boolean setSelected, boolean forceScroll) {
+    @SuppressWarnings("unused")
+	private void goTo(Calendar date, boolean animate, boolean setSelected, boolean forceScroll) {
         // Find the first and last entirely visible weeks
         int firstFullyVisiblePosition = mListView.getFirstVisiblePosition();
         View firstChild = mListView.getChildAt(0);
@@ -705,7 +707,8 @@ public class CalendarView extends FrameLayout {
             mAdapter.setFocusMonth(mCurrentMonthDisplayed);
             final int flags = DateUtils.FORMAT_SHOW_DATE | DateUtils.FORMAT_NO_MONTH_DAY;
             final long millis = calendar.getTimeInMillis();
-            String newMonthName = DateUtils.formatDateRange(getContext(), millis, millis, flags);
+            @SuppressWarnings("unused")
+			String newMonthName = DateUtils.formatDateRange(getContext(), millis, millis, flags);
 //            mMonthName.setText(newMonthName);
 //            mMonthName.invalidate();
         }
