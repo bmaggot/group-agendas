@@ -15,6 +15,7 @@ public class HourEventsTimetable {
 	Calendar todayStart;
 	Calendar todayEnd;
 	
+	@SuppressWarnings("unchecked")
 	public HourEventsTimetable(List<Event> hourEventsList, Calendar selectedDate) {
 		this.todayStart = selectedDate;
 		this.todayEnd = (Calendar)todayStart.clone();
@@ -23,7 +24,7 @@ public class HourEventsTimetable {
 		todayEnd.add(Calendar.SECOND, 59);
 		
 		Collections.sort(hourEventsList, new EventStartComparator());
-		eventsTimetable = (ArrayList<Event>[]) new ArrayList[24];
+		eventsTimetable = ((ArrayList<Event>[]) new ArrayList[24]);
 		for (Event e : hourEventsList){
 			this.add(e);
 		}
