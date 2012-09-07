@@ -1,6 +1,5 @@
 package com.groupagendas.groupagenda.chat;
 
-
 import java.util.concurrent.ExecutionException;
 
 import org.apache.http.HttpResponse;
@@ -34,7 +33,6 @@ import com.groupagendas.groupagenda.error.report.Reporter;
 import com.groupagendas.groupagenda.utils.Utils;
 
 public class ChatMessageActivity extends Activity {
-
 	private int event_id;
 
 	EditText chatInput;
