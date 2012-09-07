@@ -48,6 +48,7 @@ public class LoginActivity extends Activity {
 
 
 		pb = (ProgressBar) findViewById(R.id.progress);
+		
 		loginText = (EditText) this.findViewById(R.id.login_emailText);
 		passwordText = (EditText) this.findViewById(R.id.login_passwordText);
 		passwordText.setOnEditorActionListener(new TextView.OnEditorActionListener() {
@@ -107,7 +108,7 @@ public class LoginActivity extends Activity {
 				finish();
 			} else {
 				error = dm.getError();
-//				showDialog(0);
+				showDialog(0);
 			}
 
 			super.onPostExecute(result);
