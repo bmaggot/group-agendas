@@ -111,6 +111,12 @@ public class Event extends Object{
 			if (!color.equalsIgnoreCase("null")) this.color = color;
 		
 	}
+
+	public boolean hasIcon() {
+		if (icon == null) return false;
+		if (icon.equalsIgnoreCase("null")) return false;
+		return true;
+	}
 	
 
 	
