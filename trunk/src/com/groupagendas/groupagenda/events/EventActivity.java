@@ -11,6 +11,7 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.graphics.Color;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -52,6 +53,7 @@ import com.groupagendas.groupagenda.timezone.TimezoneManager;
 import com.groupagendas.groupagenda.utils.CountryManager;
 import com.groupagendas.groupagenda.utils.DateTimeUtils;
 import com.groupagendas.groupagenda.utils.EventStatusUpdater;
+import com.groupagendas.groupagenda.utils.InviteDialog;
 import com.groupagendas.groupagenda.utils.SearchDialog;
 import com.groupagendas.groupagenda.utils.Utils;
 import com.ptashek.widgets.datetimepicker.DateTimePicker;
@@ -298,17 +300,21 @@ public class EventActivity extends Activity {
 					else
 						view.setBackgroundResource(R.drawable.event_invited_entry_notalone_background);
 				}
+				boolean setEmailRed = false;
 				if(!invited.inMyList && invited.guid > 0){
+					invited.email = this.getResources().getString(R.string.add_to_cantact_list);
+					setEmailRed = true;
 					view.setOnClickListener(new OnClickListener() {
 						
 						@Override
 						public void onClick(View v) {
-							System.out.println("invite !");
+							Dialog dia = new InviteDialog(EventActivity.this, R.style.yearview_eventlist, invited.name);
+							dia.show();
 						}
 					});
 				}
 
-				invitedPersonList.addView(getInvitedView(invited, inflater, view, mContext));
+				invitedPersonList.addView(getInvitedView(invited, inflater, view, mContext, setEmailRed));
 			}
 			if (Data.selectedContacts != null && !Data.selectedContacts.isEmpty()) {
 				for (Contact contact : Data.selectedContacts) {
@@ -317,7 +323,7 @@ public class EventActivity extends Activity {
 					invited.name = contact.name;
 					invited.email = contact.email;
 					invited.status_id = 4;
-					invitedPersonList.addView(getInvitedView(invited, inflater, view, mContext));
+					invitedPersonList.addView(getInvitedView(invited, inflater, view, mContext, false));
 				}
 			}
 		} else if (invitesColumn != null) {
@@ -340,8 +346,21 @@ public class EventActivity extends Activity {
 					else
 						view.setBackgroundResource(R.drawable.event_invited_entry_notalone_background);
 				}
+				boolean setEmailRed = false;
+				if(!invited.inMyList && invited.guid > 0){
+					invited.email = this.getResources().getString(R.string.add_to_cantact_list);
+					setEmailRed = true;
+					view.setOnClickListener(new OnClickListener() {
+						
+						@Override
+						public void onClick(View v) {
+							Dialog dia = new InviteDialog(EventActivity.this, R.style.yearview_eventlist, invited.name);
+							dia.show();
+						}
+					});
+				}
 
-				invitedPersonList.addView(getInvitedView(invited, inflater, view, mContext));
+				invitedPersonList.addView(getInvitedView(invited, inflater, view, mContext, setEmailRed));
 			}
 			if (Data.selectedContacts != null && !Data.selectedContacts.isEmpty()) {
 				for (int i = 0, l = Data.selectedContacts.size(); i < l; i++) {
@@ -367,7 +386,7 @@ public class EventActivity extends Activity {
 					invited.email = contact.email;
 					invited.status_id = 4;
 					if (needToShow) {
-						invitedPersonList.addView(getInvitedView(invited, inflater, view, mContext));
+						invitedPersonList.addView(getInvitedView(invited, inflater, view, mContext, false));
 					}
 				}
 			}
@@ -515,12 +534,15 @@ public class EventActivity extends Activity {
 		return true;
 	}
 
-	public View getInvitedView(Invited invited, LayoutInflater inflater, View view, Context mContext) {
+	public View getInvitedView(Invited invited, LayoutInflater inflater, View view, Context mContext, boolean setEmailRed) {
 		final TextView nameView = (TextView) view.findViewById(R.id.invited_fullname);
 		nameView.setText(invited.name);
 
 		final TextView emailView = (TextView) view.findViewById(R.id.invited_available_email);
 		emailView.setText(invited.email);
+		if(setEmailRed){
+			emailView.setTextColor(Color.GREEN);
+		}
 
 		final TextView statusView = (TextView) view.findViewById(R.id.invited_status);
 

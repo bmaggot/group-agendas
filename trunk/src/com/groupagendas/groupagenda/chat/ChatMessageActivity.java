@@ -74,6 +74,7 @@ public class ChatMessageActivity extends Activity {
 				new PostChatMessage().execute(executePostArray);
 				Object[] executeArray = { event_id, null };
 				new GetChatMessages().execute(executeArray);
+				chatInput.setText("");
 			}
 		});
 	}
