@@ -298,6 +298,15 @@ public class EventActivity extends Activity {
 					else
 						view.setBackgroundResource(R.drawable.event_invited_entry_notalone_background);
 				}
+				if(!invited.inMyList && invited.guid > 0){
+					view.setOnClickListener(new OnClickListener() {
+						
+						@Override
+						public void onClick(View v) {
+							System.out.println("invite !");
+						}
+					});
+				}
 
 				invitedPersonList.addView(getInvitedView(invited, inflater, view, mContext));
 			}

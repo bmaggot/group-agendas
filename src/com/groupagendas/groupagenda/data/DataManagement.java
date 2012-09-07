@@ -2893,6 +2893,24 @@ public class DataManagement {
 								invited.me = true;
 							} else {
 								invited.name = obj.getString("gname");
+								String tmp = obj.getString("gcid");
+								if(!tmp.equalsIgnoreCase("null") && tmp.matches("[0-9]*")){
+									invited.gcid = Integer.parseInt(tmp);
+								} else {
+									invited.gcid = 0;
+								}
+								tmp = obj.getString("guid");
+								if(!tmp.equalsIgnoreCase("null") && tmp.matches("[0-9]*")){
+									invited.guid = Integer.parseInt(tmp);
+								} else {
+									invited.guid = 0;
+								}
+								tmp = obj.getString("my_contact_id");
+								if(tmp.equalsIgnoreCase("null")){
+									invited.inMyList = false;
+								} else {
+									invited.inMyList = true;
+								}
 							}
 						} catch (JSONException ex) {
 							Reporter.reportError(this.getClass().toString(), Thread.currentThread().getStackTrace()[2].getMethodName()
