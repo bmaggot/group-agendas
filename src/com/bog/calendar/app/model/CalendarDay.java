@@ -18,7 +18,6 @@ import android.widget.TextView;
 import com.bog.calendar.app.ui.EventGroupView;
 import com.bog.calendar.app.ui.EventView;
 import com.groupagendas.groupagenda.R;
-import com.groupagendas.groupagenda.data.CalendarSettings;
 import com.groupagendas.groupagenda.data.DataManagement;
 import com.groupagendas.groupagenda.events.Event;
 import com.groupagendas.groupagenda.utils.DateTimeUtils;

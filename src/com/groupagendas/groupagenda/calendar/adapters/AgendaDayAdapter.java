@@ -5,7 +5,6 @@ import java.util.List;
 
 import android.content.Context;
 import android.graphics.drawable.BitmapDrawable;
-import android.opengl.Visibility;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewGroup.LayoutParams;
@@ -15,11 +14,9 @@ import android.widget.TextView;
 
 import com.groupagendas.groupagenda.EventActivityOnClickListener;
 import com.groupagendas.groupagenda.R;
-import com.groupagendas.groupagenda.account.AccountProvider.AMetaData;
 import com.groupagendas.groupagenda.data.CalendarSettings;
 import com.groupagendas.groupagenda.events.Event;
 import com.groupagendas.groupagenda.utils.DrawingUtils;
-import com.groupagendas.groupagenda.utils.Utils;
 
 public class AgendaDayAdapter extends AbstractAdapter<Event> {
 	boolean showTime = false;

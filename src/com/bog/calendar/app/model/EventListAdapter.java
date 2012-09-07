@@ -3,26 +3,22 @@ package com.bog.calendar.app.model;
 import java.util.List;
 
 import android.content.Context;
-import android.content.Intent;
-import android.graphics.Color;
-import android.graphics.drawable.GradientDrawable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
-import android.widget.ImageView;
-import android.widget.TextView;
 
 import com.groupagendas.groupagenda.R;
 import com.groupagendas.groupagenda.events.Event;
-import com.groupagendas.groupagenda.events.EventActivity;
 import com.groupagendas.groupagenda.utils.DateTimeUtils;
 
 public class EventListAdapter extends BaseAdapter {
-    private Context context;
+    @SuppressWarnings("unused")
+	private Context context;
     private LayoutInflater mInflater;
     private List<Event> list;
-    private DateTimeUtils dt;
+    @SuppressWarnings("unused")
+	private DateTimeUtils dt;
 
     public EventListAdapter(Context context, List<Event> list) {
         this.context = context;

@@ -17,7 +17,6 @@ import android.widget.TextView;
 public class MonthInstance implements OnTouchListener{
 	private static final int ROWS_COUNT = 6;
 	private static final int DAYS_PER_WEEK = 7;
-	private static final int DAY_CELLS_COUNT = ROWS_COUNT * DAYS_PER_WEEK; 
 	public static boolean SHOW_BUBBLES = true;
 	private final String monthNames[];
 	private TextView title;

@@ -38,14 +38,12 @@ import org.json.JSONObject;
 import android.app.Activity;
 import android.content.ContentValues;
 import android.content.Context;
-import android.content.res.Resources.Theme;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.telephony.TelephonyManager;
 import android.util.Log;
-import android.widget.RadioButton;
 
 import com.bog.calendar.app.model.CEvent;
 import com.bog.calendar.app.model.EventsHelper;
@@ -69,7 +67,6 @@ import com.groupagendas.groupagenda.events.Invited;
 import com.groupagendas.groupagenda.settings.AutoColorItem;
 import com.groupagendas.groupagenda.settings.AutoIconItem;
 import com.groupagendas.groupagenda.utils.AgendaUtils;
-import com.groupagendas.groupagenda.utils.DateTimeUtils;
 import com.groupagendas.groupagenda.utils.MapUtils;
 import com.groupagendas.groupagenda.utils.Prefs;
 import com.groupagendas.groupagenda.utils.Utils;
@@ -935,6 +932,7 @@ public class DataManagement {
 
 			post.setEntity(reqEntity);
 
+			@SuppressWarnings("unused")
 			HttpResponse rp = hc.execute(post);
 
 		} catch (Exception ex) {

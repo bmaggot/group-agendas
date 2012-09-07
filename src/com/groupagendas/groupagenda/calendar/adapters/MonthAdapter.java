@@ -3,20 +3,20 @@ package com.groupagendas.groupagenda.calendar.adapters;
 import java.text.SimpleDateFormat;
 import java.util.List;
 
-import com.groupagendas.groupagenda.EventActivityOnClickListener;
-import com.groupagendas.groupagenda.R;
-import com.groupagendas.groupagenda.events.Event;
 import android.content.Context;
-import android.opengl.Visibility;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.groupagendas.groupagenda.EventActivityOnClickListener;
+import com.groupagendas.groupagenda.R;
+import com.groupagendas.groupagenda.events.Event;
+
 public class MonthAdapter extends AbstractAdapter<Event> {
 	
 	SimpleDateFormat timeFormat;
-	private boolean usesAMPM = false;
+
 
 	public MonthAdapter(Context context, List<Event> list) {
 		super(context, list);

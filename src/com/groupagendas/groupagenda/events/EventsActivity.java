@@ -1,16 +1,12 @@
 package com.groupagendas.groupagenda.events;
 
-import java.util.ArrayList;
-
 import android.app.ListActivity;
 import android.content.Intent;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.CompoundButton;
 import android.widget.ListView;
-import android.widget.ProgressBar;
 import android.widget.RadioButton;
 import android.widget.TextView;
 import az.mecid.android.ActionItem;
@@ -18,8 +14,6 @@ import az.mecid.android.QuickAction;
 
 import com.groupagendas.groupagenda.NavbarActivity;
 import com.groupagendas.groupagenda.R;
-import com.groupagendas.groupagenda.contacts.Contact;
-import com.groupagendas.groupagenda.contacts.ContactsAdapter;
 import com.groupagendas.groupagenda.data.DataManagement;
 import com.groupagendas.groupagenda.settings.SettingsActivity;
 import com.groupagendas.groupagenda.utils.AgendaUtils;
@@ -44,7 +38,6 @@ public class EventsActivity extends ListActivity {
 	private EventsAdapter eventsAdapter;
 
 	private TextView topView;
-	private ProgressBar pb;
 
 	@Override
 	public void onResume() {
@@ -76,7 +69,6 @@ public class EventsActivity extends ListActivity {
 		super.onCreate(savedInstanceState);
 		this.setContentView(R.layout.events);
 
-		pb = (ProgressBar) findViewById(R.id.progress);
 
 		dm = DataManagement.getInstance(this);
 

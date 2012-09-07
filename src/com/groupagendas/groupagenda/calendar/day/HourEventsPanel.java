@@ -1,16 +1,8 @@
 package com.groupagendas.groupagenda.calendar.day;
 
-import com.groupagendas.groupagenda.R;
-import com.groupagendas.groupagenda.calendar.AbstractCalendarView;
-import com.groupagendas.groupagenda.calendar.SwipeOnGestureListener;
-
-import android.app.Activity;
 import android.content.Context;
 import android.util.AttributeSet;
 import android.view.GestureDetector;
-import android.view.MotionEvent;
-import android.view.View;
-import android.view.View.OnTouchListener;
 import android.widget.RelativeLayout;
 
 public class HourEventsPanel extends RelativeLayout {

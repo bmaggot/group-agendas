@@ -1,6 +1,5 @@
 package com.groupagendas.groupagenda.calendar.day;
 
-import java.text.SimpleDateFormat;
 import java.util.Calendar;
 
 import android.app.Activity;
@@ -10,7 +9,6 @@ import android.view.MotionEvent;
 import com.groupagendas.groupagenda.calendar.AbstractCalendarView;
 import com.groupagendas.groupagenda.calendar.DayWeekView;
 import com.groupagendas.groupagenda.calendar.SwipeOnGestureListener;
-import com.groupagendas.groupagenda.data.CalendarSettings;
 import com.groupagendas.groupagenda.data.DataManagement;
 import com.groupagendas.groupagenda.events.NewEventActivity;
 import com.groupagendas.groupagenda.utils.Utils;

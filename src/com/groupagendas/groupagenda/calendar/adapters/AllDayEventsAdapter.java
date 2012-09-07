@@ -2,18 +2,16 @@ package com.groupagendas.groupagenda.calendar.adapters;
 
 import java.util.List;
 
-import com.groupagendas.groupagenda.EventActivityOnClickListener;
-import com.groupagendas.groupagenda.R;
-import com.groupagendas.groupagenda.events.Event;
-import com.groupagendas.groupagenda.events.EventActivity;
-
 import android.content.Context;
-import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.drawable.GradientDrawable;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+
+import com.groupagendas.groupagenda.EventActivityOnClickListener;
+import com.groupagendas.groupagenda.R;
+import com.groupagendas.groupagenda.events.Event;
 
 public class AllDayEventsAdapter extends AbstractAdapter<Event> {
 

@@ -3,15 +3,8 @@ package com.groupagendas.groupagenda.calendar.day;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 
-import com.groupagendas.groupagenda.EventActivityOnClickListener;
-import com.groupagendas.groupagenda.R;
-import com.groupagendas.groupagenda.events.Event;
-import com.groupagendas.groupagenda.events.EventActivity;
-import com.groupagendas.groupagenda.utils.Utils;
-
 import android.annotation.SuppressLint;
 import android.content.Context;
-import android.content.Intent;
 import android.content.res.Resources;
 import android.graphics.Color;
 import android.graphics.drawable.GradientDrawable;
@@ -21,6 +14,10 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+
+import com.groupagendas.groupagenda.EventActivityOnClickListener;
+import com.groupagendas.groupagenda.R;
+import com.groupagendas.groupagenda.events.Event;
 
 
 @SuppressLint("ParserError")

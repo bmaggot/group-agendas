@@ -23,7 +23,6 @@ import android.graphics.Rect;
 import android.text.format.DateUtils;
 import android.util.AttributeSet;
 import android.util.DisplayMetrics;
-import android.util.Log;
 import android.util.TypedValue;
 import android.view.GestureDetector;
 import android.view.LayoutInflater;
@@ -66,10 +65,6 @@ import com.groupagendas.groupagenda.utils.DateTimeUtils;
 @Widget
 public class CalendarYearView extends FrameLayout {
 
-    /**
-     * Tag for logging.
-     */
-    private static final String LOG_TAG = CalendarYearView.class.getSimpleName();
 
     /**
      * Default value whether to show week number.
@@ -661,15 +656,15 @@ public class CalendarYearView extends FrameLayout {
      */
     private void goTo(Calendar date, boolean animate, boolean setSelected, boolean forceScroll) {
         // Find the first and last entirely visible weeks
-        int firstFullyVisiblePosition = mListView.getFirstVisiblePosition();
-        View firstChild = mListView.getChildAt(0);
-        if (firstChild != null && firstChild.getTop() < 0) {
-            firstFullyVisiblePosition++;
-        }
-        int lastFullyVisiblePosition = firstFullyVisiblePosition + mShownWeekCount - 1;
-        if (firstChild != null && firstChild.getTop() > mBottomBuffer) {
-            lastFullyVisiblePosition--;
-        }
+//        int firstFullyVisiblePosition = mListView.getFirstVisiblePosition();
+//        View firstChild = mListView.getChildAt(0);
+//        if (firstChild != null && firstChild.getTop() < 0) {
+//            firstFullyVisiblePosition++;
+//        }
+//        int lastFullyVisiblePosition = firstFullyVisiblePosition + mShownWeekCount - 1;
+//        if (firstChild != null && firstChild.getTop() > mBottomBuffer) {
+//            lastFullyVisiblePosition--;
+//        }
         if (setSelected) {
             mAdapter.setSelectedDay(date);
         }

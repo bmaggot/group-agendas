@@ -18,10 +18,8 @@ import android.widget.EditText;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
-import com.groupagendas.groupagenda.data.Data;
 import com.groupagendas.groupagenda.data.DataManagement;
 import com.groupagendas.groupagenda.registration.RegisterationActivity;
-import com.groupagendas.groupagenda.utils.PrefixReceiver;
 import com.pass_retrieve.forgot_pass1;
 
 public class LoginActivity extends Activity {
@@ -35,12 +33,12 @@ public class LoginActivity extends Activity {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.login);
 
-        final Activity con=this;
+      
         findViewById(R.id.forgot_pass).setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View view) {
                 startActivity(new Intent(getBaseContext(), forgot_pass1.class ));
-               // con.finish();
+//                LoginActivity.this.finish();
             }
         });
 

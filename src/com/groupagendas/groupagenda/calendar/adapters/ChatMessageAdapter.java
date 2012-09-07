@@ -5,13 +5,10 @@ import java.util.List;
 import android.content.Context;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.LinearLayout;
-import android.widget.LinearLayout.LayoutParams;
 import android.widget.TextView;
 
 import com.groupagendas.groupagenda.R;
 import com.groupagendas.groupagenda.chat.ChatMessageObject;
-import com.groupagendas.groupagenda.chat.ChatThreadObject;
 import com.groupagendas.groupagenda.data.Data;
 
 public class ChatMessageAdapter extends AbstractAdapter<ChatMessageObject> {

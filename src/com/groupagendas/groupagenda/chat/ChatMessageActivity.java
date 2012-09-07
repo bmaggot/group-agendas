@@ -1,6 +1,6 @@
 package com.groupagendas.groupagenda.chat;
 
-import java.util.ArrayList;
+
 import java.util.concurrent.ExecutionException;
 
 import org.apache.http.HttpResponse;
@@ -34,9 +34,9 @@ import com.groupagendas.groupagenda.error.report.Reporter;
 import com.groupagendas.groupagenda.utils.Utils;
 
 public class ChatMessageActivity extends Activity {
-	private DataManagement dm;
+
 	private int event_id;
-	private ArrayList<ChatMessageObject> chatMessages = new ArrayList<ChatMessageObject>();
+
 	EditText chatInput;
 	Button chatSend;
 	ChatMessageAdapter adapter;
@@ -45,7 +45,6 @@ public class ChatMessageActivity extends Activity {
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		event_id = getIntent().getIntExtra("event_id", 0);
-		dm = DataManagement.getInstance(this);
 		setContentView(R.layout.chat);
 		Object[] executeArray = { event_id, null };
 		try {

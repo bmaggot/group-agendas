@@ -1,11 +1,10 @@
 package com.groupagendas.groupagenda.contacts.importer.phone;
 
-import com.groupagendas.groupagenda.contacts.Contact;
-import com.groupagendas.groupagenda.data.Data;
-import com.groupagendas.groupagenda.data.DataManagement;
-
 import android.app.Activity;
 import android.os.AsyncTask;
+
+import com.groupagendas.groupagenda.contacts.Contact;
+import com.groupagendas.groupagenda.data.DataManagement;
 
 public class Importer extends AsyncTask<Object, Void, Boolean> {
 

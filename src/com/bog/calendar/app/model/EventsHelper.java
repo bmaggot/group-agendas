@@ -7,8 +7,6 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
-import android.graphics.Color;
-
 import com.groupagendas.groupagenda.data.DataManagement;
 import com.groupagendas.groupagenda.error.report.Reporter;
 import com.groupagendas.groupagenda.events.Event;
