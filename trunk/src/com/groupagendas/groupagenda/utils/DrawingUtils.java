@@ -33,9 +33,10 @@ public static int convertDPtoPX(Context context, int DP) {
 	 * @param heightPX - rectangle height.
 	 * @param roundRadius - corners round radius for round rectangle.
 	 * @param event - event, for which this rectangle is drawn.
+	 * @param shadow  - indicates whether to draw shadow for this rectangle.
 	 * @return Bitmap that represents this rectangle.
 	 */
-private static Bitmap getRoundRectBitmap(Context context, int widthPX, int heightPX, int roundRadius, Event event){
+private static Bitmap getRoundRectBitmap(Context context, int widthPX, int heightPX, int roundRadius, Event event, boolean shadow){
 		
 		int shadowRadius = convertDPtoPX(context, 2);
 		int shadowOffset = convertDPtoPX(context, Math.round(heightPX * 0.1f)); 
@@ -46,20 +47,28 @@ private static Bitmap getRoundRectBitmap(Context context, int widthPX, int heigh
 		Canvas c = new Canvas(bmp);
 		Paint p = new Paint();
 		p.setColor(Color.parseColor("#" + event.getColor()));
-		
-		p.setShadowLayer(shadowRadius, shadowOffset, shadowOffset, context.getResources().getColor(R.color.darker_gray));
+		if (shadow){
+			p.setShadowLayer(shadowRadius, shadowOffset, shadowOffset, context.getResources().getColor(R.color.darker_gray));
+		}
 		final RectF rect = new RectF();
 		rect.set(0, 0, widthPX, heightPX);
 		c.drawRoundRect(rect, roundRadius,
 				roundRadius, p);
 		return bmp;
 }
-
-public static Bitmap getEventRoundRectangle (Context context, int sizeDP, Event event){
+/**
+ * Draws an round rectangle based on event color. 
+ * @param context - method context.
+ * @param sizeDP - rectangle size. Rectangle height is same, and width is half of specified size.
+ * @param event - event, for which this rectangle is drawn.  
+ * @param shadow  - indicates whether to draw shadow for this rectangle
+ * @return Bitmap that represents this rectangle.
+ */
+public static Bitmap getEventRoundRectangle (Context context, int sizeDP, Event event, boolean shadow){
 	int heightPX = convertDPtoPX(context, sizeDP);
 	int widthPX = heightPX / 2;
 	int roundRadius = Math.round(heightPX * 0.2f);
-	return getRoundRectBitmap(context, widthPX, heightPX, roundRadius, event);
+	return getRoundRectBitmap(context, widthPX, heightPX, roundRadius, event, shadow);
 }
 
 }
