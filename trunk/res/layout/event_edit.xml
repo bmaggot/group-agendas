@@ -675,22 +675,6 @@
                     layout="@layout/event_invitation_section" />
             </LinearLayout>
 
-            <LinearLayout
-                android:id="@+id/saveBlock"
-                android:layout_width="fill_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="5dp"
-                android:gravity="center_horizontal"
-                android:orientation="horizontal"
-                android:visibility="gone" >
-
-                <Button
-                    android:id="@+id/saveButton"
-                    android:layout_width="100dp"
-                    android:layout_height="wrap_content"
-                    android:onClick="saveEvent"
-                    android:text="@string/save" />
-            </LinearLayout>
         </LinearLayout>
     </ScrollView>
 
