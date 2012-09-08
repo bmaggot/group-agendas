@@ -2,14 +2,15 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
-    android:weightSum="10">
+    android:orientation="vertical" >
 
     <ListView
         android:id="@+id/chat_message_list"
-        android:layout_width="match_parent"
-        android:layout_weight="8"
+        android:layout_width="fill_parent"
+        android:fitsSystemWindows="true"
         android:layout_height="0dp"
+        android:layout_weight="1"
+        android:layout_gravity="top"
         android:background="@color/white"
         android:cacheColorHint="#00000000"
         android:fadingEdge="none"
@@ -19,15 +20,13 @@
     <LinearLayout
         android:id="@+id/chat_inputBlock"
         android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="2"
-        android:minHeight="60dp"
+        android:layout_height="wrap_content"
         android:layout_gravity="bottom"
         android:background="@color/darker_gray"
         android:gravity="center_vertical"
         android:orientation="horizontal"
         android:paddingTop="15dp"
-        android:paddingBottom="15dp" >
+        android:paddingBottom="10dp" >
 
         <EditText
             android:id="@+id/chat_input"
@@ -38,7 +37,8 @@
             android:layout_marginLeft="10dp"
             android:layout_weight="8"
             android:inputType="textMultiLine"
-            android:maxLines="5" />
+            android:minLines="2"
+            android:maxLines="3" />
 
         <Button android:id="@+id/chat_send"
             android:layout_width="0dp"
