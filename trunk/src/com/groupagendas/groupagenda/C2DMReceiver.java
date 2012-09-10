@@ -10,6 +10,7 @@ import android.content.Intent;
 import android.util.Log;
 
 import com.google.android.c2dm.C2DMBaseReceiver;
+import com.groupagendas.groupagenda.chat.ChatMessageActivity;
 import com.groupagendas.groupagenda.chat.ChatThreadActivity;
 import com.groupagendas.groupagenda.data.DataManagement;
 import com.groupagendas.groupagenda.error.report.Reporter;
@@ -82,7 +83,7 @@ public class C2DMReceiver extends C2DMBaseReceiver {
 			Intent notificationIntent;
 			com.groupagendas.groupagenda.events.Event event = DataManagement.getInstance(context).getEventFromDb(Integer.parseInt(rel_id));
 			if(isChatMessage){
-				notificationIntent = new Intent(context, ChatThreadActivity.class);
+				notificationIntent = new Intent(context, ChatMessageActivity.class);
 				notificationIntent.putExtra("event_id", event.event_id);
 				notificationIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
 				PendingIntent contentIntent = PendingIntent.getActivity(context, 0, notificationIntent, PendingIntent.FLAG_UPDATE_CURRENT);
