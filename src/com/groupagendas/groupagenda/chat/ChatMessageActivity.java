@@ -15,11 +15,13 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 
 import android.app.Activity;
+import android.content.Context;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
@@ -73,6 +75,8 @@ public class ChatMessageActivity extends Activity {
 				Object[] executeArray = { event_id, null };
 				new GetChatMessages().execute(executeArray);
 				chatInput.setText("");
+				InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+				imm.hideSoftInputFromWindow(chatInput.getWindowToken(), 0);
 			}
 		});
 	}
