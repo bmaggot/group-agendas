@@ -1263,6 +1263,7 @@ public class DataManagement {
 										birthdayEvent.my_time_end = Utils.formatCalendar(birthdateCalendar, SERVER_TIMESTAMP_FORMAT);
 										birthdayEvent.is_all_day = true;
 										birthdayEvent.timezone = getAccount().timezone;
+										birthdayEvent.birthday = true;
 										createEvent(birthdayEvent);
 										contactsBirthdays.add(birthdayEvent);
 									}
@@ -3153,6 +3154,10 @@ public class DataManagement {
 			}
 			if (e.reminder3 != null) {
 				reqEntity.addPart("reminder3", new StringBody(e.reminder3));
+			}
+			
+			if(e.birthday){
+				reqEntity.addPart("bd", new StringBody("1"));
 			}
 			post.setEntity(reqEntity);
 

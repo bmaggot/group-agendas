@@ -73,6 +73,7 @@ public class Event extends Object{
 	public ArrayList<Invited> invited = null;
 	
 	public boolean is_all_day;
+	public boolean birthday = false;
 	
 	@Override
 	public String toString(){
