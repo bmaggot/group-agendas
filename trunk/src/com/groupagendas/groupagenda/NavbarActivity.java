@@ -516,7 +516,7 @@ public class NavbarActivity extends Activity {
 		mInflater.inflate(R.layout.calendar_week, calendarContainer);
 		if (calendarContainer.getChildAt(0) instanceof DayWeekView) {
 			DayWeekView view = (DayWeekView) calendarContainer.getChildAt(0);
-			int daysToShow = 0;
+			int daysToShow = 0; //if we want to resume with default shown days number we call init with param 0
 			if (this.resumeDayWeekView) {
 				daysToShow = this.dayWeekViewShowDays;
 				resumeDayWeekView = false;
@@ -552,7 +552,7 @@ public class NavbarActivity extends Activity {
 	}
 
 	private void showDayView() {
-		if (!resumeDayWeekView){
+		if (!resumeDayWeekView){ //if there is no need to restore pinching state we show only one day
 			calendarContainer.removeAllViews();
 			mInflater.inflate(R.layout.calendar_week, calendarContainer);
 			if (calendarContainer.getChildAt(0) instanceof DayWeekView) {
@@ -562,7 +562,7 @@ public class NavbarActivity extends Activity {
 				DayWeekView.setDaysToShow(daysToShow);
 				view.init(selectedDate, daysToShow);
 			}
-		}else showWeekView();
+		}else showWeekView(); // else we call show weekView, which shows restored number of days
 
 	}
 
