@@ -170,23 +170,27 @@ public class MiniMonthView extends AbstractCalendarView {
 		int firstDayOfWeek = tmp.getFirstDayOfWeek();
 		
 		for (AgendaFrame frame : daysList){
-			TextView dayTitle = (TextView) frame.getDayContainer().findViewById(R.id.agenda_day_title);		
+			TextView dayTitle = (TextView) frame.getDayContainer().findViewById(R.id.agenda_day_title);	
+			TextView weekNum = (TextView) frame.getDayContainer().findViewById(R.id.agenda_week_title);
 			String title = "" + tmp.get(Calendar.DATE);
 			dayTitle.setText(title);
 			
 			if (Utils.isToday(tmp)){
 				dayTitle.setBackgroundColor(getResources().getColor(R.color.darker_gray));
+				weekNum.setBackgroundColor(getResources().getColor(R.color.darker_gray));
 			} else{
 				dayTitle.setBackgroundColor(getResources().getColor(R.color.lighter_gray));
+				weekNum.setBackgroundColor(getResources().getColor(R.color.lighter_gray));
 			}
 			
-			if (tmp.get(Calendar.DAY_OF_WEEK) == firstDayOfWeek){
-				TextView WeekNum = (TextView) frame.getDayContainer().findViewById(R.id.agenda_week_title);	
-				WeekNum.setVisibility(VISIBLE);
-				WeekNum.setText("" + tmp.get(Calendar.WEEK_OF_MONTH));
+			if (tmp.get(Calendar.DAY_OF_WEEK) == firstDayOfWeek){					
+				weekNum.setVisibility(VISIBLE);
+				weekNum.setText("" + tmp.get(Calendar.WEEK_OF_MONTH));
 			}else {
 				frame.getDayContainer().findViewById(R.id.agenda_week_title).setVisibility(GONE);
 			}
+			
+			
 			
 			tmp.add(Calendar.DATE, 1);
 		}
