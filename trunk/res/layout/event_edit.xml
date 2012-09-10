@@ -672,6 +672,18 @@
                     android:id="@+id/invited_person_list"
                     layout="@layout/event_invitation_section" />
             </LinearLayout>
+            
+            <Button
+                android:id="@+id/event_delete"
+                android:layout_width="fill_parent"
+                android:layout_height="40dp"
+                android:layout_margin="10dp"
+                android:background="@drawable/event_invite_people_button_standalone"
+                android:visibility="gone"
+                android:text="@string/delete_event"
+                android:textColor="@color/red"
+                android:textSize="16dp"
+                android:textStyle="bold" />
 
         </LinearLayout>
     </ScrollView>

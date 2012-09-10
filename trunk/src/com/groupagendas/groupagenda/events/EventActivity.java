@@ -66,6 +66,7 @@ public class EventActivity extends Activity {
 
 	private ProgressBar pb;
 	private Button saveButton;
+	private Button deleteButton;
 	private TextView topText;
 
 	private ImageView iconView;
@@ -145,6 +146,7 @@ public class EventActivity extends Activity {
 
 		pb = (ProgressBar) findViewById(R.id.progress);
 		saveButton = (Button) findViewById(R.id.save_button);
+		deleteButton = (Button) findViewById(R.id.event_delete);
 		topText = (TextView) findViewById(R.id.topText);
 
 		String typeStr = "";
@@ -270,6 +272,15 @@ public class EventActivity extends Activity {
 				@Override
 				public void onClick(View v) {
 					saveEvent(v);
+				}
+			});
+			
+			deleteButton.setVisibility(View.VISIBLE);
+			deleteButton.setOnClickListener(new OnClickListener() {
+				
+				@Override
+				public void onClick(View v) {
+					showDialog(DELETE_DIALOG);
 				}
 			});
 		} else {
