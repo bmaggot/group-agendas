@@ -223,5 +223,6 @@
     <string name="invite_and_dont_request_details">Yes don\'t request details.</string>
     <string name="dont_invite">No thank You.</string>
     <string name="add_to_cantact_list">Add this contact.</string>
+    <string name="cross"> X </string>
     
 </resources>
