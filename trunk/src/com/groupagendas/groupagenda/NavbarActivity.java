@@ -96,6 +96,10 @@ public class NavbarActivity extends Activity {
 	private boolean dataLoaded = false;
 	private int loadPhase = 0;
 
+	private boolean resumeDayWeekView;
+
+	private int dayWeekViewShowDays;
+
 	public static boolean showInvites = false;
 	
 
@@ -401,6 +405,10 @@ public class NavbarActivity extends Activity {
 	     if(calendarContainer.getChildAt(0) instanceof AbstractCalendarView){
 	    	 selectedDate = ((AbstractCalendarView)calendarContainer.getChildAt(0)).getDateToResume();
 	     }
+	     if (viewState == ViewState.DAY || viewState == ViewState.WEEK){
+	    	 outState.putBoolean("resumeDayWeekView", true);
+		     outState.putInt("dayWeekViewShowDays", DayWeekView.getDaysToShow());
+	     }
 	     
 	     String dateStr = new SimpleDateFormat(DataManagement.SERVER_TIMESTAMP_FORMAT).format(selectedDate.getTime());			
 	     outState.putString("selectedDate", dateStr);
@@ -414,6 +422,10 @@ public class NavbarActivity extends Activity {
 		      viewState = ViewState.getValueByString(state.getString("viewState"));
 		      selectedDate = Utils.stringToCalendar(state.getString("selectedDate"), DataManagement.SERVER_TIMESTAMP_FORMAT);
 		      selectedDate.setFirstDayOfWeek(CalendarSettings.getFirstDayofWeek());  
+		      if (viewState == ViewState.DAY || viewState == ViewState.WEEK){
+		    	  resumeDayWeekView = state.getBoolean("resumeDayWeekView");
+		    	  dayWeekViewShowDays = state.getInt("dayWeekViewShowDays");
+			     }
 		    }
 		  }
 
@@ -502,8 +514,17 @@ public class NavbarActivity extends Activity {
 	private void showWeekView() {
 		calendarContainer.removeAllViews();
 		mInflater.inflate(R.layout.calendar_week, calendarContainer);
-		DayWeekView view = (DayWeekView) calendarContainer.getChildAt(0);
-		view.init(selectedDate, DayWeekView.MAX_DAYS_SHOWN);
+		if (calendarContainer.getChildAt(0) instanceof DayWeekView) {
+			DayWeekView view = (DayWeekView) calendarContainer.getChildAt(0);
+			int daysToShow = 0;
+			if (this.resumeDayWeekView) {
+				daysToShow = this.dayWeekViewShowDays;
+				resumeDayWeekView = false;
+			}else{
+				DayWeekView.setDaysToShow(DayWeekView.DEFAULT_DAYS_SHOWN);
+			}
+			view.init(selectedDate, daysToShow);
+		}
 
 	}
 
@@ -531,10 +552,17 @@ public class NavbarActivity extends Activity {
 	}
 
 	private void showDayView() {
-		calendarContainer.removeAllViews();
-		mInflater.inflate(R.layout.calendar_week, calendarContainer);
-		DayWeekView view = (DayWeekView) calendarContainer.getChildAt(0);
-		view.init(selectedDate, 1);
+		if (!resumeDayWeekView){
+			calendarContainer.removeAllViews();
+			mInflater.inflate(R.layout.calendar_week, calendarContainer);
+			if (calendarContainer.getChildAt(0) instanceof DayWeekView) {
+				DayWeekView view = (DayWeekView) calendarContainer
+						.getChildAt(0);
+				int daysToShow = 1;
+				DayWeekView.setDaysToShow(daysToShow);
+				view.init(selectedDate, daysToShow);
+			}
+		}else showWeekView();
 
 	}
 
@@ -638,6 +666,18 @@ public class NavbarActivity extends Activity {
 			}
 		}
 	};
+	
+	
+	@Override
+	protected void onPause() {
+	    super.onPause();
+	    if (viewState == ViewState.DAY || viewState == ViewState.WEEK){
+	    	this.resumeDayWeekView = true;
+	    	this.dayWeekViewShowDays = DayWeekView.getDaysToShow();
+	    }
+	    
+	}
+
 
 	@Override
 	public boolean onKeyDown(int keyCode, KeyEvent event) {

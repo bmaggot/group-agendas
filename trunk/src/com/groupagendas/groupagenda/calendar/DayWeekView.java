@@ -7,6 +7,8 @@ import java.util.List;
 import android.content.Context;
 import android.graphics.Color;
 import android.graphics.drawable.GradientDrawable;
+import android.os.Bundle;
+import android.os.Parcelable;
 import android.util.AttributeSet;
 import android.view.GestureDetector;
 import android.view.MotionEvent;
@@ -44,6 +46,7 @@ public class DayWeekView extends AbstractCalendarView {
 	
 	protected final int EVENTS_COLUMN_WIDTH =  Math.round(0.9f * VIEW_WIDTH - 1);
 	protected final int HOUR_COLUMN_WIDTH =  VIEW_WIDTH - EVENTS_COLUMN_WIDTH;
+	public final static int DEFAULT_DAYS_SHOWN = 7;
 	public final static int MAX_DAYS_SHOWN = 7;
 	private static final int MIN_DAYS_SHOWN = 1;
 	
@@ -54,7 +57,7 @@ public class DayWeekView extends AbstractCalendarView {
 	private float deltaX;
 	private boolean deltaSet = false;
 	
-	protected int daysToShow;
+	protected static int daysToShow;
 	protected boolean showHourEventsIcon = false;
 	protected WeekInstance daysShown;
 
@@ -197,10 +200,15 @@ public class DayWeekView extends AbstractCalendarView {
  * @author justinas.marcinka@gmail.com
  * @param initDate - Date that will be the first shown day, if not all days of week are displayed.
  * If all days of week are displayed, first shown day will be the first day of week of this date.
- * @param daysToShow indicates how much days should be shown.
+ * @param daysToShow indicates how much days should be shown. If 0 is given, it indicates that it is week view and number of shown days will be indicated by DayWeekView.daysToShow field
+ * NOTE: if you want to have day View, externally set DayWeekView.daysToShow field to 1, or to DayWeekView.DEFAULT_DAYS_SHOWN for week view accordingly.
  */
-	public void init(Calendar initDate, int daysToShow) {
-		setShownDaysCount(daysToShow);
+	public synchronized void init(Calendar initDate, int daysToShow) {
+		if (daysToShow != 0) { //if there is custom number of days to be shown
+			setShownDaysCount(daysToShow);
+		} else setShownDaysCount(DayWeekView.daysToShow); // else we use value from static field
+		
+		
 		super.init(initDate);
 		
 	}
@@ -208,7 +216,7 @@ public class DayWeekView extends AbstractCalendarView {
 
 
 	private void setShownDaysCount(int daysToShow) {
-		this.daysToShow = daysToShow;
+		DayWeekView.daysToShow = daysToShow;
 		showHourEventsIcon = (daysToShow == 1);	
 }
 
@@ -456,7 +464,16 @@ public class DayWeekView extends AbstractCalendarView {
 
 		@Override
 		public Calendar getDateToResume() {	
+//			DayWeekView.needsToResume = true;
 			return daysShown.getShownDate();
+		}
+
+		public static int getDaysToShow() {
+			return daysToShow;
+		}
+		
+		public static void setDaysToShow(int daysToShow) {
+			DayWeekView.daysToShow = daysToShow;
 		}
 
 	
