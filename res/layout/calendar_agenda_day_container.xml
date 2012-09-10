@@ -25,5 +25,6 @@
         android:divider="@null"
         android:dividerHeight="0dp"
         android:cacheColorHint="#00000000"
-        android:fadingEdgeLength="0dp" />
+        android:fadingEdgeLength="0dp"
+        android:paddingBottom="7dp" />
 </LinearLayout>
