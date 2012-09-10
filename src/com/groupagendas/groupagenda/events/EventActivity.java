@@ -319,7 +319,7 @@ public class EventActivity extends Activity {
 						
 						@Override
 						public void onClick(View v) {
-							Dialog dia = new InviteDialog(EventActivity.this, R.style.yearview_eventlist, invited.name);
+							Dialog dia = new InviteDialog(EventActivity.this, R.style.yearview_eventlist, invited);
 							dia.show();
 						}
 					});
@@ -365,7 +365,7 @@ public class EventActivity extends Activity {
 						
 						@Override
 						public void onClick(View v) {
-							Dialog dia = new InviteDialog(EventActivity.this, R.style.yearview_eventlist, invited.name);
+							Dialog dia = new InviteDialog(EventActivity.this, R.style.yearview_eventlist, invited);
 							dia.show();
 						}
 					});
