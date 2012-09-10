@@ -10,12 +10,14 @@ import android.content.Intent;
 import android.util.Log;
 
 import com.google.android.c2dm.C2DMBaseReceiver;
+import com.groupagendas.groupagenda.chat.ChatThreadActivity;
 import com.groupagendas.groupagenda.data.DataManagement;
 import com.groupagendas.groupagenda.error.report.Reporter;
 import com.groupagendas.groupagenda.events.EventsActivity;
 import com.groupagendas.groupagenda.utils.AgendaUtils;
 
 public class C2DMReceiver extends C2DMBaseReceiver {
+	private static boolean isChatMessage = false;
 	public C2DMReceiver() {
 		super("group.agenda.c2dm@gmail.com");
 	}
@@ -52,6 +54,11 @@ public class C2DMReceiver extends C2DMBaseReceiver {
 			DataManagement.updateAppData(Integer.parseInt(data));
 			
 		}else if (receiveIntent.hasExtra("rel_id") && receiveIntent.getStringExtra("rel_id") != "" && data != null) {
+			if(receiveIntent.hasExtra("rel_obj") && receiveIntent.getStringExtra("rel_obj").equals("ch")){
+				isChatMessage = true;
+			} else {
+				isChatMessage = false;
+			}
 			rel_id = receiveIntent.getStringExtra("rel_id");
 			Log.e("C2DMReceiver", "C2DMReceiver: " + data);
 			showNotification(this, "Group Agenda", "Group Agenda", data, 17301620, "", rel_id, type, isNative);
@@ -72,18 +79,11 @@ public class C2DMReceiver extends C2DMBaseReceiver {
 			notification.defaults = Notification.DEFAULT_ALL;
 			notification.flags = Notification.FLAG_AUTO_CANCEL;
 
-			Intent notificationIntent = new Intent(context, EventsActivity.class);
-			NavbarActivity.showInvites = true;
-			if (getEventById(rel_id, context) == null) {
-				DataManagement.getInstance(context).getEventsFromRemoteDb("");
-			}
-
+			Intent notificationIntent;
 			com.groupagendas.groupagenda.events.Event event = DataManagement.getInstance(context).getEventFromDb(Integer.parseInt(rel_id));
-			if (event != null) {
+			if(isChatMessage){
+				notificationIntent = new Intent(context, ChatThreadActivity.class);
 				notificationIntent.putExtra("event_id", event.event_id);
-				notificationIntent.putExtra("type", event.type);
-				notificationIntent.putExtra("isNative", event.isNative);
-
 				notificationIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
 				PendingIntent contentIntent = PendingIntent.getActivity(context, 0, notificationIntent, PendingIntent.FLAG_UPDATE_CURRENT);
 
@@ -91,7 +91,25 @@ public class C2DMReceiver extends C2DMBaseReceiver {
 
 				mNotificationManager.notify(1, notification);
 			} else {
-				System.out.println("Bad rel_id!");
+				notificationIntent = new Intent(context, EventsActivity.class);
+				NavbarActivity.showInvites = true;
+				if (getEventById(rel_id, context) == null) {
+					DataManagement.getInstance(context).getEventsFromRemoteDb("");
+				}
+				if (event != null) {
+					notificationIntent.putExtra("event_id", event.event_id);
+					notificationIntent.putExtra("type", event.type);
+					notificationIntent.putExtra("isNative", event.isNative);
+
+					notificationIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+					PendingIntent contentIntent = PendingIntent.getActivity(context, 0, notificationIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+
+					notification.setLatestEventInfo(context, title, text, contentIntent);
+
+					mNotificationManager.notify(1, notification);
+				} else {
+					System.out.println("Bad rel_id!");
+				}
 			}
 
 		} catch (Exception ex) {
