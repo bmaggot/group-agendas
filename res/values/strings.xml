@@ -224,5 +224,6 @@
     <string name="dont_invite">No thank You.</string>
     <string name="add_to_cantact_list">Add this contact.</string>
     <string name="cross"> X </string>
+    <string name="delete_chatm_progress">Removing chat message… wait.</string>
     
 </resources>
