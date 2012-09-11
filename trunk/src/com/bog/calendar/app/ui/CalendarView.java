@@ -510,7 +510,7 @@ public class CalendarView extends FrameLayout {
     	if(isDrawEventsPoint){
     		for(int i=0, l=mEvents.size(); i<l; i++){
     			Event e = mEvents.get(i);
-    			if(c.after(e.startCalendar) && c.before(e.endCalendar)){
+    			if(c.after(e.getStartCalendar()) && c.before(e.getEndCalendar())){
     	    		events.add(e);
     	    	}
     		}
@@ -1181,7 +1181,7 @@ public class CalendarView extends FrameLayout {
                     	for(int j=1, l=mEvents.size(); j<=l; j++){
                     		Event e = mEvents.get(j-1);
                     		
-                    		if(c.after(e.startCalendar) && c.before(e.endCalendar)){
+                    		if(c.after(e.getStartCalendar()) && c.before(e.getEndCalendar())){
                     			if(q%8 == 0){ 
                         			row = row+1;
                         			col = col+1;

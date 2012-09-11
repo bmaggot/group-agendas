@@ -746,8 +746,8 @@ public class NewEventActivity extends Activity {
 
 			if (startCalendar.getTime().before(endCalendar.getTime())) {
 
-				event.startCalendar = startCalendar;
-				event.endCalendar = endCalendar;
+				event.setStartCalendar(startCalendar);
+				event.setEndCalendar(endCalendar);
 
 				event.my_time_start = Utils.formatCalendar(startCalendar, DataManagement.SERVER_TIMESTAMP_FORMAT);
 				event.my_time_end = Utils.formatCalendar(endCalendar, DataManagement.SERVER_TIMESTAMP_FORMAT);

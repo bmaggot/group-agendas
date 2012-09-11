@@ -49,8 +49,8 @@ public class HourEventView extends RelativeLayout {
 		 lp = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.WRAP_CONTENT, RelativeLayout.LayoutParams.WRAP_CONTENT);
 		
 		
-		Calendar startTime  = (Calendar) e.startCalendar.clone();
-		Calendar endTime = e.endCalendar;
+		Calendar startTime  = (Calendar) e.getStartCalendar().clone();
+		Calendar endTime = e.getEndCalendar();
 		
 		SimpleDateFormat df;
 //		Set Event start time textView

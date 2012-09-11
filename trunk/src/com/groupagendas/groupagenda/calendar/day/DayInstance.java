@@ -68,10 +68,10 @@ public class DayInstance  {
 //			return e.is_all_day;
 			if (e.is_all_day) return true;
 			
-			if (!e.startCalendar.after(selectedDate)){
+			if (!e.getStartCalendar().after(selectedDate)){
 				String dayStr = new SimpleDateFormat("yyyy-MM-dd").format(selectedDate.getTime());
 				Calendar tmp = Utils.stringToCalendar(dayStr + " 23:59:59", DataManagement.SERVER_TIMESTAMP_FORMAT);
-				if (!e.endCalendar.before(tmp)) return true;
+				if (!e.getEndCalendar().before(tmp)) return true;
 			}
 			
 			return false;

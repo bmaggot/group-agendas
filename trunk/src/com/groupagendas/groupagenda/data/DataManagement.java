@@ -1257,8 +1257,8 @@ public class DataManagement {
 										Event birthdayEvent = new Event();
 										birthdayEvent.title = contact.name + " " + contact.lastname + " "
 												+ Data.getmContext().getString(R.string.contact_birthday);
-										birthdayEvent.startCalendar = birthdateCalendar;
-										birthdayEvent.endCalendar = birthdateCalendar;
+										birthdayEvent.setStartCalendar(birthdateCalendar);
+										birthdayEvent.setEndCalendar(birthdateCalendar);
 										birthdayEvent.my_time_start = Utils.formatCalendar(birthdateCalendar, SERVER_TIMESTAMP_FORMAT);
 										birthdayEvent.my_time_end = Utils.formatCalendar(birthdateCalendar, SERVER_TIMESTAMP_FORMAT);
 										birthdayEvent.is_all_day = true;
@@ -2351,7 +2351,7 @@ public class DataManagement {
 							try {
 								event.my_time_start = e.getString("my_time_start");
 								cv.put(EventsProvider.EMetaData.EventsMetaData.MY_TIME_START, event.my_time_start);
-								event.startCalendar = Utils.stringToCalendar(event.my_time_start, SERVER_TIMESTAMP_FORMAT);
+								event.setStartCalendar(Utils.stringToCalendar(event.my_time_start, SERVER_TIMESTAMP_FORMAT));
 
 							} catch (JSONException ex) {
 								Reporter.reportError(this.getClass().toString(), Thread.currentThread().getStackTrace()[2].getMethodName()
@@ -2360,7 +2360,7 @@ public class DataManagement {
 							try {
 								event.my_time_end = e.getString("my_time_end");
 								cv.put(EventsProvider.EMetaData.EventsMetaData.MY_TIME_END, event.my_time_end);
-								event.endCalendar = Utils.stringToCalendar(event.my_time_end, SERVER_TIMESTAMP_FORMAT);
+								event.setEndCalendar(Utils.stringToCalendar(event.my_time_end, SERVER_TIMESTAMP_FORMAT));
 
 							} catch (JSONException ex) {
 								Reporter.reportError(this.getClass().toString(), Thread.currentThread().getStackTrace()[2].getMethodName()
@@ -2616,11 +2616,11 @@ public class DataManagement {
 				item.time_end = result.getString(result.getColumnIndex(EventsProvider.EMetaData.EventsMetaData.TIME_END));
 				item.time = result.getString(result.getColumnIndex(EventsProvider.EMetaData.EventsMetaData.TIME));
 				item.my_time_start = result.getString(result.getColumnIndex(EventsProvider.EMetaData.EventsMetaData.MY_TIME_START));
-				item.startCalendar = Utils.stringToCalendar(item.my_time_start, SERVER_TIMESTAMP_FORMAT);
-				// item.startCalendar.add(Calendar.DATE, -1);
+				item.setStartCalendar(Utils.stringToCalendar(item.my_time_start, SERVER_TIMESTAMP_FORMAT));
+				// item.getStartCalendar().add(Calendar.DATE, -1);
 				item.my_time_end = result.getString(result.getColumnIndex(EventsProvider.EMetaData.EventsMetaData.MY_TIME_END));
-				item.endCalendar = Utils.stringToCalendar(item.my_time_end, SERVER_TIMESTAMP_FORMAT);
-				// item.endCalendar.add(Calendar.DATE, 1);
+				item.setEndCalendar(Utils.stringToCalendar(item.my_time_end, SERVER_TIMESTAMP_FORMAT));
+				// item.getEndCalendar().add(Calendar.DATE, 1);
 
 				item.reminder1 = result.getString(result.getColumnIndex(EventsProvider.EMetaData.EventsMetaData.REMINDER1));
 				item.reminder2 = result.getString(result.getColumnIndex(EventsProvider.EMetaData.EventsMetaData.REMINDER2));
@@ -2729,19 +2729,19 @@ public class DataManagement {
 
 						Date dt = new Date();
 						dt.setTime(cursor.getLong(3));
-						item.startCalendar = Calendar.getInstance();
-						item.startCalendar.setTime(dt);
+						item.setStartCalendar(Calendar.getInstance());
+						item.getStartCalendar().setTime(dt);
 						item.my_time_start = formatter.format(dt);
 
 						long endLong = cursor.getLong(4);
-						item.endCalendar = Calendar.getInstance();
+						item.setEndCalendar(Calendar.getInstance());
 						if (endLong > 0) {
 							dt.setTime(endLong);
-							item.endCalendar.setTime(dt);
+							item.getEndCalendar().setTime(dt);
 						} else {
 							dt.setTime(cursor.getLong(3));
-							item.endCalendar.setTime(dt);
-							item.endCalendar.add(Calendar.HOUR_OF_DAY, 1);
+							item.getEndCalendar().setTime(dt);
+							item.getEndCalendar().add(Calendar.HOUR_OF_DAY, 1);
 						}
 						item.my_time_end = formatter.format(dt);
 
@@ -3511,7 +3511,7 @@ public class DataManagement {
 							try {
 								event.my_time_start = e.getString("my_time_start");
 								cv.put(EventsProvider.EMetaData.EventsMetaData.MY_TIME_START, event.my_time_start);
-								event.startCalendar = Utils.stringToCalendar(event.my_time_start, SERVER_TIMESTAMP_FORMAT);
+								event.setStartCalendar(Utils.stringToCalendar(event.my_time_start, SERVER_TIMESTAMP_FORMAT));
 
 							} catch (JSONException ex) {
 								Reporter.reportError(this.getClass().toString(), Thread.currentThread().getStackTrace()[2].getMethodName()
@@ -3520,7 +3520,7 @@ public class DataManagement {
 							try {
 								event.my_time_end = e.getString("my_time_end");
 								cv.put(EventsProvider.EMetaData.EventsMetaData.MY_TIME_END, event.my_time_end);
-								event.endCalendar = Utils.stringToCalendar(event.my_time_end, SERVER_TIMESTAMP_FORMAT);
+								event.setEndCalendar(Utils.stringToCalendar(event.my_time_end, SERVER_TIMESTAMP_FORMAT));
 
 							} catch (JSONException ex) {
 								Reporter.reportError(this.getClass().toString(), Thread.currentThread().getStackTrace()[2].getMethodName()
@@ -3651,11 +3651,11 @@ public class DataManagement {
 							// //
 							Data.getmContext().getContentResolver().insert(EventsProvider.EMetaData.EventsMetaData.CONTENT_URI, cv);
 							Event tmpEvent = getEventFromDb(event_id);
-							if (tmpEvent.startCalendar == null) {
-								tmpEvent.startCalendar = Utils.stringToCalendar(event.my_time_start, SERVER_TIMESTAMP_FORMAT);
+							if (tmpEvent.getStartCalendar() == null) {
+								tmpEvent.setStartCalendar(Utils.stringToCalendar(event.my_time_start, SERVER_TIMESTAMP_FORMAT));
 							}
-							if (tmpEvent.endCalendar == null) {
-								tmpEvent.endCalendar = Utils.stringToCalendar(event.my_time_end, SERVER_TIMESTAMP_FORMAT);
+							if (tmpEvent.getEndCalendar() == null) {
+								tmpEvent.setEndCalendar(Utils.stringToCalendar(event.my_time_end, SERVER_TIMESTAMP_FORMAT));
 							}
 							updateEventInsideLocalDb(tmpEvent);
 						}

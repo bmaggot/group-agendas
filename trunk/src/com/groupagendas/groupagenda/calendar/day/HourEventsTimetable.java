@@ -5,8 +5,10 @@ import java.util.Calendar;
 import java.util.Collections;
 import java.util.List;
 
+import com.groupagendas.groupagenda.data.DataManagement;
 import com.groupagendas.groupagenda.events.Event;
 import com.groupagendas.groupagenda.utils.EventTimeComparator;
+import com.groupagendas.groupagenda.utils.Utils;
 
 public class HourEventsTimetable {
 	private final static int DEFAULT_TIMETABLE_ACCURACY_MINUTES = 60;
@@ -60,7 +62,7 @@ public class HourEventsTimetable {
 	}
 	
 	private int getStartTimetableIndex(Event event) {
-		Calendar start = event.startCalendar;
+		Calendar start = event.getStartCalendar();
 		if (start.before(todayStart)) {// if event start is not today, we set
 										// event start in time table 00:00
 			start = todayStart;
@@ -127,10 +129,13 @@ public class HourEventsTimetable {
 	 */
 	public int getEventDurationUnits(Event event) {
 		
-		Calendar start = event.startCalendar;
+		Calendar start = event.getStartCalendar();
 		if (start.before(todayStart)) start = todayStart;
 		
-		Calendar end = event.endCalendar;
+		Calendar end = event.getEndCalendar();
+		
+		Utils.formatCalendar(start, DataManagement.SERVER_TIMESTAMP_FORMAT);
+
 		if (end.after(todayEnd)) end = todayEnd;
 		long durationInMilis = end.getTimeInMillis() - start.getTimeInMillis();
 		long durationInMins = durationInMilis / milisInMinute;
