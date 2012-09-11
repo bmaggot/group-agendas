@@ -1,9 +1,7 @@
 package com.groupagendas.groupagenda.utils;
 
-import java.util.Calendar;
 import java.util.Comparator;
 
-import com.groupagendas.groupagenda.data.DataManagement;
 import com.groupagendas.groupagenda.events.Event;
 
 public class EventTimeComparator implements Comparator<Event> {

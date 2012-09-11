@@ -17,6 +17,7 @@ import com.groupagendas.groupagenda.utils.Utils;
 
 public class DayInstance  {
 
+		private static final int TIMETABLE_ACCURACY = 30;
 		private List<Event> allDayEvents; 
 		private HourEventsTimetable hourEventsTimetable;
 		private ArrayList<Event> hourEventsList;
@@ -27,6 +28,16 @@ public class DayInstance  {
 			activity = (Activity) context;
 			this.selectedDate = selectedDate;
 			updateEventLists();
+		}
+		/**
+		 * This method returns lenght of this event in quantity of timetable rows, according to timetable accuracy. 
+		 * E.g. if event lasts 4 hours and timetable accuracy is 30 minutes, this method returns 8
+		 * @author justinas.marcinka@gmail.com
+		 * @param event
+		 * @return Time units quantity that this event takes on particular day
+		 */
+		public int getEventDuration(Event event){
+			return hourEventsTimetable.getEventDurationUnits(event);
 		}
 		
 
@@ -49,7 +60,7 @@ public class DayInstance  {
 					 
 					}
 				
-				hourEventsTimetable = new HourEventsTimetable(hourEventsList, selectedDate);
+				hourEventsTimetable = new HourEventsTimetable(hourEventsList, selectedDate, TIMETABLE_ACCURACY);
 			}
 		}
 

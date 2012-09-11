@@ -7,8 +7,6 @@ import java.util.List;
 import android.content.Context;
 import android.graphics.Color;
 import android.graphics.drawable.GradientDrawable;
-import android.os.Bundle;
-import android.os.Parcelable;
 import android.util.AttributeSet;
 import android.view.GestureDetector;
 import android.view.MotionEvent;
@@ -174,10 +172,10 @@ public class DayWeekView extends AbstractCalendarView {
 					int daysToShow;
 					if (deltaX > this.deltaX){
 						System.out.println("ARTINAM");
-						daysToShow = (int) (scalling * this.daysToShow);
+						daysToShow = (int) (scalling * DayWeekView.daysToShow);
 					}else{
 						System.out.println("TOLINAM");
-						daysToShow = (int) (scalling * this.daysToShow);
+						daysToShow = (int) (scalling * DayWeekView.daysToShow);
 					}
 					this.deltaX = 0;
 					if (daysToShow > MAX_DAYS_SHOWN) daysToShow = MAX_DAYS_SHOWN;
@@ -448,7 +446,7 @@ public class DayWeekView extends AbstractCalendarView {
 				
 				for (int i = 0; i < hourEventsList.size(); i++){
 					Event e = hourEventsList.get(i);
-					int neighbourId = hourEventsTimetable.getNeighbourId(e);
+					int neighbourId = hourEventsTimetable.getLeftNeighbourId(e);
 					int divider = hourEventsTimetable.getWidthDivider(e);
 					drawHourEvent(e, divider, neighbourId, container, containerWidth, day);
 				}

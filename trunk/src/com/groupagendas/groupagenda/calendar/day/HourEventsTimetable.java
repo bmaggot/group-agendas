@@ -5,53 +5,70 @@ import java.util.Calendar;
 import java.util.Collections;
 import java.util.List;
 
-import com.groupagendas.groupagenda.data.DataManagement;
 import com.groupagendas.groupagenda.events.Event;
-import com.groupagendas.groupagenda.utils.EventStartComparator;
-import com.groupagendas.groupagenda.utils.Utils;
+import com.groupagendas.groupagenda.utils.EventTimeComparator;
 
 public class HourEventsTimetable {
+	private final static int DEFAULT_TIMETABLE_ACCURACY_MINUTES = 60;
+	private static final int milisInMinute = 60000;
+	private final int accuracyInMinutes;
 	private ArrayList<Event>[] eventsTimetable;
 	Calendar todayStart;
 	Calendar todayEnd;
 	
+	public HourEventsTimetable(List<Event> hourEventsList, Calendar selectedDate){
+		this(hourEventsList, selectedDate, DEFAULT_TIMETABLE_ACCURACY_MINUTES);
+	}
+	
 	@SuppressWarnings("unchecked")
-	public HourEventsTimetable(List<Event> hourEventsList, Calendar selectedDate) {
+	public HourEventsTimetable(List<Event> hourEventsList, Calendar selectedDate, int accuracyInMinutes) {
 		this.todayStart = selectedDate;
 		this.todayEnd = (Calendar)todayStart.clone();
+		this.accuracyInMinutes = accuracyInMinutes;
 		todayEnd.add(Calendar.HOUR_OF_DAY, 23);
 		todayEnd.add(Calendar.MINUTE, 59);
 		todayEnd.add(Calendar.SECOND, 59);
 		
-		Collections.sort(hourEventsList, new EventStartComparator());
-		eventsTimetable = ((ArrayList<Event>[]) new ArrayList[24]);
+		int minsPerDay = 24 * 60;
+		int rowsCount = minsPerDay / accuracyInMinutes;
+		if (accuracyInMinutes * rowsCount < minsPerDay) rowsCount++;
+		
+		Collections.sort(hourEventsList, new EventTimeComparator());
+		eventsTimetable = ((ArrayList<Event>[]) new ArrayList[rowsCount]);
 		for (Event e : hourEventsList){
 			this.add(e);
 		}
+		
+//	method called for debugging	printTimetable();
 	}
 	
-	private void add(Event event){
-		
-		Calendar end = event.endCalendar;
-		if (end.after(todayEnd)){
-			end = todayEnd;
-		}
-		
-		Calendar start = Utils.stringToCalendar(event.my_time_start, DataManagement.SERVER_TIMESTAMP_FORMAT);
-		if (start.before(todayStart)){// cia jeigu eventas prasideda ne sita diena, o anksciau
-			start = (Calendar) todayStart.clone();
-			end = todayEnd;
-			end.set(start.get(Calendar.YEAR), start.get(Calendar.MONTH), start.get(Calendar.DAY_OF_MONTH));
-		}
-		
-		while (start.before(end)){
-			put(start.get(Calendar.HOUR_OF_DAY), event);
-			start.add(Calendar.HOUR_OF_DAY, 1);
-		}
-		
+//	private void printTimetable() {
+//		for (int i = 0; i < eventsTimetable.length; i++){
+//			if (eventsTimetable[i] != null) {
+//				System.out.println( i + ": ");
+//				for (Event e : eventsTimetable[i]) System.out.println(e.title + " ");
+//			}
+//		}
+//		
+//	}
 
+	private void add(Event event){
+		//TODO test if everything is ok with events that take more than one day
+		int startIndex = getStartTimetableIndex(event);
+		int endIndex = startIndex + getEventDurationUnits(event);
+		for (int i = startIndex; i < endIndex; i++) put (i, event);
 	}
 	
+	private int getStartTimetableIndex(Event event) {
+		Calendar start = event.startCalendar;
+		if (start.before(todayStart)) {// if event start is not today, we set
+										// event start in time table 00:00
+			start = todayStart;
+		}
+		return (start.get(Calendar.HOUR_OF_DAY) * 60 + start
+				.get(Calendar.MINUTE)) / accuracyInMinutes;
+}
+
 	private void put (int hour, Event event){
 		if (eventsTimetable[hour] == null) eventsTimetable[hour] =  new ArrayList<Event>();
 		eventsTimetable[hour].add(event);
@@ -65,34 +82,60 @@ public class HourEventsTimetable {
  * @return which part of layout is assigned for this event interface. 
  * E.g. if return is 4, then this event details can take 1/4 of layout
  */
-
 	public int getWidthDivider(Event event) {
-		Calendar start = Utils.stringToCalendar(event.my_time_start, DataManagement.SERVER_TIMESTAMP_FORMAT);
-		Calendar end = Utils.stringToCalendar(event.my_time_end, DataManagement.SERVER_TIMESTAMP_FORMAT);
+		int startIndex = getStartTimetableIndex(event);
+		int endIndex = startIndex + getEventDurationUnits(event);
 		int ret = 1;
+		ArrayList<Event> hourList;
 		
-		while (start.before(end)){
-			ArrayList<Event> hourList;
-			if ((hourList = eventsTimetable[start.get(Calendar.HOUR_OF_DAY)]) != null)
-				if (hourList.size() > ret) ret = hourList.size();
-			start.add(Calendar.HOUR_OF_DAY, 1);
+		
+		for (int i = startIndex; i < endIndex; i++){	
+			hourList = eventsTimetable[i];
+			if (hourList.size() > ret) ret = hourList.size();
 		}
+			
 		
 		return ret;
 	}
 	
-	public int getNeighbourId(Event event){
-		int startHour = 0;
-		if (todayStart.before(event.startCalendar)) startHour = event.startCalendar.get(Calendar.HOUR_OF_DAY);
-		ArrayList<Event> hourEvents = eventsTimetable[startHour];
+	/**
+	 * @author justinas.marcinka@gmail.com
+	 * Method gets Id for left neighbour of timetable for event
+	 * @param event
+	 * @return java hashcode of left neighbour of this event in timetable. If this is first event in that table row, method returns 0;
+	 */
+	public int getLeftNeighbourId(Event event){
+		int eventStartIndex = getStartTimetableIndex(event);  // we get number of row, where starts our event
+		ArrayList<Event> hourEvents = eventsTimetable[eventStartIndex]; // we get all events of that hour
 
-		int index = hourEvents.indexOf(event);
+		int eventIndexInRow = hourEvents.indexOf(event); // we get our event position in table row
 //		We use event object JAVA HASH code for Relative Layout id;
-		if (index > 0) return hourEvents.get(index -1).hashCode();  
-		else return 0;
+		if (eventIndexInRow > 0) return hourEvents.get(eventIndexInRow - 1).hashCode();  // if our event is not the first from left event, we return his left neighbour hashcode
+		else return 0; // else return zero id;
 	}
 
 	public boolean hasEvents(int hour) {
 		return eventsTimetable[hour]!=null;
+	}
+
+	/**
+	 * This method returns length of this event in quantity of timetable rows, according to timetable accuracy. 
+	 * E.g. if event lasts 4 hours and timetable accuracy is 30 minutes, this method returns 8
+	 * @author justinas.marcinka@gmail.com
+	 * @param event
+	 * @return Time units quantity that this event takes on particular day
+	 */
+	public int getEventDurationUnits(Event event) {
+		
+		Calendar start = event.startCalendar;
+		if (start.before(todayStart)) start = todayStart;
+		
+		Calendar end = event.endCalendar;
+		if (end.after(todayEnd)) end = todayEnd;
+		long durationInMilis = end.getTimeInMillis() - start.getTimeInMillis();
+		long durationInMins = durationInMilis / milisInMinute;
+		int durationInTimeUnits = (int) (durationInMins / accuracyInMinutes);
+		if (durationInMins % accuracyInMinutes > accuracyInMinutes / 2) durationInTimeUnits++; 
+		return durationInTimeUnits;
 	}
 }
