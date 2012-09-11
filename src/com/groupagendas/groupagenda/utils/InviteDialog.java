@@ -22,7 +22,7 @@ import com.groupagendas.groupagenda.events.Invited;
 
 public class InviteDialog extends Dialog {
 
-	private Activity context;
+//	private Activity context;
 	private Button inviteAndRequest;
 	private Button justInvite;
 	private Button dontInvite;
@@ -31,7 +31,7 @@ public class InviteDialog extends Dialog {
 
 	public InviteDialog(Activity context, int styleResId, final Invited invited) {
 		super(context, styleResId);
-		this.context = context;
+//		this.context = context;
 		this.invited = invited;
 		this.setContentView(R.layout.contacts_invite);
 		this.setTitle(context.getResources().getString(R.string.do_you_want_to_save_contact) + " " + invited.name + " "
