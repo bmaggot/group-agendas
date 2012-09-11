@@ -40,6 +40,7 @@ public class ChatMessageActivity extends Activity {
 	EditText chatInput;
 	Button chatSend;
 	ChatMessageAdapter adapter;
+	ListView chat_message_list;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -55,7 +56,7 @@ public class ChatMessageActivity extends Activity {
 			e.printStackTrace();
 		}
 		adapter = new ChatMessageAdapter(this, Data.getChatMessages());
-		ListView chat_message_list = (ListView) findViewById(R.id.chat_message_list);
+		chat_message_list = (ListView) findViewById(R.id.chat_message_list);
 		chat_message_list.setAdapter(adapter);
 		adapter.notifyDataSetChanged();
 		chatInput = (EditText) findViewById(R.id.chat_input);
@@ -77,6 +78,8 @@ public class ChatMessageActivity extends Activity {
 				chatInput.setText("");
 				InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
 				imm.hideSoftInputFromWindow(chatInput.getWindowToken(), 0);
+				chat_message_list.setSelection(adapter.getCount()-1);
+				
 			}
 		});
 	}

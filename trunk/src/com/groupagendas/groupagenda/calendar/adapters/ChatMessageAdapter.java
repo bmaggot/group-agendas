@@ -7,6 +7,7 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.groupagendas.groupagenda.R;
 import com.groupagendas.groupagenda.chat.ChatMessageObject;
@@ -39,6 +40,7 @@ public class ChatMessageAdapter extends AbstractAdapter<ChatMessageObject> {
 				iksiuks.setOnClickListener(new OnClickListener() {
 					@Override
 					public void onClick(View v) {
+						Toast.makeText(getContext(), R.string.delete_chatm_progress, Toast.LENGTH_SHORT).show();
 						DataManagement.getInstance(getContext()).removeChatMessage(chatMessage.messageId, chatMessage.eventId);
 					}
 				});
