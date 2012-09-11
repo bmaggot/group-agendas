@@ -8,7 +8,7 @@ import android.graphics.Paint;
 import android.graphics.RectF;
 
 import com.groupagendas.groupagenda.R;
-import com.groupagendas.groupagenda.events.Event;
+import com.groupagendas.groupagenda.interfaces.Colored;
 
 public class DrawingUtils {
 	
@@ -34,7 +34,7 @@ public static int convertDPtoPX(Context context, int DP) {
 	 * @param shadow  - indicates whether to draw shadow for this rectangle.
 	 * @return Bitmap that represents this rectangle.
 	 */
-private static Bitmap getRoundRectBitmap(Context context, int widthPX, int heightPX, int roundRadius, Event event, boolean shadow){
+private static Bitmap getRoundRectBitmap(Context context, int widthPX, int heightPX, int roundRadius, Colored coloredObject, boolean shadow){
 		
 		int shadowRadius = convertDPtoPX(context, 2);
 		int shadowOffset = convertDPtoPX(context, Math.round(heightPX * 0.1f)); 
@@ -44,7 +44,7 @@ private static Bitmap getRoundRectBitmap(Context context, int widthPX, int heigh
 				Bitmap.Config.ARGB_8888);
 		Canvas c = new Canvas(bmp);
 		Paint p = new Paint();
-		p.setColor(Color.parseColor("#" + event.getColor()));
+		p.setColor(Color.parseColor("#" + coloredObject.getColor()));
 		if (shadow){
 			p.setShadowLayer(shadowRadius, shadowOffset, shadowOffset, context.getResources().getColor(R.color.darker_gray));
 		}
@@ -62,11 +62,11 @@ private static Bitmap getRoundRectBitmap(Context context, int widthPX, int heigh
  * @param shadow  - indicates whether to draw shadow for this rectangle
  * @return Bitmap that represents this rectangle.
  */
-public static Bitmap getEventRoundRectangle (Context context, int sizeDP, Event event, boolean shadow){
+public static Bitmap getColoredRoundRectangle (Context context, int sizeDP, Colored coloredObject, boolean shadow){
 	int heightPX = convertDPtoPX(context, sizeDP);
 	int widthPX = heightPX / 2;
 	int roundRadius = Math.round(heightPX * 0.2f);
-	return getRoundRectBitmap(context, widthPX, heightPX, roundRadius, event, shadow);
+	return getRoundRectBitmap(context, widthPX, heightPX, roundRadius, coloredObject, shadow);
 }
 
 }

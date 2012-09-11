@@ -2,7 +2,9 @@ package com.groupagendas.groupagenda.contacts;
 
 import java.util.Map;
 
-public class Contact extends Object{
+import com.groupagendas.groupagenda.interfaces.Colored;
+
+public class Contact extends Object implements Colored {
 	public int contact_id;
 	public String name;
 	public String lastname;
@@ -26,4 +28,18 @@ public class Contact extends Object{
 	public String agenda_view;
 	public String registered;
 	public Map<String, String> groups = null;
+
+	private String color;
+	
+	public String getColor () {
+		if (color != null) {
+			return color;
+		} else {
+			return "00000000";
+		}
+	}
+	
+	public void setColor (String color) {
+		this.color = color;
+	}
 }

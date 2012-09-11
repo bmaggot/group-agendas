@@ -43,6 +43,7 @@ public class ContactsProvider extends ContentProvider{
 			public static final String STREET = "street";
 			public static final String ZIP = "zip";
 			public static final String VISIBILITY = "visibility";
+			public static final String COLOR = "contact_color";
 			
 			public static final String IMAGE = "image";
 			public static final String IMAGE_URL = "image_url";
@@ -104,6 +105,7 @@ public class ContactsProvider extends ContentProvider{
 		CM.put(CMetaData.ContactsMetaData.STREET, CMetaData.ContactsMetaData.STREET);
 		CM.put(CMetaData.ContactsMetaData.ZIP, CMetaData.ContactsMetaData.ZIP);
 		CM.put(CMetaData.ContactsMetaData.VISIBILITY, CMetaData.ContactsMetaData.VISIBILITY);
+		CM.put(CMetaData.ContactsMetaData.COLOR, CMetaData.ContactsMetaData.COLOR);
 		
 		CM.put(CMetaData.ContactsMetaData.IMAGE, CMetaData.ContactsMetaData.IMAGE);
 		CM.put(CMetaData.ContactsMetaData.IMAGE_URL, CMetaData.ContactsMetaData.IMAGE_URL);
@@ -328,6 +330,7 @@ private static class DatabaseHelper extends SQLiteOpenHelper {
 				+CMetaData.ContactsMetaData.STREET+" TEXT ,"
 				+CMetaData.ContactsMetaData.ZIP+" TEXT ,"
 				+CMetaData.ContactsMetaData.VISIBILITY+" TEXT ,"
+				+CMetaData.ContactsMetaData.COLOR+" TEXT ,"
 				
 				+CMetaData.ContactsMetaData.IMAGE+" TEXT ,"
 				+CMetaData.ContactsMetaData.IMAGE_URL+" TEXT ,"

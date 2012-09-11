@@ -209,7 +209,7 @@ private SectionListItem[] filterEvents (String filterString, SectionListItem[] e
 							.findViewById(R.id.listnsearch_entry_color_placeholder);
 
 					
-					bubble.setBackgroundDrawable(new BitmapDrawable(DrawingUtils.getEventRoundRectangle(getContext(), 15, event, true)));
+					bubble.setBackgroundDrawable(new BitmapDrawable(DrawingUtils.getColoredRoundRectangle(getContext(), 15, event, true)));
 
 					ImageView icon = (ImageView) view
 							.findViewById(R.id.listnsearch_entry_icon_placeholder);

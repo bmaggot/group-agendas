@@ -1147,7 +1147,7 @@ public class DataManagement {
 			item.street = result.getString(result.getColumnIndex(ContactsProvider.CMetaData.ContactsMetaData.STREET));
 			item.zip = result.getString(result.getColumnIndex(ContactsProvider.CMetaData.ContactsMetaData.ZIP));
 			item.visibility = result.getString(result.getColumnIndex(ContactsProvider.CMetaData.ContactsMetaData.VISIBILITY));
-			item.zip = result.getString(result.getColumnIndex(ContactsProvider.CMetaData.ContactsMetaData.ZIP));
+			item.setColor(result.getString(result.getColumnIndex(ContactsProvider.CMetaData.ContactsMetaData.COLOR)));
 			final int image = result.getInt(result.getColumnIndex(ContactsProvider.CMetaData.ContactsMetaData.IMAGE));
 			item.image = image == 1;
 			item.image_url = result.getString(result.getColumnIndex(ContactsProvider.CMetaData.ContactsMetaData.IMAGE_URL));
@@ -1361,6 +1361,13 @@ public class DataManagement {
 								try {
 									contact.registered = c.getString(ContactsProvider.CMetaData.ContactsMetaData.REGISTERED);
 									cv.put(ContactsProvider.CMetaData.ContactsMetaData.REGISTERED, contact.registered);
+								} catch (JSONException e) {
+									Reporter.reportError(this.getClass().toString(), Thread.currentThread().getStackTrace()[2]
+											.getMethodName().toString(), e.getMessage());
+								}
+								try {
+									contact.setColor(c.getString(ContactsProvider.CMetaData.ContactsMetaData.COLOR));
+									cv.put(ContactsProvider.CMetaData.ContactsMetaData.COLOR, contact.getColor());
 								} catch (JSONException e) {
 									Reporter.reportError(this.getClass().toString(), Thread.currentThread().getStackTrace()[2]
 											.getMethodName().toString(), e.getMessage());
