@@ -134,6 +134,9 @@ public class NewEventActivity extends Activity {
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.new_event);
+		
+		startCalendar.clear(Calendar.SECOND);
+		endCalendar.clear(Calendar.SECOND);
 
 		dm = DataManagement.getInstance(this);
 		dtUtils = new DateTimeUtils(this);
