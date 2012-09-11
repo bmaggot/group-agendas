@@ -2,6 +2,7 @@ package com.groupagendas.groupagenda.events;
 
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Locale;
 import java.util.concurrent.ExecutionException;
 
 import android.app.Activity;
@@ -286,7 +287,9 @@ public class NewEventActivity extends Activity {
 		countrySpinner.setAdapter(adapterCountry);
 		countryArray = CountryManager.getCountryValues(this);
 		
-		String curentCountry = dm.getmContext().getResources().getConfiguration().locale.getISO3Country();
+//		String curentCountry = dm.getmContext().getResources().getConfiguration().locale.getISO3Country();
+		Locale newLocale = new Locale(dm.getAccount().language, dm.getAccount().country);
+		String curentCountry = newLocale.getISO3Country();
 		int i = 0;
 		for(String tmpCountry : countryArray){
 			if(tmpCountry.equals(curentCountry)){
