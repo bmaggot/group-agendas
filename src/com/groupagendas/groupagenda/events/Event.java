@@ -3,12 +3,14 @@ package com.groupagendas.groupagenda.events;
 import java.util.ArrayList;
 import java.util.Calendar;
 
+import com.groupagendas.groupagenda.interfaces.Colored;
+
 import android.content.Context;
 
 
 
 
-public class Event extends Object{
+public class Event extends Object implements Colored {
 //	TODO set all default fields and getters
 	public static String DEFAULT_COLOR = "21C0DB";
 	

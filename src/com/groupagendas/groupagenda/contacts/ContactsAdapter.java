@@ -4,28 +4,38 @@ import java.util.ArrayList;
 import java.util.List;
 
 import android.app.Activity;
+import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.drawable.BitmapDrawable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.ViewGroup.LayoutParams;
 import android.widget.BaseAdapter;
 import android.widget.Filter;
 import android.widget.Filterable;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.groupagendas.groupagenda.R;
 import com.groupagendas.groupagenda.data.Data;
+import com.groupagendas.groupagenda.utils.DrawingUtils;
 import com.groupagendas.groupagenda.utils.Utils;
 
 public class ContactsAdapter extends BaseAdapter implements Filterable {
 	private List<Contact> contacts;
 	private List<Contact> contactsAll;
+
 	private LayoutInflater mInflater;
+	private Context context;
 
-	public ContactsAdapter(List<Contact> objects, Activity activity) {
+	private int bubbleHeightDP = 15;
+	private int colouredRectangleMarginsDP = 2;
 
+	public ContactsAdapter(List<Contact> objects, Activity activity, Context context) {
+		this.context = context;
 		contacts = objects;
 		contactsAll = objects;
 
@@ -40,6 +50,7 @@ public class ContactsAdapter extends BaseAdapter implements Filterable {
 			holder.email = (TextView) convertView.findViewById(R.id.list_contacts_email);
 			holder.name = (TextView) convertView.findViewById(R.id.list_contacts_name);
 			holder.image = (ImageView) convertView.findViewById(R.id.contact_icon);
+			holder.color = (ImageView) convertView.findViewById(R.id.contact_color);
 
 			convertView.setTag(holder);
 		} else {
@@ -51,7 +62,11 @@ public class ContactsAdapter extends BaseAdapter implements Filterable {
 		if (contact.lastname != null && !contact.lastname.equals("null"))
 			sb.append(" ").append(contact.lastname);
 		holder.name.setText(sb.toString());
-
+		
+		if (context != null) {
+			holder.color.setBackgroundDrawable(new BitmapDrawable(DrawingUtils.getColoredRoundRectangle(context, bubbleHeightDP, contact, true)));
+		}
+		
 		/*
 		 * This section of code is disabled in order not to display contact's
 		 * email address.
@@ -89,6 +104,7 @@ public class ContactsAdapter extends BaseAdapter implements Filterable {
 		TextView name;
 		TextView email;
 		ImageView image;
+		ImageView color;
 	}
 
 	@Override

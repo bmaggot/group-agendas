@@ -76,7 +76,7 @@ public class GroupContactsActivity extends ListActivity {
 
 		protected void onPostExecute(ArrayList<Contact> contacts) {
 			if (contacts != null)
-				setListAdapter(new ContactsAdapter(contacts, GroupContactsActivity.this));
+				setListAdapter(new ContactsAdapter(contacts, GroupContactsActivity.this, GroupContactsActivity.this));
 
 			super.onPostExecute(contacts);
 		}

@@ -285,7 +285,7 @@ public class ContactsActivity extends ListActivity implements OnCheckedChangeLis
 
 		mGestureDetector = new GestureDetector(this, new SideIndexGestureListener());
 
-		cAdapter = new ContactsAdapter(dm.getContacts(), this);
+		cAdapter = new ContactsAdapter(dm.getContacts(), this, getApplicationContext());
 		gAdapter = new GroupsAdapter(dm.getGroups(), this);
 
 	}
