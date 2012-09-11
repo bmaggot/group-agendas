@@ -64,7 +64,7 @@ public class ContactsAdapter extends BaseAdapter implements Filterable {
 		holder.name.setText(sb.toString());
 		
 		if (context != null) {
-			holder.color.setBackgroundDrawable(new BitmapDrawable(DrawingUtils.getColoredRoundRectangle(context, bubbleHeightDP, contact, true)));
+			holder.color.setBackgroundDrawable(new BitmapDrawable(DrawingUtils.getColoredRoundRectangle(context, bubbleHeightDP, contact, false)));
 		}
 		
 		/*
