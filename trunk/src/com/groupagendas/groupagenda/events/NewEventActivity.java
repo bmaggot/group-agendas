@@ -245,6 +245,7 @@ public class NewEventActivity extends Activity {
 		String strTime = getIntent().getStringExtra(EXTRA_STRING_FOR_START_CALENDAR);
 		if (strTime != null) {
 			startCalendar = Utils.stringToCalendar(strTime, DataManagement.SERVER_TIMESTAMP_FORMAT);
+			startCalendar.clear(Calendar.SECOND);
 			// startCalendar = dtUtils.stringDateToCalendar(strTime);
 			endCalendar.setTime(startCalendar.getTime());
 			endCalendar.add(Calendar.MINUTE, DEFAULT_EVENT_DURATION_IN_MINS);
