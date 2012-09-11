@@ -51,8 +51,8 @@ public class Event extends Object{
 	public String my_time_start;
 	public String my_time_end;
 	
-	public Calendar startCalendar;
-	public Calendar endCalendar;
+	private Calendar startCalendar;
+	private Calendar endCalendar;
 	
 	
 	
@@ -117,6 +117,26 @@ public class Event extends Object{
 		if (icon == null) return false;
 		if (icon.equalsIgnoreCase("null")) return false;
 		return true;
+	}
+
+	public Calendar getStartCalendar() {
+		return startCalendar;
+	}
+
+	public void setStartCalendar(Calendar startCalendar) {
+		this.startCalendar = startCalendar;
+		this.startCalendar.clear(Calendar.SECOND);
+		this.startCalendar.clear(Calendar.MILLISECOND);
+	}
+
+	public Calendar getEndCalendar() {
+		return endCalendar;
+	}
+
+	public void setEndCalendar(Calendar endCalendar) {
+		this.endCalendar = endCalendar;
+		this.endCalendar.clear(Calendar.SECOND);
+		this.endCalendar.clear(Calendar.MILLISECOND);
 	}
 	
 

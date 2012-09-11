@@ -99,16 +99,16 @@ public class DayWeekView extends AbstractCalendarView {
 		float startTimeHours = 0; 
 		float endTimeHours = 24;
 		
-		if (day.getSelectedDate().before(event.startCalendar)) {
-			startTimeHours = event.startCalendar.get(Calendar.HOUR_OF_DAY);
-			float minutes = event.startCalendar.get(Calendar.MINUTE);
+		if (day.getSelectedDate().before(event.getStartCalendar())) {
+			startTimeHours = event.getStartCalendar().get(Calendar.HOUR_OF_DAY);
+			float minutes = event.getStartCalendar().get(Calendar.MINUTE);
 			startTimeHours += minutes / 60;
 		} else eventFrame.setStartTime(day.getSelectedDate()); //set event start hour 0:00 to show
 		
-		if (day.getSelectedDate().get(Calendar.DAY_OF_MONTH) == event.endCalendar.get(Calendar.DAY_OF_MONTH)){
-			if (day.getSelectedDate().get(Calendar.MONTH) == event.endCalendar.get(Calendar.MONTH)){
-				endTimeHours = event.endCalendar.get(Calendar.HOUR_OF_DAY);
-				float minutes = event.endCalendar.get(Calendar.MINUTE);
+		if (day.getSelectedDate().get(Calendar.DAY_OF_MONTH) == event.getEndCalendar().get(Calendar.DAY_OF_MONTH)){
+			if (day.getSelectedDate().get(Calendar.MONTH) == event.getEndCalendar().get(Calendar.MONTH)){
+				endTimeHours = event.getEndCalendar().get(Calendar.HOUR_OF_DAY);
+				float minutes = event.getEndCalendar().get(Calendar.MINUTE);
 				endTimeHours += minutes / 60;
 									
 				}			

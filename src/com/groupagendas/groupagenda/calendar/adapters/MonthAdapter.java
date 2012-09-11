@@ -51,10 +51,10 @@ public class MonthAdapter extends AbstractAdapter<Event> {
 			colourBubble.setImageResource(event.getColorBubbleId(getContext()));
 			
 			TextView startTime = (TextView) view.findViewById(R.id.month_entry_start);
-			startTime.setText(timeFormat.format(event.startCalendar.getTime()));
+			startTime.setText(timeFormat.format(event.getStartCalendar().getTime()));
 			
 			TextView endTime = (TextView) view.findViewById(R.id.month_entry_end);
-			endTime.setText(timeFormat.format(event.endCalendar.getTime()));
+			endTime.setText(timeFormat.format(event.getEndCalendar().getTime()));
 			
 			ImageView icon = (ImageView) view.findViewById(R.id.month_entry_icon_placeholder);
 			if(event.icon == null) event.icon = "null";

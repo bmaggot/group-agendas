@@ -759,7 +759,7 @@ public class ContactsActivity extends ListActivity implements OnCheckedChangeLis
 							try {
 								event.my_time_start = e.getString("my_time_start");
 								cv.put(EventsProvider.EMetaData.EventsMetaData.MY_TIME_START, event.my_time_start);
-								event.startCalendar = Utils.stringToCalendar(event.my_time_start, DataManagement.SERVER_TIMESTAMP_FORMAT);
+								event.setStartCalendar(Utils.stringToCalendar(event.my_time_start, DataManagement.SERVER_TIMESTAMP_FORMAT));
 
 							} catch (JSONException ex) {
 								Reporter.reportError(this.getClass().toString(), Thread.currentThread().getStackTrace()[2].getMethodName()
@@ -768,7 +768,7 @@ public class ContactsActivity extends ListActivity implements OnCheckedChangeLis
 							try {
 								event.my_time_end = e.getString("my_time_end");
 								cv.put(EventsProvider.EMetaData.EventsMetaData.MY_TIME_END, event.my_time_end);
-								event.endCalendar = Utils.stringToCalendar(event.my_time_end, DataManagement.SERVER_TIMESTAMP_FORMAT);
+								event.setEndCalendar(Utils.stringToCalendar(event.my_time_end, DataManagement.SERVER_TIMESTAMP_FORMAT));
 
 							} catch (JSONException ex) {
 								Reporter.reportError(this.getClass().toString(), Thread.currentThread().getStackTrace()[2].getMethodName()
@@ -899,11 +899,11 @@ public class ContactsActivity extends ListActivity implements OnCheckedChangeLis
 							// //
 							dm.getmContext().getContentResolver().insert(EventsProvider.EMetaData.EventsMetaData.CONTENT_URI, cv);
 							Event tmpEvent = dm.getEventFromDb(event_id);
-							if (tmpEvent.startCalendar == null) {
-								tmpEvent.startCalendar = Utils.stringToCalendar(event.my_time_start, date_format);
+							if (tmpEvent.getStartCalendar() == null) {
+								tmpEvent.setStartCalendar(Utils.stringToCalendar(event.my_time_start, date_format));
 							}
-							if (tmpEvent.endCalendar == null) {
-								tmpEvent.endCalendar = Utils.stringToCalendar(event.my_time_end, date_format);
+							if (tmpEvent.getEndCalendar() == null) {
+								tmpEvent.setEndCalendar(Utils.stringToCalendar(event.my_time_end, date_format));
 							}
 							dm.updateEventInsideLocalDb(tmpEvent);
 						}

@@ -52,7 +52,7 @@ public class AgendaDayAdapter extends AbstractAdapter<Event> {
 		TextView timeText = (TextView) (view.findViewById(R.id.agenda_entry_time_placeholder));
 		if (showTime) {
 			timeText.setVisibility(View.VISIBLE);
-			timeText.setText(hoursFormatter.format(event.startCalendar.getTime()));
+			timeText.setText(hoursFormatter.format(event.getStartCalendar().getTime()));
 			
 		}else{
 			timeText.setVisibility(View.GONE);

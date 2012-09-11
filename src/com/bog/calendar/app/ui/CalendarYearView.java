@@ -507,7 +507,7 @@ public class CalendarYearView extends FrameLayout {
     	if(isDrawEventsPoint){
     		for(int i=0, l=mEvents.size(); i<l; i++){
     			Event e = mEvents.get(i);
-    			if(c.after(e.startCalendar) && c.before(e.endCalendar)){
+    			if(c.after(e.getStartCalendar()) && c.before(e.getEndCalendar())){
     	    		events.add(e);
     	    	}
     		}
