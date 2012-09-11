@@ -40,6 +40,7 @@ import com.groupagendas.groupagenda.account.AccountProvider;
 import com.groupagendas.groupagenda.calendar.AbstractCalendarView;
 import com.groupagendas.groupagenda.calendar.DayWeekView;
 import com.groupagendas.groupagenda.calendar.agenda.AgendaView;
+import com.groupagendas.groupagenda.calendar.importer.NativeCalendarImporter;
 import com.groupagendas.groupagenda.calendar.listnsearch.ListnSearchView;
 import com.groupagendas.groupagenda.calendar.minimonth.MiniMonthView;
 import com.groupagendas.groupagenda.calendar.month.MonthView;
@@ -152,6 +153,7 @@ public class NavbarActivity extends Activity {
 						total = 0;
 						publishProgress(total);
 					case 1: // Load account
+						NativeCalendarImporter.readCalendar(dm.getmContext());
 						dm.getAccountFromRemoteDb();
 						loadPhase++;
 						total = 20;
