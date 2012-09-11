@@ -194,6 +194,12 @@ public class Utils {
 	
 	}
 	
+	/**
+	 * Creates new today calendar with daytime set to 00:00:00:00 and FirstDayofWeek defined in CalendarSettings.class
+	 * @author justinas.marcinka@gmail.com
+	 * @return
+	 */
+	
 	public static Calendar createNewTodayCalendar() {
 		Calendar tmp = Calendar.getInstance();
 		tmp.setFirstDayOfWeek(CalendarSettings.getFirstDayofWeek());
@@ -205,15 +211,33 @@ public class Utils {
 	}
 
 	
-	
+	/**
+	 * Formats given calendar to String, using user selected format, defined in CalendarSettings
+	 * @author justinas.marcinka@gmail.com
+	 * @param calendar calendar to format
+	 * @return
+	 */
 	public static String formatCalendar(Calendar calendar){
 		return CalendarSettings.getDateFormatter().format(calendar.getTime());
 	}
 	
+	/**
+	 * Formats given calendar to String, using given pattern
+	 * @author justinas.marcinka@gmail.com
+	 * @param calendar calendar to format
+	 * @param pattern date format pattern
+	 * @return
+	 */
 	public static String formatCalendar(Calendar calendar, String pattern){
 		return new SimpleDateFormat(pattern).format(calendar.getTime());
 	}
 
+	/**
+	 * Gets day of week parameter of given date, according to user calendar settings. First day: 1
+	 * @author justinas.marcinka@gmail.com
+	 * @param date
+	 * @return day of week number
+	 */
 	public static int getDayOfWeek(Calendar date) {
 		
 		Calendar tmp = (Calendar) date.clone();
@@ -228,7 +252,12 @@ public class Utils {
 	}
 
 
-
+/**
+ * Indicates whether given calendar date is weekend, according to users calendar settings
+ * @author justinas.marcinka@gmail.com
+ * @param day
+ * @return true, if given date is weekend
+ */
 	public static boolean isWeekend(Calendar day) {
 		for (int i = 0; i < CalendarSettings.getWeekends().length; i++)
 			if (day.get(Calendar.DAY_OF_WEEK) == CalendarSettings.getWeekends()[i]) return true;
