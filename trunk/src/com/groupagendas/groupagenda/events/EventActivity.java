@@ -1075,11 +1075,19 @@ public class EventActivity extends Activity {
 
 			cv.put(EventsProvider.EMetaData.EventsMetaData.COLOR, event.getColor());
 
-			event.my_time_start = Utils.formatCalendar(startCalendar, DataManagement.SERVER_TIMESTAMP_FORMAT);
-			cv.put(EventsProvider.EMetaData.EventsMetaData.MY_TIME_START, event.my_time_start);
+			if (startCalendar.getTime().before(endCalendar.getTime())) {
 
-			event.my_time_end = Utils.formatCalendar(endCalendar, DataManagement.SERVER_TIMESTAMP_FORMAT);
-			cv.put(EventsProvider.EMetaData.EventsMetaData.MY_TIME_END, event.my_time_end);
+				event.setStartCalendar(startCalendar);
+				event.setEndCalendar(endCalendar);
+
+				event.my_time_start = Utils.formatCalendar(startCalendar, DataManagement.SERVER_TIMESTAMP_FORMAT);
+				event.my_time_end = Utils.formatCalendar(endCalendar, DataManagement.SERVER_TIMESTAMP_FORMAT);
+				cv.put(EventsProvider.EMetaData.EventsMetaData.MY_TIME_START, event.my_time_start);
+				cv.put(EventsProvider.EMetaData.EventsMetaData.MY_TIME_END, event.my_time_end);
+			} else {
+				check = false;
+				errorStr = getString(R.string.invalid_start_end_time);
+			}
 
 			event.country = countryArray[countrySpinner.getSelectedItemPosition()];
 			cv.put(EventsProvider.EMetaData.EventsMetaData.COUNTRY, event.country);

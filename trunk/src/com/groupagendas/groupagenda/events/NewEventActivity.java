@@ -755,7 +755,7 @@ public class NewEventActivity extends Activity {
 				cv.put(EventsProvider.EMetaData.EventsMetaData.MY_TIME_END, event.my_time_end);
 			} else {
 				check = false;
-				errorStr = getString(R.string.start_equals_end);
+				errorStr = getString(R.string.invalid_start_end_time);
 			}
 
 			event.country = countryArray[countrySpinner.getSelectedItemPosition()];

@@ -110,7 +110,7 @@
     <string name="loading_events">Loading Events…</string>
     <string name="loading_chat">Loading Chat threads…</string>
     <string name="title_is_required">Title is required</string>
-    <string name="start_equals_end">Event end time must be later than start time</string>
+    <string name="invalid_start_end_time">Event end time must be later than start time</string>
     <string name="name_is_required">Name is required</string>
     <string name="desc_is_required">Description is required</string>
     <string name="new_event">New event</string>
