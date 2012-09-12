@@ -609,7 +609,6 @@ public class NewEventActivity extends Activity {
 		Toast.makeText(this, R.string.saving_new_event, Toast.LENGTH_LONG).show();
 		try {
 			new NewEventTask().execute().get();
-			Toast.makeText(this, R.string.new_event_saved, Toast.LENGTH_LONG).show();
 		} catch (InterruptedException e) {
 			e.printStackTrace();
 		} catch (ExecutionException e) {
@@ -831,6 +830,7 @@ public class NewEventActivity extends Activity {
 		protected void onPostExecute(Boolean result) {
 			if (result) {
 				finish();
+				Toast.makeText(NewEventActivity.this, R.string.new_event_saved, Toast.LENGTH_LONG).show();
 			} else {
 				showDialog(DIALOG_ERROR);
 				pb.setVisibility(View.GONE);
