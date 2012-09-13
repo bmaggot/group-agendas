@@ -40,6 +40,7 @@ import android.widget.Toast;
 import com.groupagendas.groupagenda.R;
 import com.groupagendas.groupagenda.contacts.Contact;
 import com.groupagendas.groupagenda.contacts.ContactsActivity;
+import com.groupagendas.groupagenda.data.CalendarSettings;
 import com.groupagendas.groupagenda.data.Data;
 import com.groupagendas.groupagenda.data.DataManagement;
 import com.groupagendas.groupagenda.settings.AutoColorItem;
@@ -67,9 +68,6 @@ public class NewEventActivity extends Activity {
 
 	private EditText titleView;
 
-	private Spinner typeSpinner;
-	private String[] typeArray;
-
 	private final int DIALOG_START = 0;
 	private Calendar startCalendar = Calendar.getInstance();
 	private EditText startView;
@@ -96,7 +94,6 @@ public class NewEventActivity extends Activity {
 	private EditText costView;
 	private EditText accomodationView;
 
-	private LinearLayout contactsBlock;
 	private Button contactsButton;
 	private CharSequence[] titles;
 	private int[] ids;
@@ -253,7 +250,6 @@ public class NewEventActivity extends Activity {
 		if (strTime != null) {
 			startCalendar = Utils.stringToCalendar(strTime, DataManagement.SERVER_TIMESTAMP_FORMAT);
 			startCalendar.clear(Calendar.SECOND);
-			// startCalendar = dtUtils.stringDateToCalendar(strTime);
 			endCalendar.setTime(startCalendar.getTime());
 			endCalendar.add(Calendar.MINUTE, DEFAULT_EVENT_DURATION_IN_MINS);
 
@@ -400,7 +396,6 @@ public class NewEventActivity extends Activity {
 
 		// contacts
 		Data.selectedContacts = new ArrayList<Contact>();
-		contactsBlock = (LinearLayout) findViewById(R.id.contactsBlock);
 		contactsButton = (Button) findViewById(R.id.contactsButton);
 		contactsButton.setOnClickListener(new OnClickListener() {
 			@Override
@@ -979,10 +974,10 @@ public class NewEventActivity extends Activity {
 		mDateTimePicker.updateDate(c.get(Calendar.YEAR), c.get(Calendar.MONTH), c.get(Calendar.DAY_OF_MONTH));
 		mDateTimePicker.updateTime(c.get(Calendar.HOUR_OF_DAY), c.get(Calendar.MINUTE));
 
-		// Check is system is set to use 24h time (this doesn't seem to work as
-		// expected though)
-		final String timeS = android.provider.Settings.System.getString(getContentResolver(), android.provider.Settings.System.TIME_12_24);
-		final boolean is24h = !(timeS == null || timeS.equals("12"));
+//		// Check is system is set to use 24h time (this doesn't seem to work as
+//		// expected though)
+//		final String timeS = android.provider.Settings.System.getString(getContentResolver(), android.provider.Settings.System.TIME_12_24);
+		final boolean is24h = !CalendarSettings.isUsing_AM_PM();
 
 		// Update demo TextViews when the "OK" button is clicked
 		((Button) mDateTimeDialogView.findViewById(R.id.SetDateTime)).setOnClickListener(new OnClickListener() {
