@@ -26,6 +26,7 @@ import android.widget.AdapterView.OnItemClickListener;
 import android.widget.AdapterView.OnItemSelectedListener;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.GridView;
 import android.widget.ImageView;
@@ -130,11 +131,13 @@ public class NewEventActivity extends Activity {
 	private boolean remindersShown = false;
 	private boolean countrySelected = false;
 
+	private CheckBox templateTrigger;
+
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.new_event);
-		
+
 		startCalendar.clear(Calendar.SECOND);
 		endCalendar.clear(Calendar.SECOND);
 
@@ -150,6 +153,7 @@ public class NewEventActivity extends Activity {
 		event = new Event();
 
 		pb = (ProgressBar) findViewById(R.id.progress);
+		templateTrigger = (CheckBox) findViewById(R.id.templateTrigger);
 		saveButton = (Button) findViewById(R.id.saveButton);
 
 		// icon
@@ -290,18 +294,20 @@ public class NewEventActivity extends Activity {
 		adapterCountry.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
 		countrySpinner.setAdapter(adapterCountry);
 		countryArray = CountryManager.getCountryValues(this);
-		
-//		String curentCountry = dm.getmContext().getResources().getConfiguration().locale.getISO3Country();
+
+		// String curentCountry =
+		// dm.getmContext().getResources().getConfiguration().locale.getISO3Country();
 		Locale newLocale = new Locale(dm.getAccount().language, dm.getAccount().country);
 		String curentCountry = newLocale.getISO3Country();
 		int i = 0;
-		for(String tmpCountry : countryArray){
-			if(tmpCountry.equals(curentCountry)){
+		for (String tmpCountry : countryArray) {
+			if (tmpCountry.equals(curentCountry)) {
 				countrySpinner.setSelection(i);
 				countrySelected = true;
 				timezoneSpinner.setEnabled(true);
 				String[] timezoneLabels = TimezoneManager.getTimezones(NewEventActivity.this, countryArray[i]);
-				ArrayAdapter<String> adapterTimezone = new ArrayAdapter<String>(NewEventActivity.this, R.layout.search_dialog_item, timezoneLabels);
+				ArrayAdapter<String> adapterTimezone = new ArrayAdapter<String>(NewEventActivity.this, R.layout.search_dialog_item,
+						timezoneLabels);
 				adapterTimezone.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
 				timezoneSpinner.setAdapter(adapterTimezone);
 
@@ -309,24 +315,25 @@ public class NewEventActivity extends Activity {
 			}
 			i++;
 		}
-		
-		LinearLayout countrySpinnerBlock = (LinearLayout) findViewById(R.id.countrySpinnerBlock); 
+
+		LinearLayout countrySpinnerBlock = (LinearLayout) findViewById(R.id.countrySpinnerBlock);
 		countrySpinnerBlock.setOnClickListener(new OnClickListener() {
-			
+
 			@Override
 			public void onClick(View arg0) {
 				Dialog dia = new SearchDialog(NewEventActivity.this, R.style.yearview_eventlist_title, adapterCountry, countrySpinner);
-				dia.show();				
+				dia.show();
 			}
 		});
-		
+
 		countrySpinner.setOnItemSelectedListener(new OnItemSelectedListener() {
 
 			@Override
 			public void onItemSelected(AdapterView<?> arg0, View arg1, int pos, long arg3) {
 				if (pos == 0) {
-					if(!countrySelected){
-						ArrayAdapter<String> adapterTimezone = new ArrayAdapter<String>(NewEventActivity.this, R.layout.search_dialog_item, new String[0]);
+					if (!countrySelected) {
+						ArrayAdapter<String> adapterTimezone = new ArrayAdapter<String>(NewEventActivity.this, R.layout.search_dialog_item,
+								new String[0]);
 						adapterTimezone.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
 						timezoneSpinner.setAdapter(adapterTimezone);
 						timezoneSpinner.setEnabled(false);
@@ -335,7 +342,8 @@ public class NewEventActivity extends Activity {
 				} else {
 					timezoneSpinner.setEnabled(true);
 					String[] timezoneLabels = TimezoneManager.getTimezones(NewEventActivity.this, countryArray[pos]);
-					ArrayAdapter<String> adapterTimezone = new ArrayAdapter<String>(NewEventActivity.this,  R.layout.search_dialog_item, timezoneLabels);
+					ArrayAdapter<String> adapterTimezone = new ArrayAdapter<String>(NewEventActivity.this, R.layout.search_dialog_item,
+							timezoneLabels);
 					adapterTimezone.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
 					timezoneSpinner.setAdapter(adapterTimezone);
 
@@ -536,6 +544,35 @@ public class NewEventActivity extends Activity {
 		super.onResume();
 	}
 
+	private Event setEventData() {
+		Event event = new Event();
+
+		if (timezoneArray != null) {
+			event.timezone = timezoneArray[timezoneSpinner.getSelectedItemPosition()];
+		}
+
+		event.description_ = descView.getText().toString();
+
+		// title
+		event.setTitle(titleView.getText().toString());
+
+		// calendars
+		event.setStartCalendar(startCalendar);
+		event.setEndCalendar(endCalendar);
+
+		event.country = countryArray[countrySpinner.getSelectedItemPosition()];
+		event.zip = zipView.getText().toString();
+		event.city = cityView.getText().toString();
+		event.street = streetView.getText().toString();
+		event.location = locationView.getText().toString();
+		event.go_by = gobyView.getText().toString();
+		event.take_with_you = takewithyouView.getText().toString();
+		event.cost = costView.getText().toString();
+		event.accomodation = accomodationView.getText().toString();
+
+		return event;
+	}
+
 	public View getInvitedView(Invited invited, LayoutInflater inflater, View view, Context mContext) {
 		final TextView nameView = (TextView) view.findViewById(R.id.invited_fullname);
 		nameView.setText(invited.name);
@@ -589,17 +626,19 @@ public class NewEventActivity extends Activity {
 					}
 				}
 
-//				if (event.color == null || event.color.equals("null") || event.color.equals("")) {
-//					for (int i = 0, l = autoColors.size(); i < l; i++) {
-//						final AutoColorItem autoColor = autoColors.get(i);
-//						if (s.toString().contains(autoColor.keyword)) {
-//							event.color = autoColor.color;
-//							String nameColor = "calendarbubble_" + autoColor.color + "_";
-//							int image = getResources().getIdentifier(nameColor, "drawable", "com.groupagendas.groupagenda");
-//							colorView.setImageResource(image);
-//						}
-//					}
-//				}
+				// if (event.color == null || event.color.equals("null") ||
+				// event.color.equals("")) {
+				// for (int i = 0, l = autoColors.size(); i < l; i++) {
+				// final AutoColorItem autoColor = autoColors.get(i);
+				// if (s.toString().contains(autoColor.keyword)) {
+				// event.color = autoColor.color;
+				// String nameColor = "calendarbubble_" + autoColor.color + "_";
+				// int image = getResources().getIdentifier(nameColor,
+				// "drawable", "com.groupagendas.groupagenda");
+				// colorView.setImageResource(image);
+				// }
+				// }
+				// }
 			}
 		}
 
@@ -607,12 +646,17 @@ public class NewEventActivity extends Activity {
 
 	public void saveEvent(View v) {
 		Toast.makeText(this, R.string.saving_new_event, Toast.LENGTH_LONG).show();
-		try {
-			new NewEventTask().execute().get();
-		} catch (InterruptedException e) {
-			e.printStackTrace();
-		} catch (ExecutionException e) {
-			e.printStackTrace();
+		if (!templateTrigger.isChecked()) {
+			try {
+				new NewEventTask().execute().get();
+				Toast.makeText(this, R.string.new_event_saved, Toast.LENGTH_LONG).show();
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			} catch (ExecutionException e) {
+				e.printStackTrace();
+			}
+		} else {
+
 		}
 	}
 
@@ -710,113 +754,89 @@ public class NewEventActivity extends Activity {
 		@Override
 		protected Boolean doInBackground(Event... events) {
 			boolean success = false;
-			boolean check = true;
 
-			// timezone
-			if (timezoneArray != null) {
-				event.timezone = timezoneArray[timezoneSpinner.getSelectedItemPosition()];
-			}
-			
-			
-			event.description_ = descView.getText().toString();
-			
-			// title 
-			event.setTitle(titleView.getText().toString());
-			
-			//calendars
-			event.setStartCalendar(startCalendar);
-			event.setEndCalendar(endCalendar);
-			
-			event.country = countryArray[countrySpinner.getSelectedItemPosition()];
-			event.zip = zipView.getText().toString();
-			event.city = cityView.getText().toString();
-			event.street = streetView.getText().toString();
-			event.location = locationView.getText().toString();
-			event.go_by = gobyView.getText().toString();
-			event.take_with_you = takewithyouView.getText().toString();
-			event.cost = costView.getText().toString();
-			event.accomodation = accomodationView.getText().toString();
-			
-			
-				int testEvent = event.isValid();
-				if (testEvent == 0){
-					cv.put(EventsProvider.EMetaData.EventsMetaData.TIMEZONE, event.getTimezone());
-					cv.put(EventsProvider.EMetaData.EventsMetaData.DESC, event.getDescription());
-					cv.put(EventsProvider.EMetaData.EventsMetaData.TITLE, event.getActualTitle()); //it has already passed validation
-					cv.put(EventsProvider.EMetaData.EventsMetaData.ICON, event.icon);
+			event = setEventData();
 
-					cv.put(EventsProvider.EMetaData.EventsMetaData.COLOR, event.getColor());
+			int testEvent = event.isValid();
+			if (testEvent == 0) {
+				cv.put(EventsProvider.EMetaData.EventsMetaData.TIMEZONE, event.getTimezone());
+				cv.put(EventsProvider.EMetaData.EventsMetaData.DESC, event.getDescription());
+				/* It already has been validated */
+				cv.put(EventsProvider.EMetaData.EventsMetaData.TITLE, event.getActualTitle());
 
-					cv.put(EventsProvider.EMetaData.EventsMetaData.TYPE, "THERE_IS_NO_TYPE_REMOVE THIS_SHIT_FROM_DB");
-					
-					event.my_time_start = Utils.formatCalendar(event.getStartCalendar(), DataManagement.SERVER_TIMESTAMP_FORMAT);
-					event.my_time_end = Utils.formatCalendar(event.getEndCalendar(), DataManagement.SERVER_TIMESTAMP_FORMAT);
-					cv.put(EventsProvider.EMetaData.EventsMetaData.MY_TIME_START, event.my_time_start);
-					cv.put(EventsProvider.EMetaData.EventsMetaData.MY_TIME_END, event.my_time_end);
-					
-					//not mandatory fields
-					cv.put(EventsProvider.EMetaData.EventsMetaData.COUNTRY, event.country);
-					cv.put(EventsProvider.EMetaData.EventsMetaData.ZIP, event.getZip());
-					cv.put(EventsProvider.EMetaData.EventsMetaData.CITY, event.getCity());
-					cv.put(EventsProvider.EMetaData.EventsMetaData.STREET, event.getStreet());
-					cv.put(EventsProvider.EMetaData.EventsMetaData.LOCATION, event.getLocation());					
-					cv.put(EventsProvider.EMetaData.EventsMetaData.GO_BY, event.getGo_by());					
-					cv.put(EventsProvider.EMetaData.EventsMetaData.TAKE_WITH_YOU, event.getTake_with_you());					
-					cv.put(EventsProvider.EMetaData.EventsMetaData.COST, event.getCost());					
-					cv.put(EventsProvider.EMetaData.EventsMetaData.ACCOMODATION, event.getAccomodation());
+				cv.put(EventsProvider.EMetaData.EventsMetaData.ICON, event.icon);
+				cv.put(EventsProvider.EMetaData.EventsMetaData.COLOR, event.getColor());
 
-					// owner
-					cv.put(EventsProvider.EMetaData.EventsMetaData.IS_OWNER, 1);
-					// user_id
-					cv.put(EventsProvider.EMetaData.EventsMetaData.USER_ID, prefs.getUserId());
-					
-					// reminders
-					if (reminder1time != null && reminder1time.after(Calendar.getInstance())) {
-						event.reminder1 = dtUtils.formatDateTimeToDefault(reminder1time.getTime());
-						cv.put(EventsProvider.EMetaData.EventsMetaData.REMINDER1, dtUtils.formatDateTimeToDefault(reminder1time.getTime()));
-					}
-					if (reminder2time != null && reminder2time.after(Calendar.getInstance()) && !reminder2time.equals(reminder1time)) {
-						event.reminder2 = dtUtils.formatDateTimeToDefault(reminder2time.getTime());
-						cv.put(EventsProvider.EMetaData.EventsMetaData.REMINDER2, dtUtils.formatDateTimeToDefault(reminder2time.getTime()));
-					}
-					if (reminder3time != null && reminder3time.after(Calendar.getInstance()) && !reminder3time.equals(reminder1time)
-							&& !reminder3time.equals(reminder2time)) {
-						event.reminder3 = dtUtils.formatDateTimeToDefault(reminder3time.getTime());
-						cv.put(EventsProvider.EMetaData.EventsMetaData.REMINDER3, dtUtils.formatDateTimeToDefault(reminder3time.getTime()));
-					}
-					
-					success = dm.createEvent(event);
+				cv.put(EventsProvider.EMetaData.EventsMetaData.TYPE, "THERE_IS_NO_TYPE_REMOVE THIS_SHIT_FROM_DB");
 
-					if (!success) {
-						cv.put(EventsProvider.EMetaData.EventsMetaData.NEED_UPDATE, 2);
-					}
+				event.my_time_start = Utils.formatCalendar(event.getStartCalendar(), DataManagement.SERVER_TIMESTAMP_FORMAT);
+				event.my_time_end = Utils.formatCalendar(event.getEndCalendar(), DataManagement.SERVER_TIMESTAMP_FORMAT);
+				cv.put(EventsProvider.EMetaData.EventsMetaData.MY_TIME_START, event.my_time_start);
+				cv.put(EventsProvider.EMetaData.EventsMetaData.MY_TIME_END, event.my_time_end);
 
-					getContentResolver().insert(EventsProvider.EMetaData.EventsMetaData.CONTENT_URI, cv);
-					dm.putEventIntoTreeMap(event);
-					Data.selectedContacts.clear();
-					return true;
-				}else{
-					switch (testEvent){
-					case 1: // no title set
-						errorStr = getString(R.string.title_is_required);
-						break;
-					case 2: // no timezone set
-						errorStr = getString(R.string.timezone_required);
-						break;
-					case 3: // calendar fields are null
+				// not mandatory fields
+				cv.put(EventsProvider.EMetaData.EventsMetaData.COUNTRY, event.country);
+				cv.put(EventsProvider.EMetaData.EventsMetaData.ZIP, event.getZip());
+				cv.put(EventsProvider.EMetaData.EventsMetaData.CITY, event.getCity());
+				cv.put(EventsProvider.EMetaData.EventsMetaData.STREET, event.getStreet());
+				cv.put(EventsProvider.EMetaData.EventsMetaData.LOCATION, event.getLocation());
+				cv.put(EventsProvider.EMetaData.EventsMetaData.GO_BY, event.getGo_by());
+				cv.put(EventsProvider.EMetaData.EventsMetaData.TAKE_WITH_YOU, event.getTake_with_you());
+				cv.put(EventsProvider.EMetaData.EventsMetaData.COST, event.getCost());
+				cv.put(EventsProvider.EMetaData.EventsMetaData.ACCOMODATION, event.getAccomodation());
 
-						break;
-					case 4: // event start is set after end
-						errorStr = getString(R.string.invalid_start_end_time);
-						break;
-					case 5: // event duration is 0
-						errorStr = getString(R.string.invalid_start_end_time);
-						break;
-					default:
-						break;
-					}
-					return false;
+				// owner
+				cv.put(EventsProvider.EMetaData.EventsMetaData.IS_OWNER, 1);
+				// user_id
+				cv.put(EventsProvider.EMetaData.EventsMetaData.USER_ID, prefs.getUserId());
+
+				// reminders
+				if (reminder1time != null && reminder1time.after(Calendar.getInstance())) {
+					event.reminder1 = dtUtils.formatDateTimeToDefault(reminder1time.getTime());
+					cv.put(EventsProvider.EMetaData.EventsMetaData.REMINDER1, dtUtils.formatDateTimeToDefault(reminder1time.getTime()));
 				}
+				if (reminder2time != null && reminder2time.after(Calendar.getInstance()) && !reminder2time.equals(reminder1time)) {
+					event.reminder2 = dtUtils.formatDateTimeToDefault(reminder2time.getTime());
+					cv.put(EventsProvider.EMetaData.EventsMetaData.REMINDER2, dtUtils.formatDateTimeToDefault(reminder2time.getTime()));
+				}
+				if (reminder3time != null && reminder3time.after(Calendar.getInstance()) && !reminder3time.equals(reminder1time)
+						&& !reminder3time.equals(reminder2time)) {
+					event.reminder3 = dtUtils.formatDateTimeToDefault(reminder3time.getTime());
+					cv.put(EventsProvider.EMetaData.EventsMetaData.REMINDER3, dtUtils.formatDateTimeToDefault(reminder3time.getTime()));
+				}
+
+				success = dm.createEvent(event);
+
+				if (!success) {
+					cv.put(EventsProvider.EMetaData.EventsMetaData.NEED_UPDATE, 2);
+				}
+
+				getContentResolver().insert(EventsProvider.EMetaData.EventsMetaData.CONTENT_URI, cv);
+				dm.putEventIntoTreeMap(event);
+				Data.selectedContacts.clear();
+				return true;
+			} else {
+				switch (testEvent) {
+				case 1: // no title set
+					errorStr = getString(R.string.title_is_required);
+					break;
+				case 2: // no timezone set
+					errorStr = getString(R.string.timezone_required);
+					break;
+				case 3: // calendar fields are null
+
+					break;
+				case 4: // event start is set after end
+					errorStr = getString(R.string.invalid_start_end_time);
+					break;
+				case 5: // event duration is 0
+					errorStr = getString(R.string.invalid_start_end_time);
+					break;
+				default:
+					break;
+				}
+				return false;
+			}
 		}
 
 		@Override
@@ -841,8 +861,9 @@ public class NewEventActivity extends Activity {
 			((AlertDialog) dialog).setMessage(errorStr);
 			break;
 		}
-		
+
 	}
+
 	@Override
 	protected Dialog onCreateDialog(int id) {
 		AlertDialog.Builder builder = new AlertDialog.Builder(this);
@@ -992,7 +1013,7 @@ public class NewEventActivity extends Activity {
 					reminder3time = mDateTimePicker.getCalendar();
 					break;
 				}
-				if(!timeSet){
+				if (!timeSet) {
 					view.setText(dtUtils.formatDateTime(mDateTimePicker.getCalendar().getTime()));
 				}
 				mDateTimeDialog.dismiss();
