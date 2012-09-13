@@ -11,6 +11,8 @@ import android.content.Context;
 
 
 public class Event extends Object implements Colored {
+private static final String DEFAULT_TITLE = "";
+
 //	TODO set all default fields and getters
 	public static String DEFAULT_COLOR = "21C0DB";
 	
@@ -88,7 +90,11 @@ public class Event extends Object implements Colored {
 		String text = this.title;
 		return text;
 	}
-	
+	/**
+	 * @author justinas.marcinka@gmail.com
+	 * @param context
+	 * @return resource id of colour bubble image for this event. If event color is not set, id of white bubble will be returned 
+	 */
 	public int getColorBubbleId(Context context){
 		
 		String color = this.color;
@@ -102,6 +108,11 @@ public class Event extends Object implements Colored {
 		return imgID;
 	}
 
+	/**
+	 * @author justinas.marcinka@gmail.com
+	 * @param context
+	 * @return resource id of icon image for this event. If event has no icon, 0 will be returned
+	 */
 	public int getIconId(Context context) {
 		return context.getResources().getIdentifier(this.icon, "drawable", context.getPackageName());
 	}
@@ -120,7 +131,10 @@ public class Event extends Object implements Colored {
 			if (!color.equalsIgnoreCase("null")) this.color = color;
 		
 	}
-
+/**
+ * @author justinas.marcinka@gmail.com
+ * @return true if this event has icon set
+ */
 	public boolean hasIcon() {
 		if (icon == null) return false;
 		if (icon.equalsIgnoreCase("null")) return false;
@@ -131,6 +145,11 @@ public class Event extends Object implements Colored {
 		return startCalendar;
 	}
 
+	/**
+	 * Setter for field startCalendar. Ensures that date would be set yyyy-MM-dd hh:mm:00:00
+	 * @author justinas.marcinka@gmail.com
+	 * @param startCalendar
+	 */
 	public void setStartCalendar(Calendar startCalendar) {
 		this.startCalendar = startCalendar;
 		this.startCalendar.clear(Calendar.SECOND);
@@ -141,11 +160,222 @@ public class Event extends Object implements Colored {
 		return endCalendar;
 	}
 
+	/**
+	 * Getter for field endCalendar. Ensures that date would be set yyyy-MM-dd hh:mm:00:0
+	 * @author justinas.marcinka@gmail.com
+	 * @param endCalendar
+	 */
 	public void setEndCalendar(Calendar endCalendar) {
 		this.endCalendar = endCalendar;
 		this.endCalendar.clear(Calendar.SECOND);
 		this.endCalendar.clear(Calendar.MILLISECOND);
 	}
+	
+	/**
+	 * Method checks if this event's data is valid. If there is some logical problems, it returns error code.
+	 * @author justinas.marcinka@gmail.com
+	 * @return Error code for event.                   
+	 * Possible error codes:<br>  
+	 * 0 - no error.<br> 
+	 * 1 - event title not set.<br>
+	 * 2 - event timezone is not set.<br>
+	 * 3 - event end date or start date is not set.<br> 
+	 * 4 - event end date is before start date.<br>   
+	 * 5 - event duration equals 0, and this is not all day event.<br>   
+	 */
+	public int isValid(){
+		
+		int check;
+		
+		//Validating title
+		check = validateTitle(this.title);
+		if (check != 0) return check;
+		
+		check = validateTimezone(this.timezone);
+		if (check != 0) return check;
+		
+		//Calendar fields validity check
+		check = validateCalendars();
+		if (check != 0) return check;
+		
+		return 0;
+	}
+	
+	/**
+	 * Method checks if this event's timezone is set.
+	 * @author justinas.marcinka@gmail.com
+	 * @param timezone 
+	 * @return Error code for event.                   
+	 * Possible error codes:<br>  
+	 * 0 - no error.<br> 
+	 * 2 - event timezone not set<br>
+	 */
+	private int validateTimezone(String timezone) {
+		if (timezone == null || timezone.equalsIgnoreCase("null")) return 2;
+		return 0;
+	}
+	
+	/**
+	 * Method checks if this event's title is set.
+	 * @author justinas.marcinka@gmail.com
+	 * @return Error code for event.                   
+	 * Possible error codes:<br>  
+	 * 0 - no error.<br> 
+	 * 1 - event title not set<br>
+	 */
+	private int validateTitle(String title) {
+		if (title == null || title.equalsIgnoreCase("null") || title.length() <= 0) return 1;
+		return 0;
+	}
+	/**
+	 * Method checks if this event's calendars are valid.
+	 * @author justinas.marcinka@gmail.com
+	 * @return Error code for event.                   
+	 * Possible error codes:<br>  
+	 * 0 - no error.<br> 
+	 * 3 - event startCalendar or endCalendar is not set (null).<br>
+	 * 4 - event end date is before start date.<br>   
+	 * 5 - event duration equals 0, and this is not all day event.<br>    
+	 */
+	private int validateCalendars(){
+		
+				if (startCalendar == null || endCalendar == null)
+					return 3; // if either of fields is not set
+				else {
+					if (!startCalendar.before(endCalendar)) {
+						if (startCalendar.after(endCalendar))
+							return 4; // if event start is later than end
+						else if (!this.is_all_day)
+							return 5; // if event start is equal as end and it is not
+										// all day event (event duration is 0)
+					}
+				}
+		return 0;
+	}
+	public int getUser_id() {
+		return user_id;
+	}
+	public String getType() {
+		return type;
+	}
+	
+	/**
+	 * @author justinas.marcinka@gmail.com
+	 * @return value of this.title
+	 */
+	public String getActualTitle() {
+		return title;
+	}
+	
+	/**
+	 * @author justinas.marcinka@gmail.com
+	 * @return value of this.title, if it's valid, else returns Event.DEFAULT_TITLE
+	 */
+	public String getValidTitle() {
+		if (validateTitle(title) != 0) return DEFAULT_TITLE;
+		return title;
+	}
+	public String getZip() {
+		return zip;
+	}
+	public String getTimezone() {
+		return timezone;
+	}
+	public String getDescription() {
+		return description_;
+	}
+	
+	public void setTitle(String title) {
+		this.title = title;
+	}
+	public int getEvent_id() {
+		return event_id;
+	}
+	public boolean isNative() {
+		return isNative;
+	}
+	public boolean isIs_sports_event() {
+		return is_sports_event;
+	}
+	public int getStatus() {
+		return status;
+	}
+	public boolean isIs_owner() {
+		return is_owner;
+	}
+	public String getCreator_fullname() {
+		return creator_fullname;
+	}
+	public int getCreator_contact_id() {
+		return creator_contact_id;
+	}
+	public String getTitle() {
+		return title;
+	}
+	public String getIcon() {
+		return icon;
+	}
+	public String getDescription_() {
+		return description_;
+	}
+	public String getLocation() {
+		return location;
+	}
+	public String getAccomodation() {
+		return accomodation;
+	}
+	public String getCost() {
+		return cost;
+	}
+	public String getTake_with_you() {
+		return take_with_you;
+	}
+	public String getGo_by() {
+		return go_by;
+	}
+	public String getCountry() {
+		return country;
+	}
+	public String getCity() {
+		return city;
+	}
+	public String getStreet() {
+		return street;
+	}
+	public String getTime() {
+		return time;
+	}
+	public String getReminder1() {
+		return reminder1;
+	}
+	public String getReminder2() {
+		return reminder2;
+	}
+	public String getReminder3() {
+		return reminder3;
+	}
+
+	public int getAttendant_1_count() {
+		return attendant_1_count;
+	}
+	public int getAttendant_2_count() {
+		return attendant_2_count;
+	}
+	public int getAttendant_0_count() {
+		return attendant_0_count;
+	}
+	public int getAttendant_4_count() {
+		return attendant_4_count;
+	}
+
+	public boolean isIs_all_day() {
+		return is_all_day;
+	}
+	public boolean isBirthday() {
+		return birthday;
+	}
+	
+	
 	
 
 	
