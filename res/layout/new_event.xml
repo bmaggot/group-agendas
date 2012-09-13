@@ -667,6 +667,12 @@
                     layout="@layout/event_invitation_section" />
             </LinearLayout>
 
+            <CheckBox android:checked="false"
+                android:id="@+id/templateTrigger"
+                android:text="@string/event_save_as_template"
+                android:textColor="@color/black"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
         </LinearLayout>
     </ScrollView>
 
