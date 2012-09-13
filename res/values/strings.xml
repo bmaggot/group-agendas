@@ -227,5 +227,6 @@
     <string name="delete_chatm_progress">Removing chat message… wait.</string>
     <string name="contact_color_placeholder">Contact\'s color placeholder</string>
     <string name="contact_icon_placeholder">Contact\'s icon placeholder</string>
+    <string name="event_save_as_template">Save as template</string>
     
 </resources>
