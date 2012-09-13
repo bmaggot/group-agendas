@@ -36,7 +36,6 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import android.app.Activity;
-import android.app.AlarmManager;
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
@@ -2408,9 +2407,6 @@ public class DataManagement {
 							tmpAlarmFired = e.getString("alarm1_fired");
 							if(!tmpAlarmFired.equals("null") && tmpAlarmFired.matches("[0-9]*")){
 								event.alarm1fired = Integer.parseInt(tmpAlarmFired) == 1;
-							}
-							if(!event.alarm1fired){
-								
 							}
 							try {
 								event.alarm2 = e.getString("alarm2");

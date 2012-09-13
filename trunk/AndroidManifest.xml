@@ -48,7 +48,7 @@
                 <category android:name="com.groupagendas.groupagenda" />
             </intent-filter>
         </receiver>
-        <receiver android:name="AlarmReceiver"/>
+        <receiver android:process=":remote" android:name="AlarmReceiver"/>
 
         <activity
             android:name=".GroupAgendasActivity"
