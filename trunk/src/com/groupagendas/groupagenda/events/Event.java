@@ -61,6 +61,12 @@ public class Event extends Object implements Colored {
 	public String reminder1;
 	public String reminder2;
 	public String reminder3;
+	public String alarm1;
+	public boolean alarm1fired = false;
+	public String alarm2;
+	public boolean alarm2fired = false;
+	public String alarm3;
+	public boolean alarm3fired = false;
 	
 	public String created;
 	public String modified;

@@ -36,6 +36,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import android.app.Activity;
+import android.app.AlarmManager;
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
@@ -2373,7 +2374,7 @@ public class DataManagement {
 								Reporter.reportError(this.getClass().toString(), Thread.currentThread().getStackTrace()[2].getMethodName()
 										.toString(), ex.getMessage());
 							}
-
+//reminders
 							try {
 								event.reminder1 = e.getString("reminder1");
 								cv.put(EventsProvider.EMetaData.EventsMetaData.REMINDER1, event.reminder1);
@@ -2394,6 +2395,44 @@ public class DataManagement {
 							} catch (JSONException ex) {
 								Reporter.reportError(this.getClass().toString(), Thread.currentThread().getStackTrace()[2].getMethodName()
 										.toString(), ex.getMessage());
+							}
+//alarms					
+							String tmpAlarmFired = "";
+							try {
+								event.alarm1 = e.getString("alarm1");
+								cv.put(EventsProvider.EMetaData.EventsMetaData.REMINDER1, event.reminder1);
+							} catch (JSONException ex) {
+								Reporter.reportError(this.getClass().toString(), Thread.currentThread().getStackTrace()[2].getMethodName()
+										.toString(), ex.getMessage());
+							}
+							tmpAlarmFired = e.getString("alarm1_fired");
+							if(!tmpAlarmFired.equals("null") && tmpAlarmFired.matches("[0-9]*")){
+								event.alarm1fired = Integer.parseInt(tmpAlarmFired) == 1;
+							}
+							if(!event.alarm1fired){
+								
+							}
+							try {
+								event.alarm2 = e.getString("alarm2");
+								cv.put(EventsProvider.EMetaData.EventsMetaData.REMINDER2, event.reminder2);
+							} catch (JSONException ex) {
+								Reporter.reportError(this.getClass().toString(), Thread.currentThread().getStackTrace()[2].getMethodName()
+										.toString(), ex.getMessage());
+							}
+							tmpAlarmFired = e.getString("alarm2_fired");
+							if(!tmpAlarmFired.equals("null") && tmpAlarmFired.matches("[0-9]*")){
+								event.alarm2fired = Integer.parseInt(tmpAlarmFired) == 1;
+							}
+							try {
+								event.alarm3 = e.getString("alarm3");
+								cv.put(EventsProvider.EMetaData.EventsMetaData.REMINDER3, event.reminder3);
+							} catch (JSONException ex) {
+								Reporter.reportError(this.getClass().toString(), Thread.currentThread().getStackTrace()[2].getMethodName()
+										.toString(), ex.getMessage());
+							}
+							tmpAlarmFired = e.getString("alarm3_fired");
+							if(!tmpAlarmFired.equals("null") && tmpAlarmFired.matches("[0-9]*")){
+								event.alarm3fired = Integer.parseInt(tmpAlarmFired) == 1;
 							}
 
 							try {
