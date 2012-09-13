@@ -1046,4 +1046,8 @@ public class NewEventActivity extends Activity {
 		mDateTimeDialog.show();
 	}
 
+	
+	/* TODO	Improve validation of event's fields + create array(list) of int's
+	 * 		for getting exact errors.
+	 */
 }
