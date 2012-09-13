@@ -2582,7 +2582,7 @@ public class DataManagement {
 					}
 					String dayStr = new SimpleDateFormat("yyyy-MM-dd").format(event_end.getTime());
 					Calendar eventTmpEnd = Utils.stringToCalendar(dayStr + " 00:00:00", SERVER_TIMESTAMP_FORMAT);
-					if (eventTmpEnd.after(eventDay)) {
+					if (eventTmpEnd.after(eventDay) && event_end.after(eventTmpEnd)) {
 						dayStr = new SimpleDateFormat("yyyy-MM-dd").format(event_start.getTime());
 						event_start = Utils.stringToCalendar(dayStr + " 00:00:00", SERVER_TIMESTAMP_FORMAT);
 						putValueIntoTreeMap(tm, event_start, event);
