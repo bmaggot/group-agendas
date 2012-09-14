@@ -63,11 +63,11 @@ private static final String DEFAULT_TITLE = "";
 	public String reminder1;
 	public String reminder2;
 	public String reminder3;
-	public String alarm1;
+	public String alarm1 = "null";
 	public boolean alarm1fired = false;
-	public String alarm2;
+	public String alarm2 = "null";
 	public boolean alarm2fired = false;
-	public String alarm3;
+	public String alarm3 = "null";
 	public boolean alarm3fired = false;
 	
 	public String created;
