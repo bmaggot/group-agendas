@@ -83,6 +83,7 @@ public class InviteDialog extends Dialog {
 				}
 				post.setEntity(reqEntity);
 				if (DataManagement.networkAvailable) {
+					@SuppressWarnings("unused")
 					HttpResponse rp = hc.execute(post);
 				} else {
 					OfflineData uplooad = new OfflineData("mobile/contact_copy", reqEntity);
