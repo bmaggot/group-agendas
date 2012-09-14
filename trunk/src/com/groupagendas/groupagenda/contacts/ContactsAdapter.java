@@ -11,12 +11,10 @@ import android.graphics.drawable.BitmapDrawable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.ViewGroup.LayoutParams;
 import android.widget.BaseAdapter;
 import android.widget.Filter;
 import android.widget.Filterable;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.groupagendas.groupagenda.R;
@@ -32,7 +30,6 @@ public class ContactsAdapter extends BaseAdapter implements Filterable {
 	private Context context;
 
 	private int bubbleHeightDP = 15;
-	private int colouredRectangleMarginsDP = 2;
 
 	public ContactsAdapter(List<Contact> objects, Activity activity, Context context) {
 		this.context = context;
