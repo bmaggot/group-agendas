@@ -10,6 +10,7 @@ public class Phone {
 
 	public void importContactsFromPhone(ImportActivity activity) {
 		Cursor phones = activity.getContentResolver().query(ContactsContract.CommonDataKinds.Phone.CONTENT_URI, null, null, null, null);
+		phones.moveToFirst();
 		while (phones.moveToNext()) {
 			String displayName = phones.getString(phones.getColumnIndex(ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME));
 			String [] nameArray;
