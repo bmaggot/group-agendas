@@ -230,5 +230,9 @@
     <string name="event_save_as_template">Save as template</string>
     <string name="new_template_saved">Your new event template is saved!</string>
     <string name="saving_new_template">Saving new template…</string>
+    <string name="templates">Templates…</string>
+    <string name="event_alarm1">Alarm 1:</string>
+    <string name="event_alarm2">Alarm 2:</string>
+    <string name="event_alarm3">Alarm 3:</string>
     
 </resources>
