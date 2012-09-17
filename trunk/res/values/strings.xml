@@ -234,5 +234,7 @@
     <string name="event_alarm1">Alarm 1:</string>
     <string name="event_alarm2">Alarm 2:</string>
     <string name="event_alarm3">Alarm 3:</string>
+    <string name="alarm_sleep">Sleep</string>
+    <string name="alarm_dismiss">Dismiss</string>
     
 </resources>
