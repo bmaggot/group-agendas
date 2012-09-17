@@ -15,27 +15,27 @@
 
         <Button
             android:id="@+id/templatesButton"
-            android:background="@drawable/contacts_save_import_button"
             android:layout_width="wrap_content"
             android:layout_height="33dp"
-            android:layout_marginTop="8dp"
+            android:layout_alignParentLeft="true"
             android:layout_marginLeft="5dp"
+            android:layout_marginTop="8dp"
+            android:background="@drawable/contacts_save_import_button"
+            android:gravity="center"
             android:onClick="loadTemplates"
-			android:gravity="center"
             android:paddingBottom="5dp"
             android:paddingLeft="5dp"
             android:paddingRight="5dp"
             android:paddingTop="5dp"
-			android:layout_alignParentLeft="true"
-	        android:text="@string/templates"
-	        android:textColor="@color/white"
-	        android:textStyle="bold"
-	        android:textSize="14dp"
-	        android:shadowColor="@color/black"
-	        android:shadowDx="0"
-	        android:shadowDy="2"
-	        android:shadowRadius="1.5" />
-        
+            android:shadowColor="@color/black"
+            android:shadowDx="0"
+            android:shadowDy="2"
+            android:shadowRadius="1.5"
+            android:text="@string/templates"
+            android:textColor="@color/white"
+            android:textSize="14dp"
+            android:textStyle="bold" />
+
         <TextView
             android:id="@+id/topText"
             android:layout_width="wrap_content"
@@ -58,27 +58,26 @@
 
         <Button
             android:id="@+id/saveButton"
-            android:background="@drawable/contacts_save_import_button"
             android:layout_width="wrap_content"
             android:layout_height="33dp"
-            android:layout_marginTop="8dp"
+            android:layout_alignParentRight="true"
             android:layout_marginRight="5dp"
+            android:layout_marginTop="8dp"
+            android:background="@drawable/contacts_save_import_button"
+            android:gravity="center"
             android:onClick="saveEvent"
-			android:gravity="center"
             android:paddingBottom="5dp"
             android:paddingLeft="15dp"
             android:paddingRight="15dp"
             android:paddingTop="5dp"
-			android:layout_alignParentRight="true"
-	        android:text="@string/save"
-	        android:textColor="@color/white"
-	        android:textStyle="bold"
-	        android:textSize="14dp"
-	        android:shadowColor="@color/black"
-	        android:shadowDx="0"
-	        android:shadowDy="2"
-	        android:shadowRadius="1.5" />
-        
+            android:shadowColor="@color/black"
+            android:shadowDx="0"
+            android:shadowDy="2"
+            android:shadowRadius="1.5"
+            android:text="@string/save"
+            android:textColor="@color/white"
+            android:textSize="14dp"
+            android:textStyle="bold" />
     </RelativeLayout>
 
     <ScrollView
@@ -99,19 +98,21 @@
                 android:gravity="center_vertical"
                 android:orientation="horizontal" >
 
-                <ImageView android:contentDescription="@string/event_icons_placeholder"
+                <ImageView
                     android:id="@+id/iconView"
                     android:layout_width="68dp"
                     android:layout_height="68dp"
+                    android:contentDescription="@string/event_icons_placeholder"
                     android:padding="0dp"
                     android:src="@drawable/no_icon" />
 
-                <ImageView android:contentDescription="@string/event_color_placeholder"
+                <ImageView
                     android:id="@+id/colorView"
                     android:layout_width="26dp"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_vertical"
                     android:layout_marginRight="5dp"
+                    android:contentDescription="@string/event_color_placeholder"
                     android:paddingLeft="5dp"
                     android:src="@drawable/calendarbubble__" />
 
@@ -246,139 +247,181 @@
                     android:textColor="@android:color/black" />
             </LinearLayout>
 
-            <LinearLayout android:background="@drawable/event_invite_people_button_notalone_i"
+            <LinearLayout
                 android:id="@+id/countrySpinnerBlock"
-                android:paddingTop="5dp"
-                android:paddingRight="10dp"
-                android:paddingBottom="5dp"
-                android:paddingLeft="10dp"
-                android:layout_marginRight="10dp"
-                android:layout_marginLeft="10dp"
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal" >
+                android:layout_marginLeft="10dp"
+                android:layout_marginRight="10dp"
+                android:background="@drawable/event_invite_people_button_notalone_i"
+                android:orientation="horizontal"
+                android:paddingBottom="5dp"
+                android:paddingLeft="10dp"
+                android:paddingRight="10dp"
+                android:paddingTop="5dp" >
 
                 <TextView
-                    android:layout_gravity="center_vertical"
                     android:layout_width="80dp"
                     android:layout_height="wrap_content"
-                    android:text="@string/country"
-                    android:textStyle="bold"
-                    android:textColor="@android:color/black" />
-
-                <Spinner android:background="#00000000"
-                    android:clickable="false"
                     android:layout_gravity="center_vertical"
+                    android:paddingBottom="5dp"
+                    android:paddingTop="4dp"
+                    android:singleLine="true"
+                    android:text="@string/country"
+                    android:textColor="@color/black"
+                    android:textSize="15dp"
+                    android:textStyle="bold" />
+
+                <Spinner
                     android:id="@+id/countrySpinner"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:textColor="@color/black" />
+                    android:layout_gravity="center_vertical"
+                    android:background="#00000000"
+                    android:clickable="false"
+                    android:paddingBottom="5dp"
+                    android:paddingTop="4dp"
+                    android:singleLine="true"
+                    android:textColor="@color/black"
+                    android:textSize="15dp" />
             </LinearLayout>
 
-            <LinearLayout android:background="@drawable/event_invited_entry_notalone_background"
-                android:paddingTop="5dp"
-                android:paddingRight="10dp"
-                android:paddingBottom="5dp"
-                android:paddingLeft="10dp"
-                android:layout_marginRight="10dp"
-                android:layout_marginLeft="10dp"
+            <LinearLayout
                 android:id="@+id/cityViewBlock"
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal" >
+                android:layout_marginLeft="10dp"
+                android:layout_marginRight="10dp"
+                android:background="@drawable/event_invited_entry_notalone_background"
+                android:orientation="horizontal"
+                android:paddingBottom="5dp"
+                android:paddingLeft="10dp"
+                android:paddingRight="10dp"
+                android:paddingTop="5dp" >
 
                 <TextView
                     android:layout_width="80dp"
                     android:layout_height="wrap_content"
+                    android:paddingBottom="5dp"
+                    android:paddingTop="4dp"
+                    android:singleLine="true"
                     android:text="@string/city"
-                    android:textStyle="bold"
-                    android:textColor="@android:color/black" />
+                    android:textColor="@color/black"
+                    android:textSize="15dp"
+                    android:textStyle="bold" />
 
-                <EditText android:background="#00000000"
+                <EditText
                     android:id="@+id/cityView"
                     android:layout_width="fill_parent"
-                    android:textColor="@color/black"
                     android:layout_height="wrap_content"
-                    android:inputType="text" />
+                    android:background="#00000000"
+                    android:inputType="text"
+                    android:paddingBottom="5dp"
+                    android:paddingTop="4dp"
+                    android:singleLine="true"
+                    android:textColor="@color/black"
+                    android:textSize="15dp" />
             </LinearLayout>
 
-            <LinearLayout android:background="@drawable/event_invited_entry_notalone_background"
-                android:paddingTop="5dp"
-                android:paddingRight="10dp"
-                android:paddingBottom="5dp"
-                android:paddingLeft="10dp"
-                android:layout_marginRight="10dp"
-                android:layout_marginLeft="10dp"
+            <LinearLayout
                 android:id="@+id/streetViewBlock"
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal" >
+                android:layout_marginLeft="10dp"
+                android:layout_marginRight="10dp"
+                android:background="@drawable/event_invited_entry_notalone_background"
+                android:orientation="horizontal"
+                android:paddingBottom="5dp"
+                android:paddingLeft="10dp"
+                android:paddingRight="10dp"
+                android:paddingTop="5dp" >
 
                 <TextView
                     android:layout_width="80dp"
                     android:layout_height="wrap_content"
+                    android:paddingBottom="5dp"
+                    android:paddingTop="4dp"
+                    android:singleLine="true"
                     android:text="@string/street"
-                    android:textStyle="bold"
-                    android:textColor="@android:color/black" />
+                    android:textColor="@color/black"
+                    android:textSize="15dp"
+                    android:textStyle="bold" />
 
-                <EditText android:background="#00000000"
+                <EditText
                     android:id="@+id/streetView"
                     android:layout_width="fill_parent"
                     android:layout_height="wrap_content"
+                    android:background="#00000000"
+                    android:inputType="text"
+                    android:paddingBottom="5dp"
+                    android:paddingTop="4dp"
+                    android:singleLine="true"
                     android:textColor="@color/black"
-                    android:inputType="text" />
+                    android:textSize="15dp" />
             </LinearLayout>
 
-            <LinearLayout android:background="@drawable/event_invited_entry_notalone_background"
-                android:paddingTop="5dp"
-                android:paddingRight="10dp"
-                android:paddingBottom="5dp"
-                android:paddingLeft="10dp"
-                android:layout_marginRight="10dp"
-                android:layout_marginLeft="10dp"
+            <LinearLayout
                 android:id="@+id/zipViewBlock"
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal" >
+                android:layout_marginLeft="10dp"
+                android:layout_marginRight="10dp"
+                android:background="@drawable/event_invited_entry_notalone_background"
+                android:orientation="horizontal"
+                android:paddingBottom="5dp"
+                android:paddingLeft="10dp"
+                android:paddingRight="10dp"
+                android:paddingTop="5dp" >
 
                 <TextView
                     android:layout_width="80dp"
                     android:layout_height="wrap_content"
+                    android:paddingBottom="5dp"
+                    android:paddingTop="4dp"
+                    android:singleLine="true"
                     android:text="@string/zip"
-                    android:textStyle="bold"
-                    android:textColor="@android:color/black" />
+                    android:textColor="@color/black"
+                    android:textSize="15dp"
+                    android:textStyle="bold" />
 
-                <EditText android:background="#00000000"
+                <EditText
                     android:id="@+id/zipView"
                     android:layout_width="fill_parent"
                     android:layout_height="wrap_content"
+                    android:background="#00000000"
+                    android:inputType="text"
+                    android:paddingBottom="5dp"
+                    android:paddingTop="4dp"
+                    android:singleLine="true"
                     android:textColor="@color/black"
-                    android:inputType="text" />
+                    android:textSize="15dp" />
             </LinearLayout>
 
-            <LinearLayout android:background="@drawable/event_invited_entry_last_background"
-                android:paddingTop="5dp"
-                android:paddingRight="10dp"
-                android:paddingBottom="5dp"
-                android:paddingLeft="10dp"
-                android:layout_marginRight="10dp"
-                android:layout_marginLeft="10dp"
+            <LinearLayout
                 android:id="@+id/timezoneSpinnerBlock"
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal" >
+                android:layout_marginLeft="10dp"
+                android:layout_marginRight="10dp"
+                android:background="@drawable/event_invited_entry_last_background"
+                android:orientation="horizontal"
+                android:paddingBottom="5dp"
+                android:paddingLeft="10dp"
+                android:paddingRight="10dp"
+                android:paddingTop="5dp" >
 
                 <TextView
                     android:layout_width="80dp"
                     android:layout_height="wrap_content"
                     android:text="@string/timezone"
-                    android:textStyle="bold"
-                    android:textColor="@android:color/black" />
+                    android:textColor="@android:color/black"
+                    android:textStyle="bold" />
 
-                <Spinner android:background="#00000000"
+                <Spinner
                     android:id="@+id/timezoneSpinner"
                     android:layout_width="fill_parent"
                     android:layout_height="wrap_content"
+                    android:background="#00000000"
                     android:textColor="@color/black" />
             </LinearLayout>
 
@@ -544,7 +587,8 @@
                 android:orientation="vertical"
                 android:visibility="gone" >
 
-                <LinearLayout android:id="@+id/reminder_container1"
+                <LinearLayout
+                    android:id="@+id/reminder_container1"
                     android:layout_width="fill_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginLeft="10dp"
@@ -570,15 +614,16 @@
                         android:layout_height="wrap_content"
                         android:layout_gravity="center_vertical|right"
                         android:layout_marginRight="15dp"
-                        android:gravity="center"
                         android:background="@null"
+                        android:gravity="center"
                         android:inputType="date"
                         android:textColor="@android:color/darker_gray"
                         android:textSize="15dp"
                         android:textStyle="bold" />
                 </LinearLayout>
 
-                <LinearLayout android:id="@+id/reminder_container2"
+                <LinearLayout
+                    android:id="@+id/reminder_container2"
                     android:layout_width="fill_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginLeft="10dp"
@@ -604,15 +649,16 @@
                         android:layout_height="wrap_content"
                         android:layout_gravity="center_vertical|right"
                         android:layout_marginRight="15dp"
-                        android:gravity="center"
                         android:background="@null"
+                        android:gravity="center"
                         android:inputType="date"
                         android:textColor="@android:color/darker_gray"
                         android:textSize="15dp"
                         android:textStyle="bold" />
                 </LinearLayout>
 
-                <LinearLayout android:id="@+id/reminder_container3"
+                <LinearLayout
+                    android:id="@+id/reminder_container3"
                     android:layout_width="fill_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginBottom="10dp"
@@ -639,8 +685,8 @@
                         android:layout_height="wrap_content"
                         android:layout_gravity="center_vertical|right"
                         android:layout_marginRight="15dp"
-                        android:gravity="center"
                         android:background="@null"
+                        android:gravity="center"
                         android:inputType="date"
                         android:textColor="@color/darker_gray"
                         android:textSize="15dp"
@@ -655,7 +701,8 @@
                 android:orientation="vertical"
                 android:visibility="gone" >
 
-                <LinearLayout android:id="@+id/alarm_container1"
+                <LinearLayout
+                    android:id="@+id/alarm_container1"
                     android:layout_width="fill_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginLeft="10dp"
@@ -681,15 +728,16 @@
                         android:layout_height="wrap_content"
                         android:layout_gravity="center_vertical|right"
                         android:layout_marginRight="15dp"
-                        android:gravity="center"
                         android:background="@null"
+                        android:gravity="center"
                         android:inputType="date"
                         android:textColor="@android:color/darker_gray"
                         android:textSize="15dp"
                         android:textStyle="bold" />
                 </LinearLayout>
 
-                <LinearLayout android:id="@+id/alarm_container2"
+                <LinearLayout
+                    android:id="@+id/alarm_container2"
                     android:layout_width="fill_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginLeft="10dp"
@@ -715,15 +763,16 @@
                         android:layout_height="wrap_content"
                         android:layout_gravity="center_vertical|right"
                         android:layout_marginRight="15dp"
-                        android:gravity="center"
                         android:background="@null"
+                        android:gravity="center"
                         android:inputType="date"
                         android:textColor="@android:color/darker_gray"
                         android:textSize="15dp"
                         android:textStyle="bold" />
                 </LinearLayout>
 
-                <LinearLayout android:id="@+id/alarm_container3"
+                <LinearLayout
+                    android:id="@+id/alarm_container3"
                     android:layout_width="fill_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginBottom="10dp"
@@ -750,8 +799,8 @@
                         android:layout_height="wrap_content"
                         android:layout_gravity="center_vertical|right"
                         android:layout_marginRight="15dp"
-                        android:gravity="center"
                         android:background="@null"
+                        android:gravity="center"
                         android:inputType="date"
                         android:textColor="@color/darker_gray"
                         android:textSize="15dp"
@@ -801,12 +850,13 @@
                     layout="@layout/event_invitation_section" />
             </LinearLayout>
 
-            <CheckBox android:checked="false"
+            <CheckBox
                 android:id="@+id/templateTrigger"
-                android:text="@string/event_save_as_template"
-                android:textColor="@color/black"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content" />
+                android:layout_height="wrap_content"
+                android:checked="false"
+                android:text="@string/event_save_as_template"
+                android:textColor="@color/black" />
         </LinearLayout>
     </ScrollView>
 
