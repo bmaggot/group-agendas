@@ -119,7 +119,7 @@ public class DayWeekView extends AbstractCalendarView {
 		float eventContainerHeight = durationTimeUnits * timeUnitHeight;
 		
 //		if event lasts less than one hour, it's resized to half of hour pane to make text visible at all :)
-		if (eventContainerHeight <= lineHeight / 2) eventContainerHeight = lineHeight * 0.55f;   
+		if (eventContainerHeight <= lineHeight / 2f) eventContainerHeight = lineHeight * 0.55f;   
 		
 	
 		RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(containerWidth/divider, (int)(eventContainerHeight));	
