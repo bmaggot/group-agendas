@@ -76,7 +76,7 @@ public class DataManagement {
 	public static boolean networkAvailable = true;
 	public static boolean eventStatusChanged = false;
 	public static ArrayList<Event> contactsBirthdays = new ArrayList<Event>();
-	public static final String SERVER_TIMESTAMP_FORMAT = "yyyy-MM-dd hh:mm:ss";
+	public static final String SERVER_TIMESTAMP_FORMAT = "yyyy-MM-dd HH:mm:ss";
 	public static final String ACCOUNT_BIRTHDATE_TIMESTAMP_FORMAT = "yyyy-MM-dd";
 
 	private DataManagement(Activity c) {
