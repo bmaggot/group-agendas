@@ -731,12 +731,9 @@ public class NavbarActivity extends Activity {
 	}
 
 	@Override
-	public boolean onKeyDown(int keyCode, KeyEvent event) {
-		if (keyCode == KeyEvent.KEYCODE_BACK) {
-			moveTaskToBack(true);
-			return true;
-		}
-		return super.onKeyDown(keyCode, event);
+	public void onBackPressed() {
+		moveTaskToBack(true);
+		super.onBackPressed(); 
 	}
 
 	public FrameLayout getCalendarContainer() {
