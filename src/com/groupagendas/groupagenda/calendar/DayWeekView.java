@@ -47,6 +47,7 @@ public class DayWeekView extends AbstractCalendarView {
 	public final static int DEFAULT_DAYS_SHOWN = 7;
 	public final static int MAX_DAYS_SHOWN = 7;
 	private static final int MIN_DAYS_SHOWN = 1;
+
 	
 	public static final float DEFAULT_TIME_TO_SCROLL = 7.5f; //DEFAULT HOUR TO SCROLL. 7.5f = 7:30
 	public static final int hourLineHeightDP = 23;  //HEIGHT OF ONE HOUR LINE IN DIP for day and week view
@@ -96,33 +97,36 @@ public class DayWeekView extends AbstractCalendarView {
 	
 		HourEventView eventFrame = new HourEventView(getContext(), event, this.am_pmEnabled, this.showHourEventsIcon);
 		
-		float startTimeHours = 0; 
-		float endTimeHours = 24;
+		int startTimeMinutes = 0; 
+		float endTimeMinutes = 24 * 60;
 		
 		if (day.getSelectedDate().before(event.getStartCalendar())) {
-			startTimeHours = event.getStartCalendar().get(Calendar.HOUR_OF_DAY);
-			float minutes = event.getStartCalendar().get(Calendar.MINUTE);
-			startTimeHours += minutes / 60;
+			startTimeMinutes = event.getStartCalendar().get(Calendar.HOUR_OF_DAY) * 60;
+			startTimeMinutes += event.getStartCalendar().get(Calendar.MINUTE);
 		} else eventFrame.setStartTime(day.getSelectedDate()); //set event start hour 0:00 to show
 		
-		if (day.getSelectedDate().get(Calendar.DAY_OF_MONTH) == event.getEndCalendar().get(Calendar.DAY_OF_MONTH)){
-			if (day.getSelectedDate().get(Calendar.MONTH) == event.getEndCalendar().get(Calendar.MONTH)){
-				endTimeHours = event.getEndCalendar().get(Calendar.HOUR_OF_DAY);
-				float minutes = event.getEndCalendar().get(Calendar.MINUTE);
-				endTimeHours += minutes / 60;
-									
-				}			
-		}
+//		if (day.getSelectedDate().get(Calendar.DAY_OF_MONTH) == event.getEndCalendar().get(Calendar.DAY_OF_MONTH)){
+//			if (day.getSelectedDate().get(Calendar.MONTH) == event.getEndCalendar().get(Calendar.MONTH)){
+//				endTimeMinutes = event.getEndCalendar().get(Calendar.HOUR_OF_DAY) * 60;
+//				endTimeMinutes += event.getEndCalendar().get(Calendar.MINUTE);
+//									
+//				}			
+//		}
 		
-		float duration = endTimeHours - startTimeHours ;
+		int durationTimeUnits = day.getEventDuration(event);
+		float timeUnitHeight = WeekInstance.TIMETABLE_ACCURACY / 60f * lineHeight;
+		
+		float eventContainerHeight = durationTimeUnits * timeUnitHeight;
 		
 //		if event lasts less than one hour, it's resized to half of hour pane to make text visible at all :)
-		if (duration <= 0.5f) duration = 0.55f;   
+		if (eventContainerHeight <= lineHeight / 2) eventContainerHeight = lineHeight * 0.55f;   
 		
 	
-		RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(containerWidth/divider, (int)(lineHeight * duration));	
+		RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(containerWidth/divider, (int)(eventContainerHeight));	
 	
-		params.topMargin = (int) (lineHeight * startTimeHours);
+		int timeUnitsUntilStart = startTimeMinutes / WeekInstance.TIMETABLE_ACCURACY;
+		if (startTimeMinutes % WeekInstance.TIMETABLE_ACCURACY >= WeekInstance.TIMETABLE_ACCURACY / 2) timeUnitsUntilStart++;
+		params.topMargin = (int) (timeUnitHeight * timeUnitsUntilStart);
 		
 		if (neighbourId != 0) {
 			params.addRule(RelativeLayout.RIGHT_OF, neighbourId);
