@@ -137,6 +137,7 @@ public class NewEventActivity extends Activity {
 
 		startCalendar.clear(Calendar.SECOND);
 		endCalendar.clear(Calendar.SECOND);
+		endCalendar.add(Calendar.MINUTE, DEFAULT_EVENT_DURATION_IN_MINS);
 
 		dm = DataManagement.getInstance(this);
 		dtUtils = new DateTimeUtils(this);
@@ -640,11 +641,9 @@ public class NewEventActivity extends Activity {
 	};
 
 	public void saveEvent(View v) {
-		Toast.makeText(this, R.string.saving_new_event, Toast.LENGTH_LONG).show();
 		if (!templateTrigger.isChecked()) {
 			try {
 				new NewEventTask().execute().get();
-				Toast.makeText(this, R.string.new_event_saved, Toast.LENGTH_LONG).show();
 			} catch (InterruptedException e) {
 				e.printStackTrace();
 			} catch (ExecutionException e) {
@@ -743,6 +742,7 @@ public class NewEventActivity extends Activity {
 		protected void onPreExecute() {
 			pb.setVisibility(View.VISIBLE);
 			saveButton.setText(getString(R.string.saving));
+			Toast.makeText(NewEventActivity.this, R.string.saving_new_event, Toast.LENGTH_SHORT).show();
 			super.onPreExecute();
 		}
 
@@ -762,7 +762,7 @@ public class NewEventActivity extends Activity {
 				cv.put(EventsProvider.EMetaData.EventsMetaData.ICON, event.icon);
 				cv.put(EventsProvider.EMetaData.EventsMetaData.COLOR, event.getColor());
 
-				cv.put(EventsProvider.EMetaData.EventsMetaData.TYPE, "THERE_IS_NO_TYPE_REMOVE THIS_SHIT_FROM_DB");
+				cv.put(EventsProvider.EMetaData.EventsMetaData.TYPE, "Should not be such thing as event TYPE! REMOVE THIS FIELD!!!");
 
 				event.my_time_start = Utils.formatCalendar(event.getStartCalendar(), DataManagement.SERVER_TIMESTAMP_FORMAT);
 				event.my_time_end = Utils.formatCalendar(event.getEndCalendar(), DataManagement.SERVER_TIMESTAMP_FORMAT);
