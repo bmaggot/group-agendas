@@ -513,7 +513,7 @@ public class NavbarActivity extends Activity {
 						selectedDate.setFirstDayOfWeek(CalendarSettings
 								.getFirstDayofWeek());
 						mDateTimeDialog.dismiss();
-						showDayView();
+						switchToView();
 					}
 				});
 
