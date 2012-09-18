@@ -14,7 +14,7 @@ public class WeekInstance {
 	private DayInstance[] shownDays;
 	private Calendar shownDate;
 	private int maxAllDayEventsCount;
-	
+	public static final int TIMETABLE_ACCURACY = 30;
 	private int daysToShow;
 	
 	
