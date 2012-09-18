@@ -55,7 +55,7 @@ public class HourEventsTimetable {
 //	}
 
 	private void add(Event event){
-		//TODO test if everything is ok with events that take more than one day
+		
 		int startIndex = getStartTimetableIndex(event);
 		int endIndex = startIndex + getEventDurationUnits(event);
 		for (int i = startIndex; i < endIndex; i++) put (i, event);

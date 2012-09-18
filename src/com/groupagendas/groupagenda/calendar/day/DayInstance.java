@@ -8,6 +8,7 @@ import java.util.List;
 import android.app.Activity;
 import android.content.Context;
 
+import com.groupagendas.groupagenda.calendar.week.WeekInstance;
 import com.groupagendas.groupagenda.data.Data;
 import com.groupagendas.groupagenda.data.DataManagement;
 import com.groupagendas.groupagenda.events.Event;
@@ -17,7 +18,6 @@ import com.groupagendas.groupagenda.utils.Utils;
 
 public class DayInstance  {
 
-		private static final int TIMETABLE_ACCURACY = 30;
 		private List<Event> allDayEvents; 
 		private HourEventsTimetable hourEventsTimetable;
 		private ArrayList<Event> hourEventsList;
@@ -48,7 +48,6 @@ public class DayInstance  {
 			hourEventsList = new ArrayList<Event>();
 			hourEventsTimetable = null;
 			
-			
 			if (events != null){
 				for (Event e : events){
 					if (allDay(e)){
@@ -60,7 +59,7 @@ public class DayInstance  {
 					 
 					}
 				
-				hourEventsTimetable = new HourEventsTimetable(hourEventsList, selectedDate, TIMETABLE_ACCURACY);
+				hourEventsTimetable = new HourEventsTimetable(hourEventsList, selectedDate, WeekInstance.TIMETABLE_ACCURACY);
 			}
 		}
 
