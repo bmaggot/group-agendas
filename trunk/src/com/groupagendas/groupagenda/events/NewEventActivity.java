@@ -978,6 +978,8 @@ public class NewEventActivity extends Activity {
 //		// expected though)
 //		final String timeS = android.provider.Settings.System.getString(getContentResolver(), android.provider.Settings.System.TIME_12_24);
 		final boolean is24h = !CalendarSettings.isUsing_AM_PM();
+		// Setup TimePicker
+		mDateTimePicker.setIs24HourView(is24h);
 
 		// Update demo TextViews when the "OK" button is clicked
 		((Button) mDateTimeDialogView.findViewById(R.id.SetDateTime)).setOnClickListener(new OnClickListener() {
@@ -989,10 +991,15 @@ public class NewEventActivity extends Activity {
 				case DIALOG_START:
 					startCalendar = mDateTimePicker.getCalendar();
 					startView.setText(dtUtils.formatDateTime(startCalendar.getTime()));
-					endCalendar = Calendar.getInstance();
-					endCalendar.setTime(mDateTimePicker.getCalendar().getTime());
-					endCalendar.add(Calendar.MINUTE, DEFAULT_EVENT_DURATION_IN_MINS);
-					endView.setText(dtUtils.formatDateTime(endCalendar.getTime()));
+							if (!startCalendar.before(endCalendar)) {
+								endCalendar = Calendar.getInstance();
+								endCalendar.setTime(mDateTimePicker
+										.getCalendar().getTime());
+								endCalendar.add(Calendar.MINUTE,
+										DEFAULT_EVENT_DURATION_IN_MINS);
+								endView.setText(dtUtils
+										.formatDateTime(endCalendar.getTime()));
+							}
 					timeSet = true;
 					break;
 				case DIALOG_END:
@@ -1031,8 +1038,7 @@ public class NewEventActivity extends Activity {
 			}
 		});
 
-		// Setup TimePicker
-		mDateTimePicker.setIs24HourView(is24h);
+		
 		// No title on the dialog window
 		mDateTimeDialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
 		// Set the dialog content view
