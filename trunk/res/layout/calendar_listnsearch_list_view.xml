@@ -34,8 +34,20 @@
         android:layout_marginRight="3dp"
         android:layout_marginBottom="3dp"
         android:src="@null" />
+    
+    <TextView android:id="@+id/listnsearch_event_time_placeholder"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+		android:cacheColorHint="#00000000"
+        android:padding="2dp"
+        android:scrollingCache="false"
+        android:textSize="15dp"
+        android:textStyle="bold"
+        android:textColor="@color/black" >
+    </TextView>
 
     <TextView android:id="@+id/example_text_view"
+       
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
 		android:cacheColorHint="#00000000"
