@@ -16,7 +16,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.groupagendas.groupagenda.R;
-import com.groupagendas.groupagenda.events.EventActivity;
+import com.groupagendas.groupagenda.events.EventEditActivity;
 
 public class EntryAdapter extends BaseAdapter implements Filterable{
 
@@ -56,7 +56,7 @@ public class EntryAdapter extends BaseAdapter implements Filterable{
 				v.setOnClickListener(new OnClickListener() {
 					@Override
 					public void onClick(View v) {
-						Intent intent = new Intent(mContext, EventActivity.class);
+						Intent intent = new Intent(mContext, EventEditActivity.class);
 						intent.putExtra("event_id", ei.event.event_id);
 						intent.putExtra("type", ei.event.type);
 						mContext.startActivity(intent);
