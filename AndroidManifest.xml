@@ -111,7 +111,7 @@
             android:theme="@android:style/Theme.NoTitleBar" >
         </activity>
         <activity
-            android:name=".events.EventActivity"
+            android:name=".events.EventEditActivity"
             android:configChanges="keyboardHidden|orientation"
             android:theme="@android:style/Theme.NoTitleBar" >
         </activity>
