@@ -5,7 +5,7 @@ import android.content.Intent;
 import android.view.View;
 
 import com.groupagendas.groupagenda.events.Event;
-import com.groupagendas.groupagenda.events.EventActivity;
+import com.groupagendas.groupagenda.events.EventEditActivity;
 
 public class EventActivityOnClickListener implements View.OnClickListener{
 	Event event;
@@ -16,7 +16,7 @@ public class EventActivityOnClickListener implements View.OnClickListener{
 	}
 	@Override
   public void onClick(View view) {
-		Intent intent = new Intent(context, EventActivity.class);
+		Intent intent = new Intent(context, EventEditActivity.class);
 		intent.putExtra("event_id", event.event_id);
 		intent.putExtra("type", event.type);
 		intent.putExtra("isNative", event.isNative);

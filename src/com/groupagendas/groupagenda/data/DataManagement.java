@@ -2609,6 +2609,17 @@ public class DataManagement {
 		Calendar event_day = Utils.stringToCalendar(dayStr + " 00:00:00", date_format);
 		Data.setSortedEvents(putValueIntoTreeMap(Data.getSortedEvents(), event_day, event));
 	}
+	
+	
+	/**
+	 * 
+	 * @param date - day of event
+	 * @return array list of events that take part on given day
+	 */
+	public ArrayList<Event> getEventsByDate(Calendar date){
+		ArrayList<Event> array =  new ArrayList<Event>();
+		return array;
+	}
 
 	public ArrayList<Event> getEventsFromLocalDb() {
 		Event item;
