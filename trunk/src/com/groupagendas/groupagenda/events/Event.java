@@ -1,9 +1,12 @@
 package com.groupagendas.groupagenda.events;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 
+import com.groupagendas.groupagenda.data.DataManagement;
 import com.groupagendas.groupagenda.interfaces.Colored;
+import com.groupagendas.groupagenda.utils.Utils;
 
 import android.content.Context;
 
@@ -12,6 +15,13 @@ import android.content.Context;
 
 public class Event extends Object implements Colored {
 private static final String DEFAULT_TITLE = "";
+private static final String TIMESTAMP_FORMAT = DataManagement.SERVER_TIMESTAMP_FORMAT;
+
+private static final String DEFAULT_REMINDER = "null";
+
+private static final int REMINDER_1 = 1;
+private static final int REMINDER_2 = 2;
+private static final int REMINDER_3 = 3;
 
 //	TODO set all default fields and getters
 	public static String DEFAULT_COLOR = "21C0DB";
@@ -374,6 +384,44 @@ private static final String DEFAULT_TITLE = "";
 	}
 	public boolean isBirthday() {
 		return birthday;
+	}
+	
+		
+	public void setReminder1(Calendar reminder1) {
+		this.reminder1 = createReminderString(REMINDER_1, reminder1);
+	}
+
+	public void setReminder2(Calendar reminder2) {
+		this.reminder2 = createReminderString(REMINDER_2, reminder2);
+	}
+
+	public void setReminder3(Calendar reminder3) {
+		this.reminder3 = createReminderString(REMINDER_3, reminder3);
+	}
+
+
+/**
+ * Creates new string for reminder with given id. 
+ * @param id identifier for reminder.
+ * @see Event.REMINDER_1 Event.REMINDER_2 Event.REMINDER_3
+ * @param reminder time in Calendar format
+ * @return "null" if it's not in future or is same as already defined reminder. Else, returns string representation for given time
+ *  
+ */
+	private String createReminderString(int id, Calendar reminder) {
+		
+		if (reminder == null) return DEFAULT_REMINDER;
+		
+		if (reminder.after(Calendar.getInstance())) //if it is not in future, return "null"
+			return DEFAULT_REMINDER;
+		
+		String reminderStr  = new SimpleDateFormat(TIMESTAMP_FORMAT).format(reminder.getTime());
+		
+		if (reminderStr.equalsIgnoreCase(reminder1) && id != REMINDER_1) return DEFAULT_REMINDER;
+		if (reminderStr.equalsIgnoreCase(reminder2) && id != REMINDER_2) return DEFAULT_REMINDER;
+		if (reminderStr.equalsIgnoreCase(reminder3) && id != REMINDER_3) return DEFAULT_REMINDER;
+		
+		return reminderStr;
 	}
 	
 	
