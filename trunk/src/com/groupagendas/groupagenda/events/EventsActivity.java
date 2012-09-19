@@ -80,7 +80,7 @@ public class EventsActivity extends ListActivity {
 	@Override
 	protected void onListItemClick(ListView l, View v, int pos, long id) {
 		super.onListItemClick(l, v, pos, id);
-		Intent intent = new Intent(EventsActivity.this, EventActivity.class);
+		Intent intent = new Intent(EventsActivity.this, EventEditActivity.class);
 		Event event = (Event) getListAdapter().getItem(pos);
 		intent.putExtra("event_id", event.event_id);
 		intent.putExtra("type", event.type);

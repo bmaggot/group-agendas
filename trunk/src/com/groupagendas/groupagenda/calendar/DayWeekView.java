@@ -94,8 +94,10 @@ public class DayWeekView extends AbstractCalendarView {
 		final float scale = getContext().getResources().getDisplayMetrics().density;
 		int lineHeight = (int) (hourLineHeightDP * scale + 0.5f);
  
-	
-		HourEventView eventFrame = new HourEventView(getContext(), event, this.am_pmEnabled, this.showHourEventsIcon);
+	// if there is more than one day shown, save space and fit event title to one line
+		boolean showSingleLine = daysToShow != 1;
+		
+		HourEventView eventFrame = new HourEventView(getContext(), event, this.am_pmEnabled, this.showHourEventsIcon, showSingleLine);
 		
 		int startTimeMinutes = 0; 
 		float endTimeMinutes = 24 * 60;

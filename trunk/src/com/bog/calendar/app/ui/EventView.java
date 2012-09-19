@@ -11,7 +11,7 @@ import android.widget.TextView;
 import com.bog.calendar.app.model.CEvent;
 import com.bog.calendar.app.model.EventsHelper;
 import com.groupagendas.groupagenda.R;
-import com.groupagendas.groupagenda.events.EventActivity;
+import com.groupagendas.groupagenda.events.EventEditActivity;
 
 /**
  * UI representation of Event object
@@ -77,7 +77,7 @@ public class EventView extends TextView {
     private OnClickListener defaultClickListener = new OnClickListener() {
         @Override
         public void onClick(View view) {
-        	Intent intent = new Intent(getContext(), EventActivity.class);
+        	Intent intent = new Intent(getContext(), EventEditActivity.class);
     		intent.putExtra("event_id", parentEvent.getId());
     		intent.putExtra("type", parentEvent.getType());
     		getContext().startActivity(intent);

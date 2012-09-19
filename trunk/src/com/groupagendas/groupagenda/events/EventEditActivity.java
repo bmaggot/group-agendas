@@ -59,7 +59,7 @@ import com.groupagendas.groupagenda.utils.SearchDialog;
 import com.groupagendas.groupagenda.utils.Utils;
 import com.ptashek.widgets.datetimepicker.DateTimePicker;
 
-public class EventActivity extends Activity {
+public class EventEditActivity extends Activity {
 	private DataManagement dm;
 	private DateTimeUtils dtUtils;
 
@@ -177,7 +177,7 @@ public class EventActivity extends Activity {
 				@Override
 				public void onClick(View arg0) {
 					if (event_id > 0) {
-						Intent intent = new Intent(EventActivity.this, ChatMessageActivity.class);
+						Intent intent = new Intent(EventEditActivity.this, ChatMessageActivity.class);
 						intent.putExtra("event_id", event_id);
 						startActivity(intent);
 					}
@@ -320,7 +320,7 @@ public class EventActivity extends Activity {
 						
 						@Override
 						public void onClick(View v) {
-							Dialog dia = new InviteDialog(EventActivity.this, R.style.yearview_eventlist, invited);
+							Dialog dia = new InviteDialog(EventEditActivity.this, R.style.yearview_eventlist, invited);
 							dia.show();
 						}
 					});
@@ -366,7 +366,7 @@ public class EventActivity extends Activity {
 						
 						@Override
 						public void onClick(View v) {
-							Dialog dia = new InviteDialog(EventActivity.this, R.style.yearview_eventlist, invited);
+							Dialog dia = new InviteDialog(EventEditActivity.this, R.style.yearview_eventlist, invited);
 							dia.show();
 						}
 					});
@@ -411,7 +411,7 @@ public class EventActivity extends Activity {
 				Data.newEventPar = true;
 				Data.showSaveButtonInContactsForm = true;
 				Data.eventForSavingNewInvitedPersons = event;
-				startActivity(new Intent(EventActivity.this, ContactsActivity.class));
+				startActivity(new Intent(EventEditActivity.this, ContactsActivity.class));
 			}
 		});
 
@@ -619,12 +619,12 @@ public class EventActivity extends Activity {
 				iconView.setOnClickListener(new OnClickListener() {
 					@Override
 					public void onClick(View v) {
-						final Dialog dialog = new Dialog(EventActivity.this);
+						final Dialog dialog = new Dialog(EventEditActivity.this);
 						dialog.setContentView(R.layout.list_dialog);
 						dialog.setTitle(R.string.choose_icon);
 
 						GridView gridview = (GridView) dialog.findViewById(R.id.gridview);
-						gridview.setAdapter(new IconsAdapter(EventActivity.this, iconsValues));
+						gridview.setAdapter(new IconsAdapter(EventEditActivity.this, iconsValues));
 
 						gridview.setOnItemClickListener(new OnItemClickListener() {
 							public void onItemClick(AdapterView<?> parent, View v, int position, long id) {
@@ -659,12 +659,12 @@ public class EventActivity extends Activity {
 				colorView.setOnClickListener(new OnClickListener() {
 					@Override
 					public void onClick(View v) {
-						final Dialog dialog = new Dialog(EventActivity.this);
+						final Dialog dialog = new Dialog(EventEditActivity.this);
 						dialog.setContentView(R.layout.list_dialog);
 						dialog.setTitle(R.string.choose_color);
 
 						GridView gridview = (GridView) dialog.findViewById(R.id.gridview);
-						gridview.setAdapter(new ColorsAdapter(EventActivity.this, colorsValues));
+						gridview.setAdapter(new ColorsAdapter(EventEditActivity.this, colorsValues));
 
 						gridview.setOnItemClickListener(new OnItemClickListener() {
 							public void onItemClick(AdapterView<?> parent, View v, int position, long id) {
@@ -777,17 +777,17 @@ public class EventActivity extends Activity {
 				showView(timezoneSpinner, addressLine);
 			// country
 			countrySpinner = (Spinner) findViewById(R.id.countrySpinner);
-			final ArrayAdapter<String> adapterCountry = new ArrayAdapter<String>(EventActivity.this, R.layout.search_dialog_item, CountryManager.getCountries(EventActivity.this));
+			final ArrayAdapter<String> adapterCountry = new ArrayAdapter<String>(EventEditActivity.this, R.layout.search_dialog_item, CountryManager.getCountries(EventEditActivity.this));
 			adapterCountry.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
 			countrySpinner.setAdapter(adapterCountry);
-			countryArray = CountryManager.getCountryValues(EventActivity.this);
+			countryArray = CountryManager.getCountryValues(EventEditActivity.this);
 			
 			LinearLayout countrySpinnerBlock = (LinearLayout) findViewById(R.id.countrySpinnerBlock); 
 			countrySpinnerBlock.setOnClickListener(new OnClickListener() {
 				
 				@Override
 				public void onClick(View arg0) {
-					Dialog dia = new SearchDialog(EventActivity.this, R.style.yearview_eventlist_title, adapterCountry, countrySpinner);
+					Dialog dia = new SearchDialog(EventEditActivity.this, R.style.yearview_eventlist_title, adapterCountry, countrySpinner);
 					dia.show();				
 				}
 			});
@@ -799,7 +799,7 @@ public class EventActivity extends Activity {
 				public void onItemSelected(AdapterView<?> arg0, View arg1, int pos, long arg3) {
 
 					if (pos == 0) {
-						ArrayAdapter<String> adapterTimezone = new ArrayAdapter<String>(EventActivity.this,  R.layout.search_dialog_item, new String[0]);
+						ArrayAdapter<String> adapterTimezone = new ArrayAdapter<String>(EventEditActivity.this,  R.layout.search_dialog_item, new String[0]);
 						adapterTimezone.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
 						timezoneSpinner.setAdapter(adapterTimezone);
 						timezoneSpinner.setEnabled(false);
@@ -807,11 +807,11 @@ public class EventActivity extends Activity {
 					} else {
 						timezoneSpinner.setEnabled(true);
 						// timezone
-						String[] timezoneLabels = TimezoneManager.getTimezones(EventActivity.this, countryArray[pos]);
-						ArrayAdapter<String> adapterTimezone = new ArrayAdapter<String>(EventActivity.this,  R.layout.search_dialog_item, timezoneLabels);
+						String[] timezoneLabels = TimezoneManager.getTimezones(EventEditActivity.this, countryArray[pos]);
+						ArrayAdapter<String> adapterTimezone = new ArrayAdapter<String>(EventEditActivity.this,  R.layout.search_dialog_item, timezoneLabels);
 						adapterTimezone.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
 						timezoneSpinner.setAdapter(adapterTimezone);
-						timezoneArray = TimezoneManager.getTimezonesValues(EventActivity.this, countryArray[pos]);
+						timezoneArray = TimezoneManager.getTimezonesValues(EventEditActivity.this, countryArray[pos]);
 
 						if (result.timezone != null && !result.timezone.equals("null")) {
 							pos = Utils.getArrayIndex(timezoneArray, result.timezone);
@@ -1228,7 +1228,7 @@ public class EventActivity extends Activity {
 		}
 
 		protected void onPostExecute(Boolean result) {
-			Toast toast = Toast.makeText(EventActivity.this, "", Toast.LENGTH_LONG);
+			Toast toast = Toast.makeText(EventEditActivity.this, "", Toast.LENGTH_LONG);
 			if (result) {
 				toast.setText(getString(R.string.event_deleted));
 			} else {

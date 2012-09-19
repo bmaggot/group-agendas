@@ -1,11 +1,13 @@
 package com.groupagendas.groupagenda.calendar.listnsearch;
 
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 
 import com.groupagendas.groupagenda.EventActivityOnClickListener;
 import com.groupagendas.groupagenda.R;
+import com.groupagendas.groupagenda.data.CalendarSettings;
 import com.groupagendas.groupagenda.data.Data;
 import com.groupagendas.groupagenda.events.Event;
 import com.groupagendas.groupagenda.utils.DrawingUtils;
@@ -168,10 +170,18 @@ private SectionListItem[] filterEvents (String filterString, SectionListItem[] e
 	private class StandardArrayAdapter extends ArrayAdapter<SectionListItem> {
 
 		private SectionListItem[] items;
+		private SimpleDateFormat df;
+//		Set Event start time textView
+		
 
 		public StandardArrayAdapter(final Context context, final int textViewResourceId, final SectionListItem[] items) {
 			super(context, textViewResourceId, items);
 			this.items = items;
+			if (CalendarSettings.isUsing_AM_PM()){
+				df = new SimpleDateFormat(getContext().getString(R.string.hour_event_view_time_format_AMPM));
+			}else{
+				df = new SimpleDateFormat(getContext().getString(R.string.hour_event_view_time_format));
+			}
 		}		
 
 		public void setList(SectionListItem[] items){
@@ -203,8 +213,14 @@ private SectionListItem[] filterEvents (String filterString, SectionListItem[] e
 					textView.setText(currentItem.item.toString());
 				}
 				
+				
+				
 				if (currentItem.item instanceof Event){
+					
+					
 					Event event = (Event) currentItem.item;
+					TextView timeText = (TextView) view.findViewById(R.id.listnsearch_event_time_placeholder);
+					timeText.setText(df.format(event.getStartCalendar().getTime()));
 					ImageView bubble = (ImageView) view
 							.findViewById(R.id.listnsearch_entry_color_placeholder);
 
