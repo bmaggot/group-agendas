@@ -1,30 +1,29 @@
-package com.groupagendas.groupagenda.calendar.week;
+package com.groupagendas.groupagenda.calendar.dayandweek;
 
 import java.util.Calendar;
 
 import android.app.Activity;
 import android.content.Intent;
-import android.view.GestureDetector.SimpleOnGestureListener;
 import android.view.MotionEvent;
 
 import com.groupagendas.groupagenda.calendar.AbstractCalendarView;
-import com.groupagendas.groupagenda.calendar.DayWeekView;
+import com.groupagendas.groupagenda.calendar.SwipeOnGestureListener;
 import com.groupagendas.groupagenda.data.DataManagement;
 import com.groupagendas.groupagenda.events.NewEventActivity;
 import com.groupagendas.groupagenda.utils.Utils;
 
-public class WeekDayTouchListener extends SimpleOnGestureListener {
+public class HourEventsPanelMotionListener extends SwipeOnGestureListener {
 
 	private Calendar selectedDate;
-	private AbstractCalendarView parentView;
-	
-	public WeekDayTouchListener (AbstractCalendarView parent, Calendar selectedDate) {
-		parentView = parent;
+
+	public HourEventsPanelMotionListener(AbstractCalendarView parent, Calendar selectedDate) {
+		super(parent);
 		this.selectedDate = selectedDate;
 	}
 
 	@Override
 	public boolean onSingleTapUp(MotionEvent e) {
+
 		int y = Math.round(e.getY());
 
 		float tmpF = DayWeekView.hourLineHeightDP * parentView.getResources().getDisplayMetrics().density;
@@ -43,6 +42,12 @@ public class WeekDayTouchListener extends SimpleOnGestureListener {
 
 		navbar.startActivity(intent);
 		return true;
+	}
+
+	@Override
+	public boolean onFling(MotionEvent e1, MotionEvent e2, float velocityX, float velocityY) {
+		return super.onFling(e1, e2, velocityX, velocityY);
+
 	}
 
 }

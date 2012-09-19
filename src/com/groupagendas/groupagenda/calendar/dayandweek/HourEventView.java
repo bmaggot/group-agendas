@@ -1,4 +1,4 @@
-package com.groupagendas.groupagenda.calendar.day;
+package com.groupagendas.groupagenda.calendar.dayandweek;
 
 import java.text.SimpleDateFormat;
 import java.util.Calendar;

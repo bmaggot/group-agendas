@@ -1,4 +1,4 @@
-package com.groupagendas.groupagenda.calendar.day;
+package com.groupagendas.groupagenda.calendar.dayandweek;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -8,7 +8,6 @@ import java.util.List;
 import android.app.Activity;
 import android.content.Context;
 
-import com.groupagendas.groupagenda.calendar.week.WeekInstance;
 import com.groupagendas.groupagenda.data.Data;
 import com.groupagendas.groupagenda.data.DataManagement;
 import com.groupagendas.groupagenda.events.Event;

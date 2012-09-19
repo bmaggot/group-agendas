@@ -1,4 +1,4 @@
-package com.groupagendas.groupagenda.calendar.week;
+package com.groupagendas.groupagenda.calendar.dayandweek;
 
 import com.groupagendas.groupagenda.R;
 
