@@ -732,7 +732,6 @@ public class NavbarActivity extends Activity {
 	@Override
 	public void onBackPressed() {
 		moveTaskToBack(true);
-		super.onBackPressed(); 
 	}
 
 	public FrameLayout getCalendarContainer() {
@@ -758,13 +757,13 @@ public class NavbarActivity extends Activity {
 		AlarmReceiver alarm = new AlarmReceiver();
 		for (Event event : Data.getEvents()) {
 			if (!event.alarm1fired && !event.alarm1.equals("null")) {
-				alarm.SetAlarm(getApplicationContext(), Utils.stringToCalendar(event.alarm1, DataManagement.SERVER_TIMESTAMP_FORMAT).getTimeInMillis(), event.title);
+				alarm.SetAlarm(getApplicationContext(), Utils.stringToCalendar(event.alarm1, DataManagement.SERVER_TIMESTAMP_FORMAT).getTimeInMillis(), event);
 			}
 			if (!event.alarm2fired && !event.alarm2.equals("null")) {
-				alarm.SetAlarm(getApplicationContext(), Utils.stringToCalendar(event.alarm2, DataManagement.SERVER_TIMESTAMP_FORMAT).getTimeInMillis(), event.title);
+				alarm.SetAlarm(getApplicationContext(), Utils.stringToCalendar(event.alarm2, DataManagement.SERVER_TIMESTAMP_FORMAT).getTimeInMillis(), event);
 			}
 			if (!event.alarm3fired && !event.alarm3.equals("null")) {
-				alarm.SetAlarm(getApplicationContext(), Utils.stringToCalendar(event.alarm3, DataManagement.SERVER_TIMESTAMP_FORMAT).getTimeInMillis(), event.title);
+				alarm.SetAlarm(getApplicationContext(), Utils.stringToCalendar(event.alarm3, DataManagement.SERVER_TIMESTAMP_FORMAT).getTimeInMillis(), event);
 			}
 		}
 	}
