@@ -48,7 +48,7 @@
                 <category android:name="com.groupagendas.groupagenda" />
             </intent-filter>
         </receiver>
-        <receiver android:process=":remote" android:name="AlarmReceiver"/>
+        <receiver android:name="AlarmReceiver" />
 
         <activity
             android:name=".GroupAgendasActivity"
@@ -252,6 +252,11 @@
 
                 <data android:scheme="import-activity" />
             </intent-filter>
+        </activity>
+        <activity
+            android:name=".utils.AlarmActivity"
+            android:configChanges="keyboardHidden|orientation"
+            android:theme="@android:style/Theme.NoTitleBar" >
         </activity>
     </application>
 
