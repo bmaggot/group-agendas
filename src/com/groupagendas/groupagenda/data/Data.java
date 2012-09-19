@@ -111,7 +111,7 @@ public class Data {
 		Data._instance = _instance;
 	}
 
-	protected static Context getmContext() {
+	public static Context getmContext() {
 		return mContext;
 	}
 
