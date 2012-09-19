@@ -36,6 +36,7 @@ import az.mecid.android.ActionItem;
 import az.mecid.android.QuickAction;
 
 import com.groupagendas.groupagenda.account.AccountProvider;
+import com.groupagendas.groupagenda.alarm.AlarmReceiver;
 import com.groupagendas.groupagenda.calendar.AbstractCalendarView;
 import com.groupagendas.groupagenda.calendar.DayWeekView;
 import com.groupagendas.groupagenda.calendar.agenda.AgendaView;
