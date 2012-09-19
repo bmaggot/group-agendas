@@ -25,7 +25,7 @@ public class MiniMonthView extends AbstractCalendarView {
 	
 	private TableLayout miniMonthTable;
 
-	private boolean showWeekTitle = false;
+	private boolean showWeekTitle = true;
 
 
 
@@ -185,7 +185,7 @@ public class MiniMonthView extends AbstractCalendarView {
 			
 			if (tmp.get(Calendar.DAY_OF_WEEK) == firstDayOfWeek){					
 				weekNum.setVisibility(VISIBLE);
-				weekNum.setText("" + tmp.get(Calendar.WEEK_OF_MONTH));
+				weekNum.setText("" + tmp.get(Calendar.WEEK_OF_YEAR));
 			}else {
 				frame.getDayContainer().findViewById(R.id.agenda_week_title).setVisibility(GONE);
 			}
