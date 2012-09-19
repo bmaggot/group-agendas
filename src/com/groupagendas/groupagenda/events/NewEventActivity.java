@@ -5,7 +5,6 @@ import java.util.Calendar;
 import java.util.Locale;
 import java.util.concurrent.ExecutionException;
 
-import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.ContentValues;
@@ -53,77 +52,19 @@ import com.groupagendas.groupagenda.utils.SearchDialog;
 import com.groupagendas.groupagenda.utils.Utils;
 import com.ptashek.widgets.datetimepicker.DateTimePicker;
 
-public class NewEventActivity extends Activity {
-	public static final String EXTRA_STRING_FOR_START_CALENDAR = "strTime";
-	public static final int DEFAULT_EVENT_DURATION_IN_MINS = 30;
-
-	private DataManagement dm;
-	private DateTimeUtils dtUtils;
-
-	private ProgressBar pb;
-	private Button saveButton;
-
-	private ImageView iconView;
-	private ImageView colorView;
-
-	private EditText titleView;
-
-	private final int DIALOG_START = 0;
-	private Calendar startCalendar = Calendar.getInstance();
-	private EditText startView;
-	private Button startButton;
-
-	private final int DIALOG_END = 1;
-	private Calendar endCalendar = Calendar.getInstance();
-	private EditText endView;
-	private Button endButton;
-
-	private EditText descView;
-
-	private Spinner countrySpinner;
-	private String[] countryArray;
-	private EditText cityView;
-	private EditText streetView;
-	private EditText zipView;
-	private Spinner timezoneSpinner;
-	private String[] timezoneArray;
-
-	private EditText locationView;
-	private EditText gobyView;
-	private EditText takewithyouView;
-	private EditText costView;
-	private EditText accomodationView;
+public class NewEventActivity extends EventActivity {
+	private final int CHOOSE_CONTACTS_DIALOG = 1;
 
 	private Button contactsButton;
 	private CharSequence[] titles;
 	private int[] ids;
 	private boolean[] selections;
-
-	private Event event;
-
-	private String errorStr = "";
-	private final int DIALOG_ERROR = 0;
-	private final int CHOOSE_CONTACTS_DIALOG = 1;
-	private final int REMINDER1 = 11;
-	private Calendar reminder1time;
-	private final int REMINDER2 = 22;
-	private Calendar reminder2time;
-	private final int REMINDER3 = 33;
-	private Calendar reminder3time;
-
-	private Prefs prefs;
-
-	ContentValues cv;
-
+	
 	private ArrayList<AutoColorItem> autoColors = null;
 	private ArrayList<AutoIconItem> autoIcons = null;
 
 	boolean addressPanelVisible = false;
 	boolean detailsPanelVisible = false;
-
-	private RelativeLayout addressDetailsPanel;
-	TextView addressTrigger;
-	TextView detailsTrigger;
 
 	private boolean remindersShown = false;
 	private boolean countrySelected = false;
@@ -133,7 +74,13 @@ public class NewEventActivity extends Activity {
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+		
+		//these fields indicate that we will save this user as owner of event and save his uid
+		setOwner = true;
+		setUid = true;
+		
 		setContentView(R.layout.new_event);
+		event = new Event();
 
 		startCalendar.clear(Calendar.SECOND);
 		endCalendar.clear(Calendar.SECOND);
@@ -147,8 +94,6 @@ public class NewEventActivity extends Activity {
 
 		cv = new ContentValues();
 		prefs = new Prefs(this);
-
-		event = new Event();
 
 		pb = (ProgressBar) findViewById(R.id.progress);
 		templateTrigger = (CheckBox) findViewById(R.id.templateTrigger);
@@ -541,34 +486,7 @@ public class NewEventActivity extends Activity {
 		super.onResume();
 	}
 
-	private Event setEventData() {
-		Event event = new Event();
-
-		if (timezoneArray != null) {
-			event.timezone = timezoneArray[timezoneSpinner.getSelectedItemPosition()];
-		}
-
-		event.description_ = descView.getText().toString();
-
-		// title
-		event.setTitle(titleView.getText().toString());
-
-		// calendars
-		event.setStartCalendar(startCalendar);
-		event.setEndCalendar(endCalendar);
-
-		event.country = countryArray[countrySpinner.getSelectedItemPosition()];
-		event.zip = zipView.getText().toString();
-		event.city = cityView.getText().toString();
-		event.street = streetView.getText().toString();
-		event.location = locationView.getText().toString();
-		event.go_by = gobyView.getText().toString();
-		event.take_with_you = takewithyouView.getText().toString();
-		event.cost = costView.getText().toString();
-		event.accomodation = accomodationView.getText().toString();
-
-		return event;
-	}
+	
 
 	public View getInvitedView(Invited invited, LayoutInflater inflater, View view, Context mContext) {
 		final TextView nameView = (TextView) view.findViewById(R.id.invited_fullname);
@@ -754,56 +672,12 @@ public class NewEventActivity extends Activity {
 		protected Boolean doInBackground(Event... events) {
 			boolean success = false;
 
-			event = setEventData();
+			NewEventActivity.super.setEventData(event);
 
 			int testEvent = event.isValid();
 			if (testEvent == 0) {
-				cv.put(EventsProvider.EMetaData.EventsMetaData.TIMEZONE, event.getTimezone());
-				cv.put(EventsProvider.EMetaData.EventsMetaData.DESC, event.getDescription());
-				/* It already has been validated */
-				cv.put(EventsProvider.EMetaData.EventsMetaData.TITLE, event.getActualTitle());
-
-				cv.put(EventsProvider.EMetaData.EventsMetaData.ICON, event.icon);
-				cv.put(EventsProvider.EMetaData.EventsMetaData.COLOR, event.getColor());
-
-				cv.put(EventsProvider.EMetaData.EventsMetaData.TYPE, "Should not be such thing as event TYPE! REMOVE THIS FIELD!!!");
-
-				event.my_time_start = Utils.formatCalendar(event.getStartCalendar(), DataManagement.SERVER_TIMESTAMP_FORMAT);
-				event.my_time_end = Utils.formatCalendar(event.getEndCalendar(), DataManagement.SERVER_TIMESTAMP_FORMAT);
-				cv.put(EventsProvider.EMetaData.EventsMetaData.MY_TIME_START, event.my_time_start);
-				cv.put(EventsProvider.EMetaData.EventsMetaData.MY_TIME_END, event.my_time_end);
-
-				// not mandatory fields
-				cv.put(EventsProvider.EMetaData.EventsMetaData.COUNTRY, event.country);
-				cv.put(EventsProvider.EMetaData.EventsMetaData.ZIP, event.getZip());
-				cv.put(EventsProvider.EMetaData.EventsMetaData.CITY, event.getCity());
-				cv.put(EventsProvider.EMetaData.EventsMetaData.STREET, event.getStreet());
-				cv.put(EventsProvider.EMetaData.EventsMetaData.LOCATION, event.getLocation());
-				cv.put(EventsProvider.EMetaData.EventsMetaData.GO_BY, event.getGo_by());
-				cv.put(EventsProvider.EMetaData.EventsMetaData.TAKE_WITH_YOU, event.getTake_with_you());
-				cv.put(EventsProvider.EMetaData.EventsMetaData.COST, event.getCost());
-				cv.put(EventsProvider.EMetaData.EventsMetaData.ACCOMODATION, event.getAccomodation());
-
-				// owner
-				cv.put(EventsProvider.EMetaData.EventsMetaData.IS_OWNER, 1);
-				// user_id
-				cv.put(EventsProvider.EMetaData.EventsMetaData.USER_ID, prefs.getUserId());
-
-				// reminders
-				if (reminder1time != null && reminder1time.after(Calendar.getInstance())) {
-					event.reminder1 = dtUtils.formatDateTimeToDefault(reminder1time.getTime());
-					cv.put(EventsProvider.EMetaData.EventsMetaData.REMINDER1, dtUtils.formatDateTimeToDefault(reminder1time.getTime()));
-				}
-				if (reminder2time != null && reminder2time.after(Calendar.getInstance()) && !reminder2time.equals(reminder1time)) {
-					event.reminder2 = dtUtils.formatDateTimeToDefault(reminder2time.getTime());
-					cv.put(EventsProvider.EMetaData.EventsMetaData.REMINDER2, dtUtils.formatDateTimeToDefault(reminder2time.getTime()));
-				}
-				if (reminder3time != null && reminder3time.after(Calendar.getInstance()) && !reminder3time.equals(reminder1time)
-						&& !reminder3time.equals(reminder2time)) {
-					event.reminder3 = dtUtils.formatDateTimeToDefault(reminder3time.getTime());
-					cv.put(EventsProvider.EMetaData.EventsMetaData.REMINDER3, dtUtils.formatDateTimeToDefault(reminder3time.getTime()));
-				}
-
+				
+				NewEventActivity.super.putEventContentValues(cv);
 				success = dm.createEvent(event);
 
 				if (!success) {
@@ -815,25 +689,7 @@ public class NewEventActivity extends Activity {
 				Data.selectedContacts.clear();
 				return true;
 			} else {
-				switch (testEvent) {
-				case 1: // no title set
-					errorStr = getString(R.string.title_is_required);
-					break;
-				case 2: // no timezone set
-					errorStr = getString(R.string.timezone_required);
-					break;
-				case 3: // calendar fields are null
-
-					break;
-				case 4: // event start is set after end
-					errorStr = getString(R.string.invalid_start_end_time);
-					break;
-				case 5: // event duration is 0
-					errorStr = getString(R.string.invalid_start_end_time);
-					break;
-				default:
-					break;
-				}
+				errorStr = setErrorStr(testEvent);
 				return false;
 			}
 		}
@@ -862,6 +718,7 @@ public class NewEventActivity extends Activity {
 		}
 
 	}
+
 
 	@Override
 	protected Dialog onCreateDialog(int id) {
@@ -1013,13 +870,13 @@ public class NewEventActivity extends Activity {
 				case DIALOG_END:
 					endCalendar = mDateTimePicker.getCalendar();
 					break;
-				case REMINDER1:
+				case EventActivity.REMINDER1:
 					reminder1time = mDateTimePicker.getCalendar();
 					break;
-				case REMINDER2:
+				case EventActivity.REMINDER2:
 					reminder2time = mDateTimePicker.getCalendar();
 					break;
-				case REMINDER3:
+				case EventActivity.REMINDER3:
 					reminder3time = mDateTimePicker.getCalendar();
 					break;
 				}

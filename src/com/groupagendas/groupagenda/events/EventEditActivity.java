@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.concurrent.ExecutionException;
 
-import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.ContentValues;
@@ -15,8 +14,10 @@ import android.graphics.Color;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.provider.Settings.System;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -48,7 +49,6 @@ import com.groupagendas.groupagenda.data.CalendarSettings;
 import com.groupagendas.groupagenda.data.Data;
 import com.groupagendas.groupagenda.data.DataManagement;
 import com.groupagendas.groupagenda.events.EventsAdapter.ViewHolder;
-// TODO find out if it's still in use import com.groupagendas.groupagenda.settings.AutoColorItem;
 import com.groupagendas.groupagenda.settings.AutoIconItem;
 import com.groupagendas.groupagenda.timezone.TimezoneManager;
 import com.groupagendas.groupagenda.utils.CountryManager;
@@ -59,68 +59,22 @@ import com.groupagendas.groupagenda.utils.SearchDialog;
 import com.groupagendas.groupagenda.utils.Utils;
 import com.ptashek.widgets.datetimepicker.DateTimePicker;
 
-public class EventEditActivity extends Activity {
-	private DataManagement dm;
-	private DateTimeUtils dtUtils;
-
-	private int event_id;
-
-	private ProgressBar pb;
-	private Button saveButton;
+public class EventEditActivity extends EventActivity {
+	
 	private Button deleteButton;
+	private int event_id;
 	private TextView topText;
-
-	private ImageView iconView;
-	private ImageView colorView;
-	private EditText titleView;
 
 //	TODO find out if it's still in use.
 //	private Spinner typeSpinner;
 //	private String[] typeArray;
 
-	private final int DIALOG_START = 0;
-	private Calendar startCalendar = Calendar.getInstance();
-	private EditText startView;
-	private Button startButton;
-
-	private final int DIALOG_END = 1;
-	private Calendar endCalendar = Calendar.getInstance();
-	private EditText endView;
-	private Button endButton;
-
-	private EditText descView;
-
 	private LinearLayout addressLine;
-	private Spinner countrySpinner;
-	private String[] countryArray;
-	private EditText cityView;
-	private EditText streetView;
-	private EditText zipView;
-	private Spinner timezoneSpinner;
-	private String[] timezoneArray;
-
 	private LinearLayout detailsLine;
-	private EditText locationView;
-	private EditText gobyView;
-	private EditText takewithyouView;
-	private EditText costView;
-	private EditText accomodationView;
 
 	private View responsePanel;
 	private LinearLayout invitesColumn;
-//	private LinearLayout invitedPersonList; TODO remove shit
-
-	private Event event;
-
-	private String errorStr = "";
-	private final int DIALOG_ERROR = 0;
-	private final int DELETE_DIALOG = 1;
-	private final int REMINDER1 = 11;
-	private Calendar reminder1time;
-	private final int REMINDER2 = 22;
-	private Calendar reminder2time;
-	private final int REMINDER3 = 33;
-	private Calendar reminder3time;
+	protected final static int DELETE_DIALOG = 1;
 	private boolean remindersShown = false;
 
 //	private ArrayList<AutoColorItem> autoColors = null; TODO remove shit
@@ -130,11 +84,6 @@ public class EventEditActivity extends Activity {
 
 	private boolean addressPanelVisible = true;
 	private boolean detailsPanelVisible = true;
-
-	private RelativeLayout addressDetailsPanel;
-	TextView addressTrigger;
-	TextView detailsTrigger;
-
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -582,7 +531,6 @@ public class EventEditActivity extends Activity {
 	}
 
 	class GetEventTask extends AsyncTask<Integer, Event, Event> {
-
 		final DataManagement dm = DataManagement.getInstance(getParent());
 		final Context mContext = dm.getmContext();
 
@@ -1043,109 +991,13 @@ public class EventEditActivity extends Activity {
 		@Override
 		protected Boolean doInBackground(Event... events) {
 			boolean success = false;
-			boolean check = true;
-			String temp = "";
+//			boolean check = true;
+//			String temp = "";
 			ContentValues cv = new ContentValues();
-
-			// timezone
-			if (timezoneArray != null) {
-				temp = timezoneArray[timezoneSpinner.getSelectedItemPosition()];
-				event.timezone = temp;
-				cv.put(EventsProvider.EMetaData.EventsMetaData.TIMEZONE, temp);
-			} else if (event.timezone != null || !event.timezone.equals("null")) {
-				cv.put(EventsProvider.EMetaData.EventsMetaData.TIMEZONE, event.timezone);
-			} else if (event.timezone == null || event.timezone.equals("null")) {
-				check = false;
-				errorStr = getString(R.string.timezone_required);
-			}
-
-			// description
-			temp = descView.getText().toString();
-			if (temp.length() <= 0) {
-				check = false;
-				errorStr = getString(R.string.desc_is_required);
-			}
-			event.description_ = temp;
-			cv.put(EventsProvider.EMetaData.EventsMetaData.DESC, temp);
-
-			// title
-			temp = titleView.getText().toString();
-			if (temp.length() <= 0) {
-				check = false;
-				errorStr = getString(R.string.title_is_required);
-			}
-			event.title = temp;
-			cv.put(EventsProvider.EMetaData.EventsMetaData.TITLE, temp);
-
-			cv.put(EventsProvider.EMetaData.EventsMetaData.ICON, event.icon);
-
-			cv.put(EventsProvider.EMetaData.EventsMetaData.COLOR, event.getColor());
-
-			if (startCalendar.getTime().before(endCalendar.getTime())) {
-
-				event.setStartCalendar(startCalendar);
-				event.setEndCalendar(endCalendar);
-
-				event.my_time_start = Utils.formatCalendar(startCalendar, DataManagement.SERVER_TIMESTAMP_FORMAT);
-				event.my_time_end = Utils.formatCalendar(endCalendar, DataManagement.SERVER_TIMESTAMP_FORMAT);
-				cv.put(EventsProvider.EMetaData.EventsMetaData.MY_TIME_START, event.my_time_start);
-				cv.put(EventsProvider.EMetaData.EventsMetaData.MY_TIME_END, event.my_time_end);
-			} else {
-				check = false;
-				errorStr = getString(R.string.invalid_start_end_time);
-			}
-
-			event.country = countryArray[countrySpinner.getSelectedItemPosition()];
-			cv.put(EventsProvider.EMetaData.EventsMetaData.COUNTRY, event.country);
-
-			temp = zipView.getText().toString();
-			event.zip = temp;
-			cv.put(EventsProvider.EMetaData.EventsMetaData.ZIP, temp);
-
-			temp = cityView.getText().toString();
-			event.city = temp;
-			cv.put(EventsProvider.EMetaData.EventsMetaData.CITY, temp);
-
-			temp = streetView.getText().toString();
-			event.street = temp;
-			cv.put(EventsProvider.EMetaData.EventsMetaData.STREET, temp);
-
-			temp = locationView.getText().toString();
-			event.location = temp;
-			cv.put(EventsProvider.EMetaData.EventsMetaData.LOCATION, temp);
-
-			temp = gobyView.getText().toString();
-			event.go_by = temp;
-			cv.put(EventsProvider.EMetaData.EventsMetaData.GO_BY, temp);
-
-			temp = takewithyouView.getText().toString();
-			event.take_with_you = temp;
-			cv.put(EventsProvider.EMetaData.EventsMetaData.TAKE_WITH_YOU, temp);
-
-			temp = costView.getText().toString();
-			event.cost = temp;
-			cv.put(EventsProvider.EMetaData.EventsMetaData.COST, temp);
-
-			temp = accomodationView.getText().toString();
-			event.accomodation = temp;
-			cv.put(EventsProvider.EMetaData.EventsMetaData.ACCOMODATION, temp);
-
-			// reminders
-			if (reminder1time != null && reminder1time.after(Calendar.getInstance())) {
-				event.reminder1 = dtUtils.formatDateTimeToDefault(reminder1time.getTime());
-				cv.put(EventsProvider.EMetaData.EventsMetaData.REMINDER1, dtUtils.formatDateTimeToDefault(reminder1time.getTime()));
-			}
-			if (reminder2time != null && reminder2time.after(Calendar.getInstance()) && !reminder2time.equals(reminder1time)) {
-				event.reminder2 = dtUtils.formatDateTimeToDefault(reminder2time.getTime());
-				cv.put(EventsProvider.EMetaData.EventsMetaData.REMINDER2, dtUtils.formatDateTimeToDefault(reminder2time.getTime()));
-			}
-			if (reminder3time != null && reminder3time.after(Calendar.getInstance()) && !reminder3time.equals(reminder1time)
-					&& !reminder3time.equals(reminder2time)) {
-				event.reminder3 = dtUtils.formatDateTimeToDefault(reminder3time.getTime());
-				cv.put(EventsProvider.EMetaData.EventsMetaData.REMINDER3, dtUtils.formatDateTimeToDefault(reminder3time.getTime()));
-			}
-
-			if (check) {
+			setEventData(event);
+			int testEvent = event.isValid();
+			if (testEvent == 0) {
+				EventEditActivity.super.putEventContentValues(cv);
 				Uri uri = Uri.parse(EventsProvider.EMetaData.EventsMetaData.CONTENT_URI + "/" + event.event_id);
 				getContentResolver().update(uri, cv, null, null);
 				success = dm.editEvent(event);
@@ -1162,9 +1014,11 @@ public class EventEditActivity extends Activity {
 					cv.put(EventsProvider.EMetaData.EventsMetaData.NEED_UPDATE, 4);
 					getContentResolver().update(uri, cv, null, null);
 				}
+				return true;
+			}else {
+				errorStr = setErrorStr(testEvent);
+				return false;
 			}
-
-			return check;
 		}
 
 		@Override
@@ -1185,7 +1039,7 @@ public class EventEditActivity extends Activity {
 	protected Dialog onCreateDialog(int id) {
 		AlertDialog.Builder builder = new AlertDialog.Builder(this);
 		switch (id) {
-		case DIALOG_ERROR:
+		case EventActivity.DIALOG_ERROR:
 			builder.setMessage(errorStr).setCancelable(false)
 					.setPositiveButton(getString(R.string.ok), new DialogInterface.OnClickListener() {
 						@Override
@@ -1194,7 +1048,7 @@ public class EventEditActivity extends Activity {
 						}
 					});
 			break;
-		case DELETE_DIALOG:
+		case EventEditActivity.DELETE_DIALOG:
 			builder.setMessage(getString(R.string.sure_delete)).setCancelable(false)
 					.setPositiveButton(getString(R.string.yes), new DialogInterface.OnClickListener() {
 						@Override
@@ -1276,10 +1130,10 @@ public class EventEditActivity extends Activity {
 
 		Calendar c = Calendar.getInstance();
 		switch (id) {
-		case DIALOG_START:
+		case EventActivity.DIALOG_START:
 			c = startCalendar;
 			break;
-		case DIALOG_END:
+		case EventActivity.DIALOG_END:
 			c = endCalendar;
 			break;
 		}
