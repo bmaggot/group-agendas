@@ -1,4 +1,4 @@
-package com.groupagendas.groupagenda.calendar;
+package com.groupagendas.groupagenda.calendar.dayandweek;
 
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -18,12 +18,7 @@ import android.widget.TextView;
 
 import com.groupagendas.groupagenda.EventActivityOnClickListener;
 import com.groupagendas.groupagenda.R;
-import com.groupagendas.groupagenda.calendar.day.DayInstance;
-import com.groupagendas.groupagenda.calendar.day.HourEventView;
-import com.groupagendas.groupagenda.calendar.day.HourEventsTimetable;
-import com.groupagendas.groupagenda.calendar.week.VerticalDaysSeparator;
-import com.groupagendas.groupagenda.calendar.week.WeekDayTouchListener;
-import com.groupagendas.groupagenda.calendar.week.WeekInstance;
+import com.groupagendas.groupagenda.calendar.AbstractCalendarView;
 import com.groupagendas.groupagenda.events.Event;
 
 

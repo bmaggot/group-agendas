@@ -1,11 +1,10 @@
-package com.groupagendas.groupagenda.calendar.week;
+package com.groupagendas.groupagenda.calendar.dayandweek;
 
 import java.util.Calendar;
 
 import android.app.Activity;
 import android.content.Context;
 
-import com.groupagendas.groupagenda.calendar.day.DayInstance;
 import com.groupagendas.groupagenda.utils.Utils;
 
 public class WeekInstance {
