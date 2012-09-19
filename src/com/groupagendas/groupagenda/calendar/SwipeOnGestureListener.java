@@ -20,7 +20,8 @@ public class SwipeOnGestureListener extends SimpleOnGestureListener {
 		  
 	  
 
-	  public boolean onFling(MotionEvent e1, MotionEvent e2, float velocityX, float velocityY) {  
+	  @Override
+	public boolean onFling(MotionEvent e1, MotionEvent e2, float velocityX, float velocityY) {  
 	   if (Math.abs(e1.getY() - e2.getY()) > SWIPE_MAX_OFF_PATH)
 	    return false;
 	   if (e1.getX() - e2.getX() > SWIPE_MIN_DISTANCE

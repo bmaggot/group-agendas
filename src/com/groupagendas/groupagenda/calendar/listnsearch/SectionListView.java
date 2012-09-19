@@ -59,7 +59,7 @@ public class SectionListView extends ListView implements OnScrollListener {
         transparentView = ((SectionListAdapter) adapter)
                 .getTransparentSectionView();
         final FrameLayout.LayoutParams lp = new FrameLayout.LayoutParams(
-                LayoutParams.FILL_PARENT, LayoutParams.WRAP_CONTENT);
+                android.view.ViewGroup.LayoutParams.FILL_PARENT, android.view.ViewGroup.LayoutParams.WRAP_CONTENT);
         ((FrameLayout) parent).addView(transparentView, lp);
         if (adapter.isEmpty()) {
             transparentView.setVisibility(View.INVISIBLE);

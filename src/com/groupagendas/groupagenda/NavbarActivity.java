@@ -15,7 +15,6 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
-import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
@@ -386,6 +385,7 @@ public class NavbarActivity extends Activity {
 
 	}
 
+	@Override
 	public void onResume() {
 		super.onResume();
 		RadioButton radioButton;
@@ -502,6 +502,7 @@ public class NavbarActivity extends Activity {
 		((Button) mDateTimeDialogView.findViewById(R.id.SetDateTime))
 				.setOnClickListener(new OnClickListener() {
 
+					@Override
 					public void onClick(View v) {
 						mDateTimePicker.clearFocus();
 						String dayStr = new SimpleDateFormat("yyyy-MM-dd")
@@ -519,6 +520,7 @@ public class NavbarActivity extends Activity {
 		((Button) mDateTimeDialogView.findViewById(R.id.CancelDialog))
 				.setOnClickListener(new OnClickListener() {
 
+					@Override
 					public void onClick(View v) {
 						mDateTimeDialog.cancel();
 					}
@@ -527,6 +529,7 @@ public class NavbarActivity extends Activity {
 		((Button) mDateTimeDialogView.findViewById(R.id.ResetDateTime))
 				.setOnClickListener(new OnClickListener() {
 
+					@Override
 					public void onClick(View v) {
 						mDateTimePicker.reset();
 					}
@@ -660,13 +663,16 @@ public class NavbarActivity extends Activity {
 
 	private TextWatcher filterTextWatcher = new TextWatcher() {
 
+		@Override
 		public void afterTextChanged(Editable s) {
 		}
 
+		@Override
 		public void beforeTextChanged(CharSequence s, int start, int count,
 				int after) {
 		}
 
+		@Override
 		public void onTextChanged(CharSequence s, int start, int before,
 				int count) {
 			if (s != null && entryAdapter != null) {
@@ -677,6 +683,7 @@ public class NavbarActivity extends Activity {
 	};
 
 	private CompoundButton.OnCheckedChangeListener btnNavBarOnCheckedChangeListener = new CompoundButton.OnCheckedChangeListener() {
+		@Override
 		public void onCheckedChanged(CompoundButton buttonView,
 				boolean isChecked) {
 			if (isChecked) {

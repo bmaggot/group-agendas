@@ -64,6 +64,7 @@ public class EditAutoColorActivity extends Activity {
 		GridView gridview = (GridView) findViewById(R.id.gridview);
 		gridview.setAdapter(new ColorsAdapter(EditAutoColorActivity.this, colorsValues));
 		gridview.setOnItemClickListener(new OnItemClickListener() {
+			@Override
 			public void onItemClick(AdapterView<?> parent, View v, int position, long id) {
 				mItem.color = colorsValues[position];
 				setImage(mItem.color);

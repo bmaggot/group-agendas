@@ -163,6 +163,7 @@ public class CalendarSettingsActivity extends Activity {
 
 	class GetAccountFromDBTask extends AsyncTask<Void, Account, Account> {
 
+		@Override
 		protected void onPreExecute() {
 
 			pb.setVisibility(View.VISIBLE);
@@ -170,10 +171,12 @@ public class CalendarSettingsActivity extends Activity {
 			super.onPreExecute();
 		}
 
+		@Override
 		protected Account doInBackground(Void... args) {
 			return dm.getAccountFromLocalDb();
 		}
 
+		@Override
 		protected void onPostExecute(Account account) {
 			if (account != null)
 				feelFields(account);
@@ -185,15 +188,18 @@ public class CalendarSettingsActivity extends Activity {
 
 	class GetAccountTask extends AsyncTask<Void, Account, Account> {
 
+		@Override
 		protected void onPreExecute() {
 			pb.setVisibility(View.VISIBLE);
 			super.onPreExecute();
 		}
 
+		@Override
 		protected Account doInBackground(Void... args) {
 			return dm.getAccountFromRemoteDb();
 		}
 
+		@Override
 		protected void onPostExecute(Account account) {
 			if (account != null) {
 				feelFields(account);

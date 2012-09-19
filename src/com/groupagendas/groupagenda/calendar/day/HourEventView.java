@@ -47,7 +47,7 @@ public class HourEventView extends RelativeLayout {
 		this.event = e;
 		setId(e.hashCode());
 		
-		 lp = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.WRAP_CONTENT, RelativeLayout.LayoutParams.WRAP_CONTENT);
+		 lp = new RelativeLayout.LayoutParams(android.view.ViewGroup.LayoutParams.WRAP_CONTENT, android.view.ViewGroup.LayoutParams.WRAP_CONTENT);
 		
 		
 		Calendar startTime  = (Calendar) e.getStartCalendar().clone();

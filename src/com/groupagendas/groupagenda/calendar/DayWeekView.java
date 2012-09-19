@@ -75,7 +75,7 @@ public class DayWeekView extends AbstractCalendarView {
 			else allDayEventRowsNumber = 10;
 		}
 		
-		LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(LayoutParams.FILL_PARENT,  Math.round(allDayEventRowsNumber * allDayLineHeightDP*densityFactor)); 
+		LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(android.view.ViewGroup.LayoutParams.FILL_PARENT,  Math.round(allDayEventRowsNumber * allDayLineHeightDP*densityFactor)); 
 		allDayEventsContainer.setLayoutParams(layoutParams);
 	}
 	
@@ -227,7 +227,7 @@ public class DayWeekView extends AbstractCalendarView {
 	@Override
 	protected void instantiateTopPanelBottomLine() {
 		LinearLayout calendarTopPanelBottomLine = new LinearLayout(getContext());
-		LayoutParams params = new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT);
+		LayoutParams params = new LayoutParams(android.view.ViewGroup.LayoutParams.MATCH_PARENT, android.view.ViewGroup.LayoutParams.MATCH_PARENT);
 		calendarTopPanelBottomLine.setOrientation(LinearLayout.HORIZONTAL);
 		calendarTopPanelBottomLine.setLayoutParams(params);
 		getTopPanelBottomLine().addView(calendarTopPanelBottomLine);	
@@ -295,7 +295,7 @@ public class DayWeekView extends AbstractCalendarView {
 			
 //			setting up panels frames
 			View child;
-			LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(LayoutParams.FILL_PARENT, LayoutParams.FILL_PARENT);
+			LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(android.view.ViewGroup.LayoutParams.FILL_PARENT, android.view.ViewGroup.LayoutParams.FILL_PARENT);
 			params.weight = 1;
 			
 //			adding day frames and listeners from first to last-1 of shown days
@@ -331,7 +331,7 @@ public class DayWeekView extends AbstractCalendarView {
 				label.setText(HourNames[i]);
 				label.setGravity(android.view.Gravity.CENTER_HORIZONTAL);
 				label.setHeight(Math.round(hourLineHeightDP * densityFactor));
-				label.setWidth(LayoutParams.FILL_PARENT);
+				label.setWidth(android.view.ViewGroup.LayoutParams.FILL_PARENT);
 				hourList.addView(label);
 			}
 		}
@@ -360,7 +360,7 @@ public class DayWeekView extends AbstractCalendarView {
 		
 		private RelativeLayout createNewHourEventFrame() {
 			RelativeLayout child = new RelativeLayout(getContext());
-			RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(LayoutParams.FILL_PARENT, LayoutParams.FILL_PARENT);
+			RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(android.view.ViewGroup.LayoutParams.FILL_PARENT, android.view.ViewGroup.LayoutParams.FILL_PARENT);
 			child.setLayoutParams(params);		
 			return child;
 		}

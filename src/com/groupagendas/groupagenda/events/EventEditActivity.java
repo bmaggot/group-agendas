@@ -142,7 +142,7 @@ public class EventEditActivity extends Activity {
 
 		dm = DataManagement.getInstance(this);
 		dtUtils = new DateTimeUtils(this);
-		responsePanel = (View) findViewById(R.id.response_to_invitation);
+		responsePanel = findViewById(R.id.response_to_invitation);
 		intent = getIntent();
 
 		pb = (ProgressBar) findViewById(R.id.progress);
@@ -627,6 +627,7 @@ public class EventEditActivity extends Activity {
 						gridview.setAdapter(new IconsAdapter(EventEditActivity.this, iconsValues));
 
 						gridview.setOnItemClickListener(new OnItemClickListener() {
+							@Override
 							public void onItemClick(AdapterView<?> parent, View v, int position, long id) {
 								if (iconsValues[position].equals("noicon")) {
 									event.icon = "";
@@ -667,6 +668,7 @@ public class EventEditActivity extends Activity {
 						gridview.setAdapter(new ColorsAdapter(EventEditActivity.this, colorsValues));
 
 						gridview.setOnItemClickListener(new OnItemClickListener() {
+							@Override
 							public void onItemClick(AdapterView<?> parent, View v, int position, long id) {
 								event.setColor(colorsValues[position]);
 								// String nameColor = "calendarbubble_" + TODO and more shit
@@ -986,12 +988,15 @@ public class EventEditActivity extends Activity {
 
 	private TextWatcher filterTextWatcher = new TextWatcher() {
 
+		@Override
 		public void afterTextChanged(Editable s) {
 		}
 
+		@Override
 		public void beforeTextChanged(CharSequence s, int start, int count, int after) {
 		}
 
+		@Override
 		public void onTextChanged(CharSequence s, int start, int before, int count) {
 			if (s != null) {
 				if (event.icon == null || event.icon.equals("null") || event.icon.equals("")) {
@@ -1183,6 +1188,7 @@ public class EventEditActivity extends Activity {
 		case DIALOG_ERROR:
 			builder.setMessage(errorStr).setCancelable(false)
 					.setPositiveButton(getString(R.string.ok), new DialogInterface.OnClickListener() {
+						@Override
 						public void onClick(DialogInterface dialog, int id) {
 							dialog.dismiss();
 						}
@@ -1191,10 +1197,12 @@ public class EventEditActivity extends Activity {
 		case DELETE_DIALOG:
 			builder.setMessage(getString(R.string.sure_delete)).setCancelable(false)
 					.setPositiveButton(getString(R.string.yes), new DialogInterface.OnClickListener() {
+						@Override
 						public void onClick(DialogInterface dialog, int id) {
 							new DeleteEventTask().execute();
 						}
 					}).setNegativeButton(getString(R.string.no), new DialogInterface.OnClickListener() {
+						@Override
 						public void onClick(DialogInterface dialog, int id) {
 							dialog.cancel();
 						}
@@ -1205,6 +1213,7 @@ public class EventEditActivity extends Activity {
 	}
 
 	class DeleteEventTask extends AsyncTask<Void, Boolean, Boolean> {
+		@Override
 		protected Boolean doInBackground(Void... type) {
 
 			if (event_id > 0) {
@@ -1227,6 +1236,7 @@ public class EventEditActivity extends Activity {
 			return false;
 		}
 
+		@Override
 		protected void onPostExecute(Boolean result) {
 			Toast toast = Toast.makeText(EventEditActivity.this, "", Toast.LENGTH_LONG);
 			if (result) {
@@ -1284,6 +1294,7 @@ public class EventEditActivity extends Activity {
 		// Update demo TextViews when the "OK" button is clicked
 		((Button) mDateTimeDialogView.findViewById(R.id.SetDateTime)).setOnClickListener(new OnClickListener() {
 
+			@Override
 			public void onClick(View v) {
 				mDateTimePicker.clearFocus();
 				boolean timeSet = false;
@@ -1326,6 +1337,7 @@ public class EventEditActivity extends Activity {
 		// Cancel the dialog when the "Cancel" button is clicked
 		((Button) mDateTimeDialogView.findViewById(R.id.CancelDialog)).setOnClickListener(new OnClickListener() {
 
+			@Override
 			public void onClick(View v) {
 				mDateTimeDialog.cancel();
 			}
@@ -1334,6 +1346,7 @@ public class EventEditActivity extends Activity {
 		// Reset Date and Time pickers when the "Reset" button is clicked
 		((Button) mDateTimeDialogView.findViewById(R.id.ResetDateTime)).setOnClickListener(new OnClickListener() {
 
+			@Override
 			public void onClick(View v) {
 				mDateTimePicker.reset();
 			}

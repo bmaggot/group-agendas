@@ -21,14 +21,14 @@ public class EventGroupView extends LinearLayout {
     public EventGroupView(Context context) {
         super(context);
         this.setOrientation(HORIZONTAL);
-        ViewGroup.LayoutParams lp = new ViewGroup.LayoutParams(LayoutParams.FILL_PARENT, LayoutParams.WRAP_CONTENT);
+        ViewGroup.LayoutParams lp = new ViewGroup.LayoutParams(android.view.ViewGroup.LayoutParams.FILL_PARENT, android.view.ViewGroup.LayoutParams.WRAP_CONTENT);
         setLayoutParams(lp);
     }
 
     public EventGroupView(Context context, EventsGroup parentEventsGroup) {
         super(context);
         this.setOrientation(HORIZONTAL);
-        ViewGroup.LayoutParams lp = new ViewGroup.LayoutParams(LayoutParams.FILL_PARENT, LayoutParams.WRAP_CONTENT);
+        ViewGroup.LayoutParams lp = new ViewGroup.LayoutParams(android.view.ViewGroup.LayoutParams.FILL_PARENT, android.view.ViewGroup.LayoutParams.WRAP_CONTENT);
         setLayoutParams(lp);
         setParentEventsGroup(parentEventsGroup);
     }
@@ -36,7 +36,7 @@ public class EventGroupView extends LinearLayout {
     public EventGroupView(Context context, AttributeSet attrs) {
         super(context, attrs);
         this.setOrientation(HORIZONTAL);
-        ViewGroup.LayoutParams lp = new ViewGroup.LayoutParams(LayoutParams.FILL_PARENT, LayoutParams.WRAP_CONTENT);
+        ViewGroup.LayoutParams lp = new ViewGroup.LayoutParams(android.view.ViewGroup.LayoutParams.FILL_PARENT, android.view.ViewGroup.LayoutParams.WRAP_CONTENT);
         setLayoutParams(lp);
     }
 
@@ -50,7 +50,7 @@ public class EventGroupView extends LinearLayout {
             EventView eventView = new EventView(getContext());
             eventView.setParentEvent(parentEventsGroup.getEventList().get(e));
             LinearLayout.LayoutParams params =
-                    new LinearLayout.LayoutParams(LayoutParams.WRAP_CONTENT, (int) eventView.getCurrentEventHeight(), 1);
+                    new LinearLayout.LayoutParams(android.view.ViewGroup.LayoutParams.WRAP_CONTENT, (int) eventView.getCurrentEventHeight(), 1);
             params.topMargin = EventsHelper.timeToOffsetConvert(EventsHelper.getNumberOfMillisecondsFromMidnight(parentEventsGroup.getEventList().get(e).getStartTime()), (int) minimalGroupHeight);
             eventView.setLayoutParams(params);
             this.addView(eventView);

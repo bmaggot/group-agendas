@@ -136,7 +136,7 @@ public class ContactsActivity extends ListActivity implements OnCheckedChangeLis
 				tmpTV.setGravity(Gravity.CENTER);
 				tmpTV.setPadding(5, 0, 0, 0);
 				tmpTV.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 16);
-				LayoutParams params = new LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT, 1);
+				LayoutParams params = new LayoutParams(android.view.ViewGroup.LayoutParams.WRAP_CONTENT, android.view.ViewGroup.LayoutParams.WRAP_CONTENT, 1);
 				tmpTV.setLayoutParams(params);
 				sideIndex.addView(tmpTV);
 			}
@@ -172,6 +172,7 @@ public class ContactsActivity extends ListActivity implements OnCheckedChangeLis
 		return false;
 	}
 
+	@Override
 	public void onResume() {
 		super.onResume();
 		LinearLayout sideIndex = (LinearLayout) findViewById(R.id.sideIndex);
@@ -253,6 +254,7 @@ public class ContactsActivity extends ListActivity implements OnCheckedChangeLis
 		}
 	}
 
+	@Override
 	public void onPause() {
 		super.onPause();
 		editor.putString("ContactsActivityTask", CURRENT_TASK);
@@ -260,6 +262,7 @@ public class ContactsActivity extends ListActivity implements OnCheckedChangeLis
 		editor.commit();
 	}
 
+	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		this.setContentView(R.layout.contacts);
@@ -298,12 +301,15 @@ public class ContactsActivity extends ListActivity implements OnCheckedChangeLis
 	}
 
 	private TextWatcher filterTextWatcher = new TextWatcher() {
+		@Override
 		public void afterTextChanged(Editable s) {
 		}
 
+		@Override
 		public void beforeTextChanged(CharSequence s, int start, int count, int after) {
 		}
 
+		@Override
 		public void onTextChanged(CharSequence s, int start, int before, int count) {
 			if (s != null) {
 				if (CURRENT_LIST == CONTACTS_LIST) {
@@ -369,6 +375,7 @@ public class ContactsActivity extends ListActivity implements OnCheckedChangeLis
 		}
 	}
 
+	@Override
 	public void onListItemClick(ListView parent, View v, int position, long id) {
 		v.setDrawingCacheBackgroundColor(Color.TRANSPARENT);
 		v.setDrawingCacheEnabled(false);
@@ -513,7 +520,7 @@ public class ContactsActivity extends ListActivity implements OnCheckedChangeLis
 		if (itemPosition <= indexListSize) // TODO Find out why sometimes it gets NullPointerException
 			indexMin = Integer.parseInt(indexList.keySet().toArray()[(itemPosition - 1) * factor].toString());
 
-		ListView listView = (ListView) getListView();
+		ListView listView = getListView();
 		listView.setSelection(indexMin);
 	}
 

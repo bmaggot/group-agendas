@@ -93,18 +93,21 @@ public class DateTimePicker extends RelativeLayout implements View.OnClickListen
 	// Constructor end
 
 	// Called every time the user changes DatePicker values
+	@Override
 	public void onDateChanged(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
 		// Update the internal Calendar instance
 		mCalendar.set(year, monthOfYear, dayOfMonth, mCalendar.get(Calendar.HOUR_OF_DAY), mCalendar.get(Calendar.MINUTE));
 	}
 
 	// Called every time the user changes TimePicker values
+	@Override
 	public void onTimeChanged(TimePicker view, int hourOfDay, int minute) {
 		// Update the internal Calendar instance
 		mCalendar.set(mCalendar.get(Calendar.YEAR), mCalendar.get(Calendar.MONTH), mCalendar.get(Calendar.DAY_OF_MONTH), hourOfDay, minute);
 	}
 
 	// Handle button clicks
+	@Override
 	public void onClick(View v) {
 		switch (v.getId()) {
 			case R.id.SwitchToDate:

@@ -31,6 +31,7 @@ public class GroupsAdapter extends BaseAdapter implements Filterable{
 		mInflater = LayoutInflater.from(activity);
 	}
 
+	@Override
 	public View getView(int position, View convertView, ViewGroup parent) {
 		ViewHolder holder;
 		if (convertView == null) {

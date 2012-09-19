@@ -98,6 +98,7 @@ public class ContactEditActivity extends Activity implements OnClickListener, On
 	
 	private DateTimeUtils dtUtils;
 
+	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		this.setContentView(R.layout.contact_edit);
@@ -191,7 +192,8 @@ public class ContactEditActivity extends Activity implements OnClickListener, On
 	private DatePickerDialog.OnDateSetListener mDateSetListener =
         new DatePickerDialog.OnDateSetListener() {
 
-            public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
+            @Override
+			public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
                 birthdateCalendar.set(Calendar.YEAR, year);
                 birthdateCalendar.set(Calendar.MONTH, monthOfYear);
                 birthdateCalendar.set(Calendar.DAY_OF_MONTH, dayOfMonth);
@@ -200,6 +202,7 @@ public class ContactEditActivity extends Activity implements OnClickListener, On
             }
         };
 	
+	@Override
 	protected Dialog onCreateDialog(int id) {
 		AlertDialog.Builder builder = new AlertDialog.Builder(this);
 		switch (id) {
@@ -207,6 +210,7 @@ public class ContactEditActivity extends Activity implements OnClickListener, On
 			return new DatePickerDialog(this, mDateSetListener, birthdateCalendar.get(Calendar.YEAR), birthdateCalendar.get(Calendar.MONTH), birthdateCalendar.get(Calendar.DAY_OF_MONTH));
 		case ERROR_DIALOG:
 			builder.setMessage(ERROR_STRING).setCancelable(false).setPositiveButton(getString(R.string.ok), new DialogInterface.OnClickListener() {
+				@Override
 				public void onClick(DialogInterface dialog, int id) {
 					dialog.cancel();
 				}
@@ -221,6 +225,7 @@ public class ContactEditActivity extends Activity implements OnClickListener, On
 			ArrayAdapter<String> adapter = new ArrayAdapter<String>(this, android.R.layout.select_dialog_item, items);
 			builder.setTitle(getString(R.string.select_image));
 			builder.setAdapter(adapter, new DialogInterface.OnClickListener() {
+				@Override
 				public void onClick(DialogInterface dialog, int item) {
 					if (item == 0) {
 						Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
@@ -254,6 +259,7 @@ public class ContactEditActivity extends Activity implements OnClickListener, On
 
 	class GetContactTask extends AsyncTask<Integer, Contact, Contact> {
 
+		@Override
 		protected Contact doInBackground(Integer... id) {
 			editedContact = dm.getContact(id[0]);
 
@@ -263,6 +269,7 @@ public class ContactEditActivity extends Activity implements OnClickListener, On
 			return editedContact;
 		}
 
+		@Override
 		protected void onPostExecute(Contact result) {
 			if (result.image) {
 				Bitmap bitmap = Utils.getResizedBitmap(BitmapFactory.decodeByteArray(result.image_bytes, 0, result.image_bytes.length), 120, 120);
@@ -311,6 +318,7 @@ public class ContactEditActivity extends Activity implements OnClickListener, On
 
 	class EditContactTask extends AsyncTask<Contact, Boolean, Boolean> {
 
+		@Override
 		protected Boolean doInBackground(Contact... contacts) {
 			boolean success = false;
 			boolean check = true;
@@ -390,6 +398,7 @@ public class ContactEditActivity extends Activity implements OnClickListener, On
 			return check;
 		}
 
+		@Override
 		protected void onPostExecute(Boolean result) {
 			if (result) {
 				onBackPressed();
@@ -473,6 +482,7 @@ public class ContactEditActivity extends Activity implements OnClickListener, On
 			return check;
 		}
 		
+		@Override
 		protected void onPostExecute(Boolean result) {
 			if (result) {
 				onBackPressed();
@@ -484,6 +494,7 @@ public class ContactEditActivity extends Activity implements OnClickListener, On
 		}
 	}
 	class GetGroupsTask extends AsyncTask<Void, Void, Void> {
+		@Override
 		protected void onPreExecute() {
 			groupsButton.setEnabled(false);
 		}
@@ -495,6 +506,7 @@ public class ContactEditActivity extends Activity implements OnClickListener, On
 			return null;
 		}
 
+		@Override
 		protected void onPostExecute(Void result) {
 			groupsButton.setEnabled(true);
 		}
@@ -518,12 +530,14 @@ public class ContactEditActivity extends Activity implements OnClickListener, On
 	}
 
 	public class DialogSelectionClickHandler implements DialogInterface.OnMultiChoiceClickListener {
+		@Override
 		public void onClick(DialogInterface dialog, int clicked, boolean selected) {
 			selections[clicked] = selected;
 		}
 	}
 
 	private class DialogButtonClickHandler implements DialogInterface.OnClickListener {
+		@Override
 		public void onClick(DialogInterface dialog, int clicked) {
 			switch (clicked) {
 			case DialogInterface.BUTTON_POSITIVE:
@@ -626,6 +640,7 @@ public class ContactEditActivity extends Activity implements OnClickListener, On
 				AlertDialog.Builder builder = new AlertDialog.Builder(this);
 				builder.setTitle(getString(R.string.choose_crop_app));
 				builder.setAdapter(adapter, new DialogInterface.OnClickListener() {
+					@Override
 					public void onClick(DialogInterface dialog, int item) {
 						startActivityForResult(cropOptions.get(item).appIntent, CROP_FROM_CAMERA);
 					}

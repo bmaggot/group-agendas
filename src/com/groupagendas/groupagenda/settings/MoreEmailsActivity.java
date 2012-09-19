@@ -35,6 +35,7 @@ public class MoreEmailsActivity extends Activity{
 	
 	private String errorStr = "";
 	
+	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		this.setContentView(R.layout.more_emails);
@@ -158,7 +159,8 @@ public class MoreEmailsActivity extends Activity{
 		builder.setMessage(errorStr)
 		       .setCancelable(false)
 		       .setPositiveButton(getString(R.string.ok), new DialogInterface.OnClickListener() {
-		           public void onClick(DialogInterface dialog, int id) {
+		           @Override
+				public void onClick(DialogInterface dialog, int id) {
 		                dialog.dismiss();
 		           }
 		       });
@@ -167,6 +169,7 @@ public class MoreEmailsActivity extends Activity{
 	
 	class GetAccountFromDBTask extends AsyncTask<Void, Account, Account> {
 
+		@Override
 		protected void onPreExecute() {
 
 			pb.setVisibility(View.VISIBLE);
@@ -174,10 +177,12 @@ public class MoreEmailsActivity extends Activity{
 			super.onPreExecute();
 		}
 
+		@Override
 		protected Account doInBackground(Void... args) {
 			return dm.getAccountFromLocalDb();
 		}
 
+		@Override
 		protected void onPostExecute(Account account) {
 			if (account != null)
 				feelFields(account);
@@ -189,15 +194,18 @@ public class MoreEmailsActivity extends Activity{
 	
 	class GetAccountTask extends AsyncTask<Void, Account, Account> {
 
+		@Override
 		protected void onPreExecute() {
 			pb.setVisibility(View.VISIBLE);
 			super.onPreExecute();
 		}
 
+		@Override
 		protected Account doInBackground(Void... args) {
 			return dm.getAccountFromRemoteDb();
 		}
 
+		@Override
 		protected void onPostExecute(Account account) {
 			if (account != null) {
 				feelFields(account);

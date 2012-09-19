@@ -16,6 +16,7 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup.LayoutParams;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TableLayout;
@@ -44,11 +45,13 @@ public class ContactInfoActivity extends Activity {
 	
 	private DateTimeUtils dtUtils;
 	
+	@Override
 	public void onResume() {
 		super.onResume();
 		new GetGroupContactsTask().execute();
 	}
 	
+	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		this.setContentView(R.layout.contact_info);
@@ -60,20 +63,22 @@ public class ContactInfoActivity extends Activity {
 
 		table = (TableLayout) findViewById(R.id.table);
 
-		params = new TableRow.LayoutParams(TableRow.LayoutParams.FILL_PARENT, TableRow.LayoutParams.WRAP_CONTENT);
+		params = new TableRow.LayoutParams(LayoutParams.FILL_PARENT, LayoutParams.WRAP_CONTENT);
 		params.setMargins(0, 10, 0, 10);
 
-		paramsD = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.FILL_PARENT, 1);
+		paramsD = new LinearLayout.LayoutParams(LayoutParams.FILL_PARENT, 1);
 
 	}
 
 	class GetGroupContactsTask extends AsyncTask<Void, Contact, Contact> {
 
+		@Override
 		protected Contact doInBackground(Void... type) {
 			Contact contact = dm.getContact(intent.getIntExtra("contactId", 0));
 			return contact;
 		}
 
+		@Override
 		protected void onPostExecute(Contact contact) {
 			if (contact != null) {
 
@@ -133,6 +138,7 @@ public class ContactInfoActivity extends Activity {
 	}
 
 	class DeleteContactTask extends AsyncTask<Void, Boolean, Boolean> {
+		@Override
 		protected Boolean doInBackground(Void... type) {
 			
 			Uri uri = Uri.parse(ContactsProvider.CMetaData.ContactsMetaData.CONTENT_URI+"/"+mContact.contact_id);
@@ -151,6 +157,7 @@ public class ContactInfoActivity extends Activity {
 			return true;
 		}
 
+		@Override
 		protected void onPostExecute(Boolean result) {
 			toast = Toast.makeText(ContactInfoActivity.this, "", Toast.LENGTH_SHORT);
 			toast.setText(getString(R.string.contact_deleted));
@@ -187,16 +194,19 @@ public class ContactInfoActivity extends Activity {
 		table.addView(divider);
 	}
 
+	@Override
 	protected Dialog onCreateDialog(int id) {
 		AlertDialog.Builder builder = new AlertDialog.Builder(this);
 		switch (id) {
 		case DELETE_DIALOG:
 			builder.setMessage(getString(R.string.sure_delete)).setCancelable(false)
 					.setPositiveButton(getString(R.string.yes), new DialogInterface.OnClickListener() {
+						@Override
 						public void onClick(DialogInterface dialog, int id) {
 							new DeleteContactTask().execute();
 						}
 					}).setNegativeButton(getString(R.string.no), new DialogInterface.OnClickListener() {
+						@Override
 						public void onClick(DialogInterface dialog, int id) {
 							dialog.cancel();
 						}

@@ -42,7 +42,7 @@ public class AgendaDayAdapter extends AbstractAdapter<Event> {
 	@Override
 	public View getView(int i, View view, ViewGroup viewGroup) {
 		if (view == null) {
-			view = (LinearLayout)mInflater.inflate(R.layout.calendar_agenda_entry, null);
+			view = mInflater.inflate(R.layout.calendar_agenda_entry, null);
         }
 
 		final Event event = list.get(i);

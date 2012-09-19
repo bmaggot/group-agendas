@@ -168,6 +168,7 @@ public class NewEventActivity extends Activity {
 				gridview.setAdapter(new IconsAdapter(NewEventActivity.this, iconsValues));
 
 				gridview.setOnItemClickListener(new OnItemClickListener() {
+					@Override
 					public void onItemClick(AdapterView<?> parent, View v, int position, long id) {
 						if (iconsValues[position].equals("noicon")) {
 							iconView.setImageDrawable(getResources().getDrawable(R.drawable.no_icon));
@@ -603,12 +604,15 @@ public class NewEventActivity extends Activity {
 
 	private TextWatcher filterTextWatcher = new TextWatcher() {
 
+		@Override
 		public void afterTextChanged(Editable s) {
 		}
 
+		@Override
 		public void beforeTextChanged(CharSequence s, int start, int count, int after) {
 		}
 
+		@Override
 		public void onTextChanged(CharSequence s, int start, int before, int count) {
 			if (s != null) {
 				if (event.icon == null || event.icon.equals("null")) {
@@ -866,6 +870,7 @@ public class NewEventActivity extends Activity {
 		case DIALOG_ERROR:
 			builder.setMessage(errorStr).setCancelable(false)
 					.setPositiveButton(getString(R.string.ok), new DialogInterface.OnClickListener() {
+						@Override
 						public void onClick(DialogInterface dialog, int id) {
 							dialog.dismiss();
 						}
@@ -881,6 +886,7 @@ public class NewEventActivity extends Activity {
 	}
 
 	public class DialogSelectionClickHandler implements DialogInterface.OnMultiChoiceClickListener {
+		@Override
 		public void onClick(DialogInterface dialog, int clicked, boolean selected) {
 			selections[clicked] = selected;
 		}
@@ -896,6 +902,7 @@ public class NewEventActivity extends Activity {
 	}
 
 	private class DialogButtonClickHandler implements DialogInterface.OnClickListener {
+		@Override
 		public void onClick(DialogInterface dialog, int clicked) {
 			switch (clicked) {
 			case DialogInterface.BUTTON_POSITIVE:
@@ -984,6 +991,7 @@ public class NewEventActivity extends Activity {
 		// Update demo TextViews when the "OK" button is clicked
 		((Button) mDateTimeDialogView.findViewById(R.id.SetDateTime)).setOnClickListener(new OnClickListener() {
 
+			@Override
 			public void onClick(View v) {
 				mDateTimePicker.clearFocus();
 				boolean timeSet = false;
@@ -1025,6 +1033,7 @@ public class NewEventActivity extends Activity {
 		// Cancel the dialog when the "Cancel" button is clicked
 		((Button) mDateTimeDialogView.findViewById(R.id.CancelDialog)).setOnClickListener(new OnClickListener() {
 
+			@Override
 			public void onClick(View v) {
 				mDateTimeDialog.cancel();
 			}
@@ -1033,6 +1042,7 @@ public class NewEventActivity extends Activity {
 		// Reset Date and Time pickers when the "Reset" button is clicked
 		((Button) mDateTimeDialogView.findViewById(R.id.ResetDateTime)).setOnClickListener(new OnClickListener() {
 
+			@Override
 			public void onClick(View v) {
 				mDateTimePicker.reset();
 			}

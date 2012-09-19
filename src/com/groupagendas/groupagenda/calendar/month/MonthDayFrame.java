@@ -66,7 +66,7 @@ public class MonthDayFrame extends RelativeLayout {
 	
 	private LinearLayout createBubbleContainerLine() {
 		LinearLayout layout = new LinearLayout(getContext());
-		layout.setLayoutParams(new LayoutParams(LayoutParams.FILL_PARENT, LayoutParams.WRAP_CONTENT));
+		layout.setLayoutParams(new LayoutParams(android.view.ViewGroup.LayoutParams.FILL_PARENT, android.view.ViewGroup.LayoutParams.WRAP_CONTENT));
 		return layout;
 	}
 	public boolean addBubbleToLine(LinearLayout line, int maxChildren, Event event){
@@ -149,6 +149,7 @@ public class MonthDayFrame extends RelativeLayout {
 	public boolean isToday() {
 		return state == MonthCellState.TODAY;
 	}
+	@Override
 	public boolean isSelected() {
 		return state == MonthCellState.SELECTED;
 	}

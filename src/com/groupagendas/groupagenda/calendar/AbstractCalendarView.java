@@ -151,7 +151,7 @@ public abstract class AbstractCalendarView extends LinearLayout {
 	private void setupDelegates() {
 		int[] tmpCoords = new int[2];
 		int screenWidth = getResources().getDisplayMetrics().widthPixels;
-		View calNavbar = (View) findViewById(R.id.calendar_navbar);
+		View calNavbar = findViewById(R.id.calendar_navbar);
 		calNavbar.getLocationOnScreen(tmpCoords);
 		prevButton.getHitRect(prevButtonBounds);
 		prevButtonBounds.right = tmpCoords[0]+50;

@@ -29,6 +29,7 @@ public class LoginActivity extends Activity {
 	private ProgressBar pb;
 	private String error;
 
+	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.login);
@@ -78,11 +79,13 @@ public class LoginActivity extends Activity {
 	}
 
 	public class LoginTask extends AsyncTask<Void, Void, Boolean> {
+		@Override
 		protected void onPreExecute() {
 			pb.setVisibility(View.VISIBLE);
 			super.onPreExecute();
 		}
 
+		@Override
 		protected Boolean doInBackground(Void... arg0) {
 			boolean success = false;
 
@@ -94,6 +97,7 @@ public class LoginActivity extends Activity {
 			return success;
 		}
 
+		@Override
 		protected void onPostExecute(Boolean result) {
 			pb.setVisibility(View.GONE);
 			if (result == true) {
@@ -114,9 +118,11 @@ public class LoginActivity extends Activity {
 
 	}
 
+	@Override
 	protected Dialog onCreateDialog(int id) {
 		AlertDialog.Builder builder = new AlertDialog.Builder(this);
 		builder.setMessage(error).setCancelable(false).setPositiveButton(getString(R.string.ok), new DialogInterface.OnClickListener() {
+			@Override
 			public void onClick(DialogInterface dialog, int id) {
 				dialog.cancel();
 			}

@@ -73,6 +73,7 @@ public class GroupEditActivity extends Activity implements OnClickListener {
 	
 	private boolean ACTION_EDIT = true;
 
+	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		this.setContentView(R.layout.group_edit);
@@ -113,7 +114,7 @@ public class GroupEditActivity extends Activity implements OnClickListener {
 		}else{
 			TableRow RIRow = (TableRow) findViewById(R.id.remove_image_row);
 			RIRow.setVisibility(View.GONE);
-			View RIView = (View) findViewById(R.id.remove_image_line);
+			View RIView = findViewById(R.id.remove_image_line);
 			RIView.setVisibility(View.GONE);
 			
 			new GetContactsTask().execute();
@@ -145,6 +146,7 @@ public class GroupEditActivity extends Activity implements OnClickListener {
 	}
 	
 	class CreateGroupTask extends AsyncTask<Group, Boolean, Boolean> {
+		@Override
 		protected void onPreExecute() {
 			pb.setVisibility(View.VISIBLE);
 			super.onPreExecute();
@@ -187,6 +189,7 @@ public class GroupEditActivity extends Activity implements OnClickListener {
 			
 		}
 		
+		@Override
 		protected void onPostExecute(Boolean result) {
 			if (result) {
 				onBackPressed();
@@ -200,11 +203,13 @@ public class GroupEditActivity extends Activity implements OnClickListener {
 	}
 	
 	class EditGroupTask extends AsyncTask<Void, Boolean, Boolean> {
+		@Override
 		protected void onPreExecute() {
 			pb.setVisibility(View.VISIBLE);
 			super.onPreExecute();
 		}
 
+		@Override
 		protected Boolean doInBackground(Void... groups) {
 			boolean success = false;
 			boolean check = true;
@@ -251,6 +256,7 @@ public class GroupEditActivity extends Activity implements OnClickListener {
 			return check;
 		}
 
+		@Override
 		protected void onPostExecute(Boolean result) {
 			if (result) {
 				Intent intent = new Intent();
@@ -267,11 +273,13 @@ public class GroupEditActivity extends Activity implements OnClickListener {
 	}
 
 	class GetGroupTask extends AsyncTask<Integer, Group, Group> {
+		@Override
 		protected void onPreExecute() {
 			pb.setVisibility(View.VISIBLE);
 			super.onPreExecute();
 		}
 
+		@Override
 		protected Group doInBackground(Integer... id) {
 			editedGroup = dm.getGroup(GroupEditActivity.this, id[0]);
 
@@ -281,6 +289,7 @@ public class GroupEditActivity extends Activity implements OnClickListener {
 			return editedGroup;
 		}
 
+		@Override
 		protected void onPostExecute(Group result) {
 			if (result.image) {
 				Bitmap bitmap = Utils.getResizedBitmap(BitmapFactory.decodeByteArray(result.image_bytes, 0, result.image_bytes.length), 120, 120);
@@ -296,6 +305,7 @@ public class GroupEditActivity extends Activity implements OnClickListener {
 	}
 	
 	class GetContactsTask extends AsyncTask<Void, Void, Void>{
+		@Override
 		protected void onPreExecute() {
 			contactsButton.setEnabled(false);
 		}
@@ -305,6 +315,7 @@ public class GroupEditActivity extends Activity implements OnClickListener {
 			getContactsList(contacts, true);
 			return null;
 		}
+		@Override
 		protected void onPostExecute(Void result) {
 			contactsButton.setEnabled(true);
 		}
@@ -328,11 +339,13 @@ public class GroupEditActivity extends Activity implements OnClickListener {
 		}
 	}
 	
+	@Override
 	protected Dialog onCreateDialog(int id) {
 		AlertDialog.Builder builder = new AlertDialog.Builder(this);
 		switch (id) {
 		case ERROR_DIALOG:
 			builder.setMessage(ERROR_STRING).setCancelable(false).setPositiveButton(getString(R.string.ok), new DialogInterface.OnClickListener() {
+				@Override
 				public void onClick(DialogInterface dialog, int id) {
 					dialog.cancel();
 				}
@@ -347,6 +360,7 @@ public class GroupEditActivity extends Activity implements OnClickListener {
 			ArrayAdapter<String> adapter = new ArrayAdapter<String>(this, android.R.layout.select_dialog_item, items);
 			builder.setTitle(getString(R.string.select_image));
 			builder.setAdapter(adapter, new DialogInterface.OnClickListener() {
+				@Override
 				public void onClick(DialogInterface dialog, int item) {
 					if (item == 0) {
 						Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
@@ -379,12 +393,14 @@ public class GroupEditActivity extends Activity implements OnClickListener {
 	}
 
 	public class DialogSelectionClickHandler implements DialogInterface.OnMultiChoiceClickListener {
+		@Override
 		public void onClick(DialogInterface dialog, int clicked, boolean selected) {
 			selections[clicked] = selected;
 		}
 	}
 
 	private class DialogButtonClickHandler implements DialogInterface.OnClickListener {
+		@Override
 		public void onClick(DialogInterface dialog, int clicked) {
 			switch (clicked) {
 			case DialogInterface.BUTTON_POSITIVE:
@@ -488,6 +504,7 @@ public class GroupEditActivity extends Activity implements OnClickListener {
 				AlertDialog.Builder builder = new AlertDialog.Builder(this);
 				builder.setTitle(getString(R.string.choose_crop_app));
 				builder.setAdapter(adapter, new DialogInterface.OnClickListener() {
+					@Override
 					public void onClick(DialogInterface dialog, int item) {
 						startActivityForResult(cropOptions.get(item).appIntent, CROP_FROM_CAMERA);
 					}

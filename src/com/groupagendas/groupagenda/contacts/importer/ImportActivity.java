@@ -48,6 +48,7 @@ public class ImportActivity extends Activity {
 			 * statistics are retrieved and set in public variable in Data class. Afterwards
 			 * import activity gets closed. 
 			 **/
+			@Override
 			public void onClick(View v) {
 				gimp.show();
 			}

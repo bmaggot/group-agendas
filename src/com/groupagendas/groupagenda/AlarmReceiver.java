@@ -1,20 +1,15 @@
 package com.groupagendas.groupagenda;
 
 import android.app.AlarmManager;
-import android.app.Dialog;
 import android.app.PendingIntent;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Handler;
 import android.os.PowerManager;
-import android.os.Vibrator;
 import android.widget.Toast;
 
-import com.groupagendas.groupagenda.data.Data;
-import com.groupagendas.groupagenda.data.DataManagement;
 import com.groupagendas.groupagenda.events.Event;
-import com.groupagendas.groupagenda.utils.AlarmDialog;
 
 public class AlarmReceiver extends BroadcastReceiver {
 
