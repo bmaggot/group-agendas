@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.graphics.Color;
 import android.util.AttributeSet;
 import android.view.View;
+import android.view.ViewGroup.LayoutParams;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
@@ -67,7 +68,7 @@ public class EventView extends TextView {
         }
 
         RelativeLayout.LayoutParams params =
-                new RelativeLayout.LayoutParams(eventWidth == 0 ? RelativeLayout.LayoutParams.FILL_PARENT : eventWidth, (int) currentEventHeight);
+                new RelativeLayout.LayoutParams(eventWidth == 0 ? LayoutParams.FILL_PARENT : eventWidth, (int) currentEventHeight);
         yPos = EventsHelper.timeToOffsetConvert(EventsHelper.getNumberOfMillisecondsFromMidnight(parentEvent.getStartTime()), (int) minimalEventHeight);
         params.topMargin = yPos;
         setPadding(viewPadding, viewPadding, viewPadding, viewPadding);
@@ -86,7 +87,7 @@ public class EventView extends TextView {
 
     @Override
     protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
-        super.onMeasure(widthMeasureSpec, (int) heightMeasureSpec);
+        super.onMeasure(widthMeasureSpec, heightMeasureSpec);
     }
 
     @Override

@@ -341,7 +341,7 @@ public class CalendarView extends FrameLayout {
         mWeekSeperatorLineWidth = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP,
                 UNSCALED_WEEK_SEPARATOR_LINE_WIDTH, displayMetrics);
 
-        LayoutInflater layoutInflater = (LayoutInflater) getContext().getSystemService(Service.LAYOUT_INFLATER_SERVICE);
+        LayoutInflater layoutInflater = (LayoutInflater) getContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         View content = layoutInflater.inflate(R.layout.calendar_view, null, false);
         addView(content);
 
@@ -366,7 +366,8 @@ public class CalendarView extends FrameLayout {
         return mListView.isEnabled();
     }
 
-    protected void onConfigurationChanged(Configuration newConfig) {
+    @Override
+	protected void onConfigurationChanged(Configuration newConfig) {
 //        super.onConfigurationChanged(newConfig);
         setCurrentLocale(newConfig.locale);
     }
@@ -836,8 +837,8 @@ public class CalendarView extends FrameLayout {
             } else {
                 weekView = new WeekView(mContext);
                 android.widget.AbsListView.LayoutParams params =
-                        new android.widget.AbsListView.LayoutParams(LayoutParams.WRAP_CONTENT,
-                                LayoutParams.WRAP_CONTENT);
+                        new android.widget.AbsListView.LayoutParams(android.view.ViewGroup.LayoutParams.WRAP_CONTENT,
+                                android.view.ViewGroup.LayoutParams.WRAP_CONTENT);
                 weekView.setLayoutParams(params);
                 weekView.setClickable(true);
                 weekView.setOnTouchListener(this);

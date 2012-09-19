@@ -341,6 +341,7 @@ public class RegisterationActivity extends Activity {
 						AlertDialog.Builder builder = new AlertDialog.Builder(RegisterationActivity.this);
 						builder.setMessage(errorStr).setTitle(getString(R.string.error)).setCancelable(false)
 								.setPositiveButton(getString(R.string.ok), new DialogInterface.OnClickListener() {
+									@Override
 									public void onClick(DialogInterface dialog, int id) {
 										dialog.dismiss();
 									}
@@ -415,6 +416,7 @@ public class RegisterationActivity extends Activity {
 		case DIALOG_ERROR:
 			builder.setMessage(errorStr).setTitle(getString(R.string.error)).setCancelable(false)
 					.setPositiveButton(getString(R.string.ok), new DialogInterface.OnClickListener() {
+						@Override
 						public void onClick(DialogInterface dialog, int id) {
 							dialog.dismiss();
 						}
@@ -423,6 +425,7 @@ public class RegisterationActivity extends Activity {
 		case DIALOG_SUCCESS:
 			builder.setMessage(getString(R.string.need_activation)).setCancelable(false)
 					.setPositiveButton(getString(R.string.ok), new DialogInterface.OnClickListener() {
+						@Override
 						public void onClick(DialogInterface dialog, int id) {
 							onBackPressed();
 						}

@@ -61,6 +61,7 @@ public class GmailDialog extends Dialog {
 			 * into shared preferences and user should be able to use
 			 * makeSecuredReqTask.
 			 **/
+			@Override
 			public void onClick(View v) {
 				Toast.makeText(GmailDialog.this.context, R.string.contact_import_dialog_launching_auth, Toast.LENGTH_SHORT);
 				Data.returnedFromContactAuth = true;
@@ -74,6 +75,7 @@ public class GmailDialog extends Dialog {
 			 * manually. After process is finished public trigger is set tu True
 			 * and import activity gets closed.
 			 **/
+			@Override
 			public void onClick(View v) {
 				clearCredentials();
 				Data.credentialsClear = true;
@@ -89,6 +91,7 @@ public class GmailDialog extends Dialog {
 			 * set in public variable in Data class. Afterwards import activity
 			 * gets closed.
 			 **/
+			@Override
 			public void onClick(View v) {
 				Toast.makeText(GmailDialog.this.context, R.string.contact_import_dialog_starting_gimp, Toast.LENGTH_LONG);
 				Data.importStats = getContacts();
@@ -145,7 +148,7 @@ public class GmailDialog extends Dialog {
 			jsonOutput = new makeSecuredReqTask().execute(params).get();
 			JSONObject jsonResponse = new JSONObject(jsonOutput);
 			JSONObject m = (JSONObject) jsonResponse.get("feed");
-			JSONArray entries = (JSONArray) m.getJSONArray("entry");
+			JSONArray entries = m.getJSONArray("entry");
 
 			totalEntries = entries.length();
 
@@ -309,6 +312,7 @@ public class GmailDialog extends Dialog {
 		String url;
 		OAuthConsumer consumer;
 
+		@Override
 		protected void onPreExecute() {
 		}
 
@@ -328,6 +332,7 @@ public class GmailDialog extends Dialog {
 			return result;
 		}
 
+		@Override
 		protected void onPostExecute(String result) {
 		}
 	}

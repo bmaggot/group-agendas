@@ -50,7 +50,7 @@ public class MonthView extends AbstractCalendarView {
 	@Override
 	protected void instantiateTopPanelBottomLine() {
 		LinearLayout calendarTopPanelBottomLine = new LinearLayout(getContext());
-		LayoutParams params = new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT);
+		LayoutParams params = new LayoutParams(android.view.ViewGroup.LayoutParams.MATCH_PARENT, android.view.ViewGroup.LayoutParams.MATCH_PARENT);
 		calendarTopPanelBottomLine.setOrientation(LinearLayout.HORIZONTAL);
 		calendarTopPanelBottomLine.setLayoutParams(params);
 		getTopPanelBottomLine().addView(calendarTopPanelBottomLine);

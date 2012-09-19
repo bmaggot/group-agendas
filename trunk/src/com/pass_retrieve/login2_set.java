@@ -13,7 +13,8 @@ import com.groupagendas.groupagenda.R;
  * To change this template use File | Settings | File Templates.
  */
 public class login2_set extends LoginActivity {
-    public void onCreate(Bundle savedInstanceState) {
+    @Override
+	public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         ((EditText) findViewById(R.id.login_emailText)).setText(getIntent().getStringExtra("mail"));
         ((EditText) findViewById(R.id.login_passwordText)).setText(getIntent().getStringExtra("pass"));

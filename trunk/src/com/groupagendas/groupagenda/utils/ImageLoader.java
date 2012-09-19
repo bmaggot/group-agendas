@@ -167,6 +167,7 @@ public class ImageLoader {
 	}
 
 	class PhotosLoader extends Thread {
+		@Override
 		public void run() {
 			try {
 				while (true) {
@@ -212,6 +213,7 @@ public class ImageLoader {
 			imageView = i;
 		}
 
+		@Override
 		public void run() {
 			if (bitmap != null) {
 				imageView.setImageBitmap(bitmap);

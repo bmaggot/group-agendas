@@ -63,6 +63,7 @@ public class EditAutoIconActivity extends Activity {
 		GridView gridview = (GridView) findViewById(R.id.gridview);
 		gridview.setAdapter(new IconsAdapter(EditAutoIconActivity.this, iconsValues));
 		gridview.setOnItemClickListener(new OnItemClickListener() {
+			@Override
 			public void onItemClick(AdapterView<?> parent, View v, int position, long id) {
 				mItem.icon = iconsValues[position];
 				int iconId = getResources().getIdentifier(iconsValues[position], "drawable", "com.groupagendas.groupagenda");

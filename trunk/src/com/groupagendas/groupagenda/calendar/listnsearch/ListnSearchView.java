@@ -189,10 +189,12 @@ private SectionListItem[] filterEvents (String filterString, SectionListItem[] e
 			this.notifyDataSetChanged();
 		}
 		
+		@Override
 		public int getCount(){
 			return items.length;
 		}
 		
+		@Override
 		public SectionListItem getItem (int i){
 			return items[i];	
 		}

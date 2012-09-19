@@ -8,6 +8,7 @@ import android.widget.TextView;
 import com.groupagendas.groupagenda.R;
 
 public class WhatsnewActivity extends Activity {
+	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 

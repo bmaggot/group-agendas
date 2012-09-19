@@ -117,6 +117,7 @@ private static final String DEFAULT_TITLE = "";
 		return context.getResources().getIdentifier(this.icon, "drawable", context.getPackageName());
 	}
 
+	@Override
 	public String getColor() {
 		if(color == null || color.equalsIgnoreCase("null")){
 			this.color = DEFAULT_COLOR;

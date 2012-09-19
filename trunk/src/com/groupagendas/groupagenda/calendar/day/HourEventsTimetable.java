@@ -36,7 +36,7 @@ public class HourEventsTimetable {
 		if (accuracyInMinutes * rowsCount < minsPerDay) rowsCount++;
 		
 		Collections.sort(hourEventsList, new EventTimeComparator());
-		eventsTimetable = ((ArrayList<Event>[]) new ArrayList[rowsCount]);
+		eventsTimetable = (new ArrayList[rowsCount]);
 		for (Event e : hourEventsList){
 			this.add(e);
 		}

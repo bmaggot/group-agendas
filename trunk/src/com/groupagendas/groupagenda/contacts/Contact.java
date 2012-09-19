@@ -31,6 +31,7 @@ public class Contact extends Object implements Colored {
 
 	private String color;
 	
+	@Override
 	public String getColor () {
 		if (color != null) {
 			return color;

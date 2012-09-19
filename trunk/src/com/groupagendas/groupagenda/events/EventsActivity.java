@@ -89,6 +89,7 @@ public class EventsActivity extends ListActivity {
 	}
 
 	private CompoundButton.OnCheckedChangeListener btnNavBarOnCheckedChangeListener = new CompoundButton.OnCheckedChangeListener() {
+		@Override
 		public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
 			if (isChecked) {
 				switch (buttonView.getId()) {

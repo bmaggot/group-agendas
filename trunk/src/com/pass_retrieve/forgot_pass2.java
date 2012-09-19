@@ -19,7 +19,8 @@ import com.groupagendas.groupagenda.R;
  */
 public class forgot_pass2 extends Activity {
     public Activity con;
-    public void onCreate(Bundle savedInstanceState) {
+    @Override
+	public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         con=this;
         setContentView(R.layout.forgot_pass_2);

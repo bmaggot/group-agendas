@@ -47,7 +47,7 @@ public class Utils {
 		Calendar calendar = Calendar.getInstance(timezone);
 		try {
 			SimpleDateFormat formatter = new SimpleDateFormat(pattern);
-			Date date = (Date) formatter.parse(date_str);
+			Date date = formatter.parse(date_str);
 			calendar.setTime(date);
 		} catch (ParseException e) {
 			Reporter.reportError(Utils.class.toString(), Thread.currentThread().getStackTrace()[2].getMethodName().toString(), e.getMessage());
@@ -60,7 +60,7 @@ public class Utils {
 			Calendar calendar = Calendar.getInstance();
 			try {
 				SimpleDateFormat formatter = new SimpleDateFormat(pattern);
-				Date date = (Date) formatter.parse(date_str);
+				Date date = formatter.parse(date_str);
 				calendar.setTime(date);
 			} catch (ParseException e) {
 				Reporter.reportError(Utils.class.toString(), Thread.currentThread().getStackTrace()[2].getMethodName().toString(), e.getMessage());

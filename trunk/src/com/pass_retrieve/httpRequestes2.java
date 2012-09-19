@@ -86,9 +86,11 @@ public class httpRequestes2 {
         public ProgressDialog waitDialog=null;
 
 
-        protected void onPreExecute() {   waitDialog=ProgressDialog.show(con, "", "Loading. Please wait...", true);}
+        @Override
+		protected void onPreExecute() {   waitDialog=ProgressDialog.show(con, "", "Loading. Please wait...", true);}
 
-        protected String doInBackground(Void... arg0) {
+        @Override
+		protected String doInBackground(Void... arg0) {
             //       public void clickbutton(View v) {
             String responseBody = null;
             try {
@@ -133,7 +135,8 @@ public class httpRequestes2 {
             return responseBody;
         }
 
-        protected void onPostExecute(String responseBody) {
+        @Override
+		protected void onPostExecute(String responseBody) {
             waitDialog.dismiss();
           //  Log.d("responseBody", responseBody);
            // Log.d("responseBody", email);

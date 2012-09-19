@@ -99,6 +99,7 @@ public class AccountActivity extends Activity implements OnClickListener{
 	private final int DIALOG_ERROR   = 5;
 	private String errorStr;
 	
+	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		this.setContentView(R.layout.account);
@@ -198,7 +199,7 @@ public class AccountActivity extends Activity implements OnClickListener{
 	private void feelFields() {
 		Account account = dm.getAccount();
 		if ((account.name != null) && (!account.name.equals("null"))) {
-			nameView.setText((CharSequence) account.name);
+			nameView.setText(account.name);
 		} else {
 			nameView.setText("");
 		}
@@ -350,7 +351,8 @@ public class AccountActivity extends Activity implements OnClickListener{
 			   .setTitle(getString(R.string.error))
 		       .setCancelable(false)
 		       .setPositiveButton(getString(R.string.ok), new DialogInterface.OnClickListener() {
-		           public void onClick(DialogInterface dialog, int id) {
+		           @Override
+				public void onClick(DialogInterface dialog, int id) {
 		                dialog.dismiss();
 		           }
 		       });
@@ -362,6 +364,7 @@ public class AccountActivity extends Activity implements OnClickListener{
 			ArrayAdapter<String> adapter = new ArrayAdapter<String>(this, android.R.layout.select_dialog_item, items);
 			builder.setTitle(getString(R.string.select_image));
 			builder.setAdapter(adapter, new DialogInterface.OnClickListener() {
+				@Override
 				public void onClick(DialogInterface dialog, int item) {
 					if (item == 0) {
 						Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
@@ -398,6 +401,7 @@ public class AccountActivity extends Activity implements OnClickListener{
 
 	private DatePickerDialog.OnDateSetListener mDateSetListener = new DatePickerDialog.OnDateSetListener() {
 
+		@Override
 		public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
 			mYear = year;
 			mMonth = monthOfYear;
@@ -411,15 +415,18 @@ public class AccountActivity extends Activity implements OnClickListener{
 	}
 
 	class EditAccountTask extends AsyncTask<Void, Boolean, Boolean>{
+		@Override
 		protected void onPreExecute() {
 			pb.setVisibility(View.VISIBLE);
 			super.onPreExecute();
 		}
 
+		@Override
 		protected Boolean doInBackground(Void... args) {
 			return dm.updateAccount(dm.getAccount(), removeImage.isChecked());
 		}
 
+		@Override
 		protected void onPostExecute(Boolean result) {
 			
 			if(!result){
@@ -524,6 +531,7 @@ public class AccountActivity extends Activity implements OnClickListener{
 				AlertDialog.Builder builder = new AlertDialog.Builder(this);
 				builder.setTitle(getString(R.string.choose_crop_app));
 				builder.setAdapter(adapter, new DialogInterface.OnClickListener() {
+					@Override
 					public void onClick(DialogInterface dialog, int item) {
 						startActivityForResult(cropOptions.get(item).appIntent, CROP_FROM_CAMERA);
 					}

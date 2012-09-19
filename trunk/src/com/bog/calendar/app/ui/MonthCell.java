@@ -180,7 +180,8 @@ public class MonthCell {
         return dayEventsCount;
     }
 
-    public String toString() {
+    @Override
+	public String toString() {
         return String.valueOf(mDayOfMonth) + "(" + mBound.toString() + ")";
     }
 

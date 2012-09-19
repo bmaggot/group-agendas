@@ -79,6 +79,7 @@ public class RequestTokenActivity extends Activity {
 		finish();
 	}
 	
+	@Override
 	protected void onStop() {
 	    setResult(1);
 	    super.onStop();

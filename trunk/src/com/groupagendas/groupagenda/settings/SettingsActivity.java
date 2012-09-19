@@ -13,6 +13,7 @@ import com.groupagendas.groupagenda.account.AccountActivity;
 import com.groupagendas.groupagenda.utils.Prefs;
 
 public class SettingsActivity extends ListActivity{
+	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		this.setContentView(R.layout.settings);

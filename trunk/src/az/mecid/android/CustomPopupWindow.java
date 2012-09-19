@@ -27,6 +27,7 @@ public class CustomPopupWindow {
 		this.window = new PopupWindow(anchor.getContext());
 
 		window.setTouchInterceptor(new OnTouchListener() {
+			@Override
 			public boolean onTouch(View v, MotionEvent event) {
 				if (event.getAction() == MotionEvent.ACTION_OUTSIDE) {
 					CustomPopupWindow.this.window.dismiss();
@@ -62,8 +63,8 @@ public class CustomPopupWindow {
 			window.setBackgroundDrawable(background);
 		}
 
-		window.setWidth(WindowManager.LayoutParams.WRAP_CONTENT);
-		window.setHeight(WindowManager.LayoutParams.WRAP_CONTENT);
+		window.setWidth(LayoutParams.WRAP_CONTENT);
+		window.setHeight(LayoutParams.WRAP_CONTENT);
 		window.setTouchable(true);
 		window.setFocusable(true);
 		window.setOutsideTouchable(true);
