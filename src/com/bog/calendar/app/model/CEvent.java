@@ -1,10 +1,10 @@
 package com.bog.calendar.app.model;
 
-import android.graphics.Color;
-
 import java.io.Serializable;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+
+import android.graphics.Color;
 
 
 /**

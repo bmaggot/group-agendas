@@ -2,7 +2,6 @@ package com.groupagendas.groupagenda.contacts.importer;
 
 import android.database.Cursor;
 import android.provider.ContactsContract;
-import android.provider.ContactsContract.CommonDataKinds.Email;
 import android.provider.ContactsContract.RawContacts;
 
 import com.groupagendas.groupagenda.contacts.Contact;

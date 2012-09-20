@@ -1,7 +1,5 @@
 package com.groupagendas.groupagenda;
 
-import com.groupagendas.groupagenda.data.DataManagement;
-
 import android.app.Activity;
 import android.content.Context;
 import android.content.SharedPreferences;
@@ -14,6 +12,8 @@ import android.widget.CompoundButton;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.ToggleButton;
+
+import com.groupagendas.groupagenda.data.DataManagement;
 
 public class CalendarsActivity extends Activity {
 	private SharedPreferences prefs;

@@ -8,7 +8,6 @@ import java.util.Locale;
 import java.util.TimeZone;
 
 import android.app.AlertDialog;
-import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
 import android.content.res.Configuration;

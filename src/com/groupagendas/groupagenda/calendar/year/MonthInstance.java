@@ -2,17 +2,17 @@ package com.groupagendas.groupagenda.calendar.year;
 
 import java.util.Calendar;
 
-import com.groupagendas.groupagenda.R;
-import com.groupagendas.groupagenda.calendar.MonthCellState;
-import com.groupagendas.groupagenda.data.CalendarSettings;
-import com.groupagendas.groupagenda.data.Data;
-import com.groupagendas.groupagenda.utils.Utils;
-
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnTouchListener;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+
+import com.groupagendas.groupagenda.R;
+import com.groupagendas.groupagenda.calendar.MonthCellState;
+import com.groupagendas.groupagenda.data.CalendarSettings;
+import com.groupagendas.groupagenda.data.Data;
+import com.groupagendas.groupagenda.utils.Utils;
 
 public class MonthInstance implements OnTouchListener{
 	private static final int ROWS_COUNT = 6;

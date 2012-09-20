@@ -3,9 +3,6 @@ package com.groupagendas.groupagenda.contacts.importer;
 import java.net.URLEncoder;
 import java.util.concurrent.ExecutionException;
 
-import com.groupagendas.groupagenda.data.Data;
-import com.groupagendas.groupagenda.error.report.Reporter;
-
 import oauth.signpost.OAuth;
 import oauth.signpost.OAuthConsumer;
 import oauth.signpost.OAuthProvider;
@@ -20,6 +17,9 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.util.Log;
+
+import com.groupagendas.groupagenda.data.Data;
+import com.groupagendas.groupagenda.error.report.Reporter;
 
 
 public class RequestTokenActivity extends Activity {

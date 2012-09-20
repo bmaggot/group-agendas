@@ -5,15 +5,6 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 
-import com.groupagendas.groupagenda.EventActivityOnClickListener;
-import com.groupagendas.groupagenda.R;
-import com.groupagendas.groupagenda.data.CalendarSettings;
-import com.groupagendas.groupagenda.data.Data;
-import com.groupagendas.groupagenda.events.Event;
-import com.groupagendas.groupagenda.utils.DrawingUtils;
-import com.groupagendas.groupagenda.utils.Utils;
-
-
 import android.content.Context;
 import android.graphics.Color;
 import android.graphics.drawable.BitmapDrawable;
@@ -28,6 +19,14 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+
+import com.groupagendas.groupagenda.EventActivityOnClickListener;
+import com.groupagendas.groupagenda.R;
+import com.groupagendas.groupagenda.data.CalendarSettings;
+import com.groupagendas.groupagenda.data.Data;
+import com.groupagendas.groupagenda.events.Event;
+import com.groupagendas.groupagenda.utils.DrawingUtils;
+import com.groupagendas.groupagenda.utils.Utils;
 
 
 public class ListnSearchView extends LinearLayout {

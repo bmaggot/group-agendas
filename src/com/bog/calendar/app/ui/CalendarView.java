@@ -7,7 +7,6 @@ import java.util.Calendar;
 import java.util.Locale;
 import java.util.TimeZone;
 
-import android.app.Service;
 import android.content.Context;
 import android.content.res.Configuration;
 import android.content.res.TypedArray;

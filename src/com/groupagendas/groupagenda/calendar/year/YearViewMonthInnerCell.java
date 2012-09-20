@@ -1,14 +1,14 @@
 package com.groupagendas.groupagenda.calendar.year;
 
-import com.groupagendas.groupagenda.R;
-import com.groupagendas.groupagenda.calendar.MonthCellState;
-
 import android.content.Context;
 import android.graphics.Color;
 import android.util.AttributeSet;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+
+import com.groupagendas.groupagenda.R;
+import com.groupagendas.groupagenda.calendar.MonthCellState;
 
 public class YearViewMonthInnerCell extends RelativeLayout{
 	TextView text;

@@ -1,12 +1,9 @@
 package com.pass_retrieve;
 
-import android.app.Activity;
-import android.app.AlertDialog;
-import android.app.ProgressDialog;
-import android.content.DialogInterface;
-import android.content.Intent;
-import android.os.AsyncTask;
-import android.util.Log;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+
 import org.apache.http.NameValuePair;
 import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.HttpClient;
@@ -21,11 +18,15 @@ import org.apache.http.params.HttpConnectionParams;
 import org.apache.http.params.HttpParams;
 import org.json.JSONObject;
 
-import com.groupagendas.groupagenda.error.report.Reporter;
+import android.app.Activity;
+import android.app.AlertDialog;
+import android.app.ProgressDialog;
+import android.content.DialogInterface;
+import android.content.Intent;
+import android.os.AsyncTask;
+import android.util.Log;
 
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
+import com.groupagendas.groupagenda.error.report.Reporter;
 
 /**
  * Created by IntelliJ IDEA.
