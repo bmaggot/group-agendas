@@ -55,37 +55,37 @@ public class Phone {
 		}
 		phones.close();
 		//import phone contacts
-//		Cursor phoneContacts = activity.getContentResolver().query(RawContacts.CONTENT_URI,
-//				new String[] { RawContacts._ID, RawContacts.ACCOUNT_TYPE, ContactsContract.Contacts.DISPLAY_NAME },
-//				RawContacts.ACCOUNT_TYPE + " <> 'com.android.contacts.sim' " + " AND " + RawContacts.ACCOUNT_TYPE + " <> 'com.google' ",
-//				null, null);
-//		while(phoneContacts.moveToNext()){
-//			String displayName = phoneContacts.getString(phoneContacts.getColumnIndex(ContactsContract.Contacts.DISPLAY_NAME));
-//			String[] nameArray;
-//			String firstName = "";
-//			String lastName = "";
-//			Contact phoneContact = new Contact();
-//			if (displayName.matches("[0-9,A-Z,a-z]*\\s[0-9,A-Z,a-z]*")) {
-//				nameArray = displayName.split("\\s");
-//				firstName = nameArray[0];
-//				if (nameArray.length <= 2) {
-//					lastName = nameArray[1];
-//				} else if (nameArray.length > 2) {
-//					for (int i = 1; i < nameArray.length; i++) {
-//						lastName = lastName + nameArray[i];
-//					}
-//				}
-//			} else {
-//				firstName = displayName;
-//				lastName = "";
-//			}
-//			phoneContact.name = firstName;
-//			System.out.println(firstName);
-//			phoneContact.lastname = lastName;
-//			Object[] array = { activity, phoneContact };
-//			new Importer().execute(array);
-//		}
-//		phoneContacts.close();
+		Cursor phoneContacts = activity.getContentResolver().query(RawContacts.CONTENT_URI,
+				new String[] { RawContacts._ID, RawContacts.ACCOUNT_TYPE, ContactsContract.Contacts.DISPLAY_NAME },
+				RawContacts.ACCOUNT_TYPE + " <> 'com.android.contacts.sim' " + " AND " + RawContacts.ACCOUNT_TYPE + " == 'com.google' ",
+				null, null);
+		while(phoneContacts.moveToNext()){
+			String displayName = phoneContacts.getString(phoneContacts.getColumnIndex(ContactsContract.Contacts.DISPLAY_NAME));
+			String[] nameArray;
+			String firstName = "";
+			String lastName = "";
+			Contact phoneContact = new Contact();
+			if (displayName.matches("[0-9,A-Z,a-z]*\\s[0-9,A-Z,a-z]*")) {
+				nameArray = displayName.split("\\s");
+				firstName = nameArray[0];
+				if (nameArray.length <= 2) {
+					lastName = nameArray[1];
+				} else if (nameArray.length > 2) {
+					for (int i = 1; i < nameArray.length; i++) {
+						lastName = lastName + nameArray[i];
+					}
+				}
+			} else {
+				firstName = displayName;
+				lastName = "";
+			}
+			phoneContact.name = firstName;
+			System.out.println(firstName);
+			phoneContact.lastname = lastName;
+			Object[] array = { activity, phoneContact };
+			new Importer().execute(array);
+		}
+		phoneContacts.close();
 		DataManagement.getInstance(activity).getContactsFromRemoteDb(null);
 		activity.onBackPressed();
 	}

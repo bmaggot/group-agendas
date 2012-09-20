@@ -1,5 +1,7 @@
 package com.groupagendas.groupagenda.alarm;
 
+import java.util.Calendar;
+
 import android.app.AlarmManager;
 import android.app.PendingIntent;
 import android.content.BroadcastReceiver;
@@ -13,34 +15,49 @@ import com.groupagendas.groupagenda.data.DataManagement;
 import com.groupagendas.groupagenda.events.Event;
 
 public class AlarmReceiver extends BroadcastReceiver {
-
 	Handler handler = new Handler();
-	DataManagement dm;
 
 	@Override
 	public void onReceive(Context context, Intent intent) {
-		// Debug.waitForDebugger();
-		dm = DataManagement.getInstance(context);
-		System.out.println("DataManagement" + dm);
 		int eventId = intent.getIntExtra("eventId", 0);
-		Event event = dm.getEventFromDb(eventId);
+		int alarmNR = intent.getIntExtra("alarmNr", 0);
 		PowerManager pm = (PowerManager) context.getSystemService(Context.POWER_SERVICE);
 		PowerManager.WakeLock wl = pm.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, "Group Agendas");
 		wl.acquire();
 		Intent i = new Intent(context, AlarmActivity.class);
 		i.putExtra("event_id", eventId);
+		i.putExtra("alarmNr", alarmNR);
 		i.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
 		context.startActivity(i);
 		wl.release();
 	}
 
-	public void SetAlarm(Context context, long time, Event event) {
+	public void SetAlarm(Context context, long time, Event event, int alarmNumber) {
 		AlarmManager am = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
 		Intent i = new Intent(context, AlarmReceiver.class);
 		i.putExtra("eventId", event.event_id);
-		PendingIntent pi = PendingIntent.getBroadcast(context, 0, i, 0);
+		i.putExtra("alarmNr", alarmNumber);
+		PendingIntent pi = PendingIntent.getBroadcast(context, event.event_id + alarmNumber, i, PendingIntent.FLAG_UPDATE_CURRENT);
 		am.set(AlarmManager.RTC_WAKEUP, time, pi);
-		System.out.println(event.title + "alarm set");
+		Calendar tmp = Calendar.getInstance();
+		tmp.setTimeInMillis(time);
+		System.out.println(event.title + " - alarm set:" + tmp.getTime() + " id: " + event.event_id + alarmNumber);
 	}
+	
+    public void CancelAlarm(Context context, int alarmId)
+    {
+        Intent intent = new Intent(context, AlarmReceiver.class);
+        PendingIntent sender = PendingIntent.getBroadcast(context, alarmId, intent, 0);
+        AlarmManager alarmManager = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
+        alarmManager.cancel(sender);
+    }
 
 }
+
+/*
+
+
+
+
+
+*/
