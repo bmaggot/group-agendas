@@ -237,5 +237,6 @@
     <string name="event_alarm3">Alarm 3:</string>
     <string name="alarm_sleep">Sleep</string>
     <string name="alarm_dismiss">Dismiss</string>
+    <string name="alarm_dismiss_all_alarms">You gave dismissed all alarms in the past!</string>
     
 </resources>
