@@ -10,11 +10,6 @@ import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.util.EntityUtils;
 import org.json.JSONObject;
 
-import com.groupagendas.groupagenda.data.Data;
-import com.groupagendas.groupagenda.data.DataManagement;
-import com.groupagendas.groupagenda.data.OfflineData;
-import com.groupagendas.groupagenda.error.report.Reporter;
-
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -22,6 +17,11 @@ import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.AsyncTask;
 import android.util.Log;
+
+import com.groupagendas.groupagenda.data.Data;
+import com.groupagendas.groupagenda.data.DataManagement;
+import com.groupagendas.groupagenda.data.OfflineData;
+import com.groupagendas.groupagenda.error.report.Reporter;
 
 public class ConnectReceiver extends BroadcastReceiver {
 

@@ -12,11 +12,11 @@ import java.util.regex.Pattern;
 import org.json.JSONArray;
 import org.json.JSONException;
 
-import com.groupagendas.groupagenda.data.CalendarSettings;
-import com.groupagendas.groupagenda.error.report.Reporter;
-
 import android.graphics.Bitmap;
 import android.text.format.DateFormat;
+
+import com.groupagendas.groupagenda.data.CalendarSettings;
+import com.groupagendas.groupagenda.error.report.Reporter;
 
 public class Utils {
 	public static void CopyStream(InputStream is, OutputStream os) {

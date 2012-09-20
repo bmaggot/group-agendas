@@ -6,10 +6,10 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 
-import com.groupagendas.groupagenda.error.report.Reporter;
-
 import android.content.Context;
 import android.os.Environment;
+
+import com.groupagendas.groupagenda.error.report.Reporter;
 
 public class DBUtils {
 	

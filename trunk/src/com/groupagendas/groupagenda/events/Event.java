@@ -4,11 +4,10 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 
+import android.content.Context;
+
 import com.groupagendas.groupagenda.data.DataManagement;
 import com.groupagendas.groupagenda.interfaces.Colored;
-import com.groupagendas.groupagenda.utils.Utils;
-
-import android.content.Context;
 
 
 

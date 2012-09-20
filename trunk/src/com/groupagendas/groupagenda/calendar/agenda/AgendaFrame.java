@@ -2,13 +2,13 @@ package com.groupagendas.groupagenda.calendar.agenda;
 
 import java.util.List;
 
-import com.groupagendas.groupagenda.R;
-import com.groupagendas.groupagenda.calendar.adapters.AgendaDayAdapter;
-import com.groupagendas.groupagenda.events.Event;
-
 import android.content.Context;
 import android.widget.LinearLayout;
 import android.widget.ListView;
+
+import com.groupagendas.groupagenda.R;
+import com.groupagendas.groupagenda.calendar.adapters.AgendaDayAdapter;
+import com.groupagendas.groupagenda.events.Event;
 
 public class AgendaFrame {
 	private final LinearLayout frame;

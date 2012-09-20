@@ -2,10 +2,6 @@ package com.groupagendas.groupagenda.calendar.month;
 
 import java.util.ArrayList;
 
-import com.groupagendas.groupagenda.R;
-import com.groupagendas.groupagenda.calendar.MonthCellState;
-import com.groupagendas.groupagenda.events.Event;
-
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
@@ -17,6 +13,10 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+
+import com.groupagendas.groupagenda.R;
+import com.groupagendas.groupagenda.calendar.MonthCellState;
+import com.groupagendas.groupagenda.events.Event;
 
 public class MonthDayFrame extends RelativeLayout {
 	

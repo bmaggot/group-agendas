@@ -1,9 +1,9 @@
 package com.bog.calendar.app.ui;
 
-import java.lang.annotation.Target;
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
 
 /**
  * Indicates a class is a widget usable by application developers to create UI.

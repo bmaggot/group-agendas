@@ -2,12 +2,6 @@ package com.groupagendas.groupagenda.events;
 
 import java.util.Calendar;
 
-import com.groupagendas.groupagenda.R;
-import com.groupagendas.groupagenda.data.DataManagement;
-import com.groupagendas.groupagenda.utils.DateTimeUtils;
-import com.groupagendas.groupagenda.utils.Prefs;
-import com.groupagendas.groupagenda.utils.Utils;
-
 import android.app.Activity;
 import android.content.ContentValues;
 import android.widget.Button;
@@ -17,6 +11,12 @@ import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
+
+import com.groupagendas.groupagenda.R;
+import com.groupagendas.groupagenda.data.DataManagement;
+import com.groupagendas.groupagenda.utils.DateTimeUtils;
+import com.groupagendas.groupagenda.utils.Prefs;
+import com.groupagendas.groupagenda.utils.Utils;
 
 public class EventActivity extends Activity {
 	public static final int DEFAULT_EVENT_DURATION_IN_MINS = 30;

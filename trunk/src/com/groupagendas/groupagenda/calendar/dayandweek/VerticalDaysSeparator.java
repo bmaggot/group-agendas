@@ -1,11 +1,11 @@
 package com.groupagendas.groupagenda.calendar.dayandweek;
 
-import com.groupagendas.groupagenda.R;
-
 import android.content.Context;
 import android.view.Gravity;
 import android.view.ViewGroup.LayoutParams;
 import android.widget.TextView;
+
+import com.groupagendas.groupagenda.R;
 
 public class VerticalDaysSeparator extends TextView {
 	int LINE_WIDTH_DIP = 1;
