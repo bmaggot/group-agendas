@@ -9,7 +9,11 @@ import java.util.List;
  * Group Events object to group intersected events.
  */
 public class EventsGroup extends BaseEvent implements Serializable, Comparable<EventsGroup> {
-    private List<CEvent> eventList = new ArrayList<CEvent>();
+    /**
+	 * 
+	 */
+	private static final long serialVersionUID = -8817657536333429582L;
+	private List<CEvent> eventList = new ArrayList<CEvent>();
 
     public EventsGroup() {
     }
