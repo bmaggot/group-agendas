@@ -225,14 +225,10 @@ public class EventsHelper {
         event.setIcon(e.icon);
                
         try{    	
-        	Calendar startEventTime = Calendar.getInstance();
-            dt = formatter.parse(e.my_time_start);
-            startEventTime.setTime(dt);
+        	Calendar startEventTime = (Calendar) e.getStartCalendar().clone();
             event.setStartTime(startEventTime.getTimeInMillis());
             
-            Calendar endEventTime = Calendar.getInstance();
-            dt = formatter.parse(e.my_time_end);
-            endEventTime.setTime(dt);
+            Calendar endEventTime = (Calendar) e.getEndCalendar().clone();
             event.setEndTime(endEventTime.getTimeInMillis());
         	
             return event;
