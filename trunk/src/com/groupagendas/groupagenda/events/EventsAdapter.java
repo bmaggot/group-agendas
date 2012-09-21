@@ -16,8 +16,8 @@ import android.widget.TextView;
 
 import com.groupagendas.groupagenda.R;
 import com.groupagendas.groupagenda.data.DataManagement;
-import com.groupagendas.groupagenda.utils.DateTimeUtils;
 import com.groupagendas.groupagenda.utils.EventStatusUpdater;
+import com.groupagendas.groupagenda.utils.Utils;
 
 public class EventsAdapter extends BaseAdapter implements Filterable{
 	private List<Event> events;
@@ -26,14 +26,12 @@ public class EventsAdapter extends BaseAdapter implements Filterable{
 	private Context mContext;
 	private DataManagement dm;
 	private String mFilter = null;
-	private DateTimeUtils dtUtils;
 	public EventsAdapter(List<Event> objects, Activity activity){
 		events = objects;
 		eventsAll = objects;
 		mInflater = LayoutInflater.from(activity);
 		mContext = activity;
 		dm = DataManagement.getInstance(activity);
-		dtUtils = new DateTimeUtils(activity);
 	}
 	
 	@Override
@@ -62,7 +60,7 @@ public class EventsAdapter extends BaseAdapter implements Filterable{
 		final Event event = events.get(position);
 		
 		holder.title.setText(event.title);
-		holder.date.setText(dtUtils.formatDateTime(event.my_time_start));
+		holder.date.setText(Utils.formatCalendar(event.getStartCalendar()));
 		// type
 		StringBuilder sb = new StringBuilder(event.type).append("_type");
 		if(mContext.getResources().getIdentifier(sb.toString(), "string", mContext.getPackageName()) != 0){
