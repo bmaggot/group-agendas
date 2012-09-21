@@ -12,13 +12,21 @@ import java.util.regex.Pattern;
 import org.json.JSONArray;
 import org.json.JSONException;
 
+import com.groupagendas.groupagenda.data.CalendarSettings;
+import com.groupagendas.groupagenda.data.DataManagement;
+import com.groupagendas.groupagenda.error.report.Reporter;
+
 import android.graphics.Bitmap;
 import android.text.format.DateFormat;
 
-import com.groupagendas.groupagenda.data.CalendarSettings;
-import com.groupagendas.groupagenda.error.report.Reporter;
+
+
 
 public class Utils {
+
+	
+	public static final String DATE_FORMAT_LONG = DataManagement.SERVER_TIMESTAMP_FORMAT;
+	
 	public static void CopyStream(InputStream is, OutputStream os) {
 		final int buffer_size = 1024;
 		try {
@@ -263,6 +271,33 @@ public class Utils {
 			if (day.get(Calendar.DAY_OF_WEEK) == CalendarSettings.getWeekends()[i]) return true;
 		return false;
 	}
+
+/**
+ * @author justinas.marcinka@gmail.com
+ * @param timestamp unix timestamp
+ * @return time in milis from 1970-01-01 00:00:00:00 UTC
+ */
+
+public static long unixTimestampToMilis(long timestamp) {
+	return timestamp * 1000;
+}
+
+/**
+ * @author justinas.marcinka@gmail.com
+ * @return unix timestamp
+ * @param milis miliseconds from 1970-01-01 00:00:00:00 UTC
+ */
+public static long millisToUnixTimestamp(long milis) {
+	return milis / 1000;
+}
+
+
+
+public static Calendar createCalendar(long timeInMilis, String timezone) {
+	Calendar cal = Calendar.getInstance(TimeZone.getTimeZone(timezone));
+	cal.setTimeInMillis(timeInMilis);
+	return cal;
+}
 	
 
 
