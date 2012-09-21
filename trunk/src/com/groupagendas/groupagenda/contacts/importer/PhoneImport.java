@@ -1,6 +1,8 @@
 package com.groupagendas.groupagenda.contacts.importer;
 
+import android.app.Activity;
 import android.database.Cursor;
+import android.os.AsyncTask;
 import android.provider.ContactsContract;
 import android.provider.ContactsContract.RawContacts;
 
@@ -8,10 +10,12 @@ import com.groupagendas.groupagenda.contacts.Contact;
 import com.groupagendas.groupagenda.contacts.importer.phone.Importer;
 import com.groupagendas.groupagenda.data.DataManagement;
 
-public class PhoneImport {
+public class PhoneImport extends AsyncTask<Activity, Void, Void>{
 
-	public void importContactsFromPhone(ImportActivity activity) {
+	@Override
+	protected Void doInBackground(Activity... params) {
 		// import sim contacts
+		Activity activity = params[0];
 		Cursor phones = activity.getContentResolver().query(ContactsContract.CommonDataKinds.Phone.CONTENT_URI, null, null, null, null);
 		while (phones.moveToNext()) {
 			String displayName = phones.getString(phones.getColumnIndex(ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME));
@@ -49,7 +53,6 @@ public class PhoneImport {
 						ContactsContract.CommonDataKinds.Email._ID },
 				RawContacts.ACCOUNT_TYPE + " <> 'com.android.contacts.sim' " + " AND " + RawContacts.ACCOUNT_TYPE + " == 'com.google' ",
 				null, null);
-		int in = 0;
 		while (phoneContacts.moveToNext()) {
 			String displayName = phoneContacts.getString(phoneContacts.getColumnIndex(ContactsContract.Contacts.DISPLAY_NAME));
 			String rawContactId = phoneContacts.getString(phoneContacts.getColumnIndex(RawContacts._ID));
@@ -75,17 +78,16 @@ public class PhoneImport {
 			if(!displayName.matches("[_A-Za-z0-9-]+(\\.[_A-Za-z0-9-]+)*@[A-Za-z0-9]+(\\.[A-Za-z0-9]+)*(\\.[A-Za-z]{2,})")){
 				
 			}
-			phoneContact.email = getContactEmail(rawContactId, activity, phoneContact);
-			phoneContact.phone1 = getContactPhoneNumber(rawContactId, activity, phoneContact);
+			phoneContact.email = getContactEmail(rawContactId, (ImportActivity) activity, phoneContact);
+			phoneContact.phone1 = getContactPhoneNumber(rawContactId, (ImportActivity) activity, phoneContact);
 			phoneContact.lastname = lastName;
 			Object[] array = { activity, phoneContact };
 			new Importer().execute(array);
 		}
 		phoneContacts.close();
-		DataManagement.getInstance(activity).getContactsFromRemoteDb(null);
-		activity.onBackPressed();
+		DataManagement.setLoadContactsData(true);
+		return null;
 	}
-
 	public String getContactEmail(String id, ImportActivity activity, Contact contact) {
 		String email = "";
 		Cursor emailCur = activity.getContentResolver().query(ContactsContract.CommonDataKinds.Email.CONTENT_URI, null,
@@ -108,4 +110,8 @@ public class PhoneImport {
 		return phone;
 	}
 	
+	@Override
+	protected void onPostExecute(Void params){
+		
+	}
 }
