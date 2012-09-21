@@ -175,10 +175,11 @@ public class EventsProvider extends ContentProvider{
 	// Events day indexes table projection map
 	private static HashMap<String, String> DEM;
 	
-//	static{
-//		DEM = new HashMap<String, String>();
-//		DEM.put(EMetaData.EventsIndexesMetaData., value)
-//	}
+	static{
+		DEM = new HashMap<String, String>();
+		DEM.put(EMetaData.EventsIndexesMetaData.EVENT_ID, EMetaData.EventsIndexesMetaData.EVENT_ID);
+		DEM.put(EMetaData.EventsIndexesMetaData.DAY, EMetaData.EventsIndexesMetaData.DAY);
+	}
 	
 	
 	

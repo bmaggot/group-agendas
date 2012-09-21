@@ -50,14 +50,12 @@ import android.widget.Toast;
 
 import com.groupagendas.groupagenda.R;
 import com.groupagendas.groupagenda.contacts.importer.ImportActivity;
-import com.groupagendas.groupagenda.data.CalendarSettings;
 import com.groupagendas.groupagenda.data.Data;
 import com.groupagendas.groupagenda.data.DataManagement;
 import com.groupagendas.groupagenda.data.OfflineData;
 import com.groupagendas.groupagenda.error.report.Reporter;
 import com.groupagendas.groupagenda.events.Event;
 import com.groupagendas.groupagenda.events.EventsProvider;
-import com.groupagendas.groupagenda.utils.Utils;
 import com.makeramen.segmented.SegmentedRadioGroup;
 
 public class ContactsActivity extends ListActivity implements OnCheckedChangeListener {

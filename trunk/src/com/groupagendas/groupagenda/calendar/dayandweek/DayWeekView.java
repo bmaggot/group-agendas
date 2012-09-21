@@ -95,7 +95,6 @@ public class DayWeekView extends AbstractCalendarView {
 		HourEventView eventFrame = new HourEventView(getContext(), event, this.am_pmEnabled, this.showHourEventsIcon, showSingleLine);
 		
 		int startTimeMinutes = 0; 
-		float endTimeMinutes = 24 * 60;
 		
 		if (day.getSelectedDate().before(event.getStartCalendar())) {
 			startTimeMinutes = event.getStartCalendar().get(Calendar.HOUR_OF_DAY) * 60;
