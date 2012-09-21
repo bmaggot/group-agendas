@@ -162,7 +162,7 @@ public class NavbarActivity extends Activity {
 						publishProgress(total);
 					case 1: // Load account
 						dm.getAccountFromRemoteDb();
-						NativeCalendarImporter.readCalendar(dm.getmContext());
+						NativeCalendarImporter.readCalendar(dm.getContext());
 						loadPhase++;
 						total = 20;
 						publishProgress(total);
