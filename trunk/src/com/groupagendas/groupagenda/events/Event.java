@@ -8,6 +8,7 @@ import android.content.Context;
 
 import com.groupagendas.groupagenda.data.DataManagement;
 import com.groupagendas.groupagenda.interfaces.Colored;
+import android.database.Cursor;
 
 
 
@@ -21,6 +22,8 @@ private static final String DEFAULT_REMINDER = "null";
 private static final int REMINDER_1 = 1;
 private static final int REMINDER_2 = 2;
 private static final int REMINDER_3 = 3;
+//TODO implement or delete. Luko pasiulytas optimizavimas
+private final Cursor databaseRow;
 
 //	TODO set all default fields and getters
 	public static String DEFAULT_COLOR = "21C0DB";
@@ -58,11 +61,7 @@ private static final int REMINDER_3 = 3;
 	public String zip;
 	
 	public String timezone;
-	public String time_start;
-	public String time_end;
-	public String time;
-	public String my_time_start;
-	public String my_time_end;
+
 	
 	private Calendar startCalendar;
 	private Calendar endCalendar;
@@ -88,15 +87,33 @@ private static final int REMINDER_3 = 3;
 	public int attendant_4_count;
 	
 	public int[] assigned_contacts = null;
+	private String assigned_contacts_DB_entry = "";
+	
 	public int[] assigned_groups = null;
+	private String assigned_groups_DB_entry = "";
+	
 	public ArrayList<Invited> invited = null;
+	private String invited_DB_entry = "";
 	
 	public boolean is_all_day;
 	public boolean birthday = false;
 	
+	public Event (Cursor dbRow){
+		this.databaseRow = dbRow;
+	}
+	//TODO remove this constructor when possible
+	public Event (){
+		databaseRow = null;
+	}
+	
 	@Override
 	public String toString(){
 		String text = this.title;
+		SimpleDateFormat df = new SimpleDateFormat(TIMESTAMP_FORMAT);
+		text += "\n";
+		text += "Start time:" + df.format(startCalendar.getTime());
+		text += "\n";
+		text += "End time:" + df.format(endCalendar.getTime());
 		return text;
 	}
 	/**
@@ -304,13 +321,13 @@ private static final int REMINDER_3 = 3;
 	public boolean isNative() {
 		return isNative;
 	}
-	public boolean isIs_sports_event() {
+	public boolean is_sports_event() {
 		return is_sports_event;
 	}
 	public int getStatus() {
 		return status;
 	}
-	public boolean isIs_owner() {
+	public boolean is_owner() {
 		return is_owner;
 	}
 	public String getCreator_fullname() {
@@ -322,11 +339,14 @@ private static final int REMINDER_3 = 3;
 	public String getTitle() {
 		return title;
 	}
+	
+	/**
+	 * @author justinas.marcinka@gmail.com
+	 * Returns icon filename without extension
+	 * @return
+	 */
 	public String getIcon() {
 		return icon;
-	}
-	public String getDescription_() {
-		return description_;
 	}
 	public String getLocation() {
 		return location;
@@ -352,9 +372,9 @@ private static final int REMINDER_3 = 3;
 	public String getStreet() {
 		return street;
 	}
-	public String getTime() {
-		return time;
-	}
+//	public String getTime() {
+//		return time;
+//	}
 	public String getReminder1() {
 		return reminder1;
 	}
@@ -378,7 +398,7 @@ private static final int REMINDER_3 = 3;
 		return attendant_4_count;
 	}
 
-	public boolean isIs_all_day() {
+	public boolean is_all_day() {
 		return is_all_day;
 	}
 	public boolean isBirthday() {
@@ -422,6 +442,264 @@ private static final int REMINDER_3 = 3;
 		
 		return reminderStr;
 	}
+	
+	
+	
+	public void setAssigned_contacts(int[] assigned_contacts) {
+			this.assigned_contacts = assigned_contacts;
+		}	
+	public int[] getAssigned_contacts() {
+		if (assigned_contacts == null) assigned_contacts = parseAssignedContacts(assigned_contacts_DB_entry);
+		return assigned_contacts;
+	}
+	private int[] parseAssignedContacts(String assigned_contacts_DB_entry) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+	
+	
+	
+	
+	public void setAssigned_groups(int[] assigned_groups) {
+		this.assigned_groups = assigned_groups;
+	}
+	
+	public int[] getAssigned_groups() {
+		if (assigned_groups == null) assigned_groups = parseAssignedGroups(assigned_groups_DB_entry);
+		return assigned_groups;
+	}
+	private int[] parseAssignedGroups(String assigned_groups_DB_entry) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+	
+	
+	
+	public void setInvited(ArrayList<Invited> invited) {
+		this.invited = invited;
+	}
+	public ArrayList<Invited> getInvited() {
+		if (invited == null) invited = parseInvitedDBentry(invited_DB_entry);
+		return invited;
+	}
+	private ArrayList<Invited> parseInvitedDBentry(String invited_DB_entry2) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+
+
+public void setAssigned_contacts_DB_entry(String assigned_contacts_DB_entry) {
+	this.assigned_contacts_DB_entry = assigned_contacts_DB_entry;
+}
+public void setAssigned_groups_DB_entry(String assigned_groups_DB_entry) {
+	this.assigned_groups_DB_entry = assigned_groups_DB_entry;
+}
+public void setInvited_DB_entry(String invited_DB_entry) {
+	this.invited_DB_entry = invited_DB_entry;
+}
+//public String getTime_start() {
+//	return time_start;
+//}
+//public void setTime_start(String time_start) {
+//	this.time_start = time_start;
+//}
+//public String getTime_end() {
+//	return time_end;
+//}
+//public void setTime_end(String time_end) {
+//	this.time_end = time_end;
+//}
+//public String getMy_time_start() {
+//	return my_time_start;
+//}
+//public void setMy_time_start(String my_time_start) {
+//	this.my_time_start = my_time_start;
+//}
+//public String getMy_time_end() {
+//	return my_time_end;
+//}
+//public void setMy_time_end(String my_time_end) {
+//	this.my_time_end = my_time_end;
+//}
+public String getAlarm1() {
+	return alarm1;
+}
+public void setAlarm1(String alarm1) {
+	this.alarm1 = alarm1;
+}
+public boolean isAlarm1fired() {
+	return alarm1fired;
+}
+public void setAlarm1fired(boolean alarm1fired) {
+	this.alarm1fired = alarm1fired;
+}
+
+public void setAlarm1fired(String alarm1fired_string) {
+	this.alarm1fired = isFired(alarm1fired_string);
+}
+
+private boolean isFired(String alarm_fired_string) {
+		if (alarm_fired_string == null)
+			return false;
+
+		if (alarm_fired_string.matches("[0-9]*")) {
+			return Integer.parseInt(alarm_fired_string) == 1;
+		}
+		
+		return false;
+}
+public String getAlarm2() {
+	return alarm2;
+}
+public void setAlarm2(String alarm2) {
+	this.alarm2 = alarm2;
+}
+public boolean isAlarm2fired() {
+	return alarm2fired;
+}
+public void setAlarm2fired(boolean alarm2fired) {
+	this.alarm2fired = alarm2fired;
+}
+public void setAlarm2fired(String string) {
+	this.alarm2fired = isFired(string);	
+}
+
+public String getAlarm3() {
+	return alarm3;
+}
+public void setAlarm3(String alarm3) {
+	this.alarm3 = alarm3;
+}
+public boolean isAlarm3fired() {
+	return alarm3fired;
+}
+public void setAlarm3fired(boolean alarm3fired) {
+	this.alarm3fired = alarm3fired;
+}
+
+public void setAlarm3fired(String string) {
+	this.alarm3fired = isFired(string);	
+}
+public String getCreated() {
+	return created;
+}
+public void setCreated(String created) {
+	this.created = created;
+}
+public String getModified() {
+	return modified;
+}
+public void setModified(String modified) {
+	this.modified = modified;
+}
+public void setEvent_id(int event_id) {
+	this.event_id = event_id;
+}
+public void setUser_id(int user_id) {
+	this.user_id = user_id;
+}
+public void setNative(boolean isNative) {
+	this.isNative = isNative;
+}
+public void setSports_event(boolean is_sports_event) {
+	this.is_sports_event = is_sports_event;
+}
+public void setStatus(int status) {
+	this.status = status;
+}
+public void setIs_owner(boolean is_owner) {
+	this.is_owner = is_owner;
+}
+public void setType(String type) {
+	this.type = type;
+}
+public void setCreator_fullname(String creator_fullname) {
+	this.creator_fullname = creator_fullname;
+}
+public void setCreator_contact_id(int creator_contact_id) {
+	this.creator_contact_id = creator_contact_id;
+}
+public void setIcon(String icon) {
+	this.icon = icon;
+}
+public void setDescription(String description_) {
+	this.description_ = description_;
+}
+public void setLocation(String location) {
+	this.location = location;
+}
+public void setAccomodation(String accomodation) {
+	this.accomodation = accomodation;
+}
+public void setCost(String cost) {
+	this.cost = cost;
+}
+public void setTake_with_you(String take_with_you) {
+	this.take_with_you = take_with_you;
+}
+public void setGo_by(String go_by) {
+	this.go_by = go_by;
+}
+public void setCountry(String country) {
+	this.country = country;
+}
+public void setCity(String city) {
+	this.city = city;
+}
+public void setStreet(String street) {
+	this.street = street;
+}
+public void setZip(String zip) {
+	this.zip = zip;
+}
+public void setTimezone(String timezone) {
+	this.timezone = timezone;
+}
+//public void setTime(String time) {
+//	this.time = time;
+//}
+public void setReminder1(String reminder1) {
+	this.reminder1 = reminder1;
+}
+public void setReminder2(String reminder2) {
+	this.reminder2 = reminder2;
+}
+public void setReminder3(String reminder3) {
+	this.reminder3 = reminder3;
+}
+public void setAttendant_1_count(int attendant_1_count) {
+	this.attendant_1_count = attendant_1_count;
+}
+public void setAttendant_2_count(int attendant_2_count) {
+	this.attendant_2_count = attendant_2_count;
+}
+public void setAttendant_0_count(int attendant_0_count) {
+	this.attendant_0_count = attendant_0_count;
+}
+public void setAttendant_4_count(int attendant_4_count) {
+	this.attendant_4_count = attendant_4_count;
+}
+public void setIs_all_day(boolean is_all_day) {
+	this.is_all_day = is_all_day;
+}
+public void setBirthday(boolean birthday) {
+	this.birthday = birthday;
+}
+public String getAssigned_contacts_DB_entry() {
+	return assigned_contacts_DB_entry;
+}
+public String getAssigned_groups_DB_entry() {
+	return assigned_groups_DB_entry;
+}
+public String getInvited_DB_entry() {
+	return invited_DB_entry;
+}
+
+
+
+	
+	
 	
 	
 	
