@@ -42,10 +42,8 @@ public class NativeCalendarImporter {
 	    	event.getStartCalendar().getTime();
 	    	event.getStartCalendar().clear(Calendar.SECOND);
 	    	event.getStartCalendar().getTime();
-	    	event.my_time_start = Utils.formatCalendar(event.getStartCalendar(), "yyyy-MM-dd HH:mm:ss");
 	    	event.setEndCalendar(Utils.stringToCalendar(writeFormat.format(new Date(Long.parseLong(cursor.getString(4)))), DataManagement.SERVER_TIMESTAMP_FORMAT));
 	    	event.getEndCalendar().clear(Calendar.SECOND);
-	    	event.my_time_end = Utils.formatCalendar(event.getEndCalendar(), "yyyy-MM-dd HH:mm:ss");
 	    	event.location = cursor.getString(5);
 	    	event.timezone = Data.getAccount().timezone;
 	    	event.birthday = true;
