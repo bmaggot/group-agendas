@@ -23,7 +23,7 @@ public class EventStatusUpdater extends AsyncTask<Object, Void, Void>{
 			values.put(EventsProvider.EMetaData.EventsMetaData.NEED_UPDATE, 4);
 		}
 		String where = EventsProvider.EMetaData.EventsMetaData.E_ID+"="+event_id;
-		dm.getmContext().getContentResolver().update(EventsProvider.EMetaData.EventsMetaData.CONTENT_URI, values, where, null);
+		dm.getContext().getContentResolver().update(EventsProvider.EMetaData.EventsMetaData.CONTENT_URI, values, where, null);
 		try {
 			dm.updateEventByIdFromRemoteDb(event_id);
 		} catch (ExecutionException e) {
