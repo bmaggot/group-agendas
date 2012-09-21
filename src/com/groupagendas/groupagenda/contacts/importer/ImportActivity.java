@@ -35,7 +35,7 @@ public class ImportActivity extends Activity {
 		phoneImportButton.setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View arg0) {
-				Phone phoneImporter = new Phone();
+				PhoneImport phoneImporter = new PhoneImport();
 				phoneImporter.importContactsFromPhone(ImportActivity.this);
 				dm.getContactsFromRemoteDb(null);
 			}
