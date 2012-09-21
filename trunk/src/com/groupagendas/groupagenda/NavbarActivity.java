@@ -630,11 +630,11 @@ public class NavbarActivity extends Activity {
 
 			for (int i = 0, l = events.size(); i < l; i++) {
 				final Event event = events.get(i);
-
-				final String newtime = Utils.formatDateTime(
-						event.my_time_start,
-						DataManagement.SERVER_TIMESTAMP_FORMAT,
-						"EEE, dd MMMM yyyy");
+//TODO temprorary workaround to build. Solution: remove this unused class
+				final String newtime = "";//Utils.formatDateTime(
+//						event.my_time_start,
+//						DataManagement.SERVER_TIMESTAMP_FORMAT,
+//						"EEE, dd MMMM yyyy");
 				if (!time.equals(newtime)) {
 					time = newtime;
 					items.add(new SectionItem(time));
