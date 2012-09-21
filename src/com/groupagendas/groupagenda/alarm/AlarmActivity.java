@@ -28,6 +28,7 @@ import com.groupagendas.groupagenda.data.Data;
 import com.groupagendas.groupagenda.data.DataManagement;
 import com.groupagendas.groupagenda.data.OfflineData;
 import com.groupagendas.groupagenda.events.Event;
+import com.groupagendas.groupagenda.utils.Utils;
 
 public class AlarmActivity extends Activity {
 
@@ -51,7 +52,7 @@ public class AlarmActivity extends Activity {
 		alarmTitle = (TextView) findViewById(R.id.alarm_title);
 		alarmTitle.setText(event.title);
 		eventTime = (TextView) findViewById(R.id.alarm_time);
-		eventTime.setText(event.my_time_start);
+		eventTime.setText(Utils.formatCalendar(event.getStartCalendar(), Utils.DATE_FORMAT_LONG)); //TODO set format from approporiate class.  DataManagement should not be used for formatting UI strings
 
 		snooze = (Button) findViewById(R.id.alarm_sleep);
 		snooze.setOnClickListener(new View.OnClickListener() {
