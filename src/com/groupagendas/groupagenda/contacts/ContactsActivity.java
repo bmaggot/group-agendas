@@ -1,6 +1,7 @@
 package com.groupagendas.groupagenda.contacts;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.TreeMap;
 import java.util.concurrent.ExecutionException;
 
@@ -577,7 +578,7 @@ public class ContactsActivity extends ListActivity implements OnCheckedChangeLis
 		@Override
 		protected Void doInBackground(Integer... params) {
 			try {
-				String date_format = CalendarSettings.getDateFormat();
+	
 				int event_id = params[0];
 				HttpClient hc = new DefaultHttpClient();
 				HttpPost post = new HttpPost(Data.getServerUrl() + "mobile/events_get");
@@ -742,45 +743,9 @@ public class ContactsActivity extends ListActivity implements OnCheckedChangeLis
 								Reporter.reportError(this.getClass().toString(), Thread.currentThread().getStackTrace()[2].getMethodName()
 										.toString(), ex.getMessage());
 							}
-							try {
-								event.time_start = e.getString("time_start");
-								cv.put(EventsProvider.EMetaData.EventsMetaData.TIME_START, event.time_start);
-							} catch (JSONException ex) {
-								Reporter.reportError(this.getClass().toString(), Thread.currentThread().getStackTrace()[2].getMethodName()
-										.toString(), ex.getMessage());
-							}
-							try {
-								event.time_end = e.getString("time_end");
-								cv.put(EventsProvider.EMetaData.EventsMetaData.TIME_END, event.time_end);
-							} catch (JSONException ex) {
-								Reporter.reportError(this.getClass().toString(), Thread.currentThread().getStackTrace()[2].getMethodName()
-										.toString(), ex.getMessage());
-							}
-							try {
-								event.time = e.getString("time");
-								cv.put(EventsProvider.EMetaData.EventsMetaData.TIME, event.time);
-							} catch (JSONException ex) {
-								Reporter.reportError(this.getClass().toString(), Thread.currentThread().getStackTrace()[2].getMethodName()
-										.toString(), ex.getMessage());
-							}
-							try {
-								event.my_time_start = e.getString("my_time_start");
-								cv.put(EventsProvider.EMetaData.EventsMetaData.MY_TIME_START, event.my_time_start);
-								event.setStartCalendar(Utils.stringToCalendar(event.my_time_start, DataManagement.SERVER_TIMESTAMP_FORMAT));
+							
+							
 
-							} catch (JSONException ex) {
-								Reporter.reportError(this.getClass().toString(), Thread.currentThread().getStackTrace()[2].getMethodName()
-										.toString(), ex.getMessage());
-							}
-							try {
-								event.my_time_end = e.getString("my_time_end");
-								cv.put(EventsProvider.EMetaData.EventsMetaData.MY_TIME_END, event.my_time_end);
-								event.setEndCalendar(Utils.stringToCalendar(event.my_time_end, DataManagement.SERVER_TIMESTAMP_FORMAT));
-
-							} catch (JSONException ex) {
-								Reporter.reportError(this.getClass().toString(), Thread.currentThread().getStackTrace()[2].getMethodName()
-										.toString(), ex.getMessage());
-							}
 
 							try {
 								event.reminder1 = e.getString("reminder1");
@@ -904,13 +869,13 @@ public class ContactsActivity extends ListActivity implements OnCheckedChangeLis
 							}
 
 							// //
-							dm.getmContext().getContentResolver().insert(EventsProvider.EMetaData.EventsMetaData.CONTENT_URI, cv);
+							dm.getContext().getContentResolver().insert(EventsProvider.EMetaData.EventsMetaData.CONTENT_URI, cv);
 							Event tmpEvent = dm.getEventFromDb(event_id);
 							if (tmpEvent.getStartCalendar() == null) {
-								tmpEvent.setStartCalendar(Utils.stringToCalendar(event.my_time_start, date_format));
+								tmpEvent.setStartCalendar((Calendar) event.getStartCalendar().clone());
 							}
 							if (tmpEvent.getEndCalendar() == null) {
-								tmpEvent.setEndCalendar(Utils.stringToCalendar(event.my_time_end, date_format));
+								tmpEvent.setEndCalendar((Calendar) event.getEndCalendar().clone());
 							}
 							dm.updateEventInsideLocalDb(tmpEvent);
 						}
