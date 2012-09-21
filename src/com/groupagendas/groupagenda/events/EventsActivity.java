@@ -57,7 +57,7 @@ public class EventsActivity extends ListActivity {
 		radioButton.setOnCheckedChangeListener(btnNavBarOnCheckedChangeListener);
 
 		setListAdapter(eventsAdapter);
-		dm.loadEvents(this, eventsAdapter);
+//		TODO wtf is this for???? dm.loadEvents(this, eventsAdapter);
 		if(NavbarActivity.showInvites && AgendaUtils.newInvites != 0){
 			NavbarActivity.showInvites = false;
 			changeTitle(getString(R.string.status_4, AgendaUtils.newInvites));
