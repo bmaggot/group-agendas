@@ -113,7 +113,7 @@ public class EventEditActivity extends EventActivity {
 		int invitedListSize = 0;
 		Button chatMessengerButton = (Button) findViewById(R.id.messenger_button);
 		Button inviteButton = (Button) findViewById(R.id.invite_button);
-		final Context mContext = dm.getmContext();
+		final Context mContext = dm.getContext();
 
 		event_id = intent.getIntExtra("event_id", 0);
 
@@ -530,7 +530,7 @@ public class EventEditActivity extends EventActivity {
 
 	class GetEventTask extends AsyncTask<Integer, Event, Event> {
 		final DataManagement dm = DataManagement.getInstance(getParent());
-		final Context mContext = dm.getmContext();
+		final Context mContext = dm.getContext();
 
 		@Override
 		protected void onPreExecute() {
@@ -668,9 +668,9 @@ public class EventEditActivity extends EventActivity {
 				}
 			});
 			// start
-			if (result.my_time_start != null && !result.my_time_start.equals("null")) {
-				startView.setText(dtUtils.formatDateTime(result.my_time_start));
-				startCalendar = Utils.stringToCalendar(result.my_time_start, DataManagement.SERVER_TIMESTAMP_FORMAT);
+			if (result.getStartCalendar() != null) {
+				startView.setText(Utils.formatCalendar(result.getStartCalendar()));
+				startCalendar = (Calendar) result.getStartCalendar().clone();
 			}
 
 			if (!result.is_owner) {
@@ -687,9 +687,9 @@ public class EventEditActivity extends EventActivity {
 				}
 			});
 
-			if (result.my_time_end != null && !result.my_time_end.equals("null")) {
-				endView.setText(dtUtils.formatDateTime(result.my_time_end));
-				endCalendar = Utils.stringToCalendar(result.my_time_end, DateTimeUtils.DEFAULT_DATETIME);
+			if (result.getEndCalendar() != null) {
+				endView.setText(Utils.formatCalendar(result.getEndCalendar()));
+				endCalendar = (Calendar) result.getEndCalendar().clone();
 			}
 
 			if (!result.is_owner) {

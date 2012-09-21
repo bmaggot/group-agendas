@@ -476,7 +476,7 @@ public class NewEventActivity extends EventActivity {
 				invited.name = contact.name;
 				invited.email = contact.email;
 				invited.status_id = 4;
-				invitedPersonList.addView(getInvitedView(invited, inflater, view, dm.getmContext()));
+				invitedPersonList.addView(getInvitedView(invited, inflater, view, dm.getContext()));
 			}
 		} else {
 			contactsButton.setBackgroundResource(R.drawable.event_invite_people_button_standalone);
