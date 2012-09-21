@@ -28,18 +28,14 @@ public class HourEventView extends RelativeLayout {
 	private TextView timeText;
 	private ImageView icon;
 	boolean usesAMPM;
-	private boolean showSingleLine;
 
-	
-	
-	
-	
+
 
 	public HourEventView(Context context, Event e, boolean usesAMPM, boolean showEventIcon, boolean showSingleLine) {
 		super(context);
 		
 		this.usesAMPM = usesAMPM;
-		this.showSingleLine = showSingleLine;
+
 		RelativeLayout.LayoutParams lp = (LayoutParams) this.getLayoutParams();
 		
 		View titleHolder = LayoutInflater.from(context).inflate(R.layout.calendar_dayview_hour_event_icontitle_holder, null);

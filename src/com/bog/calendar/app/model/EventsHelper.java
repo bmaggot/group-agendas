@@ -1,13 +1,10 @@
 package com.bog.calendar.app.model;
 
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collections;
-import java.util.Date;
 import java.util.List;
 
-import com.groupagendas.groupagenda.data.DataManagement;
 import com.groupagendas.groupagenda.error.report.Reporter;
 import com.groupagendas.groupagenda.events.Event;
 
@@ -206,8 +203,6 @@ public class EventsHelper {
      * @return event object
      */
     public static CEvent generateEvent(Event e) {
-    	Date dt;
-        SimpleDateFormat formatter = new SimpleDateFormat(DataManagement.SERVER_TIMESTAMP_FORMAT);
         
         CEvent event = new CEvent();
         event.setId(e.event_id);

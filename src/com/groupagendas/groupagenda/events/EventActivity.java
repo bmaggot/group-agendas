@@ -16,7 +16,6 @@ import com.groupagendas.groupagenda.R;
 import com.groupagendas.groupagenda.data.DataManagement;
 import com.groupagendas.groupagenda.utils.DateTimeUtils;
 import com.groupagendas.groupagenda.utils.Prefs;
-import com.groupagendas.groupagenda.utils.Utils;
 
 public class EventActivity extends Activity {
 	public static final int DEFAULT_EVENT_DURATION_IN_MINS = 30;

@@ -1,6 +1,5 @@
 package com.bog.calendar.app.model;
 
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
@@ -21,7 +20,6 @@ import com.groupagendas.groupagenda.R;
 import com.groupagendas.groupagenda.data.DataManagement;
 import com.groupagendas.groupagenda.events.Event;
 import com.groupagendas.groupagenda.utils.DateTimeUtils;
-import com.groupagendas.groupagenda.utils.Utils;
 
 public class CalendarDay implements OnClickListener {
     Activity activity;
