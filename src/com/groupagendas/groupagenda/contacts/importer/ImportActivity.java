@@ -1,16 +1,46 @@
 package com.groupagendas.groupagenda.contacts.importer;
 
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.Map;
+import java.util.concurrent.ExecutionException;
+
+import org.apache.http.HttpResponse;
+import org.apache.http.HttpStatus;
+import org.apache.http.client.HttpClient;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.entity.mime.HttpMultipartMode;
+import org.apache.http.entity.mime.MultipartEntity;
+import org.apache.http.entity.mime.content.StringBody;
+import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.util.EntityUtils;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import android.app.Activity;
+import android.content.ContentValues;
 import android.content.Intent;
+import android.os.AsyncTask;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.groupagendas.groupagenda.R;
+import com.groupagendas.groupagenda.contacts.Contact;
+import com.groupagendas.groupagenda.contacts.ContactsProvider;
 import com.groupagendas.groupagenda.data.Data;
 import com.groupagendas.groupagenda.data.DataManagement;
+import com.groupagendas.groupagenda.error.report.Reporter;
+import com.groupagendas.groupagenda.events.Event;
+import com.groupagendas.groupagenda.utils.MapUtils;
+import com.groupagendas.groupagenda.utils.Utils;
 
 public class ImportActivity extends Activity {
 	private DataManagement dm = DataManagement.getInstance(this);
@@ -35,9 +65,13 @@ public class ImportActivity extends Activity {
 		phoneImportButton.setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View arg0) {
-				PhoneImport phoneImporter = new PhoneImport();
-				phoneImporter.importContactsFromPhone(ImportActivity.this);
-				dm.getContactsFromRemoteDb(null);
+				try {
+					new PhoneImport().execute(ImportActivity.this).get();
+				} catch (InterruptedException e) {
+					e.printStackTrace();
+				} catch (ExecutionException e) {
+					e.printStackTrace();
+				}
 			}
 		});
 
