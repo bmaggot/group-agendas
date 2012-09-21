@@ -12,7 +12,6 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.database.sqlite.SQLiteQueryBuilder;
 import android.net.Uri;
-import android.provider.BaseColumns;
 import android.text.TextUtils;
 
 public class EventsProvider extends ContentProvider{
@@ -25,9 +24,18 @@ public class EventsProvider extends ContentProvider{
 		public static final int DATABASE_VERSION = 1;
 
 		public static final String EVENTS_TABLE = "events";
+		public static final String EVENT_DAY_INDEX_TABLE = "events_days";
 		
+		public static final class EventsIndexesMetaData{
+			public static final Uri CONTENT_URI = Uri.parse("content://" + AUTHORITY + "/" + EVENT_DAY_INDEX_TABLE);	
+			public static final String CONTENT_TYPE = "vnd.android.cursor.dir/vnd.groupagendas.events_days_item";
+			
+			public static final String EVENT_ID = "event_id";
+			public static final String DAY = "day_start_timestamp";
+			
+		}
 		
-		public static final class EventsMetaData implements BaseColumns {
+		public static final class EventsMetaData{
 			public static final Uri CONTENT_URI = Uri.parse("content://" + AUTHORITY + "/" + EVENTS_TABLE);
 			public static final String CONTENT_TYPE = "vnd.android.cursor.dir/vnd.formula.events_item";
 			public static final String CONTENT_ITEM_TYPE = "vnd.android.cursor.item/vnd.formula.events_item";
@@ -42,6 +50,7 @@ public class EventsProvider extends ContentProvider{
 			
 			public static final String CREATOR_FULLNAME		= "creator_fullname";
 			public static final String CREATOR_CONTACT_ID	= "creator_contact_id";
+			
 			
 			public static final String TITLE	= "title";
 			public static final String ICON		= "icon";
@@ -66,10 +75,16 @@ public class EventsProvider extends ContentProvider{
 			public static final String TIME = "time";
 			public static final String MY_TIME_START = "my_time_start";
 			public static final String MY_TIME_END = "my_time_end";
+			public static final String TIME_START_UTC_MILLISECONDS = "time_start_utc";
+			public static final String TIME_END_UTC_MILLISECONDS = "time_end_utc";
 			
 			public static final String REMINDER1 = "reminder1";
 			public static final String REMINDER2 = "reminder2";
 			public static final String REMINDER3 = "reminder3";
+			
+			public static final String ALARM1 = "alarm1";
+			public static final String ALARM2 = "alarm2";
+			public static final String ALARM3 = "alarm3";
 			
 			public static final String CREATED = "created";
 			public static final String MODIFIED = "modified";
@@ -86,10 +101,11 @@ public class EventsProvider extends ContentProvider{
 			public static final String NEED_UPDATE = "need_update";
 			
 			public static final String DEFAULT_SORT_ORDER = MY_TIME_START+" ASC";
+			
 		}
 	}
 	
-	// Table Projection Map
+	// Events Table Projection Map
 	private static HashMap<String, String> EM;
 	
 	static {
@@ -128,10 +144,16 @@ public class EventsProvider extends ContentProvider{
 		EM.put(EMetaData.EventsMetaData.TIME, EMetaData.EventsMetaData.TIME);
 		EM.put(EMetaData.EventsMetaData.MY_TIME_START, EMetaData.EventsMetaData.MY_TIME_START);
 		EM.put(EMetaData.EventsMetaData.MY_TIME_END, EMetaData.EventsMetaData.MY_TIME_END);
+		EM.put(EMetaData.EventsMetaData.TIME_START_UTC_MILLISECONDS, EMetaData.EventsMetaData.TIME_START_UTC_MILLISECONDS);
+		EM.put(EMetaData.EventsMetaData.TIME_END_UTC_MILLISECONDS, EMetaData.EventsMetaData.TIME_END_UTC_MILLISECONDS);
 		
 		EM.put(EMetaData.EventsMetaData.REMINDER1, EMetaData.EventsMetaData.REMINDER1);
 		EM.put(EMetaData.EventsMetaData.REMINDER2, EMetaData.EventsMetaData.REMINDER2);
 		EM.put(EMetaData.EventsMetaData.REMINDER3, EMetaData.EventsMetaData.REMINDER3);
+		
+		EM.put(EMetaData.EventsMetaData.ALARM1, EMetaData.EventsMetaData.ALARM1);
+		EM.put(EMetaData.EventsMetaData.ALARM2, EMetaData.EventsMetaData.ALARM2);
+		EM.put(EMetaData.EventsMetaData.ALARM3, EMetaData.EventsMetaData.ALARM3);
 		
 		EM.put(EMetaData.EventsMetaData.CREATED, EMetaData.EventsMetaData.CREATED);
 		EM.put(EMetaData.EventsMetaData.MODIFIED, EMetaData.EventsMetaData.MODIFIED);
@@ -150,16 +172,28 @@ public class EventsProvider extends ContentProvider{
 	}
 	// END Table Projection Map
 	
+	// Events day indexes table projection map
+	private static HashMap<String, String> DEM;
+	
+//	static{
+//		DEM = new HashMap<String, String>();
+//		DEM.put(EMetaData.EventsIndexesMetaData., value)
+//	}
+	
+	
+	
 	// UriMatcher
 	private static final UriMatcher mUriMatcher;
 
 	private static final int ALL_EVENTS = 0;
 	private static final int ONE_EVENTS = 1;
+	private static final int DAY_INDEX = 2;
 
 	static {
 		mUriMatcher = new UriMatcher(UriMatcher.NO_MATCH);
 		mUriMatcher.addURI(EMetaData.AUTHORITY, EMetaData.EVENTS_TABLE, ALL_EVENTS);
 		mUriMatcher.addURI(EMetaData.AUTHORITY, EMetaData.EVENTS_TABLE+"/#", ONE_EVENTS);
+		mUriMatcher.addURI(EMetaData.AUTHORITY, EMetaData.EVENT_DAY_INDEX_TABLE, DAY_INDEX);
 	}
 	// END UriMatcher
 	
@@ -236,6 +270,10 @@ public class EventsProvider extends ContentProvider{
 			rowId = db.replace(EMetaData.EVENTS_TABLE, EMetaData.EventsMetaData.E_ID, values);
 			insUri = ContentUris.withAppendedId(EMetaData.EventsMetaData.CONTENT_URI, rowId);
 			break;
+		case DAY_INDEX:
+			rowId = db.replace(EMetaData.EVENT_DAY_INDEX_TABLE, "", values); 
+			insUri = ContentUris.withAppendedId(EMetaData.EventsMetaData.CONTENT_URI, rowId);
+			break;
 		default:
 			throw new IllegalArgumentException("Unknow URI " + uri);
 		}
@@ -272,6 +310,7 @@ public class EventsProvider extends ContentProvider{
 
 		@Override
 		public void onCreate(SQLiteDatabase db) {
+			//TODO add is all day column
 			String query =	"CREATE TABLE "
 				+EMetaData.EVENTS_TABLE+" ("
 				+EMetaData.EventsMetaData.E_ID+" INTEGER PRIMARY KEY,"
@@ -308,10 +347,16 @@ public class EventsProvider extends ContentProvider{
 				+EMetaData.EventsMetaData.TIME+" TEXT ,"
 				+EMetaData.EventsMetaData.MY_TIME_START+" TEXT ,"
 				+EMetaData.EventsMetaData.MY_TIME_END+" TEXT ,"
+				+EMetaData.EventsMetaData.TIME_START_UTC_MILLISECONDS+" INTEGER ,"
+				+EMetaData.EventsMetaData.TIME_END_UTC_MILLISECONDS+" INTEGER ,"
 				
 				+EMetaData.EventsMetaData.REMINDER1+" TEXT ,"
 				+EMetaData.EventsMetaData.REMINDER2+" TEXT ,"
 				+EMetaData.EventsMetaData.REMINDER3+" TEXT ,"
+				
+				+EMetaData.EventsMetaData.ALARM1+" TEXT ,"
+				+EMetaData.EventsMetaData.ALARM2+" TEXT ,"
+				+EMetaData.EventsMetaData.ALARM3+" TEXT ,"
 				
 				+EMetaData.EventsMetaData.CREATED+" TEXT ,"
 				+EMetaData.EventsMetaData.MODIFIED+" TEXT ,"
@@ -324,8 +369,17 @@ public class EventsProvider extends ContentProvider{
 				+EMetaData.EventsMetaData.ASSIGNED_CONTACTS+" TEXT ,"
 				+EMetaData.EventsMetaData.ASSIGNED_GROUPS+" TEXT ,"
 				+EMetaData.EventsMetaData.INVITED+" TEXT ,"
-				+EMetaData.EventsMetaData.NEED_UPDATE+" INTEGER DEFAULT 0 )";
-				
+				+EMetaData.EventsMetaData.NEED_UPDATE+" INTEGER DEFAULT 0"
+				+")";
+			db.execSQL(query);
+			
+			query = "CREATE TABLE "
+					+EMetaData.EVENT_DAY_INDEX_TABLE
+					+ " ("
+					+ EMetaData.EventsIndexesMetaData.EVENT_ID + " TEXT ,"
+					+ EMetaData.EventsIndexesMetaData.DAY + " INTEGER , "
+					+ "PRIMARY KEY (" + EMetaData.EventsIndexesMetaData.EVENT_ID + ", " + EMetaData.EventsIndexesMetaData.DAY + ") ON CONFLICT IGNORE"
+					+")";
 			db.execSQL(query);
 		}
 
