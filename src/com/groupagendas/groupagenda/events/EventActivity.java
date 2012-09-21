@@ -119,11 +119,6 @@ public class EventActivity extends Activity {
 
 		cv.put(EventsProvider.EMetaData.EventsMetaData.TYPE, "Should not be such thing as event TYPE! REMOVE THIS FIELD!!!");
 
-		event.my_time_start = Utils.formatCalendar(event.getStartCalendar(), DataManagement.SERVER_TIMESTAMP_FORMAT);
-		event.my_time_end = Utils.formatCalendar(event.getEndCalendar(), DataManagement.SERVER_TIMESTAMP_FORMAT);
-		cv.put(EventsProvider.EMetaData.EventsMetaData.MY_TIME_START, event.my_time_start);
-		cv.put(EventsProvider.EMetaData.EventsMetaData.MY_TIME_END, event.my_time_end);
-
 		// not mandatory fields
 		cv.put(EventsProvider.EMetaData.EventsMetaData.COUNTRY, event.country);
 		cv.put(EventsProvider.EMetaData.EventsMetaData.ZIP, event.getZip());
