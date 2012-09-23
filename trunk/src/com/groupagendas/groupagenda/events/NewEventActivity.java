@@ -598,7 +598,16 @@ public class NewEventActivity extends EventActivity {
 		}
 	}
 
-	// TODO docu docu docu
+	/**
+	 * Display template list dialogue.
+	 * 
+	 * Retrieves list of available templates titles from SQLite database and displays it in
+	 * a dialogue.
+	 * 
+	 * @author meska.lt@gmail.com
+	 * @param v
+	 *  
+	 */
 	public void chooseTemplate(View v) {
 		String columns[] = { TemplatesMetaData.T_ID, TemplatesMetaData.TITLE };
 		Cursor cur;
@@ -608,8 +617,7 @@ public class NewEventActivity extends EventActivity {
 
 		// getTemplates();
 
-		cur = Data.getmContext().getContentResolver()
-				.query(TemplatesMetaData.CONTENT_URI, columns, null, null, TemplatesMetaData.DEFAULT_SORT_ORDER);
+		cur = Data.getmContext().getContentResolver().query(TemplatesMetaData.CONTENT_URI, columns, null, null, TemplatesMetaData.DEFAULT_SORT_ORDER);
 
 		if (cur.moveToFirst()) {
 			while (!cur.isAfterLast()) {
@@ -645,15 +653,6 @@ public class NewEventActivity extends EventActivity {
 			}
 		});
 		templateListDialog.show();
-	}
-
-	// TODO getTemplates
-	public void getTemplates() {
-		ArrayList<Event> templates = dm.getTemplatesFromRemoteDb();
-		for (Event template : templates) {
-			dm.uploadTemplateToLocalDb(template, 0);
-		}
-		templates = null;
 	}
 
 	public void showAddressPanel() {
@@ -1042,7 +1041,7 @@ public class NewEventActivity extends EventActivity {
 					break;
 
 				case 3: // calendar fields are null
-
+//					errorStr = getString(R.string.)
 					break;
 
 				case 4: // event start is set after end
@@ -1075,7 +1074,17 @@ public class NewEventActivity extends EventActivity {
 		}
 	}
 
-	// TODO documentation pending
+	/**
+	 * Update user interface input fields.
+	 * 
+	 * Update user interface input fields with submitted values. Currently event timezone and
+	 * country, start–end time, reminder and alarm field values aren't updated.
+	 * 
+	 * @author meska.lt@gmail.com
+	 * @param data – Event object with values set.
+	 * @version 1.0
+	 * @since 2012-09-24
+	 */
 	public void setUIValues(Event data) {
 		EditText view;
 		ImageView imageView;
@@ -1116,9 +1125,9 @@ public class NewEventActivity extends EventActivity {
 
 		/* Set event's address */
 		// TODO make country set
-		// view = (EditText) findViewById(R.id.countrySpinner);
-		// if (view != null)
-		// view.setText(data.getDescription());
+//		 spinner = (Spinner) findViewById(R.id.countrySpinner);
+//		 if (spinner != null)
+//			 spinner.setSelection(position);
 
 		view = (EditText) findViewById(R.id.cityView);
 		if (view != null)
@@ -1159,17 +1168,17 @@ public class NewEventActivity extends EventActivity {
 			view.setText(data.getAccomodation());
 
 		/* Set event's reminders */
-		// view = (EditText) findViewById(R.id.reminder1);
-		// if (view != null)
-		// view.setText(data.getReminder1());
-		//
-		// view = (EditText) findViewById(R.id.reminder3);
-		// if (view != null)
-		// view.setText(data.getReminder2());
-		//
-		// view = (EditText) findViewById(R.id.reminder3);
-		// if (view != null)
-		// view.setText(data.getReminder3());
+//		 view = (EditText) findViewById(R.id.reminder1);
+//		 if (view != null)
+//			 view.setText(data.getReminder1());
+//		
+//		 view = (EditText) findViewById(R.id.reminder3);
+//		 if (view != null)
+//			 view.setText(data.getReminder2());
+//		
+//		 view = (EditText) findViewById(R.id.reminder3);
+//		 if (view != null)
+//			 view.setText(data.getReminder3());
 
 		/* Set event's alarms */
 		// view = (EditText) findViewById(R.id.alarm1);

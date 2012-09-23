@@ -15,6 +15,11 @@ import android.net.Uri;
 import android.provider.BaseColumns;
 import android.text.TextUtils;
 
+/**
+ * Extended ContentProvider class.
+ * @author meska.lt@gmail.com
+ *
+ */
 public class TemplatesProvider extends ContentProvider {
 	private DatabaseHelper mOpenHelper;
 

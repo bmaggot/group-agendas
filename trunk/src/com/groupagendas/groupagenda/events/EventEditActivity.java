@@ -63,10 +63,6 @@ public class EventEditActivity extends EventActivity {
 	private int event_id;
 	private TextView topText;
 
-//	TODO find out if it's still in use.
-//	private Spinner typeSpinner;
-//	private String[] typeArray;
-
 	private LinearLayout addressLine;
 	private LinearLayout detailsLine;
 
@@ -75,7 +71,6 @@ public class EventEditActivity extends EventActivity {
 	protected final static int DELETE_DIALOG = 1;
 	private boolean remindersShown = false;
 
-//	private ArrayList<AutoColorItem> autoColors = null; TODO remove shit
 	private ArrayList<AutoIconItem> autoIcons = null;
 
 	private Intent intent;

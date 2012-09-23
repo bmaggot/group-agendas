@@ -3122,7 +3122,7 @@ public class DataManagement {
 		cv.put(EventsProvider.EMetaData.EventsMetaData.INVITED,
 				event.getInvited_DB_entry());
 
-		// cv.put(key, event.is_all_day()); TODO
+		// cv.put(key, event.is_all_day()); TODO event insert into local database allday issue
 
 		resolver.insert(EventsProvider.EMetaData.EventsMetaData.CONTENT_URI, cv);
 
@@ -5065,19 +5065,29 @@ public class DataManagement {
 	}
 
 	/**
+	 * Get Context object.
+	 * 
 	 * @author interfectos@gmail.com
-	 * @return Returns existing mContext from Data (bin).
+	 * @return Existing Context object from Data (bin).
 	 */
 	public Context getContext() {
 		return Data.getmContext();
 	}
 	
-	// TODO write a javadoc for uploadTemplate (Event event)
 	/**
-	 * Cool method. Fuck yeah. Still missing event's icon, shared_to, type (?)
+	 * Upload Event object to remote database as a template.
+	 * 
+	 * Method creates a multipart entity object, fills it with submitted event's data. Afterwards
+	 * creates a connection to remote server and, if successful Ð uploads data. If not Ð stores
+	 * it in an UnuploadedData object ArrayList. 
+	 * 
+	 * Note: still missing event field upload features.
+	 * 
 	 * @author meska.lt@gmail.com
 	 * @param event Event type object with validated data.
-	 * @return upload status. False if upload wasn't successful.  
+	 * @version 1.1
+	 * @since 2012-09-24
+	 * @return Uploaded event's ID in remote database.  
 	 */
 	public int uploadTemplateToRemoteDb (Event event) {
 		int response = 0;
@@ -5223,6 +5233,21 @@ public class DataManagement {
 		return response;
 	}
 	
+	/**
+	 * Upload Event object to local database as a template.
+	 * 
+	 * Method creates a ContentValues object, fills it with submitted event's data. Afterwards
+	 * gets a local daatabase content resolver and, if successful Ð uploads data into it.
+	 * 
+	 * Note: still missing event field upload features.
+	 * 
+	 * @author meska.lt@gmail.com
+	 * @param template Event type object with validated data.
+	 * @param template_id Integer corresponding to template's ID in remote database.
+	 * @version 1.0
+	 * @since 2012-09-24
+	 * @return True if successful.  
+	 */
 	public boolean uploadTemplateToLocalDb (Event template, int template_id) {
 		boolean success = false;
 		
@@ -5363,7 +5388,8 @@ public class DataManagement {
 		
 		return success;
 	}
-	
+
+	// TODO getTemplatesFromRemoteDb() documentation pending.
 	public ArrayList<Event> getTemplatesFromRemoteDb() {
 		boolean success = false;
 		ArrayList<Event> templates = new ArrayList<Event>();
@@ -5762,4 +5788,25 @@ public class DataManagement {
 		
 		return event;
 	}
+
+	/**
+	 * Get all templates
+	 * 
+	 * Get all templates from remote database and store them in local database and temporary memory.
+	 * 
+	 * @author meska.lt@gmail.com
+	 * @version 1.0
+	 * @since 2012-09-24
+	 * @return ArrayList of Event objects retrieved from remote database.
+	 */
+	public ArrayList<Event> getTemplates() {
+		ArrayList<Event> templates = getTemplatesFromRemoteDb();
+		
+		for (Event template : templates) {
+			uploadTemplateToLocalDb(template, 0);
+		}
+		
+		return templates;
+	}
+
 }
