@@ -66,6 +66,7 @@ import com.groupagendas.groupagenda.events.EventsProvider;
 import com.groupagendas.groupagenda.events.Invited;
 import com.groupagendas.groupagenda.settings.AutoColorItem;
 import com.groupagendas.groupagenda.settings.AutoIconItem;
+import com.groupagendas.groupagenda.templates.TemplatesProvider.TMetaData.TemplatesMetaData;
 import com.groupagendas.groupagenda.utils.AgendaUtils;
 import com.groupagendas.groupagenda.utils.MapUtils;
 import com.groupagendas.groupagenda.utils.Prefs;
@@ -3654,7 +3655,7 @@ public class DataManagement {
 		return citems;
 	}
 
-	public Event getEventFromDb(int event_id) {
+	public Event getEventFromLocalDb(int event_id) {
 		Event item = new Event();
 		Uri uri = Uri.parse(EventsProvider.EMetaData.EventsMetaData.CONTENT_URI
 				+ "/" + event_id);
@@ -5039,31 +5040,726 @@ public class DataManagement {
 		Data.setLoadEventsData(loadEventsData);
 	}
 
-	public void updateContactsAdapter(ArrayList<Contact> contacts,
-			ContactsAdapter cAdapter) {
+	// TODO write a javadoc && MAYBE AN INTERFACE?
+	public void updateContactsAdapter(ArrayList<Contact> contacts, ContactsAdapter cAdapter) {
 		if (cAdapter != null) {
 			cAdapter.setItems(contacts);
 			cAdapter.notifyDataSetChanged();
 		}
 	}
 
-	public void updateGroupsAdapter(ArrayList<Group> groups,
-			GroupsAdapter gAdapter) {
+	// TODO write a javadoc && MAYBE AN INTERFACE?
+	public void updateGroupsAdapter(ArrayList<Group> groups, GroupsAdapter gAdapter) {
 		if (gAdapter != null) {
 			gAdapter.setItems(groups);
 			gAdapter.notifyDataSetChanged();
 		}
 	}
 
-	public void updateEventsAdapter(ArrayList<Event> events,
-			EventsAdapter eAdapter) {
+	// TODO write a javadoc && MAYBE AN INTERFACE?
+	public void updateEventsAdapter(ArrayList<Event> events, EventsAdapter eAdapter) {
 		if (eAdapter != null) {
 			eAdapter.setItems(events);
 			eAdapter.notifyDataSetChanged();
 		}
 	}
 
+	/**
+	 * @author interfectos@gmail.com
+	 * @return Returns existing mContext from Data (bin).
+	 */
 	public Context getContext() {
 		return Data.getmContext();
+	}
+	
+	// TODO write a javadoc for uploadTemplate (Event event)
+	/**
+	 * Cool method. Fuck yeah. Still missing event's icon, shared_to, type (?)
+	 * @author meska.lt@gmail.com
+	 * @param event Event type object with validated data.
+	 * @return upload status. False if upload wasn't successful.  
+	 */
+	public int uploadTemplateToRemoteDb (Event event) {
+		int response = 0;
+		try {
+			HttpClient hc = new DefaultHttpClient();
+			HttpPost post = new HttpPost(Data.getServerUrl() + "mobile/templates_set");
+
+			MultipartEntity reqEntity = new MultipartEntity(HttpMultipartMode.BROWSER_COMPATIBLE);
+
+			reqEntity.addPart("token", new StringBody(Data.getToken()));
+			
+			if (event.event_id > 0)
+				reqEntity.addPart("template_id", new StringBody(((Integer) event.event_id).toString()));
+			else
+				reqEntity.addPart("template_id", new StringBody(""));
+			
+			if (event.icon != null)
+				reqEntity.addPart("icon", new StringBody(event.icon));
+			
+			if (event.getColor() != null)
+				reqEntity.addPart("color", new StringBody(event.getColor()));
+
+			if (event.title != null) {
+				reqEntity.addPart("title", new StringBody(event.title));
+				reqEntity.addPart("template_title", new StringBody(event.title));
+			} else {
+				reqEntity.addPart("title", new StringBody(""));
+				reqEntity.addPart("template_title", new StringBody(""));
+			}
+
+//			if (event.time_start > 0)
+//				reqEntity.addPart("time_start", new StringBody(event.time_start));
+//			
+//			if (event.time_end != null)
+//				reqEntity.addPart("time_end", new StringBody(event.time_end));
+
+			if (event.description_ != null) {
+				reqEntity.addPart("description", new StringBody(event.description_));
+			} else {
+				reqEntity.addPart("description", new StringBody(""));
+			}
+
+			if (event.country != null)
+				reqEntity.addPart("country", new StringBody(event.country));
+			
+			if (event.city != null)
+				reqEntity.addPart("city", new StringBody(event.city));
+			
+			if (event.street != null)
+				reqEntity.addPart("street", new StringBody(event.street));
+			
+			if (event.zip != null)
+				reqEntity.addPart("zip", new StringBody(event.zip));
+			
+			if (event.timezone != null)
+				reqEntity.addPart("timezone", new StringBody(event.timezone));
+
+			if (event.location != null)
+				reqEntity.addPart("location", new StringBody(event.location));
+			
+			if (event.go_by != null)
+				reqEntity.addPart("go_by", new StringBody(event.go_by));
+			
+			if (event.take_with_you != null)
+				reqEntity.addPart("take_with_you", new StringBody(event.take_with_you));
+			
+			if (event.cost != null)
+				reqEntity.addPart("cost", new StringBody(event.cost));
+			
+			if (event.accomodation != null)
+				reqEntity.addPart("accomodation", new StringBody(event.accomodation));
+
+			if (Data.selectedContacts != null && !Data.selectedContacts.isEmpty()) {
+				event.assigned_contacts = new int[Data.selectedContacts.size()];
+				int i = 0;
+				for (Contact contact : Data.selectedContacts) {
+					event.assigned_contacts[i] = contact.contact_id;
+					i++;
+				}
+			}
+			
+			if (event.assigned_contacts != null) {
+				for (int i = 0, l = event.assigned_contacts.length; i < l; i++) {
+					reqEntity.addPart("contacts[]", new StringBody(String.valueOf(event.assigned_contacts[i])));
+				}
+			} else {
+				reqEntity.addPart("contacts[]", new StringBody(""));
+			}
+			
+			if (event.assigned_groups != null) {
+				for (int i = 0, l = event.assigned_groups.length; i < l; i++) {
+					reqEntity.addPart("groups[]", new StringBody(String.valueOf(event.assigned_groups[i])));
+				}
+			} else {
+				reqEntity.addPart("groups[]", new StringBody(""));
+			}
+
+			if (event.reminder1 != null) {
+				reqEntity.addPart("reminder1", new StringBody(event.reminder1));
+			}
+			
+			if (event.reminder2 != null) {
+				reqEntity.addPart("reminder2", new StringBody(event.reminder2));
+			}
+			
+			if (event.reminder3 != null) {
+				reqEntity.addPart("reminder3", new StringBody(event.reminder3));
+			}
+
+//			TODO find out wtf is bd in event
+//			if (event.birthday) {
+//				reqEntity.addPart("bd", new StringBody("1"));
+//			}
+			
+			post.setEntity(reqEntity);
+
+			if (networkAvailable) {
+				HttpResponse rp = hc.execute(post);
+
+				if (rp.getStatusLine().getStatusCode() == HttpStatus.SC_OK) {
+					String resp = EntityUtils.toString(rp.getEntity());
+					if (resp != null) {
+						JSONObject object = new JSONObject(resp);
+						boolean success = object.getBoolean("success");
+
+						if (success == false) {
+							Log.e("Create event error", object.getJSONObject("error").getString("reason"));
+						}
+						response = object.getInt("template_id");
+						event.event_id = response;
+					}
+				} else {
+					Log.e("setTemplate - status", rp.getStatusLine().getStatusCode() + "");
+				}
+			} else {
+				OfflineData uplooad = new OfflineData("mobile/templates_set", reqEntity);
+				Data.getUnuploadedData().add(uplooad);
+			}
+		} catch (Exception ex) {
+			Reporter.reportError(this.getClass().toString(), Thread.currentThread().getStackTrace()[2].getMethodName().toString(),
+					ex.getMessage());
+		}
+		return response;
+	}
+	
+	public boolean uploadTemplateToLocalDb (Event template, int template_id) {
+		boolean success = false;
+		
+		try {
+			ContentValues cv = new ContentValues();
+
+			if (template_id != 0)
+				cv.put(TemplatesMetaData.T_ID, template_id);
+			else if (template.event_id > 0)
+				cv.put(TemplatesMetaData.T_ID, template.event_id);
+			else
+				cv.put(TemplatesMetaData.T_ID, 0);
+			
+			if (template.icon != null)
+				cv.put(TemplatesMetaData.ICON, template.icon);
+			else
+				cv.put(TemplatesMetaData.ICON, "");
+			
+			if (template.getColor() != null)
+				cv.put(TemplatesMetaData.COLOR, template.getColor());
+
+			if (template.title != null)
+				cv.put(TemplatesMetaData.TITLE, template.title);
+			else
+				cv.put(TemplatesMetaData.TITLE, "Untitled");
+
+//			if (template.time_start != null)
+//				cv.put(TemplatesMetaData.TIME_START, template.time_start);
+//			
+//			if (template.time_end != null)
+//				cv.put(TemplatesMetaData.TIME_END, template.time_end);
+
+			if (template.description_ != null)
+				cv.put(TemplatesMetaData.DESC, template.description_);
+			else
+				cv.put(TemplatesMetaData.DESC, template.description_);
+
+			if (template.country != null)
+				cv.put(TemplatesMetaData.COUNTRY, template.country);
+			else
+				cv.put(TemplatesMetaData.COUNTRY, "");
+			
+			if (template.city != null)
+				cv.put(TemplatesMetaData.CITY, template.city);
+			else
+				cv.put(TemplatesMetaData.CITY, "");
+			
+			if (template.street != null)
+				cv.put(TemplatesMetaData.STREET, template.street);
+			else
+				cv.put(TemplatesMetaData.STREET, "");
+			
+			if (template.zip != null)
+				cv.put(TemplatesMetaData.ZIP, template.zip);
+			else
+				cv.put(TemplatesMetaData.ZIP, "");
+			
+			if (template.timezone != null)
+				cv.put(TemplatesMetaData.TIMEZONE, template.timezone);
+			else
+				cv.put(TemplatesMetaData.TIMEZONE, "");
+
+			if (template.location != null)
+				cv.put(TemplatesMetaData.LOCATION, template.location);
+			else
+				cv.put(TemplatesMetaData.LOCATION, "");
+			
+			if (template.go_by != null)
+				cv.put(TemplatesMetaData.GO_BY, template.go_by);
+			else
+				cv.put(TemplatesMetaData.GO_BY, "");
+			
+			if (template.take_with_you != null)
+				cv.put(TemplatesMetaData.TAKE_WITH_YOU, template.take_with_you);
+			else
+				cv.put(TemplatesMetaData.TAKE_WITH_YOU, "");
+			
+			if (template.cost != null)
+				cv.put(TemplatesMetaData.COST, template.cost);
+			else
+				cv.put(TemplatesMetaData.COST, "");
+			
+			if (template.accomodation != null)
+				cv.put(TemplatesMetaData.ACCOMODATION, template.accomodation);
+			else
+				cv.put(TemplatesMetaData.ACCOMODATION, "");
+
+			if (Data.selectedContacts != null && !Data.selectedContacts.isEmpty()) {
+				template.assigned_contacts = new int[Data.selectedContacts.size()];
+				int i = 0;
+				for (Contact contact : Data.selectedContacts) {
+					template.assigned_contacts[i] = contact.contact_id;
+					i++;
+				}
+			}
+			
+			if (template.assigned_contacts != null) {
+				for (int i = 0, l = template.assigned_contacts.length; i < l; i++) {
+					cv.put(TemplatesMetaData.ASSIGNED_CONTACTS, String.valueOf(template.assigned_contacts[i]));
+				}
+			} else {
+				cv.put(TemplatesMetaData.ASSIGNED_CONTACTS, "");
+			}
+			
+			if (template.assigned_groups != null) {
+				for (int i = 0, l = template.assigned_groups.length; i < l; i++) {
+					cv.put(TemplatesMetaData.ASSIGNED_GROUPS, String.valueOf(template.assigned_groups[i]));
+				}
+			} else {
+				cv.put(TemplatesMetaData.ASSIGNED_GROUPS, "");
+			}
+
+//			if (template.reminder1 != null)
+//				cv.put(TemplatesMetaData.REMINDER1, template.reminder1);
+//			else
+//				cv.put(TemplatesMetaData.REMINDER1, "");
+			
+//			if (template.reminder2 != null)
+//			cv.put(TemplatesMetaData.REMINDER2, template.reminder2);
+//		else
+//			cv.put(TemplatesMetaData.REMINDER2, "");
+			
+//			if (template.reminder3 != null)
+//			cv.put(TemplatesMetaData.REMINDER3, template.reminder3);
+//		else
+//			cv.put(TemplatesMetaData.REMINDER3, "");
+
+//			TODO find out wtf is bd in event
+//			if (event.birthday) {
+//				reqEntity.addPart("bd", new StringBody("1"));
+//			}
+			
+			Data.getmContext().getContentResolver().insert(TemplatesMetaData.CONTENT_URI, cv);
+			success = true;
+		} catch (Exception e) {
+			Log.e("TemplateUploadLocal", "CATCH!");
+		}
+		
+		return success;
+	}
+	
+	public ArrayList<Event> getTemplatesFromRemoteDb() {
+		boolean success = false;
+		ArrayList<Event> templates = new ArrayList<Event>();
+		Event template = null;
+
+		try {
+			HttpClient hc = new DefaultHttpClient();
+			HttpPost post = new HttpPost(Data.getServerUrl() + "mobile/templates_get");
+
+			MultipartEntity reqEntity = new MultipartEntity(HttpMultipartMode.BROWSER_COMPATIBLE);
+
+			reqEntity.addPart("token", new StringBody(Data.getToken()));
+
+			post.setEntity(reqEntity);
+			HttpResponse rp = hc.execute(post);
+
+			if (rp.getStatusLine().getStatusCode() == HttpStatus.SC_OK) {
+				String resp = EntityUtils.toString(rp.getEntity());
+				if (resp != null) {
+					JSONObject object = new JSONObject(resp);
+					success = object.getBoolean("success");
+
+					if (success == false) {
+						// TODO show an error.
+					} else {
+						JSONArray es = object.getJSONArray("templates");
+						int count = es.length();
+						for (int i = 0; i < count; i++) {
+							JSONObject e = es.getJSONObject(i);
+
+							template = new Event();
+
+							try {
+								template.event_id = e.getInt("template_id");
+//								cv.put(EventsProvider.EMetaData.EventsMetaData.E_ID, template.event_id);
+							} catch (JSONException ex) {
+								Reporter.reportError(this.getClass().toString(), Thread.currentThread().getStackTrace()[2].getMethodName().toString(), ex.getMessage());
+							}
+//							try {
+//								template.user_id = e.getInt("user_id");
+//								cv.put(EventsProvider.EMetaData.EventsMetaData.USER_ID, template.user_id);
+//							} catch (JSONException ex) {
+//								Reporter.reportError(this.getClass().toString(), Thread.currentThread().getStackTrace()[2].getMethodName().toString(), ex.getMessage());
+//							}
+//							try {
+//								template.status = e.getInt("status");
+//								cv.put(EventsProvider.EMetaData.EventsMetaData.STATUS, template.status);
+//							} catch (JSONException ex) {
+//								Reporter.reportError(this.getClass().toString(), Thread.currentThread().getStackTrace()[2].getMethodName().toString(), ex.getMessage());
+//							}
+//							try {
+//								int is_owner = e.getInt("is_owner");
+//								template.is_owner = is_owner == 1;
+//								cv.put(EventsProvider.EMetaData.EventsMetaData.IS_OWNER, template.is_owner);
+//							} catch (JSONException ex) {
+//								Reporter.reportError(this.getClass().toString(), Thread.currentThread().getStackTrace()[2].getMethodName().toString(), ex.getMessage());
+//							}
+//							try {
+//								template.type = e.getString("type");
+//								cv.put(EventsProvider.EMetaData.EventsMetaData.TYPE, template.type);
+//							} catch (JSONException ex) {
+//								Reporter.reportError(this.getClass().toString(), Thread.currentThread().getStackTrace()[2].getMethodName().toString(), ex.getMessage());
+//							}
+							try {
+								template.title = e.getString("title");
+//								cv.put(EventsProvider.EMetaData.EventsMetaData.TITLE, template.title);
+							} catch (JSONException ex) {
+								Reporter.reportError(this.getClass().toString(), Thread.currentThread().getStackTrace()[2].getMethodName().toString(), ex.getMessage());
+							}
+//							try {
+//								template.icon = e.getString("icon");
+//								cv.put(EventsProvider.EMetaData.EventsMetaData.ICON, template.icon);
+//							} catch (JSONException ex) {
+//								Reporter.reportError(this.getClass().toString(), Thread.currentThread().getStackTrace()[2].getMethodName().toString(), ex.getMessage());
+//							}
+							try {
+								template.setColor(e.getString("color"));
+//								cv.put(EventsProvider.EMetaData.EventsMetaData.COLOR, template.getColor());
+							} catch (JSONException ex) {
+								Reporter.reportError(this.getClass().toString(), Thread.currentThread().getStackTrace()[2].getMethodName().toString(), ex.getMessage());
+							}
+							try {
+								template.description_ = e.getString("description");
+//								cv.put(EventsProvider.EMetaData.EventsMetaData.DESC, template.description_);
+							} catch (JSONException ex) {
+								Reporter.reportError(this.getClass().toString(), Thread.currentThread().getStackTrace()[2].getMethodName().toString(), ex.getMessage());
+							}
+							try {
+								template.location = e.getString("location");
+//								cv.put(EventsProvider.EMetaData.EventsMetaData.LOCATION, template.location);
+							} catch (JSONException ex) {
+								Reporter.reportError(this.getClass().toString(), Thread.currentThread().getStackTrace()[2].getMethodName().toString(), ex.getMessage());
+							}
+							try {
+								template.accomodation = e.getString("accomodation");
+//								cv.put(EventsProvider.EMetaData.EventsMetaData.ACCOMODATION, template.accomodation);
+							} catch (JSONException ex) {
+								Reporter.reportError(this.getClass().toString(), Thread.currentThread().getStackTrace()[2].getMethodName().toString(), ex.getMessage());
+							}
+							try {
+								template.cost = e.getString("cost");
+//								cv.put(EventsProvider.EMetaData.EventsMetaData.COST, template.cost);
+							} catch (JSONException ex) {
+								Reporter.reportError(this.getClass().toString(), Thread.currentThread().getStackTrace()[2].getMethodName().toString(), ex.getMessage());
+							}
+							try {
+								template.take_with_you = e.getString("take_with_you");
+//								cv.put(EventsProvider.EMetaData.EventsMetaData.TAKE_WITH_YOU, template.take_with_you);
+							} catch (JSONException ex) {
+								Reporter.reportError(this.getClass().toString(), Thread.currentThread().getStackTrace()[2].getMethodName().toString(), ex.getMessage());
+							}
+							try {
+								template.go_by = e.getString("go_by");
+//								cv.put(EventsProvider.EMetaData.EventsMetaData.GO_BY, template.go_by);
+							} catch (JSONException ex) {
+								Reporter.reportError(this.getClass().toString(), Thread.currentThread().getStackTrace()[2].getMethodName().toString(), ex.getMessage());
+							}
+							/* Address START */
+							try {
+								template.country = e.getString("country");
+//								cv.put(EventsProvider.EMetaData.EventsMetaData.COUNTRY, template.country);
+							} catch (JSONException ex) {
+								Reporter.reportError(this.getClass().toString(), Thread.currentThread().getStackTrace()[2].getMethodName().toString(), ex.getMessage());
+							}
+							try {
+								template.city = e.getString("city");
+//								cv.put(EventsProvider.EMetaData.EventsMetaData.CITY, template.city);
+							} catch (JSONException ex) {
+								Reporter.reportError(this.getClass().toString(), Thread.currentThread().getStackTrace()[2].getMethodName().toString(), ex.getMessage());
+							}
+							try {
+								template.street = e.getString("street");
+//								cv.put(EventsProvider.EMetaData.EventsMetaData.STREET, template.street);
+							} catch (JSONException ex) {
+								Reporter.reportError(this.getClass().toString(), Thread.currentThread().getStackTrace()[2].getMethodName().toString(), ex.getMessage());
+							}
+							try {
+								template.zip = e.getString("zip");
+//								cv.put(EventsProvider.EMetaData.EventsMetaData.ZIP, template.zip);
+							} catch (JSONException ex) {
+								Reporter.reportError(this.getClass().toString(), Thread.currentThread().getStackTrace()[2].getMethodName().toString(), ex.getMessage());
+							}
+							try {
+								template.timezone = e.getString("timezone");
+//								cv.put(EventsProvider.EMetaData.EventsMetaData.TIMEZONE, template.timezone);
+							} catch (JSONException ex) {
+								Reporter.reportError(this.getClass().toString(), Thread.currentThread().getStackTrace()[2].getMethodName().toString(), ex.getMessage());
+							}
+							/* Address END */
+							
+//							try {
+//								template.time_start = e.getString("time_start");
+//								cv.put(EventsProvider.EMetaData.EventsMetaData.TIME_START, template.time_start);
+//							} catch (JSONException ex) {
+//								Reporter.reportError(this.getClass().toString(), Thread.currentThread().getStackTrace()[2].getMethodName().toString(), ex.getMessage());
+//							}
+//							try {
+//								template.time_end = e.getString("time_end");
+//								cv.put(EventsProvider.EMetaData.EventsMetaData.TIME_END, template.time_end);
+//							} catch (JSONException ex) {
+//								Reporter.reportError(this.getClass().toString(), Thread.currentThread().getStackTrace()[2].getMethodName().toString(), ex.getMessage());
+//							}
+//							try {
+//								template.time = e.getString("time");
+//								cv.put(EventsProvider.EMetaData.EventsMetaData.TIME, template.time);
+//							} catch (JSONException ex) {
+//								Reporter.reportError(this.getClass().toString(), Thread.currentThread().getStackTrace()[2].getMethodName().toString(), ex.getMessage());
+//							}
+//							try {
+//								template.my_time_start = e.getString("my_time_start");
+//								cv.put(EventsProvider.EMetaData.EventsMetaData.MY_TIME_START, template.my_time_start);
+//								template.setStartCalendar(Utils.stringToCalendar(template.my_time_start, SERVER_TIMESTAMP_FORMAT));
+//
+//							} catch (JSONException ex) {
+//								Reporter.reportError(this.getClass().toString(), Thread.currentThread().getStackTrace()[2].getMethodName()
+//										.toString(), ex.getMessage());
+//							}
+//							try {
+//								template.my_time_end = e.getString("my_time_end");
+//								cv.put(EventsProvider.EMetaData.EventsMetaData.MY_TIME_END, template.my_time_end);
+//								template.setEndCalendar(Utils.stringToCalendar(template.my_time_end, SERVER_TIMESTAMP_FORMAT));
+//
+//							} catch (JSONException ex) {
+//								Reporter.reportError(this.getClass().toString(), Thread.currentThread().getStackTrace()[2].getMethodName()
+//										.toString(), ex.getMessage());
+//							}
+							/* Reminders START */
+//							try {
+//								template.reminder1 = e.getString("reminder1");
+//								cv.put(EventsProvider.EMetaData.EventsMetaData.REMINDER1, template.reminder1);
+//							} catch (JSONException ex) {
+//								Reporter.reportError(this.getClass().toString(), Thread.currentThread().getStackTrace()[2].getMethodName()
+//										.toString(), ex.getMessage());
+//							}
+//							try {
+//								template.reminder2 = e.getString("reminder2");
+//								cv.put(EventsProvider.EMetaData.EventsMetaData.REMINDER2, template.reminder2);
+//							} catch (JSONException ex) {
+//								Reporter.reportError(this.getClass().toString(), Thread.currentThread().getStackTrace()[2].getMethodName()
+//										.toString(), ex.getMessage());
+//							}
+//							try {
+//								template.reminder3 = e.getString("reminder3");
+//								cv.put(EventsProvider.EMetaData.EventsMetaData.REMINDER3, template.reminder3);
+//							} catch (JSONException ex) {
+//								Reporter.reportError(this.getClass().toString(), Thread.currentThread().getStackTrace()[2].getMethodName()
+//										.toString(), ex.getMessage());
+//							}
+							/* Reminders START */
+							/* Alarms START */
+//							String tmpAlarmFired = "";
+//							try {
+//								template.alarm1 = e.getString("alarm1");
+//								cv.put(EventsProvider.EMetaData.EventsMetaData.REMINDER1, template.reminder1);
+//							} catch (JSONException ex) {
+//								Reporter.reportError(this.getClass().toString(), Thread.currentThread().getStackTrace()[2].getMethodName()
+//										.toString(), ex.getMessage());
+//							}
+//							tmpAlarmFired = e.getString("alarm1_fired");
+//							if(!tmpAlarmFired.equals("null") && tmpAlarmFired.matches("[0-9]*")){
+//								template.alarm1fired = Integer.parseInt(tmpAlarmFired) == 1;
+//							}
+//							try {
+//								template.alarm2 = e.getString("alarm2");
+//								cv.put(EventsProvider.EMetaData.EventsMetaData.REMINDER2, template.reminder2);
+//							} catch (JSONException ex) {
+//								Reporter.reportError(this.getClass().toString(), Thread.currentThread().getStackTrace()[2].getMethodName()
+//										.toString(), ex.getMessage());
+//							}
+//							tmpAlarmFired = e.getString("alarm2_fired");
+//							if(!tmpAlarmFired.equals("null") && tmpAlarmFired.matches("[0-9]*")){
+//								template.alarm2fired = Integer.parseInt(tmpAlarmFired) == 1;
+//							}
+//							try {
+//								template.alarm3 = e.getString("alarm3");
+//								cv.put(EventsProvider.EMetaData.EventsMetaData.REMINDER3, template.reminder3);
+//							} catch (JSONException ex) {
+//								Reporter.reportError(this.getClass().toString(), Thread.currentThread().getStackTrace()[2].getMethodName()
+//										.toString(), ex.getMessage());
+//							}
+//							tmpAlarmFired = e.getString("alarm3_fired");
+//							if(!tmpAlarmFired.equals("null") && tmpAlarmFired.matches("[0-9]*")){
+//								template.alarm3fired = Integer.parseInt(tmpAlarmFired) == 1;
+//							}
+							/* Alarms END */
+
+//							try {
+//								template.created = e.getString("created");
+//								cv.put(EventsProvider.EMetaData.EventsMetaData.CREATED, template.created);
+//							} catch (JSONException ex) {
+//								Reporter.reportError(this.getClass().toString(), Thread.currentThread().getStackTrace()[2].getMethodName()
+//										.toString(), ex.getMessage());
+//							}
+//							try {
+//								template.modified = e.getString("modified");
+//								cv.put(EventsProvider.EMetaData.EventsMetaData.MODIFIED, template.modified);
+//							} catch (JSONException ex) {
+//								Reporter.reportError(this.getClass().toString(), Thread.currentThread().getStackTrace()[2].getMethodName()
+//										.toString(), ex.getMessage());
+//							}
+//
+//							try {
+//								template.attendant_1_count = e.getInt("attendant_1_count");
+//								cv.put(EventsProvider.EMetaData.EventsMetaData.ATTENDANT_1_COUNT, template.attendant_1_count);
+//							} catch (JSONException ex) {
+//								Reporter.reportError(this.getClass().toString(), Thread.currentThread().getStackTrace()[2].getMethodName()
+//										.toString(), ex.getMessage());
+//							}
+//							try {
+//								template.attendant_2_count = e.getInt("attendant_2_count");
+//								cv.put(EventsProvider.EMetaData.EventsMetaData.ATTENDANT_2_COUNT, template.attendant_2_count);
+//							} catch (JSONException ex) {
+//								Reporter.reportError(this.getClass().toString(), Thread.currentThread().getStackTrace()[2].getMethodName()
+//										.toString(), ex.getMessage());
+//							}
+//							try {
+//								template.attendant_0_count = e.getInt("attendant_0_count");
+//								cv.put(EventsProvider.EMetaData.EventsMetaData.ATTENDANT_0_COUNT, template.attendant_0_count);
+//							} catch (JSONException ex) {
+//								Reporter.reportError(this.getClass().toString(), Thread.currentThread().getStackTrace()[2].getMethodName()
+//										.toString(), ex.getMessage());
+//							}
+//							try {
+//								template.attendant_4_count = e.getInt("attendant_4_count");
+//								cv.put(EventsProvider.EMetaData.EventsMetaData.ATTENDANT_4_COUNT, template.attendant_4_count);
+//							} catch (JSONException ex) {
+//								Reporter.reportError(this.getClass().toString(), Thread.currentThread().getStackTrace()[2].getMethodName()
+//										.toString(), ex.getMessage());
+//							}
+//
+//							try {
+//								int is_sports_event = e.getInt("is_sports_event");
+//								template.is_sports_event = is_sports_event == 1;
+//								cv.put(EventsProvider.EMetaData.EventsMetaData.IS_SPORTS_EVENT, template.is_sports_event);
+//							} catch (JSONException ex) {
+//								Reporter.reportError(this.getClass().toString(), Thread.currentThread().getStackTrace()[2].getMethodName()
+//										.toString(), ex.getMessage());
+//							}
+//							try {
+//								template.creator_fullname = e.getString("creator_fullname");
+//								cv.put(EventsProvider.EMetaData.EventsMetaData.CREATOR_FULLNAME, template.creator_fullname);
+//							} catch (JSONException ex) {
+//								Reporter.reportError(this.getClass().toString(), Thread.currentThread().getStackTrace()[2].getMethodName()
+//										.toString(), ex.getMessage());
+//							}
+//							try {
+//								template.creator_contact_id = e.getInt("creator_contact_id");
+//								cv.put(EventsProvider.EMetaData.EventsMetaData.CREATOR_CONTACT_ID, template.creator_contact_id);
+//							} catch (JSONException ex) {
+//								Reporter.reportError(this.getClass().toString(), Thread.currentThread().getStackTrace()[2].getMethodName()
+//										.toString(), ex.getMessage());
+//							}
+// TODO contacts[] ant Templates
+							try {
+								@SuppressWarnings("unused")
+								JSONArray contacts = e.getJSONArray("groups");
+//								cv.put(EventsProvider.EMetaData.EventsMetaData.ASSIGNED_CONTACTS, assigned_contacts);
+							} catch (JSONException ex) {
+								Reporter.reportError(this.getClass().toString(), Thread.currentThread().getStackTrace()[2].getMethodName().toString(), ex.getMessage());
+							}
+							// TODO groups[] ant Templates
+							try {
+								@SuppressWarnings("unused")
+								JSONArray groups = e.getJSONArray("groups");
+								
+//								cv.put(EventsProvider.EMetaData.EventsMetaData.ASSIGNED_GROUPS, assigned_groups);
+							} catch (JSONException ex) {
+								Reporter.reportError(this.getClass().toString(), Thread.currentThread().getStackTrace()[2].getMethodName().toString(), ex.getMessage());
+							}
+//							try {
+//								String invited = e.getString("invited");
+//								cv.put(EventsProvider.EMetaData.EventsMetaData.INVITED, invited);
+//							} catch (JSONException ex) {
+//								Reporter.reportError(this.getClass().toString(), Thread.currentThread().getStackTrace()[2].getMethodName()
+//										.toString(), ex.getMessage());
+//							}
+//							try {
+//								int all_day = e.getInt("all_day_event");
+//								template.is_all_day = all_day == 1;
+//							} catch (JSONException ex) {
+//								Reporter.reportError(this.getClass().toString(), Thread.currentThread().getStackTrace()[2].getMethodName().toString(), ex.getMessage());
+//							}
+
+//							Data.getmContext().getContentResolver().insert(EventsProvider.EMetaData.EventsMetaData.CONTENT_URI, cv);
+							templates.add(template);
+						}
+					}
+				}
+			}
+		} catch (Exception ex) {
+			Reporter.reportError(this.getClass().toString(), Thread.currentThread().getStackTrace()[2].getMethodName().toString(),
+					ex.getMessage());
+		}
+//		if (contactsBirthdays != null && !contactsBirthdays.isEmpty()) {
+//			templates.addAll(contactsBirthdays);
+//		}
+//		sortEvents(events);
+		return templates;
+	}
+	
+	public Event getTemplateFromLocalDb (int template_id) {
+		Event event = new Event();
+		Uri uri = Uri.parse(TemplatesMetaData.CONTENT_URI.toString() + "/" + template_id);
+		Cursor result = Data.getmContext().getContentResolver().query(uri, null, null, null, null);
+		
+		if (result.moveToFirst()) {
+			event.setEvent_id(result.getInt(result.getColumnIndex(TemplatesMetaData.T_ID)));
+			event.setColor(result.getString(result.getColumnIndex(TemplatesMetaData.COLOR)));
+			event.setIcon(result.getString(result.getColumnIndex(TemplatesMetaData.ICON)));
+
+			event.setTitle(result.getString(result.getColumnIndex(TemplatesMetaData.TITLE)));
+//			event.setStartCalendar((result.getInt(result.getColumnIndex(TemplatesMetaData.TIME_START)));
+//			event.setEndCalendar(result.getInt(result.getColumnIndex(TemplatesMetaData.TIME_END)));
+			event.setDescription(result.getString(result.getColumnIndex(TemplatesMetaData.DESC)));
+
+			event.setCountry(result.getString(result.getColumnIndex(TemplatesMetaData.COUNTRY)));
+			event.setCity(result.getString(result.getColumnIndex(TemplatesMetaData.CITY)));
+			event.setStreet(result.getString(result.getColumnIndex(TemplatesMetaData.STREET)));
+			event.setZip(result.getString(result.getColumnIndex(TemplatesMetaData.ZIP)));
+			event.setTimezone(result.getString(result.getColumnIndex(TemplatesMetaData.TIMEZONE)));
+
+			event.setLocation(result.getString(result.getColumnIndex(TemplatesMetaData.LOCATION)));
+			event.setGo_by(result.getString(result.getColumnIndex(TemplatesMetaData.GO_BY)));
+			event.setTake_with_you(result.getString(result.getColumnIndex(TemplatesMetaData.TAKE_WITH_YOU)));
+			event.setCost(result.getString(result.getColumnIndex(TemplatesMetaData.COST)));
+			event.setAccomodation(result.getString(result.getColumnIndex(TemplatesMetaData.ACCOMODATION)));
+
+//			event.setReminder1(result.getInt(result.getColumnIndex(TemplatesMetaData.REMINDER1)));
+//			event.setReminder2(result.getInt(result.getColumnIndex(TemplatesMetaData.REMINDER2)));
+//			event.setReminder3(result.getInt(result.getColumnIndex(TemplatesMetaData.REMINDER3)));
+
+//			event.setAlarm1(result.getInt(result.getColumnIndex(TemplatesMetaData.ALARM1)));
+//			event.setAlarm2(result.getInt(result.getColumnIndex(TemplatesMetaData.ALARM2)));
+//			event.setAlarm3(result.getInt(result.getColumnIndex(TemplatesMetaData.ALARM3)));
+		}
+		
+		return event;
 	}
 }
