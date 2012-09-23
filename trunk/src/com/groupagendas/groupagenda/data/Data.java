@@ -78,6 +78,9 @@ public class Data {
 	public static boolean returnedFromContactAuth = false;
 	public static boolean credentialsClear = false;
 	public static int[] importStats = null;
+	
+	// Template load parameter
+	public static int templateInUse = 0;
 
 	protected static String getPushId() {
 		return pushId;
