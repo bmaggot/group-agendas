@@ -141,6 +141,12 @@
             label="EventsProvider"
             android:authorities="com.groupagendas.groupagenda.events.EventsProvider" >
         </provider>
+        <provider 
+            android:exported="false"
+            android:name=".templates.TemplatesProvider"
+        	android:authorities="com.groupagendas.groupagenda.templates.TemplatesProvider" >
+            
+        </provider>
 
         <receiver android:name=".ConnectReceiver" >
             <intent-filter>
@@ -148,7 +154,8 @@
             </intent-filter>
         </receiver>
 
-        <service android:name=".UpdateService" >
+        <service android:name=".UpdateService"
+            android:exported="false" >
             <intent-filter>
                 <action android:name="com.groupagendas.groupagenda.UpdateService" />
             </intent-filter>
