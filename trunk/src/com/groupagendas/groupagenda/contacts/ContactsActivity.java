@@ -374,6 +374,7 @@ public class ContactsActivity extends ListActivity implements OnCheckedChangeLis
 		}
 	}
 
+	@SuppressWarnings("unused")
 	@Override
 	public void onListItemClick(ListView parent, View v, int position, long id) {
 		v.setDrawingCacheBackgroundColor(Color.TRANSPARENT);
@@ -571,6 +572,7 @@ public class ContactsActivity extends ListActivity implements OnCheckedChangeLis
 
 	}
 
+	// TODO WHAT THE FUCK IS THIS?!
 	public class UpdateEventByIdFromRemoteDb extends AsyncTask<Integer, Void, Void> {
 
 		@Override
@@ -868,7 +870,7 @@ public class ContactsActivity extends ListActivity implements OnCheckedChangeLis
 
 							// //
 							dm.getContext().getContentResolver().insert(EventsProvider.EMetaData.EventsMetaData.CONTENT_URI, cv);
-							Event tmpEvent = dm.getEventFromDb(event_id);
+							Event tmpEvent = dm.getEventFromLocalDb(event_id);
 							if (tmpEvent.getStartCalendar() == null) {
 								tmpEvent.setStartCalendar((Calendar) event.getStartCalendar().clone());
 							}
