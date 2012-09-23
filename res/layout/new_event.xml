@@ -22,7 +22,7 @@
             android:layout_marginTop="8dp"
             android:background="@drawable/contacts_save_import_button"
             android:gravity="center"
-            android:onClick="loadTemplates"
+            android:onClick="chooseTemplate"
             android:paddingBottom="5dp"
             android:paddingLeft="5dp"
             android:paddingRight="5dp"
