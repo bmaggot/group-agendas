@@ -10,11 +10,14 @@ import android.app.Dialog;
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.DialogInterface.OnDismissListener;
 import android.content.Intent;
+import android.database.Cursor;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -44,6 +47,10 @@ import com.groupagendas.groupagenda.data.Data;
 import com.groupagendas.groupagenda.data.DataManagement;
 import com.groupagendas.groupagenda.settings.AutoColorItem;
 import com.groupagendas.groupagenda.settings.AutoIconItem;
+import com.groupagendas.groupagenda.templates.TemplatesAdapter;
+import com.groupagendas.groupagenda.templates.TemplatesDialog;
+import com.groupagendas.groupagenda.templates.TemplatesDialogData;
+import com.groupagendas.groupagenda.templates.TemplatesProvider.TMetaData.TemplatesMetaData;
 import com.groupagendas.groupagenda.timezone.TimezoneManager;
 import com.groupagendas.groupagenda.utils.CountryManager;
 import com.groupagendas.groupagenda.utils.DateTimeUtils;
@@ -55,16 +62,21 @@ import com.ptashek.widgets.datetimepicker.DateTimePicker;
 public class NewEventActivity extends EventActivity {
 	private final int CHOOSE_CONTACTS_DIALOG = 1;
 
+	@SuppressWarnings("unused")
+	private Button templatesButton;
+
 	private Button contactsButton;
 	private CharSequence[] titles;
 	private int[] ids;
 	private boolean[] selections;
-	
+
+	@SuppressWarnings("unused")
 	private ArrayList<AutoColorItem> autoColors = null;
 	private ArrayList<AutoIconItem> autoIcons = null;
 
 	boolean addressPanelVisible = false;
 	boolean detailsPanelVisible = false;
+	int templateInUse = 0;
 
 	private boolean remindersShown = false;
 	private boolean countrySelected = false;
@@ -74,11 +86,12 @@ public class NewEventActivity extends EventActivity {
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		
-		//these fields indicate that we will save this user as owner of event and save his uid
+
+		// these fields indicate that we will save this user as owner of event
+		// and save his uid
 		setOwner = true;
 		setUid = true;
-		
+
 		setContentView(R.layout.new_event);
 		event = new Event();
 
@@ -98,6 +111,7 @@ public class NewEventActivity extends EventActivity {
 		pb = (ProgressBar) findViewById(R.id.progress);
 		templateTrigger = (CheckBox) findViewById(R.id.templateTrigger);
 		saveButton = (Button) findViewById(R.id.saveButton);
+		templatesButton = (Button) findViewById(R.id.templatesButton);
 
 		// icon
 		final String[] iconsValues = getResources().getStringArray(R.array.icons_values);
@@ -483,10 +497,9 @@ public class NewEventActivity extends EventActivity {
 			LinearLayout invitedPersonList = (LinearLayout) findViewById(R.id.invited_person_list);
 			invitedPersonList.removeAllViews();
 		}
+		
 		super.onResume();
 	}
-
-	
 
 	public View getInvitedView(Invited invited, LayoutInflater inflater, View view, Context mContext) {
 		final TextView nameView = (TextView) view.findViewById(R.id.invited_fullname);
@@ -564,6 +577,7 @@ public class NewEventActivity extends EventActivity {
 
 	public void saveEvent(View v) {
 		if (!templateTrigger.isChecked()) {
+			Toast.makeText(this, R.string.saving_new_event, Toast.LENGTH_LONG).show();
 			try {
 				new NewEventTask().execute().get();
 			} catch (InterruptedException e) {
@@ -572,8 +586,74 @@ public class NewEventActivity extends EventActivity {
 				e.printStackTrace();
 			}
 		} else {
-
+			Toast.makeText(this, R.string.saving_new_template, Toast.LENGTH_LONG).show();
+			try {
+				new NewTemplateTask().execute().get();
+				Toast.makeText(this, R.string.new_event_saved, Toast.LENGTH_LONG).show();
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			} catch (ExecutionException e) {
+				e.printStackTrace();
+			}
 		}
+	}
+
+	// TODO docu docu docu
+	public void chooseTemplate(View v) {
+		String columns[] = { TemplatesMetaData.T_ID, TemplatesMetaData.TITLE };
+		Cursor cur;
+		ArrayList<TemplatesDialogData> dialogData = new ArrayList<TemplatesDialogData>();
+		TemplatesDialogData temp;
+		TemplatesAdapter dialogDataAdapter = null;
+
+		// getTemplates();
+
+		cur = Data.getmContext().getContentResolver()
+				.query(TemplatesMetaData.CONTENT_URI, columns, null, null, TemplatesMetaData.DEFAULT_SORT_ORDER);
+
+		if (cur.moveToFirst()) {
+			while (!cur.isAfterLast()) {
+				temp = new TemplatesDialogData();
+
+				temp.setID(cur.getString(cur.getColumnIndex(TemplatesMetaData.T_ID)));
+				temp.setTitle(cur.getString(cur.getColumnIndex(TemplatesMetaData.TITLE)));
+
+				dialogData.add(temp);
+
+				cur.moveToNext();
+			}
+		} else {
+			Log.e("chooseTemplate", "No response from local db");
+		}
+
+		cur.close();
+
+		if (dialogData != null) {
+			dialogDataAdapter = new TemplatesAdapter(this, dialogData);
+		}
+
+		TemplatesDialog templateListDialog = new TemplatesDialog(NewEventActivity.this, dialogDataAdapter);
+		templateListDialog.setOnDismissListener(new OnDismissListener() {
+			
+			@Override
+			public void onDismiss(DialogInterface dialog) {
+				if (Data.templateInUse > 0) {
+					event = dm.getTemplateFromLocalDb(Data.templateInUse);
+					setUIValues(event);
+					Data.templateInUse = 0;
+				}
+			}
+		});
+		templateListDialog.show();
+	}
+
+	// TODO getTemplates
+	public void getTemplates() {
+		ArrayList<Event> templates = dm.getTemplatesFromRemoteDb();
+		for (Event template : templates) {
+			dm.uploadTemplateToLocalDb(template, 0);
+		}
+		templates = null;
 	}
 
 	public void showAddressPanel() {
@@ -676,7 +756,7 @@ public class NewEventActivity extends EventActivity {
 
 			int testEvent = event.isValid();
 			if (testEvent == 0) {
-				
+
 				NewEventActivity.super.putEventContentValues(cv);
 				success = dm.createEvent(event);
 
@@ -718,7 +798,6 @@ public class NewEventActivity extends EventActivity {
 		}
 
 	}
-
 
 	@Override
 	protected Dialog onCreateDialog(int id) {
@@ -838,9 +917,12 @@ public class NewEventActivity extends EventActivity {
 		mDateTimePicker.updateDate(c.get(Calendar.YEAR), c.get(Calendar.MONTH), c.get(Calendar.DAY_OF_MONTH));
 		mDateTimePicker.updateTime(c.get(Calendar.HOUR_OF_DAY), c.get(Calendar.MINUTE));
 
-//		// Check is system is set to use 24h time (this doesn't seem to work as
-//		// expected though)
-//		final String timeS = android.provider.Settings.System.getString(getContentResolver(), android.provider.Settings.System.TIME_12_24);
+		// // Check is system is set to use 24h time (this doesn't seem to work
+		// as
+		// // expected though)
+		// final String timeS =
+		// android.provider.Settings.System.getString(getContentResolver(),
+		// android.provider.Settings.System.TIME_12_24);
 		final boolean is24h = !CalendarSettings.isUsing_AM_PM();
 		// Setup TimePicker
 		mDateTimePicker.setIs24HourView(is24h);
@@ -856,15 +938,12 @@ public class NewEventActivity extends EventActivity {
 				case DIALOG_START:
 					startCalendar = mDateTimePicker.getCalendar();
 					startView.setText(dtUtils.formatDateTime(startCalendar.getTime()));
-							if (!startCalendar.before(endCalendar)) {
-								endCalendar = Calendar.getInstance();
-								endCalendar.setTime(mDateTimePicker
-										.getCalendar().getTime());
-								endCalendar.add(Calendar.MINUTE,
-										DEFAULT_EVENT_DURATION_IN_MINS);
-								endView.setText(dtUtils
-										.formatDateTime(endCalendar.getTime()));
-							}
+					if (!startCalendar.before(endCalendar)) {
+						endCalendar = Calendar.getInstance();
+						endCalendar.setTime(mDateTimePicker.getCalendar().getTime());
+						endCalendar.add(Calendar.MINUTE, DEFAULT_EVENT_DURATION_IN_MINS);
+						endView.setText(dtUtils.formatDateTime(endCalendar.getTime()));
+					}
 					timeSet = true;
 					break;
 				case DIALOG_END:
@@ -905,7 +984,6 @@ public class NewEventActivity extends EventActivity {
 			}
 		});
 
-		
 		// No title on the dialog window
 		mDateTimeDialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
 		// Set the dialog content view
@@ -914,7 +992,197 @@ public class NewEventActivity extends EventActivity {
 		mDateTimeDialog.show();
 	}
 
-	/* TODO	Improve validation of event's fields + create array(list) of int's
-	 * 		for getting exact errors.
+	/*
+	 * TODO Improve validation of event's fields + create array(list) of int's
+	 * for getting exact errors.
 	 */
+
+	class NewTemplateTask extends AsyncTask<Event, Void, Boolean> {
+
+		@Override
+		protected void onPreExecute() {
+			pb.setVisibility(View.VISIBLE);
+			saveButton.setText(getString(R.string.saving));
+			super.onPreExecute();
+		}
+
+		@Override
+		protected Boolean doInBackground(Event... events) {
+			boolean success = false;
+
+			NewEventActivity.super.setEventData(event);
+
+			int testEvent = event.isValid();
+
+			if (testEvent == 0) {
+				if (reminder1time != null && reminder1time.after(Calendar.getInstance())) {
+					event.reminder1 = dtUtils.formatDateTimeToDefault(reminder1time.getTime());
+				}
+
+				if (reminder2time != null && reminder2time.after(Calendar.getInstance()) && !reminder2time.equals(reminder1time)) {
+					event.reminder2 = dtUtils.formatDateTimeToDefault(reminder2time.getTime());
+				}
+
+				if (reminder3time != null && reminder3time.after(Calendar.getInstance()) && !reminder3time.equals(reminder1time)
+						&& !reminder3time.equals(reminder2time)) {
+					event.reminder3 = dtUtils.formatDateTimeToDefault(reminder3time.getTime());
+				}
+
+				Integer templateId = dm.uploadTemplateToRemoteDb(event);
+				dm.uploadTemplateToLocalDb(event, templateId);
+				Data.selectedContacts.clear();
+			} else {
+				switch (testEvent) {
+				case 1: // no title set
+					errorStr = getString(R.string.title_is_required);
+					break;
+
+				case 2: // no timezone set
+					errorStr = getString(R.string.timezone_required);
+					break;
+
+				case 3: // calendar fields are null
+
+					break;
+
+				case 4: // event start is set after end
+					errorStr = getString(R.string.invalid_start_end_time);
+					break;
+
+				case 5: // event duration is 0
+					errorStr = getString(R.string.invalid_start_end_time);
+					break;
+
+				default:
+					break;
+				}
+			}
+
+			return success;
+		}
+
+		@Override
+		protected void onPostExecute(Boolean result) {
+			if (result) {
+				finish();
+				Toast.makeText(NewEventActivity.this, R.string.new_template_saved, Toast.LENGTH_LONG).show();
+			} else {
+				showDialog(DIALOG_ERROR);
+				pb.setVisibility(View.GONE);
+				saveButton.setText(getString(R.string.save));
+			}
+			super.onPostExecute(result);
+		}
+	}
+
+	// TODO documentation pending
+	public void setUIValues(Event data) {
+		EditText view;
+		ImageView imageView;
+
+		/* Set event's color & icon */
+		imageView = (ImageView) findViewById(R.id.colorView);
+		if (imageView != null) {
+			int image = getResources().getIdentifier("calendarbubble_" + data.getColor() + "_", "drawable", "com.groupagendas.groupagenda");
+			if (image != 0)
+				imageView.setImageResource(image);
+		}
+
+		imageView = (ImageView) findViewById(R.id.iconView);
+		if (imageView != null) {
+			int image = getResources().getIdentifier(data.getIcon(), "drawable", "com.groupagendas.groupagenda");
+			if (image != 0)
+				imageView.setImageResource(image);
+		}
+
+		/* Set event's title */
+		view = (EditText) findViewById(R.id.title);
+		if (view != null)
+			view.setText(data.getActualTitle());
+
+		/* Set event's start & end time */
+		// view = (EditText) findViewById(R.id.startView);
+		// if (view != null)
+		// view.setText(data.getStartCalendar());
+
+		// view = (EditText) findViewById(R.id.endView);
+		// if (view != null)
+		// view.setText(data.getStartCalendar());
+
+		/* Set event's description */
+		view = (EditText) findViewById(R.id.descView);
+		if (view != null)
+			view.setText(data.getDescription());
+
+		/* Set event's address */
+		// TODO make country set
+		// view = (EditText) findViewById(R.id.countrySpinner);
+		// if (view != null)
+		// view.setText(data.getDescription());
+
+		view = (EditText) findViewById(R.id.cityView);
+		if (view != null)
+			view.setText(data.getCity());
+
+		view = (EditText) findViewById(R.id.streetView);
+		if (view != null)
+			view.setText(data.getStreet());
+
+		view = (EditText) findViewById(R.id.zipView);
+		if (view != null)
+			view.setText(data.getZip());
+
+		// TODO make timezone set
+		// view = (EditText) findViewById(R.id.timezoneSpinner);
+		// if (view != null)
+		// view.setText(data.getCity());
+
+		/* Set event's details */
+		view = (EditText) findViewById(R.id.locationView);
+		if (view != null)
+			view.setText(data.getLocation());
+
+		view = (EditText) findViewById(R.id.gobyView);
+		if (view != null)
+			view.setText(data.getGo_by());
+
+		view = (EditText) findViewById(R.id.takewithyouView);
+		if (view != null)
+			view.setText(data.getTake_with_you());
+
+		view = (EditText) findViewById(R.id.costView);
+		if (view != null)
+			view.setText(data.getCost());
+
+		view = (EditText) findViewById(R.id.accomodationView);
+		if (view != null)
+			view.setText(data.getAccomodation());
+
+		/* Set event's reminders */
+		// view = (EditText) findViewById(R.id.reminder1);
+		// if (view != null)
+		// view.setText(data.getReminder1());
+		//
+		// view = (EditText) findViewById(R.id.reminder3);
+		// if (view != null)
+		// view.setText(data.getReminder2());
+		//
+		// view = (EditText) findViewById(R.id.reminder3);
+		// if (view != null)
+		// view.setText(data.getReminder3());
+
+		/* Set event's alarms */
+		// view = (EditText) findViewById(R.id.alarm1);
+		// if (view != null)
+		// view.setText(data.getAlarm1());
+		//
+		// view = (EditText) findViewById(R.id.alarm2);
+		// if (view != null)
+		// view.setText(data.getAlarm2());
+		//
+		// view = (EditText) findViewById(R.id.alarm3);
+		// if (view != null)
+		// view.setText(data.getAlarm3());
+
+	}
 }
