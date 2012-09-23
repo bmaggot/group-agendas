@@ -55,6 +55,7 @@ import com.groupagendas.groupagenda.events.Event;
 import com.groupagendas.groupagenda.events.EventsActivity;
 import com.groupagendas.groupagenda.events.EventsProvider;
 import com.groupagendas.groupagenda.events.NewEventActivity;
+import com.groupagendas.groupagenda.templates.TemplatesProvider;
 import com.groupagendas.groupagenda.utils.AgendaUtils;
 import com.groupagendas.groupagenda.utils.Utils;
 import com.ptashek.widgets.datetimepicker.DateTimePicker;
@@ -140,29 +141,20 @@ public class NavbarActivity extends Activity {
 					switch (loadPhase) {
 					case 0:
 						// Delete old data
-						getContentResolver()
-								.delete(AccountProvider.AMetaData.AccountMetaData.CONTENT_URI,
-										"", null);
-						getContentResolver()
-								.delete(ContactsProvider.CMetaData.ContactsMetaData.CONTENT_URI,
-										"", null);
-						getContentResolver()
-								.delete(ContactsProvider.CMetaData.GroupsMetaData.CONTENT_URI,
-										"", null);
-						getContentResolver()
-								.delete(EventsProvider.EMetaData.EventsMetaData.CONTENT_URI,
-										"", null);
-						getContentResolver()
-								.getType(
-										EventsProvider.EMetaData.EventsMetaData.CONTENT_URI);
+						getContentResolver().delete(AccountProvider.AMetaData.AccountMetaData.CONTENT_URI, "", null);
+						getContentResolver().delete(ContactsProvider.CMetaData.ContactsMetaData.CONTENT_URI, "", null);
+						getContentResolver().delete(ContactsProvider.CMetaData.GroupsMetaData.CONTENT_URI,"", null);
+						getContentResolver().delete(TemplatesProvider.TMetaData.TemplatesMetaData.CONTENT_URI, "", null);
+						getContentResolver().delete(EventsProvider.EMetaData.EventsMetaData.CONTENT_URI, "", null);
+						getContentResolver().getType(EventsProvider.EMetaData.EventsMetaData.CONTENT_URI);
 						Data.clearData();
 
 						loadPhase++;
-						total = 0;
+						total = 10;
 						publishProgress(total);
 					case 1: // Load account
 						dm.getAccountFromRemoteDb();
-						NativeCalendarImporter.readCalendar(dm.getContext());
+//						NativeCalendarImporter.readCalendar(dm.getmContext());
 						loadPhase++;
 						total = 20;
 						publishProgress(total);
@@ -174,16 +166,22 @@ public class NavbarActivity extends Activity {
 					case 3:// Load groups
 						dm.getGroupsFromRemoteDb();
 						loadPhase++;
-						total = 60;
+						total = 50;
 						publishProgress(total);
 
-					case 4: // Load events
+					case 4: // Load event templates
+						dm.getTemplates();
+						loadPhase++;
+						total = 60;
+						publishProgress(total);
+						
+					case 5: // Load events
 						dm.getEventsFromRemoteDb("");
 						loadPhase++;
 						total = 80;
 						publishProgress(total);
 
-					case 5: // Load chat threads
+					case 6: // Load chat threads
 						dm.getChatThreads();
 						loadPhase++;
 						total = 100;
@@ -203,19 +201,28 @@ public class NavbarActivity extends Activity {
 			progressDialog.setProgress(values[0]);
 			switch (values[0]) {
 			case 0:
-				progressDialog.setMessage(getString(R.string.loading_accaunt));
+				progressDialog.setMessage(getString(R.string.loading_data));
 				break;
-			case 40:
+			case 10:
+				progressDialog.setMessage(getString(R.string.loading_account));
+				break;
+			case 20:
 				progressDialog.setMessage(getString(R.string.loading_contacts));
 				break;
-			case 60:
+			case 40:
 				progressDialog.setMessage(getString(R.string.loading_groups));
 				break;
-			case 80:
+			case 50:
+				progressDialog.setMessage(getString(R.string.loading_templates));
+				break;
+			case 60:
 				progressDialog.setMessage(getString(R.string.loading_events));
 				break;
-			case 100:
+			case 80:
 				progressDialog.setMessage(getString(R.string.loading_chat));
+				break;
+			case 100:
+				progressDialog.setMessage(getString(R.string.loading_complete));
 				break;
 			}
 		}
@@ -267,7 +274,7 @@ public class NavbarActivity extends Activity {
 		// Intent intent = getIntent();
 		// if(intent.getBooleanExtra("load_data", false)){
 		// showDialog(PROGRESS_DIALOG);
-		// TODO
+		// TODO wtf is this shit?! (onCreate issue)
 		// DataManagement.updateAppData(5);
 		// }
 

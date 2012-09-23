@@ -153,7 +153,7 @@ public class EventActivity extends Activity {
 			return getString(R.string.title_is_required);
 		case 2: // no timezone set
 			return getString(R.string.timezone_required);
-		case 3: // calendar fields are null TODO
+		case 3: // calendar fields are null TODO add proper error texts.
 			return getString(R.string.invalid_start_end_time);
 		case 4: // event start is set after end
 			return getString(R.string.invalid_start_end_time);

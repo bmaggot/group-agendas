@@ -21,7 +21,6 @@ import com.groupagendas.groupagenda.calendar.adapters.AbstractAdapter;
  */
 public class TemplatesAdapter extends AbstractAdapter<TemplatesDialogData> {
 	/**
-	 * A constructor.
 	 * @author meska.lt@gmail.com
 	 * @param context Ð object of a present activity;
 	 * @param list Ð List of TemplatesDialogData objects.
@@ -31,6 +30,17 @@ public class TemplatesAdapter extends AbstractAdapter<TemplatesDialogData> {
 		super(context, list);
 	}
 
+	/**
+	 * Get a TextView containing template's title and ID in the tag.
+	 * 
+	 * Method inflates a custom layout, sets templates title as text and id as a tag.
+	 * 
+	 * @author meska.lt@gmail.com
+	 * @param i Ð Integer value of template title's index in the list of TemplaDialogData objects.
+	 * @param view Ð 
+	 * @param viewGroup Ð 
+	 * @return TextView object containing submited id matching template's title as a text and template id as a tag.
+	 */
 	@Override
 	public View getView(int i, View view, ViewGroup viewGroup) {
 		if (view == null) {

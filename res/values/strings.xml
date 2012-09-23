@@ -104,11 +104,13 @@
     <string name="accomodation">Accomodation</string>
     <string name="invite_people">Invite people</string>
     <string name="loading_data">Loading data…</string>
-    <string name="loading_accaunt">Loading Account info…</string>
+    <string name="loading_account">Loading Account info…</string>
     <string name="loading_contacts">Loading Contacts…</string>
     <string name="loading_groups">Loading Groups…</string>
     <string name="loading_events">Loading Events…</string>
     <string name="loading_chat">Loading Chat threads…</string>
+    <string name="loading_templates">Loading event templates…</string>
+    <string name="loading_complete">Loading complete</string>
     <string name="title_is_required">Title is required</string>
     <string name="invalid_start_end_time">Event end time must be later than start time</string>
     <string name="name_is_required">Name is required</string>

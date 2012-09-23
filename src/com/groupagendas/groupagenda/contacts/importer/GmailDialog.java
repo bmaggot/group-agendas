@@ -102,23 +102,7 @@ public class GmailDialog extends Dialog {
 		});
 	}
 
-//	protected void onResume() {
-//		if (Data.returnedFromContactAuth) {
-//			Data.returnedFromContactAuth = false;
-//			
-//			if (isOAuthSuccessful()) {
-//	    		console.setText("Authentication was successful, try getting the contacts");
-//	    	} else {
-//	    		console.setText("You aren't authenticated. Click on the authentication button.");
-//	    	}
-//			
-//		} else if (Data.returnedFromContactImport){
-//			console.setText(R.string.contact_import_dialog_finished_gimp);
-//		}
-//		
-//		super.onResume();
-//	}
-
+	// TODO DOCUMENTATION ON CLEAR CREDENTIALS
 	private void clearCredentials() {
 		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
 		final Editor edit = prefs.edit();
@@ -127,6 +111,7 @@ public class GmailDialog extends Dialog {
 		edit.commit();
 	}
 
+	// TODO DOCUMENTATION ON ISOAUTHSUCCESSFUL
 	public static boolean isOAuthSuccessful() {
 		String token = prefs.getString(OAuth.OAUTH_TOKEN, null);
 		String secret = prefs.getString(OAuth.OAUTH_TOKEN_SECRET, null);
@@ -136,6 +121,7 @@ public class GmailDialog extends Dialog {
 			return false;
 	}
 
+	// TODO DOCUMENTATION ON GET CONTACTS
 	private int[] getContacts() {
 		String jsonOutput = "";
 		int[] importStats = new int[3];
@@ -155,7 +141,7 @@ public class GmailDialog extends Dialog {
 			for (int i = 0; i < totalEntries; i++) {
 				Contact tempContact = new Contact();
 				JSONObject entry = entries.getJSONObject(i);
-				// TODO YEAH-BAT'! HARDCODE CATCH 'EM ALL, bleat'.
+
 				try {
 					JSONObject fullName = entry.getJSONObject("gd$name");
 
@@ -338,9 +324,10 @@ public class GmailDialog extends Dialog {
 	}
 
 	/**
-	 * @author meska
 	 * This is a private class for embedding networking process which stores imported contact
 	 * in remote database. 
+	 * 
+	 * @author meska.lt@gmail.com
 	 */
 	private class createContactTask extends AsyncTask<Object, Void, Boolean> {
 		@Override
