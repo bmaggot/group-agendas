@@ -8,10 +8,14 @@ package com.groupagendas.groupagenda.data;
 
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.util.TimeZone;
 
 import com.groupagendas.groupagenda.account.Account;
 
 public class CalendarSettings {
+	
+	private static String DEFAULT_TIMEZONE = TimeZone.getDefault().toString();
+	
 	
 	public static final int[] DEFAULT_WEEKENDS = {1,7};
 	
@@ -33,6 +37,11 @@ public class CalendarSettings {
 //		TODO get weekends from account settings
 		return DEFAULT_WEEKENDS;
 	}	
+	
+	public static String getTimeZone(){
+		if (Data.getAccount() == null) return DEFAULT_TIMEZONE;
+		return Data.getAccount().timezone;		
+	}
 
 	public static boolean isUsing_AM_PM() {
 		if (Data.getAccount() == null) return DEFAULT_AM_PM_SETTING;
