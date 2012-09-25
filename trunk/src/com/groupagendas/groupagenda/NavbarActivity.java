@@ -183,6 +183,7 @@ public class NavbarActivity extends Activity {
 
 					case 6: // Load chat threads
 						dm.getChatThreads();
+						dm.getAddressesFromRemoteDb();
 						loadPhase++;
 						total = 100;
 						publishProgress(total);
