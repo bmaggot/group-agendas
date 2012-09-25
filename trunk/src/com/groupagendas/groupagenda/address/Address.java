@@ -6,7 +6,7 @@ public class Address {
 	private String title;
 	private String street;
 	private String city;
-	private int zip;
+	private String zip;
 	private String state;
 	private String country;
 	private String timezone;
@@ -41,10 +41,10 @@ public class Address {
 	public void setCity(String city) {
 		this.city = city;
 	}
-	public int getZip() {
+	public String getZip() {
 		return zip;
 	}
-	public void setZip(int zip) {
+	public void setZip(String zip) {
 		this.zip = zip;
 	}
 	public String getState() {

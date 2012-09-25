@@ -52,6 +52,8 @@ import com.groupagendas.groupagenda.NavbarActivity;
 import com.groupagendas.groupagenda.R;
 import com.groupagendas.groupagenda.account.Account;
 import com.groupagendas.groupagenda.account.AccountProvider;
+import com.groupagendas.groupagenda.address.Address;
+import com.groupagendas.groupagenda.address.AddressProvider.AMetaData.AddressesMetaData;
 import com.groupagendas.groupagenda.chat.ChatMessageObject;
 import com.groupagendas.groupagenda.chat.ChatThreadObject;
 import com.groupagendas.groupagenda.contacts.Contact;
@@ -77,23 +79,20 @@ public class DataManagement {
 	public static boolean networkAvailable = true;
 	public static boolean eventStatusChanged = false;
 	public static ArrayList<Event> contactsBirthdays = new ArrayList<Event>();
-	
-	
+
 	public static final String SERVER_TIMESTAMP_FORMAT = "yyyy-MM-dd HH:mm:ss";
 	public static final String ACCOUNT_BIRTHDATE_TIMESTAMP_FORMAT = "yyyy-MM-dd";
-	
+
 	private static final long SECONDS_PER_DAY = 24 * 60 * 60;
 	private static final long MILLISECONDS_PER_DAY = SECONDS_PER_DAY * 1000;
-	
+
 	private static final String GET_EVENTS_FROM_REMOTE_DB_URL = "mobile/events_list";
 	private static final String TOKEN = "token";
 	private static final String CATEGORY = "category";
-	
 
 	private DataManagement(Context c) {
 		Data.setPrefs(new Prefs(c));
-		Data.set_prefs(c.getSharedPreferences("PREFS_PRIVATE",
-				Context.MODE_PRIVATE));
+		Data.set_prefs(c.getSharedPreferences("PREFS_PRIVATE", Context.MODE_PRIVATE));
 		Data.setmContext(c);
 		resolver = c.getContentResolver();
 	}
@@ -115,17 +114,12 @@ public class DataManagement {
 
 		try {
 			HttpClient hc = new DefaultHttpClient();
-			HttpPost post = new HttpPost(Data.getServerUrl()
-					+ "mobile/account_edit");
+			HttpPost post = new HttpPost(Data.getServerUrl() + "mobile/account_edit");
 
-			MultipartEntity reqEntity = new MultipartEntity(
-					HttpMultipartMode.BROWSER_COMPATIBLE);
+			MultipartEntity reqEntity = new MultipartEntity(HttpMultipartMode.BROWSER_COMPATIBLE);
 			reqEntity.addPart(TOKEN, new StringBody(Data.getToken()));
 
-			reqEntity.addPart(
-					"lastname",
-					new StringBody(account.fullname.replace(account.name + " ",
-							"")));
+			reqEntity.addPart("lastname", new StringBody(account.fullname.replace(account.name + " ", "")));
 			reqEntity.addPart("name", new StringBody(account.name));
 
 			reqEntity.addPart("birthdate", new StringBody(account.birthdate));
@@ -154,46 +148,37 @@ public class DataManagement {
 						JSONObject object = new JSONObject(resp);
 						success = object.getBoolean("success");
 						if (!success) {
-							Log.e("Change account ERROR",
-									object.getJSONObject("error").getString(
-											"reason"));
+							Log.e("Change account ERROR", object.getJSONObject("error").getString("reason"));
 						}
 					}
 				}
 			} else {
-				OfflineData uplooad = new OfflineData("mobile/account_edit",
-						reqEntity);
+				OfflineData uplooad = new OfflineData("mobile/account_edit", reqEntity);
 				Data.getUnuploadedData().add(uplooad);
 			}
 
 		} catch (Exception ex) {
 			Data.setERROR(ex.getMessage());
-			Reporter.reportError(this.getClass().toString(), Thread
-					.currentThread().getStackTrace()[2].getMethodName()
-					.toString(), ex.getMessage());
+			Reporter.reportError(this.getClass().toString(), Thread.currentThread().getStackTrace()[2].getMethodName().toString(),
+					ex.getMessage());
 		}
 
 		// image
 		try {
 			HttpClient hc = new DefaultHttpClient();
-			HttpPost post = new HttpPost(Data.getServerUrl()
-					+ "mobile/account_image");
+			HttpPost post = new HttpPost(Data.getServerUrl() + "mobile/account_image");
 
-			MultipartEntity reqEntity = new MultipartEntity(
-					HttpMultipartMode.BROWSER_COMPATIBLE);
+			MultipartEntity reqEntity = new MultipartEntity(HttpMultipartMode.BROWSER_COMPATIBLE);
 			reqEntity.addPart(TOKEN, new StringBody(Data.getToken()));
 
 			if (removeImage == false) {
 				if (account.image_bytes != null) {
-					ByteArrayBody bab = new ByteArrayBody(account.image_bytes,
-							"image");
+					ByteArrayBody bab = new ByteArrayBody(account.image_bytes, "image");
 					reqEntity.addPart("image", bab);
 				}
-				reqEntity.addPart("remove_image",
-						new StringBody(String.valueOf("0")));
+				reqEntity.addPart("remove_image", new StringBody(String.valueOf("0")));
 			} else {
-				reqEntity.addPart("remove_image",
-						new StringBody(String.valueOf("1")));
+				reqEntity.addPart("remove_image", new StringBody(String.valueOf("1")));
 			}
 
 			post.setEntity(reqEntity);
@@ -206,22 +191,19 @@ public class DataManagement {
 						JSONObject object = new JSONObject(resp);
 						success = object.getBoolean("success");
 						if (!success) {
-							Log.e("Change account image ERROR", object
-									.getJSONObject("error").getString("reason"));
+							Log.e("Change account image ERROR", object.getJSONObject("error").getString("reason"));
 						}
 					}
 				}
 			} else {
-				OfflineData uplooad = new OfflineData("mobile/account_image",
-						reqEntity);
+				OfflineData uplooad = new OfflineData("mobile/account_image", reqEntity);
 				Data.getUnuploadedData().add(uplooad);
 			}
 
 		} catch (Exception ex) {
 			Data.setERROR(ex.getMessage());
-			Reporter.reportError(this.getClass().toString(), Thread
-					.currentThread().getStackTrace()[2].getMethodName()
-					.toString(), ex.getMessage());
+			Reporter.reportError(this.getClass().toString(), Thread.currentThread().getStackTrace()[2].getMethodName().toString(),
+					ex.getMessage());
 		}
 		return success;
 	}
@@ -232,11 +214,9 @@ public class DataManagement {
 
 		try {
 			HttpClient hc = new DefaultHttpClient();
-			HttpPost post = new HttpPost(Data.getServerUrl()
-					+ "mobile/account_get");
+			HttpPost post = new HttpPost(Data.getServerUrl() + "mobile/account_get");
 
-			MultipartEntity reqEntity = new MultipartEntity(
-					HttpMultipartMode.BROWSER_COMPATIBLE);
+			MultipartEntity reqEntity = new MultipartEntity(HttpMultipartMode.BROWSER_COMPATIBLE);
 
 			reqEntity.addPart(TOKEN, new StringBody(Data.getToken()));
 			post.setEntity(reqEntity);
@@ -257,397 +237,275 @@ public class DataManagement {
 
 						try {
 							u.user_id = profile.getInt("user_id");
-							cv.put(AccountProvider.AMetaData.AccountMetaData.A_ID,
-									u.user_id);
+							cv.put(AccountProvider.AMetaData.AccountMetaData.A_ID, u.user_id);
 						} catch (JSONException e) {
-							Reporter.reportError(this.getClass().toString(),
-									Thread.currentThread().getStackTrace()[2]
-											.getMethodName().toString(), e
-											.getMessage());
+							Reporter.reportError(this.getClass().toString(), Thread.currentThread().getStackTrace()[2].getMethodName()
+									.toString(), e.getMessage());
 						}
 
 						try {
 							u.name = profile.getString("name");
-							cv.put(AccountProvider.AMetaData.AccountMetaData.NAME,
-									u.name);
+							cv.put(AccountProvider.AMetaData.AccountMetaData.NAME, u.name);
 						} catch (JSONException e) {
-							Reporter.reportError(this.getClass().toString(),
-									Thread.currentThread().getStackTrace()[2]
-											.getMethodName().toString(), e
-											.getMessage());
+							Reporter.reportError(this.getClass().toString(), Thread.currentThread().getStackTrace()[2].getMethodName()
+									.toString(), e.getMessage());
 						}
 						try {
 							u.lastname = profile.getString("lastname");
-							cv.put(AccountProvider.AMetaData.AccountMetaData.LASTNAME,
-									u.lastname);
+							cv.put(AccountProvider.AMetaData.AccountMetaData.LASTNAME, u.lastname);
 						} catch (JSONException e) {
-							Reporter.reportError(this.getClass().toString(),
-									Thread.currentThread().getStackTrace()[2]
-											.getMethodName().toString(), e
-											.getMessage());
+							Reporter.reportError(this.getClass().toString(), Thread.currentThread().getStackTrace()[2].getMethodName()
+									.toString(), e.getMessage());
 						}
 						try {
 							u.fullname = profile.getString("fullname");
-							cv.put(AccountProvider.AMetaData.AccountMetaData.FULLNAME,
-									u.fullname);
+							cv.put(AccountProvider.AMetaData.AccountMetaData.FULLNAME, u.fullname);
 						} catch (JSONException e) {
-							Reporter.reportError(this.getClass().toString(),
-									Thread.currentThread().getStackTrace()[2]
-											.getMethodName().toString(), e
-											.getMessage());
+							Reporter.reportError(this.getClass().toString(), Thread.currentThread().getStackTrace()[2].getMethodName()
+									.toString(), e.getMessage());
 						}
 
 						try {
 							u.birthdate = profile.getString("birthdate");
-							cv.put(AccountProvider.AMetaData.AccountMetaData.BIRTHDATE,
-									u.birthdate);
+							cv.put(AccountProvider.AMetaData.AccountMetaData.BIRTHDATE, u.birthdate);
 						} catch (JSONException e) {
-							Reporter.reportError(this.getClass().toString(),
-									Thread.currentThread().getStackTrace()[2]
-											.getMethodName().toString(), e
-											.getMessage());
+							Reporter.reportError(this.getClass().toString(), Thread.currentThread().getStackTrace()[2].getMethodName()
+									.toString(), e.getMessage());
 						}
 						try {
 							u.sex = profile.getString("sex");
-							cv.put(AccountProvider.AMetaData.AccountMetaData.SEX,
-									u.sex);
+							cv.put(AccountProvider.AMetaData.AccountMetaData.SEX, u.sex);
 						} catch (JSONException e) {
-							Reporter.reportError(this.getClass().toString(),
-									Thread.currentThread().getStackTrace()[2]
-											.getMethodName().toString(), e
-											.getMessage());
+							Reporter.reportError(this.getClass().toString(), Thread.currentThread().getStackTrace()[2].getMethodName()
+									.toString(), e.getMessage());
 						}
 
 						try {
 							u.email = profile.getString("email");
-							cv.put(AccountProvider.AMetaData.AccountMetaData.EMAIL,
-									u.email);
+							cv.put(AccountProvider.AMetaData.AccountMetaData.EMAIL, u.email);
 						} catch (JSONException e) {
-							Reporter.reportError(this.getClass().toString(),
-									Thread.currentThread().getStackTrace()[2]
-											.getMethodName().toString(), e
-											.getMessage());
+							Reporter.reportError(this.getClass().toString(), Thread.currentThread().getStackTrace()[2].getMethodName()
+									.toString(), e.getMessage());
 						}
 						try {
 							u.email2 = profile.getString("email2");
-							cv.put(AccountProvider.AMetaData.AccountMetaData.EMAIL2,
-									u.email2);
+							cv.put(AccountProvider.AMetaData.AccountMetaData.EMAIL2, u.email2);
 						} catch (JSONException e) {
-							Reporter.reportError(this.getClass().toString(),
-									Thread.currentThread().getStackTrace()[2]
-											.getMethodName().toString(), e
-											.getMessage());
+							Reporter.reportError(this.getClass().toString(), Thread.currentThread().getStackTrace()[2].getMethodName()
+									.toString(), e.getMessage());
 						}
 						try {
 							u.email3 = profile.getString("email3");
-							cv.put(AccountProvider.AMetaData.AccountMetaData.EMAIL3,
-									u.email3);
+							cv.put(AccountProvider.AMetaData.AccountMetaData.EMAIL3, u.email3);
 						} catch (JSONException e) {
-							Reporter.reportError(this.getClass().toString(),
-									Thread.currentThread().getStackTrace()[2]
-											.getMethodName().toString(), e
-											.getMessage());
+							Reporter.reportError(this.getClass().toString(), Thread.currentThread().getStackTrace()[2].getMethodName()
+									.toString(), e.getMessage());
 						}
 						try {
 							u.email4 = profile.getString("email4");
-							cv.put(AccountProvider.AMetaData.AccountMetaData.EMAIL4,
-									u.email4);
+							cv.put(AccountProvider.AMetaData.AccountMetaData.EMAIL4, u.email4);
 						} catch (JSONException e) {
-							Reporter.reportError(this.getClass().toString(),
-									Thread.currentThread().getStackTrace()[2]
-											.getMethodName().toString(), e
-											.getMessage());
+							Reporter.reportError(this.getClass().toString(), Thread.currentThread().getStackTrace()[2].getMethodName()
+									.toString(), e.getMessage());
 						}
 						try {
 							u.phone1 = profile.getString("phone1");
-							cv.put(AccountProvider.AMetaData.AccountMetaData.PHONE1,
-									u.phone1);
+							cv.put(AccountProvider.AMetaData.AccountMetaData.PHONE1, u.phone1);
 						} catch (JSONException e) {
-							Reporter.reportError(this.getClass().toString(),
-									Thread.currentThread().getStackTrace()[2]
-											.getMethodName().toString(), e
-											.getMessage());
+							Reporter.reportError(this.getClass().toString(), Thread.currentThread().getStackTrace()[2].getMethodName()
+									.toString(), e.getMessage());
 						}
 						try {
 							u.phone2 = profile.getString("phone2");
-							cv.put(AccountProvider.AMetaData.AccountMetaData.PHONE2,
-									u.phone2);
+							cv.put(AccountProvider.AMetaData.AccountMetaData.PHONE2, u.phone2);
 						} catch (JSONException e) {
-							Reporter.reportError(this.getClass().toString(),
-									Thread.currentThread().getStackTrace()[2]
-											.getMethodName().toString(), e
-											.getMessage());
+							Reporter.reportError(this.getClass().toString(), Thread.currentThread().getStackTrace()[2].getMethodName()
+									.toString(), e.getMessage());
 						}
 						try {
 							u.phone3 = profile.getString("phone3");
-							cv.put(AccountProvider.AMetaData.AccountMetaData.PHONE3,
-									u.phone3);
+							cv.put(AccountProvider.AMetaData.AccountMetaData.PHONE3, u.phone3);
 						} catch (JSONException e) {
-							Reporter.reportError(this.getClass().toString(),
-									Thread.currentThread().getStackTrace()[2]
-											.getMethodName().toString(), e
-											.getMessage());
+							Reporter.reportError(this.getClass().toString(), Thread.currentThread().getStackTrace()[2].getMethodName()
+									.toString(), e.getMessage());
 						}
 
 						try {
 							u.image = profile.getBoolean("image");
-							cv.put(AccountProvider.AMetaData.AccountMetaData.IMAGE,
-									u.image);
+							cv.put(AccountProvider.AMetaData.AccountMetaData.IMAGE, u.image);
 						} catch (JSONException e) {
-							Reporter.reportError(this.getClass().toString(),
-									Thread.currentThread().getStackTrace()[2]
-											.getMethodName().toString(), e
-											.getMessage());
+							Reporter.reportError(this.getClass().toString(), Thread.currentThread().getStackTrace()[2].getMethodName()
+									.toString(), e.getMessage());
 						}
 						try {
 							u.image_url = profile.getString("image_url");
-							cv.put(AccountProvider.AMetaData.AccountMetaData.IMAGE_URL,
-									u.image_url);
+							cv.put(AccountProvider.AMetaData.AccountMetaData.IMAGE_URL, u.image_url);
 
 							u.image_bytes = imageToBytes(u.image_url);
-							cv.put(AccountProvider.AMetaData.AccountMetaData.IMAGE_BYTES,
-									u.image_bytes);
+							cv.put(AccountProvider.AMetaData.AccountMetaData.IMAGE_BYTES, u.image_bytes);
 						} catch (JSONException e) {
-							Reporter.reportError(this.getClass().toString(),
-									Thread.currentThread().getStackTrace()[2]
-											.getMethodName().toString(), e
-											.getMessage());
+							Reporter.reportError(this.getClass().toString(), Thread.currentThread().getStackTrace()[2].getMethodName()
+									.toString(), e.getMessage());
 						}
 						try {
-							u.image_thumb_url = profile
-									.getString("image_thumb_url");
-							cv.put(AccountProvider.AMetaData.AccountMetaData.IMAGE_THUMB_URL,
-									u.image_thumb_url);
+							u.image_thumb_url = profile.getString("image_thumb_url");
+							cv.put(AccountProvider.AMetaData.AccountMetaData.IMAGE_THUMB_URL, u.image_thumb_url);
 						} catch (JSONException e) {
-							Reporter.reportError(this.getClass().toString(),
-									Thread.currentThread().getStackTrace()[2]
-											.getMethodName().toString(), e
-											.getMessage());
+							Reporter.reportError(this.getClass().toString(), Thread.currentThread().getStackTrace()[2].getMethodName()
+									.toString(), e.getMessage());
 						}
 
 						try {
 							u.country = profile.getString("country");
-							cv.put(AccountProvider.AMetaData.AccountMetaData.COUNTRY,
-									u.country);
+							cv.put(AccountProvider.AMetaData.AccountMetaData.COUNTRY, u.country);
 						} catch (JSONException e) {
-							Reporter.reportError(this.getClass().toString(),
-									Thread.currentThread().getStackTrace()[2]
-											.getMethodName().toString(), e
-											.getMessage());
+							Reporter.reportError(this.getClass().toString(), Thread.currentThread().getStackTrace()[2].getMethodName()
+									.toString(), e.getMessage());
 						}
 						try {
 							u.city = profile.getString("city");
-							cv.put(AccountProvider.AMetaData.AccountMetaData.CITY,
-									u.city);
+							cv.put(AccountProvider.AMetaData.AccountMetaData.CITY, u.city);
 						} catch (JSONException e) {
-							Reporter.reportError(this.getClass().toString(),
-									Thread.currentThread().getStackTrace()[2]
-											.getMethodName().toString(), e
-											.getMessage());
+							Reporter.reportError(this.getClass().toString(), Thread.currentThread().getStackTrace()[2].getMethodName()
+									.toString(), e.getMessage());
 						}
 						try {
 							u.street = profile.getString("street");
-							cv.put(AccountProvider.AMetaData.AccountMetaData.STREET,
-									u.street);
+							cv.put(AccountProvider.AMetaData.AccountMetaData.STREET, u.street);
 						} catch (JSONException e) {
-							Reporter.reportError(this.getClass().toString(),
-									Thread.currentThread().getStackTrace()[2]
-											.getMethodName().toString(), e
-											.getMessage());
+							Reporter.reportError(this.getClass().toString(), Thread.currentThread().getStackTrace()[2].getMethodName()
+									.toString(), e.getMessage());
 						}
 						try {
 							u.zip = profile.getString("zip");
-							cv.put(AccountProvider.AMetaData.AccountMetaData.ZIP,
-									u.zip);
+							cv.put(AccountProvider.AMetaData.AccountMetaData.ZIP, u.zip);
 						} catch (JSONException e) {
-							Reporter.reportError(this.getClass().toString(),
-									Thread.currentThread().getStackTrace()[2]
-											.getMethodName().toString(), e
-											.getMessage());
+							Reporter.reportError(this.getClass().toString(), Thread.currentThread().getStackTrace()[2].getMethodName()
+									.toString(), e.getMessage());
 						}
 
 						try {
 							u.timezone = profile.getString("timezone");
-							cv.put(AccountProvider.AMetaData.AccountMetaData.TIMEZONE,
-									u.timezone);
+							cv.put(AccountProvider.AMetaData.AccountMetaData.TIMEZONE, u.timezone);
 						} catch (JSONException e) {
-							Reporter.reportError(this.getClass().toString(),
-									Thread.currentThread().getStackTrace()[2]
-											.getMethodName().toString(), e
-											.getMessage());
+							Reporter.reportError(this.getClass().toString(), Thread.currentThread().getStackTrace()[2].getMethodName()
+									.toString(), e.getMessage());
 						}
 						try {
 							u.local_time = profile.getString("local_time");
-							cv.put(AccountProvider.AMetaData.AccountMetaData.LOCAL_TIME,
-									u.local_time);
+							cv.put(AccountProvider.AMetaData.AccountMetaData.LOCAL_TIME, u.local_time);
 						} catch (JSONException e) {
-							Reporter.reportError(this.getClass().toString(),
-									Thread.currentThread().getStackTrace()[2]
-											.getMethodName().toString(), e
-											.getMessage());
+							Reporter.reportError(this.getClass().toString(), Thread.currentThread().getStackTrace()[2].getMethodName()
+									.toString(), e.getMessage());
 						}
 						try {
 							u.language = profile.getString("language");
-							cv.put(AccountProvider.AMetaData.AccountMetaData.LANGUAGE,
-									u.language);
+							cv.put(AccountProvider.AMetaData.AccountMetaData.LANGUAGE, u.language);
 						} catch (JSONException e) {
-							Reporter.reportError(this.getClass().toString(),
-									Thread.currentThread().getStackTrace()[2]
-											.getMethodName().toString(), e
-											.getMessage());
+							Reporter.reportError(this.getClass().toString(), Thread.currentThread().getStackTrace()[2].getMethodName()
+									.toString(), e.getMessage());
 						}
 
 						try {
-							u.setting_default_view = profile
-									.getString("setting_default_view");
-							cv.put(AccountProvider.AMetaData.AccountMetaData.SETTING_DEFAULT_VIEW,
-									u.setting_default_view);
+							u.setting_default_view = profile.getString("setting_default_view");
+							cv.put(AccountProvider.AMetaData.AccountMetaData.SETTING_DEFAULT_VIEW, u.setting_default_view);
 						} catch (JSONException e) {
-							Reporter.reportError(this.getClass().toString(),
-									Thread.currentThread().getStackTrace()[2]
-											.getMethodName().toString(), e
-											.getMessage());
+							Reporter.reportError(this.getClass().toString(), Thread.currentThread().getStackTrace()[2].getMethodName()
+									.toString(), e.getMessage());
 						}
 						try {
-							u.setting_date_format = profile
-									.getString("setting_date_format");
-							cv.put(AccountProvider.AMetaData.AccountMetaData.SETTING_DATE_FORMAT,
-									u.setting_date_format);
+							u.setting_date_format = profile.getString("setting_date_format");
+							cv.put(AccountProvider.AMetaData.AccountMetaData.SETTING_DATE_FORMAT, u.setting_date_format);
 						} catch (JSONException e) {
-							Reporter.reportError(this.getClass().toString(),
-									Thread.currentThread().getStackTrace()[2]
-											.getMethodName().toString(), e
-											.getMessage());
+							Reporter.reportError(this.getClass().toString(), Thread.currentThread().getStackTrace()[2].getMethodName()
+									.toString(), e.getMessage());
 						}
 						try {
 							u.setting_ampm = profile.getInt("setting_ampm");
-							cv.put(AccountProvider.AMetaData.AccountMetaData.SETTING_AMPM,
-									u.setting_ampm);
+							cv.put(AccountProvider.AMetaData.AccountMetaData.SETTING_AMPM, u.setting_ampm);
 						} catch (JSONException e) {
-							Reporter.reportError(this.getClass().toString(),
-									Thread.currentThread().getStackTrace()[2]
-											.getMethodName().toString(), e
-											.getMessage());
+							Reporter.reportError(this.getClass().toString(), Thread.currentThread().getStackTrace()[2].getMethodName()
+									.toString(), e.getMessage());
 						}
 
 						try {
-							u.google_calendar_link = profile
-									.getString("google_calendar_link");
-							cv.put(AccountProvider.AMetaData.AccountMetaData.GOOGLE_CALENDAR_LINK,
-									u.google_calendar_link);
+							u.google_calendar_link = profile.getString("google_calendar_link");
+							cv.put(AccountProvider.AMetaData.AccountMetaData.GOOGLE_CALENDAR_LINK, u.google_calendar_link);
 						} catch (JSONException e) {
-							Reporter.reportError(this.getClass().toString(),
-									Thread.currentThread().getStackTrace()[2]
-											.getMethodName().toString(), e
-											.getMessage());
+							Reporter.reportError(this.getClass().toString(), Thread.currentThread().getStackTrace()[2].getMethodName()
+									.toString(), e.getMessage());
 						}
 
 						try {
-							u.color_my_event = profile
-									.getString("color_my_event");
-							cv.put(AccountProvider.AMetaData.AccountMetaData.COLOR_MY_EVENT,
-									u.color_my_event);
+							u.color_my_event = profile.getString("color_my_event");
+							cv.put(AccountProvider.AMetaData.AccountMetaData.COLOR_MY_EVENT, u.color_my_event);
 						} catch (JSONException e) {
-							Reporter.reportError(this.getClass().toString(),
-									Thread.currentThread().getStackTrace()[2]
-											.getMethodName().toString(), e
-											.getMessage());
+							Reporter.reportError(this.getClass().toString(), Thread.currentThread().getStackTrace()[2].getMethodName()
+									.toString(), e.getMessage());
 						}
 						try {
-							u.color_attending = profile
-									.getString("color_attending");
-							cv.put(AccountProvider.AMetaData.AccountMetaData.COLOR_ATTENDING,
-									u.color_attending);
+							u.color_attending = profile.getString("color_attending");
+							cv.put(AccountProvider.AMetaData.AccountMetaData.COLOR_ATTENDING, u.color_attending);
 						} catch (JSONException e) {
-							Reporter.reportError(this.getClass().toString(),
-									Thread.currentThread().getStackTrace()[2]
-											.getMethodName().toString(), e
-											.getMessage());
+							Reporter.reportError(this.getClass().toString(), Thread.currentThread().getStackTrace()[2].getMethodName()
+									.toString(), e.getMessage());
 						}
 						try {
-							u.color_pending = profile
-									.getString("color_pending");
-							cv.put(AccountProvider.AMetaData.AccountMetaData.COLOR_PENDING,
-									u.color_pending);
+							u.color_pending = profile.getString("color_pending");
+							cv.put(AccountProvider.AMetaData.AccountMetaData.COLOR_PENDING, u.color_pending);
 						} catch (JSONException e) {
-							Reporter.reportError(this.getClass().toString(),
-									Thread.currentThread().getStackTrace()[2]
-											.getMethodName().toString(), e
-											.getMessage());
+							Reporter.reportError(this.getClass().toString(), Thread.currentThread().getStackTrace()[2].getMethodName()
+									.toString(), e.getMessage());
 						}
 						try {
-							u.color_invitation = profile
-									.getString("color_invitation");
-							cv.put(AccountProvider.AMetaData.AccountMetaData.COLOR_INVINTATION,
-									u.color_invitation);
+							u.color_invitation = profile.getString("color_invitation");
+							cv.put(AccountProvider.AMetaData.AccountMetaData.COLOR_INVINTATION, u.color_invitation);
 						} catch (JSONException e) {
-							Reporter.reportError(this.getClass().toString(),
-									Thread.currentThread().getStackTrace()[2]
-											.getMethodName().toString(), e
-											.getMessage());
+							Reporter.reportError(this.getClass().toString(), Thread.currentThread().getStackTrace()[2].getMethodName()
+									.toString(), e.getMessage());
 						}
 						try {
 							u.color_notes = profile.getString("color_notes");
-							cv.put(AccountProvider.AMetaData.AccountMetaData.COLOR_NOTES,
-									u.color_notes);
+							cv.put(AccountProvider.AMetaData.AccountMetaData.COLOR_NOTES, u.color_notes);
 						} catch (JSONException e) {
-							Reporter.reportError(this.getClass().toString(),
-									Thread.currentThread().getStackTrace()[2]
-											.getMethodName().toString(), e
-											.getMessage());
+							Reporter.reportError(this.getClass().toString(), Thread.currentThread().getStackTrace()[2].getMethodName()
+									.toString(), e.getMessage());
 						}
 						try {
-							u.color_birthday = profile
-									.getString("color_birthday");
-							cv.put(AccountProvider.AMetaData.AccountMetaData.COLOR_BIRTHDAY,
-									u.color_birthday);
+							u.color_birthday = profile.getString("color_birthday");
+							cv.put(AccountProvider.AMetaData.AccountMetaData.COLOR_BIRTHDAY, u.color_birthday);
 						} catch (JSONException e) {
-							Reporter.reportError(this.getClass().toString(),
-									Thread.currentThread().getStackTrace()[2]
-											.getMethodName().toString(), e
-											.getMessage());
+							Reporter.reportError(this.getClass().toString(), Thread.currentThread().getStackTrace()[2].getMethodName()
+									.toString(), e.getMessage());
 						}
 
 						try {
 							u.created = profile.getString("created");
-							cv.put(AccountProvider.AMetaData.AccountMetaData.CREATED,
-									u.created);
+							cv.put(AccountProvider.AMetaData.AccountMetaData.CREATED, u.created);
 						} catch (JSONException e) {
-							Reporter.reportError(this.getClass().toString(),
-									Thread.currentThread().getStackTrace()[2]
-											.getMethodName().toString(), e
-											.getMessage());
+							Reporter.reportError(this.getClass().toString(), Thread.currentThread().getStackTrace()[2].getMethodName()
+									.toString(), e.getMessage());
 						}
 						try {
 							u.modified = profile.getString("modified");
-							cv.put(AccountProvider.AMetaData.AccountMetaData.MODIFIED,
-									u.modified);
+							cv.put(AccountProvider.AMetaData.AccountMetaData.MODIFIED, u.modified);
 						} catch (JSONException e) {
-							Reporter.reportError(this.getClass().toString(),
-									Thread.currentThread().getStackTrace()[2]
-											.getMethodName().toString(), e
-											.getMessage());
+							Reporter.reportError(this.getClass().toString(), Thread.currentThread().getStackTrace()[2].getMethodName()
+									.toString(), e.getMessage());
 						}
 
-						Data.getmContext()
-								.getContentResolver()
-								.insert(AccountProvider.AMetaData.AccountMetaData.CONTENT_URI,
-										cv);
+						Data.getmContext().getContentResolver().insert(AccountProvider.AMetaData.AccountMetaData.CONTENT_URI, cv);
 
 					} else {
-						Data.setERROR(object.getJSONObject("error").getString(
-								"reason"));
-						Reporter.reportError(this.getClass().toString(), Thread
-								.currentThread().getStackTrace()[2]
-								.getMethodName().toString(), object
-								.getJSONObject("error").getString("reason"));
+						Data.setERROR(object.getJSONObject("error").getString("reason"));
+						Reporter.reportError(this.getClass().toString(), Thread.currentThread().getStackTrace()[2].getMethodName()
+								.toString(), object.getJSONObject("error").getString("reason"));
 					}
 				}
 			}
 		} catch (Exception ex) {
-			Reporter.reportError(this.getClass().toString(), Thread
-					.currentThread().getStackTrace()[2].getMethodName()
-					.toString(), ex.getMessage());
+			Reporter.reportError(this.getClass().toString(), Thread.currentThread().getStackTrace()[2].getMethodName().toString(),
+					ex.getMessage());
 		}
 		Data.setAccount(u);
 		Data.setLoadAccountData(false);
@@ -657,153 +515,76 @@ public class DataManagement {
 	public Account getAccountFromLocalDb() {
 		Account u = null;
 
-		Cursor result = Data
-				.getmContext()
-				.getContentResolver()
-				.query(AccountProvider.AMetaData.AccountMetaData.CONTENT_URI,
-						null, null, null, null);
+		Cursor result = Data.getmContext().getContentResolver()
+				.query(AccountProvider.AMetaData.AccountMetaData.CONTENT_URI, null, null, null, null);
 
 		if (result.moveToFirst()) {
 			u = new Account();
 
-			u.user_id = result
-					.getInt(result
-							.getColumnIndex(AccountProvider.AMetaData.AccountMetaData.A_ID));
+			u.user_id = result.getInt(result.getColumnIndex(AccountProvider.AMetaData.AccountMetaData.A_ID));
 
-			u.name = result
-					.getString(result
-							.getColumnIndex(AccountProvider.AMetaData.AccountMetaData.NAME));
-			u.fullname = result
-					.getString(result
-							.getColumnIndex(AccountProvider.AMetaData.AccountMetaData.FULLNAME));
+			u.name = result.getString(result.getColumnIndex(AccountProvider.AMetaData.AccountMetaData.NAME));
+			u.fullname = result.getString(result.getColumnIndex(AccountProvider.AMetaData.AccountMetaData.FULLNAME));
 
-			u.birthdate = result
-					.getString(result
-							.getColumnIndex(AccountProvider.AMetaData.AccountMetaData.BIRTHDATE));
-			u.sex = result
-					.getString(result
-							.getColumnIndex(AccountProvider.AMetaData.AccountMetaData.SEX));
+			u.birthdate = result.getString(result.getColumnIndex(AccountProvider.AMetaData.AccountMetaData.BIRTHDATE));
+			u.sex = result.getString(result.getColumnIndex(AccountProvider.AMetaData.AccountMetaData.SEX));
 
-			u.email = result
-					.getString(result
-							.getColumnIndex(AccountProvider.AMetaData.AccountMetaData.EMAIL));
-			u.email2 = result
-					.getString(result
-							.getColumnIndex(AccountProvider.AMetaData.AccountMetaData.EMAIL2));
-			u.email3 = result
-					.getString(result
-							.getColumnIndex(AccountProvider.AMetaData.AccountMetaData.EMAIL3));
-			u.email4 = result
-					.getString(result
-							.getColumnIndex(AccountProvider.AMetaData.AccountMetaData.EMAIL4));
-			u.phone1 = result
-					.getString(result
-							.getColumnIndex(AccountProvider.AMetaData.AccountMetaData.PHONE1));
-			u.phone2 = result
-					.getString(result
-							.getColumnIndex(AccountProvider.AMetaData.AccountMetaData.PHONE2));
-			u.phone3 = result
-					.getString(result
-							.getColumnIndex(AccountProvider.AMetaData.AccountMetaData.PHONE3));
+			u.email = result.getString(result.getColumnIndex(AccountProvider.AMetaData.AccountMetaData.EMAIL));
+			u.email2 = result.getString(result.getColumnIndex(AccountProvider.AMetaData.AccountMetaData.EMAIL2));
+			u.email3 = result.getString(result.getColumnIndex(AccountProvider.AMetaData.AccountMetaData.EMAIL3));
+			u.email4 = result.getString(result.getColumnIndex(AccountProvider.AMetaData.AccountMetaData.EMAIL4));
+			u.phone1 = result.getString(result.getColumnIndex(AccountProvider.AMetaData.AccountMetaData.PHONE1));
+			u.phone2 = result.getString(result.getColumnIndex(AccountProvider.AMetaData.AccountMetaData.PHONE2));
+			u.phone3 = result.getString(result.getColumnIndex(AccountProvider.AMetaData.AccountMetaData.PHONE3));
 
-			final int image = result
-					.getInt(result
-							.getColumnIndex(AccountProvider.AMetaData.AccountMetaData.IMAGE));
+			final int image = result.getInt(result.getColumnIndex(AccountProvider.AMetaData.AccountMetaData.IMAGE));
 			u.image = image == 1;
-			u.image_url = result
-					.getString(result
-							.getColumnIndex(AccountProvider.AMetaData.AccountMetaData.IMAGE_URL));
-			u.image_thumb_url = result
-					.getString(result
-							.getColumnIndex(AccountProvider.AMetaData.AccountMetaData.IMAGE_THUMB_URL));
-			u.image_bytes = result
-					.getBlob(result
-							.getColumnIndex(AccountProvider.AMetaData.AccountMetaData.IMAGE_BYTES));
-			u.remove_image = result
-					.getInt(result
-							.getColumnIndex(AccountProvider.AMetaData.AccountMetaData.REMOVE_IMAGE));
+			u.image_url = result.getString(result.getColumnIndex(AccountProvider.AMetaData.AccountMetaData.IMAGE_URL));
+			u.image_thumb_url = result.getString(result.getColumnIndex(AccountProvider.AMetaData.AccountMetaData.IMAGE_THUMB_URL));
+			u.image_bytes = result.getBlob(result.getColumnIndex(AccountProvider.AMetaData.AccountMetaData.IMAGE_BYTES));
+			u.remove_image = result.getInt(result.getColumnIndex(AccountProvider.AMetaData.AccountMetaData.REMOVE_IMAGE));
 
-			u.country = result
-					.getString(result
-							.getColumnIndex(AccountProvider.AMetaData.AccountMetaData.COUNTRY));
-			u.city = result
-					.getString(result
-							.getColumnIndex(AccountProvider.AMetaData.AccountMetaData.CITY));
-			u.street = result
-					.getString(result
-							.getColumnIndex(AccountProvider.AMetaData.AccountMetaData.STREET));
-			u.zip = result
-					.getString(result
-							.getColumnIndex(AccountProvider.AMetaData.AccountMetaData.ZIP));
+			u.country = result.getString(result.getColumnIndex(AccountProvider.AMetaData.AccountMetaData.COUNTRY));
+			u.city = result.getString(result.getColumnIndex(AccountProvider.AMetaData.AccountMetaData.CITY));
+			u.street = result.getString(result.getColumnIndex(AccountProvider.AMetaData.AccountMetaData.STREET));
+			u.zip = result.getString(result.getColumnIndex(AccountProvider.AMetaData.AccountMetaData.ZIP));
 
-			u.timezone = result
-					.getString(result
-							.getColumnIndex(AccountProvider.AMetaData.AccountMetaData.TIMEZONE));
-			u.local_time = result
-					.getString(result
-							.getColumnIndex(AccountProvider.AMetaData.AccountMetaData.LOCAL_TIME));
-			u.language = result
-					.getString(result
-							.getColumnIndex(AccountProvider.AMetaData.AccountMetaData.LANGUAGE));
+			u.timezone = result.getString(result.getColumnIndex(AccountProvider.AMetaData.AccountMetaData.TIMEZONE));
+			u.local_time = result.getString(result.getColumnIndex(AccountProvider.AMetaData.AccountMetaData.LOCAL_TIME));
+			u.language = result.getString(result.getColumnIndex(AccountProvider.AMetaData.AccountMetaData.LANGUAGE));
 
 			u.setting_default_view = result
-					.getString(result
-							.getColumnIndex(AccountProvider.AMetaData.AccountMetaData.SETTING_DEFAULT_VIEW));
-			u.setting_date_format = result
-					.getString(result
-							.getColumnIndex(AccountProvider.AMetaData.AccountMetaData.SETTING_DATE_FORMAT));
-			u.setting_ampm = result
-					.getInt(result
-							.getColumnIndex(AccountProvider.AMetaData.AccountMetaData.SETTING_AMPM));
+					.getString(result.getColumnIndex(AccountProvider.AMetaData.AccountMetaData.SETTING_DEFAULT_VIEW));
+			u.setting_date_format = result.getString(result.getColumnIndex(AccountProvider.AMetaData.AccountMetaData.SETTING_DATE_FORMAT));
+			u.setting_ampm = result.getInt(result.getColumnIndex(AccountProvider.AMetaData.AccountMetaData.SETTING_AMPM));
 
 			u.google_calendar_link = result
-					.getString(result
-							.getColumnIndex(AccountProvider.AMetaData.AccountMetaData.GOOGLE_CALENDAR_LINK));
+					.getString(result.getColumnIndex(AccountProvider.AMetaData.AccountMetaData.GOOGLE_CALENDAR_LINK));
 
-			u.color_my_event = result
-					.getString(result
-							.getColumnIndex(AccountProvider.AMetaData.AccountMetaData.COLOR_MY_EVENT));
-			u.color_attending = result
-					.getString(result
-							.getColumnIndex(AccountProvider.AMetaData.AccountMetaData.COLOR_ATTENDING));
-			u.color_pending = result
-					.getString(result
-							.getColumnIndex(AccountProvider.AMetaData.AccountMetaData.COLOR_PENDING));
-			u.color_invitation = result
-					.getString(result
-							.getColumnIndex(AccountProvider.AMetaData.AccountMetaData.COLOR_INVINTATION));
-			u.color_notes = result
-					.getString(result
-							.getColumnIndex(AccountProvider.AMetaData.AccountMetaData.COLOR_NOTES));
-			u.color_birthday = result
-					.getString(result
-							.getColumnIndex(AccountProvider.AMetaData.AccountMetaData.COLOR_BIRTHDAY));
+			u.color_my_event = result.getString(result.getColumnIndex(AccountProvider.AMetaData.AccountMetaData.COLOR_MY_EVENT));
+			u.color_attending = result.getString(result.getColumnIndex(AccountProvider.AMetaData.AccountMetaData.COLOR_ATTENDING));
+			u.color_pending = result.getString(result.getColumnIndex(AccountProvider.AMetaData.AccountMetaData.COLOR_PENDING));
+			u.color_invitation = result.getString(result.getColumnIndex(AccountProvider.AMetaData.AccountMetaData.COLOR_INVINTATION));
+			u.color_notes = result.getString(result.getColumnIndex(AccountProvider.AMetaData.AccountMetaData.COLOR_NOTES));
+			u.color_birthday = result.getString(result.getColumnIndex(AccountProvider.AMetaData.AccountMetaData.COLOR_BIRTHDAY));
 
-			u.created = result
-					.getString(result
-							.getColumnIndex(AccountProvider.AMetaData.AccountMetaData.CREATED));
-			u.modified = result
-					.getString(result
-							.getColumnIndex(AccountProvider.AMetaData.AccountMetaData.MODIFIED));
+			u.created = result.getString(result.getColumnIndex(AccountProvider.AMetaData.AccountMetaData.CREATED));
+			u.modified = result.getString(result.getColumnIndex(AccountProvider.AMetaData.AccountMetaData.MODIFIED));
 		}
 		result.close();
 		Data.setAccount(u);
 		return u;
 	}
 
-	public boolean registerAccount(String language, String country,
-			String timezone, String sex, String name, String lastname,
-			String email, String phonecode, String phone, String password,
-			String city, String street, String streetNo, String zip) {
+	public boolean registerAccount(String language, String country, String timezone, String sex, String name, String lastname,
+			String email, String phonecode, String phone, String password, String city, String street, String streetNo, String zip) {
 		boolean success = false;
 
 		try {
 			HttpClient hc = new DefaultHttpClient();
-			HttpPost post = new HttpPost(Data.getServerUrl()
-					+ "mobile/account_register");
+			HttpPost post = new HttpPost(Data.getServerUrl() + "mobile/account_register");
 
-			MultipartEntity reqEntity = new MultipartEntity(
-					HttpMultipartMode.BROWSER_COMPATIBLE);
+			MultipartEntity reqEntity = new MultipartEntity(HttpMultipartMode.BROWSER_COMPATIBLE);
 
 			reqEntity.addPart("language", new StringBody(language));
 			reqEntity.addPart("country", new StringBody(country));
@@ -817,8 +598,7 @@ public class DataManagement {
 			reqEntity.addPart("password", new StringBody(password));
 			reqEntity.addPart("confirm_password", new StringBody(password));
 			reqEntity.addPart("city", new StringBody(city));
-			reqEntity
-					.addPart("street", new StringBody(street + " " + streetNo));
+			reqEntity.addPart("street", new StringBody(street + " " + streetNo));
 			reqEntity.addPart("zip", new StringBody(zip));
 
 			post.setEntity(reqEntity);
@@ -832,16 +612,14 @@ public class DataManagement {
 					success = object.getBoolean("success");
 
 					if (success == false) {
-						Data.setERROR(object.getJSONObject("error").getString(
-								"reason"));
+						Data.setERROR(object.getJSONObject("error").getString("reason"));
 					}
 				}
 			}
 
 		} catch (Exception ex) {
-			Reporter.reportError(this.getClass().toString(), Thread
-					.currentThread().getStackTrace()[2].getMethodName()
-					.toString(), ex.getMessage());
+			Reporter.reportError(this.getClass().toString(), Thread.currentThread().getStackTrace()[2].getMethodName().toString(),
+					ex.getMessage());
 		}
 
 		return success;
@@ -852,17 +630,14 @@ public class DataManagement {
 
 		try {
 			HttpClient hc = new DefaultHttpClient();
-			HttpPost post = new HttpPost(Data.getServerUrl()
-					+ "mobile/account_email_change");
+			HttpPost post = new HttpPost(Data.getServerUrl() + "mobile/account_email_change");
 
-			MultipartEntity reqEntity = new MultipartEntity(
-					HttpMultipartMode.BROWSER_COMPATIBLE);
+			MultipartEntity reqEntity = new MultipartEntity(HttpMultipartMode.BROWSER_COMPATIBLE);
 			reqEntity.addPart(TOKEN, new StringBody(Data.getToken()));
 			reqEntity.addPart("password", new StringBody(Data.getPassword()));
 			reqEntity.addPart("email", new StringBody(email));
 			if (email_id > 1)
-				reqEntity.addPart("email_id",
-						new StringBody(String.valueOf(email_id)));
+				reqEntity.addPart("email_id", new StringBody(String.valueOf(email_id)));
 
 			post.setEntity(reqEntity);
 			if (networkAvailable) {
@@ -875,9 +650,7 @@ public class DataManagement {
 						JSONObject object = new JSONObject(resp);
 						success = object.getBoolean("success");
 						if (!success) {
-							Log.e("Change email ERROR",
-									object.getJSONObject("error").getString(
-											"reason"));
+							Log.e("Change email ERROR", object.getJSONObject("error").getString("reason"));
 						}
 					}
 				}
@@ -889,34 +662,27 @@ public class DataManagement {
 
 		} catch (Exception ex) {
 			Data.setERROR(ex.getMessage());
-			Reporter.reportError(this.getClass().toString(), Thread
-					.currentThread().getStackTrace()[2].getMethodName()
-					.toString(), ex.getMessage());
+			Reporter.reportError(this.getClass().toString(), Thread.currentThread().getStackTrace()[2].getMethodName().toString(),
+					ex.getMessage());
 		}
 
 		return success;
 	}
 
-	public boolean changeCalendarSettings(int am_pm, String defaultview,
-			String dateformat) {
+	public boolean changeCalendarSettings(int am_pm, String defaultview, String dateformat) {
 		boolean success = false;
 
 		try {
 			HttpClient hc = new DefaultHttpClient();
-			HttpPost post = new HttpPost(Data.getServerUrl()
-					+ "mobile/settings_update");
+			HttpPost post = new HttpPost(Data.getServerUrl() + "mobile/settings_update");
 
-			MultipartEntity reqEntity = new MultipartEntity(
-					HttpMultipartMode.BROWSER_COMPATIBLE);
+			MultipartEntity reqEntity = new MultipartEntity(HttpMultipartMode.BROWSER_COMPATIBLE);
 
 			reqEntity.addPart(TOKEN, new StringBody(Data.getToken()));
 
-			reqEntity.addPart("setting_ampm",
-					new StringBody(String.valueOf(am_pm)));
-			reqEntity.addPart("setting_default_view", new StringBody(
-					defaultview));
-			reqEntity
-					.addPart("setting_date_format", new StringBody(dateformat));
+			reqEntity.addPart("setting_ampm", new StringBody(String.valueOf(am_pm)));
+			reqEntity.addPart("setting_default_view", new StringBody(defaultview));
+			reqEntity.addPart("setting_date_format", new StringBody(dateformat));
 
 			post.setEntity(reqEntity);
 			if (networkAvailable) {
@@ -928,9 +694,7 @@ public class DataManagement {
 						JSONObject object = new JSONObject(resp);
 						success = object.getBoolean("success");
 						if (!success) {
-							Log.e("Edit settings ERROR",
-									object.getJSONObject("error").getString(
-											"reason"));
+							Log.e("Edit settings ERROR", object.getJSONObject("error").getString("reason"));
 						}
 					}
 				}
@@ -941,9 +705,8 @@ public class DataManagement {
 			}
 
 		} catch (Exception ex) {
-			Reporter.reportError(this.getClass().toString(), Thread
-					.currentThread().getStackTrace()[2].getMethodName()
-					.toString(), ex.getMessage());
+			Reporter.reportError(this.getClass().toString(), Thread.currentThread().getStackTrace()[2].getMethodName().toString(),
+					ex.getMessage());
 			success = false;
 		}
 
@@ -957,15 +720,12 @@ public class DataManagement {
 		if (networkAvailable) {
 			try {
 				HttpClient hc = new DefaultHttpClient();
-				HttpPost post = new HttpPost(Data.getServerUrl()
-						+ "mobile/login");
-				post.setHeader("User-Agent", "Linux; AndroidPhone "
-						+ android.os.Build.VERSION.RELEASE);
+				HttpPost post = new HttpPost(Data.getServerUrl() + "mobile/login");
+				post.setHeader("User-Agent", "Linux; AndroidPhone " + android.os.Build.VERSION.RELEASE);
 				post.setHeader("Accept", "*/*");
 				// post.setHeader("Content-Type", "text/vnd.ms-sync.wbxml");
 
-				MultipartEntity reqEntity = new MultipartEntity(
-						HttpMultipartMode.BROWSER_COMPATIBLE);
+				MultipartEntity reqEntity = new MultipartEntity(HttpMultipartMode.BROWSER_COMPATIBLE);
 
 				reqEntity.addPart("email", new StringBody(email));
 				reqEntity.addPart("password", new StringBody(password));
@@ -981,20 +741,16 @@ public class DataManagement {
 						success = object.getBoolean("success");
 						if (success == true) {
 							token = object.getString(TOKEN);
-							JSONObject profile = object
-									.getJSONObject("profile");
-							int id = Integer.parseInt(profile
-									.getString("user_id"));
+							JSONObject profile = object.getJSONObject("profile");
+							int id = Integer.parseInt(profile.getString("user_id"));
 							Data.setToken(token);
 							Data.setUserId(id);
 
 							// Last login set
 							hc = new DefaultHttpClient();
-							post = new HttpPost(Data.getServerUrl()
-									+ "mobile/set_lastlogin");
+							post = new HttpPost(Data.getServerUrl() + "mobile/set_lastlogin");
 
-							reqEntity = new MultipartEntity(
-									HttpMultipartMode.BROWSER_COMPATIBLE);
+							reqEntity = new MultipartEntity(HttpMultipartMode.BROWSER_COMPATIBLE);
 
 							reqEntity.addPart(TOKEN, new StringBody(token));
 
@@ -1011,77 +767,48 @@ public class DataManagement {
 							Data.save();
 
 							// autoicons and autocolors
-							Data.getmContext()
-									.getContentResolver()
-									.delete(AccountProvider.AMetaData.AutoiconMetaData.CONTENT_URI,
-											"", null);
-							JSONArray autoicons = object
-									.getJSONArray("custom_icons");
+							Data.getmContext().getContentResolver()
+									.delete(AccountProvider.AMetaData.AutoiconMetaData.CONTENT_URI, "", null);
+							JSONArray autoicons = object.getJSONArray("custom_icons");
 							for (int i = 0, l = autoicons.length(); i < l; i++) {
-								final JSONObject autoicon = autoicons
-										.getJSONObject(i);
+								final JSONObject autoicon = autoicons.getJSONObject(i);
 								ContentValues values = new ContentValues();
-								values.put(
-										AccountProvider.AMetaData.AutoiconMetaData.ICON,
-										autoicon.getString("icon"));
-								values.put(
-										AccountProvider.AMetaData.AutoiconMetaData.KEYWORD,
-										autoicon.getString("keyword"));
-								values.put(
-										AccountProvider.AMetaData.AutoiconMetaData.CONTEXT,
-										autoicon.getString("context"));
+								values.put(AccountProvider.AMetaData.AutoiconMetaData.ICON, autoicon.getString("icon"));
+								values.put(AccountProvider.AMetaData.AutoiconMetaData.KEYWORD, autoicon.getString("keyword"));
+								values.put(AccountProvider.AMetaData.AutoiconMetaData.CONTEXT, autoicon.getString("context"));
 
-								Data.getmContext()
-										.getContentResolver()
-										.insert(AccountProvider.AMetaData.AutoiconMetaData.CONTENT_URI,
-												values);
+								Data.getmContext().getContentResolver()
+										.insert(AccountProvider.AMetaData.AutoiconMetaData.CONTENT_URI, values);
 							}
 
-							Data.getmContext()
-									.getContentResolver()
-									.delete(AccountProvider.AMetaData.AutocolorMetaData.CONTENT_URI,
-											"", null);
-							JSONArray autocolors = object
-									.getJSONArray("custom_colors");
+							Data.getmContext().getContentResolver()
+									.delete(AccountProvider.AMetaData.AutocolorMetaData.CONTENT_URI, "", null);
+							JSONArray autocolors = object.getJSONArray("custom_colors");
 							for (int i = 0, l = autocolors.length(); i < l; i++) {
-								final JSONObject autocolor = autocolors
-										.getJSONObject(i);
+								final JSONObject autocolor = autocolors.getJSONObject(i);
 								ContentValues values = new ContentValues();
-								values.put(
-										AccountProvider.AMetaData.AutocolorMetaData.COLOR,
-										autocolor.getString("color"));
-								values.put(
-										AccountProvider.AMetaData.AutocolorMetaData.KEYWORD,
-										autocolor.getString("keyword"));
-								values.put(
-										AccountProvider.AMetaData.AutocolorMetaData.CONTEXT,
-										autocolor.getString("context"));
+								values.put(AccountProvider.AMetaData.AutocolorMetaData.COLOR, autocolor.getString("color"));
+								values.put(AccountProvider.AMetaData.AutocolorMetaData.KEYWORD, autocolor.getString("keyword"));
+								values.put(AccountProvider.AMetaData.AutocolorMetaData.CONTEXT, autocolor.getString("context"));
 
-								Data.getmContext()
-										.getContentResolver()
-										.insert(AccountProvider.AMetaData.AutocolorMetaData.CONTENT_URI,
-												values);
+								Data.getmContext().getContentResolver()
+										.insert(AccountProvider.AMetaData.AutocolorMetaData.CONTENT_URI, values);
 							}
 							registerPhone();
 						} else {
-							Data.setERROR(object.getJSONObject("error")
-									.getString("reason"));
-							Reporter.reportError(
-									DataManagement.class.toString(), "login",
-									Data.getERROR());
+							Data.setERROR(object.getJSONObject("error").getString("reason"));
+							Reporter.reportError(DataManagement.class.toString(), "login", Data.getERROR());
 						}
 					}
 				}
 
 			} catch (Exception ex) {
 				Data.setERROR(ex.getMessage());
-				Reporter.reportError(this.getClass().toString(), Thread
-						.currentThread().getStackTrace()[2].getMethodName()
-						.toString(), ex.getMessage());
+				Reporter.reportError(this.getClass().toString(), Thread.currentThread().getStackTrace()[2].getMethodName().toString(),
+						ex.getMessage());
 			}
 		} else {
-			if (Data.getEmail().equals(email)
-					&& Data.getPassword().equals(password)) {
+			if (Data.getEmail().equals(email) && Data.getPassword().equals(password)) {
 				success = true;
 				Data.setLogged(true);
 				Data.needToClearData = false;
@@ -1096,22 +823,19 @@ public class DataManagement {
 			Data.setPushId(C2DMessaging.getRegistrationId(Data.getmContext()));
 			if (Data.getPushId() == "") {
 
-				C2DMessaging.register(Data.getmContext(),
-						"group.agenda.c2dm@gmail.com");
+				C2DMessaging.register(Data.getmContext(), "group.agenda.c2dm@gmail.com");
 			} else {
 				sendPushIdToServer(Data.getmContext(), Data.getPushId());
 			}
 		} catch (Exception e) {
-			Reporter.reportError(DataManagement.class.toString(),
-					"registerPhone", e.getMessage().toString());
+			Reporter.reportError(DataManagement.class.toString(), "registerPhone", e.getMessage().toString());
 		}
 	}
 
 	public static String getImei(Context context) {
 
 		try {
-			TelephonyManager telephonyManager = (TelephonyManager) context
-					.getSystemService(Context.TELEPHONY_SERVICE);
+			TelephonyManager telephonyManager = (TelephonyManager) context.getSystemService(Context.TELEPHONY_SERVICE);
 
 			if (telephonyManager == null) {
 				return "";
@@ -1119,16 +843,15 @@ public class DataManagement {
 
 			return telephonyManager.getDeviceId();
 		} catch (Exception ex) {
-			Reporter.reportError(DataManagement.class.toString(), Thread
-					.currentThread().getStackTrace()[2].getMethodName()
-					.toString(), ex.getMessage());
+			Reporter.reportError(DataManagement.class.toString(), Thread.currentThread().getStackTrace()[2].getMethodName().toString(),
+					ex.getMessage());
 		}
 
 		return "";
 	}
 
-	public static HttpURLConnection sendHttpRequest(String path, String method,
-			List<NameValuePair> paramsList, List<NameValuePair> propertyList) {
+	public static HttpURLConnection sendHttpRequest(String path, String method, List<NameValuePair> paramsList,
+			List<NameValuePair> propertyList) {
 		HttpURLConnection connection = null;
 
 		String KContentType = "multipart/form-data; boundary=AaB03x";
@@ -1141,8 +864,7 @@ public class DataManagement {
 			if (method.equals("POST")) {
 				url = new URL(path);
 			} else if (method.equals("GET")) {
-				url = new URL(path + "?"
-						+ URLEncodedUtils.format(paramsList, "utf-8"));
+				url = new URL(path + "?" + URLEncodedUtils.format(paramsList, "utf-8"));
 			}
 			connection = (HttpURLConnection) url.openConnection();
 
@@ -1158,13 +880,11 @@ public class DataManagement {
 
 			for (int i = 0; i < propertyList.size(); i++) {
 				NameValuePair param = paramsList.get(i);
-				connection
-						.setRequestProperty(param.getName(), param.getValue());
+				connection.setRequestProperty(param.getName(), param.getValue());
 			}
 
 			if (method.equals("POST")) {
-				DataOutputStream outputStream = new DataOutputStream(
-						connection.getOutputStream());
+				DataOutputStream outputStream = new DataOutputStream(connection.getOutputStream());
 
 				for (int i = 0; i < paramsList.size(); i++) {
 					NameValuePair param = paramsList.get(i);
@@ -1178,9 +898,7 @@ public class DataManagement {
 
 					outputStream.writeBytes(KStartContent);
 					outputStream.writeBytes(KCrlf);
-					outputStream
-							.writeBytes("Content-Disposition: form-data; name=\""
-									+ param.getName() + "\"");
+					outputStream.writeBytes("Content-Disposition: form-data; name=\"" + param.getName() + "\"");
 					outputStream.writeBytes(KCrlf);
 					outputStream.writeBytes(KCrlf);
 					outputStream.write(param.getValue().getBytes("utf-8"));
@@ -1199,9 +917,8 @@ public class DataManagement {
 			return connection;
 
 		} catch (Exception ex) {
-			Reporter.reportError(DataManagement.class.toString(), Thread
-					.currentThread().getStackTrace()[2].getMethodName()
-					.toString(), ex.getMessage());
+			Reporter.reportError(DataManagement.class.toString(), Thread.currentThread().getStackTrace()[2].getMethodName().toString(),
+					ex.getMessage());
 		}
 
 		return null;
@@ -1212,11 +929,9 @@ public class DataManagement {
 		try {
 
 			HttpClient hc = new DefaultHttpClient();
-			HttpPost post = new HttpPost(Data.getServerUrl()
-					+ "mobile/register_android");
+			HttpPost post = new HttpPost(Data.getServerUrl() + "mobile/register_android");
 
-			MultipartEntity reqEntity = new MultipartEntity(
-					HttpMultipartMode.BROWSER_COMPATIBLE);
+			MultipartEntity reqEntity = new MultipartEntity(HttpMultipartMode.BROWSER_COMPATIBLE);
 
 			reqEntity.addPart(TOKEN, new StringBody(Data.getToken()));
 			reqEntity.addPart("android_id", new StringBody(pushId));
@@ -1227,9 +942,8 @@ public class DataManagement {
 			HttpResponse rp = hc.execute(post);
 
 		} catch (Exception ex) {
-			Reporter.reportError(DataManagement.class.toString(), Thread
-					.currentThread().getStackTrace()[2].getMethodName()
-					.toString(), ex.getMessage());
+			Reporter.reportError(DataManagement.class.toString(), Thread.currentThread().getStackTrace()[2].getMethodName().toString(),
+					ex.getMessage());
 		}
 	}
 
@@ -1238,41 +952,24 @@ public class DataManagement {
 
 		try {
 			HttpClient hc = new DefaultHttpClient();
-			HttpPost post = new HttpPost(Data.getServerUrl()
-					+ "mobile/settings_set_autoicons");
+			HttpPost post = new HttpPost(Data.getServerUrl() + "mobile/settings_set_autoicons");
 
-			MultipartEntity reqEntity = new MultipartEntity(
-					HttpMultipartMode.BROWSER_COMPATIBLE);
+			MultipartEntity reqEntity = new MultipartEntity(HttpMultipartMode.BROWSER_COMPATIBLE);
 			reqEntity.addPart(TOKEN, new StringBody(Data.getToken()));
 
-			Cursor result = Data
-					.getmContext()
-					.getContentResolver()
-					.query(AccountProvider.AMetaData.AutoiconMetaData.CONTENT_URI,
-							null, null, null, null);
+			Cursor result = Data.getmContext().getContentResolver()
+					.query(AccountProvider.AMetaData.AutoiconMetaData.CONTENT_URI, null, null, null, null);
 			result.moveToFirst();
 
 			int i = 1;
 			while (!result.isAfterLast()) {
 
-				reqEntity
-						.addPart(
-								"autoicon[" + i + "][icon]",
-								new StringBody(
-										result.getString(result
-												.getColumnIndex(AccountProvider.AMetaData.AutoiconMetaData.ICON))));
-				reqEntity
-						.addPart(
-								"autoicon[" + i + "][keyword]",
-								new StringBody(
-										result.getString(result
-												.getColumnIndex(AccountProvider.AMetaData.AutoiconMetaData.KEYWORD))));
-				reqEntity
-						.addPart(
-								"autoicon[" + i + "][context]",
-								new StringBody(
-										result.getString(result
-												.getColumnIndex(AccountProvider.AMetaData.AutoiconMetaData.CONTEXT))));
+				reqEntity.addPart("autoicon[" + i + "][icon]",
+						new StringBody(result.getString(result.getColumnIndex(AccountProvider.AMetaData.AutoiconMetaData.ICON))));
+				reqEntity.addPart("autoicon[" + i + "][keyword]",
+						new StringBody(result.getString(result.getColumnIndex(AccountProvider.AMetaData.AutoiconMetaData.KEYWORD))));
+				reqEntity.addPart("autoicon[" + i + "][context]",
+						new StringBody(result.getString(result.getColumnIndex(AccountProvider.AMetaData.AutoiconMetaData.CONTEXT))));
 
 				i++;
 				result.moveToNext();
@@ -1288,17 +985,15 @@ public class DataManagement {
 					success = object.getBoolean("success");
 
 					if (success == false) {
-						Data.setERROR(object.getJSONObject("error").getString(
-								"reason"));
+						Data.setERROR(object.getJSONObject("error").getString("reason"));
 						Log.e("set autoicon - error: ", Data.getERROR());
 					}
 				}
 			}
 
 		} catch (Exception ex) {
-			Reporter.reportError(this.getClass().toString(), Thread
-					.currentThread().getStackTrace()[2].getMethodName()
-					.toString(), ex.getMessage());
+			Reporter.reportError(this.getClass().toString(), Thread.currentThread().getStackTrace()[2].getMethodName().toString(),
+					ex.getMessage());
 			return false;
 		}
 
@@ -1308,29 +1003,18 @@ public class DataManagement {
 	public ArrayList<AutoIconItem> getAutoIcons() {
 		ArrayList<AutoIconItem> Items = new ArrayList<AutoIconItem>();
 
-		Cursor result = Data
-				.getmContext()
-				.getContentResolver()
-				.query(AccountProvider.AMetaData.AutoiconMetaData.CONTENT_URI,
-						null, null, null, null);
+		Cursor result = Data.getmContext().getContentResolver()
+				.query(AccountProvider.AMetaData.AutoiconMetaData.CONTENT_URI, null, null, null, null);
 		result.moveToFirst();
 
 		while (!result.isAfterLast()) {
 
 			final AutoIconItem item = new AutoIconItem();
 
-			item.id = result
-					.getInt(result
-							.getColumnIndex(AccountProvider.AMetaData.AutoiconMetaData.I_ID));
-			item.icon = result
-					.getString(result
-							.getColumnIndex(AccountProvider.AMetaData.AutoiconMetaData.ICON));
-			item.keyword = result
-					.getString(result
-							.getColumnIndex(AccountProvider.AMetaData.AutoiconMetaData.KEYWORD));
-			item.context = result
-					.getString(result
-							.getColumnIndex(AccountProvider.AMetaData.AutoiconMetaData.CONTEXT));
+			item.id = result.getInt(result.getColumnIndex(AccountProvider.AMetaData.AutoiconMetaData.I_ID));
+			item.icon = result.getString(result.getColumnIndex(AccountProvider.AMetaData.AutoiconMetaData.ICON));
+			item.keyword = result.getString(result.getColumnIndex(AccountProvider.AMetaData.AutoiconMetaData.KEYWORD));
+			item.context = result.getString(result.getColumnIndex(AccountProvider.AMetaData.AutoiconMetaData.CONTEXT));
 
 			result.moveToNext();
 
@@ -1345,41 +1029,24 @@ public class DataManagement {
 
 		try {
 			HttpClient hc = new DefaultHttpClient();
-			HttpPost post = new HttpPost(Data.getServerUrl()
-					+ "mobile/settings_set_autocolors");
+			HttpPost post = new HttpPost(Data.getServerUrl() + "mobile/settings_set_autocolors");
 
-			MultipartEntity reqEntity = new MultipartEntity(
-					HttpMultipartMode.BROWSER_COMPATIBLE);
+			MultipartEntity reqEntity = new MultipartEntity(HttpMultipartMode.BROWSER_COMPATIBLE);
 			reqEntity.addPart(TOKEN, new StringBody(Data.getToken()));
 
-			Cursor result = Data
-					.getmContext()
-					.getContentResolver()
-					.query(AccountProvider.AMetaData.AutocolorMetaData.CONTENT_URI,
-							null, null, null, null);
+			Cursor result = Data.getmContext().getContentResolver()
+					.query(AccountProvider.AMetaData.AutocolorMetaData.CONTENT_URI, null, null, null, null);
 			result.moveToFirst();
 
 			int i = 1;
 			while (!result.isAfterLast()) {
 
-				reqEntity
-						.addPart(
-								"autocolor[" + i + "][color]",
-								new StringBody(
-										result.getString(result
-												.getColumnIndex(AccountProvider.AMetaData.AutocolorMetaData.COLOR))));
-				reqEntity
-						.addPart(
-								"autocolor[" + i + "][keyword]",
-								new StringBody(
-										result.getString(result
-												.getColumnIndex(AccountProvider.AMetaData.AutocolorMetaData.KEYWORD))));
-				reqEntity
-						.addPart(
-								"autocolor[" + i + "][context]",
-								new StringBody(
-										result.getString(result
-												.getColumnIndex(AccountProvider.AMetaData.AutocolorMetaData.CONTEXT))));
+				reqEntity.addPart("autocolor[" + i + "][color]",
+						new StringBody(result.getString(result.getColumnIndex(AccountProvider.AMetaData.AutocolorMetaData.COLOR))));
+				reqEntity.addPart("autocolor[" + i + "][keyword]",
+						new StringBody(result.getString(result.getColumnIndex(AccountProvider.AMetaData.AutocolorMetaData.KEYWORD))));
+				reqEntity.addPart("autocolor[" + i + "][context]",
+						new StringBody(result.getString(result.getColumnIndex(AccountProvider.AMetaData.AutocolorMetaData.CONTEXT))));
 
 				i++;
 				result.moveToNext();
@@ -1395,17 +1062,15 @@ public class DataManagement {
 					success = object.getBoolean("success");
 
 					if (success == false) {
-						Data.setERROR(object.getJSONObject("error").getString(
-								"reason"));
+						Data.setERROR(object.getJSONObject("error").getString("reason"));
 						Log.e("set autocolor - error: ", Data.getERROR());
 					}
 				}
 			}
 
 		} catch (Exception ex) {
-			Reporter.reportError(this.getClass().toString(), Thread
-					.currentThread().getStackTrace()[2].getMethodName()
-					.toString(), ex.getMessage());
+			Reporter.reportError(this.getClass().toString(), Thread.currentThread().getStackTrace()[2].getMethodName().toString(),
+					ex.getMessage());
 			return false;
 		}
 
@@ -1415,29 +1080,18 @@ public class DataManagement {
 	public ArrayList<AutoColorItem> getAutoColors() {
 		ArrayList<AutoColorItem> Items = new ArrayList<AutoColorItem>();
 
-		Cursor result = Data
-				.getmContext()
-				.getContentResolver()
-				.query(AccountProvider.AMetaData.AutocolorMetaData.CONTENT_URI,
-						null, null, null, null);
+		Cursor result = Data.getmContext().getContentResolver()
+				.query(AccountProvider.AMetaData.AutocolorMetaData.CONTENT_URI, null, null, null, null);
 		result.moveToFirst();
 
 		while (!result.isAfterLast()) {
 
 			final AutoColorItem item = new AutoColorItem();
 
-			item.id = result
-					.getInt(result
-							.getColumnIndex(AccountProvider.AMetaData.AutocolorMetaData.C_ID));
-			item.color = result
-					.getString(result
-							.getColumnIndex(AccountProvider.AMetaData.AutocolorMetaData.COLOR));
-			item.keyword = result
-					.getString(result
-							.getColumnIndex(AccountProvider.AMetaData.AutocolorMetaData.KEYWORD));
-			item.context = result
-					.getString(result
-							.getColumnIndex(AccountProvider.AMetaData.AutocolorMetaData.CONTEXT));
+			item.id = result.getInt(result.getColumnIndex(AccountProvider.AMetaData.AutocolorMetaData.C_ID));
+			item.color = result.getString(result.getColumnIndex(AccountProvider.AMetaData.AutocolorMetaData.COLOR));
+			item.keyword = result.getString(result.getColumnIndex(AccountProvider.AMetaData.AutocolorMetaData.KEYWORD));
+			item.context = result.getString(result.getColumnIndex(AccountProvider.AMetaData.AutocolorMetaData.CONTEXT));
 
 			Items.add(item);
 
@@ -1478,83 +1132,38 @@ public class DataManagement {
 		if (where.length() > 0)
 			where += " AND ";
 
-		where += ContactsProvider.CMetaData.ContactsMetaData.NEED_UPDATE
-				+ "!=3";
+		where += ContactsProvider.CMetaData.ContactsMetaData.NEED_UPDATE + "!=3";
 
-		Cursor result = Data
-				.getmContext()
-				.getContentResolver()
-				.query(ContactsProvider.CMetaData.ContactsMetaData.CONTENT_URI,
-						null, where, null, null);
+		Cursor result = Data.getmContext().getContentResolver()
+				.query(ContactsProvider.CMetaData.ContactsMetaData.CONTENT_URI, null, where, null, null);
 
 		result.moveToFirst();
 
 		while (!result.isAfterLast()) {
 			item = new Contact();
 
-			item.contact_id = result
-					.getInt(result
-							.getColumnIndex(ContactsProvider.CMetaData.ContactsMetaData.C_ID));
-			item.name = result
-					.getString(result
-							.getColumnIndex(ContactsProvider.CMetaData.ContactsMetaData.NAME));
-			item.lastname = result
-					.getString(result
-							.getColumnIndex(ContactsProvider.CMetaData.ContactsMetaData.LASTNAME));
-			item.email = result
-					.getString(result
-							.getColumnIndex(ContactsProvider.CMetaData.ContactsMetaData.EMAIL));
-			item.phone1 = result
-					.getString(result
-							.getColumnIndex(ContactsProvider.CMetaData.ContactsMetaData.PHONE));
-			item.birthdate = result
-					.getString(result
-							.getColumnIndex(ContactsProvider.CMetaData.ContactsMetaData.BIRTHDATE));
-			item.country = result
-					.getString(result
-							.getColumnIndex(ContactsProvider.CMetaData.ContactsMetaData.COUNTRY));
-			item.city = result
-					.getString(result
-							.getColumnIndex(ContactsProvider.CMetaData.ContactsMetaData.CITY));
-			item.street = result
-					.getString(result
-							.getColumnIndex(ContactsProvider.CMetaData.ContactsMetaData.STREET));
-			item.zip = result
-					.getString(result
-							.getColumnIndex(ContactsProvider.CMetaData.ContactsMetaData.ZIP));
-			item.visibility = result
-					.getString(result
-							.getColumnIndex(ContactsProvider.CMetaData.ContactsMetaData.VISIBILITY));
-			item.setColor(result.getString(result
-					.getColumnIndex(ContactsProvider.CMetaData.ContactsMetaData.COLOR)));
-			final int image = result
-					.getInt(result
-							.getColumnIndex(ContactsProvider.CMetaData.ContactsMetaData.IMAGE));
+			item.contact_id = result.getInt(result.getColumnIndex(ContactsProvider.CMetaData.ContactsMetaData.C_ID));
+			item.name = result.getString(result.getColumnIndex(ContactsProvider.CMetaData.ContactsMetaData.NAME));
+			item.lastname = result.getString(result.getColumnIndex(ContactsProvider.CMetaData.ContactsMetaData.LASTNAME));
+			item.email = result.getString(result.getColumnIndex(ContactsProvider.CMetaData.ContactsMetaData.EMAIL));
+			item.phone1 = result.getString(result.getColumnIndex(ContactsProvider.CMetaData.ContactsMetaData.PHONE));
+			item.birthdate = result.getString(result.getColumnIndex(ContactsProvider.CMetaData.ContactsMetaData.BIRTHDATE));
+			item.country = result.getString(result.getColumnIndex(ContactsProvider.CMetaData.ContactsMetaData.COUNTRY));
+			item.city = result.getString(result.getColumnIndex(ContactsProvider.CMetaData.ContactsMetaData.CITY));
+			item.street = result.getString(result.getColumnIndex(ContactsProvider.CMetaData.ContactsMetaData.STREET));
+			item.zip = result.getString(result.getColumnIndex(ContactsProvider.CMetaData.ContactsMetaData.ZIP));
+			item.visibility = result.getString(result.getColumnIndex(ContactsProvider.CMetaData.ContactsMetaData.VISIBILITY));
+			item.setColor(result.getString(result.getColumnIndex(ContactsProvider.CMetaData.ContactsMetaData.COLOR)));
+			final int image = result.getInt(result.getColumnIndex(ContactsProvider.CMetaData.ContactsMetaData.IMAGE));
 			item.image = image == 1;
-			item.image_url = result
-					.getString(result
-							.getColumnIndex(ContactsProvider.CMetaData.ContactsMetaData.IMAGE_URL));
-			item.image_thumb_url = result
-					.getString(result
-							.getColumnIndex(ContactsProvider.CMetaData.ContactsMetaData.IMAGE_THUMB_URL));
-			item.image_bytes = result
-					.getBlob(result
-							.getColumnIndex(ContactsProvider.CMetaData.ContactsMetaData.IMAGE_BYTES));
-			item.created = result
-					.getString(result
-							.getColumnIndex(ContactsProvider.CMetaData.ContactsMetaData.CREATED));
-			item.modified = result
-					.getString(result
-							.getColumnIndex(ContactsProvider.CMetaData.ContactsMetaData.MODOFIED));
-			item.agenda_view = result
-					.getString(result
-							.getColumnIndex(ContactsProvider.CMetaData.ContactsMetaData.AGENDA_VIEW));
-			item.registered = result
-					.getString(result
-							.getColumnIndex(ContactsProvider.CMetaData.ContactsMetaData.REGISTERED));
-			final String groups = result
-					.getString(result
-							.getColumnIndex(ContactsProvider.CMetaData.ContactsMetaData.GROUPS));
+			item.image_url = result.getString(result.getColumnIndex(ContactsProvider.CMetaData.ContactsMetaData.IMAGE_URL));
+			item.image_thumb_url = result.getString(result.getColumnIndex(ContactsProvider.CMetaData.ContactsMetaData.IMAGE_THUMB_URL));
+			item.image_bytes = result.getBlob(result.getColumnIndex(ContactsProvider.CMetaData.ContactsMetaData.IMAGE_BYTES));
+			item.created = result.getString(result.getColumnIndex(ContactsProvider.CMetaData.ContactsMetaData.CREATED));
+			item.modified = result.getString(result.getColumnIndex(ContactsProvider.CMetaData.ContactsMetaData.MODOFIED));
+			item.agenda_view = result.getString(result.getColumnIndex(ContactsProvider.CMetaData.ContactsMetaData.AGENDA_VIEW));
+			item.registered = result.getString(result.getColumnIndex(ContactsProvider.CMetaData.ContactsMetaData.REGISTERED));
+			final String groups = result.getString(result.getColumnIndex(ContactsProvider.CMetaData.ContactsMetaData.GROUPS));
 			if (groups != null) {
 				item.groups = MapUtils.stringToMap(groups);
 			}
@@ -1574,17 +1183,14 @@ public class DataManagement {
 
 		try {
 			HttpClient hc = new DefaultHttpClient();
-			HttpPost post = new HttpPost(Data.getServerUrl()
-					+ "mobile/contact_list");
-			MultipartEntity reqEntity = new MultipartEntity(
-					HttpMultipartMode.BROWSER_COMPATIBLE);
+			HttpPost post = new HttpPost(Data.getServerUrl() + "mobile/contact_list");
+			MultipartEntity reqEntity = new MultipartEntity(HttpMultipartMode.BROWSER_COMPATIBLE);
 
 			reqEntity.addPart(TOKEN, new StringBody(Data.getToken()));
 			if (groupIds != null) {
 				Iterator<Integer> it = groupIds.iterator();
 				while (it.hasNext()) {
-					reqEntity.addPart("group_id[]",
-							new StringBody(String.valueOf(it.next())));
+					reqEntity.addPart("group_id[]", new StringBody(String.valueOf(it.next())));
 				}
 			}
 
@@ -1611,316 +1217,205 @@ public class DataManagement {
 								ContentValues cv = new ContentValues();
 
 								try {
-									contact.contact_id = c
-											.getInt(ContactsProvider.CMetaData.ContactsMetaData.C_ID);
-									cv.put(ContactsProvider.CMetaData.ContactsMetaData.C_ID,
-											contact.contact_id);
+									contact.contact_id = c.getInt(ContactsProvider.CMetaData.ContactsMetaData.C_ID);
+									cv.put(ContactsProvider.CMetaData.ContactsMetaData.C_ID, contact.contact_id);
 								} catch (JSONException e) {
-									Reporter.reportError(this.getClass()
-											.toString(), Thread.currentThread()
-											.getStackTrace()[2].getMethodName()
-											.toString(), e.getMessage());
+									Reporter.reportError(this.getClass().toString(), Thread.currentThread().getStackTrace()[2]
+											.getMethodName().toString(), e.getMessage());
 								}
 
 								try {
-									contact.name = c
-											.getString(ContactsProvider.CMetaData.ContactsMetaData.NAME);
-									cv.put(ContactsProvider.CMetaData.ContactsMetaData.NAME,
-											contact.name);
+									contact.name = c.getString(ContactsProvider.CMetaData.ContactsMetaData.NAME);
+									cv.put(ContactsProvider.CMetaData.ContactsMetaData.NAME, contact.name);
 								} catch (JSONException e) {
-									Reporter.reportError(this.getClass()
-											.toString(), Thread.currentThread()
-											.getStackTrace()[2].getMethodName()
-											.toString(), e.getMessage());
+									Reporter.reportError(this.getClass().toString(), Thread.currentThread().getStackTrace()[2]
+											.getMethodName().toString(), e.getMessage());
 								}
 
 								try {
-									contact.lastname = c
-											.getString(ContactsProvider.CMetaData.ContactsMetaData.LASTNAME);
-									cv.put(ContactsProvider.CMetaData.ContactsMetaData.LASTNAME,
-											contact.lastname);
+									contact.lastname = c.getString(ContactsProvider.CMetaData.ContactsMetaData.LASTNAME);
+									cv.put(ContactsProvider.CMetaData.ContactsMetaData.LASTNAME, contact.lastname);
 								} catch (JSONException e) {
-									Reporter.reportError(this.getClass()
-											.toString(), Thread.currentThread()
-											.getStackTrace()[2].getMethodName()
-											.toString(), e.getMessage());
+									Reporter.reportError(this.getClass().toString(), Thread.currentThread().getStackTrace()[2]
+											.getMethodName().toString(), e.getMessage());
 								}
 								try {
-									contact.email = c
-											.getString(ContactsProvider.CMetaData.ContactsMetaData.EMAIL);
-									cv.put(ContactsProvider.CMetaData.ContactsMetaData.EMAIL,
-											contact.email);
+									contact.email = c.getString(ContactsProvider.CMetaData.ContactsMetaData.EMAIL);
+									cv.put(ContactsProvider.CMetaData.ContactsMetaData.EMAIL, contact.email);
 								} catch (JSONException e) {
-									Reporter.reportError(this.getClass()
-											.toString(), Thread.currentThread()
-											.getStackTrace()[2].getMethodName()
-											.toString(), e.getMessage());
+									Reporter.reportError(this.getClass().toString(), Thread.currentThread().getStackTrace()[2]
+											.getMethodName().toString(), e.getMessage());
 								}
 								try {
-									contact.phone1 = c
-											.getString(ContactsProvider.CMetaData.ContactsMetaData.PHONE);
-									cv.put(ContactsProvider.CMetaData.ContactsMetaData.PHONE,
-											contact.phone1);
+									contact.phone1 = c.getString(ContactsProvider.CMetaData.ContactsMetaData.PHONE);
+									cv.put(ContactsProvider.CMetaData.ContactsMetaData.PHONE, contact.phone1);
 								} catch (JSONException e) {
-									Reporter.reportError(this.getClass()
-											.toString(), Thread.currentThread()
-											.getStackTrace()[2].getMethodName()
-											.toString(), e.getMessage());
+									Reporter.reportError(this.getClass().toString(), Thread.currentThread().getStackTrace()[2]
+											.getMethodName().toString(), e.getMessage());
 								}
 								try {
-									contact.birthdate = c
-											.getString(ContactsProvider.CMetaData.ContactsMetaData.BIRTHDATE);
+									contact.birthdate = c.getString(ContactsProvider.CMetaData.ContactsMetaData.BIRTHDATE);
 									Calendar birthdateCalendar;
 									if (!contact.birthdate.equals("null")) {
-										birthdateCalendar = Utils
-												.stringToCalendar(
-														contact.birthdate,
-														DataManagement.ACCOUNT_BIRTHDATE_TIMESTAMP_FORMAT);
-										birthdateCalendar.set(
-												Calendar.YEAR,
-												Calendar.getInstance().get(
-														Calendar.YEAR));
+										birthdateCalendar = Utils.stringToCalendar(contact.birthdate,
+												DataManagement.ACCOUNT_BIRTHDATE_TIMESTAMP_FORMAT);
+										birthdateCalendar.set(Calendar.YEAR, Calendar.getInstance().get(Calendar.YEAR));
 										Event birthdayEvent = new Event();
-										birthdayEvent.title = contact.name
-												+ " "
-												+ contact.lastname
-												+ " "
-												+ Data.getmContext()
-														.getString(
-																R.string.contact_birthday);
-										birthdayEvent
-												.setStartCalendar(birthdateCalendar);
-										birthdayEvent
-												.setEndCalendar(birthdateCalendar);
-//										birthdayEvent.my_time_start = Utils
-//												.formatCalendar(
-//														birthdateCalendar,
-//														SERVER_TIMESTAMP_FORMAT);
-//										birthdayEvent.my_time_end = Utils
-//												.formatCalendar(
-//														birthdateCalendar,
-//														SERVER_TIMESTAMP_FORMAT);
+										birthdayEvent.title = contact.name + " " + contact.lastname + " "
+												+ Data.getmContext().getString(R.string.contact_birthday);
+										birthdayEvent.setStartCalendar(birthdateCalendar);
+										birthdayEvent.setEndCalendar(birthdateCalendar);
+										// birthdayEvent.my_time_start = Utils
+										// .formatCalendar(
+										// birthdateCalendar,
+										// SERVER_TIMESTAMP_FORMAT);
+										// birthdayEvent.my_time_end = Utils
+										// .formatCalendar(
+										// birthdateCalendar,
+										// SERVER_TIMESTAMP_FORMAT);
 										birthdayEvent.is_all_day = true;
 										birthdayEvent.timezone = getAccount().timezone;
 										birthdayEvent.birthday = true;
 										createEvent(birthdayEvent);
 										contactsBirthdays.add(birthdayEvent);
 									}
-									cv.put(ContactsProvider.CMetaData.ContactsMetaData.BIRTHDATE,
-											contact.birthdate);
+									cv.put(ContactsProvider.CMetaData.ContactsMetaData.BIRTHDATE, contact.birthdate);
 								} catch (JSONException e) {
-									Reporter.reportError(this.getClass()
-											.toString(), Thread.currentThread()
-											.getStackTrace()[2].getMethodName()
-											.toString(), e.getMessage());
+									Reporter.reportError(this.getClass().toString(), Thread.currentThread().getStackTrace()[2]
+											.getMethodName().toString(), e.getMessage());
 								}
 								try {
-									contact.country = c
-											.getString(ContactsProvider.CMetaData.ContactsMetaData.COUNTRY);
-									cv.put(ContactsProvider.CMetaData.ContactsMetaData.COUNTRY,
-											contact.country);
+									contact.country = c.getString(ContactsProvider.CMetaData.ContactsMetaData.COUNTRY);
+									cv.put(ContactsProvider.CMetaData.ContactsMetaData.COUNTRY, contact.country);
 								} catch (JSONException e) {
-									Reporter.reportError(this.getClass()
-											.toString(), Thread.currentThread()
-											.getStackTrace()[2].getMethodName()
-											.toString(), e.getMessage());
+									Reporter.reportError(this.getClass().toString(), Thread.currentThread().getStackTrace()[2]
+											.getMethodName().toString(), e.getMessage());
 								}
 								try {
-									contact.city = c
-											.getString(ContactsProvider.CMetaData.ContactsMetaData.CITY);
-									cv.put(ContactsProvider.CMetaData.ContactsMetaData.CITY,
-											contact.city);
+									contact.city = c.getString(ContactsProvider.CMetaData.ContactsMetaData.CITY);
+									cv.put(ContactsProvider.CMetaData.ContactsMetaData.CITY, contact.city);
 								} catch (JSONException e) {
-									Reporter.reportError(this.getClass()
-											.toString(), Thread.currentThread()
-											.getStackTrace()[2].getMethodName()
-											.toString(), e.getMessage());
+									Reporter.reportError(this.getClass().toString(), Thread.currentThread().getStackTrace()[2]
+											.getMethodName().toString(), e.getMessage());
 								}
 								try {
-									contact.street = c
-											.getString(ContactsProvider.CMetaData.ContactsMetaData.STREET);
-									cv.put(ContactsProvider.CMetaData.ContactsMetaData.STREET,
-											contact.street);
+									contact.street = c.getString(ContactsProvider.CMetaData.ContactsMetaData.STREET);
+									cv.put(ContactsProvider.CMetaData.ContactsMetaData.STREET, contact.street);
 								} catch (JSONException e) {
-									Reporter.reportError(this.getClass()
-											.toString(), Thread.currentThread()
-											.getStackTrace()[2].getMethodName()
-											.toString(), e.getMessage());
+									Reporter.reportError(this.getClass().toString(), Thread.currentThread().getStackTrace()[2]
+											.getMethodName().toString(), e.getMessage());
 								}
 								try {
-									contact.zip = c
-											.getString(ContactsProvider.CMetaData.ContactsMetaData.ZIP);
-									cv.put(ContactsProvider.CMetaData.ContactsMetaData.ZIP,
-											contact.zip);
+									contact.zip = c.getString(ContactsProvider.CMetaData.ContactsMetaData.ZIP);
+									cv.put(ContactsProvider.CMetaData.ContactsMetaData.ZIP, contact.zip);
 								} catch (JSONException e) {
-									Reporter.reportError(this.getClass()
-											.toString(), Thread.currentThread()
-											.getStackTrace()[2].getMethodName()
-											.toString(), e.getMessage());
+									Reporter.reportError(this.getClass().toString(), Thread.currentThread().getStackTrace()[2]
+											.getMethodName().toString(), e.getMessage());
 								}
 								try {
-									contact.visibility = c
-											.getString(ContactsProvider.CMetaData.ContactsMetaData.VISIBILITY);
-									cv.put(ContactsProvider.CMetaData.ContactsMetaData.VISIBILITY,
-											contact.visibility);
+									contact.visibility = c.getString(ContactsProvider.CMetaData.ContactsMetaData.VISIBILITY);
+									cv.put(ContactsProvider.CMetaData.ContactsMetaData.VISIBILITY, contact.visibility);
 								} catch (JSONException e) {
-									Reporter.reportError(this.getClass()
-											.toString(), Thread.currentThread()
-											.getStackTrace()[2].getMethodName()
-											.toString(), e.getMessage());
+									Reporter.reportError(this.getClass().toString(), Thread.currentThread().getStackTrace()[2]
+											.getMethodName().toString(), e.getMessage());
 								}
 
 								try {
-									contact.image = c
-											.getBoolean(ContactsProvider.CMetaData.ContactsMetaData.IMAGE);
-									cv.put(ContactsProvider.CMetaData.ContactsMetaData.IMAGE,
-											contact.image);
+									contact.image = c.getBoolean(ContactsProvider.CMetaData.ContactsMetaData.IMAGE);
+									cv.put(ContactsProvider.CMetaData.ContactsMetaData.IMAGE, contact.image);
 								} catch (JSONException e) {
-									Reporter.reportError(this.getClass()
-											.toString(), Thread.currentThread()
-											.getStackTrace()[2].getMethodName()
-											.toString(), e.getMessage());
+									Reporter.reportError(this.getClass().toString(), Thread.currentThread().getStackTrace()[2]
+											.getMethodName().toString(), e.getMessage());
 									contact.image = false;
 								}
 								try {
-									contact.image_thumb_url = c
-											.getString(ContactsProvider.CMetaData.ContactsMetaData.IMAGE_THUMB_URL);
-									cv.put(ContactsProvider.CMetaData.ContactsMetaData.IMAGE_THUMB_URL,
-											contact.image_thumb_url);
+									contact.image_thumb_url = c.getString(ContactsProvider.CMetaData.ContactsMetaData.IMAGE_THUMB_URL);
+									cv.put(ContactsProvider.CMetaData.ContactsMetaData.IMAGE_THUMB_URL, contact.image_thumb_url);
 								} catch (JSONException e) {
-									Reporter.reportError(this.getClass()
-											.toString(), Thread.currentThread()
-											.getStackTrace()[2].getMethodName()
-											.toString(), e.getMessage());
+									Reporter.reportError(this.getClass().toString(), Thread.currentThread().getStackTrace()[2]
+											.getMethodName().toString(), e.getMessage());
 									contact.image_thumb_url = "false";
 								}
 								try {
-									contact.image_url = c
-											.getString(ContactsProvider.CMetaData.ContactsMetaData.IMAGE_URL);
-									cv.put(ContactsProvider.CMetaData.ContactsMetaData.IMAGE_URL,
-											contact.image_url);
-									if (contact.image_url != null
-											&& !contact.image_url
-													.equals("null")) {
-										contact.image_bytes = imageToBytes(Data
-												.getServerUrl()
-												+ contact.image_url);
-										cv.put(ContactsProvider.CMetaData.ContactsMetaData.IMAGE_BYTES,
-												contact.image_bytes);
+									contact.image_url = c.getString(ContactsProvider.CMetaData.ContactsMetaData.IMAGE_URL);
+									cv.put(ContactsProvider.CMetaData.ContactsMetaData.IMAGE_URL, contact.image_url);
+									if (contact.image_url != null && !contact.image_url.equals("null")) {
+										contact.image_bytes = imageToBytes(Data.getServerUrl() + contact.image_url);
+										cv.put(ContactsProvider.CMetaData.ContactsMetaData.IMAGE_BYTES, contact.image_bytes);
 									}
 								} catch (JSONException e) {
-									Reporter.reportError(this.getClass()
-											.toString(), Thread.currentThread()
-											.getStackTrace()[2].getMethodName()
-											.toString(), e.getMessage());
+									Reporter.reportError(this.getClass().toString(), Thread.currentThread().getStackTrace()[2]
+											.getMethodName().toString(), e.getMessage());
 									contact.image_url = "false";
 								}
 
 								try {
-									contact.created = c
-											.getString(ContactsProvider.CMetaData.ContactsMetaData.CREATED);
-									cv.put(ContactsProvider.CMetaData.ContactsMetaData.CREATED,
-											contact.created);
+									contact.created = c.getString(ContactsProvider.CMetaData.ContactsMetaData.CREATED);
+									cv.put(ContactsProvider.CMetaData.ContactsMetaData.CREATED, contact.created);
 								} catch (JSONException e) {
-									Reporter.reportError(this.getClass()
-											.toString(), Thread.currentThread()
-											.getStackTrace()[2].getMethodName()
-											.toString(), e.getMessage());
+									Reporter.reportError(this.getClass().toString(), Thread.currentThread().getStackTrace()[2]
+											.getMethodName().toString(), e.getMessage());
 								}
 								try {
-									contact.modified = c
-											.getString(ContactsProvider.CMetaData.ContactsMetaData.MODOFIED);
-									cv.put(ContactsProvider.CMetaData.ContactsMetaData.MODOFIED,
-											contact.modified);
+									contact.modified = c.getString(ContactsProvider.CMetaData.ContactsMetaData.MODOFIED);
+									cv.put(ContactsProvider.CMetaData.ContactsMetaData.MODOFIED, contact.modified);
 								} catch (JSONException e) {
-									Reporter.reportError(this.getClass()
-											.toString(), Thread.currentThread()
-											.getStackTrace()[2].getMethodName()
-											.toString(), e.getMessage());
+									Reporter.reportError(this.getClass().toString(), Thread.currentThread().getStackTrace()[2]
+											.getMethodName().toString(), e.getMessage());
 								}
 								try {
-									contact.agenda_view = c
-											.getString(ContactsProvider.CMetaData.ContactsMetaData.AGENDA_VIEW);
-									cv.put(ContactsProvider.CMetaData.ContactsMetaData.AGENDA_VIEW,
-											contact.agenda_view);
+									contact.agenda_view = c.getString(ContactsProvider.CMetaData.ContactsMetaData.AGENDA_VIEW);
+									cv.put(ContactsProvider.CMetaData.ContactsMetaData.AGENDA_VIEW, contact.agenda_view);
 								} catch (JSONException e) {
-									Reporter.reportError(this.getClass()
-											.toString(), Thread.currentThread()
-											.getStackTrace()[2].getMethodName()
-											.toString(), e.getMessage());
+									Reporter.reportError(this.getClass().toString(), Thread.currentThread().getStackTrace()[2]
+											.getMethodName().toString(), e.getMessage());
 								}
 								try {
-									contact.registered = c
-											.getString(ContactsProvider.CMetaData.ContactsMetaData.REGISTERED);
-									cv.put(ContactsProvider.CMetaData.ContactsMetaData.REGISTERED,
-											contact.registered);
+									contact.registered = c.getString(ContactsProvider.CMetaData.ContactsMetaData.REGISTERED);
+									cv.put(ContactsProvider.CMetaData.ContactsMetaData.REGISTERED, contact.registered);
 								} catch (JSONException e) {
-									Reporter.reportError(this.getClass()
-											.toString(), Thread.currentThread()
-											.getStackTrace()[2].getMethodName()
-											.toString(), e.getMessage());
+									Reporter.reportError(this.getClass().toString(), Thread.currentThread().getStackTrace()[2]
+											.getMethodName().toString(), e.getMessage());
 								}
 								try {
-									contact.setColor(c
-											.getString(ContactsProvider.CMetaData.ContactsMetaData.COLOR));
-									cv.put(ContactsProvider.CMetaData.ContactsMetaData.COLOR,
-											contact.getColor());
+									contact.setColor(c.getString(ContactsProvider.CMetaData.ContactsMetaData.COLOR));
+									cv.put(ContactsProvider.CMetaData.ContactsMetaData.COLOR, contact.getColor());
 								} catch (JSONException e) {
-									Reporter.reportError(this.getClass()
-											.toString(), Thread.currentThread()
-											.getStackTrace()[2].getMethodName()
-											.toString(), e.getMessage());
+									Reporter.reportError(this.getClass().toString(), Thread.currentThread().getStackTrace()[2]
+											.getMethodName().toString(), e.getMessage());
 								}
 								try {
-									contact.email = c
-											.getString(ContactsProvider.CMetaData.ContactsMetaData.EMAIL);
-									cv.put(ContactsProvider.CMetaData.ContactsMetaData.EMAIL,
-											contact.email);
+									contact.email = c.getString(ContactsProvider.CMetaData.ContactsMetaData.EMAIL);
+									cv.put(ContactsProvider.CMetaData.ContactsMetaData.EMAIL, contact.email);
 								} catch (JSONException e) {
-									Reporter.reportError(this.getClass()
-											.toString(), Thread.currentThread()
-											.getStackTrace()[2].getMethodName()
-											.toString(), e.getMessage());
+									Reporter.reportError(this.getClass().toString(), Thread.currentThread().getStackTrace()[2]
+											.getMethodName().toString(), e.getMessage());
 								}
 
 								try {
-									if (!c.getString("groups").equals("null")
-											&& c.getString("groups") != null) {
+									if (!c.getString("groups").equals("null") && c.getString("groups") != null) {
 										try {
-											JSONArray groups = c
-													.getJSONArray("groups");
+											JSONArray groups = c.getJSONArray("groups");
 											if (groups != null) {
 												Map<String, String> set = new HashMap<String, String>();
-												for (int j = 0, l = groups
-														.length(); j < l; j++) {
-													set.put(String.valueOf(j),
-															groups.getString(j));
+												for (int j = 0, l = groups.length(); j < l; j++) {
+													set.put(String.valueOf(j), groups.getString(j));
 												}
 												contact.groups = set;
 												cv.put(ContactsProvider.CMetaData.ContactsMetaData.GROUPS,
 														MapUtils.mapToString(contact.groups));
 											}
 										} catch (JSONException e) {
-											Reporter.reportError(this
-													.getClass().toString(),
-													Thread.currentThread()
-															.getStackTrace()[2]
-															.getMethodName()
-															.toString(), e
-															.getMessage());
+											Reporter.reportError(this.getClass().toString(), Thread.currentThread().getStackTrace()[2]
+													.getMethodName().toString(), e.getMessage());
 										}
 									}
 								} catch (JSONException e) {
-									Reporter.reportError(this.getClass()
-											.toString(), Thread.currentThread()
-											.getStackTrace()[2].getMethodName()
-											.toString(), e.getMessage());
+									Reporter.reportError(this.getClass().toString(), Thread.currentThread().getStackTrace()[2]
+											.getMethodName().toString(), e.getMessage());
 								}
 								contacts.add(contact);
-								Data.getmContext()
-										.getContentResolver()
-										.insert(ContactsProvider.CMetaData.ContactsMetaData.CONTENT_URI,
-												cv);
+								Data.getmContext().getContentResolver().insert(ContactsProvider.CMetaData.ContactsMetaData.CONTENT_URI, cv);
 							}
 						}
 					}
@@ -1928,9 +1423,8 @@ public class DataManagement {
 
 			}
 		} catch (Exception ex) {
-			Reporter.reportError(this.getClass().toString(), Thread
-					.currentThread().getStackTrace()[2].getMethodName()
-					.toString(), ex.getMessage());
+			Reporter.reportError(this.getClass().toString(), Thread.currentThread().getStackTrace()[2].getMethodName().toString(),
+					ex.getMessage());
 		}
 		Data.setContacts(contacts);
 		Data.setLoadContactsData(false);
@@ -1939,77 +1433,32 @@ public class DataManagement {
 
 	public Contact getContact(int id) {
 		Contact item = new Contact();
-		Uri uri = Uri
-				.parse(ContactsProvider.CMetaData.ContactsMetaData.CONTENT_URI
-						+ "/" + id);
-		Cursor result = Data.getmContext().getContentResolver()
-				.query(uri, null, null, null, null);
+		Uri uri = Uri.parse(ContactsProvider.CMetaData.ContactsMetaData.CONTENT_URI + "/" + id);
+		Cursor result = Data.getmContext().getContentResolver().query(uri, null, null, null, null);
 
 		if (result.moveToFirst()) {
-			item.contact_id = result
-					.getInt(result
-							.getColumnIndex(ContactsProvider.CMetaData.ContactsMetaData.C_ID));
-			item.name = result
-					.getString(result
-							.getColumnIndex(ContactsProvider.CMetaData.ContactsMetaData.NAME));
-			item.lastname = result
-					.getString(result
-							.getColumnIndex(ContactsProvider.CMetaData.ContactsMetaData.LASTNAME));
-			item.email = result
-					.getString(result
-							.getColumnIndex(ContactsProvider.CMetaData.ContactsMetaData.EMAIL));
-			item.phone1 = result
-					.getString(result
-							.getColumnIndex(ContactsProvider.CMetaData.ContactsMetaData.PHONE));
-			item.birthdate = result
-					.getString(result
-							.getColumnIndex(ContactsProvider.CMetaData.ContactsMetaData.BIRTHDATE));
-			item.country = result
-					.getString(result
-							.getColumnIndex(ContactsProvider.CMetaData.ContactsMetaData.COUNTRY));
-			item.city = result
-					.getString(result
-							.getColumnIndex(ContactsProvider.CMetaData.ContactsMetaData.CITY));
-			item.street = result
-					.getString(result
-							.getColumnIndex(ContactsProvider.CMetaData.ContactsMetaData.STREET));
-			item.zip = result
-					.getString(result
-							.getColumnIndex(ContactsProvider.CMetaData.ContactsMetaData.ZIP));
-			item.visibility = result
-					.getString(result
-							.getColumnIndex(ContactsProvider.CMetaData.ContactsMetaData.VISIBILITY));
-			item.zip = result
-					.getString(result
-							.getColumnIndex(ContactsProvider.CMetaData.ContactsMetaData.ZIP));
-			final int image = result
-					.getInt(result
-							.getColumnIndex(ContactsProvider.CMetaData.ContactsMetaData.IMAGE));
+			item.contact_id = result.getInt(result.getColumnIndex(ContactsProvider.CMetaData.ContactsMetaData.C_ID));
+			item.name = result.getString(result.getColumnIndex(ContactsProvider.CMetaData.ContactsMetaData.NAME));
+			item.lastname = result.getString(result.getColumnIndex(ContactsProvider.CMetaData.ContactsMetaData.LASTNAME));
+			item.email = result.getString(result.getColumnIndex(ContactsProvider.CMetaData.ContactsMetaData.EMAIL));
+			item.phone1 = result.getString(result.getColumnIndex(ContactsProvider.CMetaData.ContactsMetaData.PHONE));
+			item.birthdate = result.getString(result.getColumnIndex(ContactsProvider.CMetaData.ContactsMetaData.BIRTHDATE));
+			item.country = result.getString(result.getColumnIndex(ContactsProvider.CMetaData.ContactsMetaData.COUNTRY));
+			item.city = result.getString(result.getColumnIndex(ContactsProvider.CMetaData.ContactsMetaData.CITY));
+			item.street = result.getString(result.getColumnIndex(ContactsProvider.CMetaData.ContactsMetaData.STREET));
+			item.zip = result.getString(result.getColumnIndex(ContactsProvider.CMetaData.ContactsMetaData.ZIP));
+			item.visibility = result.getString(result.getColumnIndex(ContactsProvider.CMetaData.ContactsMetaData.VISIBILITY));
+			item.zip = result.getString(result.getColumnIndex(ContactsProvider.CMetaData.ContactsMetaData.ZIP));
+			final int image = result.getInt(result.getColumnIndex(ContactsProvider.CMetaData.ContactsMetaData.IMAGE));
 			item.image = image == 1;
-			item.image_url = result
-					.getString(result
-							.getColumnIndex(ContactsProvider.CMetaData.ContactsMetaData.IMAGE_URL));
-			item.image_thumb_url = result
-					.getString(result
-							.getColumnIndex(ContactsProvider.CMetaData.ContactsMetaData.IMAGE_THUMB_URL));
-			item.image_bytes = result
-					.getBlob(result
-							.getColumnIndex(ContactsProvider.CMetaData.ContactsMetaData.IMAGE_BYTES));
-			item.created = result
-					.getString(result
-							.getColumnIndex(ContactsProvider.CMetaData.ContactsMetaData.CREATED));
-			item.modified = result
-					.getString(result
-							.getColumnIndex(ContactsProvider.CMetaData.ContactsMetaData.MODOFIED));
-			item.agenda_view = result
-					.getString(result
-							.getColumnIndex(ContactsProvider.CMetaData.ContactsMetaData.AGENDA_VIEW));
-			item.registered = result
-					.getString(result
-							.getColumnIndex(ContactsProvider.CMetaData.ContactsMetaData.REGISTERED));
-			final String groups = result
-					.getString(result
-							.getColumnIndex(ContactsProvider.CMetaData.ContactsMetaData.GROUPS));
+			item.image_url = result.getString(result.getColumnIndex(ContactsProvider.CMetaData.ContactsMetaData.IMAGE_URL));
+			item.image_thumb_url = result.getString(result.getColumnIndex(ContactsProvider.CMetaData.ContactsMetaData.IMAGE_THUMB_URL));
+			item.image_bytes = result.getBlob(result.getColumnIndex(ContactsProvider.CMetaData.ContactsMetaData.IMAGE_BYTES));
+			item.created = result.getString(result.getColumnIndex(ContactsProvider.CMetaData.ContactsMetaData.CREATED));
+			item.modified = result.getString(result.getColumnIndex(ContactsProvider.CMetaData.ContactsMetaData.MODOFIED));
+			item.agenda_view = result.getString(result.getColumnIndex(ContactsProvider.CMetaData.ContactsMetaData.AGENDA_VIEW));
+			item.registered = result.getString(result.getColumnIndex(ContactsProvider.CMetaData.ContactsMetaData.REGISTERED));
+			final String groups = result.getString(result.getColumnIndex(ContactsProvider.CMetaData.ContactsMetaData.GROUPS));
 			if (groups != null) {
 				item.groups = MapUtils.stringToMap(groups);
 			}
@@ -2024,11 +1473,9 @@ public class DataManagement {
 
 		try {
 			HttpClient hc = new DefaultHttpClient();
-			HttpPost post = new HttpPost(Data.getServerUrl()
-					+ "mobile/contact_remove");
+			HttpPost post = new HttpPost(Data.getServerUrl() + "mobile/contact_remove");
 
-			MultipartEntity reqEntity = new MultipartEntity(
-					HttpMultipartMode.BROWSER_COMPATIBLE);
+			MultipartEntity reqEntity = new MultipartEntity(HttpMultipartMode.BROWSER_COMPATIBLE);
 
 			reqEntity.addPart("contact_id", new StringBody(String.valueOf(id)));
 			reqEntity.addPart(TOKEN, new StringBody(Data.getToken()));
@@ -2052,14 +1499,12 @@ public class DataManagement {
 					}
 				}
 			} else {
-				OfflineData uplooad = new OfflineData("mobile/contact_remove",
-						reqEntity);
+				OfflineData uplooad = new OfflineData("mobile/contact_remove", reqEntity);
 				Data.getUnuploadedData().add(uplooad);
 			}
 		} catch (Exception ex) {
-			Reporter.reportError(this.getClass().toString(), Thread
-					.currentThread().getStackTrace()[2].getMethodName()
-					.toString(), ex.getMessage());
+			Reporter.reportError(this.getClass().toString(), Thread.currentThread().getStackTrace()[2].getMethodName().toString(),
+					ex.getMessage());
 			return false;
 		}
 		return success;
@@ -2070,29 +1515,23 @@ public class DataManagement {
 
 		try {
 			HttpClient hc = new DefaultHttpClient();
-			HttpPost post = new HttpPost(Data.getServerUrl()
-					+ "mobile/contact_edit");
+			HttpPost post = new HttpPost(Data.getServerUrl() + "mobile/contact_edit");
 
-			MultipartEntity reqEntity = new MultipartEntity(
-					HttpMultipartMode.BROWSER_COMPATIBLE);
+			MultipartEntity reqEntity = new MultipartEntity(HttpMultipartMode.BROWSER_COMPATIBLE);
 
 			if (c.remove_image == false) {
 				if (c.image_bytes != null) {
-					ByteArrayBody bab = new ByteArrayBody(c.image_bytes,
-							"image");
+					ByteArrayBody bab = new ByteArrayBody(c.image_bytes, "image");
 					reqEntity.addPart("image", bab);
 				}
-				reqEntity.addPart("remove_image",
-						new StringBody(String.valueOf("0")));
+				reqEntity.addPart("remove_image", new StringBody(String.valueOf("0")));
 			} else {
-				reqEntity.addPart("remove_image",
-						new StringBody(String.valueOf("1")));
+				reqEntity.addPart("remove_image", new StringBody(String.valueOf("1")));
 			}
 
 			reqEntity.addPart(TOKEN, new StringBody(Data.getToken()));
 
-			reqEntity.addPart("contact_id",
-					new StringBody(String.valueOf(c.contact_id)));
+			reqEntity.addPart("contact_id", new StringBody(String.valueOf(c.contact_id)));
 			reqEntity.addPart("name", new StringBody(c.name));
 			reqEntity.addPart("lastname", new StringBody(c.lastname));
 			reqEntity.addPart("email", new StringBody(c.email));
@@ -2107,8 +1546,7 @@ public class DataManagement {
 			Map<String, String> groups = c.groups;
 			if (groups != null) {
 				for (int i = 0, l = groups.size(); i < l; i++) {
-					reqEntity.addPart("groups[]",
-							new StringBody(String.valueOf(groups.get(i))));
+					reqEntity.addPart("groups[]", new StringBody(String.valueOf(groups.get(i))));
 				}
 			} else {
 				reqEntity.addPart("groups[]", new StringBody(""));
@@ -2130,21 +1568,18 @@ public class DataManagement {
 						Log.e("editContact - success", "" + success);
 
 						if (success == false) {
-							Data.setERROR(object.getJSONObject("error")
-									.getString("reason"));
+							Data.setERROR(object.getJSONObject("error").getString("reason"));
 							Log.e("editContact - error: ", Data.getERROR());
 						}
 					}
 				}
 			} else {
-				OfflineData uplooad = new OfflineData("mobile/contact_edit",
-						reqEntity);
+				OfflineData uplooad = new OfflineData("mobile/contact_edit", reqEntity);
 				Data.getUnuploadedData().add(uplooad);
 			}
 		} catch (Exception ex) {
-			Reporter.reportError(this.getClass().toString(), Thread
-					.currentThread().getStackTrace()[2].getMethodName()
-					.toString(), ex.getMessage());
+			Reporter.reportError(this.getClass().toString(), Thread.currentThread().getStackTrace()[2].getMethodName().toString(),
+					ex.getMessage());
 			return false;
 		}
 		return success;
@@ -2155,21 +1590,17 @@ public class DataManagement {
 
 		try {
 			HttpClient hc = new DefaultHttpClient();
-			HttpPost post = new HttpPost(Data.getServerUrl()
-					+ "mobile/contact_create");
+			HttpPost post = new HttpPost(Data.getServerUrl() + "mobile/contact_create");
 
-			MultipartEntity reqEntity = new MultipartEntity(
-					HttpMultipartMode.BROWSER_COMPATIBLE);
+			MultipartEntity reqEntity = new MultipartEntity(HttpMultipartMode.BROWSER_COMPATIBLE);
 
 			if (c.image_bytes != null) {
 				try {
-					ByteArrayBody bab = new ByteArrayBody(c.image_bytes,
-							"image");
+					ByteArrayBody bab = new ByteArrayBody(c.image_bytes, "image");
 					reqEntity.addPart("image", bab);
 				} catch (Exception e) {
-					Reporter.reportError(this.getClass().toString(), Thread
-							.currentThread().getStackTrace()[2].getMethodName()
-							.toString(), e.getMessage());
+					Reporter.reportError(this.getClass().toString(), Thread.currentThread().getStackTrace()[2].getMethodName().toString(),
+							e.getMessage());
 				}
 			}
 
@@ -2225,8 +1656,7 @@ public class DataManagement {
 			Map<String, String> groups = c.groups;
 			if (groups != null) {
 				for (int i = 0, l = groups.size(); i < l; i++) {
-					reqEntity.addPart("groups[]",
-							new StringBody(String.valueOf(groups.get(i))));
+					reqEntity.addPart("groups[]", new StringBody(String.valueOf(groups.get(i))));
 				}
 			} else {
 				reqEntity.addPart("groups[]", new StringBody(""));
@@ -2246,21 +1676,18 @@ public class DataManagement {
 						Log.e("createContact - success", "" + success);
 
 						if (success == false) {
-							Data.setERROR(object.getJSONObject("error")
-									.getString("reason"));
+							Data.setERROR(object.getJSONObject("error").getString("reason"));
 							Log.e("createContact - error: ", Data.getERROR());
 						}
 					}
 				}
 			} else {
-				OfflineData uplooad = new OfflineData("mobile/contact_create",
-						reqEntity);
+				OfflineData uplooad = new OfflineData("mobile/contact_create", reqEntity);
 				Data.getUnuploadedData().add(uplooad);
 			}
 		} catch (Exception ex) {
-			Reporter.reportError(this.getClass().toString(), Thread
-					.currentThread().getStackTrace()[2].getMethodName()
-					.toString(), ex.getMessage());
+			Reporter.reportError(this.getClass().toString(), Thread.currentThread().getStackTrace()[2].getMethodName().toString(),
+					ex.getMessage());
 			return false;
 		}
 		return success;
@@ -2310,54 +1737,28 @@ public class DataManagement {
 		Group item;
 		ArrayList<Group> items = new ArrayList<Group>();
 
-		String where = ContactsProvider.CMetaData.GroupsMetaData.NEED_UPDATE
-				+ "!=3";
+		String where = ContactsProvider.CMetaData.GroupsMetaData.NEED_UPDATE + "!=3";
 
-		Cursor result = Data
-				.getmContext()
-				.getContentResolver()
-				.query(ContactsProvider.CMetaData.GroupsMetaData.CONTENT_URI,
-						null, where, null, null);
+		Cursor result = Data.getmContext().getContentResolver()
+				.query(ContactsProvider.CMetaData.GroupsMetaData.CONTENT_URI, null, where, null, null);
 
 		result.moveToFirst();
 
 		while (!result.isAfterLast()) {
 			item = new Group();
 
-			item.group_id = result
-					.getInt(result
-							.getColumnIndex(ContactsProvider.CMetaData.GroupsMetaData.G_ID));
-			item.title = result
-					.getString(result
-							.getColumnIndex(ContactsProvider.CMetaData.GroupsMetaData.TITLE));
-			item.created = result
-					.getString(result
-							.getColumnIndex(ContactsProvider.CMetaData.GroupsMetaData.CREATED));
-			item.modified = result
-					.getString(result
-							.getColumnIndex(ContactsProvider.CMetaData.GroupsMetaData.MODIFIED));
-			item.deleted = result
-					.getString(result
-							.getColumnIndex(ContactsProvider.CMetaData.GroupsMetaData.DELETED));
-			final int image = result
-					.getInt(result
-							.getColumnIndex(ContactsProvider.CMetaData.GroupsMetaData.IMAGE));
+			item.group_id = result.getInt(result.getColumnIndex(ContactsProvider.CMetaData.GroupsMetaData.G_ID));
+			item.title = result.getString(result.getColumnIndex(ContactsProvider.CMetaData.GroupsMetaData.TITLE));
+			item.created = result.getString(result.getColumnIndex(ContactsProvider.CMetaData.GroupsMetaData.CREATED));
+			item.modified = result.getString(result.getColumnIndex(ContactsProvider.CMetaData.GroupsMetaData.MODIFIED));
+			item.deleted = result.getString(result.getColumnIndex(ContactsProvider.CMetaData.GroupsMetaData.DELETED));
+			final int image = result.getInt(result.getColumnIndex(ContactsProvider.CMetaData.GroupsMetaData.IMAGE));
 			item.image = image == 1;
-			item.image_url = result
-					.getString(result
-							.getColumnIndex(ContactsProvider.CMetaData.GroupsMetaData.IMAGE_URL));
-			item.image_thumb_url = result
-					.getString(result
-							.getColumnIndex(ContactsProvider.CMetaData.GroupsMetaData.IMAGE_THUMB_URL));
-			item.image_bytes = result
-					.getBlob(result
-							.getColumnIndex(ContactsProvider.CMetaData.GroupsMetaData.IMAGE_BYTES));
-			item.contact_count = result
-					.getInt(result
-							.getColumnIndex(ContactsProvider.CMetaData.GroupsMetaData.CONTACTS_COUNT));
-			final String contacts = result
-					.getString(result
-							.getColumnIndex(ContactsProvider.CMetaData.GroupsMetaData.CONTACTS));
+			item.image_url = result.getString(result.getColumnIndex(ContactsProvider.CMetaData.GroupsMetaData.IMAGE_URL));
+			item.image_thumb_url = result.getString(result.getColumnIndex(ContactsProvider.CMetaData.GroupsMetaData.IMAGE_THUMB_URL));
+			item.image_bytes = result.getBlob(result.getColumnIndex(ContactsProvider.CMetaData.GroupsMetaData.IMAGE_BYTES));
+			item.contact_count = result.getInt(result.getColumnIndex(ContactsProvider.CMetaData.GroupsMetaData.CONTACTS_COUNT));
+			final String contacts = result.getString(result.getColumnIndex(ContactsProvider.CMetaData.GroupsMetaData.CONTACTS));
 			if (contacts != null) {
 				item.contacts = MapUtils.stringToMap(contacts);
 			}
@@ -2377,10 +1778,8 @@ public class DataManagement {
 
 		try {
 			HttpClient hc = new DefaultHttpClient();
-			HttpPost post = new HttpPost(Data.getServerUrl()
-					+ "mobile/groups_list");
-			MultipartEntity reqEntity = new MultipartEntity(
-					HttpMultipartMode.BROWSER_COMPATIBLE);
+			HttpPost post = new HttpPost(Data.getServerUrl() + "mobile/groups_list");
+			MultipartEntity reqEntity = new MultipartEntity(HttpMultipartMode.BROWSER_COMPATIBLE);
 
 			reqEntity.addPart(TOKEN, new StringBody(Data.getToken()));
 
@@ -2410,148 +1809,104 @@ public class DataManagement {
 
 								try {
 									group.group_id = g.getInt("group_id");
-									cv.put(ContactsProvider.CMetaData.GroupsMetaData.G_ID,
-											group.group_id);
+									cv.put(ContactsProvider.CMetaData.GroupsMetaData.G_ID, group.group_id);
 								} catch (JSONException e) {
-									Reporter.reportError(this.getClass()
-											.toString(), Thread.currentThread()
-											.getStackTrace()[2].getMethodName()
-											.toString(), e.getMessage());
+									Reporter.reportError(this.getClass().toString(), Thread.currentThread().getStackTrace()[2]
+											.getMethodName().toString(), e.getMessage());
 								}
 								try {
 									group.title = g.getString("title");
-									cv.put(ContactsProvider.CMetaData.GroupsMetaData.TITLE,
-											group.title);
+									cv.put(ContactsProvider.CMetaData.GroupsMetaData.TITLE, group.title);
 								} catch (JSONException e) {
-									Reporter.reportError(this.getClass()
-											.toString(), Thread.currentThread()
-											.getStackTrace()[2].getMethodName()
-											.toString(), e.getMessage());
+									Reporter.reportError(this.getClass().toString(), Thread.currentThread().getStackTrace()[2]
+											.getMethodName().toString(), e.getMessage());
 								}
 								try {
 									group.created = g.getString("created");
-									cv.put(ContactsProvider.CMetaData.GroupsMetaData.CREATED,
-											group.created);
+									cv.put(ContactsProvider.CMetaData.GroupsMetaData.CREATED, group.created);
 								} catch (JSONException e) {
-									Reporter.reportError(this.getClass()
-											.toString(), Thread.currentThread()
-											.getStackTrace()[2].getMethodName()
-											.toString(), e.getMessage());
+									Reporter.reportError(this.getClass().toString(), Thread.currentThread().getStackTrace()[2]
+											.getMethodName().toString(), e.getMessage());
 								}
 
 								try {
 									group.modified = g.getString("modified");
-									cv.put(ContactsProvider.CMetaData.GroupsMetaData.MODIFIED,
-											group.modified);
+									cv.put(ContactsProvider.CMetaData.GroupsMetaData.MODIFIED, group.modified);
 								} catch (JSONException e) {
-									Reporter.reportError(this.getClass()
-											.toString(), Thread.currentThread()
-											.getStackTrace()[2].getMethodName()
-											.toString(), e.getMessage());
+									Reporter.reportError(this.getClass().toString(), Thread.currentThread().getStackTrace()[2]
+											.getMethodName().toString(), e.getMessage());
 								}
 								try {
 									group.deleted = g.getString("deleted");
-									cv.put(ContactsProvider.CMetaData.GroupsMetaData.DELETED,
-											group.deleted);
+									cv.put(ContactsProvider.CMetaData.GroupsMetaData.DELETED, group.deleted);
 								} catch (JSONException e) {
-									Reporter.reportError(this.getClass()
-											.toString(), Thread.currentThread()
-											.getStackTrace()[2].getMethodName()
-											.toString(), e.getMessage());
+									Reporter.reportError(this.getClass().toString(), Thread.currentThread().getStackTrace()[2]
+											.getMethodName().toString(), e.getMessage());
 								}
 
 								try {
 									group.image = g.getBoolean("image");
-									cv.put(ContactsProvider.CMetaData.GroupsMetaData.IMAGE,
-											group.image);
-									cv.put(ContactsProvider.CMetaData.GroupsMetaData.REMOVE_IMAGE,
-											false);
+									cv.put(ContactsProvider.CMetaData.GroupsMetaData.IMAGE, group.image);
+									cv.put(ContactsProvider.CMetaData.GroupsMetaData.REMOVE_IMAGE, false);
 								} catch (JSONException e) {
-									Reporter.reportError(this.getClass()
-											.toString(), Thread.currentThread()
-											.getStackTrace()[2].getMethodName()
-											.toString(), e.getMessage());
+									Reporter.reportError(this.getClass().toString(), Thread.currentThread().getStackTrace()[2]
+											.getMethodName().toString(), e.getMessage());
 								}
 								try {
-									group.image_thumb_url = g
-											.getString("image_thumb_url");
-									cv.put(ContactsProvider.CMetaData.GroupsMetaData.IMAGE_THUMB_URL,
-											group.image_thumb_url);
+									group.image_thumb_url = g.getString("image_thumb_url");
+									cv.put(ContactsProvider.CMetaData.GroupsMetaData.IMAGE_THUMB_URL, group.image_thumb_url);
 								} catch (JSONException e) {
-									Reporter.reportError(this.getClass()
-											.toString(), Thread.currentThread()
-											.getStackTrace()[2].getMethodName()
-											.toString(), e.getMessage());
+									Reporter.reportError(this.getClass().toString(), Thread.currentThread().getStackTrace()[2]
+											.getMethodName().toString(), e.getMessage());
 								}
 								try {
 									group.image_url = g.getString("image_url");
-									cv.put(ContactsProvider.CMetaData.GroupsMetaData.IMAGE_URL,
-											group.image_url);
+									cv.put(ContactsProvider.CMetaData.GroupsMetaData.IMAGE_URL, group.image_url);
 
 									group.image_bytes = imageToBytes(group.image_url);
-									cv.put(ContactsProvider.CMetaData.GroupsMetaData.IMAGE_BYTES,
-											group.image_bytes);
+									cv.put(ContactsProvider.CMetaData.GroupsMetaData.IMAGE_BYTES, group.image_bytes);
 								} catch (JSONException e) {
-									Reporter.reportError(this.getClass()
-											.toString(), Thread.currentThread()
-											.getStackTrace()[2].getMethodName()
-											.toString(), e.getMessage());
+									Reporter.reportError(this.getClass().toString(), Thread.currentThread().getStackTrace()[2]
+											.getMethodName().toString(), e.getMessage());
 								}
 
 								try {
-									group.contact_count = g
-											.getInt("contact_count");
-									cv.put(ContactsProvider.CMetaData.GroupsMetaData.CONTACTS_COUNT,
-											group.contact_count);
+									group.contact_count = g.getInt("contact_count");
+									cv.put(ContactsProvider.CMetaData.GroupsMetaData.CONTACTS_COUNT, group.contact_count);
 								} catch (JSONException e) {
-									Reporter.reportError(this.getClass()
-											.toString(), Thread.currentThread()
-											.getStackTrace()[2].getMethodName()
-											.toString(), e.getMessage());
+									Reporter.reportError(this.getClass().toString(), Thread.currentThread().getStackTrace()[2]
+											.getMethodName().toString(), e.getMessage());
 									group.contact_count = 0;
 								}
 								try {
-									if (!g.getString("contacts").equals("null")
-											&& g.getString("contacts") != null) {
+									if (!g.getString("contacts").equals("null") && g.getString("contacts") != null) {
 										try {
-											JSONArray contacts = g
-													.getJSONArray("contacts");
+											JSONArray contacts = g.getJSONArray("contacts");
 											if (contacts != null) {
 												Map<String, String> set = null;
 												for (int j = 0; j < group.contact_count; j++) {
 													if (set == null)
 														set = new HashMap<String, String>();
-													set.put(String.valueOf(j),
-															contacts.getString(j));
+													set.put(String.valueOf(j), contacts.getString(j));
 												}
 												group.contacts = set;
 												cv.put(ContactsProvider.CMetaData.GroupsMetaData.CONTACTS,
 														MapUtils.mapToString(group.contacts));
 											}
 										} catch (JSONException e) {
-											Reporter.reportError(this
-													.getClass().toString(),
-													Thread.currentThread()
-															.getStackTrace()[2]
-															.getMethodName()
-															.toString(), e
-															.getMessage());
+											Reporter.reportError(this.getClass().toString(), Thread.currentThread().getStackTrace()[2]
+													.getMethodName().toString(), e.getMessage());
 										}
 									}
 								} catch (JSONException e) {
-									Reporter.reportError(this.getClass()
-											.toString(), Thread.currentThread()
-											.getStackTrace()[2].getMethodName()
-											.toString(), e.getMessage());
+									Reporter.reportError(this.getClass().toString(), Thread.currentThread().getStackTrace()[2]
+											.getMethodName().toString(), e.getMessage());
 								}
 
-								if (group.deleted == null
-										|| group.deleted.equals("null")) {
+								if (group.deleted == null || group.deleted.equals("null")) {
 									groups.add(group);
-									Data.getmContext()
-											.getContentResolver()
-											.insert(ContactsProvider.CMetaData.GroupsMetaData.CONTENT_URI,
-													cv);
+									Data.getmContext().getContentResolver()
+											.insert(ContactsProvider.CMetaData.GroupsMetaData.CONTENT_URI, cv);
 								}
 							}
 						}
@@ -2560,9 +1915,8 @@ public class DataManagement {
 
 			}
 		} catch (Exception ex) {
-			Reporter.reportError(this.getClass().toString(), Thread
-					.currentThread().getStackTrace()[2].getMethodName()
-					.toString(), ex.getMessage());
+			Reporter.reportError(this.getClass().toString(), Thread.currentThread().getStackTrace()[2].getMethodName().toString(),
+					ex.getMessage());
 		}
 		Data.setGroups(groups);
 		Data.setLoadGroupsData(false);
@@ -2571,51 +1925,24 @@ public class DataManagement {
 
 	public Group getGroup(Context context, int id) {
 		Group group = new Group();
-		Uri uri = Uri
-				.parse(ContactsProvider.CMetaData.GroupsMetaData.CONTENT_URI
-						+ "/" + id);
-		Cursor result = context.getContentResolver().query(uri, null, null,
-				null, null);
+		Uri uri = Uri.parse(ContactsProvider.CMetaData.GroupsMetaData.CONTENT_URI + "/" + id);
+		Cursor result = context.getContentResolver().query(uri, null, null, null, null);
 
 		if (result.moveToFirst()) {
-			group.group_id = result
-					.getInt(result
-							.getColumnIndex(ContactsProvider.CMetaData.GroupsMetaData.G_ID));
-			group.title = result
-					.getString(result
-							.getColumnIndex(ContactsProvider.CMetaData.GroupsMetaData.TITLE));
-			group.created = result
-					.getString(result
-							.getColumnIndex(ContactsProvider.CMetaData.GroupsMetaData.CREATED));
-			group.modified = result
-					.getString(result
-							.getColumnIndex(ContactsProvider.CMetaData.GroupsMetaData.MODIFIED));
-			group.deleted = result
-					.getString(result
-							.getColumnIndex(ContactsProvider.CMetaData.GroupsMetaData.DELETED));
-			final int image = result
-					.getInt(result
-							.getColumnIndex(ContactsProvider.CMetaData.GroupsMetaData.IMAGE));
+			group.group_id = result.getInt(result.getColumnIndex(ContactsProvider.CMetaData.GroupsMetaData.G_ID));
+			group.title = result.getString(result.getColumnIndex(ContactsProvider.CMetaData.GroupsMetaData.TITLE));
+			group.created = result.getString(result.getColumnIndex(ContactsProvider.CMetaData.GroupsMetaData.CREATED));
+			group.modified = result.getString(result.getColumnIndex(ContactsProvider.CMetaData.GroupsMetaData.MODIFIED));
+			group.deleted = result.getString(result.getColumnIndex(ContactsProvider.CMetaData.GroupsMetaData.DELETED));
+			final int image = result.getInt(result.getColumnIndex(ContactsProvider.CMetaData.GroupsMetaData.IMAGE));
 			group.image = image == 1;
-			group.image_url = result
-					.getString(result
-							.getColumnIndex(ContactsProvider.CMetaData.GroupsMetaData.IMAGE_URL));
-			group.image_thumb_url = result
-					.getString(result
-							.getColumnIndex(ContactsProvider.CMetaData.GroupsMetaData.IMAGE_THUMB_URL));
-			group.image_bytes = result
-					.getBlob(result
-							.getColumnIndex(ContactsProvider.CMetaData.GroupsMetaData.IMAGE_BYTES));
-			final int remove_image = result
-					.getInt(result
-							.getColumnIndex(ContactsProvider.CMetaData.GroupsMetaData.REMOVE_IMAGE));
+			group.image_url = result.getString(result.getColumnIndex(ContactsProvider.CMetaData.GroupsMetaData.IMAGE_URL));
+			group.image_thumb_url = result.getString(result.getColumnIndex(ContactsProvider.CMetaData.GroupsMetaData.IMAGE_THUMB_URL));
+			group.image_bytes = result.getBlob(result.getColumnIndex(ContactsProvider.CMetaData.GroupsMetaData.IMAGE_BYTES));
+			final int remove_image = result.getInt(result.getColumnIndex(ContactsProvider.CMetaData.GroupsMetaData.REMOVE_IMAGE));
 			group.remove_image = remove_image == 1;
-			group.contact_count = result
-					.getInt(result
-							.getColumnIndex(ContactsProvider.CMetaData.GroupsMetaData.CONTACTS_COUNT));
-			final String contacts = result
-					.getString(result
-							.getColumnIndex(ContactsProvider.CMetaData.GroupsMetaData.CONTACTS));
+			group.contact_count = result.getInt(result.getColumnIndex(ContactsProvider.CMetaData.GroupsMetaData.CONTACTS_COUNT));
+			final String contacts = result.getString(result.getColumnIndex(ContactsProvider.CMetaData.GroupsMetaData.CONTACTS));
 			if (contacts != null) {
 				group.contacts = MapUtils.stringToMap(contacts);
 			}
@@ -2630,14 +1957,11 @@ public class DataManagement {
 
 		try {
 			HttpClient hc = new DefaultHttpClient();
-			HttpPost post = new HttpPost(Data.getServerUrl()
-					+ "mobile/group_remove");
+			HttpPost post = new HttpPost(Data.getServerUrl() + "mobile/group_remove");
 
-			MultipartEntity reqEntity = new MultipartEntity(
-					HttpMultipartMode.BROWSER_COMPATIBLE);
+			MultipartEntity reqEntity = new MultipartEntity(HttpMultipartMode.BROWSER_COMPATIBLE);
 
-			reqEntity.addPart("group_id",
-					new StringBody(String.valueOf(group_id)));
+			reqEntity.addPart("group_id", new StringBody(String.valueOf(group_id)));
 			reqEntity.addPart(TOKEN, new StringBody(Data.getToken()));
 
 			post.setEntity(reqEntity);
@@ -2658,14 +1982,12 @@ public class DataManagement {
 					}
 				}
 			} else {
-				OfflineData uplooad = new OfflineData("mobile/group_remove",
-						reqEntity);
+				OfflineData uplooad = new OfflineData("mobile/group_remove", reqEntity);
 				Data.getUnuploadedData().add(uplooad);
 			}
 		} catch (Exception ex) {
-			Reporter.reportError(this.getClass().toString(), Thread
-					.currentThread().getStackTrace()[2].getMethodName()
-					.toString(), ex.getMessage());
+			Reporter.reportError(this.getClass().toString(), Thread.currentThread().getStackTrace()[2].getMethodName().toString(),
+					ex.getMessage());
 			return false;
 		}
 		return success;
@@ -2676,35 +1998,28 @@ public class DataManagement {
 
 		try {
 			HttpClient hc = new DefaultHttpClient();
-			HttpPost post = new HttpPost(Data.getServerUrl()
-					+ "mobile/groups_edit");
+			HttpPost post = new HttpPost(Data.getServerUrl() + "mobile/groups_edit");
 
-			MultipartEntity reqEntity = new MultipartEntity(
-					HttpMultipartMode.BROWSER_COMPATIBLE);
+			MultipartEntity reqEntity = new MultipartEntity(HttpMultipartMode.BROWSER_COMPATIBLE);
 
 			if (g.remove_image == false) {
 				if (g.image_bytes != null) {
-					ByteArrayBody bab = new ByteArrayBody(g.image_bytes,
-							"image");
+					ByteArrayBody bab = new ByteArrayBody(g.image_bytes, "image");
 					reqEntity.addPart("image", bab);
 				}
-				reqEntity.addPart("remove_image",
-						new StringBody(String.valueOf("0")));
+				reqEntity.addPart("remove_image", new StringBody(String.valueOf("0")));
 			} else {
-				reqEntity.addPart("remove_image",
-						new StringBody(String.valueOf("1")));
+				reqEntity.addPart("remove_image", new StringBody(String.valueOf("1")));
 			}
 
-			reqEntity.addPart("group_id",
-					new StringBody(String.valueOf(g.group_id)));
+			reqEntity.addPart("group_id", new StringBody(String.valueOf(g.group_id)));
 			reqEntity.addPart(TOKEN, new StringBody(Data.getToken()));
 			reqEntity.addPart("title", new StringBody(g.title));
 
 			Map<String, String> contacts = g.contacts;
 			if (contacts != null) {
 				for (int i = 0, l = contacts.size(); i < l; i++) {
-					reqEntity.addPart("contacts[]",
-							new StringBody(contacts.get(String.valueOf(i))));
+					reqEntity.addPart("contacts[]", new StringBody(contacts.get(String.valueOf(i))));
 				}
 			} else {
 				reqEntity.addPart("contacts[]", new StringBody(""));
@@ -2726,21 +2041,18 @@ public class DataManagement {
 						Log.e("editGroup - success", "" + success);
 
 						if (success == false) {
-							Data.setERROR(object.getJSONObject("error")
-									.getString("reason"));
+							Data.setERROR(object.getJSONObject("error").getString("reason"));
 							Log.e("editGroup - error: ", Data.getERROR());
 						}
 					}
 				}
 			} else {
-				OfflineData uplooad = new OfflineData("mobile/groups_edit",
-						reqEntity);
+				OfflineData uplooad = new OfflineData("mobile/groups_edit", reqEntity);
 				Data.getUnuploadedData().add(uplooad);
 			}
 		} catch (Exception ex) {
-			Reporter.reportError(this.getClass().toString(), Thread
-					.currentThread().getStackTrace()[2].getMethodName()
-					.toString(), ex.getMessage());
+			Reporter.reportError(this.getClass().toString(), Thread.currentThread().getStackTrace()[2].getMethodName().toString(),
+					ex.getMessage());
 			return false;
 		}
 		return success;
@@ -2751,21 +2063,17 @@ public class DataManagement {
 
 		try {
 			HttpClient hc = new DefaultHttpClient();
-			HttpPost post = new HttpPost(Data.getServerUrl()
-					+ "mobile/groups_create");
+			HttpPost post = new HttpPost(Data.getServerUrl() + "mobile/groups_create");
 
-			MultipartEntity reqEntity = new MultipartEntity(
-					HttpMultipartMode.BROWSER_COMPATIBLE);
+			MultipartEntity reqEntity = new MultipartEntity(HttpMultipartMode.BROWSER_COMPATIBLE);
 
 			if (g.image_bytes != null) {
 				try {
-					ByteArrayBody bab = new ByteArrayBody(g.image_bytes,
-							"image");
+					ByteArrayBody bab = new ByteArrayBody(g.image_bytes, "image");
 					reqEntity.addPart("image", bab);
 				} catch (Exception e) {
-					Reporter.reportError(this.getClass().toString(), Thread
-							.currentThread().getStackTrace()[2].getMethodName()
-							.toString(), e.getMessage());
+					Reporter.reportError(this.getClass().toString(), Thread.currentThread().getStackTrace()[2].getMethodName().toString(),
+							e.getMessage());
 				}
 			}
 
@@ -2775,8 +2083,7 @@ public class DataManagement {
 			Map<String, String> contacts = g.contacts;
 			if (contacts != null) {
 				for (int i = 0, l = contacts.size(); i < l; i++) {
-					reqEntity.addPart("contacts[]",
-							new StringBody(contacts.get(String.valueOf(i))));
+					reqEntity.addPart("contacts[]", new StringBody(contacts.get(String.valueOf(i))));
 				}
 			} else {
 				reqEntity.addPart("contacts[]", new StringBody(""));
@@ -2796,21 +2103,18 @@ public class DataManagement {
 						Log.e("createGroup - success", "" + success);
 
 						if (success == false) {
-							Data.setERROR(object.getJSONObject("error")
-									.getString("reason"));
+							Data.setERROR(object.getJSONObject("error").getString("reason"));
 							Log.e("createGroup - error: ", Data.getERROR());
 						}
 					}
 				}
 			} else {
-				OfflineData uplooad = new OfflineData("mobile/groups_create",
-						reqEntity);
+				OfflineData uplooad = new OfflineData("mobile/groups_create", reqEntity);
 				Data.getUnuploadedData().add(uplooad);
 			}
 		} catch (Exception ex) {
-			Reporter.reportError(this.getClass().toString(), Thread
-					.currentThread().getStackTrace()[2].getMethodName()
-					.toString(), ex.getMessage());
+			Reporter.reportError(this.getClass().toString(), Thread.currentThread().getStackTrace()[2].getMethodName().toString(),
+					ex.getMessage());
 			return false;
 		}
 		return success;
@@ -2820,7 +2124,8 @@ public class DataManagement {
 	public ArrayList<Event> getEvents() {
 		return Data.getEvents();
 	}
-//TODO what is this method for???
+
+	// TODO what is this method for???
 	public int loadEvents(Activity instance, EventsAdapter eAdapter) {
 		int eventsSize = 0;
 		ArrayList<Event> events;
@@ -2839,8 +2144,7 @@ public class DataManagement {
 			}
 			Data.setEvents(result);
 		} else {
-			events = AgendaUtils.getActualEvents(instance,
-					getEventsFromLocalDb());
+			events = AgendaUtils.getActualEvents(instance, getEventsFromLocalDb());
 			ArrayList<Event> onlyInvites = null;
 			if (NavbarActivity.showInvites) {
 				onlyInvites = filterInvites(events);
@@ -2868,10 +2172,12 @@ public class DataManagement {
 		return newEventList;
 	}
 
-	//TODO FINISH
+	// TODO FINISH
 	/**
 	 * Gets events from remote Database and writes them to local DB.
-	 * @param eventCategory - Category. if empty, returns all events
+	 * 
+	 * @param eventCategory
+	 *            - Category. if empty, returns all events
 	 * @return
 	 */
 	public ArrayList<Event> getEventsFromRemoteDb(String eventCategory) {
@@ -2881,11 +2187,9 @@ public class DataManagement {
 
 		try {
 			HttpClient hc = new DefaultHttpClient();
-			HttpPost post = new HttpPost(Data.getServerUrl()
-					+ GET_EVENTS_FROM_REMOTE_DB_URL);
+			HttpPost post = new HttpPost(Data.getServerUrl() + GET_EVENTS_FROM_REMOTE_DB_URL);
 
-			MultipartEntity reqEntity = new MultipartEntity(
-					HttpMultipartMode.BROWSER_COMPATIBLE);
+			MultipartEntity reqEntity = new MultipartEntity(HttpMultipartMode.BROWSER_COMPATIBLE);
 
 			reqEntity.addPart(TOKEN, new StringBody(Data.getToken()));
 			reqEntity.addPart(CATEGORY, new StringBody(eventCategory));
@@ -2907,8 +2211,6 @@ public class DataManagement {
 							JSONObject e = es.getJSONObject(i);
 
 							event = createEventFromJSON(e);
-									
-									
 
 							this.insertEventToLocalDB(event);
 
@@ -2918,9 +2220,8 @@ public class DataManagement {
 				}
 			}
 		} catch (Exception ex) {
-			Reporter.reportError(this.getClass().toString(), Thread
-					.currentThread().getStackTrace()[2].getMethodName()
-					.toString(), ex.getMessage());
+			Reporter.reportError(this.getClass().toString(), Thread.currentThread().getStackTrace()[2].getMethodName().toString(),
+					ex.getMessage());
 		}
 		Data.setLoadEventsData(false);
 		if (contactsBirthdays != null && !contactsBirthdays.isEmpty()) {
@@ -2932,7 +2233,6 @@ public class DataManagement {
 
 	private Event createEventFromJSON(JSONObject e) {
 		Event event = new Event();
-		
 
 		try {
 			event.setEvent_id(e.getInt("event_id"));
@@ -2958,16 +2258,11 @@ public class DataManagement {
 
 			event.setTimezone(e.getString("timezone"));
 			// EVENT TIME START
-			long unixTimestamp = e
-					.getLong("timestamp_start_utc");
-			event.setStartCalendar(Utils.createCalendar(
-					Utils.unixTimestampToMilis(unixTimestamp),
-					event.getTimezone()));
+			long unixTimestamp = e.getLong("timestamp_start_utc");
+			event.setStartCalendar(Utils.createCalendar(Utils.unixTimestampToMilis(unixTimestamp), event.getTimezone()));
 			// EVENT TIME END
 			unixTimestamp = e.getLong("timestamp_end_utc");
-			event.setEndCalendar(Utils.createCalendar(Utils
-					.unixTimestampToMilis(unixTimestamp),
-					event.getTimezone()));
+			event.setEndCalendar(Utils.createCalendar(Utils.unixTimestampToMilis(unixTimestamp), event.getTimezone()));
 
 			// reminders
 
@@ -2976,14 +2271,14 @@ public class DataManagement {
 			event.setReminder3(e.getString("reminder3"));
 
 			// alarms
-			
+
 			event.setAlarm1(e.getString("alarm1"));
 			event.setAlarm1fired(e.getString("alarm1_fired"));
 			event.setAlarm2(e.getString("alarm2"));
-			event.setAlarm2fired(e.getString("alarm2_fired"));								
+			event.setAlarm2fired(e.getString("alarm2_fired"));
 			event.setAlarm3(e.getString("alarm3"));
 			event.setAlarm3fired(e.getString("alarm3_fired"));
-			
+
 			event.setCreated(e.getString("created"));
 			event.setModified(e.getString("modified"));
 
@@ -2991,7 +2286,7 @@ public class DataManagement {
 			event.setAttendant_1_count(e.getInt("attendant_1_count"));
 			event.setAttendant_2_count(e.getInt("attendant_2_count"));
 			event.setAttendant_4_count(e.getInt("attendant_4_count"));
-			
+
 			event.setSports_event(e.getInt("is_sports_event") == 1);
 			event.setIs_all_day(e.getInt("all_day") == 1);
 
@@ -3003,12 +2298,8 @@ public class DataManagement {
 			event.setInvited_DB_entry(e.getString("invited"));
 
 		} catch (JSONException ex) {
-			Reporter.reportError(
-					this.getClass().toString(), Thread
-							.currentThread()
-							.getStackTrace()[2]
-							.getMethodName().toString(), ex
-							.getMessage());
+			Reporter.reportError(this.getClass().toString(), Thread.currentThread().getStackTrace()[2].getMethodName().toString(),
+					ex.getMessage());
 		}
 		return event;
 	}
@@ -3018,111 +2309,81 @@ public class DataManagement {
 
 		// 1. ADD EVENT details to events table
 
-		cv.put(EventsProvider.EMetaData.EventsMetaData.E_ID,
-				event.getEvent_id());
+		cv.put(EventsProvider.EMetaData.EventsMetaData.E_ID, event.getEvent_id());
 
-		cv.put(EventsProvider.EMetaData.EventsMetaData.USER_ID,
-				event.getUser_id());
+		cv.put(EventsProvider.EMetaData.EventsMetaData.USER_ID, event.getUser_id());
 
-		cv.put(EventsProvider.EMetaData.EventsMetaData.STATUS,
-				event.getStatus());
+		cv.put(EventsProvider.EMetaData.EventsMetaData.STATUS, event.getStatus());
 
-		cv.put(EventsProvider.EMetaData.EventsMetaData.IS_OWNER,
-				event.is_owner());
+		cv.put(EventsProvider.EMetaData.EventsMetaData.IS_OWNER, event.is_owner());
 
 		cv.put(EventsProvider.EMetaData.EventsMetaData.TYPE, event.getType());
 		cv.put(EventsProvider.EMetaData.EventsMetaData.TITLE, event.getTitle());
 		cv.put(EventsProvider.EMetaData.EventsMetaData.ICON, event.getIcon());
 		cv.put(EventsProvider.EMetaData.EventsMetaData.COLOR, event.getColor());
-		cv.put(EventsProvider.EMetaData.EventsMetaData.DESC,
-				event.getDescription());
-		cv.put(EventsProvider.EMetaData.EventsMetaData.LOCATION,
-				event.getLocation());
-		cv.put(EventsProvider.EMetaData.EventsMetaData.ACCOMODATION,
-				event.getAccomodation());
+		cv.put(EventsProvider.EMetaData.EventsMetaData.DESC, event.getDescription());
+		cv.put(EventsProvider.EMetaData.EventsMetaData.LOCATION, event.getLocation());
+		cv.put(EventsProvider.EMetaData.EventsMetaData.ACCOMODATION, event.getAccomodation());
 		cv.put(EventsProvider.EMetaData.EventsMetaData.COST, event.getCost());
-		cv.put(EventsProvider.EMetaData.EventsMetaData.TAKE_WITH_YOU,
-				event.getTake_with_you());
+		cv.put(EventsProvider.EMetaData.EventsMetaData.TAKE_WITH_YOU, event.getTake_with_you());
 		cv.put(EventsProvider.EMetaData.EventsMetaData.GO_BY, event.getGo_by());
-		cv.put(EventsProvider.EMetaData.EventsMetaData.COUNTRY,
-				event.getCountry());
+		cv.put(EventsProvider.EMetaData.EventsMetaData.COUNTRY, event.getCountry());
 		cv.put(EventsProvider.EMetaData.EventsMetaData.CITY, event.getCity());
 
-		cv.put(EventsProvider.EMetaData.EventsMetaData.STREET,
-				event.getStreet());
+		cv.put(EventsProvider.EMetaData.EventsMetaData.STREET, event.getStreet());
 
 		cv.put(EventsProvider.EMetaData.EventsMetaData.ZIP, event.getZip());
 
-		cv.put(EventsProvider.EMetaData.EventsMetaData.TIMEZONE,
-				event.getTimezone());
+		cv.put(EventsProvider.EMetaData.EventsMetaData.TIMEZONE, event.getTimezone());
 
 		// EVENT TIMES UTC
 
-		cv.put(EventsProvider.EMetaData.EventsMetaData.TIME_START_UTC_MILLISECONDS,
-				event.getStartCalendar().getTimeInMillis());
+		cv.put(EventsProvider.EMetaData.EventsMetaData.TIME_START_UTC_MILLISECONDS, event.getStartCalendar().getTimeInMillis());
 
-		cv.put(EventsProvider.EMetaData.EventsMetaData.TIME_END_UTC_MILLISECONDS,
-				event.getEndCalendar().getTimeInMillis());
+		cv.put(EventsProvider.EMetaData.EventsMetaData.TIME_END_UTC_MILLISECONDS, event.getEndCalendar().getTimeInMillis());
 
 		// reminders
 
-		cv.put(EventsProvider.EMetaData.EventsMetaData.REMINDER1,
-				event.getReminder1());
+		cv.put(EventsProvider.EMetaData.EventsMetaData.REMINDER1, event.getReminder1());
 
-		cv.put(EventsProvider.EMetaData.EventsMetaData.REMINDER2,
-				event.getReminder2());
+		cv.put(EventsProvider.EMetaData.EventsMetaData.REMINDER2, event.getReminder2());
 
-		cv.put(EventsProvider.EMetaData.EventsMetaData.REMINDER3,
-				event.getReminder3());
+		cv.put(EventsProvider.EMetaData.EventsMetaData.REMINDER3, event.getReminder3());
 
 		// alarms
 
-		cv.put(EventsProvider.EMetaData.EventsMetaData.ALARM1,
-				event.getAlarm1());
+		cv.put(EventsProvider.EMetaData.EventsMetaData.ALARM1, event.getAlarm1());
 
-		cv.put(EventsProvider.EMetaData.EventsMetaData.ALARM2,
-				event.getAlarm2());
+		cv.put(EventsProvider.EMetaData.EventsMetaData.ALARM2, event.getAlarm2());
 
-		cv.put(EventsProvider.EMetaData.EventsMetaData.ALARM3,
-				event.getAlarm3());
+		cv.put(EventsProvider.EMetaData.EventsMetaData.ALARM3, event.getAlarm3());
 
-		cv.put(EventsProvider.EMetaData.EventsMetaData.CREATED,
-				event.getCreated());
+		cv.put(EventsProvider.EMetaData.EventsMetaData.CREATED, event.getCreated());
 
-		cv.put(EventsProvider.EMetaData.EventsMetaData.MODIFIED,
-				event.getModified());
+		cv.put(EventsProvider.EMetaData.EventsMetaData.MODIFIED, event.getModified());
 
-		cv.put(EventsProvider.EMetaData.EventsMetaData.ATTENDANT_1_COUNT,
-				event.getAttendant_1_count());
+		cv.put(EventsProvider.EMetaData.EventsMetaData.ATTENDANT_1_COUNT, event.getAttendant_1_count());
 
-		cv.put(EventsProvider.EMetaData.EventsMetaData.ATTENDANT_2_COUNT,
-				event.getAttendant_2_count());
+		cv.put(EventsProvider.EMetaData.EventsMetaData.ATTENDANT_2_COUNT, event.getAttendant_2_count());
 
-		cv.put(EventsProvider.EMetaData.EventsMetaData.ATTENDANT_0_COUNT,
-				event.getAttendant_0_count());
+		cv.put(EventsProvider.EMetaData.EventsMetaData.ATTENDANT_0_COUNT, event.getAttendant_0_count());
 
-		cv.put(EventsProvider.EMetaData.EventsMetaData.ATTENDANT_4_COUNT,
-				event.getAttendant_4_count());
+		cv.put(EventsProvider.EMetaData.EventsMetaData.ATTENDANT_4_COUNT, event.getAttendant_4_count());
 
-		cv.put(EventsProvider.EMetaData.EventsMetaData.IS_SPORTS_EVENT,
-				event.is_sports_event());
+		cv.put(EventsProvider.EMetaData.EventsMetaData.IS_SPORTS_EVENT, event.is_sports_event());
 
-		cv.put(EventsProvider.EMetaData.EventsMetaData.CREATOR_FULLNAME,
-				event.getCreator_fullname());
+		cv.put(EventsProvider.EMetaData.EventsMetaData.CREATOR_FULLNAME, event.getCreator_fullname());
 
-		cv.put(EventsProvider.EMetaData.EventsMetaData.CREATOR_CONTACT_ID,
-				event.getCreator_contact_id());
+		cv.put(EventsProvider.EMetaData.EventsMetaData.CREATOR_CONTACT_ID, event.getCreator_contact_id());
 
-		cv.put(EventsProvider.EMetaData.EventsMetaData.ASSIGNED_CONTACTS,
-				event.getAssigned_contacts_DB_entry());
+		cv.put(EventsProvider.EMetaData.EventsMetaData.ASSIGNED_CONTACTS, event.getAssigned_contacts_DB_entry());
 
-		cv.put(EventsProvider.EMetaData.EventsMetaData.ASSIGNED_GROUPS,
-				event.getAssigned_groups_DB_entry());
+		cv.put(EventsProvider.EMetaData.EventsMetaData.ASSIGNED_GROUPS, event.getAssigned_groups_DB_entry());
 
-		cv.put(EventsProvider.EMetaData.EventsMetaData.INVITED,
-				event.getInvited_DB_entry());
+		cv.put(EventsProvider.EMetaData.EventsMetaData.INVITED, event.getInvited_DB_entry());
 
-		// cv.put(key, event.is_all_day()); TODO event insert into local database allday issue
+		// cv.put(key, event.is_all_day()); TODO event insert into local
+		// database allday issue
 
 		resolver.insert(EventsProvider.EMetaData.EventsMetaData.CONTENT_URI, cv);
 
@@ -3135,13 +2396,9 @@ public class DataManagement {
 
 		for (; eventDayinMillis < eventEndTime; eventDayinMillis += MILLISECONDS_PER_DAY) {
 			cv = new ContentValues();
-			cv.put(EventsProvider.EMetaData.EventsIndexesMetaData.EVENT_ID,
-					event_id);
-			cv.put(EventsProvider.EMetaData.EventsIndexesMetaData.DAY,
-					eventDayinMillis);
-			resolver.insert(
-					EventsProvider.EMetaData.EventsIndexesMetaData.CONTENT_URI,
-					cv);
+			cv.put(EventsProvider.EMetaData.EventsIndexesMetaData.EVENT_ID, event_id);
+			cv.put(EventsProvider.EMetaData.EventsIndexesMetaData.DAY, eventDayinMillis);
+			resolver.insert(EventsProvider.EMetaData.EventsIndexesMetaData.CONTENT_URI, cv);
 		}
 	}
 
@@ -3161,31 +2418,22 @@ public class DataManagement {
 					difference++;
 				}
 				if (difference == 0) {
-					String dayStr = new SimpleDateFormat("yyyy-MM-dd")
-							.format(event_start.getTime());
-					Calendar eventDay = Utils.stringToCalendar(dayStr
-							+ " 00:00:00", SERVER_TIMESTAMP_FORMAT);
+					String dayStr = new SimpleDateFormat("yyyy-MM-dd").format(event_start.getTime());
+					Calendar eventDay = Utils.stringToCalendar(dayStr + " 00:00:00", SERVER_TIMESTAMP_FORMAT);
 					tm = putValueIntoTreeMap(tm, eventDay, event);
 				} else if (difference >= 0) {
 					Calendar eventDay = null;
 					for (int i = 0; i < difference; i++) {
-						String dayStr = new SimpleDateFormat("yyyy-MM-dd")
-								.format(event_start.getTime());
-						eventDay = Utils.stringToCalendar(dayStr + " 00:00:00",
-								SERVER_TIMESTAMP_FORMAT);
+						String dayStr = new SimpleDateFormat("yyyy-MM-dd").format(event_start.getTime());
+						eventDay = Utils.stringToCalendar(dayStr + " 00:00:00", SERVER_TIMESTAMP_FORMAT);
 						putValueIntoTreeMap(tm, eventDay, event);
 						event_start.add(Calendar.DAY_OF_MONTH, 1);
 					}
-					String dayStr = new SimpleDateFormat("yyyy-MM-dd")
-							.format(event_end.getTime());
-					Calendar eventTmpEnd = Utils.stringToCalendar(dayStr
-							+ " 00:00:00", SERVER_TIMESTAMP_FORMAT);
-					if (eventTmpEnd.after(eventDay)
-							&& event_end.after(eventTmpEnd)) {
-						dayStr = new SimpleDateFormat("yyyy-MM-dd")
-								.format(event_start.getTime());
-						event_start = Utils.stringToCalendar(dayStr
-								+ " 00:00:00", SERVER_TIMESTAMP_FORMAT);
+					String dayStr = new SimpleDateFormat("yyyy-MM-dd").format(event_end.getTime());
+					Calendar eventTmpEnd = Utils.stringToCalendar(dayStr + " 00:00:00", SERVER_TIMESTAMP_FORMAT);
+					if (eventTmpEnd.after(eventDay) && event_end.after(eventTmpEnd)) {
+						dayStr = new SimpleDateFormat("yyyy-MM-dd").format(event_start.getTime());
+						event_start = Utils.stringToCalendar(dayStr + " 00:00:00", SERVER_TIMESTAMP_FORMAT);
 						putValueIntoTreeMap(tm, event_start, event);
 					}
 				}
@@ -3194,9 +2442,7 @@ public class DataManagement {
 		Data.setSortedEvents(tm);
 	}
 
-	public TreeMap<Calendar, ArrayList<Event>> putValueIntoTreeMap(
-			TreeMap<Calendar, ArrayList<Event>> tm, Calendar eventDay,
-			Event event) {
+	public TreeMap<Calendar, ArrayList<Event>> putValueIntoTreeMap(TreeMap<Calendar, ArrayList<Event>> tm, Calendar eventDay, Event event) {
 		if (tm.containsKey(eventDay)) {
 			ArrayList<Event> tmpArrayList = tm.get(eventDay);
 			tmpArrayList.add(event);
@@ -3212,12 +2458,9 @@ public class DataManagement {
 	public void putEventIntoTreeMap(Event event) {
 		String date_format = SERVER_TIMESTAMP_FORMAT;
 		Calendar event_start = (Calendar) event.getStartCalendar().clone();
-		String dayStr = new SimpleDateFormat("yyyy-MM-dd").format(event_start
-				.getTime());
-		Calendar event_day = Utils.stringToCalendar(dayStr + " 00:00:00",
-				date_format);
-		Data.setSortedEvents(putValueIntoTreeMap(Data.getSortedEvents(),
-				event_day, event));
+		String dayStr = new SimpleDateFormat("yyyy-MM-dd").format(event_start.getTime());
+		Calendar event_day = Utils.stringToCalendar(dayStr + " 00:00:00", date_format);
+		Data.setSortedEvents(putValueIntoTreeMap(Data.getSortedEvents(), event_day, event));
 	}
 
 	/**
@@ -3230,36 +2473,19 @@ public class DataManagement {
 
 		Event item;
 		ArrayList<Event> array = new ArrayList<Event>();
-		long day_start_unix_timestamp = Utils.millisToUnixTimestamp(date
-				.getTimeInMillis());
-		long day_end_unix_timestamp = Utils.millisToUnixTimestamp(date
-				.getTimeInMillis()) + SECONDS_PER_DAY - 1;
+		long day_start_unix_timestamp = Utils.millisToUnixTimestamp(date.getTimeInMillis());
+		long day_end_unix_timestamp = Utils.millisToUnixTimestamp(date.getTimeInMillis()) + SECONDS_PER_DAY - 1;
 		// WHERE clause: (NEED_UPDATE < 3) AND ((start timestamp is between day
 		// start and day end) OR (end timestamp is between day start and day
 		// end) )
 		// TODO find out what NEED_UPDATE field is for and why it should be < 3
-		String where = EventsProvider.EMetaData.EventsMetaData.NEED_UPDATE
-				+ " < 3"
-				+ " AND "
-				+ "("
-				+ "("
-				+ EventsProvider.EMetaData.EventsMetaData.TIME_START_UTC_MILLISECONDS
-				+ " BETWEEN "
-				+ day_start_unix_timestamp
-				+ " AND "
-				+ day_end_unix_timestamp
-				+ ")"
-				+ " OR "
-				+ "("
-				+ EventsProvider.EMetaData.EventsMetaData.TIME_END_UTC_MILLISECONDS
-				+ " BETWEEN " + day_start_unix_timestamp + " AND "
-				+ day_end_unix_timestamp + ")" + ")";
+		String where = EventsProvider.EMetaData.EventsMetaData.NEED_UPDATE + " < 3" + " AND " + "(" + "("
+				+ EventsProvider.EMetaData.EventsMetaData.TIME_START_UTC_MILLISECONDS + " BETWEEN " + day_start_unix_timestamp + " AND "
+				+ day_end_unix_timestamp + ")" + " OR " + "(" + EventsProvider.EMetaData.EventsMetaData.TIME_END_UTC_MILLISECONDS
+				+ " BETWEEN " + day_start_unix_timestamp + " AND " + day_end_unix_timestamp + ")" + ")";
 
-		Cursor result = Data
-				.getmContext()
-				.getContentResolver()
-				.query(EventsProvider.EMetaData.EventsMetaData.CONTENT_URI,
-						null, where, null, null);
+		Cursor result = Data.getmContext().getContentResolver()
+				.query(EventsProvider.EMetaData.EventsMetaData.CONTENT_URI, null, where, null, null);
 
 		if (result != null) {
 			result.moveToFirst();
@@ -3267,124 +2493,56 @@ public class DataManagement {
 			while (!result.isAfterLast()) {
 				item = new Event();
 
-				item.event_id = result
-						.getInt(result
-								.getColumnIndex(EventsProvider.EMetaData.EventsMetaData.E_ID));
-				item.user_id = result
-						.getInt(result
-								.getColumnIndex(EventsProvider.EMetaData.EventsMetaData.USER_ID));
+				item.event_id = result.getInt(result.getColumnIndex(EventsProvider.EMetaData.EventsMetaData.E_ID));
+				item.user_id = result.getInt(result.getColumnIndex(EventsProvider.EMetaData.EventsMetaData.USER_ID));
 
-				final int is_sport_event = result
-						.getInt(result
-								.getColumnIndex(EventsProvider.EMetaData.EventsMetaData.IS_SPORTS_EVENT));
+				final int is_sport_event = result.getInt(result.getColumnIndex(EventsProvider.EMetaData.EventsMetaData.IS_SPORTS_EVENT));
 				item.is_sports_event = is_sport_event == 1;
-				item.status = result
-						.getInt(result
-								.getColumnIndex(EventsProvider.EMetaData.EventsMetaData.STATUS));
-				final int is_owner = result
-						.getInt(result
-								.getColumnIndex(EventsProvider.EMetaData.EventsMetaData.IS_OWNER));
+				item.status = result.getInt(result.getColumnIndex(EventsProvider.EMetaData.EventsMetaData.STATUS));
+				final int is_owner = result.getInt(result.getColumnIndex(EventsProvider.EMetaData.EventsMetaData.IS_OWNER));
 				item.is_owner = is_owner == 1;
-				item.type = result
-						.getString(result
-								.getColumnIndex(EventsProvider.EMetaData.EventsMetaData.TYPE));
+				item.type = result.getString(result.getColumnIndex(EventsProvider.EMetaData.EventsMetaData.TYPE));
 
-				item.creator_fullname = result
-						.getString(result
-								.getColumnIndex(EventsProvider.EMetaData.EventsMetaData.CREATOR_FULLNAME));
-				item.creator_contact_id = result
-						.getInt(result
-								.getColumnIndex(EventsProvider.EMetaData.EventsMetaData.CREATOR_CONTACT_ID));
+				item.creator_fullname = result.getString(result.getColumnIndex(EventsProvider.EMetaData.EventsMetaData.CREATOR_FULLNAME));
+				item.creator_contact_id = result.getInt(result.getColumnIndex(EventsProvider.EMetaData.EventsMetaData.CREATOR_CONTACT_ID));
 
-				item.title = result
-						.getString(result
-								.getColumnIndex(EventsProvider.EMetaData.EventsMetaData.TITLE));
-				item.icon = result
-						.getString(result
-								.getColumnIndex(EventsProvider.EMetaData.EventsMetaData.ICON));
-				item.setColor(result.getString(result
-						.getColumnIndex(EventsProvider.EMetaData.EventsMetaData.COLOR)));
-				item.description_ = result
-						.getString(result
-								.getColumnIndex(EventsProvider.EMetaData.EventsMetaData.DESC));
-				item.location = result
-						.getString(result
-								.getColumnIndex(EventsProvider.EMetaData.EventsMetaData.LOCATION));
-				item.accomodation = result
-						.getString(result
-								.getColumnIndex(EventsProvider.EMetaData.EventsMetaData.ACCOMODATION));
-				item.cost = result
-						.getString(result
-								.getColumnIndex(EventsProvider.EMetaData.EventsMetaData.COST));
-				item.take_with_you = result
-						.getString(result
-								.getColumnIndex(EventsProvider.EMetaData.EventsMetaData.TAKE_WITH_YOU));
-				item.go_by = result
-						.getString(result
-								.getColumnIndex(EventsProvider.EMetaData.EventsMetaData.GO_BY));
+				item.title = result.getString(result.getColumnIndex(EventsProvider.EMetaData.EventsMetaData.TITLE));
+				item.icon = result.getString(result.getColumnIndex(EventsProvider.EMetaData.EventsMetaData.ICON));
+				item.setColor(result.getString(result.getColumnIndex(EventsProvider.EMetaData.EventsMetaData.COLOR)));
+				item.description_ = result.getString(result.getColumnIndex(EventsProvider.EMetaData.EventsMetaData.DESC));
+				item.location = result.getString(result.getColumnIndex(EventsProvider.EMetaData.EventsMetaData.LOCATION));
+				item.accomodation = result.getString(result.getColumnIndex(EventsProvider.EMetaData.EventsMetaData.ACCOMODATION));
+				item.cost = result.getString(result.getColumnIndex(EventsProvider.EMetaData.EventsMetaData.COST));
+				item.take_with_you = result.getString(result.getColumnIndex(EventsProvider.EMetaData.EventsMetaData.TAKE_WITH_YOU));
+				item.go_by = result.getString(result.getColumnIndex(EventsProvider.EMetaData.EventsMetaData.GO_BY));
 
-				item.country = result
-						.getString(result
-								.getColumnIndex(EventsProvider.EMetaData.EventsMetaData.COUNTRY));
-				item.city = result
-						.getString(result
-								.getColumnIndex(EventsProvider.EMetaData.EventsMetaData.CITY));
-				item.street = result
-						.getString(result
-								.getColumnIndex(EventsProvider.EMetaData.EventsMetaData.STREET));
-				item.zip = result
-						.getString(result
-								.getColumnIndex(EventsProvider.EMetaData.EventsMetaData.ZIP));
-				item.timezone = result
-						.getString(result
-								.getColumnIndex(EventsProvider.EMetaData.EventsMetaData.TIMEZONE));
+				item.country = result.getString(result.getColumnIndex(EventsProvider.EMetaData.EventsMetaData.COUNTRY));
+				item.city = result.getString(result.getColumnIndex(EventsProvider.EMetaData.EventsMetaData.CITY));
+				item.street = result.getString(result.getColumnIndex(EventsProvider.EMetaData.EventsMetaData.STREET));
+				item.zip = result.getString(result.getColumnIndex(EventsProvider.EMetaData.EventsMetaData.ZIP));
+				item.timezone = result.getString(result.getColumnIndex(EventsProvider.EMetaData.EventsMetaData.TIMEZONE));
 
 				// Setting Event start and end calendars
 
 				long unixTimestamp;
 				// get event start timestamp
 				unixTimestamp = result
-						.getLong((result
-								.getColumnIndex(EventsProvider.EMetaData.EventsMetaData.TIME_START_UTC_MILLISECONDS)));
-				item.setStartCalendar(Utils.createCalendar(
-						Utils.unixTimestampToMilis(unixTimestamp),
-						item.getTimezone()));
-				unixTimestamp = result
-						.getLong((result
-								.getColumnIndex(EventsProvider.EMetaData.EventsMetaData.TIME_END_UTC_MILLISECONDS)));
-				item.setEndCalendar(Utils.createCalendar(
-						Utils.unixTimestampToMilis(unixTimestamp),
-						item.getTimezone()));
+						.getLong((result.getColumnIndex(EventsProvider.EMetaData.EventsMetaData.TIME_START_UTC_MILLISECONDS)));
+				item.setStartCalendar(Utils.createCalendar(Utils.unixTimestampToMilis(unixTimestamp), item.getTimezone()));
+				unixTimestamp = result.getLong((result.getColumnIndex(EventsProvider.EMetaData.EventsMetaData.TIME_END_UTC_MILLISECONDS)));
+				item.setEndCalendar(Utils.createCalendar(Utils.unixTimestampToMilis(unixTimestamp), item.getTimezone()));
 
-				item.reminder1 = result
-						.getString(result
-								.getColumnIndex(EventsProvider.EMetaData.EventsMetaData.REMINDER1));
-				item.reminder2 = result
-						.getString(result
-								.getColumnIndex(EventsProvider.EMetaData.EventsMetaData.REMINDER2));
-				item.reminder3 = result
-						.getString(result
-								.getColumnIndex(EventsProvider.EMetaData.EventsMetaData.REMINDER3));
+				item.reminder1 = result.getString(result.getColumnIndex(EventsProvider.EMetaData.EventsMetaData.REMINDER1));
+				item.reminder2 = result.getString(result.getColumnIndex(EventsProvider.EMetaData.EventsMetaData.REMINDER2));
+				item.reminder3 = result.getString(result.getColumnIndex(EventsProvider.EMetaData.EventsMetaData.REMINDER3));
 
-				item.created = result
-						.getString(result
-								.getColumnIndex(EventsProvider.EMetaData.EventsMetaData.CREATED));
-				item.modified = result
-						.getString(result
-								.getColumnIndex(EventsProvider.EMetaData.EventsMetaData.MODIFIED));
+				item.created = result.getString(result.getColumnIndex(EventsProvider.EMetaData.EventsMetaData.CREATED));
+				item.modified = result.getString(result.getColumnIndex(EventsProvider.EMetaData.EventsMetaData.MODIFIED));
 
-				item.attendant_1_count = result
-						.getInt(result
-								.getColumnIndex(EventsProvider.EMetaData.EventsMetaData.ATTENDANT_1_COUNT));
-				item.attendant_2_count = result
-						.getInt(result
-								.getColumnIndex(EventsProvider.EMetaData.EventsMetaData.ATTENDANT_2_COUNT));
-				item.attendant_0_count = result
-						.getInt(result
-								.getColumnIndex(EventsProvider.EMetaData.EventsMetaData.ATTENDANT_0_COUNT));
-				item.attendant_4_count = result
-						.getInt(result
-								.getColumnIndex(EventsProvider.EMetaData.EventsMetaData.ATTENDANT_4_COUNT));
+				item.attendant_1_count = result.getInt(result.getColumnIndex(EventsProvider.EMetaData.EventsMetaData.ATTENDANT_1_COUNT));
+				item.attendant_2_count = result.getInt(result.getColumnIndex(EventsProvider.EMetaData.EventsMetaData.ATTENDANT_2_COUNT));
+				item.attendant_0_count = result.getInt(result.getColumnIndex(EventsProvider.EMetaData.EventsMetaData.ATTENDANT_0_COUNT));
+				item.attendant_4_count = result.getInt(result.getColumnIndex(EventsProvider.EMetaData.EventsMetaData.ATTENDANT_4_COUNT));
 
 				array.add(item);
 				result.moveToNext();
@@ -3398,123 +2556,58 @@ public class DataManagement {
 		Event item;
 		ArrayList<Event> items = new ArrayList<Event>();
 		if (Data.get_prefs().getBoolean("isAgenda", true)) {
-			String where = EventsProvider.EMetaData.EventsMetaData.NEED_UPDATE
-					+ " < 3";
-			Cursor result = Data
-					.getmContext()
-					.getContentResolver()
-					.query(EventsProvider.EMetaData.EventsMetaData.CONTENT_URI,
-							null, where, null, null);
+			String where = EventsProvider.EMetaData.EventsMetaData.NEED_UPDATE + " < 3";
+			Cursor result = Data.getmContext().getContentResolver()
+					.query(EventsProvider.EMetaData.EventsMetaData.CONTENT_URI, null, where, null, null);
 
 			result.moveToFirst();
 
 			while (!result.isAfterLast()) {
 				item = new Event();
 
-				item.event_id = result
-						.getInt(result
-								.getColumnIndex(EventsProvider.EMetaData.EventsMetaData.E_ID));
-				item.user_id = result
-						.getInt(result
-								.getColumnIndex(EventsProvider.EMetaData.EventsMetaData.USER_ID));
+				item.event_id = result.getInt(result.getColumnIndex(EventsProvider.EMetaData.EventsMetaData.E_ID));
+				item.user_id = result.getInt(result.getColumnIndex(EventsProvider.EMetaData.EventsMetaData.USER_ID));
 
-				final int is_sport_event = result
-						.getInt(result
-								.getColumnIndex(EventsProvider.EMetaData.EventsMetaData.IS_SPORTS_EVENT));
+				final int is_sport_event = result.getInt(result.getColumnIndex(EventsProvider.EMetaData.EventsMetaData.IS_SPORTS_EVENT));
 				item.is_sports_event = is_sport_event == 1;
-				item.status = result
-						.getInt(result
-								.getColumnIndex(EventsProvider.EMetaData.EventsMetaData.STATUS));
-				final int is_owner = result
-						.getInt(result
-								.getColumnIndex(EventsProvider.EMetaData.EventsMetaData.IS_OWNER));
+				item.status = result.getInt(result.getColumnIndex(EventsProvider.EMetaData.EventsMetaData.STATUS));
+				final int is_owner = result.getInt(result.getColumnIndex(EventsProvider.EMetaData.EventsMetaData.IS_OWNER));
 				item.is_owner = is_owner == 1;
-				item.type = result
-						.getString(result
-								.getColumnIndex(EventsProvider.EMetaData.EventsMetaData.TYPE));
+				item.type = result.getString(result.getColumnIndex(EventsProvider.EMetaData.EventsMetaData.TYPE));
 
-				item.creator_fullname = result
-						.getString(result
-								.getColumnIndex(EventsProvider.EMetaData.EventsMetaData.CREATOR_FULLNAME));
-				item.creator_contact_id = result
-						.getInt(result
-								.getColumnIndex(EventsProvider.EMetaData.EventsMetaData.CREATOR_CONTACT_ID));
+				item.creator_fullname = result.getString(result.getColumnIndex(EventsProvider.EMetaData.EventsMetaData.CREATOR_FULLNAME));
+				item.creator_contact_id = result.getInt(result.getColumnIndex(EventsProvider.EMetaData.EventsMetaData.CREATOR_CONTACT_ID));
 
-				item.title = result
-						.getString(result
-								.getColumnIndex(EventsProvider.EMetaData.EventsMetaData.TITLE));
-				item.icon = result
-						.getString(result
-								.getColumnIndex(EventsProvider.EMetaData.EventsMetaData.ICON));
-				item.setColor(result.getString(result
-						.getColumnIndex(EventsProvider.EMetaData.EventsMetaData.COLOR)));
-				item.description_ = result
-						.getString(result
-								.getColumnIndex(EventsProvider.EMetaData.EventsMetaData.DESC));
+				item.title = result.getString(result.getColumnIndex(EventsProvider.EMetaData.EventsMetaData.TITLE));
+				item.icon = result.getString(result.getColumnIndex(EventsProvider.EMetaData.EventsMetaData.ICON));
+				item.setColor(result.getString(result.getColumnIndex(EventsProvider.EMetaData.EventsMetaData.COLOR)));
+				item.description_ = result.getString(result.getColumnIndex(EventsProvider.EMetaData.EventsMetaData.DESC));
 
-				item.location = result
-						.getString(result
-								.getColumnIndex(EventsProvider.EMetaData.EventsMetaData.LOCATION));
-				item.accomodation = result
-						.getString(result
-								.getColumnIndex(EventsProvider.EMetaData.EventsMetaData.ACCOMODATION));
+				item.location = result.getString(result.getColumnIndex(EventsProvider.EMetaData.EventsMetaData.LOCATION));
+				item.accomodation = result.getString(result.getColumnIndex(EventsProvider.EMetaData.EventsMetaData.ACCOMODATION));
 
-				item.cost = result
-						.getString(result
-								.getColumnIndex(EventsProvider.EMetaData.EventsMetaData.COST));
-				item.take_with_you = result
-						.getString(result
-								.getColumnIndex(EventsProvider.EMetaData.EventsMetaData.TAKE_WITH_YOU));
-				item.go_by = result
-						.getString(result
-								.getColumnIndex(EventsProvider.EMetaData.EventsMetaData.GO_BY));
+				item.cost = result.getString(result.getColumnIndex(EventsProvider.EMetaData.EventsMetaData.COST));
+				item.take_with_you = result.getString(result.getColumnIndex(EventsProvider.EMetaData.EventsMetaData.TAKE_WITH_YOU));
+				item.go_by = result.getString(result.getColumnIndex(EventsProvider.EMetaData.EventsMetaData.GO_BY));
 
-				item.country = result
-						.getString(result
-								.getColumnIndex(EventsProvider.EMetaData.EventsMetaData.COUNTRY));
-				item.city = result
-						.getString(result
-								.getColumnIndex(EventsProvider.EMetaData.EventsMetaData.CITY));
-				item.street = result
-						.getString(result
-								.getColumnIndex(EventsProvider.EMetaData.EventsMetaData.STREET));
-				item.zip = result
-						.getString(result
-								.getColumnIndex(EventsProvider.EMetaData.EventsMetaData.ZIP));
+				item.country = result.getString(result.getColumnIndex(EventsProvider.EMetaData.EventsMetaData.COUNTRY));
+				item.city = result.getString(result.getColumnIndex(EventsProvider.EMetaData.EventsMetaData.CITY));
+				item.street = result.getString(result.getColumnIndex(EventsProvider.EMetaData.EventsMetaData.STREET));
+				item.zip = result.getString(result.getColumnIndex(EventsProvider.EMetaData.EventsMetaData.ZIP));
 
-				item.timezone = result
-						.getString(result
-								.getColumnIndex(EventsProvider.EMetaData.EventsMetaData.TIMEZONE));
+				item.timezone = result.getString(result.getColumnIndex(EventsProvider.EMetaData.EventsMetaData.TIMEZONE));
 
-				item.reminder1 = result
-						.getString(result
-								.getColumnIndex(EventsProvider.EMetaData.EventsMetaData.REMINDER1));
-				item.reminder2 = result
-						.getString(result
-								.getColumnIndex(EventsProvider.EMetaData.EventsMetaData.REMINDER2));
-				item.reminder3 = result
-						.getString(result
-								.getColumnIndex(EventsProvider.EMetaData.EventsMetaData.REMINDER3));
+				item.reminder1 = result.getString(result.getColumnIndex(EventsProvider.EMetaData.EventsMetaData.REMINDER1));
+				item.reminder2 = result.getString(result.getColumnIndex(EventsProvider.EMetaData.EventsMetaData.REMINDER2));
+				item.reminder3 = result.getString(result.getColumnIndex(EventsProvider.EMetaData.EventsMetaData.REMINDER3));
 
-				item.created = result
-						.getString(result
-								.getColumnIndex(EventsProvider.EMetaData.EventsMetaData.CREATED));
-				item.modified = result
-						.getString(result
-								.getColumnIndex(EventsProvider.EMetaData.EventsMetaData.MODIFIED));
+				item.created = result.getString(result.getColumnIndex(EventsProvider.EMetaData.EventsMetaData.CREATED));
+				item.modified = result.getString(result.getColumnIndex(EventsProvider.EMetaData.EventsMetaData.MODIFIED));
 
-				item.attendant_1_count = result
-						.getInt(result
-								.getColumnIndex(EventsProvider.EMetaData.EventsMetaData.ATTENDANT_1_COUNT));
-				item.attendant_2_count = result
-						.getInt(result
-								.getColumnIndex(EventsProvider.EMetaData.EventsMetaData.ATTENDANT_2_COUNT));
-				item.attendant_0_count = result
-						.getInt(result
-								.getColumnIndex(EventsProvider.EMetaData.EventsMetaData.ATTENDANT_0_COUNT));
-				item.attendant_4_count = result
-						.getInt(result
-								.getColumnIndex(EventsProvider.EMetaData.EventsMetaData.ATTENDANT_4_COUNT));
+				item.attendant_1_count = result.getInt(result.getColumnIndex(EventsProvider.EMetaData.EventsMetaData.ATTENDANT_1_COUNT));
+				item.attendant_2_count = result.getInt(result.getColumnIndex(EventsProvider.EMetaData.EventsMetaData.ATTENDANT_2_COUNT));
+				item.attendant_0_count = result.getInt(result.getColumnIndex(EventsProvider.EMetaData.EventsMetaData.ATTENDANT_0_COUNT));
+				item.attendant_4_count = result.getInt(result.getColumnIndex(EventsProvider.EMetaData.EventsMetaData.ATTENDANT_4_COUNT));
 
 				items.add(item);
 				result.moveToNext();
@@ -3533,11 +2626,9 @@ public class DataManagement {
 			cursor = Data
 					.getmContext()
 					.getContentResolver()
-					.query(Uri
-							.parse("content://com.android.calendar/calendars"),
-							new String[] { "_id", "title", "description",
-									"dtstart", "dtend", "eventLocation",
-									"eventTimezone" }, "_id=" + id, null, null);
+					.query(Uri.parse("content://com.android.calendar/calendars"),
+							new String[] { "_id", "title", "description", "dtstart", "dtend", "eventLocation", "eventTimezone" },
+							"_id=" + id, null, null);
 
 			if (cursor.moveToFirst()) {
 				item.isNative = true;
@@ -3550,7 +2641,6 @@ public class DataManagement {
 				item.description_ = cursor.getString(2);
 				item.timezone = cursor.getString(6);
 
-				
 				item.setStartCalendar(Utils.createCalendar(cursor.getLong(3), item.getTimezone()));
 				item.setEndCalendar(Utils.createCalendar(cursor.getLong(4), item.getTimezone()));
 			}
@@ -3565,10 +2655,7 @@ public class DataManagement {
 			cursor = Data
 					.getmContext()
 					.getContentResolver()
-					.query(Uri
-							.parse("content://com.android.calendar/calendars"),
-							(new String[] { "_id", "displayName" }), null,
-							null, null);
+					.query(Uri.parse("content://com.android.calendar/calendars"), (new String[] { "_id", "displayName" }), null, null, null);
 		} else {
 			cursor = null;
 		}
@@ -3584,19 +2671,15 @@ public class DataManagement {
 		if (calendars != null) {
 			while (!calendars.isAfterLast()) {
 				String calendar_id = calendars.getString(0);
-				boolean isNative = Data.get_prefs().getBoolean(
-						"isNative_" + calendar_id, false);
+				boolean isNative = Data.get_prefs().getBoolean("isNative_" + calendar_id, false);
 
 				if (isNative) {
 					String where = "calendar_id=" + calendar_id;
 					Cursor cursor = Data
 							.getmContext()
 							.getContentResolver()
-							.query(Uri
-									.parse("content://com.android.calendar/calendars"),
-									new String[] { "_id", "title",
-											"description", "dtstart", "dtend",
-											"eventLocation", "eventTimezone" },
+							.query(Uri.parse("content://com.android.calendar/calendars"),
+									new String[] { "_id", "title", "description", "dtstart", "dtend", "eventLocation", "eventTimezone" },
 									where, null, null);
 
 					cursor.moveToFirst();
@@ -3614,17 +2697,14 @@ public class DataManagement {
 						item.timezone = cursor.getString(6);
 
 						item.setStartCalendar(Utils.createCalendar(cursor.getLong(3), item.getTimezone()));
-						
-						
 
 						long endLong = cursor.getLong(4);
-						
+
 						if (endLong <= 0) {
 							endLong = cursor.getLong(3);
 							endLong += 1 * 60 * 60 * 1000;
 						}
 						item.setEndCalendar(Utils.createCalendar(endLong, item.getTimezone()));
-					
 
 						events.add(item);
 						cursor.moveToNext();
@@ -3657,149 +2737,76 @@ public class DataManagement {
 
 	public Event getEventFromLocalDb(int event_id) {
 		Event item = new Event();
-		Uri uri = Uri.parse(EventsProvider.EMetaData.EventsMetaData.CONTENT_URI
-				+ "/" + event_id);
-		Cursor result = Data.getmContext().getContentResolver()
-				.query(uri, null, null, null, null);
+		Uri uri = Uri.parse(EventsProvider.EMetaData.EventsMetaData.CONTENT_URI + "/" + event_id);
+		Cursor result = Data.getmContext().getContentResolver().query(uri, null, null, null, null);
 		if (result.moveToFirst()) {
-			item.event_id = result
-					.getInt(result
-							.getColumnIndex(EventsProvider.EMetaData.EventsMetaData.E_ID));
-			item.user_id = result
-					.getInt(result
-							.getColumnIndex(EventsProvider.EMetaData.EventsMetaData.USER_ID));
+			item.event_id = result.getInt(result.getColumnIndex(EventsProvider.EMetaData.EventsMetaData.E_ID));
+			item.user_id = result.getInt(result.getColumnIndex(EventsProvider.EMetaData.EventsMetaData.USER_ID));
 
-			final int is_sport_event = result
-					.getInt(result
-							.getColumnIndex(EventsProvider.EMetaData.EventsMetaData.IS_SPORTS_EVENT));
+			final int is_sport_event = result.getInt(result.getColumnIndex(EventsProvider.EMetaData.EventsMetaData.IS_SPORTS_EVENT));
 			item.is_sports_event = is_sport_event == 1;
-			item.status = result
-					.getInt(result
-							.getColumnIndex(EventsProvider.EMetaData.EventsMetaData.STATUS));
-			final int is_owner = result
-					.getInt(result
-							.getColumnIndex(EventsProvider.EMetaData.EventsMetaData.IS_OWNER));
+			item.status = result.getInt(result.getColumnIndex(EventsProvider.EMetaData.EventsMetaData.STATUS));
+			final int is_owner = result.getInt(result.getColumnIndex(EventsProvider.EMetaData.EventsMetaData.IS_OWNER));
 			item.is_owner = is_owner == 1;
-			item.type = result
-					.getString(result
-							.getColumnIndex(EventsProvider.EMetaData.EventsMetaData.TYPE));
+			item.type = result.getString(result.getColumnIndex(EventsProvider.EMetaData.EventsMetaData.TYPE));
 
-			item.creator_fullname = result
-					.getString(result
-							.getColumnIndex(EventsProvider.EMetaData.EventsMetaData.CREATOR_FULLNAME));
-			item.creator_contact_id = result
-					.getInt(result
-							.getColumnIndex(EventsProvider.EMetaData.EventsMetaData.CREATOR_CONTACT_ID));
+			item.creator_fullname = result.getString(result.getColumnIndex(EventsProvider.EMetaData.EventsMetaData.CREATOR_FULLNAME));
+			item.creator_contact_id = result.getInt(result.getColumnIndex(EventsProvider.EMetaData.EventsMetaData.CREATOR_CONTACT_ID));
 
-			item.title = result
-					.getString(result
-							.getColumnIndex(EventsProvider.EMetaData.EventsMetaData.TITLE));
-			item.icon = result
-					.getString(result
-							.getColumnIndex(EventsProvider.EMetaData.EventsMetaData.ICON));
-			item.setColor(result.getString(result
-					.getColumnIndex(EventsProvider.EMetaData.EventsMetaData.COLOR)));
-			item.description_ = result
-					.getString(result
-							.getColumnIndex(EventsProvider.EMetaData.EventsMetaData.DESC));
+			item.title = result.getString(result.getColumnIndex(EventsProvider.EMetaData.EventsMetaData.TITLE));
+			item.icon = result.getString(result.getColumnIndex(EventsProvider.EMetaData.EventsMetaData.ICON));
+			item.setColor(result.getString(result.getColumnIndex(EventsProvider.EMetaData.EventsMetaData.COLOR)));
+			item.description_ = result.getString(result.getColumnIndex(EventsProvider.EMetaData.EventsMetaData.DESC));
 
-			item.location = result
-					.getString(result
-							.getColumnIndex(EventsProvider.EMetaData.EventsMetaData.LOCATION));
-			item.accomodation = result
-					.getString(result
-							.getColumnIndex(EventsProvider.EMetaData.EventsMetaData.ACCOMODATION));
+			item.location = result.getString(result.getColumnIndex(EventsProvider.EMetaData.EventsMetaData.LOCATION));
+			item.accomodation = result.getString(result.getColumnIndex(EventsProvider.EMetaData.EventsMetaData.ACCOMODATION));
 
-			item.cost = result
-					.getString(result
-							.getColumnIndex(EventsProvider.EMetaData.EventsMetaData.COST));
-			item.take_with_you = result
-					.getString(result
-							.getColumnIndex(EventsProvider.EMetaData.EventsMetaData.TAKE_WITH_YOU));
-			item.go_by = result
-					.getString(result
-							.getColumnIndex(EventsProvider.EMetaData.EventsMetaData.GO_BY));
+			item.cost = result.getString(result.getColumnIndex(EventsProvider.EMetaData.EventsMetaData.COST));
+			item.take_with_you = result.getString(result.getColumnIndex(EventsProvider.EMetaData.EventsMetaData.TAKE_WITH_YOU));
+			item.go_by = result.getString(result.getColumnIndex(EventsProvider.EMetaData.EventsMetaData.GO_BY));
 
-			item.country = result
-					.getString(result
-							.getColumnIndex(EventsProvider.EMetaData.EventsMetaData.COUNTRY));
-			item.city = result
-					.getString(result
-							.getColumnIndex(EventsProvider.EMetaData.EventsMetaData.CITY));
-			item.street = result
-					.getString(result
-							.getColumnIndex(EventsProvider.EMetaData.EventsMetaData.STREET));
-			item.zip = result
-					.getString(result
-							.getColumnIndex(EventsProvider.EMetaData.EventsMetaData.ZIP));
+			item.country = result.getString(result.getColumnIndex(EventsProvider.EMetaData.EventsMetaData.COUNTRY));
+			item.city = result.getString(result.getColumnIndex(EventsProvider.EMetaData.EventsMetaData.CITY));
+			item.street = result.getString(result.getColumnIndex(EventsProvider.EMetaData.EventsMetaData.STREET));
+			item.zip = result.getString(result.getColumnIndex(EventsProvider.EMetaData.EventsMetaData.ZIP));
 
-			item.timezone = result
-					.getString(result
-							.getColumnIndex(EventsProvider.EMetaData.EventsMetaData.TIMEZONE));
+			item.timezone = result.getString(result.getColumnIndex(EventsProvider.EMetaData.EventsMetaData.TIMEZONE));
 
-			item.reminder1 = result
-					.getString(result
-							.getColumnIndex(EventsProvider.EMetaData.EventsMetaData.REMINDER1));
-			item.reminder2 = result
-					.getString(result
-							.getColumnIndex(EventsProvider.EMetaData.EventsMetaData.REMINDER2));
-			item.reminder3 = result
-					.getString(result
-							.getColumnIndex(EventsProvider.EMetaData.EventsMetaData.REMINDER3));
+			item.reminder1 = result.getString(result.getColumnIndex(EventsProvider.EMetaData.EventsMetaData.REMINDER1));
+			item.reminder2 = result.getString(result.getColumnIndex(EventsProvider.EMetaData.EventsMetaData.REMINDER2));
+			item.reminder3 = result.getString(result.getColumnIndex(EventsProvider.EMetaData.EventsMetaData.REMINDER3));
 
-			item.created = result
-					.getString(result
-							.getColumnIndex(EventsProvider.EMetaData.EventsMetaData.CREATED));
-			item.modified = result
-					.getString(result
-							.getColumnIndex(EventsProvider.EMetaData.EventsMetaData.MODIFIED));
+			item.created = result.getString(result.getColumnIndex(EventsProvider.EMetaData.EventsMetaData.CREATED));
+			item.modified = result.getString(result.getColumnIndex(EventsProvider.EMetaData.EventsMetaData.MODIFIED));
 
-			item.attendant_1_count = result
-					.getInt(result
-							.getColumnIndex(EventsProvider.EMetaData.EventsMetaData.ATTENDANT_1_COUNT));
-			item.attendant_2_count = result
-					.getInt(result
-							.getColumnIndex(EventsProvider.EMetaData.EventsMetaData.ATTENDANT_2_COUNT));
-			item.attendant_0_count = result
-					.getInt(result
-							.getColumnIndex(EventsProvider.EMetaData.EventsMetaData.ATTENDANT_0_COUNT));
-			item.attendant_4_count = result
-					.getInt(result
-							.getColumnIndex(EventsProvider.EMetaData.EventsMetaData.ATTENDANT_4_COUNT));
+			item.attendant_1_count = result.getInt(result.getColumnIndex(EventsProvider.EMetaData.EventsMetaData.ATTENDANT_1_COUNT));
+			item.attendant_2_count = result.getInt(result.getColumnIndex(EventsProvider.EMetaData.EventsMetaData.ATTENDANT_2_COUNT));
+			item.attendant_0_count = result.getInt(result.getColumnIndex(EventsProvider.EMetaData.EventsMetaData.ATTENDANT_0_COUNT));
+			item.attendant_4_count = result.getInt(result.getColumnIndex(EventsProvider.EMetaData.EventsMetaData.ATTENDANT_4_COUNT));
 
-			String assigned_contacts = result
-					.getString(result
-							.getColumnIndex(EventsProvider.EMetaData.EventsMetaData.ASSIGNED_CONTACTS));
+			String assigned_contacts = result.getString(result.getColumnIndex(EventsProvider.EMetaData.EventsMetaData.ASSIGNED_CONTACTS));
 			if (assigned_contacts != null && !assigned_contacts.equals("null")) {
 				try {
-					item.assigned_contacts = Utils
-							.jsonStringToArray(assigned_contacts);
+					item.assigned_contacts = Utils.jsonStringToArray(assigned_contacts);
 				} catch (JSONException e) {
-					Reporter.reportError(this.getClass().toString(), Thread
-							.currentThread().getStackTrace()[2].getMethodName()
-							.toString(), e.getMessage());
+					Reporter.reportError(this.getClass().toString(), Thread.currentThread().getStackTrace()[2].getMethodName().toString(),
+							e.getMessage());
 					item.assigned_contacts = null;
 				}
 			}
 
-			String assigned_groups = result
-					.getString(result
-							.getColumnIndex(EventsProvider.EMetaData.EventsMetaData.ASSIGNED_GROUPS));
+			String assigned_groups = result.getString(result.getColumnIndex(EventsProvider.EMetaData.EventsMetaData.ASSIGNED_GROUPS));
 			if (assigned_groups != null && !assigned_groups.equals("null")) {
 				try {
-					item.assigned_groups = Utils
-							.jsonStringToArray(assigned_groups);
+					item.assigned_groups = Utils.jsonStringToArray(assigned_groups);
 				} catch (JSONException e) {
-					Reporter.reportError(this.getClass().toString(), Thread
-							.currentThread().getStackTrace()[2].getMethodName()
-							.toString(), e.getMessage());
+					Reporter.reportError(this.getClass().toString(), Thread.currentThread().getStackTrace()[2].getMethodName().toString(),
+							e.getMessage());
 					item.assigned_groups = null;
 				}
 			}
 
-			String invitedJson = result
-					.getString(result
-							.getColumnIndex(EventsProvider.EMetaData.EventsMetaData.INVITED));
+			String invitedJson = result.getString(result.getColumnIndex(EventsProvider.EMetaData.EventsMetaData.INVITED));
 			if (invitedJson != null && !invitedJson.equals("null")) {
 				try {
 					JSONArray arr = new JSONArray(invitedJson);
@@ -3815,54 +2822,40 @@ public class DataManagement {
 							invited.status_id = obj.getInt("status");
 
 							if (invited.status_id == 4) {
-								invited.status = Data.getmContext().getString(
-										R.string.status_2);
+								invited.status = Data.getmContext().getString(R.string.status_2);
 							} else {
-								String statusStr = new StringBuilder("status_")
-										.append(invited.status_id).toString();
-								int statusId = Data
-										.getmContext()
-										.getResources()
-										.getIdentifier(statusStr, "string",
-												"com.groupagendas.groupagenda");
+								String statusStr = new StringBuilder("status_").append(invited.status_id).toString();
+								int statusId = Data.getmContext().getResources()
+										.getIdentifier(statusStr, "string", "com.groupagendas.groupagenda");
 
-								invited.status = Data.getmContext().getString(
-										statusId);
+								invited.status = Data.getmContext().getString(statusId);
 							}
 						} catch (JSONException ex) {
-							Reporter.reportError(this.getClass().toString(),
-									Thread.currentThread().getStackTrace()[2]
-											.getMethodName().toString(), ex
-											.getMessage());
+							Reporter.reportError(this.getClass().toString(), Thread.currentThread().getStackTrace()[2].getMethodName()
+									.toString(), ex.getMessage());
 						}
 
 						try {
 							if (!obj.getString("my_contact_id").equals("null")) {
-								invited.my_contact_id = obj
-										.getInt("my_contact_id");
+								invited.my_contact_id = obj.getInt("my_contact_id");
 								Contact contact = getContact(invited.my_contact_id);
 								invited.email = contact.email;
-								invited.name = contact.name + " "
-										+ contact.lastname;
+								invited.name = contact.name + " " + contact.lastname;
 								invited.contactId = contact.contact_id;
-							} else if (Data.getAccount().fullname.equals(obj
-									.getString("gname"))) {
-								invited.name = Data.getmContext().getString(
-										R.string.you);
+							} else if (Data.getAccount().fullname.equals(obj.getString("gname"))) {
+								invited.name = Data.getmContext().getString(R.string.you);
 								invited.email = Data.getEmail();
 								invited.me = true;
 							} else {
 								invited.name = obj.getString("gname");
 								String tmp = obj.getString("gcid");
-								if (!tmp.equalsIgnoreCase("null")
-										&& tmp.matches("[0-9]*")) {
+								if (!tmp.equalsIgnoreCase("null") && tmp.matches("[0-9]*")) {
 									invited.gcid = Integer.parseInt(tmp);
 								} else {
 									invited.gcid = 0;
 								}
 								tmp = obj.getString("guid");
-								if (!tmp.equalsIgnoreCase("null")
-										&& tmp.matches("[0-9]*")) {
+								if (!tmp.equalsIgnoreCase("null") && tmp.matches("[0-9]*")) {
 									invited.guid = Integer.parseInt(tmp);
 								} else {
 									invited.guid = 0;
@@ -3875,18 +2868,15 @@ public class DataManagement {
 								}
 							}
 						} catch (JSONException ex) {
-							Reporter.reportError(this.getClass().toString(),
-									Thread.currentThread().getStackTrace()[2]
-											.getMethodName().toString(), ex
-											.getMessage());
+							Reporter.reportError(this.getClass().toString(), Thread.currentThread().getStackTrace()[2].getMethodName()
+									.toString(), ex.getMessage());
 						}
 
 						item.invited.add(invited);
 					}
 				} catch (JSONException e) {
-					Reporter.reportError(this.getClass().toString(), Thread
-							.currentThread().getStackTrace()[2].getMethodName()
-							.toString(), e.getMessage());
+					Reporter.reportError(this.getClass().toString(), Thread.currentThread().getStackTrace()[2].getMethodName().toString(),
+							e.getMessage());
 				}
 			}
 		}
@@ -3898,15 +2888,12 @@ public class DataManagement {
 		boolean success = false;
 		try {
 			HttpClient hc = new DefaultHttpClient();
-			HttpPost post = new HttpPost(Data.getServerUrl()
-					+ "mobile/events_get");
+			HttpPost post = new HttpPost(Data.getServerUrl() + "mobile/events_get");
 
-			MultipartEntity reqEntity = new MultipartEntity(
-					HttpMultipartMode.BROWSER_COMPATIBLE);
+			MultipartEntity reqEntity = new MultipartEntity(HttpMultipartMode.BROWSER_COMPATIBLE);
 
 			reqEntity.addPart(TOKEN, new StringBody(Data.getToken()));
-			reqEntity.addPart("event_id",
-					new StringBody(String.valueOf(event.event_id)));
+			reqEntity.addPart("event_id", new StringBody(String.valueOf(event.event_id)));
 
 			post.setEntity(reqEntity);
 			HttpResponse rp = hc.execute(post);
@@ -3926,36 +2913,27 @@ public class DataManagement {
 							int is_sports_event = e.getInt("is_sports_event");
 							event.is_sports_event = is_sports_event == 1;
 						} catch (JSONException ex) {
-							Reporter.reportError(this.getClass().toString(),
-									Thread.currentThread().getStackTrace()[2]
-											.getMethodName().toString(), ex
-											.getMessage());
+							Reporter.reportError(this.getClass().toString(), Thread.currentThread().getStackTrace()[2].getMethodName()
+									.toString(), ex.getMessage());
 						}
 						try {
-							event.creator_fullname = e
-									.getString("creator_fullname");
+							event.creator_fullname = e.getString("creator_fullname");
 						} catch (JSONException ex) {
-							Reporter.reportError(this.getClass().toString(),
-									Thread.currentThread().getStackTrace()[2]
-											.getMethodName().toString(), ex
-											.getMessage());
+							Reporter.reportError(this.getClass().toString(), Thread.currentThread().getStackTrace()[2].getMethodName()
+									.toString(), ex.getMessage());
 						}
 						try {
-							event.creator_contact_id = e
-									.getInt("creator_contact_id");
+							event.creator_contact_id = e.getInt("creator_contact_id");
 						} catch (JSONException ex) {
-							Reporter.reportError(this.getClass().toString(),
-									Thread.currentThread().getStackTrace()[2]
-											.getMethodName().toString(), ex
-											.getMessage());
+							Reporter.reportError(this.getClass().toString(), Thread.currentThread().getStackTrace()[2].getMethodName()
+									.toString(), ex.getMessage());
 						}
 					}
 				}
 			}
 		} catch (Exception ex) {
-			Reporter.reportError(this.getClass().toString(), Thread
-					.currentThread().getStackTrace()[2].getMethodName()
-					.toString(), ex.getMessage());
+			Reporter.reportError(this.getClass().toString(), Thread.currentThread().getStackTrace()[2].getMethodName().toString(),
+					ex.getMessage());
 		}
 		return event;
 	}
@@ -3965,15 +2943,12 @@ public class DataManagement {
 
 		try {
 			HttpClient hc = new DefaultHttpClient();
-			HttpPost post = new HttpPost(Data.getServerUrl()
-					+ "mobile/events_edit");
+			HttpPost post = new HttpPost(Data.getServerUrl() + "mobile/events_edit");
 
-			MultipartEntity reqEntity = new MultipartEntity(
-					HttpMultipartMode.BROWSER_COMPATIBLE);
+			MultipartEntity reqEntity = new MultipartEntity(HttpMultipartMode.BROWSER_COMPATIBLE);
 
 			reqEntity.addPart(TOKEN, new StringBody(Data.getToken()));
-			reqEntity.addPart("event_id",
-					new StringBody(String.valueOf(e.event_id)));
+			reqEntity.addPart("event_id", new StringBody(String.valueOf(e.event_id)));
 
 			reqEntity.addPart("event_type", new StringBody(e.type));
 
@@ -3981,10 +2956,11 @@ public class DataManagement {
 			reqEntity.addPart("color", new StringBody(e.getColor()));
 
 			reqEntity.addPart("title", new StringBody(e.title));
-			
-			reqEntity.addPart("timestamp_start_utc", new StringBody("" + Utils.millisToUnixTimestamp(e.getStartCalendar().getTimeInMillis())));
+
+			reqEntity.addPart("timestamp_start_utc",
+					new StringBody("" + Utils.millisToUnixTimestamp(e.getStartCalendar().getTimeInMillis())));
 			reqEntity.addPart("timestamp_end_utc", new StringBody("" + Utils.millisToUnixTimestamp(e.getEndCalendar().getTimeInMillis())));
-			
+
 			reqEntity.addPart("timezone", new StringBody(e.timezone));
 
 			reqEntity.addPart("description", new StringBody(e.description_));
@@ -4005,8 +2981,7 @@ public class DataManagement {
 			reqEntity.addPart("reminder2", new StringBody(e.reminder2));
 			reqEntity.addPart("reminder3", new StringBody(e.reminder3));
 
-			if (Data.selectedContacts != null
-					&& !Data.selectedContacts.isEmpty()) {
+			if (Data.selectedContacts != null && !Data.selectedContacts.isEmpty()) {
 				e.assigned_contacts = new int[Data.selectedContacts.size()];
 				int i = 0;
 				for (Contact contact : Data.selectedContacts) {
@@ -4016,10 +2991,7 @@ public class DataManagement {
 			}
 			if (e.assigned_contacts != null) {
 				for (int i = 0, l = e.assigned_contacts.length; i < l; i++) {
-					reqEntity.addPart(
-							"contacts[]",
-							new StringBody(String
-									.valueOf(e.assigned_contacts[i])));
+					reqEntity.addPart("contacts[]", new StringBody(String.valueOf(e.assigned_contacts[i])));
 				}
 			} else {
 				reqEntity.addPart("contacts[]", new StringBody(""));
@@ -4027,11 +2999,7 @@ public class DataManagement {
 
 			if (e.assigned_groups != null) {
 				for (int i = 0, l = e.assigned_groups.length; i < l; i++) {
-					reqEntity
-							.addPart(
-									"groups[]",
-									new StringBody(String
-											.valueOf(e.assigned_groups[i])));
+					reqEntity.addPart("groups[]", new StringBody(String.valueOf(e.assigned_groups[i])));
 				}
 			} else {
 				reqEntity.addPart("groups[]", new StringBody(""));
@@ -4048,21 +3016,17 @@ public class DataManagement {
 						JSONObject object = new JSONObject(resp);
 						success = object.getBoolean("success");
 						if (!success) {
-							Log.e("Edit event ERROR",
-									object.getJSONObject("error").getString(
-											"reason"));
+							Log.e("Edit event ERROR", object.getJSONObject("error").getString("reason"));
 						}
 					}
 				}
 			} else {
-				OfflineData uplooad = new OfflineData("mobile/events_edit",
-						reqEntity);
+				OfflineData uplooad = new OfflineData("mobile/events_edit", reqEntity);
 				Data.getUnuploadedData().add(uplooad);
 			}
 		} catch (Exception ex) {
-			Reporter.reportError(this.getClass().toString(), Thread
-					.currentThread().getStackTrace()[2].getMethodName()
-					.toString(), ex.getMessage());
+			Reporter.reportError(this.getClass().toString(), Thread.currentThread().getStackTrace()[2].getMethodName().toString(),
+					ex.getMessage());
 			success = false;
 		}
 
@@ -4074,11 +3038,9 @@ public class DataManagement {
 
 		try {
 			HttpClient hc = new DefaultHttpClient();
-			HttpPost post = new HttpPost(Data.getServerUrl()
-					+ "mobile/events_create");
+			HttpPost post = new HttpPost(Data.getServerUrl() + "mobile/events_create");
 
-			MultipartEntity reqEntity = new MultipartEntity(
-					HttpMultipartMode.BROWSER_COMPATIBLE);
+			MultipartEntity reqEntity = new MultipartEntity(HttpMultipartMode.BROWSER_COMPATIBLE);
 
 			reqEntity.addPart(TOKEN, new StringBody(Data.getToken()));
 
@@ -4089,12 +3051,12 @@ public class DataManagement {
 
 			reqEntity.addPart("title", new StringBody(e.title));
 
-			reqEntity.addPart("timestamp_start_utc", new StringBody("" + Utils.millisToUnixTimestamp(e.getStartCalendar().getTimeInMillis())));
+			reqEntity.addPart("timestamp_start_utc",
+					new StringBody("" + Utils.millisToUnixTimestamp(e.getStartCalendar().getTimeInMillis())));
 			reqEntity.addPart("timestamp_end_utc", new StringBody("" + Utils.millisToUnixTimestamp(e.getEndCalendar().getTimeInMillis())));
 
 			if (e.description_ != null) {
-				reqEntity
-						.addPart("description", new StringBody(e.description_));
+				reqEntity.addPart("description", new StringBody(e.description_));
 			} else {
 				reqEntity.addPart("description", new StringBody(""));
 			}
@@ -4114,16 +3076,13 @@ public class DataManagement {
 			if (e.go_by != null && e.go_by.length() > 0)
 				reqEntity.addPart("go_by", new StringBody(e.go_by));
 			if (e.take_with_you != null && e.take_with_you.length() > 0)
-				reqEntity.addPart("take_with_you", new StringBody(
-						e.take_with_you));
+				reqEntity.addPart("take_with_you", new StringBody(e.take_with_you));
 			if (e.cost != null && e.cost.length() > 0)
 				reqEntity.addPart("cost", new StringBody(e.cost));
 			if (e.accomodation != null && e.accomodation.length() > 0)
-				reqEntity.addPart("accomodation",
-						new StringBody(e.accomodation));
+				reqEntity.addPart("accomodation", new StringBody(e.accomodation));
 
-			if (Data.selectedContacts != null
-					&& !Data.selectedContacts.isEmpty()) {
+			if (Data.selectedContacts != null && !Data.selectedContacts.isEmpty()) {
 				e.assigned_contacts = new int[Data.selectedContacts.size()];
 				int i = 0;
 				for (Contact contact : Data.selectedContacts) {
@@ -4133,21 +3092,14 @@ public class DataManagement {
 			}
 			if (e.assigned_contacts != null) {
 				for (int i = 0, l = e.assigned_contacts.length; i < l; i++) {
-					reqEntity.addPart(
-							"contacts[]",
-							new StringBody(String
-									.valueOf(e.assigned_contacts[i])));
+					reqEntity.addPart("contacts[]", new StringBody(String.valueOf(e.assigned_contacts[i])));
 				}
 			} else {
 				reqEntity.addPart("contacts[]", new StringBody(""));
 			}
 			if (e.assigned_groups != null) {
 				for (int i = 0, l = e.assigned_groups.length; i < l; i++) {
-					reqEntity
-							.addPart(
-									"groups[]",
-									new StringBody(String
-											.valueOf(e.assigned_groups[i])));
+					reqEntity.addPart("groups[]", new StringBody(String.valueOf(e.assigned_groups[i])));
 				}
 			} else {
 				reqEntity.addPart("groups[]", new StringBody(""));
@@ -4181,27 +3133,22 @@ public class DataManagement {
 						// Log.e("createEvent - success", "" + success);
 
 						if (success == false) {
-							Log.e("Create event error",
-									object.getJSONObject("error").getString(
-											"reason"));
+							Log.e("Create event error", object.getJSONObject("error").getString("reason"));
 						}
 						int event_id = object.getInt("event_id");
 						e.event_id = event_id;
 						updateEventByIdFromRemoteDb(event_id);
 					}
 				} else {
-					Log.e("createEvent - status", rp.getStatusLine()
-							.getStatusCode() + "");
+					Log.e("createEvent - status", rp.getStatusLine().getStatusCode() + "");
 				}
 			} else {
-				OfflineData uplooad = new OfflineData("mobile/events_create",
-						reqEntity);
+				OfflineData uplooad = new OfflineData("mobile/events_create", reqEntity);
 				Data.getUnuploadedData().add(uplooad);
 			}
 		} catch (Exception ex) {
-			Reporter.reportError(this.getClass().toString(), Thread
-					.currentThread().getStackTrace()[2].getMethodName()
-					.toString(), ex.getMessage());
+			Reporter.reportError(this.getClass().toString(), Thread.currentThread().getStackTrace()[2].getMethodName().toString(),
+					ex.getMessage());
 		}
 		return success;
 		// return event_id;
@@ -4212,11 +3159,9 @@ public class DataManagement {
 
 		try {
 			HttpClient hc = new DefaultHttpClient();
-			HttpPost post = new HttpPost(Data.getServerUrl()
-					+ "mobile/events_remove");
+			HttpPost post = new HttpPost(Data.getServerUrl() + "mobile/events_remove");
 
-			MultipartEntity reqEntity = new MultipartEntity(
-					HttpMultipartMode.BROWSER_COMPATIBLE);
+			MultipartEntity reqEntity = new MultipartEntity(HttpMultipartMode.BROWSER_COMPATIBLE);
 
 			reqEntity.addPart(TOKEN, new StringBody(Data.getToken()));
 			reqEntity.addPart("event_id", new StringBody(String.valueOf(id)));
@@ -4251,14 +3196,12 @@ public class DataManagement {
 					}
 				}
 			} else {
-				OfflineData uplooad = new OfflineData("mobile/events_remove",
-						reqEntity);
+				OfflineData uplooad = new OfflineData("mobile/events_remove", reqEntity);
 				Data.getUnuploadedData().add(uplooad);
 			}
 		} catch (Exception ex) {
-			Reporter.reportError(this.getClass().toString(), Thread
-					.currentThread().getStackTrace()[2].getMethodName()
-					.toString(), ex.getMessage());
+			Reporter.reportError(this.getClass().toString(), Thread.currentThread().getStackTrace()[2].getMethodName().toString(),
+					ex.getMessage());
 		}
 		return success;
 	}
@@ -4268,13 +3211,11 @@ public class DataManagement {
 		try {
 			new ChangeEventStatus().execute(array).get();
 		} catch (InterruptedException e) {
-			Reporter.reportError(this.getClass().toString(), Thread
-					.currentThread().getStackTrace()[2].getMethodName()
-					.toString(), e.getMessage());
+			Reporter.reportError(this.getClass().toString(), Thread.currentThread().getStackTrace()[2].getMethodName().toString(),
+					e.getMessage());
 		} catch (ExecutionException e) {
-			Reporter.reportError(this.getClass().toString(), Thread
-					.currentThread().getStackTrace()[2].getMethodName()
-					.toString(), e.getMessage());
+			Reporter.reportError(this.getClass().toString(), Thread.currentThread().getStackTrace()[2].getMethodName().toString(),
+					e.getMessage());
 		}
 		return DataManagement.eventStatusChanged;
 	}
@@ -4289,15 +3230,12 @@ public class DataManagement {
 				int event_id = (Integer) params[0];
 				String status = (String) params[1];
 				HttpClient hc = new DefaultHttpClient();
-				HttpPost post = new HttpPost(Data.getServerUrl()
-						+ "mobile/set_event_status");
+				HttpPost post = new HttpPost(Data.getServerUrl() + "mobile/set_event_status");
 
-				MultipartEntity reqEntity = new MultipartEntity(
-						HttpMultipartMode.BROWSER_COMPATIBLE);
+				MultipartEntity reqEntity = new MultipartEntity(HttpMultipartMode.BROWSER_COMPATIBLE);
 
 				reqEntity.addPart(TOKEN, new StringBody(Data.getToken()));
-				reqEntity.addPart("event_id",
-						new StringBody(String.valueOf(event_id)));
+				reqEntity.addPart("event_id", new StringBody(String.valueOf(event_id)));
 				reqEntity.addPart("status", new StringBody(status));
 
 				post.setEntity(reqEntity);
@@ -4311,21 +3249,17 @@ public class DataManagement {
 							JSONObject object = new JSONObject(resp);
 							success = object.getBoolean("success");
 							if (!success) {
-								Log.e("Edit event status ERROR",
-										object.getJSONObject("error")
-												.getString("reason"));
+								Log.e("Edit event status ERROR", object.getJSONObject("error").getString("reason"));
 							}
 						}
 					}
 				} else {
-					OfflineData uplooad = new OfflineData(
-							"mobile/set_event_status", reqEntity);
+					OfflineData uplooad = new OfflineData("mobile/set_event_status", reqEntity);
 					Data.getUnuploadedData().add(uplooad);
 				}
 			} catch (Exception ex) {
-				Reporter.reportError(this.getClass().toString(), Thread
-						.currentThread().getStackTrace()[2].getMethodName()
-						.toString(), ex.getMessage());
+				Reporter.reportError(this.getClass().toString(), Thread.currentThread().getStackTrace()[2].getMethodName().toString(),
+						ex.getMessage());
 				success = false;
 			}
 			if (success) {
@@ -4338,29 +3272,24 @@ public class DataManagement {
 
 	}
 
-	public Event updateEventByIdFromRemoteDb(int event_id)
-			throws ExecutionException, InterruptedException {
+	public Event updateEventByIdFromRemoteDb(int event_id) throws ExecutionException, InterruptedException {
 		new UpdateEventByIdFromRemoteDb().execute(event_id);
 		return null;
 	}
 
-	private class UpdateEventByIdFromRemoteDb extends
-			AsyncTask<Integer, Void, Void> {
+	private class UpdateEventByIdFromRemoteDb extends AsyncTask<Integer, Void, Void> {
 
 		@Override
 		protected Void doInBackground(Integer... params) {
 			try {
 				int event_id = params[0];
 				HttpClient hc = new DefaultHttpClient();
-				HttpPost post = new HttpPost(Data.getServerUrl()
-						+ "mobile/events_get");
+				HttpPost post = new HttpPost(Data.getServerUrl() + "mobile/events_get");
 
-				MultipartEntity reqEntity = new MultipartEntity(
-						HttpMultipartMode.BROWSER_COMPATIBLE);
+				MultipartEntity reqEntity = new MultipartEntity(HttpMultipartMode.BROWSER_COMPATIBLE);
 
 				reqEntity.addPart(TOKEN, new StringBody(Data.getToken()));
-				reqEntity.addPart("event_id",
-						new StringBody(String.valueOf(event_id)));
+				reqEntity.addPart("event_id", new StringBody(String.valueOf(event_id)));
 
 				post.setEntity(reqEntity);
 				HttpResponse rp = null;
@@ -4371,36 +3300,33 @@ public class DataManagement {
 						JSONObject e1 = new JSONObject(resp);
 						boolean success = e1.getBoolean("success");
 						if (!success) {
-							Log.e("Edit event status ERROR",
-									e1.getJSONObject("error").getString(
-											"reason"));
+							Log.e("Edit event status ERROR", e1.getJSONObject("error").getString("reason"));
 						} else {
 							JSONObject e = e1.getJSONObject("event");
 							Event event = createEventFromJSON(e);
 							insertEventToLocalDB(event);
 
-							//TODO JUSTAI V, KAS CIA??? KOL KAS KOMENTUOJU
-//							kaip suprantu, updatina calendoriu, jei jis null.
-							
-//							Event tmpEvent = getEventFromDb(event_id);
-//							if (tmpEvent.getStartCalendar() == null) {
-//								tmpEvent.setStartCalendar(Utils
-//										.stringToCalendar(event.my_time_start,
-//												SERVER_TIMESTAMP_FORMAT));
-//							}
-//							if (tmpEvent.getEndCalendar() == null) {
-//								tmpEvent.setEndCalendar(Utils.stringToCalendar(
-//										event.my_time_end,
-//										SERVER_TIMESTAMP_FORMAT));
-//							}
-//							updateEventInsideLocalDb(tmpEvent);
+							// TODO JUSTAI V, KAS CIA??? KOL KAS KOMENTUOJU
+							// kaip suprantu, updatina calendoriu, jei jis null.
+
+							// Event tmpEvent = getEventFromDb(event_id);
+							// if (tmpEvent.getStartCalendar() == null) {
+							// tmpEvent.setStartCalendar(Utils
+							// .stringToCalendar(event.my_time_start,
+							// SERVER_TIMESTAMP_FORMAT));
+							// }
+							// if (tmpEvent.getEndCalendar() == null) {
+							// tmpEvent.setEndCalendar(Utils.stringToCalendar(
+							// event.my_time_end,
+							// SERVER_TIMESTAMP_FORMAT));
+							// }
+							// updateEventInsideLocalDb(tmpEvent);
 						}
 					}
 				}
 			} catch (Exception e) {
-				Reporter.reportError(this.getClass().toString(), Thread
-						.currentThread().getStackTrace()[2].getMethodName()
-						.toString(), e.getMessage());
+				Reporter.reportError(this.getClass().toString(), Thread.currentThread().getStackTrace()[2].getMethodName().toString(),
+						e.getMessage());
 			}
 			if (Data.selectedContacts != null) {
 				Data.selectedContacts.clear();
@@ -4443,21 +3369,16 @@ public class DataManagement {
 				int event_id = (Integer) params[0];
 				String from = (String) params[1];
 				HttpClient hc = new DefaultHttpClient();
-				HttpPost post = new HttpPost(Data.getServerUrl()
-						+ "mobile/chat_get");
+				HttpPost post = new HttpPost(Data.getServerUrl() + "mobile/chat_get");
 
-				MultipartEntity reqEntity = new MultipartEntity(
-						HttpMultipartMode.BROWSER_COMPATIBLE);
+				MultipartEntity reqEntity = new MultipartEntity(HttpMultipartMode.BROWSER_COMPATIBLE);
 
 				reqEntity.addPart(TOKEN, new StringBody(Data.getToken()));
-				reqEntity.addPart("event_id",
-						new StringBody(String.valueOf(event_id)));
+				reqEntity.addPart("event_id", new StringBody(String.valueOf(event_id)));
 				if (from == null) {
-					reqEntity.addPart("from_datetime",
-							new StringBody(String.valueOf("")));
+					reqEntity.addPart("from_datetime", new StringBody(String.valueOf("")));
 				} else {
-					reqEntity.addPart("from_datetime",
-							new StringBody(String.valueOf(from)));
+					reqEntity.addPart("from_datetime", new StringBody(String.valueOf(from)));
 				}
 
 				post.setEntity(reqEntity);
@@ -4470,64 +3391,41 @@ public class DataManagement {
 							JSONObject object = new JSONObject(resp);
 							boolean success = object.getBoolean("success");
 							if (!success) {
-								Log.e("Change account ERROR",
-										object.getJSONObject("error")
-												.getString("reason"));
+								Log.e("Change account ERROR", object.getJSONObject("error").getString("reason"));
 							} else {
 								Data.getChatMessages().clear();
-								JSONArray chatMessages = object
-										.getJSONArray("items");
+								JSONArray chatMessages = object.getJSONArray("items");
 								for (int i = 0, l = chatMessages.length(); i < l; i++) {
-									final JSONObject chatMessage = chatMessages
-											.getJSONObject(i);
+									final JSONObject chatMessage = chatMessages.getJSONObject(i);
 									ChatMessageObject message = new ChatMessageObject();
-									message.messageId = chatMessage
-											.getInt("message_id");
-									message.eventId = chatMessage
-											.getInt("event_id");
-									message.dateTime = chatMessage
-											.getString("datetime");
-									message.dateTimeCalendar = Utils
-											.stringToCalendar(message.dateTime,
-													SERVER_TIMESTAMP_FORMAT);
-									message.userId = chatMessage
-											.getInt("user_id");
-									message.message = chatMessage
-											.getString("message");
-									String deleted = chatMessage
-											.getString("deleted");
+									message.messageId = chatMessage.getInt("message_id");
+									message.eventId = chatMessage.getInt("event_id");
+									message.dateTime = chatMessage.getString("datetime");
+									message.dateTimeCalendar = Utils.stringToCalendar(message.dateTime, SERVER_TIMESTAMP_FORMAT);
+									message.userId = chatMessage.getInt("user_id");
+									message.message = chatMessage.getString("message");
+									String deleted = chatMessage.getString("deleted");
 									message.deleted = !deleted.equals("null");
-									message.updated = chatMessage
-											.getString("updated");
-									message.updatedCalendar = Utils
-											.stringToCalendar(message.updated,
-													SERVER_TIMESTAMP_FORMAT);
-									message.fullname = chatMessage
-											.getString("fullname");
-									message.contactId = chatMessage
-											.getString("contact_id");
-									message.dateTimeConverted = chatMessage
-											.getString("datetime_conv");
-									message.dateTimeConvertedCalendar = Utils
-											.stringToCalendar(
-													message.dateTimeConverted,
-													SERVER_TIMESTAMP_FORMAT);
-									message.formatedDateTime = chatMessage
-											.getString("formatted_datetime");
+									message.updated = chatMessage.getString("updated");
+									message.updatedCalendar = Utils.stringToCalendar(message.updated, SERVER_TIMESTAMP_FORMAT);
+									message.fullname = chatMessage.getString("fullname");
+									message.contactId = chatMessage.getString("contact_id");
+									message.dateTimeConverted = chatMessage.getString("datetime_conv");
+									message.dateTimeConvertedCalendar = Utils.stringToCalendar(message.dateTimeConverted,
+											SERVER_TIMESTAMP_FORMAT);
+									message.formatedDateTime = chatMessage.getString("formatted_datetime");
 									Data.getChatMessages().add(message);
 								}
 							}
 						}
 					}
 				} else {
-					OfflineData uplooad = new OfflineData("mobile/chat_get",
-							reqEntity);
+					OfflineData uplooad = new OfflineData("mobile/chat_get", reqEntity);
 					Data.getUnuploadedData().add(uplooad);
 				}
 			} catch (Exception e) {
-				Reporter.reportError(this.getClass().toString(), Thread
-						.currentThread().getStackTrace()[2].getMethodName()
-						.toString(), e.getMessage());
+				Reporter.reportError(this.getClass().toString(), Thread.currentThread().getStackTrace()[2].getMethodName().toString(),
+						e.getMessage());
 			}
 			return null;
 		}
@@ -4549,21 +3447,16 @@ public class DataManagement {
 				int event_id = (Integer) params[0];
 				String message = (String) params[1];
 				HttpClient hc = new DefaultHttpClient();
-				HttpPost post = new HttpPost(Data.getServerUrl()
-						+ "mobile/chat_post");
+				HttpPost post = new HttpPost(Data.getServerUrl() + "mobile/chat_post");
 
-				MultipartEntity reqEntity = new MultipartEntity(
-						HttpMultipartMode.BROWSER_COMPATIBLE);
+				MultipartEntity reqEntity = new MultipartEntity(HttpMultipartMode.BROWSER_COMPATIBLE);
 
 				reqEntity.addPart(TOKEN, new StringBody(Data.getToken()));
-				reqEntity.addPart("event_id",
-						new StringBody(String.valueOf(event_id)));
+				reqEntity.addPart("event_id", new StringBody(String.valueOf(event_id)));
 				if (message == null) {
-					reqEntity.addPart("message",
-							new StringBody(String.valueOf("")));
+					reqEntity.addPart("message", new StringBody(String.valueOf("")));
 				} else {
-					reqEntity.addPart("message",
-							new StringBody(String.valueOf(message)));
+					reqEntity.addPart("message", new StringBody(String.valueOf(message)));
 				}
 
 				post.setEntity(reqEntity);
@@ -4582,14 +3475,12 @@ public class DataManagement {
 						}
 					}
 				} else {
-					OfflineData uplooad = new OfflineData("mobile/chat_post",
-							reqEntity);
+					OfflineData uplooad = new OfflineData("mobile/chat_post", reqEntity);
 					Data.getUnuploadedData().add(uplooad);
 				}
 			} catch (Exception e) {
-				Reporter.reportError(this.getClass().toString(), Thread
-						.currentThread().getStackTrace()[2].getMethodName()
-						.toString(), e.getMessage());
+				Reporter.reportError(this.getClass().toString(), Thread.currentThread().getStackTrace()[2].getMethodName().toString(),
+						e.getMessage());
 			}
 			return null;
 		}
@@ -4611,15 +3502,12 @@ public class DataManagement {
 				int message_id = (Integer) params[0];
 				int event_id = (Integer) params[1];
 				HttpClient hc = new DefaultHttpClient();
-				HttpPost post = new HttpPost(Data.getServerUrl()
-						+ "mobile/chat_remove");
+				HttpPost post = new HttpPost(Data.getServerUrl() + "mobile/chat_remove");
 
-				MultipartEntity reqEntity = new MultipartEntity(
-						HttpMultipartMode.BROWSER_COMPATIBLE);
+				MultipartEntity reqEntity = new MultipartEntity(HttpMultipartMode.BROWSER_COMPATIBLE);
 
 				reqEntity.addPart(TOKEN, new StringBody(Data.getToken()));
-				reqEntity.addPart("message_id",
-						new StringBody(String.valueOf(message_id)));
+				reqEntity.addPart("message_id", new StringBody(String.valueOf(message_id)));
 
 				post.setEntity(reqEntity);
 				HttpResponse rp = null;
@@ -4637,14 +3525,12 @@ public class DataManagement {
 						}
 					}
 				} else {
-					OfflineData uplooad = new OfflineData("mobile/chat_remove",
-							reqEntity);
+					OfflineData uplooad = new OfflineData("mobile/chat_remove", reqEntity);
 					Data.getUnuploadedData().add(uplooad);
 				}
 			} catch (Exception e) {
-				Reporter.reportError(this.getClass().toString(), Thread
-						.currentThread().getStackTrace()[2].getMethodName()
-						.toString(), e.getMessage());
+				Reporter.reportError(this.getClass().toString(), Thread.currentThread().getStackTrace()[2].getMethodName().toString(),
+						e.getMessage());
 			}
 			return null;
 		}
@@ -4661,11 +3547,9 @@ public class DataManagement {
 		protected Void doInBackground(Void... params) {
 			try {
 				HttpClient hc = new DefaultHttpClient();
-				HttpPost post = new HttpPost(Data.getServerUrl()
-						+ "mobile/chat_threads");
+				HttpPost post = new HttpPost(Data.getServerUrl() + "mobile/chat_threads");
 
-				MultipartEntity reqEntity = new MultipartEntity(
-						HttpMultipartMode.BROWSER_COMPATIBLE);
+				MultipartEntity reqEntity = new MultipartEntity(HttpMultipartMode.BROWSER_COMPATIBLE);
 
 				reqEntity.addPart(TOKEN, new StringBody(Data.getToken()));
 
@@ -4679,246 +3563,133 @@ public class DataManagement {
 							JSONObject object = new JSONObject(resp);
 							boolean success = object.getBoolean("success");
 							if (success) {
-								JSONArray chatThreads = object
-										.getJSONArray("items");
+								JSONArray chatThreads = object.getJSONArray("items");
 								for (int i = 0, l = chatThreads.length(); i < l; i++) {
-									final JSONObject thread = chatThreads
-											.getJSONObject(i);
+									final JSONObject thread = chatThreads.getJSONObject(i);
 									String tmp = "";
 									ChatThreadObject chatThread = new ChatThreadObject();
 									tmp = thread.getString("event_id");
-									if (!tmp.equalsIgnoreCase("null")
-											&& tmp.matches("[0-9]*")) {
-										chatThread.event_id = Integer
-												.parseInt(tmp);
+									if (!tmp.equalsIgnoreCase("null") && tmp.matches("[0-9]*")) {
+										chatThread.event_id = Integer.parseInt(tmp);
 									} else {
 										chatThread.event_id = 0;
 									}
 									tmp = thread.getString("user_id");
-									if (!tmp.equalsIgnoreCase("null")
-											&& tmp.matches("[0-9]*")) {
-										chatThread.user_id = Integer
-												.parseInt(tmp);
+									if (!tmp.equalsIgnoreCase("null") && tmp.matches("[0-9]*")) {
+										chatThread.user_id = Integer.parseInt(tmp);
 									} else {
 										chatThread.user_id = 0;
 									}
 									chatThread.type = thread.getString("type");
-									chatThread.confirmed = thread
-											.getString("confirmed");
+									chatThread.confirmed = thread.getString("confirmed");
 									tmp = thread.getString("contact_author_id");
-									if (!tmp.equalsIgnoreCase("null")
-											&& tmp.matches("[0-9]*")) {
-										chatThread.contact_author_id = Integer
-												.parseInt(tmp);
+									if (!tmp.equalsIgnoreCase("null") && tmp.matches("[0-9]*")) {
+										chatThread.contact_author_id = Integer.parseInt(tmp);
 									} else {
 										chatThread.contact_author_id = 0;
 									}
-									chatThread.title = thread
-											.getString("title");
+									chatThread.title = thread.getString("title");
 									chatThread.icon = thread.getString("icon");
-									chatThread.color = thread
-											.getString("color");
-									chatThread.description = thread
-											.getString("description");
-									chatThread.location = thread
-											.getString("location");
-									chatThread.accomodation = thread
-											.getString("accomodation");
+									chatThread.color = thread.getString("color");
+									chatThread.description = thread.getString("description");
+									chatThread.location = thread.getString("location");
+									chatThread.accomodation = thread.getString("accomodation");
 									chatThread.cost = thread.getString("cost");
-									chatThread.take_with_you = thread
-											.getString("take_with_you");
-									chatThread.go_by = thread
-											.getString("go_by");
-									chatThread.country = thread
-											.getString("country");
+									chatThread.take_with_you = thread.getString("take_with_you");
+									chatThread.go_by = thread.getString("go_by");
+									chatThread.country = thread.getString("country");
 									chatThread.city = thread.getString("city");
-									chatThread.street = thread
-											.getString("street");
+									chatThread.street = thread.getString("street");
 									chatThread.zip = thread.getString("zip");
-									chatThread.timezone = thread
-											.getString("timezone");
-									chatThread.time_start = thread
-											.getString("time_start");
-									chatThread.time_startCalendar = Utils
-											.stringToCalendar(
-													chatThread.time_start,
-													SERVER_TIMESTAMP_FORMAT);
-									chatThread.time_end = thread
-											.getString("time_end");
-									chatThread.time_endCalendar = Utils
-											.stringToCalendar(
-													chatThread.time_end,
-													SERVER_TIMESTAMP_FORMAT);
-									chatThread.all_day_event = thread
-											.getString("all_day_event")
-											.equalsIgnoreCase("1");
-									chatThread.reminder1 = thread
-											.getString("reminder1");
-									chatThread.reminder1calendar = Utils
-											.stringToCalendar(
-													chatThread.reminder1,
-													SERVER_TIMESTAMP_FORMAT);
-									chatThread.reminder2 = thread
-											.getString("reminder2");
-									chatThread.reminder2calendar = Utils
-											.stringToCalendar(
-													chatThread.reminder2,
-													SERVER_TIMESTAMP_FORMAT);
-									chatThread.reminder3 = thread
-											.getString("reminder3");
-									chatThread.reminder3calendar = Utils
-											.stringToCalendar(
-													chatThread.reminder3,
-													SERVER_TIMESTAMP_FORMAT);
-									chatThread.google_uid = thread
-											.getString("google_uid");
-									chatThread.native_id = thread
-											.getString("native_id");
+									chatThread.timezone = thread.getString("timezone");
+									chatThread.time_start = thread.getString("time_start");
+									chatThread.time_startCalendar = Utils.stringToCalendar(chatThread.time_start, SERVER_TIMESTAMP_FORMAT);
+									chatThread.time_end = thread.getString("time_end");
+									chatThread.time_endCalendar = Utils.stringToCalendar(chatThread.time_end, SERVER_TIMESTAMP_FORMAT);
+									chatThread.all_day_event = thread.getString("all_day_event").equalsIgnoreCase("1");
+									chatThread.reminder1 = thread.getString("reminder1");
+									chatThread.reminder1calendar = Utils.stringToCalendar(chatThread.reminder1, SERVER_TIMESTAMP_FORMAT);
+									chatThread.reminder2 = thread.getString("reminder2");
+									chatThread.reminder2calendar = Utils.stringToCalendar(chatThread.reminder2, SERVER_TIMESTAMP_FORMAT);
+									chatThread.reminder3 = thread.getString("reminder3");
+									chatThread.reminder3calendar = Utils.stringToCalendar(chatThread.reminder3, SERVER_TIMESTAMP_FORMAT);
+									chatThread.google_uid = thread.getString("google_uid");
+									chatThread.native_id = thread.getString("native_id");
 									chatThread.wp = thread.getString("wp");
-									chatThread.created = thread
-											.getString("created");
-									chatThread.createdCalendar = Utils
-											.stringToCalendar(
-													chatThread.created,
-													SERVER_TIMESTAMP_FORMAT);
-									chatThread.modified = thread
-											.getString("modified");
-									chatThread.from_feed = thread.getString(
-											"from_feed").equals("1");
+									chatThread.created = thread.getString("created");
+									chatThread.createdCalendar = Utils.stringToCalendar(chatThread.created, SERVER_TIMESTAMP_FORMAT);
+									chatThread.modified = thread.getString("modified");
+									chatThread.from_feed = thread.getString("from_feed").equals("1");
 									tmp = thread.getString("message_count");
-									if (!tmp.equalsIgnoreCase("null")
-											&& tmp.matches("[0-9]*")) {
-										chatThread.message_count = Integer
-												.parseInt(tmp);
+									if (!tmp.equalsIgnoreCase("null") && tmp.matches("[0-9]*")) {
+										chatThread.message_count = Integer.parseInt(tmp);
 									} else {
 										chatThread.message_count = 0;
 									}
-									chatThread.message_last = thread
-											.getString("message_last");
-									chatThread.message_lastCalendar = Utils
-											.stringToCalendar(
-													chatThread.message_last,
-													SERVER_TIMESTAMP_FORMAT);
-									chatThread.attendant_1_count = thread
-											.getInt("attendant_1_count");
-									chatThread.attendant_2_count = thread
-											.getInt("attendant_2_count");
-									chatThread.attendant_0_count = thread
-											.getInt("attendant_0_count");
-									chatThread.attendant_4_count = thread
-											.getInt("attendant_4_count");
-									chatThread.total_invited = thread
-											.getInt("total_invited");
+									chatThread.message_last = thread.getString("message_last");
+									chatThread.message_lastCalendar = Utils.stringToCalendar(chatThread.message_last,
+											SERVER_TIMESTAMP_FORMAT);
+									chatThread.attendant_1_count = thread.getInt("attendant_1_count");
+									chatThread.attendant_2_count = thread.getInt("attendant_2_count");
+									chatThread.attendant_0_count = thread.getInt("attendant_0_count");
+									chatThread.attendant_4_count = thread.getInt("attendant_4_count");
+									chatThread.total_invited = thread.getInt("total_invited");
 									tmp = thread.getString("sport_team_id");
 									if (!tmp.equalsIgnoreCase("null")) {
-										chatThread.sport_team_id = Integer
-												.parseInt(tmp);
+										chatThread.sport_team_id = Integer.parseInt(tmp);
 									} else {
 										chatThread.sport_team_id = 0;
 									}
-									chatThread.sport_event_type = thread
-											.getString("sport_event_type");
-									chatThread.sport_location = thread
-											.getString("sport_location");
-									chatThread.sport_field = thread
-											.getString("sport_field");
-									chatThread.sport_opponent = thread
-											.getString("sport_opponent");
-									chatThread.sport_referee = thread
-											.getString("sport_referee");
-									chatThread.sport_time_assembly = thread
-											.getString("sport_time_assembly");
-									chatThread.sport_time_arrival = thread
-											.getString("sport_time_arrival");
-									chatThread.sport_arrival_address = thread
-											.getString("sport_arrival_address");
-									chatThread.sport_start_return_trip = thread
-											.getString("sport_start_return_trip");
-									chatThread.sport_time_return = thread
-											.getString("sport_time_return");
-									chatThread.poll_voted_count = thread
-											.getInt("poll_voted_count");
-									chatThread.poll_pending_count = thread
-											.getInt("poll_pending_count");
-									chatThread.poll_rejected_count = thread
-											.getInt("poll_rejected_count");
-									chatThread.poll_invited_count = thread
-											.getInt("poll_invited_count");
+									chatThread.sport_event_type = thread.getString("sport_event_type");
+									chatThread.sport_location = thread.getString("sport_location");
+									chatThread.sport_field = thread.getString("sport_field");
+									chatThread.sport_opponent = thread.getString("sport_opponent");
+									chatThread.sport_referee = thread.getString("sport_referee");
+									chatThread.sport_time_assembly = thread.getString("sport_time_assembly");
+									chatThread.sport_time_arrival = thread.getString("sport_time_arrival");
+									chatThread.sport_arrival_address = thread.getString("sport_arrival_address");
+									chatThread.sport_start_return_trip = thread.getString("sport_start_return_trip");
+									chatThread.sport_time_return = thread.getString("sport_time_return");
+									chatThread.poll_voted_count = thread.getInt("poll_voted_count");
+									chatThread.poll_pending_count = thread.getInt("poll_pending_count");
+									chatThread.poll_rejected_count = thread.getInt("poll_rejected_count");
+									chatThread.poll_invited_count = thread.getInt("poll_invited_count");
 									tmp = thread.getString("org_id");
-									if (!tmp.equalsIgnoreCase("null")
-											&& tmp.matches("[0-9]*")) {
-										chatThread.org_id = Integer
-												.parseInt(tmp);
+									if (!tmp.equalsIgnoreCase("null") && tmp.matches("[0-9]*")) {
+										chatThread.org_id = Integer.parseInt(tmp);
 									} else {
 										chatThread.org_id = 0;
 									}
-									chatThread.repeat_group = thread
-											.getString("repeat_group");
-									chatThread.repeat_data = thread
-											.getString("repeat_data");
-									chatThread.alarm1 = thread
-											.getString("alarm1");
-									chatThread.alarm1calendar = Utils
-											.stringToCalendar(
-													chatThread.alarm1,
-													SERVER_TIMESTAMP_FORMAT);
-									chatThread.alarm2 = thread
-											.getString("alarm2");
-									chatThread.alarm2calendar = Utils
-											.stringToCalendar(
-													chatThread.alarm2,
-													SERVER_TIMESTAMP_FORMAT);
-									chatThread.alarm3 = thread
-											.getString("alarm3");
-									chatThread.alarm3calendar = Utils
-											.stringToCalendar(
-													chatThread.alarm3,
-													SERVER_TIMESTAMP_FORMAT);
-									chatThread.alarm1_fired = thread.getString(
-											"alarm1_fired").equalsIgnoreCase(
-											"1");
-									chatThread.alarm2_fired = thread.getString(
-											"alarm2_fired").equalsIgnoreCase(
-											"1");
-									chatThread.alarm3_fired = thread.getString(
-											"alarm3_fired").equalsIgnoreCase(
-											"1");
-									chatThread.my_time_start = thread
-											.getString("my_time_start");
-									chatThread.my_time_startCalendar = Utils
-											.stringToCalendar(
-													chatThread.my_time_start,
-													SERVER_TIMESTAMP_FORMAT);
-									chatThread.my_time_end = thread
-											.getString("my_time_end");
+									chatThread.repeat_group = thread.getString("repeat_group");
+									chatThread.repeat_data = thread.getString("repeat_data");
+									chatThread.alarm1 = thread.getString("alarm1");
+									chatThread.alarm1calendar = Utils.stringToCalendar(chatThread.alarm1, SERVER_TIMESTAMP_FORMAT);
+									chatThread.alarm2 = thread.getString("alarm2");
+									chatThread.alarm2calendar = Utils.stringToCalendar(chatThread.alarm2, SERVER_TIMESTAMP_FORMAT);
+									chatThread.alarm3 = thread.getString("alarm3");
+									chatThread.alarm3calendar = Utils.stringToCalendar(chatThread.alarm3, SERVER_TIMESTAMP_FORMAT);
+									chatThread.alarm1_fired = thread.getString("alarm1_fired").equalsIgnoreCase("1");
+									chatThread.alarm2_fired = thread.getString("alarm2_fired").equalsIgnoreCase("1");
+									chatThread.alarm3_fired = thread.getString("alarm3_fired").equalsIgnoreCase("1");
+									chatThread.my_time_start = thread.getString("my_time_start");
+									chatThread.my_time_startCalendar = Utils.stringToCalendar(chatThread.my_time_start,
+											SERVER_TIMESTAMP_FORMAT);
+									chatThread.my_time_end = thread.getString("my_time_end");
 									chatThread.my_time_endCalendar = Utils
-											.stringToCalendar(
-													chatThread.my_time_end,
-													SERVER_TIMESTAMP_FORMAT);
-									chatThread.created_local = thread
-											.getString("created_local");
-									chatThread.created_localCalendar = Utils
-											.stringToCalendar(
-													chatThread.created_local,
-													SERVER_TIMESTAMP_FORMAT);
-									chatThread.modified_local = thread
-											.getString("modified_local");
-									chatThread.modified_localCalendar = Utils
-											.stringToCalendar(
-													chatThread.modified_local,
-													SERVER_TIMESTAMP_FORMAT);
+											.stringToCalendar(chatThread.my_time_end, SERVER_TIMESTAMP_FORMAT);
+									chatThread.created_local = thread.getString("created_local");
+									chatThread.created_localCalendar = Utils.stringToCalendar(chatThread.created_local,
+											SERVER_TIMESTAMP_FORMAT);
+									chatThread.modified_local = thread.getString("modified_local");
+									chatThread.modified_localCalendar = Utils.stringToCalendar(chatThread.modified_local,
+											SERVER_TIMESTAMP_FORMAT);
 									chatThread.status = thread.getInt("status");
-									chatThread.is_owner = thread
-											.getInt("is_owner") == 1;
-									chatThread.new_messages = thread
-											.getInt("new_messages");
-									chatThread.creator_fullname = thread
-											.getString("creator_fullname");
-									tmp = thread
-											.getString("creator_contact_id");
+									chatThread.is_owner = thread.getInt("is_owner") == 1;
+									chatThread.new_messages = thread.getInt("new_messages");
+									chatThread.creator_fullname = thread.getString("creator_fullname");
+									tmp = thread.getString("creator_contact_id");
 									if (!tmp.equalsIgnoreCase("null")) {
-										chatThread.creator_contact_id = Integer
-												.parseInt(tmp);
+										chatThread.creator_contact_id = Integer.parseInt(tmp);
 									} else {
 										chatThread.creator_contact_id = 0;
 									}
@@ -4928,14 +3699,12 @@ public class DataManagement {
 						}
 					}
 				} else {
-					OfflineData uplooad = new OfflineData(
-							"mobile/chat_threads", reqEntity);
+					OfflineData uplooad = new OfflineData("mobile/chat_threads", reqEntity);
 					Data.getUnuploadedData().add(uplooad);
 				}
 			} catch (Exception e) {
-				Reporter.reportError(this.getClass().toString(), Thread
-						.currentThread().getStackTrace()[2].getMethodName()
-						.toString(), e.getMessage());
+				Reporter.reportError(this.getClass().toString(), Thread.currentThread().getStackTrace()[2].getMethodName().toString(),
+						e.getMessage());
 			}
 			return null;
 		}
@@ -4958,13 +3727,11 @@ public class DataManagement {
 					}
 				}
 			} catch (ClientProtocolException e) {
-				Reporter.reportError(this.getClass().toString(), Thread
-						.currentThread().getStackTrace()[2].getMethodName()
-						.toString(), e.getMessage());
+				Reporter.reportError(this.getClass().toString(), Thread.currentThread().getStackTrace()[2].getMethodName().toString(),
+						e.getMessage());
 			} catch (IOException e) {
-				Reporter.reportError(this.getClass().toString(), Thread
-						.currentThread().getStackTrace()[2].getMethodName()
-						.toString(), e.getMessage());
+				Reporter.reportError(this.getClass().toString(), Thread.currentThread().getStackTrace()[2].getMethodName().toString(),
+						e.getMessage());
 			}
 			return new byte[0];
 		}
@@ -5073,23 +3840,24 @@ public class DataManagement {
 	public Context getContext() {
 		return Data.getmContext();
 	}
-	
+
 	/**
 	 * Upload Event object to remote database as a template.
 	 * 
-	 * Method creates a multipart entity object, fills it with submitted event's data. Afterwards
-	 * creates a connection to remote server and, if successful Ð uploads data. If not Ð stores
-	 * it in an UnuploadedData object ArrayList. 
+	 * Method creates a multipart entity object, fills it with submitted event's
+	 * data. Afterwards creates a connection to remote server and, if successful
+	 * Ð uploads data. If not Ð stores it in an UnuploadedData object ArrayList.
 	 * 
 	 * Note: still missing event field upload features.
 	 * 
 	 * @author meska.lt@gmail.com
-	 * @param event Event type object with validated data.
+	 * @param event
+	 *            Event type object with validated data.
 	 * @version 1.1
 	 * @since 2012-09-24
-	 * @return Uploaded event's ID in remote database.  
+	 * @return Uploaded event's ID in remote database.
 	 */
-	public int uploadTemplateToRemoteDb (Event event) {
+	public int uploadTemplateToRemoteDb(Event event) {
 		int response = 0;
 		try {
 			HttpClient hc = new DefaultHttpClient();
@@ -5098,15 +3866,15 @@ public class DataManagement {
 			MultipartEntity reqEntity = new MultipartEntity(HttpMultipartMode.BROWSER_COMPATIBLE);
 
 			reqEntity.addPart("token", new StringBody(Data.getToken()));
-			
+
 			if (event.event_id > 0)
 				reqEntity.addPart("template_id", new StringBody(((Integer) event.event_id).toString()));
 			else
 				reqEntity.addPart("template_id", new StringBody(""));
-			
+
 			if (event.icon != null)
 				reqEntity.addPart("icon", new StringBody(event.icon));
-			
+
 			if (event.getColor() != null)
 				reqEntity.addPart("color", new StringBody(event.getColor()));
 
@@ -5118,11 +3886,12 @@ public class DataManagement {
 				reqEntity.addPart("template_title", new StringBody(""));
 			}
 
-//			if (event.time_start > 0)
-//				reqEntity.addPart("time_start", new StringBody(event.time_start));
-//			
-//			if (event.time_end != null)
-//				reqEntity.addPart("time_end", new StringBody(event.time_end));
+			// if (event.time_start > 0)
+			// reqEntity.addPart("time_start", new
+			// StringBody(event.time_start));
+			//
+			// if (event.time_end != null)
+			// reqEntity.addPart("time_end", new StringBody(event.time_end));
 
 			if (event.description_ != null) {
 				reqEntity.addPart("description", new StringBody(event.description_));
@@ -5132,31 +3901,31 @@ public class DataManagement {
 
 			if (event.country != null)
 				reqEntity.addPart("country", new StringBody(event.country));
-			
+
 			if (event.city != null)
 				reqEntity.addPart("city", new StringBody(event.city));
-			
+
 			if (event.street != null)
 				reqEntity.addPart("street", new StringBody(event.street));
-			
+
 			if (event.zip != null)
 				reqEntity.addPart("zip", new StringBody(event.zip));
-			
+
 			if (event.timezone != null)
 				reqEntity.addPart("timezone", new StringBody(event.timezone));
 
 			if (event.location != null)
 				reqEntity.addPart("location", new StringBody(event.location));
-			
+
 			if (event.go_by != null)
 				reqEntity.addPart("go_by", new StringBody(event.go_by));
-			
+
 			if (event.take_with_you != null)
 				reqEntity.addPart("take_with_you", new StringBody(event.take_with_you));
-			
+
 			if (event.cost != null)
 				reqEntity.addPart("cost", new StringBody(event.cost));
-			
+
 			if (event.accomodation != null)
 				reqEntity.addPart("accomodation", new StringBody(event.accomodation));
 
@@ -5168,7 +3937,7 @@ public class DataManagement {
 					i++;
 				}
 			}
-			
+
 			if (event.assigned_contacts != null) {
 				for (int i = 0, l = event.assigned_contacts.length; i < l; i++) {
 					reqEntity.addPart("contacts[]", new StringBody(String.valueOf(event.assigned_contacts[i])));
@@ -5176,7 +3945,7 @@ public class DataManagement {
 			} else {
 				reqEntity.addPart("contacts[]", new StringBody(""));
 			}
-			
+
 			if (event.assigned_groups != null) {
 				for (int i = 0, l = event.assigned_groups.length; i < l; i++) {
 					reqEntity.addPart("groups[]", new StringBody(String.valueOf(event.assigned_groups[i])));
@@ -5188,20 +3957,20 @@ public class DataManagement {
 			if (event.reminder1 != null) {
 				reqEntity.addPart("reminder1", new StringBody(event.reminder1));
 			}
-			
+
 			if (event.reminder2 != null) {
 				reqEntity.addPart("reminder2", new StringBody(event.reminder2));
 			}
-			
+
 			if (event.reminder3 != null) {
 				reqEntity.addPart("reminder3", new StringBody(event.reminder3));
 			}
 
-//			TODO find out wtf is bd in event
-//			if (event.birthday) {
-//				reqEntity.addPart("bd", new StringBody("1"));
-//			}
-			
+			// TODO find out wtf is bd in event
+			// if (event.birthday) {
+			// reqEntity.addPart("bd", new StringBody("1"));
+			// }
+
 			post.setEntity(reqEntity);
 
 			if (networkAvailable) {
@@ -5232,25 +4001,28 @@ public class DataManagement {
 		}
 		return response;
 	}
-	
+
 	/**
 	 * Upload Event object to local database as a template.
 	 * 
-	 * Method creates a ContentValues object, fills it with submitted event's data. Afterwards
-	 * gets a local daatabase content resolver and, if successful Ð uploads data into it.
+	 * Method creates a ContentValues object, fills it with submitted event's
+	 * data. Afterwards gets a local daatabase content resolver and, if
+	 * successful Ð uploads data into it.
 	 * 
 	 * Note: still missing event field upload features.
 	 * 
 	 * @author meska.lt@gmail.com
-	 * @param template Event type object with validated data.
-	 * @param template_id Integer corresponding to template's ID in remote database.
+	 * @param template
+	 *            Event type object with validated data.
+	 * @param template_id
+	 *            Integer corresponding to template's ID in remote database.
 	 * @version 1.0
 	 * @since 2012-09-24
-	 * @return True if successful.  
+	 * @return True if successful.
 	 */
-	public boolean uploadTemplateToLocalDb (Event template, int template_id) {
+	public boolean uploadTemplateToLocalDb(Event template, int template_id) {
 		boolean success = false;
-		
+
 		try {
 			ContentValues cv = new ContentValues();
 
@@ -5260,12 +4032,12 @@ public class DataManagement {
 				cv.put(TemplatesMetaData.T_ID, template.event_id);
 			else
 				cv.put(TemplatesMetaData.T_ID, 0);
-			
+
 			if (template.icon != null)
 				cv.put(TemplatesMetaData.ICON, template.icon);
 			else
 				cv.put(TemplatesMetaData.ICON, "");
-			
+
 			if (template.getColor() != null)
 				cv.put(TemplatesMetaData.COLOR, template.getColor());
 
@@ -5274,11 +4046,11 @@ public class DataManagement {
 			else
 				cv.put(TemplatesMetaData.TITLE, "Untitled");
 
-//			if (template.time_start != null)
-//				cv.put(TemplatesMetaData.TIME_START, template.time_start);
-//			
-//			if (template.time_end != null)
-//				cv.put(TemplatesMetaData.TIME_END, template.time_end);
+			// if (template.time_start != null)
+			// cv.put(TemplatesMetaData.TIME_START, template.time_start);
+			//
+			// if (template.time_end != null)
+			// cv.put(TemplatesMetaData.TIME_END, template.time_end);
 
 			if (template.description_ != null)
 				cv.put(TemplatesMetaData.DESC, template.description_);
@@ -5289,22 +4061,22 @@ public class DataManagement {
 				cv.put(TemplatesMetaData.COUNTRY, template.country);
 			else
 				cv.put(TemplatesMetaData.COUNTRY, "");
-			
+
 			if (template.city != null)
 				cv.put(TemplatesMetaData.CITY, template.city);
 			else
 				cv.put(TemplatesMetaData.CITY, "");
-			
+
 			if (template.street != null)
 				cv.put(TemplatesMetaData.STREET, template.street);
 			else
 				cv.put(TemplatesMetaData.STREET, "");
-			
+
 			if (template.zip != null)
 				cv.put(TemplatesMetaData.ZIP, template.zip);
 			else
 				cv.put(TemplatesMetaData.ZIP, "");
-			
+
 			if (template.timezone != null)
 				cv.put(TemplatesMetaData.TIMEZONE, template.timezone);
 			else
@@ -5314,22 +4086,22 @@ public class DataManagement {
 				cv.put(TemplatesMetaData.LOCATION, template.location);
 			else
 				cv.put(TemplatesMetaData.LOCATION, "");
-			
+
 			if (template.go_by != null)
 				cv.put(TemplatesMetaData.GO_BY, template.go_by);
 			else
 				cv.put(TemplatesMetaData.GO_BY, "");
-			
+
 			if (template.take_with_you != null)
 				cv.put(TemplatesMetaData.TAKE_WITH_YOU, template.take_with_you);
 			else
 				cv.put(TemplatesMetaData.TAKE_WITH_YOU, "");
-			
+
 			if (template.cost != null)
 				cv.put(TemplatesMetaData.COST, template.cost);
 			else
 				cv.put(TemplatesMetaData.COST, "");
-			
+
 			if (template.accomodation != null)
 				cv.put(TemplatesMetaData.ACCOMODATION, template.accomodation);
 			else
@@ -5343,7 +4115,7 @@ public class DataManagement {
 					i++;
 				}
 			}
-			
+
 			if (template.assigned_contacts != null) {
 				for (int i = 0, l = template.assigned_contacts.length; i < l; i++) {
 					cv.put(TemplatesMetaData.ASSIGNED_CONTACTS, String.valueOf(template.assigned_contacts[i]));
@@ -5351,7 +4123,7 @@ public class DataManagement {
 			} else {
 				cv.put(TemplatesMetaData.ASSIGNED_CONTACTS, "");
 			}
-			
+
 			if (template.assigned_groups != null) {
 				for (int i = 0, l = template.assigned_groups.length; i < l; i++) {
 					cv.put(TemplatesMetaData.ASSIGNED_GROUPS, String.valueOf(template.assigned_groups[i]));
@@ -5360,32 +4132,32 @@ public class DataManagement {
 				cv.put(TemplatesMetaData.ASSIGNED_GROUPS, "");
 			}
 
-//			if (template.reminder1 != null)
-//				cv.put(TemplatesMetaData.REMINDER1, template.reminder1);
-//			else
-//				cv.put(TemplatesMetaData.REMINDER1, "");
-			
-//			if (template.reminder2 != null)
-//			cv.put(TemplatesMetaData.REMINDER2, template.reminder2);
-//		else
-//			cv.put(TemplatesMetaData.REMINDER2, "");
-			
-//			if (template.reminder3 != null)
-//			cv.put(TemplatesMetaData.REMINDER3, template.reminder3);
-//		else
-//			cv.put(TemplatesMetaData.REMINDER3, "");
+			// if (template.reminder1 != null)
+			// cv.put(TemplatesMetaData.REMINDER1, template.reminder1);
+			// else
+			// cv.put(TemplatesMetaData.REMINDER1, "");
 
-//			TODO find out wtf is bd in event
-//			if (event.birthday) {
-//				reqEntity.addPart("bd", new StringBody("1"));
-//			}
-			
+			// if (template.reminder2 != null)
+			// cv.put(TemplatesMetaData.REMINDER2, template.reminder2);
+			// else
+			// cv.put(TemplatesMetaData.REMINDER2, "");
+
+			// if (template.reminder3 != null)
+			// cv.put(TemplatesMetaData.REMINDER3, template.reminder3);
+			// else
+			// cv.put(TemplatesMetaData.REMINDER3, "");
+
+			// TODO find out wtf is bd in event
+			// if (event.birthday) {
+			// reqEntity.addPart("bd", new StringBody("1"));
+			// }
+
 			Data.getmContext().getContentResolver().insert(TemplatesMetaData.CONTENT_URI, cv);
 			success = true;
 		} catch (Exception e) {
 			Log.e("TemplateUploadLocal", "CATCH!");
 		}
-		
+
 		return success;
 	}
 
@@ -5424,316 +4196,428 @@ public class DataManagement {
 
 							try {
 								template.event_id = e.getInt("template_id");
-//								cv.put(EventsProvider.EMetaData.EventsMetaData.E_ID, template.event_id);
+								// cv.put(EventsProvider.EMetaData.EventsMetaData.E_ID,
+								// template.event_id);
 							} catch (JSONException ex) {
-								Reporter.reportError(this.getClass().toString(), Thread.currentThread().getStackTrace()[2].getMethodName().toString(), ex.getMessage());
+								Reporter.reportError(this.getClass().toString(), Thread.currentThread().getStackTrace()[2].getMethodName()
+										.toString(), ex.getMessage());
 							}
-//							try {
-//								template.user_id = e.getInt("user_id");
-//								cv.put(EventsProvider.EMetaData.EventsMetaData.USER_ID, template.user_id);
-//							} catch (JSONException ex) {
-//								Reporter.reportError(this.getClass().toString(), Thread.currentThread().getStackTrace()[2].getMethodName().toString(), ex.getMessage());
-//							}
-//							try {
-//								template.status = e.getInt("status");
-//								cv.put(EventsProvider.EMetaData.EventsMetaData.STATUS, template.status);
-//							} catch (JSONException ex) {
-//								Reporter.reportError(this.getClass().toString(), Thread.currentThread().getStackTrace()[2].getMethodName().toString(), ex.getMessage());
-//							}
-//							try {
-//								int is_owner = e.getInt("is_owner");
-//								template.is_owner = is_owner == 1;
-//								cv.put(EventsProvider.EMetaData.EventsMetaData.IS_OWNER, template.is_owner);
-//							} catch (JSONException ex) {
-//								Reporter.reportError(this.getClass().toString(), Thread.currentThread().getStackTrace()[2].getMethodName().toString(), ex.getMessage());
-//							}
-//							try {
-//								template.type = e.getString("type");
-//								cv.put(EventsProvider.EMetaData.EventsMetaData.TYPE, template.type);
-//							} catch (JSONException ex) {
-//								Reporter.reportError(this.getClass().toString(), Thread.currentThread().getStackTrace()[2].getMethodName().toString(), ex.getMessage());
-//							}
+							// try {
+							// template.user_id = e.getInt("user_id");
+							// cv.put(EventsProvider.EMetaData.EventsMetaData.USER_ID,
+							// template.user_id);
+							// } catch (JSONException ex) {
+							// Reporter.reportError(this.getClass().toString(),
+							// Thread.currentThread().getStackTrace()[2].getMethodName().toString(),
+							// ex.getMessage());
+							// }
+							// try {
+							// template.status = e.getInt("status");
+							// cv.put(EventsProvider.EMetaData.EventsMetaData.STATUS,
+							// template.status);
+							// } catch (JSONException ex) {
+							// Reporter.reportError(this.getClass().toString(),
+							// Thread.currentThread().getStackTrace()[2].getMethodName().toString(),
+							// ex.getMessage());
+							// }
+							// try {
+							// int is_owner = e.getInt("is_owner");
+							// template.is_owner = is_owner == 1;
+							// cv.put(EventsProvider.EMetaData.EventsMetaData.IS_OWNER,
+							// template.is_owner);
+							// } catch (JSONException ex) {
+							// Reporter.reportError(this.getClass().toString(),
+							// Thread.currentThread().getStackTrace()[2].getMethodName().toString(),
+							// ex.getMessage());
+							// }
+							// try {
+							// template.type = e.getString("type");
+							// cv.put(EventsProvider.EMetaData.EventsMetaData.TYPE,
+							// template.type);
+							// } catch (JSONException ex) {
+							// Reporter.reportError(this.getClass().toString(),
+							// Thread.currentThread().getStackTrace()[2].getMethodName().toString(),
+							// ex.getMessage());
+							// }
 							try {
 								template.title = e.getString("title");
-//								cv.put(EventsProvider.EMetaData.EventsMetaData.TITLE, template.title);
+								// cv.put(EventsProvider.EMetaData.EventsMetaData.TITLE,
+								// template.title);
 							} catch (JSONException ex) {
-								Reporter.reportError(this.getClass().toString(), Thread.currentThread().getStackTrace()[2].getMethodName().toString(), ex.getMessage());
+								Reporter.reportError(this.getClass().toString(), Thread.currentThread().getStackTrace()[2].getMethodName()
+										.toString(), ex.getMessage());
 							}
-//							try {
-//								template.icon = e.getString("icon");
-//								cv.put(EventsProvider.EMetaData.EventsMetaData.ICON, template.icon);
-//							} catch (JSONException ex) {
-//								Reporter.reportError(this.getClass().toString(), Thread.currentThread().getStackTrace()[2].getMethodName().toString(), ex.getMessage());
-//							}
+							// try {
+							// template.icon = e.getString("icon");
+							// cv.put(EventsProvider.EMetaData.EventsMetaData.ICON,
+							// template.icon);
+							// } catch (JSONException ex) {
+							// Reporter.reportError(this.getClass().toString(),
+							// Thread.currentThread().getStackTrace()[2].getMethodName().toString(),
+							// ex.getMessage());
+							// }
 							try {
 								template.setColor(e.getString("color"));
-//								cv.put(EventsProvider.EMetaData.EventsMetaData.COLOR, template.getColor());
+								// cv.put(EventsProvider.EMetaData.EventsMetaData.COLOR,
+								// template.getColor());
 							} catch (JSONException ex) {
-								Reporter.reportError(this.getClass().toString(), Thread.currentThread().getStackTrace()[2].getMethodName().toString(), ex.getMessage());
+								Reporter.reportError(this.getClass().toString(), Thread.currentThread().getStackTrace()[2].getMethodName()
+										.toString(), ex.getMessage());
 							}
 							try {
 								template.description_ = e.getString("description");
-//								cv.put(EventsProvider.EMetaData.EventsMetaData.DESC, template.description_);
+								// cv.put(EventsProvider.EMetaData.EventsMetaData.DESC,
+								// template.description_);
 							} catch (JSONException ex) {
-								Reporter.reportError(this.getClass().toString(), Thread.currentThread().getStackTrace()[2].getMethodName().toString(), ex.getMessage());
+								Reporter.reportError(this.getClass().toString(), Thread.currentThread().getStackTrace()[2].getMethodName()
+										.toString(), ex.getMessage());
 							}
 							try {
 								template.location = e.getString("location");
-//								cv.put(EventsProvider.EMetaData.EventsMetaData.LOCATION, template.location);
+								// cv.put(EventsProvider.EMetaData.EventsMetaData.LOCATION,
+								// template.location);
 							} catch (JSONException ex) {
-								Reporter.reportError(this.getClass().toString(), Thread.currentThread().getStackTrace()[2].getMethodName().toString(), ex.getMessage());
+								Reporter.reportError(this.getClass().toString(), Thread.currentThread().getStackTrace()[2].getMethodName()
+										.toString(), ex.getMessage());
 							}
 							try {
 								template.accomodation = e.getString("accomodation");
-//								cv.put(EventsProvider.EMetaData.EventsMetaData.ACCOMODATION, template.accomodation);
+								// cv.put(EventsProvider.EMetaData.EventsMetaData.ACCOMODATION,
+								// template.accomodation);
 							} catch (JSONException ex) {
-								Reporter.reportError(this.getClass().toString(), Thread.currentThread().getStackTrace()[2].getMethodName().toString(), ex.getMessage());
+								Reporter.reportError(this.getClass().toString(), Thread.currentThread().getStackTrace()[2].getMethodName()
+										.toString(), ex.getMessage());
 							}
 							try {
 								template.cost = e.getString("cost");
-//								cv.put(EventsProvider.EMetaData.EventsMetaData.COST, template.cost);
+								// cv.put(EventsProvider.EMetaData.EventsMetaData.COST,
+								// template.cost);
 							} catch (JSONException ex) {
-								Reporter.reportError(this.getClass().toString(), Thread.currentThread().getStackTrace()[2].getMethodName().toString(), ex.getMessage());
+								Reporter.reportError(this.getClass().toString(), Thread.currentThread().getStackTrace()[2].getMethodName()
+										.toString(), ex.getMessage());
 							}
 							try {
 								template.take_with_you = e.getString("take_with_you");
-//								cv.put(EventsProvider.EMetaData.EventsMetaData.TAKE_WITH_YOU, template.take_with_you);
+								// cv.put(EventsProvider.EMetaData.EventsMetaData.TAKE_WITH_YOU,
+								// template.take_with_you);
 							} catch (JSONException ex) {
-								Reporter.reportError(this.getClass().toString(), Thread.currentThread().getStackTrace()[2].getMethodName().toString(), ex.getMessage());
+								Reporter.reportError(this.getClass().toString(), Thread.currentThread().getStackTrace()[2].getMethodName()
+										.toString(), ex.getMessage());
 							}
 							try {
 								template.go_by = e.getString("go_by");
-//								cv.put(EventsProvider.EMetaData.EventsMetaData.GO_BY, template.go_by);
+								// cv.put(EventsProvider.EMetaData.EventsMetaData.GO_BY,
+								// template.go_by);
 							} catch (JSONException ex) {
-								Reporter.reportError(this.getClass().toString(), Thread.currentThread().getStackTrace()[2].getMethodName().toString(), ex.getMessage());
+								Reporter.reportError(this.getClass().toString(), Thread.currentThread().getStackTrace()[2].getMethodName()
+										.toString(), ex.getMessage());
 							}
 							/* Address START */
 							try {
 								template.country = e.getString("country");
-//								cv.put(EventsProvider.EMetaData.EventsMetaData.COUNTRY, template.country);
+								// cv.put(EventsProvider.EMetaData.EventsMetaData.COUNTRY,
+								// template.country);
 							} catch (JSONException ex) {
-								Reporter.reportError(this.getClass().toString(), Thread.currentThread().getStackTrace()[2].getMethodName().toString(), ex.getMessage());
+								Reporter.reportError(this.getClass().toString(), Thread.currentThread().getStackTrace()[2].getMethodName()
+										.toString(), ex.getMessage());
 							}
 							try {
 								template.city = e.getString("city");
-//								cv.put(EventsProvider.EMetaData.EventsMetaData.CITY, template.city);
+								// cv.put(EventsProvider.EMetaData.EventsMetaData.CITY,
+								// template.city);
 							} catch (JSONException ex) {
-								Reporter.reportError(this.getClass().toString(), Thread.currentThread().getStackTrace()[2].getMethodName().toString(), ex.getMessage());
+								Reporter.reportError(this.getClass().toString(), Thread.currentThread().getStackTrace()[2].getMethodName()
+										.toString(), ex.getMessage());
 							}
 							try {
 								template.street = e.getString("street");
-//								cv.put(EventsProvider.EMetaData.EventsMetaData.STREET, template.street);
+								// cv.put(EventsProvider.EMetaData.EventsMetaData.STREET,
+								// template.street);
 							} catch (JSONException ex) {
-								Reporter.reportError(this.getClass().toString(), Thread.currentThread().getStackTrace()[2].getMethodName().toString(), ex.getMessage());
+								Reporter.reportError(this.getClass().toString(), Thread.currentThread().getStackTrace()[2].getMethodName()
+										.toString(), ex.getMessage());
 							}
 							try {
 								template.zip = e.getString("zip");
-//								cv.put(EventsProvider.EMetaData.EventsMetaData.ZIP, template.zip);
+								// cv.put(EventsProvider.EMetaData.EventsMetaData.ZIP,
+								// template.zip);
 							} catch (JSONException ex) {
-								Reporter.reportError(this.getClass().toString(), Thread.currentThread().getStackTrace()[2].getMethodName().toString(), ex.getMessage());
+								Reporter.reportError(this.getClass().toString(), Thread.currentThread().getStackTrace()[2].getMethodName()
+										.toString(), ex.getMessage());
 							}
 							try {
 								template.timezone = e.getString("timezone");
-//								cv.put(EventsProvider.EMetaData.EventsMetaData.TIMEZONE, template.timezone);
+								// cv.put(EventsProvider.EMetaData.EventsMetaData.TIMEZONE,
+								// template.timezone);
 							} catch (JSONException ex) {
-								Reporter.reportError(this.getClass().toString(), Thread.currentThread().getStackTrace()[2].getMethodName().toString(), ex.getMessage());
+								Reporter.reportError(this.getClass().toString(), Thread.currentThread().getStackTrace()[2].getMethodName()
+										.toString(), ex.getMessage());
 							}
 							/* Address END */
-							
-//							try {
-//								template.time_start = e.getString("time_start");
-//								cv.put(EventsProvider.EMetaData.EventsMetaData.TIME_START, template.time_start);
-//							} catch (JSONException ex) {
-//								Reporter.reportError(this.getClass().toString(), Thread.currentThread().getStackTrace()[2].getMethodName().toString(), ex.getMessage());
-//							}
-//							try {
-//								template.time_end = e.getString("time_end");
-//								cv.put(EventsProvider.EMetaData.EventsMetaData.TIME_END, template.time_end);
-//							} catch (JSONException ex) {
-//								Reporter.reportError(this.getClass().toString(), Thread.currentThread().getStackTrace()[2].getMethodName().toString(), ex.getMessage());
-//							}
-//							try {
-//								template.time = e.getString("time");
-//								cv.put(EventsProvider.EMetaData.EventsMetaData.TIME, template.time);
-//							} catch (JSONException ex) {
-//								Reporter.reportError(this.getClass().toString(), Thread.currentThread().getStackTrace()[2].getMethodName().toString(), ex.getMessage());
-//							}
-//							try {
-//								template.my_time_start = e.getString("my_time_start");
-//								cv.put(EventsProvider.EMetaData.EventsMetaData.MY_TIME_START, template.my_time_start);
-//								template.setStartCalendar(Utils.stringToCalendar(template.my_time_start, SERVER_TIMESTAMP_FORMAT));
-//
-//							} catch (JSONException ex) {
-//								Reporter.reportError(this.getClass().toString(), Thread.currentThread().getStackTrace()[2].getMethodName()
-//										.toString(), ex.getMessage());
-//							}
-//							try {
-//								template.my_time_end = e.getString("my_time_end");
-//								cv.put(EventsProvider.EMetaData.EventsMetaData.MY_TIME_END, template.my_time_end);
-//								template.setEndCalendar(Utils.stringToCalendar(template.my_time_end, SERVER_TIMESTAMP_FORMAT));
-//
-//							} catch (JSONException ex) {
-//								Reporter.reportError(this.getClass().toString(), Thread.currentThread().getStackTrace()[2].getMethodName()
-//										.toString(), ex.getMessage());
-//							}
+
+							// try {
+							// template.time_start = e.getString("time_start");
+							// cv.put(EventsProvider.EMetaData.EventsMetaData.TIME_START,
+							// template.time_start);
+							// } catch (JSONException ex) {
+							// Reporter.reportError(this.getClass().toString(),
+							// Thread.currentThread().getStackTrace()[2].getMethodName().toString(),
+							// ex.getMessage());
+							// }
+							// try {
+							// template.time_end = e.getString("time_end");
+							// cv.put(EventsProvider.EMetaData.EventsMetaData.TIME_END,
+							// template.time_end);
+							// } catch (JSONException ex) {
+							// Reporter.reportError(this.getClass().toString(),
+							// Thread.currentThread().getStackTrace()[2].getMethodName().toString(),
+							// ex.getMessage());
+							// }
+							// try {
+							// template.time = e.getString("time");
+							// cv.put(EventsProvider.EMetaData.EventsMetaData.TIME,
+							// template.time);
+							// } catch (JSONException ex) {
+							// Reporter.reportError(this.getClass().toString(),
+							// Thread.currentThread().getStackTrace()[2].getMethodName().toString(),
+							// ex.getMessage());
+							// }
+							// try {
+							// template.my_time_start =
+							// e.getString("my_time_start");
+							// cv.put(EventsProvider.EMetaData.EventsMetaData.MY_TIME_START,
+							// template.my_time_start);
+							// template.setStartCalendar(Utils.stringToCalendar(template.my_time_start,
+							// SERVER_TIMESTAMP_FORMAT));
+							//
+							// } catch (JSONException ex) {
+							// Reporter.reportError(this.getClass().toString(),
+							// Thread.currentThread().getStackTrace()[2].getMethodName()
+							// .toString(), ex.getMessage());
+							// }
+							// try {
+							// template.my_time_end =
+							// e.getString("my_time_end");
+							// cv.put(EventsProvider.EMetaData.EventsMetaData.MY_TIME_END,
+							// template.my_time_end);
+							// template.setEndCalendar(Utils.stringToCalendar(template.my_time_end,
+							// SERVER_TIMESTAMP_FORMAT));
+							//
+							// } catch (JSONException ex) {
+							// Reporter.reportError(this.getClass().toString(),
+							// Thread.currentThread().getStackTrace()[2].getMethodName()
+							// .toString(), ex.getMessage());
+							// }
 							/* Reminders START */
-//							try {
-//								template.reminder1 = e.getString("reminder1");
-//								cv.put(EventsProvider.EMetaData.EventsMetaData.REMINDER1, template.reminder1);
-//							} catch (JSONException ex) {
-//								Reporter.reportError(this.getClass().toString(), Thread.currentThread().getStackTrace()[2].getMethodName()
-//										.toString(), ex.getMessage());
-//							}
-//							try {
-//								template.reminder2 = e.getString("reminder2");
-//								cv.put(EventsProvider.EMetaData.EventsMetaData.REMINDER2, template.reminder2);
-//							} catch (JSONException ex) {
-//								Reporter.reportError(this.getClass().toString(), Thread.currentThread().getStackTrace()[2].getMethodName()
-//										.toString(), ex.getMessage());
-//							}
-//							try {
-//								template.reminder3 = e.getString("reminder3");
-//								cv.put(EventsProvider.EMetaData.EventsMetaData.REMINDER3, template.reminder3);
-//							} catch (JSONException ex) {
-//								Reporter.reportError(this.getClass().toString(), Thread.currentThread().getStackTrace()[2].getMethodName()
-//										.toString(), ex.getMessage());
-//							}
+							// try {
+							// template.reminder1 = e.getString("reminder1");
+							// cv.put(EventsProvider.EMetaData.EventsMetaData.REMINDER1,
+							// template.reminder1);
+							// } catch (JSONException ex) {
+							// Reporter.reportError(this.getClass().toString(),
+							// Thread.currentThread().getStackTrace()[2].getMethodName()
+							// .toString(), ex.getMessage());
+							// }
+							// try {
+							// template.reminder2 = e.getString("reminder2");
+							// cv.put(EventsProvider.EMetaData.EventsMetaData.REMINDER2,
+							// template.reminder2);
+							// } catch (JSONException ex) {
+							// Reporter.reportError(this.getClass().toString(),
+							// Thread.currentThread().getStackTrace()[2].getMethodName()
+							// .toString(), ex.getMessage());
+							// }
+							// try {
+							// template.reminder3 = e.getString("reminder3");
+							// cv.put(EventsProvider.EMetaData.EventsMetaData.REMINDER3,
+							// template.reminder3);
+							// } catch (JSONException ex) {
+							// Reporter.reportError(this.getClass().toString(),
+							// Thread.currentThread().getStackTrace()[2].getMethodName()
+							// .toString(), ex.getMessage());
+							// }
 							/* Reminders START */
 							/* Alarms START */
-//							String tmpAlarmFired = "";
-//							try {
-//								template.alarm1 = e.getString("alarm1");
-//								cv.put(EventsProvider.EMetaData.EventsMetaData.REMINDER1, template.reminder1);
-//							} catch (JSONException ex) {
-//								Reporter.reportError(this.getClass().toString(), Thread.currentThread().getStackTrace()[2].getMethodName()
-//										.toString(), ex.getMessage());
-//							}
-//							tmpAlarmFired = e.getString("alarm1_fired");
-//							if(!tmpAlarmFired.equals("null") && tmpAlarmFired.matches("[0-9]*")){
-//								template.alarm1fired = Integer.parseInt(tmpAlarmFired) == 1;
-//							}
-//							try {
-//								template.alarm2 = e.getString("alarm2");
-//								cv.put(EventsProvider.EMetaData.EventsMetaData.REMINDER2, template.reminder2);
-//							} catch (JSONException ex) {
-//								Reporter.reportError(this.getClass().toString(), Thread.currentThread().getStackTrace()[2].getMethodName()
-//										.toString(), ex.getMessage());
-//							}
-//							tmpAlarmFired = e.getString("alarm2_fired");
-//							if(!tmpAlarmFired.equals("null") && tmpAlarmFired.matches("[0-9]*")){
-//								template.alarm2fired = Integer.parseInt(tmpAlarmFired) == 1;
-//							}
-//							try {
-//								template.alarm3 = e.getString("alarm3");
-//								cv.put(EventsProvider.EMetaData.EventsMetaData.REMINDER3, template.reminder3);
-//							} catch (JSONException ex) {
-//								Reporter.reportError(this.getClass().toString(), Thread.currentThread().getStackTrace()[2].getMethodName()
-//										.toString(), ex.getMessage());
-//							}
-//							tmpAlarmFired = e.getString("alarm3_fired");
-//							if(!tmpAlarmFired.equals("null") && tmpAlarmFired.matches("[0-9]*")){
-//								template.alarm3fired = Integer.parseInt(tmpAlarmFired) == 1;
-//							}
+							// String tmpAlarmFired = "";
+							// try {
+							// template.alarm1 = e.getString("alarm1");
+							// cv.put(EventsProvider.EMetaData.EventsMetaData.REMINDER1,
+							// template.reminder1);
+							// } catch (JSONException ex) {
+							// Reporter.reportError(this.getClass().toString(),
+							// Thread.currentThread().getStackTrace()[2].getMethodName()
+							// .toString(), ex.getMessage());
+							// }
+							// tmpAlarmFired = e.getString("alarm1_fired");
+							// if(!tmpAlarmFired.equals("null") &&
+							// tmpAlarmFired.matches("[0-9]*")){
+							// template.alarm1fired =
+							// Integer.parseInt(tmpAlarmFired) == 1;
+							// }
+							// try {
+							// template.alarm2 = e.getString("alarm2");
+							// cv.put(EventsProvider.EMetaData.EventsMetaData.REMINDER2,
+							// template.reminder2);
+							// } catch (JSONException ex) {
+							// Reporter.reportError(this.getClass().toString(),
+							// Thread.currentThread().getStackTrace()[2].getMethodName()
+							// .toString(), ex.getMessage());
+							// }
+							// tmpAlarmFired = e.getString("alarm2_fired");
+							// if(!tmpAlarmFired.equals("null") &&
+							// tmpAlarmFired.matches("[0-9]*")){
+							// template.alarm2fired =
+							// Integer.parseInt(tmpAlarmFired) == 1;
+							// }
+							// try {
+							// template.alarm3 = e.getString("alarm3");
+							// cv.put(EventsProvider.EMetaData.EventsMetaData.REMINDER3,
+							// template.reminder3);
+							// } catch (JSONException ex) {
+							// Reporter.reportError(this.getClass().toString(),
+							// Thread.currentThread().getStackTrace()[2].getMethodName()
+							// .toString(), ex.getMessage());
+							// }
+							// tmpAlarmFired = e.getString("alarm3_fired");
+							// if(!tmpAlarmFired.equals("null") &&
+							// tmpAlarmFired.matches("[0-9]*")){
+							// template.alarm3fired =
+							// Integer.parseInt(tmpAlarmFired) == 1;
+							// }
 							/* Alarms END */
 
-//							try {
-//								template.created = e.getString("created");
-//								cv.put(EventsProvider.EMetaData.EventsMetaData.CREATED, template.created);
-//							} catch (JSONException ex) {
-//								Reporter.reportError(this.getClass().toString(), Thread.currentThread().getStackTrace()[2].getMethodName()
-//										.toString(), ex.getMessage());
-//							}
-//							try {
-//								template.modified = e.getString("modified");
-//								cv.put(EventsProvider.EMetaData.EventsMetaData.MODIFIED, template.modified);
-//							} catch (JSONException ex) {
-//								Reporter.reportError(this.getClass().toString(), Thread.currentThread().getStackTrace()[2].getMethodName()
-//										.toString(), ex.getMessage());
-//							}
-//
-//							try {
-//								template.attendant_1_count = e.getInt("attendant_1_count");
-//								cv.put(EventsProvider.EMetaData.EventsMetaData.ATTENDANT_1_COUNT, template.attendant_1_count);
-//							} catch (JSONException ex) {
-//								Reporter.reportError(this.getClass().toString(), Thread.currentThread().getStackTrace()[2].getMethodName()
-//										.toString(), ex.getMessage());
-//							}
-//							try {
-//								template.attendant_2_count = e.getInt("attendant_2_count");
-//								cv.put(EventsProvider.EMetaData.EventsMetaData.ATTENDANT_2_COUNT, template.attendant_2_count);
-//							} catch (JSONException ex) {
-//								Reporter.reportError(this.getClass().toString(), Thread.currentThread().getStackTrace()[2].getMethodName()
-//										.toString(), ex.getMessage());
-//							}
-//							try {
-//								template.attendant_0_count = e.getInt("attendant_0_count");
-//								cv.put(EventsProvider.EMetaData.EventsMetaData.ATTENDANT_0_COUNT, template.attendant_0_count);
-//							} catch (JSONException ex) {
-//								Reporter.reportError(this.getClass().toString(), Thread.currentThread().getStackTrace()[2].getMethodName()
-//										.toString(), ex.getMessage());
-//							}
-//							try {
-//								template.attendant_4_count = e.getInt("attendant_4_count");
-//								cv.put(EventsProvider.EMetaData.EventsMetaData.ATTENDANT_4_COUNT, template.attendant_4_count);
-//							} catch (JSONException ex) {
-//								Reporter.reportError(this.getClass().toString(), Thread.currentThread().getStackTrace()[2].getMethodName()
-//										.toString(), ex.getMessage());
-//							}
-//
-//							try {
-//								int is_sports_event = e.getInt("is_sports_event");
-//								template.is_sports_event = is_sports_event == 1;
-//								cv.put(EventsProvider.EMetaData.EventsMetaData.IS_SPORTS_EVENT, template.is_sports_event);
-//							} catch (JSONException ex) {
-//								Reporter.reportError(this.getClass().toString(), Thread.currentThread().getStackTrace()[2].getMethodName()
-//										.toString(), ex.getMessage());
-//							}
-//							try {
-//								template.creator_fullname = e.getString("creator_fullname");
-//								cv.put(EventsProvider.EMetaData.EventsMetaData.CREATOR_FULLNAME, template.creator_fullname);
-//							} catch (JSONException ex) {
-//								Reporter.reportError(this.getClass().toString(), Thread.currentThread().getStackTrace()[2].getMethodName()
-//										.toString(), ex.getMessage());
-//							}
-//							try {
-//								template.creator_contact_id = e.getInt("creator_contact_id");
-//								cv.put(EventsProvider.EMetaData.EventsMetaData.CREATOR_CONTACT_ID, template.creator_contact_id);
-//							} catch (JSONException ex) {
-//								Reporter.reportError(this.getClass().toString(), Thread.currentThread().getStackTrace()[2].getMethodName()
-//										.toString(), ex.getMessage());
-//							}
-// TODO contacts[] ant Templates
+							// try {
+							// template.created = e.getString("created");
+							// cv.put(EventsProvider.EMetaData.EventsMetaData.CREATED,
+							// template.created);
+							// } catch (JSONException ex) {
+							// Reporter.reportError(this.getClass().toString(),
+							// Thread.currentThread().getStackTrace()[2].getMethodName()
+							// .toString(), ex.getMessage());
+							// }
+							// try {
+							// template.modified = e.getString("modified");
+							// cv.put(EventsProvider.EMetaData.EventsMetaData.MODIFIED,
+							// template.modified);
+							// } catch (JSONException ex) {
+							// Reporter.reportError(this.getClass().toString(),
+							// Thread.currentThread().getStackTrace()[2].getMethodName()
+							// .toString(), ex.getMessage());
+							// }
+							//
+							// try {
+							// template.attendant_1_count =
+							// e.getInt("attendant_1_count");
+							// cv.put(EventsProvider.EMetaData.EventsMetaData.ATTENDANT_1_COUNT,
+							// template.attendant_1_count);
+							// } catch (JSONException ex) {
+							// Reporter.reportError(this.getClass().toString(),
+							// Thread.currentThread().getStackTrace()[2].getMethodName()
+							// .toString(), ex.getMessage());
+							// }
+							// try {
+							// template.attendant_2_count =
+							// e.getInt("attendant_2_count");
+							// cv.put(EventsProvider.EMetaData.EventsMetaData.ATTENDANT_2_COUNT,
+							// template.attendant_2_count);
+							// } catch (JSONException ex) {
+							// Reporter.reportError(this.getClass().toString(),
+							// Thread.currentThread().getStackTrace()[2].getMethodName()
+							// .toString(), ex.getMessage());
+							// }
+							// try {
+							// template.attendant_0_count =
+							// e.getInt("attendant_0_count");
+							// cv.put(EventsProvider.EMetaData.EventsMetaData.ATTENDANT_0_COUNT,
+							// template.attendant_0_count);
+							// } catch (JSONException ex) {
+							// Reporter.reportError(this.getClass().toString(),
+							// Thread.currentThread().getStackTrace()[2].getMethodName()
+							// .toString(), ex.getMessage());
+							// }
+							// try {
+							// template.attendant_4_count =
+							// e.getInt("attendant_4_count");
+							// cv.put(EventsProvider.EMetaData.EventsMetaData.ATTENDANT_4_COUNT,
+							// template.attendant_4_count);
+							// } catch (JSONException ex) {
+							// Reporter.reportError(this.getClass().toString(),
+							// Thread.currentThread().getStackTrace()[2].getMethodName()
+							// .toString(), ex.getMessage());
+							// }
+							//
+							// try {
+							// int is_sports_event =
+							// e.getInt("is_sports_event");
+							// template.is_sports_event = is_sports_event == 1;
+							// cv.put(EventsProvider.EMetaData.EventsMetaData.IS_SPORTS_EVENT,
+							// template.is_sports_event);
+							// } catch (JSONException ex) {
+							// Reporter.reportError(this.getClass().toString(),
+							// Thread.currentThread().getStackTrace()[2].getMethodName()
+							// .toString(), ex.getMessage());
+							// }
+							// try {
+							// template.creator_fullname =
+							// e.getString("creator_fullname");
+							// cv.put(EventsProvider.EMetaData.EventsMetaData.CREATOR_FULLNAME,
+							// template.creator_fullname);
+							// } catch (JSONException ex) {
+							// Reporter.reportError(this.getClass().toString(),
+							// Thread.currentThread().getStackTrace()[2].getMethodName()
+							// .toString(), ex.getMessage());
+							// }
+							// try {
+							// template.creator_contact_id =
+							// e.getInt("creator_contact_id");
+							// cv.put(EventsProvider.EMetaData.EventsMetaData.CREATOR_CONTACT_ID,
+							// template.creator_contact_id);
+							// } catch (JSONException ex) {
+							// Reporter.reportError(this.getClass().toString(),
+							// Thread.currentThread().getStackTrace()[2].getMethodName()
+							// .toString(), ex.getMessage());
+							// }
+							// TODO contacts[] ant Templates
 							try {
 								@SuppressWarnings("unused")
 								JSONArray contacts = e.getJSONArray("groups");
-//								cv.put(EventsProvider.EMetaData.EventsMetaData.ASSIGNED_CONTACTS, assigned_contacts);
+								// cv.put(EventsProvider.EMetaData.EventsMetaData.ASSIGNED_CONTACTS,
+								// assigned_contacts);
 							} catch (JSONException ex) {
-								Reporter.reportError(this.getClass().toString(), Thread.currentThread().getStackTrace()[2].getMethodName().toString(), ex.getMessage());
+								Reporter.reportError(this.getClass().toString(), Thread.currentThread().getStackTrace()[2].getMethodName()
+										.toString(), ex.getMessage());
 							}
 							// TODO groups[] ant Templates
 							try {
 								@SuppressWarnings("unused")
 								JSONArray groups = e.getJSONArray("groups");
-								
-//								cv.put(EventsProvider.EMetaData.EventsMetaData.ASSIGNED_GROUPS, assigned_groups);
-							} catch (JSONException ex) {
-								Reporter.reportError(this.getClass().toString(), Thread.currentThread().getStackTrace()[2].getMethodName().toString(), ex.getMessage());
-							}
-//							try {
-//								String invited = e.getString("invited");
-//								cv.put(EventsProvider.EMetaData.EventsMetaData.INVITED, invited);
-//							} catch (JSONException ex) {
-//								Reporter.reportError(this.getClass().toString(), Thread.currentThread().getStackTrace()[2].getMethodName()
-//										.toString(), ex.getMessage());
-//							}
-//							try {
-//								int all_day = e.getInt("all_day_event");
-//								template.is_all_day = all_day == 1;
-//							} catch (JSONException ex) {
-//								Reporter.reportError(this.getClass().toString(), Thread.currentThread().getStackTrace()[2].getMethodName().toString(), ex.getMessage());
-//							}
 
-//							Data.getmContext().getContentResolver().insert(EventsProvider.EMetaData.EventsMetaData.CONTENT_URI, cv);
+								// cv.put(EventsProvider.EMetaData.EventsMetaData.ASSIGNED_GROUPS,
+								// assigned_groups);
+							} catch (JSONException ex) {
+								Reporter.reportError(this.getClass().toString(), Thread.currentThread().getStackTrace()[2].getMethodName()
+										.toString(), ex.getMessage());
+							}
+							// try {
+							// String invited = e.getString("invited");
+							// cv.put(EventsProvider.EMetaData.EventsMetaData.INVITED,
+							// invited);
+							// } catch (JSONException ex) {
+							// Reporter.reportError(this.getClass().toString(),
+							// Thread.currentThread().getStackTrace()[2].getMethodName()
+							// .toString(), ex.getMessage());
+							// }
+							// try {
+							// int all_day = e.getInt("all_day_event");
+							// template.is_all_day = all_day == 1;
+							// } catch (JSONException ex) {
+							// Reporter.reportError(this.getClass().toString(),
+							// Thread.currentThread().getStackTrace()[2].getMethodName().toString(),
+							// ex.getMessage());
+							// }
+
+							// Data.getmContext().getContentResolver().insert(EventsProvider.EMetaData.EventsMetaData.CONTENT_URI,
+							// cv);
 							templates.add(template);
 						}
 					}
@@ -5743,26 +4627,26 @@ public class DataManagement {
 			Reporter.reportError(this.getClass().toString(), Thread.currentThread().getStackTrace()[2].getMethodName().toString(),
 					ex.getMessage());
 		}
-//		if (contactsBirthdays != null && !contactsBirthdays.isEmpty()) {
-//			templates.addAll(contactsBirthdays);
-//		}
-//		sortEvents(events);
+		// if (contactsBirthdays != null && !contactsBirthdays.isEmpty()) {
+		// templates.addAll(contactsBirthdays);
+		// }
+		// sortEvents(events);
 		return templates;
 	}
-	
-	public Event getTemplateFromLocalDb (int template_id) {
+
+	public Event getTemplateFromLocalDb(int template_id) {
 		Event event = new Event();
 		Uri uri = Uri.parse(TemplatesMetaData.CONTENT_URI.toString() + "/" + template_id);
 		Cursor result = Data.getmContext().getContentResolver().query(uri, null, null, null, null);
-		
+
 		if (result.moveToFirst()) {
 			event.setEvent_id(result.getInt(result.getColumnIndex(TemplatesMetaData.T_ID)));
 			event.setColor(result.getString(result.getColumnIndex(TemplatesMetaData.COLOR)));
 			event.setIcon(result.getString(result.getColumnIndex(TemplatesMetaData.ICON)));
 
 			event.setTitle(result.getString(result.getColumnIndex(TemplatesMetaData.TITLE)));
-//			event.setStartCalendar((result.getInt(result.getColumnIndex(TemplatesMetaData.TIME_START)));
-//			event.setEndCalendar(result.getInt(result.getColumnIndex(TemplatesMetaData.TIME_END)));
+			// event.setStartCalendar((result.getInt(result.getColumnIndex(TemplatesMetaData.TIME_START)));
+			// event.setEndCalendar(result.getInt(result.getColumnIndex(TemplatesMetaData.TIME_END)));
 			event.setDescription(result.getString(result.getColumnIndex(TemplatesMetaData.DESC)));
 
 			event.setCountry(result.getString(result.getColumnIndex(TemplatesMetaData.COUNTRY)));
@@ -5777,22 +4661,23 @@ public class DataManagement {
 			event.setCost(result.getString(result.getColumnIndex(TemplatesMetaData.COST)));
 			event.setAccomodation(result.getString(result.getColumnIndex(TemplatesMetaData.ACCOMODATION)));
 
-//			event.setReminder1(result.getInt(result.getColumnIndex(TemplatesMetaData.REMINDER1)));
-//			event.setReminder2(result.getInt(result.getColumnIndex(TemplatesMetaData.REMINDER2)));
-//			event.setReminder3(result.getInt(result.getColumnIndex(TemplatesMetaData.REMINDER3)));
+			// event.setReminder1(result.getInt(result.getColumnIndex(TemplatesMetaData.REMINDER1)));
+			// event.setReminder2(result.getInt(result.getColumnIndex(TemplatesMetaData.REMINDER2)));
+			// event.setReminder3(result.getInt(result.getColumnIndex(TemplatesMetaData.REMINDER3)));
 
-//			event.setAlarm1(result.getInt(result.getColumnIndex(TemplatesMetaData.ALARM1)));
-//			event.setAlarm2(result.getInt(result.getColumnIndex(TemplatesMetaData.ALARM2)));
-//			event.setAlarm3(result.getInt(result.getColumnIndex(TemplatesMetaData.ALARM3)));
+			// event.setAlarm1(result.getInt(result.getColumnIndex(TemplatesMetaData.ALARM1)));
+			// event.setAlarm2(result.getInt(result.getColumnIndex(TemplatesMetaData.ALARM2)));
+			// event.setAlarm3(result.getInt(result.getColumnIndex(TemplatesMetaData.ALARM3)));
 		}
-		
+
 		return event;
 	}
 
 	/**
 	 * Get all templates
 	 * 
-	 * Get all templates from remote database and store them in local database and temporary memory.
+	 * Get all templates from remote database and store them in local database
+	 * and temporary memory.
 	 * 
 	 * @author meska.lt@gmail.com
 	 * @version 1.0
@@ -5801,12 +4686,251 @@ public class DataManagement {
 	 */
 	public ArrayList<Event> getTemplates() {
 		ArrayList<Event> templates = getTemplatesFromRemoteDb();
-		
+
 		for (Event template : templates) {
 			uploadTemplateToLocalDb(template, 0);
 		}
-		
+
 		return templates;
 	}
 
+	// Addresses
+	public Address getAddressFromLocalDb(int addressId) {
+		Address address = new Address();
+		Uri uri = Uri.parse(AddressesMetaData.CONTENT_URI.toString() + "/" + addressId);
+		Cursor result = Data.getmContext().getContentResolver().query(uri, null, null, null, null);
+		if (result.moveToFirst()) {
+			address.setId(result.getInt(result.getColumnIndex(AddressesMetaData.A_ID)));
+			address.setUser_id(result.getInt(result.getColumnIndex(AddressesMetaData.USER_ID)));
+			address.setTitle(result.getString(result.getColumnIndex(AddressesMetaData.TITLE)));
+			address.setStreet(result.getString(result.getColumnIndex(AddressesMetaData.STREET)));
+			address.setCity(result.getString(result.getColumnIndex(AddressesMetaData.CITY)));
+			address.setZip(result.getString(result.getColumnIndex(AddressesMetaData.ZIP)));
+			address.setState(result.getString(result.getColumnIndex(AddressesMetaData.STATE)));
+			address.setCountry(result.getString(result.getColumnIndex(AddressesMetaData.COUNTRY)));
+			address.setTimezone(result.getString(result.getColumnIndex(AddressesMetaData.TIMEZONE)));
+			address.setCountry_name(result.getString(result.getColumnIndex(AddressesMetaData.COUNTRY_NAME)));
+		}
+		return address;
+	}
+
+	public ArrayList<Address> getAddressesFromRemoteDb() {
+		boolean success = false;
+		ArrayList<Address> addresses = new ArrayList<Address>();
+		Address address = null;
+
+		try {
+			HttpClient hc = new DefaultHttpClient();
+			HttpPost post = new HttpPost(Data.getServerUrl() + "mobile/adressbook_get");
+
+			MultipartEntity reqEntity = new MultipartEntity(HttpMultipartMode.BROWSER_COMPATIBLE);
+
+			reqEntity.addPart("token", new StringBody(Data.getToken()));
+
+			post.setEntity(reqEntity);
+			HttpResponse rp = hc.execute(post);
+
+			if (rp.getStatusLine().getStatusCode() == HttpStatus.SC_OK) {
+				String resp = EntityUtils.toString(rp.getEntity());
+				if (resp != null) {
+					JSONObject object = new JSONObject(resp);
+					success = object.getBoolean("success");
+
+					if (success == false) {
+						// TODO show an error.
+					} else {
+						JSONArray es = object.getJSONArray("data");
+						int count = es.length();
+						for (int i = 0; i < count; i++) {
+							JSONObject e = es.getJSONObject(i);
+
+							address = new Address();
+
+							try {
+								address.setId(e.getInt("id"));
+								address.setUser_id(e.getInt("user_id"));
+								address.setTitle(e.getString("title"));
+								address.setStreet(e.getString("street"));
+								address.setCity(e.getString("city"));
+								address.setZip(e.getString("zip"));
+								address.setState(e.getString("state"));
+								address.setCountry(e.getString("country"));
+								address.setTimezone(e.getString("timezone"));
+								address.setCountry_name(e.getString("country_name"));
+							} catch (JSONException ex) {
+								Reporter.reportError(this.getClass().toString(), Thread.currentThread().getStackTrace()[2].getMethodName()
+										.toString(), ex.getMessage());
+							}
+							addresses.add(address);
+						}
+					}
+				}
+			}
+		} catch (Exception e) {
+
+		}
+		return addresses;
+	}
+
+	public boolean uploadAddressToLocalDb(Address address, int addressId) {
+		boolean success = false;
+
+		try {
+			ContentValues cv = new ContentValues();
+
+			if (addressId != 0)
+				cv.put(AddressesMetaData.A_ID, addressId);
+			else if (address.getId() > 0)
+				cv.put(AddressesMetaData.A_ID, address.getId());
+			else
+				cv.put(AddressesMetaData.A_ID, 0);
+
+			cv.put(AddressesMetaData.USER_ID, address.getUser_id());
+
+			if (address.getTitle() != null) {
+				cv.put(AddressesMetaData.TITLE, address.getTitle());
+			} else {
+				cv.put(AddressesMetaData.TITLE, "");
+			}
+
+			if (address.getStreet() != null) {
+				cv.put(AddressesMetaData.STREET, address.getStreet());
+			} else {
+				cv.put(AddressesMetaData.STREET, "");
+			}
+
+			if (address.getCity() != null) {
+				cv.put(AddressesMetaData.CITY, address.getCity());
+			} else {
+				cv.put(AddressesMetaData.CITY, "");
+			}
+
+			if (address.getZip() != null) {
+				cv.put(AddressesMetaData.ZIP, address.getZip());
+			} else {
+				cv.put(AddressesMetaData.ZIP, "");
+			}
+
+			if (address.getState() != null) {
+				cv.put(AddressesMetaData.STATE, address.getState());
+			} else {
+				cv.put(AddressesMetaData.STATE, "");
+			}
+
+			if (address.getCountry() != null) {
+				cv.put(AddressesMetaData.COUNTRY, address.getCountry());
+			} else {
+				cv.put(AddressesMetaData.COUNTRY, "");
+			}
+
+			if (address.getTimezone() != null) {
+				cv.put(AddressesMetaData.TIMEZONE, address.getTimezone());
+			} else {
+				cv.put(AddressesMetaData.TIMEZONE, "");
+			}
+
+			if (address.getCountry_name() != null) {
+				cv.put(AddressesMetaData.COUNTRY_NAME, address.getCountry_name());
+			} else {
+				cv.put(AddressesMetaData.COUNTRY_NAME, "");
+			}
+
+			Data.getmContext().getContentResolver().insert(AddressesMetaData.CONTENT_URI, cv);
+			success = true;
+		} catch (Exception e) {
+
+		}
+		return success;
+	}
+
+	public int uploadAddressToRemoteDb(Address address) {
+		int response = 0;
+		boolean check = true;
+		try {
+			HttpClient hc = new DefaultHttpClient();
+			HttpPost post = new HttpPost(Data.getServerUrl() + "mobile/adressbook_set");
+
+			MultipartEntity reqEntity = new MultipartEntity(HttpMultipartMode.BROWSER_COMPATIBLE);
+
+			reqEntity.addPart("token", new StringBody(Data.getToken()));
+
+			if (address.getId() > 0) {
+				reqEntity.addPart("id", new StringBody(((Integer) address.getId()).toString()));
+			}
+
+			if (address.getTitle() != null) {
+				reqEntity.addPart("title", new StringBody(address.getTitle()));
+			} else {
+				check = false;
+			}
+
+			if (address.getStreet() != null) {
+				reqEntity.addPart("street", new StringBody(address.getStreet()));
+			} else {
+				reqEntity.addPart("street", new StringBody(""));
+			}
+
+			if (address.getCity() != null) {
+				reqEntity.addPart("city", new StringBody(address.getCity()));
+			} else {
+				reqEntity.addPart("city", new StringBody(""));
+			}
+
+			if (address.getZip() != null) {
+				reqEntity.addPart("zip", new StringBody(address.getZip()));
+			} else {
+				reqEntity.addPart("zip", new StringBody(""));
+			}
+
+			if (address.getState() != null) {
+				reqEntity.addPart("state", new StringBody(address.getState()));
+			} else {
+				reqEntity.addPart("state", new StringBody(""));
+			}
+
+			if (address.getCountry() != null) {
+				reqEntity.addPart("country", new StringBody(address.getCountry()));
+			} else {
+				reqEntity.addPart("country", new StringBody(""));
+			}
+
+			if (address.getTimezone() != null) {
+				reqEntity.addPart("timezone", new StringBody(address.getTimezone()));
+			} else {
+				reqEntity.addPart("timezone", new StringBody(""));
+			}
+
+			if (check) {
+				post.setEntity(reqEntity);
+
+				if (networkAvailable) {
+					HttpResponse rp = hc.execute(post);
+
+					if (rp.getStatusLine().getStatusCode() == HttpStatus.SC_OK) {
+						String resp = EntityUtils.toString(rp.getEntity());
+						if (resp != null) {
+							JSONObject object = new JSONObject(resp);
+							boolean success = object.getBoolean("success");
+
+							if (success == false) {
+								Log.e("Create address error", object.getJSONObject("error").getString("reason"));
+							}
+							response = object.getInt("id");
+							address.setId(response);
+						}
+					} else {
+						Log.e("setTemplate - status", rp.getStatusLine().getStatusCode() + "");
+					}
+				} else {
+					OfflineData uplooad = new OfflineData("mobile/templates_set", reqEntity);
+					Data.getUnuploadedData().add(uplooad);
+				}
+			} else {
+				
+			}
+		} catch (Exception e) {
+
+		}
+		return response;
+	}
 }
