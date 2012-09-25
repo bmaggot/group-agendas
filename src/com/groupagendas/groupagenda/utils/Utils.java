@@ -292,7 +292,12 @@ public static long millisToUnixTimestamp(long milis) {
 }
 
 
-
+/**
+ * Creates new calendar object with given time in millis UTC and timezone
+ * @param timeInMilis
+ * @param timezone
+ * @return
+ */
 public static Calendar createCalendar(long timeInMilis, String timezone) {
 	Calendar cal = Calendar.getInstance(TimeZone.getTimeZone(timezone));
 	cal.setTimeInMillis(timeInMilis);
