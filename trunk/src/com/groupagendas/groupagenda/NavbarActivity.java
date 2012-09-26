@@ -35,12 +35,12 @@ import at.bartinger.list.item.SectionItem;
 import az.mecid.android.ActionItem;
 import az.mecid.android.QuickAction;
 
+import com.groupagendas.groupagenda.account.Account;
 import com.groupagendas.groupagenda.account.AccountProvider;
 import com.groupagendas.groupagenda.alarm.AlarmReceiver;
 import com.groupagendas.groupagenda.calendar.AbstractCalendarView;
 import com.groupagendas.groupagenda.calendar.agenda.AgendaView;
 import com.groupagendas.groupagenda.calendar.dayandweek.DayWeekView;
-import com.groupagendas.groupagenda.calendar.importer.NativeCalendarImporter;
 import com.groupagendas.groupagenda.calendar.listnsearch.ListnSearchView;
 import com.groupagendas.groupagenda.calendar.minimonth.MiniMonthView;
 import com.groupagendas.groupagenda.calendar.month.MonthView;
@@ -137,8 +137,10 @@ public class NavbarActivity extends Activity {
 
 				int total = 0;
 
-				if (Data.needToClearData) {
-					switch (loadPhase) {
+				if (!Data.needToClearData)
+					loadPhase++;
+				
+				switch (loadPhase) {
 					case 0:
 						// Delete old data
 						getContentResolver().delete(AccountProvider.AMetaData.AccountMetaData.CONTENT_URI, "", null);
@@ -153,44 +155,57 @@ public class NavbarActivity extends Activity {
 						total = 10;
 						publishProgress(total);
 					case 1: // Load account
-						dm.getAccountFromRemoteDb();
+						if (DataManagement.networkAvailable) 
+							dm.getAccountFromRemoteDb();
+						else
+							new Account();
 //						NativeCalendarImporter.readCalendar(dm.getmContext());
 						loadPhase++;
 						total = 20;
 						publishProgress(total);
 					case 2:// Load contacts
-						dm.getContactsFromRemoteDb(null);
+						if (DataManagement.networkAvailable) 
+							dm.getContactsFromRemoteDb(null);
+						else
+							dm.getContactsFromLocalDb("");
 						loadPhase++;
 						total = 40;
 						publishProgress(total);
 					case 3:// Load groups
-						dm.getGroupsFromRemoteDb();
+						if (DataManagement.networkAvailable) 
+							dm.getGroupsFromRemoteDb();
+						else
+							dm.getGroupsFromLocalDb();
 						loadPhase++;
 						total = 50;
 						publishProgress(total);
 
-					case 4: // Load event templates
-						dm.getTemplates();
+					case 4: // Load event templates TODO load ALL templates while offline.
+						if (DataManagement.networkAvailable) 
+							dm.getTemplates();
+						else
+							dm.getTemplateFromLocalDb(0);
 						loadPhase++;
 						total = 60;
 						publishProgress(total);
 						
 					case 5: // Load events
-						dm.getEventsFromRemoteDb("");
+						if (DataManagement.networkAvailable)
+							dm.getEventsFromRemoteDb("");
+						else
+							dm.getEventsFromLocalDb();
 						loadPhase++;
 						total = 80;
 						publishProgress(total);
 
-					case 6: // Load chat threads
-						dm.getChatThreads();
+					case 6: // Load chat threads if network available TODO load offline
+						if (DataManagement.networkAvailable)
+							dm.getChatThreads();
 						dm.getAddressesFromRemoteDb();
 						loadPhase++;
 						total = 100;
 						publishProgress(total);
 					}
-				} else {
-
-				}
 			}
 			return null;
 		}
@@ -236,7 +251,7 @@ public class NavbarActivity extends Activity {
 			dataLoaded = true;
 			switchToView();
 			setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_SENSOR);
-			setAlarmsToAllEvents();
+//			setAlarmsToAllEvents(); TODO Justui V.
 		}
 	}
 

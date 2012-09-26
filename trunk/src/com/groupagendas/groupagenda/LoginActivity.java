@@ -6,6 +6,10 @@ import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
+import android.content.SharedPreferences.Editor;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.view.KeyEvent;
@@ -14,10 +18,12 @@ import android.view.View.OnClickListener;
 import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
+import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
+import com.groupagendas.groupagenda.data.Data;
 import com.groupagendas.groupagenda.data.DataManagement;
 import com.groupagendas.groupagenda.registration.RegisterationActivity;
 import com.pass_retrieve.forgot_pass1;
@@ -26,6 +32,7 @@ public class LoginActivity extends Activity {
 
 	private DataManagement dm;
 	private EditText loginText, passwordText;
+	private CheckBox stayCheck;
 	private ProgressBar pb;
 	private String error;
 
@@ -34,6 +41,13 @@ public class LoginActivity extends Activity {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.login);
 
+		ConnectivityManager conn = (ConnectivityManager) getApplicationContext().getSystemService(Context.CONNECTIVITY_SERVICE);
+		if (conn.getNetworkInfo(0).getState() == NetworkInfo.State.CONNECTED || conn.getNetworkInfo(1).getState() == NetworkInfo.State.CONNECTED) {
+			DataManagement.networkAvailable = true;
+		} else {
+			DataManagement.networkAvailable = false;
+			Data.needToClearData = false;
+		}
       
         findViewById(R.id.forgot_pass).setOnClickListener(new OnClickListener() {
             @Override
@@ -44,7 +58,6 @@ public class LoginActivity extends Activity {
         });
 
 		dm = DataManagement.getInstance(this);
-
 
 		pb = (ProgressBar) findViewById(R.id.progress);
 		
@@ -76,8 +89,20 @@ public class LoginActivity extends Activity {
 				startActivity(new Intent(LoginActivity.this, RegisterationActivity.class));
 			}
 		});
-	}
 
+		SharedPreferences prefs = getSharedPreferences("LATEST_CREDENTIALS", MODE_PRIVATE);
+		stayCheck = (CheckBox) findViewById(R.id.login_stayLoggedIn);
+		
+		stayCheck.setChecked(prefs.getBoolean("stay_logged_in", false));
+		
+		if (stayCheck.isChecked()) {
+			loginText.setText(prefs.getString("email", ""));
+			passwordText.setText(prefs.getString("password", ""));
+
+			new LoginTask().execute();
+		}
+	}
+	
 	public class LoginTask extends AsyncTask<Void, Void, Boolean> {
 		@Override
 		protected void onPreExecute() {
@@ -88,11 +113,20 @@ public class LoginActivity extends Activity {
 		@Override
 		protected Boolean doInBackground(Void... arg0) {
 			boolean success = false;
-
+			SharedPreferences prefs = getSharedPreferences("LATEST_CREDENTIALS", MODE_PRIVATE);
+			Editor editor = prefs.edit();
 			String login = loginText.getText().toString();
 			String password = passwordText.getText().toString();
+			Boolean stay = stayCheck.isChecked();
 
 			success = dm.login(login, password);
+
+			if (success) {
+				editor.putString("email", login);
+				editor.putString("password", password);
+				editor.putBoolean("stay_logged_in", stay);
+				success = editor.commit();
+			}
 
 			return success;
 		}
@@ -117,7 +151,7 @@ public class LoginActivity extends Activity {
 		}
 
 	}
-
+	
 	@Override
 	protected Dialog onCreateDialog(int id) {
 		AlertDialog.Builder builder = new AlertDialog.Builder(this);

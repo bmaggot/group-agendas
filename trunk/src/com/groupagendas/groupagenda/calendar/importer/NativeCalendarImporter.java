@@ -10,7 +10,7 @@ import android.database.Cursor;
 import android.net.Uri;
 import android.os.Build;
 
-import com.groupagendas.groupagenda.data.Data;
+import com.groupagendas.groupagenda.account.Account;
 import com.groupagendas.groupagenda.data.DataManagement;
 import com.groupagendas.groupagenda.events.Event;
 import com.groupagendas.groupagenda.utils.Utils;
@@ -24,6 +24,8 @@ public class NativeCalendarImporter {
 
 	public static void readCalendar(Context context) {
 	    Cursor cursor;
+	    Account account = new Account();
+	    
 	    if (Integer.parseInt(Build.VERSION.SDK) >= 8 ){
 	      cursor = context.getContentResolver().query(Uri.parse("content://com.android.calendar/events"), new String[]{ "calendar_id", "title", "description", "dtstart", "dtend", "eventLocation" }, null, null, null);
 	    } 
@@ -45,7 +47,7 @@ public class NativeCalendarImporter {
 	    	event.setEndCalendar(Utils.stringToCalendar(writeFormat.format(new Date(Long.parseLong(cursor.getString(4)))), DataManagement.SERVER_TIMESTAMP_FORMAT));
 	    	event.getEndCalendar().clear(Calendar.SECOND);
 	    	event.location = cursor.getString(5);
-	    	event.timezone = Data.getAccount().timezone;
+	    	event.timezone = account.getTimezone();
 	    	event.birthday = true;
 	    	DataManagement dm = DataManagement.getInstance(context);
 	    	dm.createEvent(event);

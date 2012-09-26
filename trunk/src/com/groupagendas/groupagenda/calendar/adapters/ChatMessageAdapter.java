@@ -10,8 +10,8 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.groupagendas.groupagenda.R;
+import com.groupagendas.groupagenda.account.Account;
 import com.groupagendas.groupagenda.chat.ChatMessageObject;
-import com.groupagendas.groupagenda.data.Data;
 import com.groupagendas.groupagenda.data.DataManagement;
 
 public class ChatMessageAdapter extends AbstractAdapter<ChatMessageObject> {
@@ -28,11 +28,12 @@ public class ChatMessageAdapter extends AbstractAdapter<ChatMessageObject> {
 
 		final ChatMessageObject chatMessage = (ChatMessageObject) this.getItem(i);
 		if (!chatMessage.deleted) {
+			Account account = new Account();
 			TextView messageBody = (TextView) view.findViewById(R.id.chat_message_body);
 			messageBody.setText(chatMessage.message);
 			TextView chatTime = (TextView) view.findViewById(R.id.chat_message_time);
 			chatTime.setText(chatMessage.dateTime);
-			if (chatMessage.userId == Data.getAccount().user_id) {
+			if (chatMessage.userId == account.getUser_id()) {
 				view.findViewById(R.id.kubiks).setVisibility(View.VISIBLE);
 				
 				TextView iksiuks = (TextView) view.findViewById(R.id.chat_message_delete);
