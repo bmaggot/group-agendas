@@ -2156,7 +2156,13 @@ public class DataManagement {
 		return Data.getEvents();
 	}
 
-	// TODO what is this method for???
+	/**
+	 * Loads all actual events from local db to given adapter.
+	 * @param instance
+	 * @param eAdapter
+	 * @return
+	 * @deprecated
+	 */
 	public int loadEvents(Activity instance, EventsAdapter eAdapter) {
 		int eventsSize = 0;
 		ArrayList<Event> events;
