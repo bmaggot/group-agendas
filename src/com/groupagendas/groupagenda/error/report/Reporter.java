@@ -30,18 +30,25 @@ public class Reporter {
 	private static HttpResponse rp;
 
 	public static void reportError(String className, String methodName, String errorName) {
-		if (!methodName.equals("getAccountFromRemoteDb") && !methodName.equals("getContactsFromRemoteDb")
-				&& !methodName.equals("getGroupsFromRemoteDb") && !methodName.equals("getEventsFromRemoteDb")&& !methodName.equals("doInBackground")) {
-			String error = "Class: " + className + " Method : " + methodName + " Error Name: " + errorName;
-			Reporter reporter = new Reporter();
-			reporter.report(error);
+		reportError(className, methodName, errorName, false);
+	}
+
+	public static void reportError(String className, String methodName, String errorName, boolean sendToDb) {
+		if (sendToDb) {
+			if (!methodName.equals("getAccountFromRemoteDb") && !methodName.equals("getContactsFromRemoteDb")
+					&& !methodName.equals("getGroupsFromRemoteDb") && !methodName.equals("getEventsFromRemoteDb")
+					&& !methodName.equals("doInBackground")) {
+				String error = "Class: " + className + " Method : " + methodName + " Error Name: " + errorName;
+				Reporter reporter = new Reporter();
+				reporter.report(error);
+			}
 		}
 	}
-	
-	public void report(String error){
+
+	public void report(String error) {
 		new ErrorReporter().execute(error);
 	}
-	
+
 	class ErrorReporter extends AsyncTask<String, Void, Void> {
 
 		@Override
