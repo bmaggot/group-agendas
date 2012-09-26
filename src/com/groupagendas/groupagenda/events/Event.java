@@ -8,6 +8,8 @@ import android.content.Context;
 
 import com.groupagendas.groupagenda.data.DataManagement;
 import com.groupagendas.groupagenda.interfaces.Colored;
+import com.groupagendas.groupagenda.utils.Utils;
+
 import android.database.Cursor;
 
 
@@ -23,6 +25,7 @@ private static final int REMINDER_1 = 1;
 private static final int REMINDER_2 = 2;
 private static final int REMINDER_3 = 3;
 //TODO implement or delete. Luko pasiulytas optimizavimas
+@SuppressWarnings("unused")
 private final Cursor databaseRow;
 
 //	TODO set all default fields and getters
@@ -166,7 +169,7 @@ private final Cursor databaseRow;
 	}
 
 	public Calendar getStartCalendar() {
-		return startCalendar;
+			return startCalendar;
 	}
 
 	/**
@@ -280,7 +283,10 @@ private final Cursor databaseRow;
 		return user_id;
 	}
 	public String getType() {
-		return type;
+		if (type != null)
+			return type;
+		else
+			return "p";
 	}
 	
 	/**

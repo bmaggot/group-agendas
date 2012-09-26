@@ -84,7 +84,7 @@ public class CalendarSettings {
 	 * @see com.groupagendas.groupagenda.utils.Utils
 	 */
 	public static SimpleDateFormat getDateFormatter() {
-		Account account = Data.getAccount();
+		Account account = new Account();
 			if (!account.getSetting_date_format().equalsIgnoreCase("null")) {
 				if (!account.getSetting_date_format().equalsIgnoreCase(formatterDateFormat)) {
 					formatterDateFormat = account.getSetting_date_format();
