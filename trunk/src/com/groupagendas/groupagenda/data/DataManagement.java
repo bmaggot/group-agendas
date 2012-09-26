@@ -2886,7 +2886,7 @@ private Event createEventFromCursor(Cursor result) {
 			}
 			result.close();
 		}
-
+		sortEvents(items);
 //		return getNaviveCalendarEvents(items);
 		return (items);
 	}
