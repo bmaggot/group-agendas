@@ -225,6 +225,7 @@ public class Utils {
 	 * @param calendar calendar to format
 	 * @return
 	 */
+	// TODO crash while offline
 	public static String formatCalendar(Calendar calendar){
 		return CalendarSettings.getDateFormatter().format(calendar.getTime());
 	}
