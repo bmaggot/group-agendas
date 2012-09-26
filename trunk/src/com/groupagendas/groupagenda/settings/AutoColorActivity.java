@@ -3,7 +3,6 @@ package com.groupagendas.groupagenda.settings;
 import java.util.ArrayList;
 
 import android.app.ListActivity;
-import android.content.ContentValues;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -15,7 +14,7 @@ import android.widget.ListView;
 import android.widget.ProgressBar;
 
 import com.groupagendas.groupagenda.R;
-import com.groupagendas.groupagenda.account.AccountProvider;
+import com.groupagendas.groupagenda.account.Account;
 import com.groupagendas.groupagenda.data.DataManagement;
 
 public class AutoColorActivity extends ListActivity {
@@ -70,10 +69,8 @@ public class AutoColorActivity extends ListActivity {
 		protected void onPostExecute(Boolean success) {
 			super.onPostExecute(success);
 			if(!success){
-				ContentValues values = new ContentValues();
-				values.put(AccountProvider.AMetaData.AutocolorMetaData.NEED_UPDATE, 1);
-				
-				getContentResolver().update(AccountProvider.AMetaData.AutocolorMetaData.CONTENT_URI, values, "", null);
+				Account account = new Account();
+				account.setNeed_update(1);
 			}
 		}
 	}
