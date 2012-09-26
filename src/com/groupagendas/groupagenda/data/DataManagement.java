@@ -2233,7 +2233,7 @@ public class DataManagement {
 
 							event = createEventFromJSON(e);
 							if (event != null){
-//								this.insertEventToLocalDB(event);
+								this.insertEventToLocalDB(event);
 								events.add(event);
 							}
 						}
@@ -2270,6 +2270,8 @@ public class DataManagement {
 		Event event = new Event();
 
 		String timezone = CalendarSettings.getTimeZone(); //TODO kaip pasiimam dabar?
+		day_index_formatter = new SimpleDateFormat(EventsProvider.EMetaData.EventsIndexesMetaData.DAY_COLUMN_FORMAT);
+		month_index_formatter = new SimpleDateFormat(EventsProvider.EMetaData.EventsIndexesMetaData.MONTH_COLUMN_FORMAT);
 		//critical event info. If fetch fails, return null
 		try {
 			event.setEvent_id(e.getInt("event_id"));
