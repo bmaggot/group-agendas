@@ -1100,11 +1100,11 @@ public class NewEventActivity extends EventActivity {
 		/* Set event's start & end time */
 		 view = (EditText) findViewById(R.id.startView);
 		 if (view != null)
-		 view.setText(data.getStartCalendar().toString());
+		 view.setText(Utils.formatCalendar(data.getStartCalendar()));
 
 		 view = (EditText) findViewById(R.id.endView);
 		 if (view != null)
-		 view.setText(data.getEndCalendar().toString());
+		 view.setText(Utils.formatCalendar(data.getEndCalendar()));
 
 		/* Set event's description */
 		view = (EditText) findViewById(R.id.descView);

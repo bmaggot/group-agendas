@@ -52,7 +52,6 @@ import com.google.android.c2dm.C2DMessaging;
 import com.groupagendas.groupagenda.NavbarActivity;
 import com.groupagendas.groupagenda.R;
 import com.groupagendas.groupagenda.account.Account;
-import com.groupagendas.groupagenda.account.Account.AccountMetaData;
 import com.groupagendas.groupagenda.account.AccountProvider;
 import com.groupagendas.groupagenda.address.Address;
 import com.groupagendas.groupagenda.address.AddressProvider.AMetaData.AddressesMetaData;
@@ -122,21 +121,21 @@ public class DataManagement {
 			MultipartEntity reqEntity = new MultipartEntity(HttpMultipartMode.BROWSER_COMPATIBLE);
 			reqEntity.addPart(TOKEN, new StringBody(Data.getToken()));
 
-			reqEntity.addPart(AccountMetaData.LASTNAME, new StringBody(account.getLastname()));
-			reqEntity.addPart(AccountMetaData.NAME, new StringBody(account.getName()));
+			reqEntity.addPart(Account.AccountMetaData.LASTNAME, new StringBody(account.getLastname()));
+			reqEntity.addPart(Account.AccountMetaData.NAME, new StringBody(account.getName()));
 
-			reqEntity.addPart("birthdate", new StringBody(account.getBirthdate().toString()));
-			reqEntity.addPart("sex", new StringBody(account.getSex()));
+			reqEntity.addPart(Account.AccountMetaData.BIRTHDATE, new StringBody(account.getBirthdate().toString()));
+			reqEntity.addPart(Account.AccountMetaData.SEX, new StringBody(account.getSex()));
 
-			reqEntity.addPart("country", new StringBody(account.getCountry()));
-			reqEntity.addPart("city", new StringBody(account.getCity()));
-			reqEntity.addPart("street", new StringBody(account.getStreet()));
-			reqEntity.addPart("zip", new StringBody(account.getZip()));
+			reqEntity.addPart(Account.AccountMetaData.COUNTRY, new StringBody(account.getCountry()));
+			reqEntity.addPart(Account.AccountMetaData.CITY, new StringBody(account.getCity()));
+			reqEntity.addPart(Account.AccountMetaData.STREET, new StringBody(account.getStreet()));
+			reqEntity.addPart(Account.AccountMetaData.ZIP, new StringBody(account.getZip()));
 
-			reqEntity.addPart("timezone", new StringBody(account.getTimezone()));
-			reqEntity.addPart("phone1", new StringBody(account.getPhone1()));
-			reqEntity.addPart("phone2", new StringBody(account.getPhone2()));
-			reqEntity.addPart("phone3", new StringBody(account.getPhone3()));
+			reqEntity.addPart(Account.AccountMetaData.TIMEZONE, new StringBody(account.getTimezone()));
+			reqEntity.addPart(Account.AccountMetaData.PHONE1, new StringBody(account.getPhone1()));
+			reqEntity.addPart(Account.AccountMetaData.PHONE2, new StringBody(account.getPhone2()));
+			reqEntity.addPart(Account.AccountMetaData.PHONE3, new StringBody(account.getPhone3()));
 
 			reqEntity.addPart("language", new StringBody("en"));
 
@@ -237,219 +236,219 @@ public class DataManagement {
 						u = new Account();
 
 						try {
-							u.setUser_id(profile.getInt(AccountMetaData.U_ID));
+							u.setUser_id(profile.getInt(Account.AccountMetaData.U_ID));
 						} catch (JSONException e) {
 							Reporter.reportError(this.getClass().toString(), Thread.currentThread().getStackTrace()[2].getMethodName()
 									.toString(), e.getMessage());
 						}
 
 						try {
-							u.setName(profile.getString(AccountMetaData.NAME));
+							u.setName(profile.getString(Account.AccountMetaData.NAME));
 						} catch (JSONException e) {
 							Reporter.reportError(this.getClass().toString(), Thread.currentThread().getStackTrace()[2].getMethodName()
 									.toString(), e.getMessage());
 						}
 						try {
-							u.setLastname(profile.getString(AccountMetaData.LASTNAME));
+							u.setLastname(profile.getString(Account.AccountMetaData.LASTNAME));
 						} catch (JSONException e) {
 							Reporter.reportError(this.getClass().toString(), Thread.currentThread().getStackTrace()[2].getMethodName()
 									.toString(), e.getMessage());
 						}
 						try {
-							u.setFullname(profile.getString(AccountMetaData.FULLNAME));
-						} catch (JSONException e) {
-							Reporter.reportError(this.getClass().toString(), Thread.currentThread().getStackTrace()[2].getMethodName()
-									.toString(), e.getMessage());
-						}
-
-						try {
-							u.setBirthdate(Utils.createCalendar(profile.getLong(AccountMetaData.BIRTHDATE),
-									profile.getString(AccountMetaData.TIMEZONE)));
-						} catch (JSONException e) {
-							Reporter.reportError(this.getClass().toString(), Thread.currentThread().getStackTrace()[2].getMethodName()
-									.toString(), e.getMessage());
-						}
-						try {
-							u.setSex(profile.getString(AccountMetaData.SEX));
+							u.setFullname(profile.getString(Account.AccountMetaData.FULLNAME));
 						} catch (JSONException e) {
 							Reporter.reportError(this.getClass().toString(), Thread.currentThread().getStackTrace()[2].getMethodName()
 									.toString(), e.getMessage());
 						}
 
 						try {
-							u.setEmail(profile.getString(AccountMetaData.EMAIL), 0);
+							u.setBirthdate(Utils.createCalendar(profile.getLong(Account.AccountMetaData.BIRTHDATE),
+									profile.getString(Account.AccountMetaData.TIMEZONE)));
 						} catch (JSONException e) {
 							Reporter.reportError(this.getClass().toString(), Thread.currentThread().getStackTrace()[2].getMethodName()
 									.toString(), e.getMessage());
 						}
 						try {
-							u.setEmail(profile.getString(AccountMetaData.EMAIL2), 2);
-						} catch (JSONException e) {
-							Reporter.reportError(this.getClass().toString(), Thread.currentThread().getStackTrace()[2].getMethodName()
-									.toString(), e.getMessage());
-						}
-						try {
-							u.setEmail(profile.getString(AccountMetaData.EMAIL3), 3);
-						} catch (JSONException e) {
-							Reporter.reportError(this.getClass().toString(), Thread.currentThread().getStackTrace()[2].getMethodName()
-									.toString(), e.getMessage());
-						}
-						try {
-							u.setEmail(profile.getString(AccountMetaData.EMAIL4), 4);
-						} catch (JSONException e) {
-							Reporter.reportError(this.getClass().toString(), Thread.currentThread().getStackTrace()[2].getMethodName()
-									.toString(), e.getMessage());
-						}
-						try {
-							u.setPhone(profile.getString(AccountMetaData.PHONE1), 1);
-						} catch (JSONException e) {
-							Reporter.reportError(this.getClass().toString(), Thread.currentThread().getStackTrace()[2].getMethodName()
-									.toString(), e.getMessage());
-						}
-						try {
-							u.setPhone(profile.getString(AccountMetaData.PHONE2), 2);
-						} catch (JSONException e) {
-							Reporter.reportError(this.getClass().toString(), Thread.currentThread().getStackTrace()[2].getMethodName()
-									.toString(), e.getMessage());
-						}
-						try {
-							u.setPhone(profile.getString(AccountMetaData.PHONE3), 3);
+							u.setSex(profile.getString(Account.AccountMetaData.SEX));
 						} catch (JSONException e) {
 							Reporter.reportError(this.getClass().toString(), Thread.currentThread().getStackTrace()[2].getMethodName()
 									.toString(), e.getMessage());
 						}
 
 						try {
-							u.setImage(profile.getBoolean(AccountMetaData.IMAGE));
+							u.setEmail(profile.getString(Account.AccountMetaData.EMAIL), 0);
 						} catch (JSONException e) {
 							Reporter.reportError(this.getClass().toString(), Thread.currentThread().getStackTrace()[2].getMethodName()
 									.toString(), e.getMessage());
 						}
 						try {
-							u.setImage_url(profile.getString(AccountMetaData.IMAGE_URL));
+							u.setEmail(profile.getString(Account.AccountMetaData.EMAIL2), 2);
+						} catch (JSONException e) {
+							Reporter.reportError(this.getClass().toString(), Thread.currentThread().getStackTrace()[2].getMethodName()
+									.toString(), e.getMessage());
+						}
+						try {
+							u.setEmail(profile.getString(Account.AccountMetaData.EMAIL3), 3);
+						} catch (JSONException e) {
+							Reporter.reportError(this.getClass().toString(), Thread.currentThread().getStackTrace()[2].getMethodName()
+									.toString(), e.getMessage());
+						}
+						try {
+							u.setEmail(profile.getString(Account.AccountMetaData.EMAIL4), 4);
+						} catch (JSONException e) {
+							Reporter.reportError(this.getClass().toString(), Thread.currentThread().getStackTrace()[2].getMethodName()
+									.toString(), e.getMessage());
+						}
+						try {
+							u.setPhone(profile.getString(Account.AccountMetaData.PHONE1), 1);
+						} catch (JSONException e) {
+							Reporter.reportError(this.getClass().toString(), Thread.currentThread().getStackTrace()[2].getMethodName()
+									.toString(), e.getMessage());
+						}
+						try {
+							u.setPhone(profile.getString(Account.AccountMetaData.PHONE2), 2);
+						} catch (JSONException e) {
+							Reporter.reportError(this.getClass().toString(), Thread.currentThread().getStackTrace()[2].getMethodName()
+									.toString(), e.getMessage());
+						}
+						try {
+							u.setPhone(profile.getString(Account.AccountMetaData.PHONE3), 3);
+						} catch (JSONException e) {
+							Reporter.reportError(this.getClass().toString(), Thread.currentThread().getStackTrace()[2].getMethodName()
+									.toString(), e.getMessage());
+						}
+
+						try {
+							u.setImage(profile.getBoolean(Account.AccountMetaData.IMAGE));
+						} catch (JSONException e) {
+							Reporter.reportError(this.getClass().toString(), Thread.currentThread().getStackTrace()[2].getMethodName()
+									.toString(), e.getMessage());
+						}
+						try {
+							u.setImage_url(profile.getString(Account.AccountMetaData.IMAGE_URL));
 							u.image_bytes = imageToBytes(u.getImage_url());
 						} catch (JSONException e) {
 							Reporter.reportError(this.getClass().toString(), Thread.currentThread().getStackTrace()[2].getMethodName()
 									.toString(), e.getMessage());
 						}
 						try {
-							u.setImage_thumb_url(profile.getString(AccountMetaData.IMAGE_THUMB_URL));
+							u.setImage_thumb_url(profile.getString(Account.AccountMetaData.IMAGE_THUMB_URL));
 						} catch (JSONException e) {
 							Reporter.reportError(this.getClass().toString(), Thread.currentThread().getStackTrace()[2].getMethodName()
 									.toString(), e.getMessage());
 						}
 
 						try {
-							u.setCountry(profile.getString(AccountMetaData.COUNTRY));
+							u.setCountry(profile.getString(Account.AccountMetaData.COUNTRY));
 						} catch (JSONException e) {
 							Reporter.reportError(this.getClass().toString(), Thread.currentThread().getStackTrace()[2].getMethodName()
 									.toString(), e.getMessage());
 						}
 						try {
-							u.setCity(profile.getString(AccountMetaData.CITY));
+							u.setCity(profile.getString(Account.AccountMetaData.CITY));
 						} catch (JSONException e) {
 							Reporter.reportError(this.getClass().toString(), Thread.currentThread().getStackTrace()[2].getMethodName()
 									.toString(), e.getMessage());
 						}
 						try {
-							u.setStreet(profile.getString(AccountMetaData.STREET));
+							u.setStreet(profile.getString(Account.AccountMetaData.STREET));
 						} catch (JSONException e) {
 							Reporter.reportError(this.getClass().toString(), Thread.currentThread().getStackTrace()[2].getMethodName()
 									.toString(), e.getMessage());
 						}
 						try {
-							u.setZip(profile.getString(AccountMetaData.ZIP));
+							u.setZip(profile.getString(Account.AccountMetaData.ZIP));
 						} catch (JSONException e) {
 							Reporter.reportError(this.getClass().toString(), Thread.currentThread().getStackTrace()[2].getMethodName()
 									.toString(), e.getMessage());
 						}
 
 						try {
-							u.setTimezone(profile.getString(AccountMetaData.TIMEZONE));
+							u.setTimezone(profile.getString(Account.AccountMetaData.TIMEZONE));
 						} catch (JSONException e) {
 							Reporter.reportError(this.getClass().toString(), Thread.currentThread().getStackTrace()[2].getMethodName()
 									.toString(), e.getMessage());
 						}
 						try {
-							u.setLocal_time(profile.getString(AccountMetaData.LOCAL_TIME));
+							u.setLocal_time(profile.getString(Account.AccountMetaData.LOCAL_TIME));
 						} catch (JSONException e) {
 							Reporter.reportError(this.getClass().toString(), Thread.currentThread().getStackTrace()[2].getMethodName()
 									.toString(), e.getMessage());
 						}
 						try {
-							u.setLanguage(profile.getString(AccountMetaData.LANGUAGE));
+							u.setLanguage(profile.getString(Account.AccountMetaData.LANGUAGE));
 						} catch (JSONException e) {
 							Reporter.reportError(this.getClass().toString(), Thread.currentThread().getStackTrace()[2].getMethodName()
 									.toString(), e.getMessage());
 						}
 						try {
-							u.setSetting_default_view(profile.getString(AccountMetaData.SETTING_DEFAULT_VIEW));
+							u.setSetting_default_view(profile.getString(Account.AccountMetaData.SETTING_DEFAULT_VIEW));
 						} catch (JSONException e) {
 							Reporter.reportError(this.getClass().toString(), Thread.currentThread().getStackTrace()[2].getMethodName()
 									.toString(), e.getMessage());
 						}
 						try {
-							u.setSetting_date_format(profile.getString("setting_date_format"));
+							u.setSetting_date_format(profile.getString(Account.AccountMetaData.SETTING_DATE_FORMAT));
 						} catch (JSONException e) {
 							Reporter.reportError(this.getClass().toString(), Thread.currentThread().getStackTrace()[2].getMethodName()
 									.toString(), e.getMessage());
 						}
 						try {
-							u.setSetting_ampm(profile.getString(AccountMetaData.SETTING_AMPM));
+							u.setSetting_ampm(profile.getInt(Account.AccountMetaData.SETTING_AMPM));
 						} catch (JSONException e) {
 							Reporter.reportError(this.getClass().toString(), Thread.currentThread().getStackTrace()[2].getMethodName()
 									.toString(), e.getMessage());
 						}
 						try {
-							u.setGoogle_calendar_link(profile.getString(AccountMetaData.GOOGLE_CALENDAR_LINK));
+							u.setGoogle_calendar_link(profile.getString(Account.AccountMetaData.GOOGLE_CALENDAR_LINK));
 						} catch (JSONException e) {
 							Reporter.reportError(this.getClass().toString(), Thread.currentThread().getStackTrace()[2].getMethodName()
 									.toString(), e.getMessage());
 						}
 						try {
-							u.setColor_my_event(profile.getString(AccountMetaData.COLOR_MY_EVENT));
+							u.setColor_my_event(profile.getString(Account.AccountMetaData.COLOR_MY_EVENT));
 						} catch (JSONException e) {
 							Reporter.reportError(this.getClass().toString(), Thread.currentThread().getStackTrace()[2].getMethodName()
 									.toString(), e.getMessage());
 						}
 						try {
-							u.setColor_attending(profile.getString(AccountMetaData.COLOR_ATTENDING));
+							u.setColor_attending(profile.getString(Account.AccountMetaData.COLOR_ATTENDING));
 						} catch (JSONException e) {
 							Reporter.reportError(this.getClass().toString(), Thread.currentThread().getStackTrace()[2].getMethodName()
 									.toString(), e.getMessage());
 						}
 						try {
-							u.setColor_pending(profile.getString(AccountMetaData.COLOR_PENDING));
+							u.setColor_pending(profile.getString(Account.AccountMetaData.COLOR_PENDING));
 						} catch (JSONException e) {
 							Reporter.reportError(this.getClass().toString(), Thread.currentThread().getStackTrace()[2].getMethodName()
 									.toString(), e.getMessage());
 						}
 						try {
-							u.setColor_invitation(profile.getString(AccountMetaData.COLOR_INVITATION));
+							u.setColor_invitation(profile.getString(Account.AccountMetaData.COLOR_INVITATION));
 						} catch (JSONException e) {
 							Reporter.reportError(this.getClass().toString(), Thread.currentThread().getStackTrace()[2].getMethodName()
 									.toString(), e.getMessage());
 						}
 						try {
-							u.setColor_notes(profile.getString(AccountMetaData.COLOR_NOTES));
+							u.setColor_notes(profile.getString(Account.AccountMetaData.COLOR_NOTES));
 						} catch (JSONException e) {
 							Reporter.reportError(this.getClass().toString(), Thread.currentThread().getStackTrace()[2].getMethodName()
 									.toString(), e.getMessage());
 						}
 						try {
-							u.setColor_birthday(profile.getString(AccountMetaData.COLOR_BIRTHDAY));
+							u.setColor_birthday(profile.getString(Account.AccountMetaData.COLOR_BIRTHDAY));
 						} catch (JSONException e) {
 							Reporter.reportError(this.getClass().toString(), Thread.currentThread().getStackTrace()[2].getMethodName()
 									.toString(), e.getMessage());
 						}
 						try {
-							u.setCreated(profile.getLong(AccountMetaData.CREATED));
+							u.setCreated(profile.getLong(Account.AccountMetaData.CREATED));
 						} catch (JSONException e) {
 							Reporter.reportError(this.getClass().toString(), Thread.currentThread().getStackTrace()[2].getMethodName()
 									.toString(), e.getMessage());
 						}
 						try {
-							u.setModified(profile.getLong(AccountMetaData.MODIFIED));
+							u.setModified(profile.getLong(Account.AccountMetaData.MODIFIED));
 						} catch (JSONException e) {
 							Reporter.reportError(this.getClass().toString(), Thread.currentThread().getStackTrace()[2].getMethodName()
 									.toString(), e.getMessage());

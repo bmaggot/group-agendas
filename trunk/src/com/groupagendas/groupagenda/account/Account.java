@@ -72,201 +72,201 @@ public class Account {
 	}
 	
 	public int getUser_id() {
-		return prefs.getInt(AccountMetaData.U_ID, 0);
+		return prefs.getInt(Account.AccountMetaData.U_ID, 0);
 	}
 	
 	public String getName() {
-		return prefs.getString(AccountMetaData.NAME, "");
+		return prefs.getString(Account.AccountMetaData.NAME, "");
 	}
 	
 	public String getLastname() {
-		return prefs.getString(AccountMetaData.LASTNAME, "");
+		return prefs.getString(Account.AccountMetaData.LASTNAME, "");
 	}
 	
 	public String getFullname() {
-		return prefs.getString(AccountMetaData.FULLNAME, "");
+		return prefs.getString(Account.AccountMetaData.FULLNAME, "");
 	}
 	
 	public Calendar getBirthdate() {
-		long birthdate = prefs.getLong(AccountMetaData.BIRTHDATE, 0);
+		long birthdate = prefs.getLong(Account.AccountMetaData.BIRTHDATE, 0);
 		Calendar birthdateCalendar = Utils.createCalendar(birthdate, getTimezone());
 		
 		return birthdateCalendar;
 	}
 	
 	public String getSex() {
-		return prefs.getString(AccountMetaData.SEX, "null");
+		return prefs.getString(Account.AccountMetaData.SEX, "null");
 	}
 	
 	public String getEmail() {
-		return prefs.getString(AccountMetaData.EMAIL, "");
+		return prefs.getString(Account.AccountMetaData.EMAIL, "");
 	}
 	
 	public String getEmail2() {
-		return prefs.getString(AccountMetaData.EMAIL2, "");
+		return prefs.getString(Account.AccountMetaData.EMAIL2, "");
 	}
 	
 	public String getEmail3() {
-		return prefs.getString(AccountMetaData.EMAIL3, "");
+		return prefs.getString(Account.AccountMetaData.EMAIL3, "");
 	}
 	
 	public String getEmail4() {
-		return prefs.getString(AccountMetaData.EMAIL4, "");
+		return prefs.getString(Account.AccountMetaData.EMAIL4, "");
 	}
 	
 	public String getPhone1() {
-		return prefs.getString(AccountMetaData.PHONE1, "");
+		return prefs.getString(Account.AccountMetaData.PHONE1, "");
 	}
 	
 	public String getPhone2() {
-		return prefs.getString(AccountMetaData.PHONE2, "");
+		return prefs.getString(Account.AccountMetaData.PHONE2, "");
 	}
 	
 	public String getPhone3() {
-		return prefs.getString(AccountMetaData.PHONE3, "");
+		return prefs.getString(Account.AccountMetaData.PHONE3, "");
 	}
 	
 	public boolean getImage() {
-		return prefs.getBoolean(AccountMetaData.IMAGE, false);
+		return prefs.getBoolean(Account.AccountMetaData.IMAGE, false);
 	}
 	
 	public byte[] image_bytes = null;
 	
 	public String getImage_url() {
-		return prefs.getString(AccountMetaData.IMAGE_URL, "");
+		return prefs.getString(Account.AccountMetaData.IMAGE_URL, "");
 	}
 	
 	public String getImage_thumb_url() {
-		return prefs.getString(AccountMetaData.IMAGE_THUMB_URL, "");
+		return prefs.getString(Account.AccountMetaData.IMAGE_THUMB_URL, "");
 	}
 	
 	public int getRemove_image() {
-		return prefs.getInt(AccountMetaData.REMOVE_IMAGE, 0);
+		return prefs.getInt(Account.AccountMetaData.REMOVE_IMAGE, 0);
 	}
 	
 	public String getCountry() {
-		return prefs.getString(AccountMetaData.COUNTRY, Data.getmContext().getResources().getStringArray(R.array.country_values)[78]);
+		return prefs.getString(Account.AccountMetaData.COUNTRY, Data.getmContext().getResources().getStringArray(R.array.country_values)[78]);
 	}
 	
 	public String getCity() {
-		return prefs.getString(AccountMetaData.CITY, "");
+		return prefs.getString(Account.AccountMetaData.CITY, "");
 	}
 	
 	public String getStreet() {
-		return prefs.getString(AccountMetaData.STREET, "");
+		return prefs.getString(Account.AccountMetaData.STREET, "");
 	}
 	
 	public String getZip() {
-		return prefs.getString(AccountMetaData.ZIP, "");
+		return prefs.getString(Account.AccountMetaData.ZIP, "");
 	}
 	
 	public String getTimezone() {
-		return prefs.getString(AccountMetaData.TIMEZONE, Data.getmContext().getResources().getStringArray(R.array.timezones)[172]);
+		return prefs.getString(Account.AccountMetaData.TIMEZONE, Data.getmContext().getResources().getStringArray(R.array.timezones)[172]);
 	}
 	
 // TODO wtfis public String local_time;
 	public String getLocal_time() {
-		return prefs.getString(AccountMetaData.LOCAL_TIME, "");
+		return prefs.getString(Account.AccountMetaData.LOCAL_TIME, "");
 	}
 	
 	public String getLanguage() {
-		return prefs.getString(AccountMetaData.LANGUAGE, Data.getmContext().getResources().getStringArray(R.array.language_values)[78]);
+		return prefs.getString(Account.AccountMetaData.LANGUAGE, Data.getmContext().getResources().getStringArray(R.array.language_values)[0]);
 	}
 	
 	public String getSetting_default_view() {
-		return prefs.getString(AccountMetaData.SETTING_DEFAULT_VIEW, "M");
+		return prefs.getString(Account.AccountMetaData.SETTING_DEFAULT_VIEW, "M");
 	}
 	
 	public String getSetting_date_format() {
-		return prefs.getString(AccountMetaData.SETTING_DATE_FORMAT, "yyyy-MM-dd");
+		return prefs.getString(Account.AccountMetaData.SETTING_DATE_FORMAT, "yyyy-MM-dd");
 	}
 	public int getSetting_ampm() {
-		return prefs.getInt(AccountMetaData.SETTING_AMPM, 0);
+		return prefs.getInt(Account.AccountMetaData.SETTING_AMPM, 0);
 	}
 	
 	public String getGoogle_calendar_link() {
-		return prefs.getString(AccountMetaData.GOOGLE_CALENDAR_LINK, "");
+		return prefs.getString(Account.AccountMetaData.GOOGLE_CALENDAR_LINK, "");
 	}
 	
 	public String getColor_my_event() {
-		return prefs.getString(AccountMetaData.COLOR_MY_EVENT, "000000");
+		return prefs.getString(Account.AccountMetaData.COLOR_MY_EVENT, "000000");
 	}
 	
 	public String getColor_attending() {
-		return prefs.getString(AccountMetaData.COLOR_ATTENDING, "000000");
+		return prefs.getString(Account.AccountMetaData.COLOR_ATTENDING, "000000");
 	}
 	
 	public String getColor_pending() {
-		return prefs.getString(AccountMetaData.COLOR_PENDING, "000000");
+		return prefs.getString(Account.AccountMetaData.COLOR_PENDING, "000000");
 	}
 	
 	public String getColor_invitation() {
-		return prefs.getString(AccountMetaData.COLOR_INVITATION, "000000");
+		return prefs.getString(Account.AccountMetaData.COLOR_INVITATION, "000000");
 	}
 	
 	public String getColor_notes() {
-		return prefs.getString(AccountMetaData.COLOR_NOTES, "000000");
+		return prefs.getString(Account.AccountMetaData.COLOR_NOTES, "000000");
 	}
 	
 	public String getColor_birthday() {
-		return prefs.getString(AccountMetaData.COLOR_BIRTHDAY, "000000");
+		return prefs.getString(Account.AccountMetaData.COLOR_BIRTHDAY, "000000");
 	}
 	
 	public Calendar getCreated() {
-		long millis = prefs.getLong(AccountMetaData.CREATED, 0);
+		long millis = prefs.getLong(Account.AccountMetaData.CREATED, 0);
 		return Utils.createCalendar(millis, getTimezone());
 	}
 	
 	public Calendar getModified() {
-		long millis = prefs.getLong(AccountMetaData.MODIFIED, 0);
+		long millis = prefs.getLong(Account.AccountMetaData.MODIFIED, 0);
 		return Utils.createCalendar(millis, getTimezone());
 	}
 	
 	public int getNeed_update() {
-		return prefs.getInt(AccountMetaData.NEED_UPDATE, 0);
+		return prefs.getInt(Account.AccountMetaData.NEED_UPDATE, 0);
 	}
 	
 	public void setUser_id(int user_id) {
-		prefsEditor.putInt(AccountMetaData.U_ID, user_id);
+		prefsEditor.putInt(Account.AccountMetaData.U_ID, user_id);
 		prefsEditor.commit();
 	}
 	
 	public void setName(String name) {
-		prefsEditor.putString(AccountMetaData.NAME, name);
+		prefsEditor.putString(Account.AccountMetaData.NAME, name);
 		prefsEditor.commit();
 	}
 	
 	public void setLastname(String lastname) {
-		prefsEditor.putString(AccountMetaData.LASTNAME, lastname);
+		prefsEditor.putString(Account.AccountMetaData.LASTNAME, lastname);
 		prefsEditor.commit();
 	}
 	
 	public void setFullname(String fullname) {
-		prefsEditor.putString(AccountMetaData.FULLNAME, fullname);
+		prefsEditor.putString(Account.AccountMetaData.FULLNAME, fullname);
 		prefsEditor.commit();
 	}
 	
 	public void setBirthdate(Calendar birthdate) {
 		long millis = Utils.millisToUnixTimestamp(birthdate.getTimeInMillis());
-		prefsEditor.putLong(AccountMetaData.BIRTHDATE, millis);
+		prefsEditor.putLong(Account.AccountMetaData.BIRTHDATE, millis);
 		prefsEditor.commit();
 	}
 	
 	public void setSex(String sex) {
-		prefsEditor.putString(AccountMetaData.SEX, sex);
+		prefsEditor.putString(Account.AccountMetaData.SEX, sex);
 		prefsEditor.commit();
 	}
 	
 	public void setEmail(String email, int fieldNo) {
 		switch (fieldNo) {
 			case 0:
-				prefsEditor.putString(AccountMetaData.EMAIL, email);
+				prefsEditor.putString(Account.AccountMetaData.EMAIL, email);
 			case 2:
-				prefsEditor.putString(AccountMetaData.EMAIL2, email);
+				prefsEditor.putString(Account.AccountMetaData.EMAIL2, email);
 			case 3:
-				prefsEditor.putString(AccountMetaData.EMAIL3, email);
+				prefsEditor.putString(Account.AccountMetaData.EMAIL3, email);
 			case 4:
-				prefsEditor.putString(AccountMetaData.EMAIL4, email);
+				prefsEditor.putString(Account.AccountMetaData.EMAIL4, email);
 		}
 		prefsEditor.commit();
 	}
@@ -274,132 +274,132 @@ public class Account {
 	public void setPhone(String phone, int fieldNo) {
 		switch (fieldNo) {
 			case 1:
-				prefsEditor.putString(AccountMetaData.PHONE1, phone);
+				prefsEditor.putString(Account.AccountMetaData.PHONE1, phone);
 			case 2:
-				prefsEditor.putString(AccountMetaData.PHONE2, phone);
+				prefsEditor.putString(Account.AccountMetaData.PHONE2, phone);
 			case 3:
-				prefsEditor.putString(AccountMetaData.PHONE3, phone);
+				prefsEditor.putString(Account.AccountMetaData.PHONE3, phone);
 		}
 		prefsEditor.commit();
 	}
 	
 	public void setImage(Boolean image) {
-		prefsEditor.putBoolean(AccountMetaData.IMAGE, image);
+		prefsEditor.putBoolean(Account.AccountMetaData.IMAGE, image);
 		prefsEditor.commit();
 	}
 	
 	public void setImage_url(String image_url) {
-		prefsEditor.putString(AccountMetaData.IMAGE_URL, image_url);
+		prefsEditor.putString(Account.AccountMetaData.IMAGE_URL, image_url);
 		prefsEditor.commit();
 	}
 	
 	public void setImage_thumb_url(String image_thumb_url) {
-		prefsEditor.putString(AccountMetaData.IMAGE_THUMB_URL, image_thumb_url);
+		prefsEditor.putString(Account.AccountMetaData.IMAGE_THUMB_URL, image_thumb_url);
 		prefsEditor.commit();
 	}
 	
 	public void setRemove_image(int remove_image) {
-		prefsEditor.putInt(AccountMetaData.REMOVE_IMAGE, remove_image);
+		prefsEditor.putInt(Account.AccountMetaData.REMOVE_IMAGE, remove_image);
 		prefsEditor.commit();
 	}
 	
 	public void setCountry(String country) {
-		prefsEditor.putString(AccountMetaData.COUNTRY, country);
+		prefsEditor.putString(Account.AccountMetaData.COUNTRY, country);
 		prefsEditor.commit();
 	}
 	
 	public void setCity(String city) {
-		prefsEditor.putString(AccountMetaData.CITY, city);
+		prefsEditor.putString(Account.AccountMetaData.CITY, city);
 		prefsEditor.commit();
 	}
 	
 	public void setStreet(String street) {
-		prefsEditor.putString(AccountMetaData.STREET, street);
+		prefsEditor.putString(Account.AccountMetaData.STREET, street);
 		prefsEditor.commit();		
 	}
 	
 	public void setZip(String zip) {
-		prefsEditor.putString(AccountMetaData.ZIP, zip);
+		prefsEditor.putString(Account.AccountMetaData.ZIP, zip);
 		prefsEditor.commit();		
 	}
 	
 	public void setTimezone(String timezone) {
-		prefsEditor.putString(AccountMetaData.TIMEZONE, timezone);
+		prefsEditor.putString(Account.AccountMetaData.TIMEZONE, timezone);
 		prefsEditor.commit();		
 	}
 	
 	public void setLocal_time(String local_time) {
-		prefsEditor.putString(AccountMetaData.LOCAL_TIME, local_time);
+		prefsEditor.putString(Account.AccountMetaData.LOCAL_TIME, local_time);
 		prefsEditor.commit();
 	}
 	
 	public void setLanguage(String language) {
-		prefsEditor.putString(AccountMetaData.LANGUAGE, language);
+		prefsEditor.putString(Account.AccountMetaData.LANGUAGE, language);
 		prefsEditor.commit();
 	}
 	
 	public void setSetting_default_view(String setting_default_view) {
-		prefsEditor.putString(AccountMetaData.SETTING_DEFAULT_VIEW, setting_default_view);
+		prefsEditor.putString(Account.AccountMetaData.SETTING_DEFAULT_VIEW, setting_default_view);
 		prefsEditor.commit();		
 	}
 	
 	public void setSetting_date_format(String setting_date_format) {
-		prefsEditor.putString(AccountMetaData.SETTING_DATE_FORMAT, setting_date_format);
+		prefsEditor.putString(Account.AccountMetaData.SETTING_DATE_FORMAT, setting_date_format);
 		prefsEditor.commit();
 	}
 	
-	public void setSetting_ampm(String setting_ampm) {
-		prefsEditor.putString(AccountMetaData.SETTING_AMPM, setting_ampm);
+	public void setSetting_ampm(int setting_ampm) {
+		prefsEditor.putInt(Account.AccountMetaData.SETTING_AMPM, setting_ampm);
 		prefsEditor.commit();
 	}
 	
 	public void setGoogle_calendar_link(String google_calendar_link) {
-		prefsEditor.putString(AccountMetaData.GOOGLE_CALENDAR_LINK, google_calendar_link);
+		prefsEditor.putString(Account.AccountMetaData.GOOGLE_CALENDAR_LINK, google_calendar_link);
 		prefsEditor.commit();		
 	}
 	
 	public void setColor_my_event(String color_my_event) {
-		prefsEditor.putString(AccountMetaData.COLOR_MY_EVENT, color_my_event);
+		prefsEditor.putString(Account.AccountMetaData.COLOR_MY_EVENT, color_my_event);
 		prefsEditor.commit();
 	}
 	
 	public void setColor_attending(String color_attending) {
-		prefsEditor.putString(AccountMetaData.COLOR_MY_EVENT, color_attending);
+		prefsEditor.putString(Account.AccountMetaData.COLOR_MY_EVENT, color_attending);
 		prefsEditor.commit();
 	}
 	
 	public void setColor_pending(String color_pending) {
-		prefsEditor.putString(AccountMetaData.COLOR_MY_EVENT, color_pending);
+		prefsEditor.putString(Account.AccountMetaData.COLOR_MY_EVENT, color_pending);
 		prefsEditor.commit();
 	}
 
 	public void setColor_invitation(String color_invitation) {
-		prefsEditor.putString(AccountMetaData.COLOR_MY_EVENT, color_invitation);
+		prefsEditor.putString(Account.AccountMetaData.COLOR_MY_EVENT, color_invitation);
 		prefsEditor.commit();
 	}
 
 	public void setColor_notes(String color_notes) {
-		prefsEditor.putString(AccountMetaData.COLOR_MY_EVENT, color_notes);
+		prefsEditor.putString(Account.AccountMetaData.COLOR_MY_EVENT, color_notes);
 		prefsEditor.commit();
 	}
 
 	public void setColor_birthday(String color_birthday) {
-		prefsEditor.putString(AccountMetaData.COLOR_MY_EVENT, color_birthday);
+		prefsEditor.putString(Account.AccountMetaData.COLOR_MY_EVENT, color_birthday);
 		prefsEditor.commit();
 	}
 
 	public void setCreated(long created) {
-		prefsEditor.putLong(AccountMetaData.CREATED, created);
+		prefsEditor.putLong(Account.AccountMetaData.CREATED, created);
 		prefsEditor.commit();
 	}
 	
 	public void setModified(long modified) {
-		prefsEditor.putLong(AccountMetaData.MODIFIED, modified);
+		prefsEditor.putLong(Account.AccountMetaData.MODIFIED, modified);
 		prefsEditor.commit();
 	}
 	
 	public void setNeed_update(int need_update) {
-		prefsEditor.putInt(AccountMetaData.NEED_UPDATE, need_update);
+		prefsEditor.putInt(Account.AccountMetaData.NEED_UPDATE, need_update);
 		prefsEditor.commit();
 	}
 }
