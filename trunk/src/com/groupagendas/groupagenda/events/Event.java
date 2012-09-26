@@ -30,27 +30,30 @@ private final Cursor databaseRow;
 	
 	public int event_id;
 	public int user_id;
+	private int NeedUpdate = 0;   //Update status TODO find out, what it means!!!!!
+	public int status;
+	public int creator_contact_id;
+	
+	public int attendant_1_count; 
+	public int attendant_2_count;
+	public int attendant_0_count;
+	public int attendant_4_count;
 	
 	public boolean isNative = false;
-	
 	public boolean is_sports_event;	
-	public int status;
 	public boolean is_owner;
+	public boolean is_all_day;
+	public boolean birthday = false;
+	
+	
 	public String type;
-	
 	public String creator_fullname;
-    public int creator_contact_id;
-	
 	public String title;
 	public String icon;
-	
-	
 	private String color;
 	public String description_;
-	
 	public String location;
 	public String accomodation;
-	
 	public String cost;
 	public String take_with_you;
 	public String go_by;
@@ -61,9 +64,7 @@ private final Cursor databaseRow;
 	public String zip;
 	
 	public String timezone;
-
-	
-	private Calendar startCalendar;
+	private Calendar startCalendar;     //EVENT START TIME. CALENDAR IS IN USER TIMEZONE.
 	private Calendar endCalendar;
 	
 	
@@ -81,10 +82,7 @@ private final Cursor databaseRow;
 	public String created;
 	public String modified;
 	
-	public int attendant_1_count; 
-	public int attendant_2_count;
-	public int attendant_0_count;
-	public int attendant_4_count;
+
 	
 	public int[] assigned_contacts = null;
 	private String assigned_contacts_DB_entry = "";
@@ -94,9 +92,8 @@ private final Cursor databaseRow;
 	
 	public ArrayList<Invited> invited = null;
 	private String invited_DB_entry = "";
+
 	
-	public boolean is_all_day;
-	public boolean birthday = false;
 	
 	public Event (Cursor dbRow){
 		this.databaseRow = dbRow;
@@ -695,6 +692,13 @@ public String getAssigned_groups_DB_entry() {
 public String getInvited_DB_entry() {
 	return invited_DB_entry;
 }
+public int getNeedUpdate() {
+	return NeedUpdate;
+}
+public void setNeedUpdate(int needUpdate) {
+	NeedUpdate = needUpdate;
+}
+
 
 
 
