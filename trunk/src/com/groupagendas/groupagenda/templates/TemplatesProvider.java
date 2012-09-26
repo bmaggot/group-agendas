@@ -40,6 +40,7 @@ public class TemplatesProvider extends ContentProvider {
 			
 			public static final String IS_SPORTS_EVENT	= "is_sports_event";
 //			public static final String TYPE 	= "type";
+//			public static final String IS_ALL_DAY = "is_all_day";
 			
 			public static final String TITLE	= "title";
 			public static final String ICON		= "icon";
@@ -62,9 +63,13 @@ public class TemplatesProvider extends ContentProvider {
 			public static final String TIME_START = "time_start";
 			public static final String TIME_END = "time_end";
 			
-//			public static final String REMINDER1 = "reminder1";
-//			public static final String REMINDER2 = "reminder2";
-//			public static final String REMINDER3 = "reminder3";
+			public static final String REMINDER1 = "reminder1";
+			public static final String REMINDER2 = "reminder2";
+			public static final String REMINDER3 = "reminder3";
+			
+			public static final String ALARM1 = "alarm1";
+			public static final String ALARM2 = "alarm2";
+			public static final String ALARM3 = "alarm3";
 			
 			public static final String CREATED = "created";
 			public static final String MODIFIED = "modified";
@@ -94,6 +99,7 @@ public class TemplatesProvider extends ContentProvider {
 
 		TM.put(TMetaData.TemplatesMetaData.IS_SPORTS_EVENT, TMetaData.TemplatesMetaData.IS_SPORTS_EVENT);
 //		TM.put(TMetaData.TemplatesMetaData.TYPE, TMetaData.TemplatesMetaData.TYPE);
+//		TM.put(TMetaData.TemplatesMetaData.IS_ALL_DAY, TMetaData.TemplatesMetaData.IS_ALL_DAY);
 
 		TM.put(TMetaData.TemplatesMetaData.TITLE, TMetaData.TemplatesMetaData.TITLE);
 		TM.put(TMetaData.TemplatesMetaData.ICON, TMetaData.TemplatesMetaData.ICON);
@@ -115,7 +121,15 @@ public class TemplatesProvider extends ContentProvider {
 		TM.put(TMetaData.TemplatesMetaData.TIMEZONE, TMetaData.TemplatesMetaData.TIMEZONE);
 		TM.put(TMetaData.TemplatesMetaData.TIME_START, TMetaData.TemplatesMetaData.TIME_START);
 		TM.put(TMetaData.TemplatesMetaData.TIME_END, TMetaData.TemplatesMetaData.TIME_END);
-		
+
+		TM.put(TMetaData.TemplatesMetaData.REMINDER1, TMetaData.TemplatesMetaData.REMINDER1);
+		TM.put(TMetaData.TemplatesMetaData.REMINDER2, TMetaData.TemplatesMetaData.REMINDER2);
+		TM.put(TMetaData.TemplatesMetaData.REMINDER3, TMetaData.TemplatesMetaData.REMINDER3);
+
+		TM.put(TMetaData.TemplatesMetaData.ALARM1, TMetaData.TemplatesMetaData.ALARM1);
+		TM.put(TMetaData.TemplatesMetaData.ALARM2, TMetaData.TemplatesMetaData.ALARM2);
+		TM.put(TMetaData.TemplatesMetaData.ALARM3, TMetaData.TemplatesMetaData.ALARM3);
+
 		TM.put(TMetaData.TemplatesMetaData.CREATED, TMetaData.TemplatesMetaData.CREATED);
 		TM.put(TMetaData.TemplatesMetaData.MODIFIED, TMetaData.TemplatesMetaData.MODIFIED);
 		
@@ -270,12 +284,16 @@ public class TemplatesProvider extends ContentProvider {
 				+TMetaData.TemplatesMetaData.ZIP+" TEXT ,"
 				
 				+TMetaData.TemplatesMetaData.TIMEZONE+" TEXT ,"
-				+TMetaData.TemplatesMetaData.TIME_START+" TEXT ,"
-				+TMetaData.TemplatesMetaData.TIME_END+" TEXT ,"
+				+TMetaData.TemplatesMetaData.TIME_START+" INTEGER ,"
+				+TMetaData.TemplatesMetaData.TIME_END+" INTEGER ,"
 				
-//				+EMetaData.EventsMetaData.REMINDER1+" TEXT ,"
-//				+EMetaData.EventsMetaData.REMINDER2+" TEXT ,"
-//				+EMetaData.EventsMetaData.REMINDER3+" TEXT ,"
+				+TMetaData.TemplatesMetaData.REMINDER1+" INTEGER ,"
+				+TMetaData.TemplatesMetaData.REMINDER2+" INTEGER ,"
+				+TMetaData.TemplatesMetaData.REMINDER3+" INTEGER ,"
+				
+				+TMetaData.TemplatesMetaData.ALARM1+" INTEGER ,"
+				+TMetaData.TemplatesMetaData.ALARM2+" INTEGER ,"
+				+TMetaData.TemplatesMetaData.ALARM3+" INTEGER ,"
 				
 				+TMetaData.TemplatesMetaData.CREATED+" TEXT ,"
 				+TMetaData.TemplatesMetaData.MODIFIED+" TEXT ,"
