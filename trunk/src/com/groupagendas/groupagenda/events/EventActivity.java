@@ -83,6 +83,14 @@ public class EventActivity extends Activity {
 		if (timezoneArray != null) {
 			event.timezone = timezoneArray[timezoneSpinner.getSelectedItemPosition()];
 		}
+		
+		
+		event.setIs_owner(setOwner);
+		
+		if (setUid) {
+			// user_id
+			event.setUser_id(prefs.getUserId());
+		}
 
 		event.description_ = descView.getText().toString();
 
@@ -107,45 +115,7 @@ public class EventActivity extends Activity {
 		event.setReminder3(reminder3time);
 		
 	}
-	protected void putEventContentValues(ContentValues cv) {
-		cv.put(EventsProvider.EMetaData.EventsMetaData.TIMEZONE, event.getTimezone());
-		cv.put(EventsProvider.EMetaData.EventsMetaData.DESC, event.getDescription());
-		/* It already has been validated */
-		cv.put(EventsProvider.EMetaData.EventsMetaData.TITLE, event.getActualTitle());
-
-		cv.put(EventsProvider.EMetaData.EventsMetaData.ICON, event.icon);
-		cv.put(EventsProvider.EMetaData.EventsMetaData.COLOR, event.getColor());
-
-		cv.put(EventsProvider.EMetaData.EventsMetaData.TYPE, "Should not be such thing as event TYPE! REMOVE THIS FIELD!!!");
-
-		// not mandatory fields
-		cv.put(EventsProvider.EMetaData.EventsMetaData.COUNTRY, event.country);
-		cv.put(EventsProvider.EMetaData.EventsMetaData.ZIP, event.getZip());
-		cv.put(EventsProvider.EMetaData.EventsMetaData.CITY, event.getCity());
-		cv.put(EventsProvider.EMetaData.EventsMetaData.STREET, event.getStreet());
-		cv.put(EventsProvider.EMetaData.EventsMetaData.LOCATION, event.getLocation());
-		cv.put(EventsProvider.EMetaData.EventsMetaData.GO_BY, event.getGo_by());
-		cv.put(EventsProvider.EMetaData.EventsMetaData.TAKE_WITH_YOU, event.getTake_with_you());
-		cv.put(EventsProvider.EMetaData.EventsMetaData.COST, event.getCost());
-		cv.put(EventsProvider.EMetaData.EventsMetaData.ACCOMODATION, event.getAccomodation());
-		
-		
-		if (setOwner) {
-			// owner
-			cv.put(EventsProvider.EMetaData.EventsMetaData.IS_OWNER, 1);
-		}
-		if (setUid) {
-			// user_id
-			cv.put(EventsProvider.EMetaData.EventsMetaData.USER_ID,
-					prefs.getUserId());
-		}
-		// reminders
-		
-		cv.put(EventsProvider.EMetaData.EventsMetaData.REMINDER1, event.getReminder1());
-		cv.put(EventsProvider.EMetaData.EventsMetaData.REMINDER2, event.getReminder2());
-		cv.put(EventsProvider.EMetaData.EventsMetaData.REMINDER3, event.getReminder3());
-		
-	}
+	
 	
 	public String setErrorStr(int testEvent) {
 		switch (testEvent) {

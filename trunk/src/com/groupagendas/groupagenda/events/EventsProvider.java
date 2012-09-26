@@ -26,12 +26,21 @@ public class EventsProvider extends ContentProvider{
 		public static final String EVENTS_TABLE = "events";
 		public static final String EVENT_DAY_INDEX_TABLE = "events_days";
 		
+		private static final String events_on_date = "events_on_date";
+		
+		public static final Uri EVENTS_ON_DATE_URI = Uri.parse("content://" + AUTHORITY + "/" + events_on_date);
+		
+		
 		public static final class EventsIndexesMetaData{
 			public static final Uri CONTENT_URI = Uri.parse("content://" + AUTHORITY + "/" + EVENT_DAY_INDEX_TABLE);	
 			public static final String CONTENT_TYPE = "vnd.android.cursor.dir/vnd.groupagendas.events_days_item";
 			
+			public static final String DAY_COLUMN_FORMAT = "yyyy-MM-dd";
+			public static final String MONTH_COLUMN_FORMAT = "yyyy-MM";
+			
 			public static final String EVENT_ID = "event_id";
-			public static final String DAY = "day_start_timestamp";
+			public static final String DAY = "day";
+			public static final String MONTH = "month";
 			
 		}
 		
@@ -110,7 +119,7 @@ public class EventsProvider extends ContentProvider{
 	
 	static {
 		EM = new HashMap<String, String>();
-		EM.put(EMetaData.EventsMetaData.E_ID, EMetaData.EventsMetaData.E_ID);
+		EM.put(EMetaData.EventsMetaData.E_ID, EMetaData.EVENTS_TABLE+ "." + EMetaData.EventsMetaData.E_ID);
 		EM.put(EMetaData.EventsMetaData.USER_ID, EMetaData.EventsMetaData.USER_ID);
 		
 		EM.put(EMetaData.EventsMetaData.IS_SPORTS_EVENT, EMetaData.EventsMetaData.IS_SPORTS_EVENT);
@@ -179,6 +188,7 @@ public class EventsProvider extends ContentProvider{
 		DEM = new HashMap<String, String>();
 		DEM.put(EMetaData.EventsIndexesMetaData.EVENT_ID, EMetaData.EventsIndexesMetaData.EVENT_ID);
 		DEM.put(EMetaData.EventsIndexesMetaData.DAY, EMetaData.EventsIndexesMetaData.DAY);
+		DEM.put(EMetaData.EventsIndexesMetaData.MONTH, EMetaData.EventsIndexesMetaData.MONTH);
 	}
 	
 	
@@ -190,11 +200,15 @@ public class EventsProvider extends ContentProvider{
 	private static final int ONE_EVENTS = 1;
 	private static final int DAY_INDEX = 2;
 
+	private static final int EVENTS_ON_DATE = 3;
+	private static final int EVENTS_BETWEEN_DATES = 4;
+
 	static {
 		mUriMatcher = new UriMatcher(UriMatcher.NO_MATCH);
 		mUriMatcher.addURI(EMetaData.AUTHORITY, EMetaData.EVENTS_TABLE, ALL_EVENTS);
 		mUriMatcher.addURI(EMetaData.AUTHORITY, EMetaData.EVENTS_TABLE+"/#", ONE_EVENTS);
 		mUriMatcher.addURI(EMetaData.AUTHORITY, EMetaData.EVENT_DAY_INDEX_TABLE, DAY_INDEX);
+		mUriMatcher.addURI(EMetaData.AUTHORITY, EMetaData.events_on_date, EVENTS_ON_DATE);
 	}
 	// END UriMatcher
 	
@@ -215,6 +229,8 @@ public class EventsProvider extends ContentProvider{
 		return (mOpenHelper == null) ? false : true;
 	}
 	
+	
+	
 	@Override
 	public Cursor query(Uri uri, String[] projection, String selection, String[] selectionArgs, String sortOrder) {
 		String orderBy;
@@ -230,6 +246,18 @@ public class EventsProvider extends ContentProvider{
 			qb.setProjectionMap(EM);
 			qb.appendWhere(EMetaData.EventsMetaData.E_ID + "=" + uri.getPathSegments().get(1));
 			orderBy = (TextUtils.isEmpty(sortOrder)) ? EMetaData.EventsMetaData.DEFAULT_SORT_ORDER : sortOrder;
+			break;
+			
+		case EVENTS_ON_DATE:
+			qb.setTables(EMetaData.EVENT_DAY_INDEX_TABLE + "," +  EMetaData.EVENTS_TABLE);
+			qb.appendWhere(EMetaData.EVENTS_TABLE + "." + EMetaData.EventsMetaData.E_ID
+					+"="
+					+EMetaData.EVENT_DAY_INDEX_TABLE + "." + EMetaData.EventsIndexesMetaData.EVENT_ID);
+//			qb.setProjectionMap(EM);
+			orderBy = (TextUtils.isEmpty(sortOrder)) ? EMetaData.EventsMetaData.DEFAULT_SORT_ORDER : sortOrder;
+			break;
+		case EVENTS_BETWEEN_DATES:
+			orderBy = null;
 			break;
 		default:
 			throw new IllegalArgumentException("Unknow URI " + uri);
@@ -314,7 +342,7 @@ public class EventsProvider extends ContentProvider{
 			//TODO add is all day column
 			String query =	"CREATE TABLE "
 				+EMetaData.EVENTS_TABLE+" ("
-				+EMetaData.EventsMetaData.E_ID+" INTEGER PRIMARY KEY,"
+				+EMetaData.EventsMetaData.E_ID+" INTEGER,"
 				+EMetaData.EventsMetaData.USER_ID+" INTEGER ,"
 				
 				+EMetaData.EventsMetaData.IS_SPORTS_EVENT+" TEXT ,"
@@ -370,7 +398,8 @@ public class EventsProvider extends ContentProvider{
 				+EMetaData.EventsMetaData.ASSIGNED_CONTACTS+" TEXT ,"
 				+EMetaData.EventsMetaData.ASSIGNED_GROUPS+" TEXT ,"
 				+EMetaData.EventsMetaData.INVITED+" TEXT ,"
-				+EMetaData.EventsMetaData.NEED_UPDATE+" INTEGER DEFAULT 0"
+				+EMetaData.EventsMetaData.NEED_UPDATE+" INTEGER DEFAULT 0, "
+				+ "PRIMARY KEY (" + EMetaData.EventsMetaData.E_ID +") ON CONFLICT REPLACE"
 				+")";
 			db.execSQL(query);
 			
@@ -378,8 +407,9 @@ public class EventsProvider extends ContentProvider{
 					+EMetaData.EVENT_DAY_INDEX_TABLE
 					+ " ("
 					+ EMetaData.EventsIndexesMetaData.EVENT_ID + " TEXT ,"
-					+ EMetaData.EventsIndexesMetaData.DAY + " INTEGER , "
-					+ "PRIMARY KEY (" + EMetaData.EventsIndexesMetaData.EVENT_ID + ", " + EMetaData.EventsIndexesMetaData.DAY + ") ON CONFLICT IGNORE"
+					+ EMetaData.EventsIndexesMetaData.DAY + " TEXT , "
+					+ EMetaData.EventsIndexesMetaData.MONTH + " TEXT , "
+					+ "PRIMARY KEY (" + EMetaData.EventsIndexesMetaData.EVENT_ID + ", " + EMetaData.EventsIndexesMetaData.DAY + ") ON CONFLICT REPLACE"
 					+")";
 			db.execSQL(query);
 		}

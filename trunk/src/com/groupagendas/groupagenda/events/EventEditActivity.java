@@ -986,13 +986,13 @@ public class EventEditActivity extends EventActivity {
 			boolean success = false;
 //			boolean check = true;
 //			String temp = "";
-			ContentValues cv = new ContentValues();
+			
 			setEventData(event);
 			int testEvent = event.isValid();
 			if (testEvent == 0) {
-				EventEditActivity.super.putEventContentValues(cv);
-				Uri uri = Uri.parse(EventsProvider.EMetaData.EventsMetaData.CONTENT_URI + "/" + event.event_id);
-				getContentResolver().update(uri, cv, null, null);
+				dm.updateEventInLocalDb (event);
+//				Uri uri = Uri.parse(EventsProvider.EMetaData.EventsMetaData.CONTENT_URI + "/" + event.event_id);
+//				getContentResolver().update(uri, cv, null, null);
 				success = dm.editEvent(event);
 				try {
 					dm.updateEventByIdFromRemoteDb(event.event_id);
@@ -1003,9 +1003,10 @@ public class EventEditActivity extends EventActivity {
 				}
 
 				if (!success) {
-					cv = new ContentValues();
-					cv.put(EventsProvider.EMetaData.EventsMetaData.NEED_UPDATE, 4);
-					getContentResolver().update(uri, cv, null, null);
+					//TODO lines with status 4 should be uptdated
+//					cv = new ContentValues();
+//					cv.put(EventsProvider.EMetaData.EventsMetaData.NEED_UPDATE, 4);
+//					getContentResolver().update(uri, cv, null, null);
 				}
 				return true;
 			}else {
