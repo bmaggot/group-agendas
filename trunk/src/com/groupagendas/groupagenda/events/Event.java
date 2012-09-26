@@ -5,15 +5,10 @@ import java.util.ArrayList;
 import java.util.Calendar;
 
 import android.content.Context;
+import android.database.Cursor;
 
 import com.groupagendas.groupagenda.data.DataManagement;
 import com.groupagendas.groupagenda.interfaces.Colored;
-import com.groupagendas.groupagenda.utils.Utils;
-
-import android.database.Cursor;
-
-
-
 
 public class Event extends Object implements Colored {
 private static final String DEFAULT_TITLE = "";
@@ -29,7 +24,7 @@ private static final int REMINDER_3 = 3;
 private final Cursor databaseRow;
 
 //	TODO set all default fields and getters
-	public static String DEFAULT_COLOR = "21C0DB";
+	public static final String DEFAULT_COLOR = "21C0DB";
 	
 	public int event_id;
 	public int user_id;
@@ -154,7 +149,7 @@ private final Cursor databaseRow;
 	public void setColor(String color) {
 		this.color = DEFAULT_COLOR;
 		
-		if (color != null)
+		if (color != null && (color.matches("[0-9]{6,8}")))
 			if (!color.equalsIgnoreCase("null")) this.color = color;
 		
 	}
