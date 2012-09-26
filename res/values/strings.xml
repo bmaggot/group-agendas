@@ -7,6 +7,7 @@
     <string name="email_address">E-mail address</string>
     <string name="password">Password</string>
     <string name="login">Log in</string>
+    <string name="stay_logged_in">Stay logged in</string>
     <string name="contacts">Contacts</string>
     <string name="contact">Contact</string>
     <string name="groups">Groups</string>
@@ -240,5 +241,5 @@
     <string name="alarm_sleep">Sleep</string>
     <string name="alarm_dismiss">Dismiss</string>
     <string name="alarm_dismiss_all_alarms">You gave dismissed all alarms in the past!</string>
-    
+    <string name="login_ga_logo_placeholder">GroupAgendas logo</string>    
 </resources>
