@@ -39,7 +39,7 @@ public class AlarmReceiver extends BroadcastReceiver {
 		am.set(AlarmManager.RTC_WAKEUP, time, pi);
 		Calendar tmp = Calendar.getInstance();
 		tmp.setTimeInMillis(time);
-		System.out.println(event.title + " - alarm set:" + tmp.getTime() + " id: " + event.event_id + alarmNumber);
+		
 	}
 	
     public void CancelAlarm(Context context, int alarmId)
