@@ -40,6 +40,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.groupagendas.groupagenda.R;
+import com.groupagendas.groupagenda.account.Account;
 import com.groupagendas.groupagenda.contacts.Contact;
 import com.groupagendas.groupagenda.contacts.ContactsActivity;
 import com.groupagendas.groupagenda.data.CalendarSettings;
@@ -86,6 +87,7 @@ public class NewEventActivity extends EventActivity {
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+		Account account = new Account();
 
 		// these fields indicate that we will save this user as owner of event
 		// and save his uid
@@ -254,7 +256,7 @@ public class NewEventActivity extends EventActivity {
 
 		// String curentCountry =
 		// dm.getmContext().getResources().getConfiguration().locale.getISO3Country();
-		Locale newLocale = new Locale(dm.getAccount().language, dm.getAccount().country);
+		Locale newLocale = new Locale(account.getLanguage(), account.getCountry());
 		String curentCountry = newLocale.getISO3Country();
 		int i = 0;
 		for (String tmpCountry : countryArray) {
@@ -614,8 +616,6 @@ public class NewEventActivity extends EventActivity {
 		ArrayList<TemplatesDialogData> dialogData = new ArrayList<TemplatesDialogData>();
 		TemplatesDialogData temp;
 		TemplatesAdapter dialogDataAdapter = null;
-
-		// getTemplates();
 
 		cur = Data.getmContext().getContentResolver().query(TemplatesMetaData.CONTENT_URI, columns, null, null, TemplatesMetaData.DEFAULT_SORT_ORDER);
 
@@ -1014,18 +1014,6 @@ public class NewEventActivity extends EventActivity {
 			int testEvent = event.isValid();
 
 			if (testEvent == 0) {
-				if (reminder1time != null && reminder1time.after(Calendar.getInstance())) {
-					event.reminder1 = dtUtils.formatDateTimeToDefault(reminder1time.getTime());
-				}
-
-				if (reminder2time != null && reminder2time.after(Calendar.getInstance()) && !reminder2time.equals(reminder1time)) {
-					event.reminder2 = dtUtils.formatDateTimeToDefault(reminder2time.getTime());
-				}
-
-				if (reminder3time != null && reminder3time.after(Calendar.getInstance()) && !reminder3time.equals(reminder1time)
-						&& !reminder3time.equals(reminder2time)) {
-					event.reminder3 = dtUtils.formatDateTimeToDefault(reminder3time.getTime());
-				}
 
 				Integer templateId = dm.uploadTemplateToRemoteDb(event);
 				dm.uploadTemplateToLocalDb(event, templateId);
@@ -1110,13 +1098,13 @@ public class NewEventActivity extends EventActivity {
 			view.setText(data.getActualTitle());
 
 		/* Set event's start & end time */
-		// view = (EditText) findViewById(R.id.startView);
-		// if (view != null)
-		// view.setText(data.getStartCalendar());
+		 view = (EditText) findViewById(R.id.startView);
+		 if (view != null)
+		 view.setText(data.getStartCalendar().toString());
 
-		// view = (EditText) findViewById(R.id.endView);
-		// if (view != null)
-		// view.setText(data.getStartCalendar());
+		 view = (EditText) findViewById(R.id.endView);
+		 if (view != null)
+		 view.setText(data.getEndCalendar().toString());
 
 		/* Set event's description */
 		view = (EditText) findViewById(R.id.descView);
