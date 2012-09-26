@@ -2233,7 +2233,7 @@ public class DataManagement {
 
 							event = createEventFromJSON(e);
 							if (event != null){
-								this.insertEventToLocalDB(event);
+//								this.insertEventToLocalDB(event);
 								events.add(event);
 							}
 						}
@@ -2283,7 +2283,7 @@ public class DataManagement {
 		} catch (JSONException e1) {
 			Reporter.reportError(this.getClass().toString(), Thread.currentThread().getStackTrace()[2].getMethodName()
 					.toString(), e1.getMessage());
-			return null;
+//			return null;
 		}
 		
 		try {
@@ -2478,12 +2478,14 @@ public class DataManagement {
 			Reporter.reportError(this.getClass().toString(), Thread.currentThread().getStackTrace()[2].getMethodName()
 					.toString(), e1.getMessage());
 		}
+		
 		try {
 			event.setAttendant_2_count(e.getInt("attendant_2_count"));
 		} catch (JSONException e1) {
 			Reporter.reportError(this.getClass().toString(), Thread.currentThread().getStackTrace()[2].getMethodName()
 					.toString(), e1.getMessage());
 		}
+		
 		try {
 			event.setAttendant_4_count(e.getInt("attendant_4_count"));
 		} catch (JSONException e1) {
