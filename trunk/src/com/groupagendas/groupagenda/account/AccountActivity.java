@@ -253,7 +253,7 @@ public class AccountActivity extends Activity implements OnClickListener{
 			zipView.setText(account.getZip());
 		
 		// image
-		if (account.getImage()){
+		if (account.getImage() && account.image_bytes != null){
 			accountImage.setImageBitmap(BitmapFactory.decodeByteArray(account.image_bytes, 0, account.image_bytes.length));
 		}
 	}
