@@ -52,9 +52,9 @@ public class CalendarSettings {
 	public static void setUsing_AM_PM(boolean bool) {
 		Account acc = new Account();
 		if (bool) {
-			acc.setSetting_ampm("" + 1);
+			acc.setSetting_ampm(1);
 		} else {
-			acc.setSetting_ampm("" + 0);
+			acc.setSetting_ampm(0);
 		}
 	}
 

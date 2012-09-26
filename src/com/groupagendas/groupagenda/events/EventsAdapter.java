@@ -59,15 +59,15 @@ public class EventsAdapter extends BaseAdapter implements Filterable{
 		
 		final Event event = events.get(position);
 		
-		holder.title.setText(event.title);
+		holder.title.setText(event.getActualTitle());
 		holder.date.setText(Utils.formatCalendar(event.getStartCalendar()));
 		// type
-		StringBuilder sb = new StringBuilder(event.type).append("_type");
+		StringBuilder sb = new StringBuilder(event.getType()).append("_type");
 		if(mContext.getResources().getIdentifier(sb.toString(), "string", mContext.getPackageName()) != 0){
 			holder.type.setText(mContext.getResources().getIdentifier(sb.toString(), "string", mContext.getPackageName()));
 		}
 		
-		if(event.is_owner){
+		if(event.is_owner()){
 			holder.creator.setText(mContext.getString(R.string.you));
 		}else{
 			holder.creator.setText(event.creator_fullname);
@@ -75,7 +75,7 @@ public class EventsAdapter extends BaseAdapter implements Filterable{
 		
 		// status
 		//if(event.type.equals("t") || event.type.equals("r") || event.type.equals("o")){
-			switch (event.status) {
+			switch (event.getStatus()) {
 			case 0:
 				holder.status.setText(mContext.getString(R.string.status_0));
 				holder.button_yes.setVisibility(View.VISIBLE);
@@ -110,13 +110,13 @@ public class EventsAdapter extends BaseAdapter implements Filterable{
 		holder.button_yes.setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View arg0) {
-				boolean success = dm.changeEventStatus(event.event_id, "1");
+				boolean success = dm.changeEventStatus(event.getEvent_id(), "1");
 				holder.button_yes.setVisibility(View.INVISIBLE);
 				holder.button_maybe.setVisibility(View.VISIBLE);
 				holder.button_no.setVisibility(View.VISIBLE);
 				holder.status.setText(mContext.getString(R.string.status_1));
-				editDb(event.event_id, 1, success);
-				event.status = 1;
+				editDb(event.getEvent_id(), 1, success);
+				event.setStatus(1);
 				notifyDataSetChanged();
 			}
 		});
@@ -124,13 +124,13 @@ public class EventsAdapter extends BaseAdapter implements Filterable{
 		holder.button_maybe.setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View arg0) {
-				boolean success = dm.changeEventStatus(event.event_id, "2");
+				boolean success = dm.changeEventStatus(event.getEvent_id(), "2");
 				holder.button_yes.setVisibility(View.VISIBLE);
 				holder.button_maybe.setVisibility(View.INVISIBLE);
 				holder.button_no.setVisibility(View.VISIBLE);
 				holder.status.setText(mContext.getString(R.string.status_2));
-				editDb(event.event_id, 2, success);
-				event.status = 2;
+				editDb(event.getEvent_id(), 2, success);
+				event.setStatus(2);
 				notifyDataSetChanged();
 			}
 		});
@@ -138,13 +138,13 @@ public class EventsAdapter extends BaseAdapter implements Filterable{
 		holder.button_no.setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View arg0) {
-				boolean success = dm.changeEventStatus(event.event_id, "0");
+				boolean success = dm.changeEventStatus(event.getEvent_id(), "0");
 				holder.button_yes.setVisibility(View.VISIBLE);
 				holder.button_maybe.setVisibility(View.VISIBLE);
 				holder.button_no.setVisibility(View.INVISIBLE);
 				holder.status.setText(mContext.getString(R.string.status_0));
-				editDb(event.event_id, 0, success);
-				event.status = 0;
+				editDb(event.getEvent_id(), 0, success);
+				event.setStatus(0);
 				notifyDataSetChanged();
 			}
 		});
