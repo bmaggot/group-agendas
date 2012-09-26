@@ -49,6 +49,7 @@ import android.util.Log;
 import com.bog.calendar.app.model.CEvent;
 import com.bog.calendar.app.model.EventsHelper;
 import com.google.android.c2dm.C2DMessaging;
+import com.google.android.gcm.GCMRegistrar;
 import com.groupagendas.groupagenda.NavbarActivity;
 import com.groupagendas.groupagenda.R;
 import com.groupagendas.groupagenda.account.Account;
@@ -90,7 +91,7 @@ public class DataManagement {
 	private static final String GET_EVENTS_FROM_REMOTE_DB_URL = "mobile/events_list";
 	private static final String TOKEN = "token";
 	private static final String CATEGORY = "category";
-	private static final String PROJECT_ID = "102163820835";
+	public static final String PROJECT_ID = "102163820835";
 
 	private DataManagement(Context c) {
 		Data.setPrefs(new Prefs(c));
@@ -852,8 +853,10 @@ public class DataManagement {
 	public void registerPhone() {
 		try {
 			getImei(Data.getmContext());
-			Data.setPushId(C2DMessaging.getRegistrationId(Data.getmContext()));
-			if (Data.getPushId() == "") {
+			GCMRegistrar.checkDevice(this.getContext());
+			GCMRegistrar.checkManifest(this.getContext());
+			Data.setPushId(GCMRegistrar.getRegistrationId(this.getContext()));
+			if (Data.getPushId().equals("")) {
 
 				C2DMessaging.register(Data.getmContext(), PROJECT_ID);
 			} else {
