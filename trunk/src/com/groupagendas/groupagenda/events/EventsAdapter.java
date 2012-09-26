@@ -60,8 +60,13 @@ public class EventsAdapter extends BaseAdapter implements Filterable{
 		final Event event = events.get(position);
 		
 		holder.title.setText(event.getActualTitle());
-		holder.date.setText(Utils.formatCalendar(event.getStartCalendar()));
+
+		if (event.getStartCalendar()!= null) {
+			String temp = Utils.formatCalendar(event.getStartCalendar());
+			holder.date.setText(temp);
+		}
 		// type
+		
 		StringBuilder sb = new StringBuilder(event.getType()).append("_type");
 		if(mContext.getResources().getIdentifier(sb.toString(), "string", mContext.getPackageName()) != 0){
 			holder.type.setText(mContext.getResources().getIdentifier(sb.toString(), "string", mContext.getPackageName()));
