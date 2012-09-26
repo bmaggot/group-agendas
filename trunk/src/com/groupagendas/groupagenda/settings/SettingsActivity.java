@@ -2,6 +2,8 @@ package com.groupagendas.groupagenda.settings;
 
 import android.app.ListActivity;
 import android.content.Intent;
+import android.content.SharedPreferences;
+import android.content.SharedPreferences.Editor;
 import android.net.Uri;
 import android.os.Bundle;
 import android.view.View;
@@ -73,6 +75,14 @@ public class SettingsActivity extends ListActivity{
 	
 	public void logout(View v){
 		Prefs prefs = new Prefs(this);
+		SharedPreferences sprefs = getSharedPreferences("LATEST_CREDENTIALS", MODE_PRIVATE);
+		Editor prefEditor = sprefs.edit();
+		
+		if (sprefs.getBoolean("stay_logged_in", false)) {
+			prefEditor.putBoolean("stay_logged_in", false);
+			prefEditor.commit();
+		}
+		
 		prefs.setLogged(false);
 		prefs.save();
 		Intent intent = new Intent(SettingsActivity.this, GroupAgendasActivity.class);
