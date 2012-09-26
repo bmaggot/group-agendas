@@ -16,11 +16,14 @@
 
 package com.google.android.c2dm;
 
+import com.google.android.gcm.GCMConstants;
+
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
+import com.google.android.gcm.GCMRegistrar;
 
 /**
  * Utilities for device registration.
@@ -47,11 +50,11 @@ public class C2DMessaging {
      */
     public static void register(Context context,
             String senderId) {
-        Intent registrationIntent = new Intent(REQUEST_REGISTRATION_INTENT);
+        Intent registrationIntent = new Intent(GCMConstants.INTENT_TO_GCM_REGISTRATION);
         registrationIntent.setPackage(GSF_PACKAGE);
-        registrationIntent.putExtra(EXTRA_APPLICATION_PENDING_INTENT,
+        registrationIntent.putExtra(GCMConstants.EXTRA_APPLICATION_PENDING_INTENT,
                 PendingIntent.getBroadcast(context, 0, new Intent(), 0));
-        registrationIntent.putExtra(EXTRA_SENDER, senderId);
+        registrationIntent.putExtra(GCMConstants.EXTRA_SENDER, senderId);
         context.startService(registrationIntent);
         // TODO: if intent not found, notification on need to have GSF
     }

@@ -19,7 +19,7 @@ import com.groupagendas.groupagenda.utils.AgendaUtils;
 public class C2DMReceiver extends C2DMBaseReceiver {
 	private static boolean isChatMessage = false;
 	public C2DMReceiver() {
-		super("group.agenda.c2dm@gmail.com");
+		super(DataManagement.PROJECT_ID);
 	}
 
 	@Override
