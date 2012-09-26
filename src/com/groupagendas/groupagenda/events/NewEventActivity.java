@@ -755,15 +755,13 @@ public class NewEventActivity extends EventActivity {
 
 			int testEvent = event.isValid();
 			if (testEvent == 0) {
-
-				NewEventActivity.super.putEventContentValues(cv);
 				success = dm.createEvent(event);
 
 				if (!success) {
-					cv.put(EventsProvider.EMetaData.EventsMetaData.NEED_UPDATE, 2);
+					event.setNeedUpdate(2); //  TOODO find out what it means
 				}
 
-				getContentResolver().insert(EventsProvider.EMetaData.EventsMetaData.CONTENT_URI, cv);
+				dm.insertEventToLocalDB(event);
 				dm.putEventIntoTreeMap(event);
 				Data.selectedContacts.clear();
 				return true;
@@ -1066,10 +1064,10 @@ public class NewEventActivity extends EventActivity {
 	 * Update user interface input fields.
 	 * 
 	 * Update user interface input fields with submitted values. Currently event timezone and
-	 * country, startÐend time, reminder and alarm field values aren't updated.
+	 * country, startï¿½end time, reminder and alarm field values aren't updated.
 	 * 
 	 * @author meska.lt@gmail.com
-	 * @param data Ð Event object with values set.
+	 * @param data ï¿½ Event object with values set.
 	 * @version 1.0
 	 * @since 2012-09-24
 	 */
