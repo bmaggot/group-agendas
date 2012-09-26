@@ -90,6 +90,7 @@ public class DataManagement {
 	private static final String GET_EVENTS_FROM_REMOTE_DB_URL = "mobile/events_list";
 	private static final String TOKEN = "token";
 	private static final String CATEGORY = "category";
+	private static final String PROJECT_ID = "102163820835";
 
 	private DataManagement(Context c) {
 		Data.setPrefs(new Prefs(c));
@@ -854,7 +855,7 @@ public class DataManagement {
 			Data.setPushId(C2DMessaging.getRegistrationId(Data.getmContext()));
 			if (Data.getPushId() == "") {
 
-				C2DMessaging.register(Data.getmContext(), "group.agenda.c2dm@gmail.com");
+				C2DMessaging.register(Data.getmContext(), PROJECT_ID);
 			} else {
 				sendPushIdToServer(Data.getmContext(), Data.getPushId());
 			}
