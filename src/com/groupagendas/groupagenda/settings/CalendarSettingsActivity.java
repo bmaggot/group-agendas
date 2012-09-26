@@ -99,6 +99,8 @@ public class CalendarSettingsActivity extends Activity {
 		@Override
 		protected Boolean doInBackground(Void... params) {
 			boolean success = true;
+			
+			Account account = new Account();
 
 			int am_pm = am_pmToggle.isChecked() ? 1 : 0;
 			String am_pmStr = am_pmToggle.isChecked() ? "true" : "false";
@@ -120,7 +122,7 @@ public class CalendarSettingsActivity extends Activity {
 			//TODO this is temporary workaround for current account update. We should not store data in RAM, but get data from sqlite via providers when needed.
 			CalendarSettings.setDateFormat(dateformat);
 			CalendarSettings.setUsing_AM_PM(am_pmToggle.isChecked());
-			CalendarSettings.setDefaultView(defaultview);
+			account.setSetting_default_view(defaultview);
 
 			if (!success) {
 				values.put(AccountProvider.AMetaData.AccountMetaData.NEED_UPDATE, 2);
@@ -140,21 +142,21 @@ public class CalendarSettingsActivity extends Activity {
 	}
 
 	private void feelFields(Account account) {
-
-		if (account.setting_ampm == 1) {
+		
+		if (account.getSetting_ampm() == 1) {
 			am_pmToggle.setChecked(true);
 		} else {
 			am_pmToggle.setChecked(false);
 		}
 
-		if (account.setting_default_view != null && !account.setting_default_view.equals("null")) {
-			int pos = Utils.getArrayIndex(defaultviewArray, account.setting_default_view);
+		if (!account.getSetting_default_view().equals("null")) {
+			int pos = Utils.getArrayIndex(defaultviewArray, account.getSetting_default_view());
 			defaultviewSpinner.setSelection(pos);
-			prefs.setValue(AccountProvider.AMetaData.AccountMetaData.SETTING_DEFAULT_VIEW, account.setting_default_view);
+			prefs.setValue(AccountProvider.AMetaData.AccountMetaData.SETTING_DEFAULT_VIEW, account.getSetting_default_view());
 		}
 
-		if (account.setting_date_format != null && !account.setting_date_format.equals("null")) {
-			int pos = Utils.getArrayIndex(dateformatArray, account.setting_date_format);
+		if (!account.getSetting_date_format().equals("null")) {
+			int pos = Utils.getArrayIndex(dateformatArray, account.getSetting_date_format());
 			dateformatSpinner.setSelection(pos);
 		}
 
@@ -173,13 +175,12 @@ public class CalendarSettingsActivity extends Activity {
 
 		@Override
 		protected Account doInBackground(Void... args) {
-			return dm.getAccountFromLocalDb();
+			return (new Account());
 		}
 
 		@Override
 		protected void onPostExecute(Account account) {
-			if (account != null)
-				feelFields(account);
+			feelFields(new Account());
 			new GetAccountTask().execute();
 			super.onPostExecute(account);
 		}

@@ -38,6 +38,7 @@ import android.app.Activity;
 import android.content.ContentResolver;
 import android.content.ContentValues;
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.AsyncTask;
@@ -51,6 +52,7 @@ import com.google.android.c2dm.C2DMessaging;
 import com.groupagendas.groupagenda.NavbarActivity;
 import com.groupagendas.groupagenda.R;
 import com.groupagendas.groupagenda.account.Account;
+import com.groupagendas.groupagenda.account.Account.AccountMetaData;
 import com.groupagendas.groupagenda.account.AccountProvider;
 import com.groupagendas.groupagenda.address.Address;
 import com.groupagendas.groupagenda.address.AddressProvider.AMetaData.AddressesMetaData;
@@ -109,7 +111,8 @@ public class DataManagement {
 		return Data.get_instance();
 	}
 
-	public boolean updateAccount(Account account, boolean removeImage) {
+	public boolean updateAccount(boolean removeImage) {
+		Account account = new Account();
 		boolean success = false;
 
 		try {
@@ -119,21 +122,21 @@ public class DataManagement {
 			MultipartEntity reqEntity = new MultipartEntity(HttpMultipartMode.BROWSER_COMPATIBLE);
 			reqEntity.addPart(TOKEN, new StringBody(Data.getToken()));
 
-			reqEntity.addPart("lastname", new StringBody(account.fullname.replace(account.name + " ", "")));
-			reqEntity.addPart("name", new StringBody(account.name));
+			reqEntity.addPart(AccountMetaData.LASTNAME, new StringBody(account.getLastname()));
+			reqEntity.addPart(AccountMetaData.NAME, new StringBody(account.getName()));
 
-			reqEntity.addPart("birthdate", new StringBody(account.birthdate));
-			reqEntity.addPart("sex", new StringBody(account.sex));
+			reqEntity.addPart("birthdate", new StringBody(account.getBirthdate().toString()));
+			reqEntity.addPart("sex", new StringBody(account.getSex()));
 
-			reqEntity.addPart("country", new StringBody(account.country));
-			reqEntity.addPart("city", new StringBody(account.city));
-			reqEntity.addPart("street", new StringBody(account.street));
-			reqEntity.addPart("zip", new StringBody(account.zip));
+			reqEntity.addPart("country", new StringBody(account.getCountry()));
+			reqEntity.addPart("city", new StringBody(account.getCity()));
+			reqEntity.addPart("street", new StringBody(account.getStreet()));
+			reqEntity.addPart("zip", new StringBody(account.getZip()));
 
-			reqEntity.addPart("timezone", new StringBody(account.timezone));
-			reqEntity.addPart("phone1", new StringBody(account.phone1));
-			reqEntity.addPart("phone2", new StringBody(account.phone2));
-			reqEntity.addPart("phone3", new StringBody(account.phone3));
+			reqEntity.addPart("timezone", new StringBody(account.getTimezone()));
+			reqEntity.addPart("phone1", new StringBody(account.getPhone1()));
+			reqEntity.addPart("phone2", new StringBody(account.getPhone2()));
+			reqEntity.addPart("phone3", new StringBody(account.getPhone3()));
 
 			reqEntity.addPart("language", new StringBody("en"));
 
@@ -233,268 +236,224 @@ public class DataManagement {
 						JSONObject profile = object.getJSONObject("profile");
 						u = new Account();
 
-						ContentValues cv = new ContentValues();
-
 						try {
-							u.user_id = profile.getInt("user_id");
-							cv.put(AccountProvider.AMetaData.AccountMetaData.A_ID, u.user_id);
+							u.setUser_id(profile.getInt(AccountMetaData.U_ID));
 						} catch (JSONException e) {
 							Reporter.reportError(this.getClass().toString(), Thread.currentThread().getStackTrace()[2].getMethodName()
 									.toString(), e.getMessage());
 						}
 
 						try {
-							u.name = profile.getString("name");
-							cv.put(AccountProvider.AMetaData.AccountMetaData.NAME, u.name);
+							u.setName(profile.getString(AccountMetaData.NAME));
 						} catch (JSONException e) {
 							Reporter.reportError(this.getClass().toString(), Thread.currentThread().getStackTrace()[2].getMethodName()
 									.toString(), e.getMessage());
 						}
 						try {
-							u.lastname = profile.getString("lastname");
-							cv.put(AccountProvider.AMetaData.AccountMetaData.LASTNAME, u.lastname);
+							u.setLastname(profile.getString(AccountMetaData.LASTNAME));
 						} catch (JSONException e) {
 							Reporter.reportError(this.getClass().toString(), Thread.currentThread().getStackTrace()[2].getMethodName()
 									.toString(), e.getMessage());
 						}
 						try {
-							u.fullname = profile.getString("fullname");
-							cv.put(AccountProvider.AMetaData.AccountMetaData.FULLNAME, u.fullname);
+							u.setFullname(profile.getString(AccountMetaData.FULLNAME));
 						} catch (JSONException e) {
 							Reporter.reportError(this.getClass().toString(), Thread.currentThread().getStackTrace()[2].getMethodName()
 									.toString(), e.getMessage());
 						}
 
 						try {
-							u.birthdate = profile.getString("birthdate");
-							cv.put(AccountProvider.AMetaData.AccountMetaData.BIRTHDATE, u.birthdate);
+							u.setBirthdate(Utils.createCalendar(profile.getLong(AccountMetaData.BIRTHDATE),
+									profile.getString(AccountMetaData.TIMEZONE)));
 						} catch (JSONException e) {
 							Reporter.reportError(this.getClass().toString(), Thread.currentThread().getStackTrace()[2].getMethodName()
 									.toString(), e.getMessage());
 						}
 						try {
-							u.sex = profile.getString("sex");
-							cv.put(AccountProvider.AMetaData.AccountMetaData.SEX, u.sex);
+							u.setSex(profile.getString(AccountMetaData.SEX));
 						} catch (JSONException e) {
 							Reporter.reportError(this.getClass().toString(), Thread.currentThread().getStackTrace()[2].getMethodName()
 									.toString(), e.getMessage());
 						}
 
 						try {
-							u.email = profile.getString("email");
-							cv.put(AccountProvider.AMetaData.AccountMetaData.EMAIL, u.email);
+							u.setEmail(profile.getString(AccountMetaData.EMAIL), 0);
 						} catch (JSONException e) {
 							Reporter.reportError(this.getClass().toString(), Thread.currentThread().getStackTrace()[2].getMethodName()
 									.toString(), e.getMessage());
 						}
 						try {
-							u.email2 = profile.getString("email2");
-							cv.put(AccountProvider.AMetaData.AccountMetaData.EMAIL2, u.email2);
+							u.setEmail(profile.getString(AccountMetaData.EMAIL2), 2);
 						} catch (JSONException e) {
 							Reporter.reportError(this.getClass().toString(), Thread.currentThread().getStackTrace()[2].getMethodName()
 									.toString(), e.getMessage());
 						}
 						try {
-							u.email3 = profile.getString("email3");
-							cv.put(AccountProvider.AMetaData.AccountMetaData.EMAIL3, u.email3);
+							u.setEmail(profile.getString(AccountMetaData.EMAIL3), 3);
 						} catch (JSONException e) {
 							Reporter.reportError(this.getClass().toString(), Thread.currentThread().getStackTrace()[2].getMethodName()
 									.toString(), e.getMessage());
 						}
 						try {
-							u.email4 = profile.getString("email4");
-							cv.put(AccountProvider.AMetaData.AccountMetaData.EMAIL4, u.email4);
+							u.setEmail(profile.getString(AccountMetaData.EMAIL4), 4);
 						} catch (JSONException e) {
 							Reporter.reportError(this.getClass().toString(), Thread.currentThread().getStackTrace()[2].getMethodName()
 									.toString(), e.getMessage());
 						}
 						try {
-							u.phone1 = profile.getString("phone1");
-							cv.put(AccountProvider.AMetaData.AccountMetaData.PHONE1, u.phone1);
+							u.setPhone(profile.getString(AccountMetaData.PHONE1), 1);
 						} catch (JSONException e) {
 							Reporter.reportError(this.getClass().toString(), Thread.currentThread().getStackTrace()[2].getMethodName()
 									.toString(), e.getMessage());
 						}
 						try {
-							u.phone2 = profile.getString("phone2");
-							cv.put(AccountProvider.AMetaData.AccountMetaData.PHONE2, u.phone2);
+							u.setPhone(profile.getString(AccountMetaData.PHONE2), 2);
 						} catch (JSONException e) {
 							Reporter.reportError(this.getClass().toString(), Thread.currentThread().getStackTrace()[2].getMethodName()
 									.toString(), e.getMessage());
 						}
 						try {
-							u.phone3 = profile.getString("phone3");
-							cv.put(AccountProvider.AMetaData.AccountMetaData.PHONE3, u.phone3);
+							u.setPhone(profile.getString(AccountMetaData.PHONE3), 3);
 						} catch (JSONException e) {
 							Reporter.reportError(this.getClass().toString(), Thread.currentThread().getStackTrace()[2].getMethodName()
 									.toString(), e.getMessage());
 						}
 
 						try {
-							u.image = profile.getBoolean("image");
-							cv.put(AccountProvider.AMetaData.AccountMetaData.IMAGE, u.image);
+							u.setImage(profile.getBoolean(AccountMetaData.IMAGE));
 						} catch (JSONException e) {
 							Reporter.reportError(this.getClass().toString(), Thread.currentThread().getStackTrace()[2].getMethodName()
 									.toString(), e.getMessage());
 						}
 						try {
-							u.image_url = profile.getString("image_url");
-							cv.put(AccountProvider.AMetaData.AccountMetaData.IMAGE_URL, u.image_url);
-
-							u.image_bytes = imageToBytes(u.image_url);
-							cv.put(AccountProvider.AMetaData.AccountMetaData.IMAGE_BYTES, u.image_bytes);
+							u.setImage_url(profile.getString(AccountMetaData.IMAGE_URL));
+							u.image_bytes = imageToBytes(u.getImage_url());
 						} catch (JSONException e) {
 							Reporter.reportError(this.getClass().toString(), Thread.currentThread().getStackTrace()[2].getMethodName()
 									.toString(), e.getMessage());
 						}
 						try {
-							u.image_thumb_url = profile.getString("image_thumb_url");
-							cv.put(AccountProvider.AMetaData.AccountMetaData.IMAGE_THUMB_URL, u.image_thumb_url);
+							u.setImage_thumb_url(profile.getString(AccountMetaData.IMAGE_THUMB_URL));
 						} catch (JSONException e) {
 							Reporter.reportError(this.getClass().toString(), Thread.currentThread().getStackTrace()[2].getMethodName()
 									.toString(), e.getMessage());
 						}
 
 						try {
-							u.country = profile.getString("country");
-							cv.put(AccountProvider.AMetaData.AccountMetaData.COUNTRY, u.country);
+							u.setCountry(profile.getString(AccountMetaData.COUNTRY));
 						} catch (JSONException e) {
 							Reporter.reportError(this.getClass().toString(), Thread.currentThread().getStackTrace()[2].getMethodName()
 									.toString(), e.getMessage());
 						}
 						try {
-							u.city = profile.getString("city");
-							cv.put(AccountProvider.AMetaData.AccountMetaData.CITY, u.city);
+							u.setCity(profile.getString(AccountMetaData.CITY));
 						} catch (JSONException e) {
 							Reporter.reportError(this.getClass().toString(), Thread.currentThread().getStackTrace()[2].getMethodName()
 									.toString(), e.getMessage());
 						}
 						try {
-							u.street = profile.getString("street");
-							cv.put(AccountProvider.AMetaData.AccountMetaData.STREET, u.street);
+							u.setStreet(profile.getString(AccountMetaData.STREET));
 						} catch (JSONException e) {
 							Reporter.reportError(this.getClass().toString(), Thread.currentThread().getStackTrace()[2].getMethodName()
 									.toString(), e.getMessage());
 						}
 						try {
-							u.zip = profile.getString("zip");
-							cv.put(AccountProvider.AMetaData.AccountMetaData.ZIP, u.zip);
+							u.setZip(profile.getString(AccountMetaData.ZIP));
 						} catch (JSONException e) {
 							Reporter.reportError(this.getClass().toString(), Thread.currentThread().getStackTrace()[2].getMethodName()
 									.toString(), e.getMessage());
 						}
 
 						try {
-							u.timezone = profile.getString("timezone");
-							cv.put(AccountProvider.AMetaData.AccountMetaData.TIMEZONE, u.timezone);
+							u.setTimezone(profile.getString(AccountMetaData.TIMEZONE));
 						} catch (JSONException e) {
 							Reporter.reportError(this.getClass().toString(), Thread.currentThread().getStackTrace()[2].getMethodName()
 									.toString(), e.getMessage());
 						}
 						try {
-							u.local_time = profile.getString("local_time");
-							cv.put(AccountProvider.AMetaData.AccountMetaData.LOCAL_TIME, u.local_time);
+							u.setLocal_time(profile.getString(AccountMetaData.LOCAL_TIME));
 						} catch (JSONException e) {
 							Reporter.reportError(this.getClass().toString(), Thread.currentThread().getStackTrace()[2].getMethodName()
 									.toString(), e.getMessage());
 						}
 						try {
-							u.language = profile.getString("language");
-							cv.put(AccountProvider.AMetaData.AccountMetaData.LANGUAGE, u.language);
-						} catch (JSONException e) {
-							Reporter.reportError(this.getClass().toString(), Thread.currentThread().getStackTrace()[2].getMethodName()
-									.toString(), e.getMessage());
-						}
-
-						try {
-							u.setting_default_view = profile.getString("setting_default_view");
-							cv.put(AccountProvider.AMetaData.AccountMetaData.SETTING_DEFAULT_VIEW, u.setting_default_view);
+							u.setLanguage(profile.getString(AccountMetaData.LANGUAGE));
 						} catch (JSONException e) {
 							Reporter.reportError(this.getClass().toString(), Thread.currentThread().getStackTrace()[2].getMethodName()
 									.toString(), e.getMessage());
 						}
 						try {
-							u.setting_date_format = profile.getString("setting_date_format");
-							cv.put(AccountProvider.AMetaData.AccountMetaData.SETTING_DATE_FORMAT, u.setting_date_format);
+							u.setSetting_default_view(profile.getString(AccountMetaData.SETTING_DEFAULT_VIEW));
 						} catch (JSONException e) {
 							Reporter.reportError(this.getClass().toString(), Thread.currentThread().getStackTrace()[2].getMethodName()
 									.toString(), e.getMessage());
 						}
 						try {
-							u.setting_ampm = profile.getInt("setting_ampm");
-							cv.put(AccountProvider.AMetaData.AccountMetaData.SETTING_AMPM, u.setting_ampm);
-						} catch (JSONException e) {
-							Reporter.reportError(this.getClass().toString(), Thread.currentThread().getStackTrace()[2].getMethodName()
-									.toString(), e.getMessage());
-						}
-
-						try {
-							u.google_calendar_link = profile.getString("google_calendar_link");
-							cv.put(AccountProvider.AMetaData.AccountMetaData.GOOGLE_CALENDAR_LINK, u.google_calendar_link);
-						} catch (JSONException e) {
-							Reporter.reportError(this.getClass().toString(), Thread.currentThread().getStackTrace()[2].getMethodName()
-									.toString(), e.getMessage());
-						}
-
-						try {
-							u.color_my_event = profile.getString("color_my_event");
-							cv.put(AccountProvider.AMetaData.AccountMetaData.COLOR_MY_EVENT, u.color_my_event);
+							u.setSetting_date_format(profile.getString("setting_date_format"));
 						} catch (JSONException e) {
 							Reporter.reportError(this.getClass().toString(), Thread.currentThread().getStackTrace()[2].getMethodName()
 									.toString(), e.getMessage());
 						}
 						try {
-							u.color_attending = profile.getString("color_attending");
-							cv.put(AccountProvider.AMetaData.AccountMetaData.COLOR_ATTENDING, u.color_attending);
+							u.setSetting_ampm(profile.getString(AccountMetaData.SETTING_AMPM));
 						} catch (JSONException e) {
 							Reporter.reportError(this.getClass().toString(), Thread.currentThread().getStackTrace()[2].getMethodName()
 									.toString(), e.getMessage());
 						}
 						try {
-							u.color_pending = profile.getString("color_pending");
-							cv.put(AccountProvider.AMetaData.AccountMetaData.COLOR_PENDING, u.color_pending);
+							u.setGoogle_calendar_link(profile.getString(AccountMetaData.GOOGLE_CALENDAR_LINK));
 						} catch (JSONException e) {
 							Reporter.reportError(this.getClass().toString(), Thread.currentThread().getStackTrace()[2].getMethodName()
 									.toString(), e.getMessage());
 						}
 						try {
-							u.color_invitation = profile.getString("color_invitation");
-							cv.put(AccountProvider.AMetaData.AccountMetaData.COLOR_INVINTATION, u.color_invitation);
+							u.setColor_my_event(profile.getString(AccountMetaData.COLOR_MY_EVENT));
 						} catch (JSONException e) {
 							Reporter.reportError(this.getClass().toString(), Thread.currentThread().getStackTrace()[2].getMethodName()
 									.toString(), e.getMessage());
 						}
 						try {
-							u.color_notes = profile.getString("color_notes");
-							cv.put(AccountProvider.AMetaData.AccountMetaData.COLOR_NOTES, u.color_notes);
+							u.setColor_attending(profile.getString(AccountMetaData.COLOR_ATTENDING));
 						} catch (JSONException e) {
 							Reporter.reportError(this.getClass().toString(), Thread.currentThread().getStackTrace()[2].getMethodName()
 									.toString(), e.getMessage());
 						}
 						try {
-							u.color_birthday = profile.getString("color_birthday");
-							cv.put(AccountProvider.AMetaData.AccountMetaData.COLOR_BIRTHDAY, u.color_birthday);
-						} catch (JSONException e) {
-							Reporter.reportError(this.getClass().toString(), Thread.currentThread().getStackTrace()[2].getMethodName()
-									.toString(), e.getMessage());
-						}
-
-						try {
-							u.created = profile.getString("created");
-							cv.put(AccountProvider.AMetaData.AccountMetaData.CREATED, u.created);
+							u.setColor_pending(profile.getString(AccountMetaData.COLOR_PENDING));
 						} catch (JSONException e) {
 							Reporter.reportError(this.getClass().toString(), Thread.currentThread().getStackTrace()[2].getMethodName()
 									.toString(), e.getMessage());
 						}
 						try {
-							u.modified = profile.getString("modified");
-							cv.put(AccountProvider.AMetaData.AccountMetaData.MODIFIED, u.modified);
+							u.setColor_invitation(profile.getString(AccountMetaData.COLOR_INVITATION));
 						} catch (JSONException e) {
 							Reporter.reportError(this.getClass().toString(), Thread.currentThread().getStackTrace()[2].getMethodName()
 									.toString(), e.getMessage());
 						}
-
-						Data.getmContext().getContentResolver().insert(AccountProvider.AMetaData.AccountMetaData.CONTENT_URI, cv);
+						try {
+							u.setColor_notes(profile.getString(AccountMetaData.COLOR_NOTES));
+						} catch (JSONException e) {
+							Reporter.reportError(this.getClass().toString(), Thread.currentThread().getStackTrace()[2].getMethodName()
+									.toString(), e.getMessage());
+						}
+						try {
+							u.setColor_birthday(profile.getString(AccountMetaData.COLOR_BIRTHDAY));
+						} catch (JSONException e) {
+							Reporter.reportError(this.getClass().toString(), Thread.currentThread().getStackTrace()[2].getMethodName()
+									.toString(), e.getMessage());
+						}
+						try {
+							u.setCreated(profile.getLong(AccountMetaData.CREATED));
+						} catch (JSONException e) {
+							Reporter.reportError(this.getClass().toString(), Thread.currentThread().getStackTrace()[2].getMethodName()
+									.toString(), e.getMessage());
+						}
+						try {
+							u.setModified(profile.getLong(AccountMetaData.MODIFIED));
+						} catch (JSONException e) {
+							Reporter.reportError(this.getClass().toString(), Thread.currentThread().getStackTrace()[2].getMethodName()
+									.toString(), e.getMessage());
+						}
 
 					} else {
 						Data.setERROR(object.getJSONObject("error").getString("reason"));
@@ -512,69 +471,142 @@ public class DataManagement {
 		return u;
 	}
 
-	public Account getAccountFromLocalDb() {
-		Account u = null;
-
-		Cursor result = Data.getmContext().getContentResolver()
-				.query(AccountProvider.AMetaData.AccountMetaData.CONTENT_URI, null, null, null, null);
-
-		if (result.moveToFirst()) {
-			u = new Account();
-
-			u.user_id = result.getInt(result.getColumnIndex(AccountProvider.AMetaData.AccountMetaData.A_ID));
-
-			u.name = result.getString(result.getColumnIndex(AccountProvider.AMetaData.AccountMetaData.NAME));
-			u.fullname = result.getString(result.getColumnIndex(AccountProvider.AMetaData.AccountMetaData.FULLNAME));
-
-			u.birthdate = result.getString(result.getColumnIndex(AccountProvider.AMetaData.AccountMetaData.BIRTHDATE));
-			u.sex = result.getString(result.getColumnIndex(AccountProvider.AMetaData.AccountMetaData.SEX));
-
-			u.email = result.getString(result.getColumnIndex(AccountProvider.AMetaData.AccountMetaData.EMAIL));
-			u.email2 = result.getString(result.getColumnIndex(AccountProvider.AMetaData.AccountMetaData.EMAIL2));
-			u.email3 = result.getString(result.getColumnIndex(AccountProvider.AMetaData.AccountMetaData.EMAIL3));
-			u.email4 = result.getString(result.getColumnIndex(AccountProvider.AMetaData.AccountMetaData.EMAIL4));
-			u.phone1 = result.getString(result.getColumnIndex(AccountProvider.AMetaData.AccountMetaData.PHONE1));
-			u.phone2 = result.getString(result.getColumnIndex(AccountProvider.AMetaData.AccountMetaData.PHONE2));
-			u.phone3 = result.getString(result.getColumnIndex(AccountProvider.AMetaData.AccountMetaData.PHONE3));
-
-			final int image = result.getInt(result.getColumnIndex(AccountProvider.AMetaData.AccountMetaData.IMAGE));
-			u.image = image == 1;
-			u.image_url = result.getString(result.getColumnIndex(AccountProvider.AMetaData.AccountMetaData.IMAGE_URL));
-			u.image_thumb_url = result.getString(result.getColumnIndex(AccountProvider.AMetaData.AccountMetaData.IMAGE_THUMB_URL));
-			u.image_bytes = result.getBlob(result.getColumnIndex(AccountProvider.AMetaData.AccountMetaData.IMAGE_BYTES));
-			u.remove_image = result.getInt(result.getColumnIndex(AccountProvider.AMetaData.AccountMetaData.REMOVE_IMAGE));
-
-			u.country = result.getString(result.getColumnIndex(AccountProvider.AMetaData.AccountMetaData.COUNTRY));
-			u.city = result.getString(result.getColumnIndex(AccountProvider.AMetaData.AccountMetaData.CITY));
-			u.street = result.getString(result.getColumnIndex(AccountProvider.AMetaData.AccountMetaData.STREET));
-			u.zip = result.getString(result.getColumnIndex(AccountProvider.AMetaData.AccountMetaData.ZIP));
-
-			u.timezone = result.getString(result.getColumnIndex(AccountProvider.AMetaData.AccountMetaData.TIMEZONE));
-			u.local_time = result.getString(result.getColumnIndex(AccountProvider.AMetaData.AccountMetaData.LOCAL_TIME));
-			u.language = result.getString(result.getColumnIndex(AccountProvider.AMetaData.AccountMetaData.LANGUAGE));
-
-			u.setting_default_view = result
-					.getString(result.getColumnIndex(AccountProvider.AMetaData.AccountMetaData.SETTING_DEFAULT_VIEW));
-			u.setting_date_format = result.getString(result.getColumnIndex(AccountProvider.AMetaData.AccountMetaData.SETTING_DATE_FORMAT));
-			u.setting_ampm = result.getInt(result.getColumnIndex(AccountProvider.AMetaData.AccountMetaData.SETTING_AMPM));
-
-			u.google_calendar_link = result
-					.getString(result.getColumnIndex(AccountProvider.AMetaData.AccountMetaData.GOOGLE_CALENDAR_LINK));
-
-			u.color_my_event = result.getString(result.getColumnIndex(AccountProvider.AMetaData.AccountMetaData.COLOR_MY_EVENT));
-			u.color_attending = result.getString(result.getColumnIndex(AccountProvider.AMetaData.AccountMetaData.COLOR_ATTENDING));
-			u.color_pending = result.getString(result.getColumnIndex(AccountProvider.AMetaData.AccountMetaData.COLOR_PENDING));
-			u.color_invitation = result.getString(result.getColumnIndex(AccountProvider.AMetaData.AccountMetaData.COLOR_INVINTATION));
-			u.color_notes = result.getString(result.getColumnIndex(AccountProvider.AMetaData.AccountMetaData.COLOR_NOTES));
-			u.color_birthday = result.getString(result.getColumnIndex(AccountProvider.AMetaData.AccountMetaData.COLOR_BIRTHDAY));
-
-			u.created = result.getString(result.getColumnIndex(AccountProvider.AMetaData.AccountMetaData.CREATED));
-			u.modified = result.getString(result.getColumnIndex(AccountProvider.AMetaData.AccountMetaData.MODIFIED));
-		}
-		result.close();
-		Data.setAccount(u);
-		return u;
-	}
+	// public Account getAccountFromLocalDb() {
+	// Account u = null;
+	//
+	// Cursor result = Data
+	// .getmContext()
+	// .getContentResolver()
+	// .query(AccountProvider.AMetaData.AccountMetaData.CONTENT_URI,
+	// null, null, null, null);
+	//
+	// if (result.moveToFirst()) {
+	// u = new Account();
+	//
+	// u.user_id = result
+	// .getInt(result
+	// .getColumnIndex(AccountProvider.AMetaData.AccountMetaData.A_ID));
+	//
+	// u.name = result
+	// .getString(result
+	// .getColumnIndex(AccountProvider.AMetaData.AccountMetaData.NAME));
+	// u.fullname = result
+	// .getString(result
+	// .getColumnIndex(AccountProvider.AMetaData.AccountMetaData.FULLNAME));
+	//
+	// u.birthdate = result
+	// .getString(result
+	// .getColumnIndex(AccountProvider.AMetaData.AccountMetaData.BIRTHDATE));
+	// u.sex = result
+	// .getString(result
+	// .getColumnIndex(AccountProvider.AMetaData.AccountMetaData.SEX));
+	//
+	// u.email = result
+	// .getString(result
+	// .getColumnIndex(AccountProvider.AMetaData.AccountMetaData.EMAIL));
+	// u.email2 = result
+	// .getString(result
+	// .getColumnIndex(AccountProvider.AMetaData.AccountMetaData.EMAIL2));
+	// u.email3 = result
+	// .getString(result
+	// .getColumnIndex(AccountProvider.AMetaData.AccountMetaData.EMAIL3));
+	// u.email4 = result
+	// .getString(result
+	// .getColumnIndex(AccountProvider.AMetaData.AccountMetaData.EMAIL4));
+	// u.phone1 = result
+	// .getString(result
+	// .getColumnIndex(AccountProvider.AMetaData.AccountMetaData.PHONE1));
+	// u.phone2 = result
+	// .getString(result
+	// .getColumnIndex(AccountProvider.AMetaData.AccountMetaData.PHONE2));
+	// u.phone3 = result
+	// .getString(result
+	// .getColumnIndex(AccountProvider.AMetaData.AccountMetaData.PHONE3));
+	//
+	// final int image = result
+	// .getInt(result
+	// .getColumnIndex(AccountProvider.AMetaData.AccountMetaData.IMAGE));
+	// u.image = image == 1;
+	// u.image_url = result
+	// .getString(result
+	// .getColumnIndex(AccountProvider.AMetaData.AccountMetaData.IMAGE_URL));
+	// u.image_thumb_url = result
+	// .getString(result
+	// .getColumnIndex(AccountProvider.AMetaData.AccountMetaData.IMAGE_THUMB_URL));
+	// u.image_bytes = result
+	// .getBlob(result
+	// .getColumnIndex(AccountProvider.AMetaData.AccountMetaData.IMAGE_BYTES));
+	// u.remove_image = result
+	// .getInt(result
+	// .getColumnIndex(AccountProvider.AMetaData.AccountMetaData.REMOVE_IMAGE));
+	//
+	// u.country = result
+	// .getString(result
+	// .getColumnIndex(AccountProvider.AMetaData.AccountMetaData.COUNTRY));
+	// u.city = result
+	// .getString(result
+	// .getColumnIndex(AccountProvider.AMetaData.AccountMetaData.CITY));
+	// u.street = result
+	// .getString(result
+	// .getColumnIndex(AccountProvider.AMetaData.AccountMetaData.STREET));
+	// u.zip = result
+	// .getString(result
+	// .getColumnIndex(AccountProvider.AMetaData.AccountMetaData.ZIP));
+	//
+	// u.timezone = result
+	// .getString(result
+	// .getColumnIndex(AccountProvider.AMetaData.AccountMetaData.TIMEZONE));
+	// u.local_time = result
+	// .getString(result
+	// .getColumnIndex(AccountProvider.AMetaData.AccountMetaData.LOCAL_TIME));
+	// u.language = result
+	// .getString(result
+	// .getColumnIndex(AccountProvider.AMetaData.AccountMetaData.LANGUAGE));
+	//
+	// u.setting_default_view = result
+	// .getString(result
+	// .getColumnIndex(AccountProvider.AMetaData.AccountMetaData.SETTING_DEFAULT_VIEW));
+	// u.setting_date_format = result
+	// .getString(result
+	// .getColumnIndex(AccountProvider.AMetaData.AccountMetaData.SETTING_DATE_FORMAT));
+	// u.setting_ampm = result
+	// .getInt(result
+	// .getColumnIndex(AccountProvider.AMetaData.AccountMetaData.SETTING_AMPM));
+	//
+	// u.google_calendar_link = result
+	// .getString(result
+	// .getColumnIndex(AccountProvider.AMetaData.AccountMetaData.GOOGLE_CALENDAR_LINK));
+	//
+	// u.color_my_event = result
+	// .getString(result
+	// .getColumnIndex(AccountProvider.AMetaData.AccountMetaData.COLOR_MY_EVENT));
+	// u.color_attending = result
+	// .getString(result
+	// .getColumnIndex(AccountProvider.AMetaData.AccountMetaData.COLOR_ATTENDING));
+	// u.color_pending = result
+	// .getString(result
+	// .getColumnIndex(AccountProvider.AMetaData.AccountMetaData.COLOR_PENDING));
+	// u.color_invitation = result
+	// .getString(result
+	// .getColumnIndex(AccountProvider.AMetaData.AccountMetaData.COLOR_INVINTATION));
+	// u.color_notes = result
+	// .getString(result
+	// .getColumnIndex(AccountProvider.AMetaData.AccountMetaData.COLOR_NOTES));
+	// u.color_birthday = result
+	// .getString(result
+	// .getColumnIndex(AccountProvider.AMetaData.AccountMetaData.COLOR_BIRTHDAY));
+	//
+	// u.created = result
+	// .getString(result
+	// .getColumnIndex(AccountProvider.AMetaData.AccountMetaData.CREATED));
+	// u.modified = result
+	// .getString(result
+	// .getColumnIndex(AccountProvider.AMetaData.AccountMetaData.MODIFIED));
+	// }
+	// result.close();
+	// Data.setAccount(u);
+	// return u;
+	// }
 
 	public boolean registerAccount(String language, String country, String timezone, String sex, String name, String lastname,
 			String email, String phonecode, String phone, String password, String city, String street, String streetNo, String zip) {
@@ -808,9 +840,9 @@ public class DataManagement {
 						ex.getMessage());
 			}
 		} else {
-			if (Data.getEmail().equals(email) && Data.getPassword().equals(password)) {
+			SharedPreferences prefs = Data.getmContext().getSharedPreferences("LATEST_CREDENTIALS", 0);
+			if ((prefs.getString("email", "").equals(email)) && (prefs.getString("password", "").equals(password))) {
 				success = true;
-				Data.setLogged(true);
 				Data.needToClearData = false;
 			}
 		}
@@ -1180,6 +1212,7 @@ public class DataManagement {
 		String error = null;
 		ArrayList<Contact> contacts = null;
 		Contact contact = null;
+		Account account = new Account();
 
 		try {
 			HttpClient hc = new DefaultHttpClient();
@@ -1274,7 +1307,7 @@ public class DataManagement {
 										// birthdateCalendar,
 										// SERVER_TIMESTAMP_FORMAT);
 										birthdayEvent.is_all_day = true;
-										birthdayEvent.timezone = getAccount().timezone;
+										birthdayEvent.timezone = account.getTimezone();
 										birthdayEvent.birthday = true;
 										createEvent(birthdayEvent);
 										contactsBirthdays.add(birthdayEvent);
@@ -1719,18 +1752,6 @@ public class DataManagement {
 
 	public Account getAccount() {
 		return Data.getAccount();
-	}
-
-	public Account loadAccount() {
-		Account acc = new Account();
-
-		if (DataManagement.isLoadAccountData()) {
-			acc = getAccountFromRemoteDb();
-		} else {
-			acc = getAccountFromLocalDb();
-		}
-
-		return acc;
 	}
 
 	public ArrayList<Group> getGroupsFromLocalDb() {
@@ -2737,8 +2758,10 @@ public class DataManagement {
 
 	public Event getEventFromLocalDb(int event_id) {
 		Event item = new Event();
+		Account account = new Account();
 		Uri uri = Uri.parse(EventsProvider.EMetaData.EventsMetaData.CONTENT_URI + "/" + event_id);
 		Cursor result = Data.getmContext().getContentResolver().query(uri, null, null, null, null);
+
 		if (result.moveToFirst()) {
 			item.event_id = result.getInt(result.getColumnIndex(EventsProvider.EMetaData.EventsMetaData.E_ID));
 			item.user_id = result.getInt(result.getColumnIndex(EventsProvider.EMetaData.EventsMetaData.USER_ID));
@@ -2842,7 +2865,7 @@ public class DataManagement {
 								invited.email = contact.email;
 								invited.name = contact.name + " " + contact.lastname;
 								invited.contactId = contact.contact_id;
-							} else if (Data.getAccount().fullname.equals(obj.getString("gname"))) {
+							} else if (account.getFullname().equals(obj.getString("gname"))) {
 								invited.name = Data.getmContext().getString(R.string.you);
 								invited.email = Data.getEmail();
 								invited.me = true;
@@ -3867,55 +3890,86 @@ public class DataManagement {
 
 			reqEntity.addPart("token", new StringBody(Data.getToken()));
 
-			if (event.event_id > 0)
-				reqEntity.addPart("template_id", new StringBody(((Integer) event.event_id).toString()));
+			if (event.getEvent_id() > 0)
+				reqEntity.addPart("template_id", new StringBody(((Integer) event.getEvent_id()).toString()));
 			else
 				reqEntity.addPart("template_id", new StringBody(""));
 
-			if (event.icon != null)
-				reqEntity.addPart("icon", new StringBody(event.icon));
+			if (event.getIcon() != null)
+				reqEntity.addPart("icon", new StringBody(event.getIcon()));
 
 			if (event.getColor() != null)
 				reqEntity.addPart("color", new StringBody(event.getColor()));
 
-			if (event.title != null) {
-				reqEntity.addPart("title", new StringBody(event.title));
-				reqEntity.addPart("template_title", new StringBody(event.title));
+			if (event.getActualTitle() != null) {
+				reqEntity.addPart("title", new StringBody(event.getActualTitle()));
+				reqEntity.addPart("template_title", new StringBody(event.getActualTitle()));
 			} else {
 				reqEntity.addPart("title", new StringBody(""));
 				reqEntity.addPart("template_title", new StringBody(""));
 			}
 
-			// if (event.time_start > 0)
-			// reqEntity.addPart("time_start", new
-			// StringBody(event.time_start));
-			//
-			// if (event.time_end != null)
-			// reqEntity.addPart("time_end", new StringBody(event.time_end));
-
-			if (event.description_ != null) {
-				reqEntity.addPart("description", new StringBody(event.description_));
+			if (event.getDescription() != null) {
+				reqEntity.addPart("description", new StringBody(event.getDescription()));
 			} else {
 				reqEntity.addPart("description", new StringBody(""));
 			}
 
-			if (event.country != null)
-				reqEntity.addPart("country", new StringBody(event.country));
+			if (event.getCountry() != null)
+				reqEntity.addPart("country", new StringBody(event.getCountry()));
 
-			if (event.city != null)
-				reqEntity.addPart("city", new StringBody(event.city));
+			if (event.getCity() != null)
+				reqEntity.addPart("city", new StringBody(event.getCity()));
 
-			if (event.street != null)
-				reqEntity.addPart("street", new StringBody(event.street));
+			if (event.getStreet() != null)
+				reqEntity.addPart("street", new StringBody(event.getStreet()));
 
-			if (event.zip != null)
-				reqEntity.addPart("zip", new StringBody(event.zip));
+			if (event.getZip() != null)
+				reqEntity.addPart("zip", new StringBody(event.getZip()));
 
-			if (event.timezone != null)
-				reqEntity.addPart("timezone", new StringBody(event.timezone));
+			if (event.getTimezone() != null)
+				reqEntity.addPart("timezone", new StringBody(event.getTimezone()));
 
-			if (event.location != null)
-				reqEntity.addPart("location", new StringBody(event.location));
+			long timeInMillis = event.getStartCalendar().getTimeInMillis();
+			if (timeInMillis > 0)
+				reqEntity.addPart("timestamp_start_utc", new StringBody("" + Utils.millisToUnixTimestamp(timeInMillis)));
+
+			timeInMillis = event.getEndCalendar().getTimeInMillis();
+			if (timeInMillis > 0)
+				reqEntity.addPart("timestamp_end_utc", new StringBody("" + Utils.millisToUnixTimestamp(timeInMillis)));
+
+			// timeInMillis = event.getReminder1().getTimeInMillis();
+			// if (timeInMillis > 0)
+			// reqEntity.addPart("reminder_1_utc", new StringBody("" +
+			// Utils.millisToUnixTimestamp(timeInMillis)));
+
+			// timeInMillis = event.getReminder2().getTimeInMillis();
+			// if (timeInMillis > 0)
+			// reqEntity.addPart("reminder_2_utc", new StringBody("" +
+			// Utils.millisToUnixTimestamp(timeInMillis)));
+
+			// timeInMillis = event.getReminder3().getTimeInMillis();
+			// if (timeInMillis > 0)
+			// reqEntity.addPart("reminder_3_utc", new StringBody("" +
+			// Utils.millisToUnixTimestamp(timeInMillis)));
+
+			// timeInMillis = event.getAlarm1().getTimeInMillis();
+			// if (timeInMillis > 0)
+			// reqEntity.addPart("alarm_1_utc", new StringBody("" +
+			// Utils.millisToUnixTimestamp(timeInMillis)));
+
+			// timeInMillis = event.getAlarm2().getTimeInMillis();
+			// if (timeInMillis > 0)
+			// reqEntity.addPart("alarm_2_utc", new StringBody("" +
+			// Utils.millisToUnixTimestamp(timeInMillis)));
+
+			// timeInMillis = event.getAlarm3().getTimeInMillis();
+			// if (timeInMillis > 0)
+			// reqEntity.addPart("alarm_3_utc", new StringBody("" +
+			// Utils.millisToUnixTimestamp(timeInMillis)));
+
+			if (event.getLocation() != null)
+				reqEntity.addPart("location", new StringBody(event.getLocation()));
 
 			if (event.go_by != null)
 				reqEntity.addPart("go_by", new StringBody(event.go_by));
@@ -4029,81 +4083,83 @@ public class DataManagement {
 			if (template_id != 0)
 				cv.put(TemplatesMetaData.T_ID, template_id);
 			else if (template.event_id > 0)
-				cv.put(TemplatesMetaData.T_ID, template.event_id);
+				cv.put(TemplatesMetaData.T_ID, template.getEvent_id());
 			else
 				cv.put(TemplatesMetaData.T_ID, 0);
 
-			if (template.icon != null)
-				cv.put(TemplatesMetaData.ICON, template.icon);
+			if (template.getIcon() != null)
+				cv.put(TemplatesMetaData.ICON, template.getIcon());
 			else
 				cv.put(TemplatesMetaData.ICON, "");
 
 			if (template.getColor() != null)
 				cv.put(TemplatesMetaData.COLOR, template.getColor());
 
-			if (template.title != null)
-				cv.put(TemplatesMetaData.TITLE, template.title);
+			if (template.getActualTitle() != null)
+				cv.put(TemplatesMetaData.TITLE, template.getActualTitle());
 			else
 				cv.put(TemplatesMetaData.TITLE, "Untitled");
 
-			// if (template.time_start != null)
-			// cv.put(TemplatesMetaData.TIME_START, template.time_start);
-			//
-			// if (template.time_end != null)
-			// cv.put(TemplatesMetaData.TIME_END, template.time_end);
+			long timeInMillis = template.getStartCalendar().getTimeInMillis();
+			if (timeInMillis > 0)
+				cv.put(TemplatesMetaData.TIME_START, Utils.millisToUnixTimestamp(timeInMillis));
 
-			if (template.description_ != null)
-				cv.put(TemplatesMetaData.DESC, template.description_);
+			timeInMillis = template.getEndCalendar().getTimeInMillis();
+			if (timeInMillis > 0)
+				cv.put(TemplatesMetaData.TIME_START, Utils.millisToUnixTimestamp(timeInMillis));
+
+			if (template.getDescription() != null)
+				cv.put(TemplatesMetaData.DESC, template.getDescription());
 			else
-				cv.put(TemplatesMetaData.DESC, template.description_);
+				cv.put(TemplatesMetaData.DESC, "");
 
-			if (template.country != null)
-				cv.put(TemplatesMetaData.COUNTRY, template.country);
+			if (template.getCountry() != null)
+				cv.put(TemplatesMetaData.COUNTRY, template.getCountry());
 			else
 				cv.put(TemplatesMetaData.COUNTRY, "");
 
-			if (template.city != null)
-				cv.put(TemplatesMetaData.CITY, template.city);
+			if (template.getCity() != null)
+				cv.put(TemplatesMetaData.CITY, template.getCity());
 			else
 				cv.put(TemplatesMetaData.CITY, "");
 
-			if (template.street != null)
-				cv.put(TemplatesMetaData.STREET, template.street);
+			if (template.getStreet() != null)
+				cv.put(TemplatesMetaData.STREET, template.getStreet());
 			else
 				cv.put(TemplatesMetaData.STREET, "");
 
-			if (template.zip != null)
-				cv.put(TemplatesMetaData.ZIP, template.zip);
+			if (template.getZip() != null)
+				cv.put(TemplatesMetaData.ZIP, template.getZip());
 			else
 				cv.put(TemplatesMetaData.ZIP, "");
 
-			if (template.timezone != null)
-				cv.put(TemplatesMetaData.TIMEZONE, template.timezone);
+			if (template.getTimezone() != null)
+				cv.put(TemplatesMetaData.TIMEZONE, template.getTimezone());
 			else
 				cv.put(TemplatesMetaData.TIMEZONE, "");
 
-			if (template.location != null)
-				cv.put(TemplatesMetaData.LOCATION, template.location);
+			if (template.getLocation() != null)
+				cv.put(TemplatesMetaData.LOCATION, template.getLocation());
 			else
 				cv.put(TemplatesMetaData.LOCATION, "");
 
-			if (template.go_by != null)
-				cv.put(TemplatesMetaData.GO_BY, template.go_by);
+			if (template.getGo_by() != null)
+				cv.put(TemplatesMetaData.GO_BY, template.getGo_by());
 			else
 				cv.put(TemplatesMetaData.GO_BY, "");
 
-			if (template.take_with_you != null)
-				cv.put(TemplatesMetaData.TAKE_WITH_YOU, template.take_with_you);
+			if (template.getTake_with_you() != null)
+				cv.put(TemplatesMetaData.TAKE_WITH_YOU, template.getTake_with_you());
 			else
 				cv.put(TemplatesMetaData.TAKE_WITH_YOU, "");
 
-			if (template.cost != null)
-				cv.put(TemplatesMetaData.COST, template.cost);
+			if (template.getCost() != null)
+				cv.put(TemplatesMetaData.COST, template.getCost());
 			else
 				cv.put(TemplatesMetaData.COST, "");
 
-			if (template.accomodation != null)
-				cv.put(TemplatesMetaData.ACCOMODATION, template.accomodation);
+			if (template.getAccomodation() != null)
+				cv.put(TemplatesMetaData.ACCOMODATION, template.getAccomodation());
 			else
 				cv.put(TemplatesMetaData.ACCOMODATION, "");
 
@@ -4111,22 +4167,22 @@ public class DataManagement {
 				template.assigned_contacts = new int[Data.selectedContacts.size()];
 				int i = 0;
 				for (Contact contact : Data.selectedContacts) {
-					template.assigned_contacts[i] = contact.contact_id;
+					template.getAssigned_contacts()[i] = contact.contact_id;
 					i++;
 				}
 			}
 
-			if (template.assigned_contacts != null) {
-				for (int i = 0, l = template.assigned_contacts.length; i < l; i++) {
-					cv.put(TemplatesMetaData.ASSIGNED_CONTACTS, String.valueOf(template.assigned_contacts[i]));
+			if (template.getAssigned_contacts() != null) {
+				for (int i = 0, l = template.getAssigned_contacts().length; i < l; i++) {
+					cv.put(TemplatesMetaData.ASSIGNED_CONTACTS, String.valueOf(template.getAssigned_contacts()[i]));
 				}
 			} else {
 				cv.put(TemplatesMetaData.ASSIGNED_CONTACTS, "");
 			}
 
-			if (template.assigned_groups != null) {
-				for (int i = 0, l = template.assigned_groups.length; i < l; i++) {
-					cv.put(TemplatesMetaData.ASSIGNED_GROUPS, String.valueOf(template.assigned_groups[i]));
+			if (template.getAssigned_groups() != null) {
+				for (int i = 0, l = template.getAssigned_groups().length; i < l; i++) {
+					cv.put(TemplatesMetaData.ASSIGNED_GROUPS, String.valueOf(template.getAssigned_groups()[i]));
 				}
 			} else {
 				cv.put(TemplatesMetaData.ASSIGNED_GROUPS, "");
@@ -4146,6 +4202,21 @@ public class DataManagement {
 			// cv.put(TemplatesMetaData.REMINDER3, template.reminder3);
 			// else
 			// cv.put(TemplatesMetaData.REMINDER3, "");
+
+			// if (template.getAlarm1() != null)
+			// cv.put(TemplatesMetaData.ALARM1, template.getAlarm1());
+			// else
+			// cv.put(TemplatesMetaData.ALARM1, "");
+
+			// if (template.getAlarm2() != null)
+			// cv.put(TemplatesMetaData.ALARM2, template.getAlarm2());
+			// else
+			// cv.put(TemplatesMetaData.ALARM2, "");
+
+			// if (template.getAlarm3() != null)
+			// cv.put(TemplatesMetaData.ALARM3, template.getAlarm3());
+			// else
+			// cv.put(TemplatesMetaData.ALARM3, "");
 
 			// TODO find out wtf is bd in event
 			// if (event.birthday) {
@@ -4247,15 +4318,14 @@ public class DataManagement {
 								Reporter.reportError(this.getClass().toString(), Thread.currentThread().getStackTrace()[2].getMethodName()
 										.toString(), ex.getMessage());
 							}
-							// try {
-							// template.icon = e.getString("icon");
-							// cv.put(EventsProvider.EMetaData.EventsMetaData.ICON,
-							// template.icon);
-							// } catch (JSONException ex) {
-							// Reporter.reportError(this.getClass().toString(),
-							// Thread.currentThread().getStackTrace()[2].getMethodName().toString(),
-							// ex.getMessage());
-							// }
+							try {
+								template.setIcon(e.getString("icon"));
+								// cv.put(EventsProvider.EMetaData.EventsMetaData.ICON,
+								// template.icon);
+							} catch (JSONException ex) {
+								Reporter.reportError(this.getClass().toString(), Thread.currentThread().getStackTrace()[2].getMethodName()
+										.toString(), ex.getMessage());
+							}
 							try {
 								template.setColor(e.getString("color"));
 								// cv.put(EventsProvider.EMetaData.EventsMetaData.COLOR,
@@ -4265,7 +4335,7 @@ public class DataManagement {
 										.toString(), ex.getMessage());
 							}
 							try {
-								template.description_ = e.getString("description");
+								template.setDescription(e.getString("description"));
 								// cv.put(EventsProvider.EMetaData.EventsMetaData.DESC,
 								// template.description_);
 							} catch (JSONException ex) {
@@ -4346,7 +4416,7 @@ public class DataManagement {
 										.toString(), ex.getMessage());
 							}
 							try {
-								template.timezone = e.getString("timezone");
+								template.setTimezone(e.getString("timezone"));
 								// cv.put(EventsProvider.EMetaData.EventsMetaData.TIMEZONE,
 								// template.timezone);
 							} catch (JSONException ex) {
@@ -4355,24 +4425,24 @@ public class DataManagement {
 							}
 							/* Address END */
 
-							// try {
-							// template.time_start = e.getString("time_start");
-							// cv.put(EventsProvider.EMetaData.EventsMetaData.TIME_START,
-							// template.time_start);
-							// } catch (JSONException ex) {
-							// Reporter.reportError(this.getClass().toString(),
-							// Thread.currentThread().getStackTrace()[2].getMethodName().toString(),
-							// ex.getMessage());
-							// }
-							// try {
-							// template.time_end = e.getString("time_end");
-							// cv.put(EventsProvider.EMetaData.EventsMetaData.TIME_END,
-							// template.time_end);
-							// } catch (JSONException ex) {
-							// Reporter.reportError(this.getClass().toString(),
-							// Thread.currentThread().getStackTrace()[2].getMethodName().toString(),
-							// ex.getMessage());
-							// }
+							try {
+								template.setStartCalendar(Utils.createCalendar(e.getLong("time_start"), template.getTimezone()));
+								// cv.put(EventsProvider.EMetaData.EventsMetaData.TIME_START,
+								// template.time_start);
+							} catch (JSONException ex) {
+								Reporter.reportError(this.getClass().toString(), Thread.currentThread().getStackTrace()[2].getMethodName()
+										.toString(), ex.getMessage());
+							}
+
+							try {
+								template.setEndCalendar(Utils.createCalendar(e.getLong("time_end"), template.getTimezone()));
+								// cv.put(EventsProvider.EMetaData.EventsMetaData.TIME_END,
+								// template.time_end);
+							} catch (JSONException ex) {
+								Reporter.reportError(this.getClass().toString(), Thread.currentThread().getStackTrace()[2].getMethodName()
+										.toString(), ex.getMessage());
+							}
+
 							// try {
 							// template.time = e.getString("time");
 							// cv.put(EventsProvider.EMetaData.EventsMetaData.TIME,
@@ -4645,8 +4715,10 @@ public class DataManagement {
 			event.setIcon(result.getString(result.getColumnIndex(TemplatesMetaData.ICON)));
 
 			event.setTitle(result.getString(result.getColumnIndex(TemplatesMetaData.TITLE)));
-			// event.setStartCalendar((result.getInt(result.getColumnIndex(TemplatesMetaData.TIME_START)));
-			// event.setEndCalendar(result.getInt(result.getColumnIndex(TemplatesMetaData.TIME_END)));
+			event.setStartCalendar(Utils.createCalendar(result.getLong(result.getColumnIndex(TemplatesMetaData.TIME_START)),
+					result.getString(result.getColumnIndex(TemplatesMetaData.TIMEZONE))));
+			event.setEndCalendar(Utils.createCalendar(result.getLong(result.getColumnIndex(TemplatesMetaData.TIME_END)),
+					result.getString(result.getColumnIndex(TemplatesMetaData.TIMEZONE))));
 			event.setDescription(result.getString(result.getColumnIndex(TemplatesMetaData.DESC)));
 
 			event.setCountry(result.getString(result.getColumnIndex(TemplatesMetaData.COUNTRY)));

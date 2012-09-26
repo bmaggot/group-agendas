@@ -14,7 +14,6 @@ import android.app.DatePickerDialog;
 import android.app.Dialog;
 import android.content.ActivityNotFoundException;
 import android.content.ComponentName;
-import android.content.ContentValues;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.ResolveInfo;
@@ -184,36 +183,41 @@ public class AccountActivity extends Activity implements OnClickListener{
 		accountImage = (ImageView) findViewById(R.id.accountImage);
 		accountImage.setOnClickListener(this);
 		removeImage = (CheckBox) findViewById(R.id.removeImage);
-		
-		if(dm.loadAccount() != null)
-			feelFields();
 	}
 	
 	@Override
 	public void onResume() {
 		super.onResume();
-		if(dm.loadAccount() != null)
-			feelFields();
+
+		Account account = new Account();
+		
+		fillActivityFields(account);
 	}
 
-	private void feelFields() {
-		Account account = dm.getAccount();
-		if ((account.name != null) && (!account.name.equals("null"))) {
-			nameView.setText(account.name);
+	private void fillActivityFields(Account account) {
+		if (!account.getName().equals("null")) {
+			nameView.setText(account.getName());
 		} else {
 			nameView.setText("");
 		}
-		lastnameView.setText(account.fullname.replace(account.name + " ", ""));
+		
+		if (!account.getLastname().equals("null")) {
+			lastnameView.setText(account.getLastname());
+		} else {
+			lastnameView.setText("");
+		}
 
-		if (account.phone1 != null && !account.phone1.equals("null"))
-			phone1View.setText(account.phone1);
-		if (account.phone2 != null && !account.phone2.equals("null"))
-			phone2View.setText(account.phone2);
-		if (account.phone3 != null && !account.phone3.equals("null"))
-			phone3View.setText(account.phone3);
+		if (!account.getPhone1().equals("null"))
+			phone1View.setText(account.getPhone1());
+		
+		if (!account.getPhone2().equals("null"))
+			phone2View.setText(account.getPhone2());
+		
+		if (!account.getPhone3().equals("null"))
+			phone3View.setText(account.getPhone3());
 
-		if (account.birthdate != null && !account.birthdate.equals("null")) {
-			final Calendar c = Utils.stringToCalendar(account.birthdate, DataManagement.ACCOUNT_BIRTHDATE_TIMESTAMP_FORMAT);
+		if (account.getBirthdate() != null) {
+			final Calendar c = Utils.stringToCalendar(account.getBirthdate().toString(), DataManagement.ACCOUNT_BIRTHDATE_TIMESTAMP_FORMAT);
 			mYear = c.get(Calendar.YEAR);
 			mMonth = c.get(Calendar.MONTH);
 			mDay = c.get(Calendar.DAY_OF_MONTH);
@@ -222,32 +226,34 @@ public class AccountActivity extends Activity implements OnClickListener{
 		}
 		
 		// sex
-		if (account.sex != null && !account.sex.equals("null")){
-			int pos = Utils.getArrayIndex(sexArray, account.sex);
+		if (!account.getSex().equals("null")){
+			int pos = Utils.getArrayIndex(sexArray, account.getSex());
 			sexSpinner.setSelection(pos);
 		}
 		
 		// country
-		if (account.country != null && !account.country.equals("null")){
-			int pos = Utils.getArrayIndex(countryArray, account.country);
+		if (!account.getCountry().equals("null")){
+			int pos = Utils.getArrayIndex(countryArray, account.getCountry());
 			countrySpinner.setSelection(pos);
 		}
 		
 		// timezone
-		if (account.timezone != null && !account.timezone.equals("null") && timezoneArray != null){
-			int pos = Utils.getArrayIndex(timezoneArray, account.timezone);
+		if (!account.getTimezone().equals("null") && timezoneArray != null){
+			int pos = Utils.getArrayIndex(timezoneArray, account.getTimezone());
 			timezoneSpinner.setSelection(pos);
 		}
 		
-		if (account.city != null && !account.city.equals("null"))
-			cityView.setText(account.city);
-		if (account.street != null && !account.street.equals("null"))
-			streetView.setText(account.street);
-		if (account.zip != null && !account.zip.equals("null"))
-			zipView.setText(account.zip);
+		if (!account.getCity().equals("null"))
+			cityView.setText(account.getCity());
+		
+		if (!account.getStreet().equals("null"))
+			streetView.setText(account.getStreet());
+		
+		if (!account.getZip().equals("null"))
+			zipView.setText(account.getZip());
 		
 		// image
-		if (account.image){
+		if (account.getImage()){
 			accountImage.setImageBitmap(BitmapFactory.decodeByteArray(account.image_bytes, 0, account.image_bytes.length));
 		}
 	}
@@ -262,84 +268,65 @@ public class AccountActivity extends Activity implements OnClickListener{
 	}
 	
 	public void saveAccount(View view){
-		Account mAccount = dm.getAccount();
+		Account mAccount = new Account();
 		String temp;
-		ContentValues values = new ContentValues();
-		
-		values.put(AccountProvider.AMetaData.AccountMetaData.A_ID, mAccount.user_id);
 		
 		// name, fullname
 		String name = nameView.getText().toString();
-		values.put(AccountProvider.AMetaData.AccountMetaData.NAME, name);
-		mAccount.name = name;
+		mAccount.setName(name);
 		StringBuilder fullname = new StringBuilder(name).append(" ").append(lastnameView.getText().toString());
-		values.put(AccountProvider.AMetaData.AccountMetaData.FULLNAME, fullname.toString());
-		mAccount.fullname = fullname.toString();
+		mAccount.setFullname(fullname.toString());
+		mAccount.setLastname(lastnameView.getText().toString());
 		
 		// Phones
 		temp = phone1View.getText().toString();
-		values.put(AccountProvider.AMetaData.AccountMetaData.PHONE1, temp);
-		mAccount.phone1 = temp;
+		mAccount.setPhone(temp, 1);
 		temp = phone2View.getText().toString();
-		values.put(AccountProvider.AMetaData.AccountMetaData.PHONE2, temp);
-		mAccount.phone2 = temp;
+		mAccount.setPhone(temp, 2);
 		temp = phone3View.getText().toString();
-		values.put(AccountProvider.AMetaData.AccountMetaData.PHONE3, temp);
-		mAccount.phone3 = temp;
+		mAccount.setPhone(temp, 3);
 		
 		// Date
 		temp = birthdateView.getText().toString();
-		values.put(AccountProvider.AMetaData.AccountMetaData.BIRTHDATE, temp);
-		mAccount.birthdate = temp;
+		Calendar birthdate = Utils.createCalendar(Long.parseLong(temp), mAccount.getTimezone());
+		mAccount.setBirthdate(birthdate);
 		
 		// Sex
-		int pos = (int)sexSpinner.getSelectedItemId();
-		values.put(AccountProvider.AMetaData.AccountMetaData.SEX, sexArray[pos]);
-		mAccount.sex = sexArray[pos];
+		int pos = (int) sexSpinner.getSelectedItemId();
+		mAccount.setSex(sexArray[pos]);
 		
 		// Country 
-		pos = (int)countrySpinner.getSelectedItemId();
-		values.put(AccountProvider.AMetaData.AccountMetaData.COUNTRY, countryArray[pos]);
-		mAccount.country = countryArray[pos];
+		pos = (int) countrySpinner.getSelectedItemId();
+		mAccount.setCountry(countryArray[pos]);
 		
 		// Timezone
 		pos = (int)timezoneSpinner.getSelectedItemId();
-		values.put(AccountProvider.AMetaData.AccountMetaData.TIMEZONE, timezoneArray[pos]);
-		mAccount.timezone = timezoneArray[pos];
+		mAccount.setTimezone(timezoneArray[pos]);
 		
 		// City, Street, Zip
 		temp = cityView.getText().toString();
-		values.put(AccountProvider.AMetaData.AccountMetaData.CITY, temp);
-		mAccount.city = temp;
+		mAccount.setCity(temp);
 		
 		temp = streetView.getText().toString();
-		values.put(AccountProvider.AMetaData.AccountMetaData.STREET, temp);
-		mAccount.street = temp;
+		mAccount.setStreet(temp);
 		
 		temp = zipView.getText().toString();
-		values.put(AccountProvider.AMetaData.AccountMetaData.ZIP, temp);
-		mAccount.zip = temp;
+		mAccount.setZip(temp);
 		
 		// Image
 		boolean isRemoveImage = removeImage.isChecked();
 		
 		
 		if(isRemoveImage){
-			values.put(AccountProvider.AMetaData.AccountMetaData.IMAGE, false);
-			values.put(AccountProvider.AMetaData.AccountMetaData.IMAGE_URL, "");
-			values.put(AccountProvider.AMetaData.AccountMetaData.IMAGE_THUMB_URL, "");
-			values.put(AccountProvider.AMetaData.AccountMetaData.IMAGE_BYTES, "");
-			values.put(AccountProvider.AMetaData.AccountMetaData.REMOVE_IMAGE, 1);
+			mAccount.setImage(false);
+			mAccount.setImage_url("");
+			mAccount.setImage_thumb_url("");
+			mAccount.image_bytes = null;
+			mAccount.setRemove_image(1);
 		}else{
-			values.put(AccountProvider.AMetaData.AccountMetaData.IMAGE, true);
-			values.put(AccountProvider.AMetaData.AccountMetaData.IMAGE_BYTES, mAccount.image_bytes);
-			values.put(AccountProvider.AMetaData.AccountMetaData.REMOVE_IMAGE, 0);
+			mAccount.setImage(true);
+			mAccount.setRemove_image(0);
 		}
-		
-		StringBuilder where = new StringBuilder(AccountProvider.AMetaData.AccountMetaData.A_ID).append(" = ").append(mAccount.user_id);
-		getContentResolver().update(AccountProvider.AMetaData.AccountMetaData.CONTENT_URI, values, where.toString(), null);
-		
-		new EditAccountTask().execute();
 	}
 	
 	@Override
@@ -423,18 +410,19 @@ public class AccountActivity extends Activity implements OnClickListener{
 
 		@Override
 		protected Boolean doInBackground(Void... args) {
-			return dm.updateAccount(dm.getAccount(), removeImage.isChecked());
+			return dm.updateAccount(removeImage.isChecked());
 		}
 
 		@Override
 		protected void onPostExecute(Boolean result) {
 			
 			if(!result){
-				ContentValues values = new ContentValues();
-				values.put(AccountProvider.AMetaData.AccountMetaData.NEED_UPDATE, 1);
-				
-				StringBuilder where = new StringBuilder(AccountProvider.AMetaData.AccountMetaData.A_ID).append(" = ").append(dm.getAccount().user_id);
-				getContentResolver().update(AccountProvider.AMetaData.AccountMetaData.CONTENT_URI, values, where.toString(), null);
+				// TODO sumthing
+//				ContentValues values = new ContentValues();
+//				values.put(AccountProvider.AMetaData.AccountMetaData.NEED_UPDATE, 1);
+//				
+//				StringBuilder where = new StringBuilder(AccountProvider.AMetaData.AccountMetaData.A_ID).append(" = ").append(dm.getAccount().getUser_id());
+//				getContentResolver().update(AccountProvider.AMetaData.AccountMetaData.CONTENT_URI, values, where.toString(), null);
 			}
 			
 			finish();
