@@ -20,6 +20,7 @@ import android.os.AsyncTask;
 import android.util.Log;
 
 import com.groupagendas.groupagenda.data.Data;
+import com.groupagendas.groupagenda.data.DataManagement;
 
 public class Reporter {
 
@@ -56,27 +57,31 @@ public class Reporter {
 				reqEntity.addPart("app_version", new StringBody(android.os.Build.VERSION.RELEASE));
 				reqEntity.addPart("phone_model", new StringBody(android.os.Build.MODEL));
 				post.setEntity(reqEntity);
-				rp = hc.execute(post);
-				if (rp.getStatusLine().getStatusCode() == HttpStatus.SC_OK) {
-					String resp = EntityUtils.toString(rp.getEntity());
-					Log.e("ERROR: ", error);
-					if (resp != null) {
-						JSONObject object = null;
-						try {
-							object = new JSONObject(resp);
-						} catch (JSONException e) {
-							Log.e("reportError: error while creating JSONObject ", e.getMessage());
-						}
-						try {
-							if (object.getBoolean("success")) {
-								System.out.println("Reporter: Error sent to DB!");
-							} else {
-								Log.e("Reporter: ", "error while sending error to DB ");
+				if (DataManagement.networkAvailable) {
+					rp = hc.execute(post);
+					if (rp.getStatusLine().getStatusCode() == HttpStatus.SC_OK) {
+						String resp = EntityUtils.toString(rp.getEntity());
+						Log.e("ERROR: ", error);
+						if (resp != null) {
+							JSONObject object = null;
+							try {
+								object = new JSONObject(resp);
+							} catch (JSONException e) {
+								Log.e("reportError: error while creating JSONObject ", e.getMessage());
 							}
-						} catch (JSONException e) {
-							Log.e("reportError: error while sending error to DB ", e.getMessage());
+							try {
+								if (object.getBoolean("success")) {
+									System.out.println("Reporter: Error sent to DB!");
+								} else {
+									Log.e("Reporter: ", "error while sending error to DB ");
+								}
+							} catch (JSONException e) {
+								Log.e("reportError: error while sending error to DB ", e.getMessage());
+							}
 						}
 					}
+				} else {
+					Log.e("Reporter", "I HAS NO INTERNET!");
 				}
 			} catch (UnsupportedEncodingException e) {
 				e.printStackTrace();
