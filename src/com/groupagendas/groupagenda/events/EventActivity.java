@@ -83,17 +83,12 @@ public class EventActivity extends Activity {
 		if (timezoneArray != null) {
 			event.timezone = timezoneArray[timezoneSpinner.getSelectedItemPosition()];
 		}
-		
-		
 		event.setIs_owner(setOwner);
-		
 		if (setUid) {
 			// user_id
 			event.setUser_id(prefs.getUserId());
 		}
-
 		event.description_ = descView.getText().toString();
-
 		// title
 		event.setTitle(titleView.getText().toString());
 

@@ -50,7 +50,7 @@ public class NativeCalendarImporter {
 	    	event.timezone = account.getTimezone();
 	    	event.birthday = true;
 	    	DataManagement dm = DataManagement.getInstance(context);
-	    	dm.createEvent(event);
+	    	dm.createEventInRemoteDb(event);
 	    	cursor.moveToNext();
 	    }
 	}
