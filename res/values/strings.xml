@@ -242,4 +242,5 @@
     <string name="alarm_dismiss">Dismiss</string>
     <string name="alarm_dismiss_all_alarms">You gave dismissed all alarms in the past!</string>
     <string name="login_ga_logo_placeholder">GroupAgendas logo</string>    
+    <string name="import_phone_contacts">Importing phone contacts..</string>
 </resources>
