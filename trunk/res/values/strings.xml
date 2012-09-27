@@ -110,7 +110,7 @@
     <string name="loading_groups">Loading Groups…</string>
     <string name="loading_events">Loading Events…</string>
     <string name="loading_chat">Loading Chat threads…</string>
-    <string name="loading_templates">Loading event templates…</string>
+    <string name="loading_templates">Loading Event templates…</string>
     <string name="loading_complete">Loading complete</string>
     <string name="title_is_required">Title is required</string>
     <string name="invalid_start_end_time">Event end time must be later than start time</string>
@@ -242,6 +242,6 @@
     <string name="alarm_dismiss">Dismiss</string>
     <string name="alarm_dismiss_all_alarms">You gave dismissed all alarms in the past!</string>
     <string name="login_ga_logo_placeholder">GroupAgendas logo</string>    
-    <string name="import_phone_contacts">Importing phone contacts..</string>
+    <string name="import_phone_contacts">Importing phone contacts…</string>
     <string name="import_phone_contacts_done">Importing phone contacts is done!</string>
 </resources>
