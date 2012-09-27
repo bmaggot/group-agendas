@@ -995,7 +995,7 @@ public class EventEditActivity extends EventActivity {
 //				getContentResolver().update(uri, cv, null, null);
 				success = dm.editEvent(event);
 				try {
-					dm.updateEventByIdFromRemoteDb(event.event_id);
+					dm.updateEventByIdFromRemoteDb(event.event_id); //TODO dublicate insert to localDB also problem when OFFLINE MODE
 				} catch (ExecutionException e) {
 					e.printStackTrace();
 				} catch (InterruptedException e) {

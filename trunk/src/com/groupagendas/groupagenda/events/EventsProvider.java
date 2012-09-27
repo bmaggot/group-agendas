@@ -110,6 +110,8 @@ public class EventsProvider extends ContentProvider{
 			public static final String NEED_UPDATE = "need_update";
 			
 			public static final String DEFAULT_SORT_ORDER = MY_TIME_START+" ASC";
+			public static final String IS_BIRTHDAY = "is_birthday";
+			public static String IS_ALL_DAY = "is_all_day";
 			
 		}
 	}
@@ -126,6 +128,8 @@ public class EventsProvider extends ContentProvider{
 		EM.put(EMetaData.EventsMetaData.STATUS, EMetaData.EventsMetaData.STATUS);
 		EM.put(EMetaData.EventsMetaData.IS_OWNER, EMetaData.EventsMetaData.IS_OWNER);
 		EM.put(EMetaData.EventsMetaData.TYPE, EMetaData.EventsMetaData.TYPE);
+		EM.put(EMetaData.EventsMetaData.IS_ALL_DAY, EMetaData.EventsMetaData.IS_ALL_DAY);
+		EM.put(EMetaData.EventsMetaData.IS_BIRTHDAY, EMetaData.EventsMetaData.IS_BIRTHDAY);
 		
 		EM.put(EMetaData.EventsMetaData.CREATOR_FULLNAME, EMetaData.EventsMetaData.CREATOR_FULLNAME);
 		EM.put(EMetaData.EventsMetaData.CREATOR_CONTACT_ID, EMetaData.EventsMetaData.CREATOR_CONTACT_ID);
@@ -178,6 +182,7 @@ public class EventsProvider extends ContentProvider{
 		EM.put(EMetaData.EventsMetaData.INVITED, EMetaData.EventsMetaData.INVITED);
 		
 		EM.put(EMetaData.EventsMetaData.NEED_UPDATE, EMetaData.EventsMetaData.NEED_UPDATE);
+		
 	}
 	// END Table Projection Map
 	
@@ -282,7 +287,11 @@ public class EventsProvider extends ContentProvider{
 				String whereStr = EMetaData.EventsMetaData.E_ID+"="+uri.getPathSegments().get(1)+(!TextUtils.isEmpty(where)?"AND("+where+")":"");
 				count = db.delete(EMetaData.EVENTS_TABLE, whereStr, whereArgs);
 				break;
+			case DAY_INDEX:
+				count = db.delete(EMetaData.EVENT_DAY_INDEX_TABLE, where, whereArgs);
+				break;
 			default:
+				
 				throw new IllegalArgumentException("Unknow URI "+uri);
 		}
 		getContext().getContentResolver().notifyChange(uri, null);
@@ -349,6 +358,8 @@ public class EventsProvider extends ContentProvider{
 				+EMetaData.EventsMetaData.STATUS+" INTEGER ,"
 				+EMetaData.EventsMetaData.IS_OWNER+" TEXT ,"
 				+EMetaData.EventsMetaData.TYPE+" TEXT ,"
+				+EMetaData.EventsMetaData.IS_ALL_DAY+" TEXT ,"
+				+EMetaData.EventsMetaData.IS_BIRTHDAY+" TEXT ,"
 				
 				+EMetaData.EventsMetaData.CREATOR_FULLNAME+" TEXT ,"
 				+EMetaData.EventsMetaData.CREATOR_CONTACT_ID+" INTEGER ,"
