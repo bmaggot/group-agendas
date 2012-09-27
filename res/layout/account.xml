@@ -203,33 +203,43 @@
             </LinearLayout>
 
 
-            <LinearLayout android:background="@drawable/event_invite_people_button_notalone_i"
+            <LinearLayout
                 android:id="@+id/countrySpinnerBlock"
-                android:paddingTop="5dp"
-                android:paddingRight="10dp"
-                android:paddingBottom="5dp"
-                android:paddingLeft="10dp"
-                android:layout_marginRight="10dp"
-                android:layout_marginLeft="10dp"
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal" >
+                android:layout_marginLeft="10dp"
+                android:layout_marginRight="10dp"
+                android:background="@drawable/event_invite_people_button_notalone_i"
+                android:orientation="horizontal"
+                android:paddingBottom="5dp"
+                android:paddingLeft="10dp"
+                android:paddingRight="10dp"
+                android:paddingTop="5dp" >
 
                 <TextView
-                    android:layout_gravity="center_vertical"
                     android:layout_width="80dp"
                     android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical"
+                    android:paddingBottom="5dp"
+                    android:paddingTop="4dp"
+                    android:singleLine="true"
                     android:text="@string/country"
-                    android:textStyle="bold"
-                    android:textColor="@android:color/black" />
+                    android:textColor="@color/black"
+                    android:textSize="15dp"
+                    android:textStyle="bold" />
 
-                <Spinner android:background="#00000000"
-                    android:clickable="false"
-                    android:layout_gravity="left|center_vertical"
+                <Spinner
                     android:id="@+id/countrySpinner"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:textColor="@color/black" />
+                    android:layout_gravity="center_vertical"
+                    android:background="#00000000"
+                    android:clickable="false"
+                    android:paddingBottom="5dp"
+                    android:paddingTop="4dp"
+                    android:singleLine="true"
+                    android:textColor="@color/black"
+                    android:textSize="15dp" />
             </LinearLayout>
 
             <LinearLayout android:background="@drawable/event_invited_entry_last_background"
