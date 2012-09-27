@@ -277,14 +277,14 @@ public class NavbarActivity extends Activity {
 
 		restoreMe(savedInstanceState);
 
-		if (!dataLoaded && (progressDialog == null)) {
-
-			new LoadViewTask().execute();
+		if (this.getIntent().getExtras().getBoolean(GroupAgendasActivity.LOAD_REMOTE_DATA)) {
+			if (!dataLoaded && (progressDialog == null))
+					new LoadViewTask().execute();
+		} else {
+			switchToView();
 		}
 
 		mInflater = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-
-		calendarContainer = (FrameLayout) findViewById(R.id.calendarContainer);
 
 		//
 		// Intent intent = getIntent();
@@ -411,6 +411,8 @@ public class NavbarActivity extends Activity {
 
 	@Override
 	public void onResume() {
+		calendarContainer = (FrameLayout) findViewById(R.id.calendarContainer);
+		
 		super.onResume();
 		RadioButton radioButton;
 		radioButton = (RadioButton) findViewById(R.id.btnCalendar);
@@ -436,6 +438,7 @@ public class NavbarActivity extends Activity {
 
 		if (dataLoaded)
 			switchToView();
+
 	}
 
 	@Override

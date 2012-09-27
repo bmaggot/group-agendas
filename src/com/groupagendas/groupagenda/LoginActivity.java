@@ -125,6 +125,7 @@ public class LoginActivity extends Activity {
 				editor.putString("email", login);
 				editor.putString("password", password);
 				editor.putBoolean("stay_logged_in", stay);
+				editor.putBoolean("logged", true);
 				success = editor.commit();
 			}
 
@@ -139,7 +140,7 @@ public class LoginActivity extends Activity {
 				InputMethodManager imm = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
 				imm.hideSoftInputFromWindow(passwordText.getWindowToken(), 0);
 				Intent intent = new Intent(LoginActivity.this, NavbarActivity.class);
-				intent.putExtra("load_data", true);
+				intent.putExtra(GroupAgendasActivity.LOAD_REMOTE_DATA, true);
 				startActivity(intent);
 				finish();
 			} else {
