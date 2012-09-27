@@ -2274,8 +2274,7 @@ public class DataManagement {
 	 */
 	private Event createEventFromJSON(JSONObject e) {
 		Event event = new Event();
-
-		String timezone = CalendarSettings.getTimeZone(); //TODO kaip pasiimam dabar?
+		String timezone = CalendarSettings.getTimeZone(); 
 		day_index_formatter = new SimpleDateFormat(EventsProvider.EMetaData.EventsIndexesMetaData.DAY_COLUMN_FORMAT);
 		month_index_formatter = new SimpleDateFormat(EventsProvider.EMetaData.EventsIndexesMetaData.MONTH_COLUMN_FORMAT);
 		//critical event info. If fetch fails, return null
@@ -2554,10 +2553,49 @@ public class DataManagement {
 	}
 
 	public void insertEventToLocalDB(Event event) {
-		ContentValues cv = new ContentValues();
+		
 
 		// 1. ADD EVENT details to events table
+		ContentValues cv = createCVforEventsTable(event);		
+		resolver.insert(EventsProvider.EMetaData.EventsMetaData.CONTENT_URI, cv);
+		// 2. INSERT EVENT day indexes into events_days table
 
+		insertEventToDayIndexTable(event);
+		}
+	
+	
+	private void insertEventToDayIndexTable(Event event) {
+		Calendar eventDayStart = (Calendar) event.getStartCalendar().clone();
+		eventDayStart.set(Calendar.HOUR_OF_DAY, 0);
+		eventDayStart.set(Calendar.MINUTE, 0);
+		eventDayStart.set(Calendar.SECOND, 0);
+		eventDayStart.set(Calendar.MILLISECOND, 0);
+			
+		int event_id = event.getEvent_id();
+		ContentValues cv;
+
+		while (eventDayStart.before(event.getEndCalendar())){
+			cv = new ContentValues();
+			cv.put(EventsProvider.EMetaData.EventsIndexesMetaData.EVENT_ID,
+					event_id);
+			
+			Date time = eventDayStart.getTime();
+			
+			cv.put(EventsProvider.EMetaData.EventsIndexesMetaData.DAY,
+					day_index_formatter.format(time));
+			
+			cv.put(EventsProvider.EMetaData.EventsIndexesMetaData.MONTH,
+					month_index_formatter.format(time));
+			resolver.insert(
+					EventsProvider.EMetaData.EventsIndexesMetaData.CONTENT_URI,
+					cv);
+			eventDayStart.add(Calendar.DATE, 1);
+		
+	}
+	}
+
+	private ContentValues createCVforEventsTable(Event event) {
+		ContentValues cv = new ContentValues();
 		cv.put(EventsProvider.EMetaData.EventsMetaData.E_ID, event.getEvent_id());
 		cv.put(EventsProvider.EMetaData.EventsMetaData.USER_ID, event.getUser_id());
 		cv.put(EventsProvider.EMetaData.EventsMetaData.NEED_UPDATE, event.getNeedUpdate());
@@ -2573,8 +2611,8 @@ public class DataManagement {
 		//native events are not held in GA local db so we do not put Event.isNative
 		cv.put(EventsProvider.EMetaData.EventsMetaData.IS_SPORTS_EVENT, event.is_sports_event()? 1 : 0);
 		cv.put(EventsProvider.EMetaData.EventsMetaData.IS_OWNER, event.is_owner() ? 1 : 0);
-//		TODO cv.put(EventsProvider.EMetaData.EventsMetaData.IS_ALL_DAY, event.is_all_day() ? 1 : 0);
-//cv.put(EventsProvider.EMetaData.EventsMetaData.IS_BIRTHDAY, event.isBirthday()? 1 : 0);
+		cv.put(EventsProvider.EMetaData.EventsMetaData.IS_ALL_DAY, event.is_all_day() ? 1 : 0);
+		cv.put(EventsProvider.EMetaData.EventsMetaData.IS_BIRTHDAY, event.isBirthday()? 1 : 0);
 
 		cv.put(EventsProvider.EMetaData.EventsMetaData.TYPE, event.getType());
 		cv.put(EventsProvider.EMetaData.EventsMetaData.CREATOR_FULLNAME, event.getCreator_fullname());
@@ -2615,38 +2653,7 @@ public class DataManagement {
 		cv.put(EventsProvider.EMetaData.EventsMetaData.ASSIGNED_CONTACTS, event.getAssigned_contacts_DB_entry());
 		cv.put(EventsProvider.EMetaData.EventsMetaData.ASSIGNED_GROUPS, event.getAssigned_groups_DB_entry());
 		cv.put(EventsProvider.EMetaData.EventsMetaData.INVITED, event.getInvited_DB_entry());
-		resolver.insert(EventsProvider.EMetaData.EventsMetaData.CONTENT_URI, cv);
-
-		// 2. INSERT EVENT day indexes into events_days table
-
-		Calendar eventDayStart = (Calendar) event.getStartCalendar().clone();
-		eventDayStart.set(Calendar.HOUR_OF_DAY, 0);
-		eventDayStart.set(Calendar.MINUTE, 0);
-		eventDayStart.set(Calendar.SECOND, 0);
-		eventDayStart.set(Calendar.MILLISECOND, 0);
-		
-		
-		
-		int event_id = event.getEvent_id();
-		
-
-		while (eventDayStart.before(event.getEndCalendar())){
-			cv = new ContentValues();
-			cv.put(EventsProvider.EMetaData.EventsIndexesMetaData.EVENT_ID,
-					event_id);
-			
-			Date time = eventDayStart.getTime();
-			
-			cv.put(EventsProvider.EMetaData.EventsIndexesMetaData.DAY,
-					day_index_formatter.format(time));
-			
-			cv.put(EventsProvider.EMetaData.EventsIndexesMetaData.MONTH,
-					month_index_formatter.format(time));
-			resolver.insert(
-					EventsProvider.EMetaData.EventsIndexesMetaData.CONTENT_URI,
-					cv);
-			eventDayStart.add(Calendar.DATE, 1);
-		}
+		return cv;
 	}
 
 	public void sortEvents(ArrayList<Event> events) {
@@ -2832,9 +2839,9 @@ private Event createEventFromCursor(Cursor result) {
 		item.setSports_event(result.getInt(result.getColumnIndex(EventsProvider.EMetaData.EventsMetaData.IS_SPORTS_EVENT)) == 1);
 		final int is_owner = result.getInt(result.getColumnIndex(EventsProvider.EMetaData.EventsMetaData.IS_OWNER));
 		item.setIs_owner(is_owner == 1);
-//		TODO 
-//		item.setIs_all_day(result.getInt(result.getColumnIndex(EventsProvider.EMetaData.EventsMetaData.IS_ALL_DAY)) == 1);
-//		item.setBirthday(result.getInt(result.getColumnIndex(EventsProvider.EMetaData.EventsMetaData.IS_BIRTHDAY)) == 1);
+
+		item.setIs_all_day(result.getInt(result.getColumnIndex(EventsProvider.EMetaData.EventsMetaData.IS_ALL_DAY)) == 1);
+		item.setBirthday(result.getInt(result.getColumnIndex(EventsProvider.EMetaData.EventsMetaData.IS_BIRTHDAY)) == 1);
 		item.setNative(false); //native events are not stored in local DB, so they cant be restored also
 		
 		item.setType(result.getString(result.getColumnIndex(EventsProvider.EMetaData.EventsMetaData.TYPE)));
@@ -3025,101 +3032,102 @@ private Event createEventFromCursor(Cursor result) {
 		if (result.moveToFirst()) {
 		item = createEventFromCursor(result);
 		//TODO
-//			String assigned_contacts = result.getString(result.getColumnIndex(EventsProvider.EMetaData.EventsMetaData.ASSIGNED_CONTACTS));
-//			if (assigned_contacts != null && !assigned_contacts.equals("null")) {
-//				try {
-//					item.assigned_contacts = Utils.jsonStringToArray(assigned_contacts);
-//				} catch (JSONException e) {
-//					Reporter.reportError(this.getClass().toString(), Thread.currentThread().getStackTrace()[2].getMethodName().toString(),
-//							e.getMessage());
-//					item.assigned_contacts = null;
-//				}
-//			}
-//
-//			String assigned_groups = result.getString(result.getColumnIndex(EventsProvider.EMetaData.EventsMetaData.ASSIGNED_GROUPS));
-//			if (assigned_groups != null && !assigned_groups.equals("null")) {
-//				try {
-//					item.assigned_groups = Utils.jsonStringToArray(assigned_groups);
-//				} catch (JSONException e) {
-//					Reporter.reportError(this.getClass().toString(), Thread.currentThread().getStackTrace()[2].getMethodName().toString(),
-//							e.getMessage());
-//					item.assigned_groups = null;
-//				}
-//			}
-//
-//			String invitedJson = result.getString(result.getColumnIndex(EventsProvider.EMetaData.EventsMetaData.INVITED));
-//			if (invitedJson != null && !invitedJson.equals("null")) {
-//				try {
-//					JSONArray arr = new JSONArray(invitedJson);
-//					if (arr.length() > 0) {
-//						item.invited = new ArrayList<Invited>();
-//					}
-//					for (int i = 0, l = arr.length(); i < l; i++) {
-//						JSONObject obj = arr.getJSONObject(i);
-//
-//						final Invited invited = new Invited();
-//
-//						try {
-//							invited.status_id = obj.getInt("status");
-//
-//							if (invited.status_id == 4) {
-//								invited.status = Data.getmContext().getString(R.string.status_2);
-//							} else {
-//								String statusStr = new StringBuilder("status_").append(invited.status_id).toString();
-//								int statusId = Data.getmContext().getResources()
-//										.getIdentifier(statusStr, "string", "com.groupagendas.groupagenda");
-//
-//								invited.status = Data.getmContext().getString(statusId);
-//							}
-//						} catch (JSONException ex) {
-//							Reporter.reportError(this.getClass().toString(), Thread.currentThread().getStackTrace()[2].getMethodName()
-//									.toString(), ex.getMessage());
-//						}
-//
-//						try {
-//							if (!obj.getString("my_contact_id").equals("null")) {
-//								invited.my_contact_id = obj.getInt("my_contact_id");
-//								Contact contact = getContact(invited.my_contact_id);
-//								invited.email = contact.email;
-//								invited.name = contact.name + " " + contact.lastname;
-//								invited.contactId = contact.contact_id;
-//							} else if (Data.getAccount().fullname.equals(obj.getString("gname"))) {
-//								invited.name = Data.getmContext().getString(R.string.you);
-//								invited.email = Data.getEmail();
-//								invited.me = true;
-//							} else {
-//								invited.name = obj.getString("gname");
-//								String tmp = obj.getString("gcid");
-//								if (!tmp.equalsIgnoreCase("null") && tmp.matches("[0-9]*")) {
-//									invited.gcid = Integer.parseInt(tmp);
-//								} else {
-//									invited.gcid = 0;
-//								}
-//								tmp = obj.getString("guid");
-//								if (!tmp.equalsIgnoreCase("null") && tmp.matches("[0-9]*")) {
-//									invited.guid = Integer.parseInt(tmp);
-//								} else {
-//									invited.guid = 0;
-//								}
-//								tmp = obj.getString("my_contact_id");
-//								if (tmp.equalsIgnoreCase("null")) {
-//									invited.inMyList = false;
-//								} else {
-//									invited.inMyList = true;
-//								}
-//							}
-//						} catch (JSONException ex) {
-//							Reporter.reportError(this.getClass().toString(), Thread.currentThread().getStackTrace()[2].getMethodName()
-//									.toString(), ex.getMessage());
-//						}
-//
-//						item.invited.add(invited);
-//					}
-//				} catch (JSONException e) {
-//					Reporter.reportError(this.getClass().toString(), Thread.currentThread().getStackTrace()[2].getMethodName().toString(),
-//							e.getMessage());
-//				}
-//			}
+			String assigned_contacts = result.getString(result.getColumnIndex(EventsProvider.EMetaData.EventsMetaData.ASSIGNED_CONTACTS));
+			if (assigned_contacts != null && !assigned_contacts.equals("null")) {
+				try {
+					item.assigned_contacts = Utils.jsonStringToArray(assigned_contacts);
+				} catch (JSONException e) {
+					Reporter.reportError(this.getClass().toString(), Thread.currentThread().getStackTrace()[2].getMethodName().toString(),
+							e.getMessage());
+					item.assigned_contacts = null;
+				}
+			}
+
+			String assigned_groups = result.getString(result.getColumnIndex(EventsProvider.EMetaData.EventsMetaData.ASSIGNED_GROUPS));
+			if (assigned_groups != null && !assigned_groups.equals("null")) {
+				try {
+					item.assigned_groups = Utils.jsonStringToArray(assigned_groups);
+				} catch (JSONException e) {
+					Reporter.reportError(this.getClass().toString(), Thread.currentThread().getStackTrace()[2].getMethodName().toString(),
+							e.getMessage());
+					item.assigned_groups = null;
+				}
+			}
+
+			String invitedJson = result.getString(result.getColumnIndex(EventsProvider.EMetaData.EventsMetaData.INVITED));
+			if (invitedJson != null && !invitedJson.equals("null")) {
+				try {
+					JSONArray arr = new JSONArray(invitedJson);
+					if (arr.length() > 0) {
+						item.invited = new ArrayList<Invited>();
+					}
+					for (int i = 0, l = arr.length(); i < l; i++) {
+						JSONObject obj = arr.getJSONObject(i);
+
+						final Invited invited = new Invited();
+
+						try {
+							invited.status_id = obj.getInt("status");
+
+							if (invited.status_id == 4) {
+								invited.status = Data.getmContext().getString(R.string.status_2);
+							} else {
+								String statusStr = new StringBuilder("status_").append(invited.status_id).toString();
+								int statusId = Data.getmContext().getResources()
+										.getIdentifier(statusStr, "string", "com.groupagendas.groupagenda");
+
+								invited.status = Data.getmContext().getString(statusId);
+							}
+						} catch (JSONException ex) {
+							Reporter.reportError(this.getClass().toString(), Thread.currentThread().getStackTrace()[2].getMethodName()
+									.toString(), ex.getMessage());
+						}
+//TODO remove this shit JUSTAS M. Priminkit, kas pamatysit
+						try {
+							Account acc = new Account();
+							if (!obj.getString("my_contact_id").equals("null")) {
+								invited.my_contact_id = obj.getInt("my_contact_id");
+								Contact contact = getContact(invited.my_contact_id);
+								invited.email = contact.email;
+								invited.name = contact.name + " " + contact.lastname;
+								invited.contactId = contact.contact_id;
+							} else if (acc.getFullname().equals(obj.getString("gname"))) {
+								invited.name = Data.getmContext().getString(R.string.you);
+								invited.email = Data.getEmail();
+								invited.me = true;
+							} else {
+								invited.name = obj.getString("gname");
+								String tmp = obj.getString("gcid");
+								if (!tmp.equalsIgnoreCase("null") && tmp.matches("[0-9]*")) {
+									invited.gcid = Integer.parseInt(tmp);
+								} else {
+									invited.gcid = 0;
+								}
+								tmp = obj.getString("guid");
+								if (!tmp.equalsIgnoreCase("null") && tmp.matches("[0-9]*")) {
+									invited.guid = Integer.parseInt(tmp);
+								} else {
+									invited.guid = 0;
+								}
+								tmp = obj.getString("my_contact_id");
+								if (tmp.equalsIgnoreCase("null")) {
+									invited.inMyList = false;
+								} else {
+									invited.inMyList = true;
+								}
+							}
+						} catch (JSONException ex) {
+							Reporter.reportError(this.getClass().toString(), Thread.currentThread().getStackTrace()[2].getMethodName()
+									.toString(), ex.getMessage());
+						}
+
+						item.invited.add(invited);
+					}
+				} catch (JSONException e) {
+					Reporter.reportError(this.getClass().toString(), Thread.currentThread().getStackTrace()[2].getMethodName().toString(),
+							e.getMessage());
+				}
+			}
 		}
 		result.close();
 		return item;
@@ -5226,7 +5234,36 @@ private Event createEventFromCursor(Cursor result) {
 	}
 
 	public void updateEventInLocalDb(Event event) {
-		// TODO Auto-generated method stub
+		ContentValues cv = createCVforEventsTable(event);
+		
+		int ID = event.getEvent_id();
+		Uri uri;
+		if (ID > 0) {
+
+			// 1 update event in events table
+			 uri = Uri
+					.parse(EventsProvider.EMetaData.EventsMetaData.CONTENT_URI
+							+ "/" + event.getEvent_id()); // TODO problem, when
+															// event has no id
+															// (is created from
+															// device and not
+															// sent online)
+			getContext().getContentResolver().update(uri, cv, null, null);
+
+			// 2 TODO get event from local db and compare if start and end times
+			// differ
+			boolean eventTimeChanged = true; // temprorary
+
+			// 3 Renew event data in time indexes TODO do only when event time
+			// changed;
+
+			if (eventTimeChanged) {
+				String where = EventsProvider.EMetaData.EventsIndexesMetaData.EVENT_ID
+						+ "=" + event.getEvent_id();
+				getContext().getContentResolver().delete(EventsProvider.EMetaData.EventsIndexesMetaData.CONTENT_URI, where, null);
+				insertEventToDayIndexTable(event);
+			}
+		}
 		
 	}
 }
