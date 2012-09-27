@@ -180,8 +180,17 @@ public class ImportActivity extends Activity {
 
 		@Override
 		protected void onPostExecute(Void params) {
+			pd.cancel();
+			pd.setTitle(getResources().getString(R.string.import_phone_contacts_done));
+			pd.show();
+			pd.setCancelable(true);
+			try {
+				pd.wait(2000);
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			}
 			pd.dismiss();
-
+			
 		}
 
 		public String getContactEmail(String id, ImportActivity activity, Contact contact) {
