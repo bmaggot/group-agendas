@@ -16,6 +16,12 @@ private static final String TIMESTAMP_FORMAT = DataManagement.SERVER_TIMESTAMP_F
 
 private static final String DEFAULT_REMINDER = "null";
 
+
+public static final int REJECTED = 0;
+public static final int ACCEPTED = 1;
+public static final int MAYBE = 2;
+public static final int NEW_INVITATION = 4;
+
 private static final int REMINDER_1 = 1;
 private static final int REMINDER_2 = 2;
 private static final int REMINDER_3 = 3;
@@ -88,7 +94,7 @@ private final Cursor databaseRow;
 	public int[] assigned_groups = null;
 	private String assigned_groups_DB_entry = "";
 	
-	public ArrayList<Invited> invited = null;
+	private ArrayList<Invited> invited = null;
 	private String invited_DB_entry = "";
 
 	
@@ -452,7 +458,7 @@ private final Cursor databaseRow;
 	}
 	private int[] parseAssignedContacts(String assigned_contacts_DB_entry) {
 		// TODO Auto-generated method stub
-		return null;
+		return new int[0];
 	}
 	
 	
@@ -468,7 +474,7 @@ private final Cursor databaseRow;
 	}
 	private int[] parseAssignedGroups(String assigned_groups_DB_entry) {
 		// TODO Auto-generated method stub
-		return null;
+		return new int[0];
 	}
 	
 	
@@ -476,13 +482,13 @@ private final Cursor databaseRow;
 	public void setInvited(ArrayList<Invited> invited) {
 		this.invited = invited;
 	}
-	public ArrayList<Invited> getInvited() {
+	private ArrayList<Invited> getInvited() {
 		if (invited == null) invited = parseInvitedDBentry(invited_DB_entry);
 		return invited;
 	}
 	private ArrayList<Invited> parseInvitedDBentry(String invited_DB_entry2) {
 		// TODO Auto-generated method stub
-		return null;
+		return new ArrayList<Invited>();
 	}
 
 
@@ -698,6 +704,12 @@ public int getNeedUpdate() {
 }
 public void setNeedUpdate(int needUpdate) {
 	NeedUpdate = needUpdate;
+}
+public int getInvitedCount() {
+	return getInvited().size();
+}
+public Invited getInvited(int i) {
+	return getInvited().get(i);
 }
 
 

@@ -749,21 +749,12 @@ public class NewEventActivity extends EventActivity {
 
 		@Override
 		protected Boolean doInBackground(Event... events) {
-			boolean success = false;
-
 			NewEventActivity.super.setEventData(event);
 
 			int testEvent = event.isValid();
 			if (testEvent == 0) {
-				success = dm.createEvent(event);
-
-				if (!success) {
-					event.setNeedUpdate(2); //  TOODO find out what it means
-				}
-
-				dm.insertEventToLocalDB(event);
-				dm.putEventIntoTreeMap(event);
-				Data.selectedContacts.clear();
+				dm.createNewEvent(event);	
+				Data.selectedContacts.clear(); //TODO should it be handled this way?
 				return true;
 			} else {
 				errorStr = setErrorStr(testEvent);
@@ -1012,9 +1003,7 @@ public class NewEventActivity extends EventActivity {
 			int testEvent = event.isValid();
 
 			if (testEvent == 0) {
-
-				Integer templateId = dm.uploadTemplateToRemoteDb(event);
-				dm.uploadTemplateToLocalDb(event, templateId);
+				dm.createTemplate(event);
 				Data.selectedContacts.clear();
 			} else {
 				switch (testEvent) {

@@ -6,12 +6,10 @@ import java.util.concurrent.ExecutionException;
 
 import android.app.AlertDialog;
 import android.app.Dialog;
-import android.content.ContentValues;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Color;
-import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.text.Editable;
@@ -229,9 +227,9 @@ public class EventEditActivity extends EventActivity {
 		} else {
 			saveButton.setVisibility(View.GONE);
 		}
-		if (event.invited != null && !event.invited.isEmpty()) {
-			invitedListSize = event.invited.size();
-		}
+//		if (event.invited != null && !event.invited.isEmpty()) {
+			invitedListSize = event.getInvitedCount();//TODOimplement
+//		}
 
 		if (invitedListSize == 0) {
 			inviteButton.setBackgroundResource(R.drawable.event_invite_people_button_standalone);
@@ -242,8 +240,8 @@ public class EventEditActivity extends EventActivity {
 			LinearLayout invitedPersonList = (LinearLayout) findViewById(R.id.invited_person_list);
 			LayoutInflater inflater = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 
-			for (int i = 0, l = event.invited.size(); i < l; i++) {
-				final Invited invited = event.invited.get(i);
+			for (int i = 0, l = event.getInvitedCount(); i < l; i++) {
+				final Invited invited = event.getInvited(i);
 
 				final View view = inflater.inflate(R.layout.event_invited_person_entry, invitedPersonList, false);
 				if (l == 1) {
@@ -288,8 +286,8 @@ public class EventEditActivity extends EventActivity {
 			invitedPersonList.removeAllViews();
 			final LayoutInflater inflater = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 
-			for (int i = 0, l = event.invited.size(); i < l; i++) {
-				final Invited invited = event.invited.get(i);
+			for (int i = 0, l = event.getInvitedCount(); i < l; i++) {
+				final Invited invited = event.getInvited(i);
 
 				final View view = inflater.inflate(R.layout.event_invited_person_entry, invitedPersonList, false);
 				if (l == 1) {
@@ -331,8 +329,10 @@ public class EventEditActivity extends EventActivity {
 					}
 					Invited invited = new Invited();
 					invited.name = contact.name;
-					for (Invited displayedInvited : event.invited) {
-						if (displayedInvited != null && contact != null && displayedInvited.email != null
+					for (int j = 0; j < event.getInvitedCount(); j++) {
+						
+						Invited displayedInvited = event.getInvited(i);
+						if (displayedInvited  != null && contact != null && displayedInvited.email != null
 								&& !displayedInvited.email.equals("null") && displayedInvited.email.equals(contact.email)) {
 							needToShow = false;
 						}
@@ -535,7 +535,7 @@ public class EventEditActivity extends EventActivity {
 
 		@Override
 		protected Event doInBackground(Integer... ids) {
-//			autoColors = dm.getAutoColors(); TODO remove shit
+//			autoColors = dm.getAutoColors(); TODO implement or remove shit
 			autoIcons = dm.getAutoIcons();
 
 			if (intent.getBooleanExtra("isNative", false)) {
@@ -591,8 +591,6 @@ public class EventEditActivity extends EventActivity {
 			// color
 			final String[] colorsValues = getResources().getStringArray(R.array.colors_values);
 			colorView = (ImageView) findViewById(R.id.colorView);
-			// if (result.color != null && !result.color.equals("null")) { TODO some more shit
-			// String nameColor = "calendarbubble_" + result.color + "_";
 			int image = result.getColorBubbleId(mContext);
 			colorView.setImageResource(image);
 			// }
@@ -983,31 +981,12 @@ public class EventEditActivity extends EventActivity {
 
 		@Override
 		protected Boolean doInBackground(Event... events) {
-			boolean success = false;
-//			boolean check = true;
-//			String temp = "";
-			
 			setEventData(event);
 			int testEvent = event.isValid();
 			if (testEvent == 0) {
-				dm.updateEventInLocalDb (event);
-//				Uri uri = Uri.parse(EventsProvider.EMetaData.EventsMetaData.CONTENT_URI + "/" + event.event_id);
-//				getContentResolver().update(uri, cv, null, null);
-				success = dm.editEvent(event);
-				try {
-					dm.updateEventByIdFromRemoteDb(event.event_id); //TODO dublicate insert to localDB also problem when OFFLINE MODE
-				} catch (ExecutionException e) {
-					e.printStackTrace();
-				} catch (InterruptedException e) {
-					e.printStackTrace();
-				}
-
-				if (!success) {
-					//TODO lines with status 4 should be uptdated
-//					cv = new ContentValues();
-//					cv.put(EventsProvider.EMetaData.EventsMetaData.NEED_UPDATE, 4);
-//					getContentResolver().update(uri, cv, null, null);
-				}
+				dm.updateEventByIdFromRemoteDb(event);
+				
+			
 				return true;
 			}else {
 				errorStr = setErrorStr(testEvent);
@@ -1063,24 +1042,9 @@ public class EventEditActivity extends EventActivity {
 	class DeleteEventTask extends AsyncTask<Void, Boolean, Boolean> {
 		@Override
 		protected Boolean doInBackground(Void... type) {
-
 			if (event_id > 0) {
-				Uri uri = Uri.parse(EventsProvider.EMetaData.EventsMetaData.CONTENT_URI + "/" + event_id);
-
-				Boolean result = dm.removeEvent(event_id);
-
-				if (result) {
-					getContentResolver().delete(uri, null, null);
-				} else if (DataManagement.getCONNECTION_ERROR().equals(dm.getError())) {
-					result = true;
-					ContentValues values = new ContentValues();
-					values.put(EventsProvider.EMetaData.EventsMetaData.NEED_UPDATE, 3);
-
-					getContentResolver().update(uri, values, null, null);
-				}
-				return result;
+				dm.deleteEvent(event_id);
 			}
-
 			return false;
 		}
 
