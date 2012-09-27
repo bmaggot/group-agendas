@@ -2282,7 +2282,7 @@ public class DataManagement {
 		} catch (JSONException e1) {
 			Reporter.reportError(this.getClass().toString(), Thread.currentThread().getStackTrace()[2].getMethodName()
 					.toString(), e1.getMessage());
-//			return null;
+			System.out.println("JSON exceptionas");
 		}
 		
 		try {
@@ -2858,9 +2858,6 @@ public class DataManagement {
 
 		String dayColumn = day_index_formatter.format(day.getTime());
 		
-
-		// TODO find out what NEED_UPDATE field is for and why it should be < 3
-
 		String where = EventsProvider.EMetaData.EventsMetaData.NEED_UPDATE
 				+ " < 3"
 				+ " AND "
@@ -3511,7 +3508,7 @@ private Event createEventFromCursor(Cursor result) {
 							Data.setERROR(errObj.getString("reason"));
 							Log.e("removeEvent - error: ", Data.getERROR());
 						} else {
-							this.getEventsFromRemoteDb("");
+//							TODO JUSTUI V remove from RAM
 						}
 					}
 				}
@@ -3593,10 +3590,11 @@ private Event createEventFromCursor(Cursor result) {
 	}
 
 	public Event updateEventByIdFromRemoteDb(int event_id) throws ExecutionException, InterruptedException {
+		Event event = null;
 		try {
 			HttpClient hc = new DefaultHttpClient();
 			HttpPost post = new HttpPost(Data.getServerUrl() + "mobile/events_get");
-
+			
 			MultipartEntity reqEntity = new MultipartEntity(HttpMultipartMode.BROWSER_COMPATIBLE);
 
 			reqEntity.addPart(TOKEN, new StringBody(Data.getToken()));
@@ -3614,7 +3612,7 @@ private Event createEventFromCursor(Cursor result) {
 						Log.e("Edit event status ERROR", e1.getJSONObject("error").getString("reason"));
 					} else {
 						JSONObject e = e1.getJSONObject("event");
-						Event event = createEventFromJSON(e);
+						event = createEventFromJSON(e);
 						insertEventToLocalDB(event);
 					}
 				}
@@ -3627,7 +3625,7 @@ private Event createEventFromCursor(Cursor result) {
 		if (Data.selectedContacts != null) {
 			Data.selectedContacts.clear();
 		}
-		return null;
+		return event;
 	}
 
 	
@@ -5320,7 +5318,7 @@ private Event createEventFromCursor(Cursor result) {
 		// TODO finish: if network connection available insert to remote, else add to unuploaded data table.
 		boolean success = createEventInRemoteDb(event);
 		if (!success) {
-			event.setNeedUpdate(2); //  TODO find out what it means
+			event.setNeedUpdate(2); 
 		}
 				
 		insertEventToLocalDB(event);
