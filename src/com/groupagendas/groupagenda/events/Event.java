@@ -149,7 +149,7 @@ private final Cursor databaseRow;
 	public void setColor(String color) {
 		this.color = DEFAULT_COLOR;
 		
-		if (color != null && (color.matches("[0-9]{6,8}")))
+		if (color != null && (color.matches("[a-fA-F0-9]{6,8}")))
 			if (!color.equalsIgnoreCase("null")) this.color = color;
 		
 	}
