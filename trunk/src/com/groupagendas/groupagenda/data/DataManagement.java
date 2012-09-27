@@ -2249,7 +2249,7 @@ public class DataManagement {
 		if (contactsBirthdays != null && !contactsBirthdays.isEmpty()) {
 			events.addAll(contactsBirthdays);
 		}
-		sortEvents(events);
+		Data.setSortedEvents(sortEvents(events));
 	}
 
 	/**
@@ -2655,7 +2655,7 @@ public class DataManagement {
 		return cv;
 	}
 
-	public void sortEvents(ArrayList<Event> events) {
+	public TreeMap<Calendar, ArrayList<Event>> sortEvents(ArrayList<Event> events) {
 		TreeMap<Calendar, ArrayList<Event>> tm = new TreeMap<Calendar, ArrayList<Event>>();
 		Calendar event_start = null;
 		Calendar event_end = null;
@@ -2692,7 +2692,7 @@ public class DataManagement {
 				}
 			}
 		}
-		Data.setSortedEvents(tm);
+		return tm;
 	}
 
 	public TreeMap<Calendar, ArrayList<Event>> putValueIntoTreeMap(TreeMap<Calendar, ArrayList<Event>> tm, Calendar eventDay, Event event) {
@@ -2973,7 +2973,7 @@ private Event createEventFromCursor(Cursor result) {
 			}
 			result.close();
 		}
-		sortEvents(items);
+		Data.setSortedEvents(sortEvents(items));
 //		return getNaviveCalendarEvents(items);
 		return (items);
 	}
@@ -3652,7 +3652,7 @@ private Event createEventFromCursor(Cursor result) {
 			localEvents.add(event);
 		}
 		Data.setEvents(localEvents);
-		sortEvents(Data.getEvents());
+		Data.setSortedEvents(sortEvents(Data.getEvents()));
 	}
 
 	public void getChatMessages(int event_id, String from) {
@@ -5283,7 +5283,10 @@ private Event createEventFromCursor(Cursor result) {
 		}
 		return response;
 	}
-
+/**
+ * @author justinas.marcinka@gmail.com
+ * @param event
+ */
 	public void updateEventInLocalDb(Event event) {
 		ContentValues cv = createCVforEventsTable(event);
 		
@@ -5318,6 +5321,7 @@ private Event createEventFromCursor(Cursor result) {
 		
 	}
 /**
+ * @author justinas.marcinka@gmail.com
  * Method creates event in both remote and local databases. If there is no connectivity to remote DB, event should be created only in local DB and saved task to upload data when available.
  * @param event
  */
@@ -5336,6 +5340,7 @@ private Event createEventFromCursor(Cursor result) {
 		
 	}
 	/**
+	 * @author justinas.marcinka@gmail.com
 	 * Method deletes event from both remote and local databases. If there is no connectivity to remote DB, event should be deleted only in local DB and saved task to delete data from remote db when available.
 	 * @param event
 	 */
@@ -5374,6 +5379,7 @@ public void deleteEvent(int event_id) {
 		
 	}
 /**
+ * @author justinas.marcinka@gmail.com
  * Updates event in both local and remote db
  * @param event
  */
@@ -5399,17 +5405,18 @@ public void deleteEvent(int event_id) {
 	public static final int TM_EVENTS_ON_GIVEN_DAY = 1;
 	public static final int TM_EVENTS_ON_GIVEN_MONTH = 2;
 	/**
-	 * Gets event projection from local database, according to given date and time mode.
+	 * @author justinas.marcinka@gmail.com
+	 * Gets events projections from local database, according to given date and time mode.
 	 * @param projection columns to get from events provider
 	 * @param eventTimeMode available time modes:<br>
 	 * DataManagement.TM_EVENTS_FROM_GIVEN_DATE<br>
 	 * DataManagement.TM_EVENTS_ON_GIVEN_DAY <br>
 	 * DataManagement.TM_EVENTS_ON_GIVEN_MONTH<br>
 	 * @param sortOrder sort order. if null, default will be used
-	 * @return
+	 * @return cursor holding projections that met selection criteria. Caller has to set Event objects after return
 	 */
-	public ArrayList<Event>getEventProjectionByDateFromLocalDb(String[] projection, Calendar date, int eventTimeMode, String sortOrder){
-		ArrayList<Event> list = new ArrayList<Event>();
+	private Cursor createEventProjectionByDateFromLocalDb(String[] projection, Calendar date, int eventTimeMode, String sortOrder){
+		
 		String where;
 		
 		Uri uri;
@@ -5433,7 +5440,7 @@ public void deleteEvent(int event_id) {
 				uri = EventsProvider.EMetaData.EVENTS_ON_DATE_URI;
 				where = EventsProvider.EMetaData.EventsMetaData.NEED_UPDATE + " < 3"+ " AND "
 						+ "("
-						+ EventsProvider.EMetaData.EventsIndexesMetaData.DAY + " = '" + month_index_formatter.format(date.getTime()) + "'"
+						+ EventsProvider.EMetaData.EventsIndexesMetaData.MONTH + " = '" + month_index_formatter.format(date.getTime()) + "'"
 						+ ")";
 				break;
 
@@ -5445,16 +5452,47 @@ public void deleteEvent(int event_id) {
 			where = EventsProvider.EMetaData.EventsMetaData.NEED_UPDATE + " < 3";	
 			uri = EventsProvider.EMetaData.EventsMetaData.CONTENT_URI;
 		}
-		Cursor result = getContext().getContentResolver().query(uri, projection, where, null, sortOrder);
+		return getContext().getContentResolver().query(uri, projection, where, null, sortOrder);
 		
+		
+	}
+	
+	/**
+	 * @author justinas.marcinka@gmail.com
+	 * Returns event projection in: id, color, icon, title, start and end calendars. Other fields are not initialized
+	 * @param date
+	 * @return
+	 */
+	public ArrayList<Event>getEventProjectionsForMonthView(Calendar date){
+		ArrayList<Event> list = new ArrayList<Event>();
+		String[] projection = {
+				EventsProvider.EMetaData.EventsMetaData.E_ID,
+				EventsProvider.EMetaData.EventsMetaData.COLOR,
+				EventsProvider.EMetaData.EventsMetaData.TIME_START_UTC_MILLISECONDS,
+				EventsProvider.EMetaData.EventsMetaData.TIME_END_UTC_MILLISECONDS,
+				EventsProvider.EMetaData.EventsMetaData.ICON,
+				EventsProvider.EMetaData.EventsMetaData.TITLE,
+				};
+		Cursor result = createEventProjectionByDateFromLocalDb(projection, date, TM_EVENTS_ON_GIVEN_MONTH, null);
 		if (result.moveToFirst()) {
 			while (!result.isAfterLast()) {
-				Event eventProjection = new Event(result);
+				Event eventProjection = new Event();
+				eventProjection.setEvent_id(result.getInt(result.getColumnIndexOrThrow(EventsProvider.EMetaData.EventsMetaData.E_ID)));
+				eventProjection.setTitle(result.getString(result.getColumnIndexOrThrow(EventsProvider.EMetaData.EventsMetaData.TITLE)));
+				eventProjection.setIcon(result.getString(result.getColumnIndexOrThrow(EventsProvider.EMetaData.EventsMetaData.ICON)));
+				eventProjection.setColor(result.getString(result.getColumnIndexOrThrow(EventsProvider.EMetaData.EventsMetaData.COLOR)));
+				user_timezone = CalendarSettings.getTimeZone();
+				long timeinMillis = result.getLong(result.getColumnIndexOrThrow(EventsProvider.EMetaData.EventsMetaData.TIME_START_UTC_MILLISECONDS));
+				eventProjection.setStartCalendar(Utils.createCalendar(timeinMillis, user_timezone));
+				timeinMillis = result.getLong(result.getColumnIndexOrThrow(EventsProvider.EMetaData.EventsMetaData.TIME_END_UTC_MILLISECONDS));
+				eventProjection.setEndCalendar(Utils.createCalendar(timeinMillis, user_timezone));
 				list.add(eventProjection);
 				result.moveToNext();
 			}
 		}
+		result.close();
 		return list ;
+		
 	}
 
 }
