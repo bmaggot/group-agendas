@@ -3,8 +3,10 @@ package com.groupagendas.groupagenda.calendar.month;
 
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.TreeMap;
 
 import android.content.Context;
+import android.os.AsyncTask;
 import android.util.AttributeSet;
 import android.view.View;
 import android.view.ViewGroup;
@@ -18,11 +20,13 @@ import com.groupagendas.groupagenda.R;
 import com.groupagendas.groupagenda.calendar.AbstractCalendarView;
 import com.groupagendas.groupagenda.calendar.MonthCellState;
 import com.groupagendas.groupagenda.calendar.adapters.MonthAdapter;
-import com.groupagendas.groupagenda.data.Data;
+import com.groupagendas.groupagenda.data.DataManagement;
 import com.groupagendas.groupagenda.events.Event;
 import com.groupagendas.groupagenda.utils.Utils;
 
 public class MonthView extends AbstractCalendarView {
+	
+	private TreeMap<Calendar, ArrayList<Event>> sortedEvents;
 	
 	private static final int WEEK_TITLE_WIDTH_DP = 0;
 	private final int TABLE_ROW_HEIGHT = Math.round(50 * densityFactor);
@@ -132,7 +136,7 @@ public class MonthView extends AbstractCalendarView {
 
 	@Override
 	protected void updateEventLists() {
-		eventsAdapter.setList(Data.getEventByDate(selectedDate));
+		eventsAdapter.setList(Utils.getEventsFromTreemap(selectedDate, sortedEvents));
 		eventsAdapter.notifyDataSetChanged();
 		
 	}
@@ -149,6 +153,7 @@ public class MonthView extends AbstractCalendarView {
 		return selectedDate;
 	}
 	private void setDayFrames() {
+		new UpdateEventsInfoTask().execute();
 		Calendar tmp = (Calendar) firstShownDate.clone();		
 		for (MonthDayFrame frame : daysList){
 			String title = "" + tmp.get(Calendar.DATE);
@@ -170,10 +175,10 @@ public class MonthView extends AbstractCalendarView {
 			frame.setState(state);
 			
 
-			if(!frame.hasBubbles){				
-				ArrayList<Event> eventColorsArray =  Data.getEventByDate(tmp);
-				frame.DrawColourBubbles(eventColorsArray, FRAME_WIDTH);
-			}
+//			if(!frame.hasBubbles){				
+//				ArrayList<Event> eventColorsArray =  Utils.getEventByDate(tmp);
+//				frame.DrawColourBubbles(eventColorsArray, FRAME_WIDTH);
+//			}
 			
 			tmp.add(Calendar.DATE, 1);
 		}
@@ -190,8 +195,6 @@ public class MonthView extends AbstractCalendarView {
 		LinearLayout month_weeknumbers_container = (LinearLayout) findViewById(R.id.month_weeknumbers_container);
 		month_weeknumbers_container.removeAllViews();
 		
-		
-//	TODO	add GESTURE LISTENER
 		TableLayout.LayoutParams rowLp = new TableLayout.LayoutParams(
 		        ViewGroup.LayoutParams.FILL_PARENT,
 		        ViewGroup.LayoutParams.FILL_PARENT,
@@ -290,4 +293,33 @@ public class MonthView extends AbstractCalendarView {
 		Utils.setCalendarToFirstDayOfWeek(firstShownDate);
 	
 	}
+	
+
+	private class UpdateEventsInfoTask extends AsyncTask<Void, Integer, Void> {
+		private Context context = MonthView.this.getContext();
+		private DataManagement dm = DataManagement.getInstance(context);
+		
+		
+
+		@Override
+		protected Void doInBackground(Void... params) {
+			sortedEvents = dm.sortEvents(dm.getEventProjectionsForMonthView(selectedDate));
+			return null;
+		}
+		
+		protected void onPostExecute(Void result) {
+			updateEventLists();
+			Calendar tmp = (Calendar) firstShownDate.clone();		
+			for (MonthDayFrame frame : daysList){
+				if(!frame.hasBubbles){		
+					frame.DrawColourBubbles(Utils.getEventsFromTreemap(tmp, sortedEvents), FRAME_WIDTH);
+				}		
+				tmp.add(Calendar.DATE, 1);
+			}
+			
+		}
+
+
+	}
+	
 }
