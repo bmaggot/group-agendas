@@ -2142,7 +2142,10 @@ public class DataManagement {
 		return success;
 	}
 
-	// Events
+	/**
+	 * @deprecated
+	 * @return
+	 */
 	public ArrayList<Event> getEvents() {
 		return Data.getEvents();
 	}
@@ -2563,26 +2566,31 @@ public class DataManagement {
 		eventDayStart.set(Calendar.MILLISECOND, 0);
 			
 		int event_id = event.getEvent_id();
-		ContentValues cv;
 
-		while (eventDayStart.before(event.getEndCalendar())){
-			cv = new ContentValues();
-			cv.put(EventsProvider.EMetaData.EventsIndexesMetaData.EVENT_ID,
-					event_id);
-			
-			Date time = eventDayStart.getTime();
-			
-			cv.put(EventsProvider.EMetaData.EventsIndexesMetaData.DAY,
-					day_index_formatter.format(time));
-			
-			cv.put(EventsProvider.EMetaData.EventsIndexesMetaData.MONTH,
-					month_index_formatter.format(time));
-			resolver.insert(
-					EventsProvider.EMetaData.EventsIndexesMetaData.CONTENT_URI,
-					cv);
+		if (event.is_all_day){ //only one row is inserted
+			insertEventDayIndexRow (event_id, eventDayStart);	
+		}else while (eventDayStart.before(event.getEndCalendar())){ //rows are inserted for each day that event lasts
+			insertEventDayIndexRow(event_id, eventDayStart);
 			eventDayStart.add(Calendar.DATE, 1);
 		
 	}
+	}
+
+	private void insertEventDayIndexRow(int event_id, Calendar eventDayStart) {
+		ContentValues cv = new ContentValues();
+		cv.put(EventsProvider.EMetaData.EventsIndexesMetaData.EVENT_ID,
+				event_id);
+		Date time = eventDayStart.getTime();
+		
+		cv.put(EventsProvider.EMetaData.EventsIndexesMetaData.DAY,
+				day_index_formatter.format(time));
+		
+		cv.put(EventsProvider.EMetaData.EventsIndexesMetaData.MONTH,
+				month_index_formatter.format(time));
+		resolver.insert(
+				EventsProvider.EMetaData.EventsIndexesMetaData.CONTENT_URI,
+				cv);
+		
 	}
 
 	private ContentValues createCVforEventsTable(Event event) {
@@ -5385,4 +5393,68 @@ public void deleteEvent(int event_id) {
 		}
 		
 	}
+	
+	
+	public static final int TM_EVENTS_FROM_GIVEN_DATE = 0;
+	public static final int TM_EVENTS_ON_GIVEN_DAY = 1;
+	public static final int TM_EVENTS_ON_GIVEN_MONTH = 2;
+	/**
+	 * Gets event projection from local database, according to given date and time mode.
+	 * @param projection columns to get from events provider
+	 * @param eventTimeMode available time modes:<br>
+	 * DataManagement.TM_EVENTS_FROM_GIVEN_DATE<br>
+	 * DataManagement.TM_EVENTS_ON_GIVEN_DAY <br>
+	 * DataManagement.TM_EVENTS_ON_GIVEN_MONTH<br>
+	 * @param sortOrder sort order. if null, default will be used
+	 * @return
+	 */
+	public ArrayList<Event>getEventProjectionByDateFromLocalDb(String[] projection, Calendar date, int eventTimeMode, String sortOrder){
+		ArrayList<Event> list = new ArrayList<Event>();
+		String where;
+		
+		Uri uri;
+		if (date != null) {
+			switch (eventTimeMode) {
+			case TM_EVENTS_FROM_GIVEN_DATE:
+				uri = EventsProvider.EMetaData.EventsMetaData.CONTENT_URI;
+				where = EventsProvider.EMetaData.EventsMetaData.NEED_UPDATE + " < 3";
+				where +=  EventsProvider.EMetaData.EventsMetaData.TIME_START_UTC_MILLISECONDS + ">" + date.getTimeInMillis();	
+				break;
+			case TM_EVENTS_ON_GIVEN_DAY:
+				day_index_formatter = new SimpleDateFormat(EventsProvider.EMetaData.EventsIndexesMetaData.DAY_COLUMN_FORMAT);
+				uri = EventsProvider.EMetaData.EVENTS_ON_DATE_URI;
+				where = EventsProvider.EMetaData.EventsMetaData.NEED_UPDATE + " < 3"+ " AND "
+						+ "("
+						+ EventsProvider.EMetaData.EventsIndexesMetaData.DAY + " = '" + day_index_formatter.format(date.getTime()) + "'"
+						+ ")";
+				break;
+			case TM_EVENTS_ON_GIVEN_MONTH:
+				month_index_formatter = new SimpleDateFormat(EventsProvider.EMetaData.EventsIndexesMetaData.MONTH_COLUMN_FORMAT);
+				uri = EventsProvider.EMetaData.EVENTS_ON_DATE_URI;
+				where = EventsProvider.EMetaData.EventsMetaData.NEED_UPDATE + " < 3"+ " AND "
+						+ "("
+						+ EventsProvider.EMetaData.EventsIndexesMetaData.DAY + " = '" + month_index_formatter.format(date.getTime()) + "'"
+						+ ")";
+				break;
+
+			default:
+				throw new IllegalStateException(
+						"Wrong event Time mode for projection");
+			}
+		}else{
+			where = EventsProvider.EMetaData.EventsMetaData.NEED_UPDATE + " < 3";	
+			uri = EventsProvider.EMetaData.EventsMetaData.CONTENT_URI;
+		}
+		Cursor result = getContext().getContentResolver().query(uri, projection, where, null, sortOrder);
+		
+		if (result.moveToFirst()) {
+			while (!result.isAfterLast()) {
+				Event eventProjection = new Event(result);
+				list.add(eventProjection);
+				result.moveToNext();
+			}
+		}
+		return list ;
+	}
+
 }
