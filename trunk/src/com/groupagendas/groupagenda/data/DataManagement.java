@@ -1308,18 +1308,10 @@ public class DataManagement {
 												+ Data.getmContext().getString(R.string.contact_birthday);
 										birthdayEvent.setStartCalendar(birthdateCalendar);
 										birthdayEvent.setEndCalendar(birthdateCalendar);
-										// birthdayEvent.my_time_start = Utils
-										// .formatCalendar(
-										// birthdateCalendar,
-										// SERVER_TIMESTAMP_FORMAT);
-										// birthdayEvent.my_time_end = Utils
-										// .formatCalendar(
-										// birthdateCalendar,
-										// SERVER_TIMESTAMP_FORMAT);
 										birthdayEvent.is_all_day = true;
 										birthdayEvent.timezone = account.getTimezone();
 										birthdayEvent.birthday = true;
-										createEvent(birthdayEvent);
+										createEventInRemoteDb(birthdayEvent);
 										contactsBirthdays.add(birthdayEvent);
 									}
 									cv.put(ContactsProvider.CMetaData.ContactsMetaData.BIRTHDATE, contact.birthdate);
@@ -2204,10 +2196,10 @@ public class DataManagement {
 	/**
 	 * Gets events from remote Database and writes them to local DB.
 	 * @author justinas.marcinka@gmail.com
-	 * @param eventCategory API category. if empty, returns all events
+	 * @param eventCategory API category. if empty, gets all events
 	 * @return
 	 */
-	public ArrayList<Event> getEventsFromRemoteDb(String eventCategory) {
+	public void getEventsFromRemoteDb(String eventCategory) {
 		boolean success = false;
 		ArrayList<Event> events = new ArrayList<Event>();
 		Event event = null;
@@ -2240,6 +2232,7 @@ public class DataManagement {
 							event = createEventFromJSON(e);
 							if (event != null){
 								this.insertEventToLocalDB(event);
+								if (event.getStatus() != Event.REJECTED)
 								events.add(event);
 							}
 						}
@@ -2255,7 +2248,6 @@ public class DataManagement {
 			events.addAll(contactsBirthdays);
 		}
 		sortEvents(events);
-		return getNaviveCalendarEvents(events);
 	}
 
 	/**
@@ -3025,42 +3017,44 @@ private Event createEventFromCursor(Cursor result) {
 		return citems;
 	}
 
+	
 	public Event getEventFromLocalDb(int event_id) {
 		Event item = null;
 		Uri uri = Uri.parse(EventsProvider.EMetaData.EventsMetaData.CONTENT_URI + "/" + event_id);
 		Cursor result = Data.getmContext().getContentResolver().query(uri, null, null, null, null);
 		if (result.moveToFirst()) {
 		item = createEventFromCursor(result);
-		//TODO
+
 			String assigned_contacts = result.getString(result.getColumnIndex(EventsProvider.EMetaData.EventsMetaData.ASSIGNED_CONTACTS));
 			if (assigned_contacts != null && !assigned_contacts.equals("null")) {
 				try {
-					item.assigned_contacts = Utils.jsonStringToArray(assigned_contacts);
+					item.setAssigned_contacts(Utils.jsonStringToArray(assigned_contacts));
 				} catch (JSONException e) {
 					Reporter.reportError(this.getClass().toString(), Thread.currentThread().getStackTrace()[2].getMethodName().toString(),
 							e.getMessage());
-					item.assigned_contacts = null;
+					item.setAssigned_contacts(new int[0]);
 				}
 			}
 
-			String assigned_groups = result.getString(result.getColumnIndex(EventsProvider.EMetaData.EventsMetaData.ASSIGNED_GROUPS));
+			String assigned_groups = item.getAssigned_groups_DB_entry();
 			if (assigned_groups != null && !assigned_groups.equals("null")) {
 				try {
-					item.assigned_groups = Utils.jsonStringToArray(assigned_groups);
+					item.setAssigned_groups(Utils.jsonStringToArray(assigned_groups));
 				} catch (JSONException e) {
 					Reporter.reportError(this.getClass().toString(), Thread.currentThread().getStackTrace()[2].getMethodName().toString(),
 							e.getMessage());
-					item.assigned_groups = null;
+					item.setAssigned_groups(new int[0]);
 				}
 			}
 
-			String invitedJson = result.getString(result.getColumnIndex(EventsProvider.EMetaData.EventsMetaData.INVITED));
+			String invitedJson = item.getInvited_DB_entry();
 			if (invitedJson != null && !invitedJson.equals("null")) {
 				try {
+					
 					JSONArray arr = new JSONArray(invitedJson);
 					if (arr.length() > 0) {
-						item.invited = new ArrayList<Invited>();
-					}
+						ArrayList<Invited> invitedList = new ArrayList<Invited>();
+					
 					for (int i = 0, l = arr.length(); i < l; i++) {
 						JSONObject obj = arr.getJSONObject(i);
 
@@ -3082,7 +3076,7 @@ private Event createEventFromCursor(Cursor result) {
 							Reporter.reportError(this.getClass().toString(), Thread.currentThread().getStackTrace()[2].getMethodName()
 									.toString(), ex.getMessage());
 						}
-//TODO remove this shit JUSTAS M. Priminkit, kas pamatysit
+
 						try {
 							Account acc = new Account();
 							if (!obj.getString("my_contact_id").equals("null")) {
@@ -3120,8 +3114,10 @@ private Event createEventFromCursor(Cursor result) {
 							Reporter.reportError(this.getClass().toString(), Thread.currentThread().getStackTrace()[2].getMethodName()
 									.toString(), ex.getMessage());
 						}
-
-						item.invited.add(invited);
+						invitedList.add(invited);
+					}
+					
+					item.setInvited(invitedList);
 					}
 				} catch (JSONException e) {
 					Reporter.reportError(this.getClass().toString(), Thread.currentThread().getStackTrace()[2].getMethodName().toString(),
@@ -3283,7 +3279,7 @@ private Event createEventFromCursor(Cursor result) {
 		return success;
 	}
 
-	public boolean createEvent(Event e) {
+	public boolean createEventInRemoteDb(Event e) {
 		boolean success = false;
 
 		try {
@@ -3401,7 +3397,7 @@ private Event createEventFromCursor(Cursor result) {
 					ex.getMessage());
 		}
 		return success;
-		// return event_id;
+	
 	}
 
 	public boolean removeEvent(int id) {
@@ -3523,68 +3519,44 @@ private Event createEventFromCursor(Cursor result) {
 	}
 
 	public Event updateEventByIdFromRemoteDb(int event_id) throws ExecutionException, InterruptedException {
-		new UpdateEventByIdFromRemoteDb().execute(event_id);
+		try {
+			HttpClient hc = new DefaultHttpClient();
+			HttpPost post = new HttpPost(Data.getServerUrl() + "mobile/events_get");
+
+			MultipartEntity reqEntity = new MultipartEntity(HttpMultipartMode.BROWSER_COMPATIBLE);
+
+			reqEntity.addPart(TOKEN, new StringBody(Data.getToken()));
+			reqEntity.addPart("event_id", new StringBody(String.valueOf(event_id)));
+
+			post.setEntity(reqEntity);
+			HttpResponse rp = null;
+			rp = hc.execute(post);
+			if (rp.getStatusLine().getStatusCode() == HttpStatus.SC_OK) {
+				String resp = EntityUtils.toString(rp.getEntity());
+				if (resp != null) {
+					JSONObject e1 = new JSONObject(resp);
+					boolean success = e1.getBoolean("success");
+					if (!success) {
+						Log.e("Edit event status ERROR", e1.getJSONObject("error").getString("reason"));
+					} else {
+						JSONObject e = e1.getJSONObject("event");
+						Event event = createEventFromJSON(e);
+						insertEventToLocalDB(event);
+					}
+				}
+			}
+		} catch (Exception e) {
+			Reporter.reportError(this.getClass().toString(), Thread.currentThread().getStackTrace()[2].getMethodName().toString(),
+					e.getMessage());
+		}
+		
+		if (Data.selectedContacts != null) {
+			Data.selectedContacts.clear();
+		}
 		return null;
 	}
 
-	private class UpdateEventByIdFromRemoteDb extends AsyncTask<Integer, Void, Void> {
-
-		@Override
-		protected Void doInBackground(Integer... params) {
-			try {
-				int event_id = params[0];
-				HttpClient hc = new DefaultHttpClient();
-				HttpPost post = new HttpPost(Data.getServerUrl() + "mobile/events_get");
-
-				MultipartEntity reqEntity = new MultipartEntity(HttpMultipartMode.BROWSER_COMPATIBLE);
-
-				reqEntity.addPart(TOKEN, new StringBody(Data.getToken()));
-				reqEntity.addPart("event_id", new StringBody(String.valueOf(event_id)));
-
-				post.setEntity(reqEntity);
-				HttpResponse rp = null;
-				rp = hc.execute(post);
-				if (rp.getStatusLine().getStatusCode() == HttpStatus.SC_OK) {
-					String resp = EntityUtils.toString(rp.getEntity());
-					if (resp != null) {
-						JSONObject e1 = new JSONObject(resp);
-						boolean success = e1.getBoolean("success");
-						if (!success) {
-							Log.e("Edit event status ERROR", e1.getJSONObject("error").getString("reason"));
-						} else {
-							JSONObject e = e1.getJSONObject("event");
-							Event event = createEventFromJSON(e);
-							insertEventToLocalDB(event);
-
-							// TODO JUSTAI V, KAS CIA??? KOL KAS KOMENTUOJU
-							// kaip suprantu, updatina calendoriu, jei jis null.
-
-							// Event tmpEvent = getEventFromDb(event_id);
-							// if (tmpEvent.getStartCalendar() == null) {
-							// tmpEvent.setStartCalendar(Utils
-							// .stringToCalendar(event.my_time_start,
-							// SERVER_TIMESTAMP_FORMAT));
-							// }
-							// if (tmpEvent.getEndCalendar() == null) {
-							// tmpEvent.setEndCalendar(Utils.stringToCalendar(
-							// event.my_time_end,
-							// SERVER_TIMESTAMP_FORMAT));
-							// }
-							// updateEventInsideLocalDb(tmpEvent);
-						}
-					}
-				}
-			} catch (Exception e) {
-				Reporter.reportError(this.getClass().toString(), Thread.currentThread().getStackTrace()[2].getMethodName().toString(),
-						e.getMessage());
-			}
-			if (Data.selectedContacts != null) {
-				Data.selectedContacts.clear();
-			}
-			return null;
-		}
-
-	}
+	
 
 	public void updateEventInsideLocalDb(Event event) {
 		boolean foundEventInLocalDB = false;
@@ -5263,6 +5235,82 @@ private Event createEventFromCursor(Cursor result) {
 				getContext().getContentResolver().delete(EventsProvider.EMetaData.EventsIndexesMetaData.CONTENT_URI, where, null);
 				insertEventToDayIndexTable(event);
 			}
+		}
+		
+	}
+/**
+ * Method creates event in both remote and local databases. If there is no connectivity to remote DB, event should be created only in local DB and saved task to upload data when available.
+ * @param event
+ */
+	public void createNewEvent(Event event) {
+		// TODO finish: if network connection available insert to remote, else add to unuploaded data table.
+		boolean success = createEventInRemoteDb(event);
+		if (!success) {
+			event.setNeedUpdate(2); //  TODO find out what it means
+		}
+				
+		insertEventToLocalDB(event);
+		putEventIntoTreeMap(event); // TODO remove when available
+		
+		
+		
+		
+	}
+	/**
+	 * Method deletes event from both remote and local databases. If there is no connectivity to remote DB, event should be deleted only in local DB and saved task to delete data from remote db when available.
+	 * @param event
+	 */
+public void deleteEvent(int event_id) {
+	
+
+	Boolean result = removeEvent(event_id);
+
+	if (result) {
+		deleteEventFromLocalDb(event_id);
+	} else{
+//		TODO
+	}
+
+	
+}
+
+	private void deleteEventFromLocalDb(int event_id) {
+		String where;
+		
+		
+//		1. Deleting event from events table
+		where = EventsProvider.EMetaData.EventsMetaData.E_ID + "=" + event_id;
+		getContext().getContentResolver().delete(EventsProvider.EMetaData.EventsMetaData.CONTENT_URI, where, null);
+		
+//		2. Deleting event from events day indexes table
+		where = EventsProvider.EMetaData.EventsIndexesMetaData.EVENT_ID + "=" + event_id;
+		getContext().getContentResolver().delete(EventsProvider.EMetaData.EventsIndexesMetaData.CONTENT_URI, where, null);
+		
+	}
+
+	public void createTemplate(Event event) {
+		//TODO implement offline mode
+		Integer templateId = uploadTemplateToRemoteDb(event);
+		uploadTemplateToLocalDb(event, templateId);
+		
+	}
+/**
+ * Updates event in both local and remote db
+ * @param event
+ */
+	public void updateEventByIdFromRemoteDb(Event event) {
+	
+		boolean success = editEvent(event);
+		try {
+			updateEventByIdFromRemoteDb(event.event_id); //TODO dublicate insert to localDB
+		} catch (ExecutionException e) {
+			e.printStackTrace();
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		}
+
+		if (!success) {
+			event.setNeedUpdate(4);	
 		}
 		
 	}
