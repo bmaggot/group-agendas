@@ -2,22 +2,22 @@ package com.groupagendas.groupagenda;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 
-import com.groupagendas.groupagenda.utils.Prefs;
-
 public class GroupAgendasActivity extends Activity {
+	public static final String LOAD_REMOTE_DATA = "load_remote_data";
+	public static final String LOAD_LOCAL_DATA = "load_local_data";
+	
 	@Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+		SharedPreferences prefs = getSharedPreferences("LATEST_CREDENTIALS", MODE_PRIVATE);
         
-        Prefs prefs = new Prefs(this);
-        
-        if(prefs.getLogged()){
-        	startActivity(new Intent(this, NavbarActivity.class));
-        }else{
+        if(!prefs.getBoolean("logged", false)){
         	startActivity(new Intent(this, LoginActivity.class));
         }
+        
         finish();
     }
 }
