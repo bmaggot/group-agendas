@@ -3507,7 +3507,7 @@ private Event createEventFromCursor(Cursor result) {
 							Data.setERROR(errObj.getString("reason"));
 							Log.e("removeEvent - error: ", Data.getERROR());
 						} else {
-//							TODO JUSTUI V remove from RAM
+							Data.getEvents().remove(getEventFromLocalDb(id));
 						}
 					}
 				}
