@@ -146,9 +146,19 @@ private final Cursor databaseRow;
 
 	@Override
 	public String getColor() {
-		if(color == null || color.equalsIgnoreCase("null")){
-			this.color = DEFAULT_COLOR;
+		if (color == null) {
+			if (databaseRow != null) {
+				int colIndex = databaseRow
+						.getColumnIndex(EventsProvider.EMetaData.EventsMetaData.COLOR);
+				if (colIndex >= 0)
+					this.color = databaseRow.getString(colIndex);
+				else this.color = "null";
+			}
+
+			if (color.equalsIgnoreCase("null"))
+				this.color = DEFAULT_COLOR;
 		}
+
 		return color;
 	}
 	
@@ -164,12 +174,15 @@ private final Cursor databaseRow;
  * @return true if this event has icon set
  */
 	public boolean hasIcon() {
-		if (icon == null) return false;
-		if (icon.equalsIgnoreCase("null")) return false;
+		
+		if (getIcon().equalsIgnoreCase("null")) return false;
 		return true;
 	}
 
 	public Calendar getStartCalendar() {
+		if(startCalendar == null && databaseRow != null){
+//			TODO
+		}
 			return startCalendar;
 	}
 
@@ -185,6 +198,10 @@ private final Cursor databaseRow;
 	}
 
 	public Calendar getEndCalendar() {
+		
+			if(endCalendar == null && databaseRow != null){
+//				TODO
+			}
 		return endCalendar;
 	}
 
@@ -281,13 +298,22 @@ private final Cursor databaseRow;
 		return 0;
 	}
 	public int getUser_id() {
+		
+	if(user_id == 0 && databaseRow != null){
+//				TODO
+			}
 		return user_id;
 	}
+	
 	public String getType() {
-		if (type != null)
+		
+		if(type == null && databaseRow != null){
+//			TODO
+			type = "p";
+		}
+		
 			return type;
-		else
-			return "p";
+		
 	}
 	
 	/**
@@ -295,6 +321,9 @@ private final Cursor databaseRow;
 	 * @return value of this.title
 	 */
 	public String getActualTitle() {
+		if(title == null && databaseRow != null){
+//			TODO
+		}
 		return title;
 	}
 	
@@ -303,16 +332,25 @@ private final Cursor databaseRow;
 	 * @return value of this.title, if it's valid, else returns Event.DEFAULT_TITLE
 	 */
 	public String getValidTitle() {
-		if (validateTitle(title) != 0) return DEFAULT_TITLE;
+		if (validateTitle(getActualTitle()) != 0) return DEFAULT_TITLE;
 		return title;
 	}
 	public String getZip() {
+		if(zip == null && databaseRow != null){
+//			TODO
+		}
 		return zip;
 	}
 	public String getTimezone() {
+		if(timezone == null && databaseRow != null){
+//			TODO
+		}
 		return timezone;
 	}
 	public String getDescription() {
+		if(description_ == null && databaseRow != null){
+//			TODO
+		}
 		return description_;
 	}
 	
@@ -320,27 +358,48 @@ private final Cursor databaseRow;
 		this.title = title;
 	}
 	public int getEvent_id() {
+		if(event_id == 0 && databaseRow != null){
+//			TODO
+		}
 		return event_id;
 	}
 	public boolean isNative() {
 		return isNative;
 	}
 	public boolean is_sports_event() {
+		if(is_sports_event == false && databaseRow != null){
+//			TODO return
+		}
 		return is_sports_event;
 	}
 	public int getStatus() {
+		if(status == 0 && databaseRow != null){
+//			TODO
+		}
 		return status;
 	}
 	public boolean is_owner() {
+		if(is_owner == false && databaseRow != null){
+//			TODO
+		}
 		return is_owner;
 	}
 	public String getCreator_fullname() {
+		if(creator_fullname == null && databaseRow != null){
+//			TODO
+		}
 		return creator_fullname;
 	}
 	public int getCreator_contact_id() {
+		if(creator_contact_id == 0 && databaseRow != null){
+//			TODO
+		}
 		return creator_contact_id;
 	}
 	public String getTitle() {
+		if(title == null && databaseRow != null){
+//			TODO
+		}
 		return title;
 	}
 	
@@ -350,62 +409,120 @@ private final Cursor databaseRow;
 	 * @return
 	 */
 	public String getIcon() {
+		if (icon == null) {
+			if (databaseRow != null) {
+				int colIndex = databaseRow
+						.getColumnIndex(EventsProvider.EMetaData.EventsMetaData.ICON);
+				if (colIndex >= 0)
+					this.icon = databaseRow.getString(colIndex);
+				else this.icon = "null";
+			}
+		}
 		return icon;
 	}
 	public String getLocation() {
+		if(location == null && databaseRow != null){
+//			TODO
+		}
 		return location;
 	}
 	public String getAccomodation() {
+		if(accomodation == null && databaseRow != null){
+//			TODO
+		}
 		return accomodation;
 	}
 	public String getCost() {
+		if(cost == null && databaseRow != null){
+//			TODO
+		}
 		return cost;
 	}
 	public String getTake_with_you() {
+		if(take_with_you == null && databaseRow != null){
+//			TODO
+		}
 		return take_with_you;
 	}
 	public String getGo_by() {
+		if(go_by == null && databaseRow != null){
+//			TODO
+		}
 		return go_by;
 	}
 	public String getCountry() {
+		if(country == null && databaseRow != null){
+//			TODO
+		}
 		return country;
 	}
 	public String getCity() {
+		if(city == null && databaseRow != null){
+//			TODO
+		}
 		return city;
 	}
 	public String getStreet() {
+		if(street == null && databaseRow != null){
+//			TODO
+		}
 		return street;
 	}
-//	public String getTime() {
-//		return time;
-//	}
+
 	public String getReminder1() {
+		if(reminder1 == null && databaseRow != null){
+//			TODO
+		}
 		return reminder1;
 	}
 	public String getReminder2() {
+		if(reminder2 == null && databaseRow != null){
+//			TODO
+		}
 		return reminder2;
 	}
 	public String getReminder3() {
+		if(reminder3 == null && databaseRow != null){
+//			TODO
+		}
 		return reminder3;
 	}
 
 	public int getAttendant_1_count() {
+		if(attendant_1_count == 0 && databaseRow != null){
+//			TODO
+		}
 		return attendant_1_count;
 	}
 	public int getAttendant_2_count() {
+		if(attendant_2_count == 0 && databaseRow != null){
+//			TODO
+		}
 		return attendant_2_count;
 	}
 	public int getAttendant_0_count() {
+		if(attendant_0_count == 0 && databaseRow != null){
+//			TODO
+		}
 		return attendant_0_count;
 	}
 	public int getAttendant_4_count() {
+		if(attendant_4_count == 0 && databaseRow != null){
+//			TODO
+		}
 		return attendant_4_count;
 	}
 
 	public boolean is_all_day() {
+		if(is_all_day == false && databaseRow != null){
+//			TODO
+		}
 		return is_all_day;
 	}
 	public boolean isBirthday() {
+		if(birthday == false && databaseRow != null){
+//			TODO
+		}
 		return birthday;
 	}
 	
@@ -453,7 +570,7 @@ private final Cursor databaseRow;
 			this.assigned_contacts = assigned_contacts;
 		}	
 	public int[] getAssigned_contacts() {
-		if (assigned_contacts == null) assigned_contacts = parseAssignedContacts(assigned_contacts_DB_entry);
+		if (assigned_contacts == null) assigned_contacts = parseAssignedContacts(getAssigned_contacts_DB_entry());
 		return assigned_contacts;
 	}
 	private int[] parseAssignedContacts(String assigned_contacts_DB_entry) {
@@ -469,7 +586,7 @@ private final Cursor databaseRow;
 	}
 	
 	public int[] getAssigned_groups() {
-		if (assigned_groups == null) assigned_groups = parseAssignedGroups(assigned_groups_DB_entry);
+		if (assigned_groups == null) assigned_groups = parseAssignedGroups(getAssigned_groups_DB_entry());
 		return assigned_groups;
 	}
 	private int[] parseAssignedGroups(String assigned_groups_DB_entry) {
@@ -483,7 +600,7 @@ private final Cursor databaseRow;
 		this.invited = invited;
 	}
 	private ArrayList<Invited> getInvited() {
-		if (invited == null) invited = parseInvitedDBentry(invited_DB_entry);
+		if (invited == null) invited = parseInvitedDBentry(getInvited_DB_entry());
 		return invited;
 	}
 	private ArrayList<Invited> parseInvitedDBentry(String invited_DB_entry2) {
@@ -502,31 +619,11 @@ public void setAssigned_groups_DB_entry(String assigned_groups_DB_entry) {
 public void setInvited_DB_entry(String invited_DB_entry) {
 	this.invited_DB_entry = invited_DB_entry;
 }
-//public String getTime_start() {
-//	return time_start;
-//}
-//public void setTime_start(String time_start) {
-//	this.time_start = time_start;
-//}
-//public String getTime_end() {
-//	return time_end;
-//}
-//public void setTime_end(String time_end) {
-//	this.time_end = time_end;
-//}
-//public String getMy_time_start() {
-//	return my_time_start;
-//}
-//public void setMy_time_start(String my_time_start) {
-//	this.my_time_start = my_time_start;
-//}
-//public String getMy_time_end() {
-//	return my_time_end;
-//}
-//public void setMy_time_end(String my_time_end) {
-//	this.my_time_end = my_time_end;
-//}
+
 public String getAlarm1() {
+	if(alarm1 == null && databaseRow != null){
+//		TODO
+	}
 	return alarm1;
 }
 public void setAlarm1(String alarm1) {
@@ -554,6 +651,9 @@ private boolean isFired(String alarm_fired_string) {
 		return false;
 }
 public String getAlarm2() {
+	if(alarm2 == null && databaseRow != null){
+//		TODO
+	}
 	return alarm2;
 }
 public void setAlarm2(String alarm2) {
@@ -570,6 +670,9 @@ public void setAlarm2fired(String string) {
 }
 
 public String getAlarm3() {
+	if(alarm3 == null && databaseRow != null){
+//		TODO
+	}
 	return alarm3;
 }
 public void setAlarm3(String alarm3) {
@@ -586,12 +689,18 @@ public void setAlarm3fired(String string) {
 	this.alarm3fired = isFired(string);	
 }
 public String getCreated() {
+	if(created == null && databaseRow != null){
+//		TODO
+	}
 	return created;
 }
 public void setCreated(String created) {
 	this.created = created;
 }
 public String getModified() {
+	if(modified == null && databaseRow != null){
+//		TODO
+	}
 	return modified;
 }
 public void setModified(String modified) {
@@ -691,15 +800,27 @@ public void setBirthday(boolean birthday) {
 	this.birthday = birthday;
 }
 public String getAssigned_contacts_DB_entry() {
+	if(assigned_contacts_DB_entry == null && databaseRow != null){
+//		TODO
+	}
 	return assigned_contacts_DB_entry;
 }
 public String getAssigned_groups_DB_entry() {
+	if(assigned_groups_DB_entry == null && databaseRow != null){
+//		TODO
+	}
 	return assigned_groups_DB_entry;
 }
 public String getInvited_DB_entry() {
+	if(invited_DB_entry == null && databaseRow != null){
+//		TODO
+	}
 	return invited_DB_entry;
 }
 public int getNeedUpdate() {
+	if(NeedUpdate == 0 && databaseRow != null){
+//		TODO
+	}
 	return NeedUpdate;
 }
 public void setNeedUpdate(int needUpdate) {
