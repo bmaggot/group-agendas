@@ -9,6 +9,7 @@ import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -67,6 +68,7 @@ public class EventEditActivity extends EventActivity {
 	private View responsePanel;
 	private LinearLayout invitesColumn;
 	protected final static int DELETE_DIALOG = 1;
+	protected final static int MY_INVITED_ENTRY_ID = 99999;
 	private boolean remindersShown = false;
 
 	private ArrayList<AutoIconItem> autoIcons = null;
@@ -104,7 +106,8 @@ public class EventEditActivity extends EventActivity {
 	@Override
 	public void onResume() {
 		int invitedListSize = 0;
-		Button chatMessengerButton = (Button) findViewById(R.id.messenger_button);
+		SharedPreferences prefs = getSharedPreferences("LATEST_CREDENTIALS", MODE_PRIVATE);
+   		Button chatMessengerButton = (Button) findViewById(R.id.messenger_button);
 		Button inviteButton = (Button) findViewById(R.id.invite_button);
 		final Context mContext = dm.getContext();
 
@@ -336,6 +339,8 @@ public class EventEditActivity extends EventActivity {
 								&& !displayedInvited.email.equals("null") && displayedInvited.email.equals(contact.email)) {
 							needToShow = false;
 						}
+						if (contact.email.equals(prefs.getString("email", "")))
+							view.setId(MY_INVITED_ENTRY_ID);
 					}
 					invited.email = contact.email;
 					invited.status_id = 4;
@@ -368,7 +373,7 @@ public class EventEditActivity extends EventActivity {
 				@Override
 				public void onClick(View arg0) {
 					boolean success = dm.changeEventStatus(event.event_id, "1");
-					TextView myStatus = (TextView) findViewById(99999).findViewById(R.id.invited_status);
+					TextView myStatus = (TextView) findViewById(MY_INVITED_ENTRY_ID).findViewById(R.id.invited_status);
 
 					myButton_yes.setVisibility(View.INVISIBLE);
 					myButton_maybe.setVisibility(View.VISIBLE);
@@ -386,7 +391,7 @@ public class EventEditActivity extends EventActivity {
 				@Override
 				public void onClick(View arg0) {
 					boolean success = dm.changeEventStatus(event.event_id, "2");
-					TextView myStatus = (TextView) findViewById(99999).findViewById(R.id.invited_status);
+					TextView myStatus = (TextView) findViewById(MY_INVITED_ENTRY_ID).findViewById(R.id.invited_status);
 
 					myButton_yes.setVisibility(View.VISIBLE);
 					myButton_maybe.setVisibility(View.INVISIBLE);
@@ -404,7 +409,7 @@ public class EventEditActivity extends EventActivity {
 				@Override
 				public void onClick(View arg0) {
 					boolean success = dm.changeEventStatus(event.event_id, "0");
-					TextView myStatus = (TextView) findViewById(99999).findViewById(R.id.invited_status);
+					TextView myStatus = (TextView) findViewById(MY_INVITED_ENTRY_ID).findViewById(R.id.invited_status);
 
 					myButton_yes.setVisibility(View.VISIBLE);
 					myButton_maybe.setVisibility(View.VISIBLE);
@@ -517,7 +522,7 @@ public class EventEditActivity extends EventActivity {
 
 		if (invited.me) {
 			view.setTag("my_event_status");
-			view.setId(99999);
+			view.setId(MY_INVITED_ENTRY_ID);
 		}
 
 		return view;

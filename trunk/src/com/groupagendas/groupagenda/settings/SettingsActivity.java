@@ -12,7 +12,6 @@ import android.widget.ListView;
 import com.groupagendas.groupagenda.GroupAgendasActivity;
 import com.groupagendas.groupagenda.R;
 import com.groupagendas.groupagenda.account.AccountActivity;
-import com.groupagendas.groupagenda.utils.Prefs;
 
 public class SettingsActivity extends ListActivity{
 	@Override
@@ -74,17 +73,15 @@ public class SettingsActivity extends ListActivity{
 	}
 	
 	public void logout(View v){
-		Prefs prefs = new Prefs(this);
-		SharedPreferences sprefs = getSharedPreferences("LATEST_CREDENTIALS", MODE_PRIVATE);
-		Editor prefEditor = sprefs.edit();
+		SharedPreferences prefs = getSharedPreferences("LATEST_CREDENTIALS", MODE_PRIVATE);
+		Editor prefEditor = prefs.edit();
 		
-		if (sprefs.getBoolean("stay_logged_in", false)) {
+		if (prefs.getBoolean("stay_logged_in", false))
 			prefEditor.putBoolean("stay_logged_in", false);
-			prefEditor.commit();
-		}
+		prefEditor.putBoolean("logged", false);
 		
-		prefs.setLogged(false);
-		prefs.save();
+		prefEditor.commit();
+		
 		Intent intent = new Intent(SettingsActivity.this, GroupAgendasActivity.class);
 		intent.setFlags( Intent.FLAG_ACTIVITY_CLEAR_TOP );
 		startActivity(intent);

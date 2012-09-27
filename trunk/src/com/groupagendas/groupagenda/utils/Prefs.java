@@ -31,7 +31,6 @@ public class Prefs {
 	private String emailKey = null;
 	private String errorDescription = null;
 	private String errorCategory = null;
-	private boolean logged;
 	private int user_id;
 	private String colorMyEvent, colorAttending, colorPending, colorInvitation, colorNotes;
 
@@ -144,19 +143,6 @@ public class Prefs {
 		if (this._editor == null)
 			return;
 		this._editor.putString("errorcategory", error);
-	}
-
-	public boolean getLogged() {
-		if (this._prefs == null)
-			return false;
-		this.logged = this._prefs.getBoolean("logged", false);
-		return this.logged;
-	}
-
-	public void setLogged(boolean logged) {
-		if (this._editor == null)
-			return;
-		this._editor.putBoolean("logged", logged);
 	}
 
 	public String getColorMyEvent() {
