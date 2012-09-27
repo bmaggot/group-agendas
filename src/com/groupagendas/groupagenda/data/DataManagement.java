@@ -2708,6 +2708,42 @@ public class DataManagement {
 		Calendar event_day = Utils.stringToCalendar(dayStr + " 00:00:00", date_format);
 		Data.setSortedEvents(putValueIntoTreeMap(Data.getSortedEvents(), event_day, event));
 	}
+	
+	public void deleteEventfromTheTreeMap(Event event) {
+		Calendar event_start = null;
+		Calendar event_end = null;
+		Calendar tmp_event_start = null;
+		if (event.getStartCalendar() != null && event.getEndCalendar() != null) {
+			event_start = (Calendar) event.getStartCalendar().clone();
+			event_end = (Calendar) event.getEndCalendar().clone();
+			tmp_event_start = (Calendar) event_start.clone();
+			int difference = 0;
+			while (tmp_event_start.before(event_end)) {
+				tmp_event_start.add(Calendar.DAY_OF_MONTH, 1);
+				difference++;
+			}
+			if (difference == 0) {
+				String dayStr = new SimpleDateFormat("yyyy-MM-dd").format(event_start.getTime());
+				Calendar eventDay = Utils.stringToCalendar(dayStr + " 00:00:00", SERVER_TIMESTAMP_FORMAT);
+				Data.getSortedEvents().get(eventDay).remove(event);
+			} else if (difference >= 0) {
+				Calendar eventDay = null;
+				for (int i = 0; i < difference; i++) {
+					String dayStr = new SimpleDateFormat("yyyy-MM-dd").format(event_start.getTime());
+					eventDay = Utils.stringToCalendar(dayStr + " 00:00:00", SERVER_TIMESTAMP_FORMAT);
+					Data.getSortedEvents().get(eventDay).remove(event);
+					event_start.add(Calendar.DAY_OF_MONTH, 1);
+				}
+				String dayStr = new SimpleDateFormat("yyyy-MM-dd").format(event_end.getTime());
+				Calendar eventTmpEnd = Utils.stringToCalendar(dayStr + " 00:00:00", SERVER_TIMESTAMP_FORMAT);
+				if (eventTmpEnd.after(eventDay) && event_end.after(eventTmpEnd)) {
+					dayStr = new SimpleDateFormat("yyyy-MM-dd").format(event_start.getTime());
+					event_start = Utils.stringToCalendar(dayStr + " 00:00:00", SERVER_TIMESTAMP_FORMAT);
+					Data.getSortedEvents().get(event_start).remove(event);
+				}
+			}
+		}
+	}
 
 	/**
 	 * Selects all events in specified time range from local database
