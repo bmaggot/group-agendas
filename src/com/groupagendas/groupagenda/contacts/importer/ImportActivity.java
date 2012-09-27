@@ -174,7 +174,7 @@ public class ImportActivity extends Activity {
 				DataManagement.getInstance(activity).createContact(phoneContact);
 			}
 			phoneContacts.close();
-			DataManagement.setLoadContactsData(true);
+//			TODO update contacts list in local DB
 			return null;
 		}
 
