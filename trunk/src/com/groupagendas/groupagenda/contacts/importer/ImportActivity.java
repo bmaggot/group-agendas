@@ -12,6 +12,7 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.groupagendas.groupagenda.R;
 import com.groupagendas.groupagenda.contacts.Contact;
@@ -100,6 +101,7 @@ public class ImportActivity extends Activity {
 		@Override
 		protected void onPreExecute() {
 			pd.setMessage(getResources().getString(R.string.import_phone_contacts));
+			pd.setCancelable(false);
 			pd.show();
 		}
 
@@ -180,17 +182,8 @@ public class ImportActivity extends Activity {
 
 		@Override
 		protected void onPostExecute(Void params) {
-			pd.cancel();
-			pd.setTitle(getResources().getString(R.string.import_phone_contacts_done));
-			pd.show();
-			pd.setCancelable(true);
-			try {
-				pd.wait(2000);
-			} catch (InterruptedException e) {
-				e.printStackTrace();
-			}
 			pd.dismiss();
-			
+			Toast.makeText(ImportActivity.this, getResources().getString(R.string.import_phone_contacts_done), Toast.LENGTH_LONG);
 		}
 
 		public String getContactEmail(String id, ImportActivity activity, Contact contact) {
