@@ -254,11 +254,11 @@ public class EventsProvider extends ContentProvider{
 			break;
 			
 		case EVENTS_ON_DATE:
+			qb.setProjectionMap(EM);
 			qb.setTables(EMetaData.EVENT_DAY_INDEX_TABLE + "," +  EMetaData.EVENTS_TABLE);
 			qb.appendWhere(EMetaData.EVENTS_TABLE + "." + EMetaData.EventsMetaData.E_ID
 					+"="
 					+EMetaData.EVENT_DAY_INDEX_TABLE + "." + EMetaData.EventsIndexesMetaData.EVENT_ID);
-//			qb.setProjectionMap(EM);
 			orderBy = (TextUtils.isEmpty(sortOrder)) ? EMetaData.EventsMetaData.DEFAULT_SORT_ORDER : sortOrder;
 			break;
 		case EVENTS_BETWEEN_DATES:
