@@ -3357,7 +3357,13 @@ private Event createEventFromCursor(Cursor result) {
 		return success;
 	}
 
-	public boolean createEventInRemoteDb(Event e) {
+	
+	/**
+	 * Creates event in remote DB and returns event ID if success.
+	 * @param e - event to create
+	 * @return event id. If create failed, returns 0.
+	 */
+	public int createEventInRemoteDb(Event e) {
 		boolean success = false;
 
 		try {
@@ -3456,12 +3462,12 @@ private Event createEventFromCursor(Cursor result) {
 
 						// Log.e("createEvent - success", "" + success);
 
-						if (success == false) {
+						if (!success) {
 							Log.e("Create event error", object.getJSONObject("error").getString("reason"));
+							return 0;
+						}else{
+						return object.getInt("event_id");
 						}
-						int event_id = object.getInt("event_id");
-						e.event_id = event_id;
-						updateEventByIdFromRemoteDb(event_id);
 					}
 				} else {
 					Log.e("createEvent - status", rp.getStatusLine().getStatusCode() + "");
@@ -3474,7 +3480,7 @@ private Event createEventFromCursor(Cursor result) {
 			Reporter.reportError(this.getClass().toString(), Thread.currentThread().getStackTrace()[2].getMethodName().toString(),
 					ex.getMessage());
 		}
-		return success;
+		return 0;
 	
 	}
 
@@ -5326,14 +5332,23 @@ private Event createEventFromCursor(Cursor result) {
  * @param event
  */
 	public void createNewEvent(Event event) {
-		// TODO finish: if network connection available insert to remote, else add to unuploaded data table.
-		boolean success = createEventInRemoteDb(event);
-		if (!success) {
-			event.setNeedUpdate(2); 
+	
+		
+		if (networkAvailable) {
+			int id = createEventInRemoteDb(event);
+
+			if (id > 0) {
+				event.setEvent_id(id);
+				insertEventToLocalDB(event);
+				putEventIntoTreeMap(event); // TODO remove when possible
+			} else {
+				// TODO event create error
+			}
+		} else {
+			// TODO offline mode implementation
 		}
-				
-		insertEventToLocalDB(event);
-		putEventIntoTreeMap(event); // TODO remove when available
+		
+		
 		
 		
 		
@@ -5402,26 +5417,37 @@ public void deleteEvent(int event_id) {
 	
 	
 	public static final int TM_EVENTS_FROM_GIVEN_DATE = 0;
-	public static final int TM_EVENTS_ON_GIVEN_DAY = 1;
-	public static final int TM_EVENTS_ON_GIVEN_MONTH = 2;
+	public static final int TM_EVENTS_BETWEEN_DATES = 1;
+	public static final int TM_EVENTS_ON_GIVEN_DAY = 2;
+	public static final int TM_EVENTS_ON_GIVEN_MONTH = 3;
+	public static final int TM_EVENTS_ON_GIVEN_YEAR = 4;
+	
 	/**
 	 * @author justinas.marcinka@gmail.com
 	 * Gets events projections from local database, according to given date and time mode.
 	 * @param projection columns to get from events provider
+	 * @param date date on which events are selected according to eventTimeMode TM_EVENTS_BETWEEN_DATES
+	 * @param endDate select time range end. Used only with timeMode 
 	 * @param eventTimeMode available time modes:<br>
 	 * DataManagement.TM_EVENTS_FROM_GIVEN_DATE<br>
+	 * DataManagement.TM_EVENTS_BETWEEN_DATES. NOT YE IMPLEMENTED: throws illegalStateException<br>
 	 * DataManagement.TM_EVENTS_ON_GIVEN_DAY <br>
 	 * DataManagement.TM_EVENTS_ON_GIVEN_MONTH<br>
+	 * DataManagement.TM_EVENTS_ON_GIVEN_YEAR<br>
 	 * @param sortOrder sort order. if null, default will be used
 	 * @return cursor holding projections that met selection criteria. Caller has to set Event objects after return
 	 */
-	public Cursor createEventProjectionByDateFromLocalDb(String[] projection, Calendar date, int eventTimeMode, String sortOrder){
+	public Cursor createEventProjectionByDateFromLocalDb(String[] projection, Calendar date, Calendar endDate, int eventTimeMode, String sortOrder){
 		
 		String where;
 		
 		Uri uri;
 		if (date != null) {
 			switch (eventTimeMode) {
+			case TM_EVENTS_BETWEEN_DATES:
+				throw new IllegalStateException(
+						"NOT YET IMPLEMENTED!!!!");
+//				break;
 			case TM_EVENTS_FROM_GIVEN_DATE:
 				uri = EventsProvider.EMetaData.EventsMetaData.CONTENT_URI;
 				where = EventsProvider.EMetaData.EventsMetaData.NEED_UPDATE + " < 3";
@@ -5438,6 +5464,20 @@ public void deleteEvent(int event_id) {
 			case TM_EVENTS_ON_GIVEN_MONTH:
 				month_index_formatter = new SimpleDateFormat(EventsProvider.EMetaData.EventsIndexesMetaData.MONTH_COLUMN_FORMAT);
 				uri = EventsProvider.EMetaData.EVENTS_ON_DATE_URI;
+				where = EventsProvider.EMetaData.EventsMetaData.NEED_UPDATE + " < 3"+ " AND "
+						+ "("
+						+ EventsProvider.EMetaData.EventsIndexesMetaData.MONTH + " = '" + month_index_formatter.format(date.getTime()) + "'"
+						+ ")";
+				break;
+			case TM_EVENTS_ON_GIVEN_YEAR:
+				
+				uri = EventsProvider.EMetaData.EVENTS_ON_DATE_URI;
+
+				int year = date.get(Calendar.YEAR);
+				String inString = "";
+				for (int i = 1; i <= 12; i++);
+					
+					
 				where = EventsProvider.EMetaData.EventsMetaData.NEED_UPDATE + " < 3"+ " AND "
 						+ "("
 						+ EventsProvider.EMetaData.EventsIndexesMetaData.MONTH + " = '" + month_index_formatter.format(date.getTime()) + "'"
