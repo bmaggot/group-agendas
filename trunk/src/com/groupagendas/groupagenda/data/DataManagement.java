@@ -81,7 +81,6 @@ public class DataManagement {
 	public static boolean networkAvailable = true;
 	public static boolean eventStatusChanged = false;
 	public static ArrayList<Event> contactsBirthdays = new ArrayList<Event>();
-
 	
 	SimpleDateFormat day_index_formatter;
 	SimpleDateFormat month_index_formatter;
@@ -4152,12 +4151,7 @@ private Event createEventFromCursor(Cursor result) {
 		}
 	}
 
-	/**
-	 * Get Context object.
-	 * 
-	 * @author interfectos@gmail.com
-	 * @return Existing Context object from Data (bin).
-	 */
+
 	public Context getContext() {
 		return Data.getmContext();
 	}
@@ -5431,44 +5425,65 @@ public void deleteEvent(int event_id) {
 	
 	
 	public static final int TM_EVENTS_FROM_GIVEN_DATE = 0;
-	public static final int TM_EVENTS_BETWEEN_DATES = 1;
-	public static final int TM_EVENTS_ON_GIVEN_DAY = 2;
-	public static final int TM_EVENTS_ON_GIVEN_MONTH = 3;
-	public static final int TM_EVENTS_ON_GIVEN_YEAR = 4;
+	public static final int TM_EVENTS_ON_GIVEN_DAY = 1;
+	public static final int TM_EVENTS_ON_GIVEN_MONTH = 2;
+	public static final int TM_EVENTS_ON_GIVEN_YEAR = 3;
 	
 	/**
 	 * @author justinas.marcinka@gmail.com
 	 * Gets events projections from local database, according to given date and time mode.
 	 * @param projection columns to get from events provider
-	 * @param date date on which events are selected according to eventTimeMode TM_EVENTS_BETWEEN_DATES
-	 * @param endDate select time range end. Used only with timeMode 
+	 * @param date date on which events are selected according to eventTimeMode 
+	 * @param daysToSelect selected time range end in days. Used only with timeMode TM_EVENTS_FROM_GIVEN_DATE. If set 0, all events from given date are selected
 	 * @param eventTimeMode available time modes:<br>
 	 * DataManagement.TM_EVENTS_FROM_GIVEN_DATE<br>
-	 * DataManagement.TM_EVENTS_BETWEEN_DATES. NOT YE IMPLEMENTED: throws illegalStateException<br>
 	 * DataManagement.TM_EVENTS_ON_GIVEN_DAY <br>
 	 * DataManagement.TM_EVENTS_ON_GIVEN_MONTH<br>
 	 * DataManagement.TM_EVENTS_ON_GIVEN_YEAR<br>
 	 * @param sortOrder sort order. if null, default will be used
 	 * @return cursor holding projections that met selection criteria. Caller has to set Event objects after return
 	 */
-	public Cursor createEventProjectionByDateFromLocalDb(String[] projection, Calendar date, Calendar endDate, int eventTimeMode, String sortOrder){
-		
+	public Cursor createEventProjectionByDateFromLocalDb(String[] projection, Calendar date, int daysToSelect, int eventTimeMode, String sortOrder){
+		day_index_formatter = new SimpleDateFormat(EventsProvider.EMetaData.EventsIndexesMetaData.DAY_COLUMN_FORMAT);
+		month_index_formatter = new SimpleDateFormat(EventsProvider.EMetaData.EventsIndexesMetaData.MONTH_COLUMN_FORMAT);
 		String where;
-		
 		Uri uri;
 		if (date != null) {
 			switch (eventTimeMode) {
-			case TM_EVENTS_BETWEEN_DATES:
-				throw new IllegalStateException(
-						"NOT YET IMPLEMENTED!!!!");
-//				break;
 			case TM_EVENTS_FROM_GIVEN_DATE:
-				uri = EventsProvider.EMetaData.EventsMetaData.CONTENT_URI;
-				where = EventsProvider.EMetaData.EventsMetaData.NEED_UPDATE + " < 3";
-				where +=  EventsProvider.EMetaData.EventsMetaData.TIME_START_UTC_MILLISECONDS + ">" + date.getTimeInMillis();	
+				where = EventsProvider.EMetaData.EventsMetaData.NEED_UPDATE + " < 3" + " AND "
+				+ "(";
+				if (daysToSelect > 0){
+					uri = EventsProvider.EMetaData.EVENTS_ON_DATE_URI;
+					Calendar tmpStart = (Calendar) date.clone();
+					Calendar tmpEnd = (Calendar) date.clone();
+					tmpEnd.add(Calendar.DATE, daysToSelect - 1);
+					StringBuilder sb = new StringBuilder("(");
+					sb.append('\'');
+					sb.append(day_index_formatter.format(tmpStart.getTime()));
+					sb.append('\'');
+					tmpStart.add(Calendar.DATE, 1);
+					while (!tmpStart.after(tmpEnd)){
+						sb.append(',');
+						sb.append('\'');
+						sb.append(day_index_formatter.format(tmpStart.getTime()));
+						sb.append('\'');
+						tmpStart.add(Calendar.DATE, 1);
+					}
+					sb.append(")");
+					String inStringDay = sb.toString();
+					//TODO  optimisation by using months column
+					where += EventsProvider.EMetaData.EventsIndexesMetaData.DAY + " IN " + inStringDay;
+
+				}else {
+					uri = EventsProvider.EMetaData.EventsMetaData.CONTENT_URI;
+					where +=  EventsProvider.EMetaData.EventsMetaData.TIME_START_UTC_MILLISECONDS + ">" + date.getTimeInMillis();
+				}
+		
+						where +=	")";
 				break;
 			case TM_EVENTS_ON_GIVEN_DAY:
-				day_index_formatter = new SimpleDateFormat(EventsProvider.EMetaData.EventsIndexesMetaData.DAY_COLUMN_FORMAT);
+				
 				uri = EventsProvider.EMetaData.EVENTS_ON_DATE_URI;
 				where = EventsProvider.EMetaData.EventsMetaData.NEED_UPDATE + " < 3"+ " AND "
 						+ "("
@@ -5476,7 +5491,6 @@ public void deleteEvent(int event_id) {
 						+ ")";
 				break;
 			case TM_EVENTS_ON_GIVEN_MONTH:
-				month_index_formatter = new SimpleDateFormat(EventsProvider.EMetaData.EventsIndexesMetaData.MONTH_COLUMN_FORMAT);
 				uri = EventsProvider.EMetaData.EVENTS_ON_DATE_URI;
 				where = EventsProvider.EMetaData.EventsMetaData.NEED_UPDATE + " < 3"+ " AND "
 						+ "("
@@ -5484,17 +5498,29 @@ public void deleteEvent(int event_id) {
 						+ ")";
 				break;
 			case TM_EVENTS_ON_GIVEN_YEAR:
-				
 				uri = EventsProvider.EMetaData.EVENTS_ON_DATE_URI;
-
-				int year = date.get(Calendar.YEAR);
-				String inString = "";
-				for (int i = 1; i <= 12; i++);
+				
+				Calendar tmp = (Calendar) date.clone();
+				Utils.setCalendarToFirstDayOfYear(tmp);
+				StringBuilder sb = new StringBuilder("(");
+				sb.append('\'');
+				sb.append(month_index_formatter.format(tmp.getTime()));
+				sb.append('\'');
+				tmp.add(Calendar.MONTH, 1);
+				for (int i = 0; i < 11; i++){
+					sb.append(',');
+					sb.append('\'');
+					sb.append(month_index_formatter.format(tmp.getTime()));
+					sb.append('\'');
+					tmp.add(Calendar.MONTH, 1);
+				}
+				sb.append(")");
+				 String inString = sb.toString();
 					
 					
 				where = EventsProvider.EMetaData.EventsMetaData.NEED_UPDATE + " < 3"+ " AND "
 						+ "("
-						+ EventsProvider.EMetaData.EventsIndexesMetaData.MONTH + " = '" + month_index_formatter.format(date.getTime()) + "'"
+						+ EventsProvider.EMetaData.EventsIndexesMetaData.MONTH + " IN " + inString
 						+ ")";
 				break;
 
