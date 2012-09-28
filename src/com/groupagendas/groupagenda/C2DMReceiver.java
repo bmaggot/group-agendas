@@ -72,8 +72,6 @@ public class C2DMReceiver extends C2DMBaseReceiver {
 			String ns = Context.NOTIFICATION_SERVICE;
 			NotificationManager mNotificationManager = (NotificationManager) context.getSystemService(ns);
 
-			mNotificationManager.cancelAll();
-
 			Notification notification = new Notification(icon, tickerText, System.currentTimeMillis());
 
 			notification.defaults = Notification.DEFAULT_ALL;
