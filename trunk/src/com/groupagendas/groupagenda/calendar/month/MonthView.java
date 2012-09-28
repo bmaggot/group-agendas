@@ -318,7 +318,7 @@ public class MonthView extends AbstractCalendarView {
 					EventsProvider.EMetaData.EventsMetaData.ICON,
 					EventsProvider.EMetaData.EventsMetaData.TITLE,
 					};
-			Cursor result = dm.createEventProjectionByDateFromLocalDb(projection, date, DataManagement.TM_EVENTS_ON_GIVEN_MONTH, null);
+			Cursor result = dm.createEventProjectionByDateFromLocalDb(projection, date, null, DataManagement.TM_EVENTS_ON_GIVEN_MONTH, null);
 			if (result.moveToFirst()) {
 				while (!result.isAfterLast()) {
 					Event eventProjection = new Event();
