@@ -349,11 +349,17 @@ public class Data {
 	protected static void setGroups(ArrayList<Group> groups) {
 		Data.groups = groups;
 	}
-
+/**
+ * @deprecated
+ * @return
+ */
 	public static ArrayList<Event> getEvents() {
 		return events;
 	}
-
+/**
+ * @deprecated
+ * @param events
+ */
 	protected static void setEvents(ArrayList<Event> events) {
 		Data.events = events;
 	}

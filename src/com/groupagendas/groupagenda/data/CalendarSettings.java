@@ -6,7 +6,6 @@ package com.groupagendas.groupagenda.data;
 
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
-import java.util.TimeZone;
 
 import com.groupagendas.groupagenda.account.Account;
 
