@@ -6,6 +6,7 @@ import java.util.Calendar;
 import java.util.TreeMap;
 
 import android.content.Context;
+import android.database.Cursor;
 import android.os.AsyncTask;
 import android.util.AttributeSet;
 import android.view.View;
@@ -20,8 +21,10 @@ import com.groupagendas.groupagenda.R;
 import com.groupagendas.groupagenda.calendar.AbstractCalendarView;
 import com.groupagendas.groupagenda.calendar.MonthCellState;
 import com.groupagendas.groupagenda.calendar.adapters.MonthAdapter;
+import com.groupagendas.groupagenda.data.CalendarSettings;
 import com.groupagendas.groupagenda.data.DataManagement;
 import com.groupagendas.groupagenda.events.Event;
+import com.groupagendas.groupagenda.events.EventsProvider;
 import com.groupagendas.groupagenda.utils.Utils;
 
 public class MonthView extends AbstractCalendarView {
@@ -299,11 +302,47 @@ public class MonthView extends AbstractCalendarView {
 		private Context context = MonthView.this.getContext();
 		private DataManagement dm = DataManagement.getInstance(context);
 		
-		
+		/**
+		 * @author justinas.marcinka@gmail.com
+		 * Returns event projection in: id, color, icon, title, start and end calendars. Other fields are not initialized
+		 * @param date
+		 * @return
+		 */
+		private ArrayList<Event>getEventProjectionsForDisplay(Calendar date){
+			ArrayList<Event> list = new ArrayList<Event>();
+			String[] projection = {
+					EventsProvider.EMetaData.EventsMetaData.E_ID,
+					EventsProvider.EMetaData.EventsMetaData.COLOR,
+					EventsProvider.EMetaData.EventsMetaData.TIME_START_UTC_MILLISECONDS,
+					EventsProvider.EMetaData.EventsMetaData.TIME_END_UTC_MILLISECONDS,
+					EventsProvider.EMetaData.EventsMetaData.ICON,
+					EventsProvider.EMetaData.EventsMetaData.TITLE,
+					};
+			Cursor result = dm.createEventProjectionByDateFromLocalDb(projection, date, DataManagement.TM_EVENTS_ON_GIVEN_MONTH, null);
+			if (result.moveToFirst()) {
+				while (!result.isAfterLast()) {
+					Event eventProjection = new Event();
+					eventProjection.setEvent_id(result.getInt(result.getColumnIndexOrThrow(EventsProvider.EMetaData.EventsMetaData.E_ID)));
+					eventProjection.setTitle(result.getString(result.getColumnIndexOrThrow(EventsProvider.EMetaData.EventsMetaData.TITLE)));
+					eventProjection.setIcon(result.getString(result.getColumnIndexOrThrow(EventsProvider.EMetaData.EventsMetaData.ICON)));
+					eventProjection.setColor(result.getString(result.getColumnIndexOrThrow(EventsProvider.EMetaData.EventsMetaData.COLOR)));
+					String user_timezone = CalendarSettings.getTimeZone();
+					long timeinMillis = result.getLong(result.getColumnIndexOrThrow(EventsProvider.EMetaData.EventsMetaData.TIME_START_UTC_MILLISECONDS));
+					eventProjection.setStartCalendar(Utils.createCalendar(timeinMillis, user_timezone));
+					timeinMillis = result.getLong(result.getColumnIndexOrThrow(EventsProvider.EMetaData.EventsMetaData.TIME_END_UTC_MILLISECONDS));
+					eventProjection.setEndCalendar(Utils.createCalendar(timeinMillis, user_timezone));
+					list.add(eventProjection);
+					result.moveToNext();
+				}
+			}
+			result.close();
+			return list ;
+			
+		}
 
 		@Override
 		protected Void doInBackground(Void... params) {
-			sortedEvents = dm.sortEvents(dm.getEventProjectionsForMonthView(selectedDate));
+			sortedEvents = dm.sortEvents(getEventProjectionsForDisplay(selectedDate));
 			return null;
 		}
 		

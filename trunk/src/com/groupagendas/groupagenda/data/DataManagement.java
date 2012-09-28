@@ -5415,7 +5415,7 @@ public void deleteEvent(int event_id) {
 	 * @param sortOrder sort order. if null, default will be used
 	 * @return cursor holding projections that met selection criteria. Caller has to set Event objects after return
 	 */
-	private Cursor createEventProjectionByDateFromLocalDb(String[] projection, Calendar date, int eventTimeMode, String sortOrder){
+	public Cursor createEventProjectionByDateFromLocalDb(String[] projection, Calendar date, int eventTimeMode, String sortOrder){
 		
 		String where;
 		
@@ -5457,42 +5457,6 @@ public void deleteEvent(int event_id) {
 		
 	}
 	
-	/**
-	 * @author justinas.marcinka@gmail.com
-	 * Returns event projection in: id, color, icon, title, start and end calendars. Other fields are not initialized
-	 * @param date
-	 * @return
-	 */
-	public ArrayList<Event>getEventProjectionsForMonthView(Calendar date){
-		ArrayList<Event> list = new ArrayList<Event>();
-		String[] projection = {
-				EventsProvider.EMetaData.EventsMetaData.E_ID,
-				EventsProvider.EMetaData.EventsMetaData.COLOR,
-				EventsProvider.EMetaData.EventsMetaData.TIME_START_UTC_MILLISECONDS,
-				EventsProvider.EMetaData.EventsMetaData.TIME_END_UTC_MILLISECONDS,
-				EventsProvider.EMetaData.EventsMetaData.ICON,
-				EventsProvider.EMetaData.EventsMetaData.TITLE,
-				};
-		Cursor result = createEventProjectionByDateFromLocalDb(projection, date, TM_EVENTS_ON_GIVEN_MONTH, null);
-		if (result.moveToFirst()) {
-			while (!result.isAfterLast()) {
-				Event eventProjection = new Event();
-				eventProjection.setEvent_id(result.getInt(result.getColumnIndexOrThrow(EventsProvider.EMetaData.EventsMetaData.E_ID)));
-				eventProjection.setTitle(result.getString(result.getColumnIndexOrThrow(EventsProvider.EMetaData.EventsMetaData.TITLE)));
-				eventProjection.setIcon(result.getString(result.getColumnIndexOrThrow(EventsProvider.EMetaData.EventsMetaData.ICON)));
-				eventProjection.setColor(result.getString(result.getColumnIndexOrThrow(EventsProvider.EMetaData.EventsMetaData.COLOR)));
-				user_timezone = CalendarSettings.getTimeZone();
-				long timeinMillis = result.getLong(result.getColumnIndexOrThrow(EventsProvider.EMetaData.EventsMetaData.TIME_START_UTC_MILLISECONDS));
-				eventProjection.setStartCalendar(Utils.createCalendar(timeinMillis, user_timezone));
-				timeinMillis = result.getLong(result.getColumnIndexOrThrow(EventsProvider.EMetaData.EventsMetaData.TIME_END_UTC_MILLISECONDS));
-				eventProjection.setEndCalendar(Utils.createCalendar(timeinMillis, user_timezone));
-				list.add(eventProjection);
-				result.moveToNext();
-			}
-		}
-		result.close();
-		return list ;
-		
-	}
+	
 
 }
