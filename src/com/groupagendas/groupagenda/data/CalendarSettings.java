@@ -11,8 +11,6 @@ import java.util.TimeZone;
 import com.groupagendas.groupagenda.account.Account;
 
 public class CalendarSettings {
-	
-	private static String DEFAULT_TIMEZONE = TimeZone.getDefault().getID();
 
 	public static final int[] DEFAULT_WEEKENDS = {1,7};
 	
