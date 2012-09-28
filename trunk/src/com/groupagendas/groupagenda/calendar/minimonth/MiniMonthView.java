@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.Calendar;
 
 import android.content.Context;
+import android.database.Cursor;
+import android.os.AsyncTask;
 import android.util.AttributeSet;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
@@ -14,8 +16,13 @@ import android.widget.TextView;
 import com.groupagendas.groupagenda.R;
 import com.groupagendas.groupagenda.calendar.AbstractCalendarView;
 import com.groupagendas.groupagenda.calendar.agenda.AgendaFrame;
+import com.groupagendas.groupagenda.calendar.month.MonthDayFrame;
+import com.groupagendas.groupagenda.calendar.month.MonthView;
+import com.groupagendas.groupagenda.data.CalendarSettings;
 import com.groupagendas.groupagenda.data.Data;
+import com.groupagendas.groupagenda.data.DataManagement;
 import com.groupagendas.groupagenda.events.Event;
+import com.groupagendas.groupagenda.events.EventsProvider;
 import com.groupagendas.groupagenda.utils.DrawingUtils;
 import com.groupagendas.groupagenda.utils.Utils;
 
@@ -198,17 +205,7 @@ public class MiniMonthView extends AbstractCalendarView {
 	}
 	@Override
 	protected void updateEventLists() {
-		Calendar tmp = (Calendar) firstShownDate.clone();
-		
-		for (AgendaFrame frame : daysList){	
-			if (tmp.get(Calendar.MONTH) == selectedDate.get(Calendar.MONTH)){
-				frame.setEventList(Data.getEventByDate(tmp));
-			}else {
-				frame.setEventList(new ArrayList<Event>());
-			}
-			frame.UpdateList();
-			tmp.add(Calendar.DATE, 1);
-		}
+		new UpdateEventsInfoTask().execute();
 	}
 	
 	private Calendar updateShownDate() {
@@ -228,6 +225,73 @@ public class MiniMonthView extends AbstractCalendarView {
 		TABLE_ROWS_COUNT = selectedDate.getActualMaximum(Calendar.WEEK_OF_MONTH);
 		firstShownDate = updateShownDate();
 		
+	}
+	
+	
+	private class UpdateEventsInfoTask extends AsyncTask<Void, Integer, Void> {
+		private Context context = MiniMonthView.this.getContext();
+		private DataManagement dm = DataManagement.getInstance(context);
+		
+		/**
+		 * @author justinas.marcinka@gmail.com
+		 * Returns event projection in: id, color, icon, title, start and end calendars. Other fields are not initialized
+		 * @param date
+		 * @return
+		 */
+		private ArrayList<Event>getEventProjectionsForDisplay(Calendar date){
+			ArrayList<Event> list = new ArrayList<Event>();
+			String[] projection = {
+					EventsProvider.EMetaData.EventsMetaData.E_ID,
+					EventsProvider.EMetaData.EventsMetaData.COLOR,
+					EventsProvider.EMetaData.EventsMetaData.TIME_START_UTC_MILLISECONDS,
+					EventsProvider.EMetaData.EventsMetaData.TIME_END_UTC_MILLISECONDS,
+					EventsProvider.EMetaData.EventsMetaData.ICON,
+					EventsProvider.EMetaData.EventsMetaData.TITLE,
+					};
+			Cursor result = dm.createEventProjectionByDateFromLocalDb(projection, date, 0, DataManagement.TM_EVENTS_ON_GIVEN_MONTH, null);
+			if (result.moveToFirst()) {
+				while (!result.isAfterLast()) {
+					Event eventProjection = new Event();
+					eventProjection.setEvent_id(result.getInt(result.getColumnIndexOrThrow(EventsProvider.EMetaData.EventsMetaData.E_ID)));
+					eventProjection.setTitle(result.getString(result.getColumnIndexOrThrow(EventsProvider.EMetaData.EventsMetaData.TITLE)));
+					eventProjection.setIcon(result.getString(result.getColumnIndexOrThrow(EventsProvider.EMetaData.EventsMetaData.ICON)));
+					eventProjection.setColor(result.getString(result.getColumnIndexOrThrow(EventsProvider.EMetaData.EventsMetaData.COLOR)));
+					String user_timezone = CalendarSettings.getTimeZone();
+					long timeinMillis = result.getLong(result.getColumnIndexOrThrow(EventsProvider.EMetaData.EventsMetaData.TIME_START_UTC_MILLISECONDS));
+					eventProjection.setStartCalendar(Utils.createCalendar(timeinMillis, user_timezone));
+					timeinMillis = result.getLong(result.getColumnIndexOrThrow(EventsProvider.EMetaData.EventsMetaData.TIME_END_UTC_MILLISECONDS));
+					eventProjection.setEndCalendar(Utils.createCalendar(timeinMillis, user_timezone));
+					list.add(eventProjection);
+					result.moveToNext();
+				}
+			}
+			result.close();
+			return list ;
+			
+		}
+
+		@Override
+		protected Void doInBackground(Void... params) {
+			sortedEvents = dm.sortEvents(getEventProjectionsForDisplay(selectedDate));
+			return null;
+		}
+		
+		protected void onPostExecute(Void result) {
+			Calendar tmp = (Calendar) firstShownDate.clone();
+			
+			for (AgendaFrame frame : daysList){	
+				if (tmp.get(Calendar.MONTH) == selectedDate.get(Calendar.MONTH)){
+					frame.setEventList(Utils.getEventsFromTreemap(tmp, sortedEvents));
+				}else {
+					frame.setEventList(new ArrayList<Event>());
+				}
+				frame.UpdateList();
+				tmp.add(Calendar.DATE, 1);
+			}
+			
+		}
+
+
 	}
 	
 	

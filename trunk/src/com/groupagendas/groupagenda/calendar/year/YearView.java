@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.Calendar;
 
 import android.content.Context;
+import android.database.Cursor;
+import android.os.AsyncTask;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
 import android.view.View;
@@ -13,6 +15,10 @@ import android.widget.TextView;
 import com.groupagendas.groupagenda.R;
 import com.groupagendas.groupagenda.calendar.AbstractCalendarView;
 import com.groupagendas.groupagenda.calendar.MonthCellState;
+import com.groupagendas.groupagenda.data.CalendarSettings;
+import com.groupagendas.groupagenda.data.DataManagement;
+import com.groupagendas.groupagenda.events.Event;
+import com.groupagendas.groupagenda.events.EventsProvider;
 import com.groupagendas.groupagenda.utils.Utils;
 
 public class YearView extends AbstractCalendarView {
@@ -91,7 +97,7 @@ public class YearView extends AbstractCalendarView {
 			} 	 	
 		}
 		
-		
+		refresh();
 		
 		
 		
@@ -132,13 +138,8 @@ public class YearView extends AbstractCalendarView {
 	}
 
 	private void refresh() {
-		Calendar tmp = (Calendar) selectedDate.clone();
-		Utils.setCalendarToFirstDayOfYear(tmp);
-		for (int i = 0; i < months.length; i++){
-			months[i].setNewDate((Calendar) tmp.clone());
-			tmp.add(Calendar.MONTH, 1);
-		}
-		selectDate(selectedDate, null);
+		new UpdateEventsInfoTask().execute();
+		
 		
 	}
 
@@ -173,5 +174,68 @@ public class YearView extends AbstractCalendarView {
 	public Calendar getDateToResume() {
 		return selectedDate;
 	}
+	
+	private class UpdateEventsInfoTask extends AsyncTask<Void, Integer, Void> {
+		private Context context = YearView.this.getContext();
+		private DataManagement dm = DataManagement.getInstance(context);
+		
+		/**
+		 * @author justinas.marcinka@gmail.com
+		 * Returns event projection in: id, color, icon, title, start and end calendars. Other fields are not initialized
+		 * @param date
+		 * @return
+		 */
+	private ArrayList<Event>getEventProjectionsForDisplay(Calendar date){
+		ArrayList<Event> list = new ArrayList<Event>();
+		String[] projection = {
+				EventsProvider.EMetaData.EventsMetaData.E_ID,
+				EventsProvider.EMetaData.EventsMetaData.COLOR,
+				EventsProvider.EMetaData.EventsMetaData.TIME_START_UTC_MILLISECONDS,
+				EventsProvider.EMetaData.EventsMetaData.TIME_END_UTC_MILLISECONDS,
+				EventsProvider.EMetaData.EventsMetaData.ICON,
+				EventsProvider.EMetaData.EventsMetaData.TITLE,
+				};
+		Cursor result = dm.createEventProjectionByDateFromLocalDb(projection, date, 0, DataManagement.TM_EVENTS_ON_GIVEN_YEAR, null);
+		if (result.moveToFirst()) {
+			while (!result.isAfterLast()) {
+				Event eventProjection = new Event();
+				eventProjection.setEvent_id(result.getInt(result.getColumnIndexOrThrow(EventsProvider.EMetaData.EventsMetaData.E_ID)));
+				eventProjection.setTitle(result.getString(result.getColumnIndexOrThrow(EventsProvider.EMetaData.EventsMetaData.TITLE)));
+				eventProjection.setIcon(result.getString(result.getColumnIndexOrThrow(EventsProvider.EMetaData.EventsMetaData.ICON)));
+				eventProjection.setColor(result.getString(result.getColumnIndexOrThrow(EventsProvider.EMetaData.EventsMetaData.COLOR)));
+				String user_timezone = CalendarSettings.getTimeZone();
+				long timeinMillis = result.getLong(result.getColumnIndexOrThrow(EventsProvider.EMetaData.EventsMetaData.TIME_START_UTC_MILLISECONDS));
+				eventProjection.setStartCalendar(Utils.createCalendar(timeinMillis, user_timezone));
+				timeinMillis = result.getLong(result.getColumnIndexOrThrow(EventsProvider.EMetaData.EventsMetaData.TIME_END_UTC_MILLISECONDS));
+				eventProjection.setEndCalendar(Utils.createCalendar(timeinMillis, user_timezone));
+				list.add(eventProjection);
+				result.moveToNext();
+			}
+		}
+		result.close();
+		return list ;
+		
+	}
+
+	@Override
+	protected Void doInBackground(Void... params) {
+		sortedEvents = dm.sortEvents(getEventProjectionsForDisplay(selectedDate));
+		return null;
+	}
+	
+	protected void onPostExecute(Void result) {
+		Calendar tmp = (Calendar) selectedDate.clone();
+		Utils.setCalendarToFirstDayOfYear(tmp);
+		for (int i = 0; i < months.length; i++){
+			months[i].setNewDate((Calendar) tmp.clone(), sortedEvents);
+			tmp.add(Calendar.MONTH, 1);
+		}
+		selectDate(selectedDate, null);
+		}
+		
+	}
+
+
+
 
 }

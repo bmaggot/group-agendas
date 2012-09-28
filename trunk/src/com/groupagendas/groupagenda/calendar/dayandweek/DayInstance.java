@@ -4,6 +4,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
+import java.util.TreeMap;
 
 import android.app.Activity;
 import android.content.Context;
@@ -23,10 +24,10 @@ public class DayInstance  {
 		private Calendar selectedDate; 
 		private Activity activity;
 		
-		public DayInstance(Context context, Calendar selectedDate){
+		public DayInstance(Context context, Calendar selectedDate, TreeMap<Calendar, ArrayList<Event>> tm){
 			activity = (Activity) context;
 			this.selectedDate = selectedDate;
-			updateEventLists();
+			updateEventLists(tm);
 		}
 		/**
 		 * This method returns lenght of this event in quantity of timetable rows, according to timetable accuracy. 
@@ -41,8 +42,8 @@ public class DayInstance  {
 		
 
 		
-		private void updateEventLists() {
-			ArrayList<Event> events = Data.getEventByDate(selectedDate);
+		private void updateEventLists(TreeMap<Calendar, ArrayList<Event>> tm) {
+			ArrayList<Event> events = Utils.getEventsFromTreemap(selectedDate, tm);
 			allDayEvents = new ArrayList<Event>();
 			hourEventsList = new ArrayList<Event>();
 			hourEventsTimetable = null;
@@ -84,14 +85,14 @@ public class DayInstance  {
 			this.selectedDate = selectedDate;
 		}
 
-		public void goNext() {
+		public void goNext(TreeMap<Calendar, ArrayList<Event>> tm) {
 			selectedDate.add(Calendar.DATE, 1);
-			updateEventLists();
+			updateEventLists(tm);
 		}
 
-		public void goPrev() {
+		public void goPrev(TreeMap<Calendar, ArrayList<Event>> tm) {
 			selectedDate.add(Calendar.DATE, -1);
-			updateEventLists();
+			updateEventLists(tm);
 		}
 
 		public List<Event> getAllDayEvents() {
