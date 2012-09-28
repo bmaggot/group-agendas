@@ -29,7 +29,7 @@ import com.groupagendas.groupagenda.utils.Utils;
 
 public class MonthView extends AbstractCalendarView {
 	
-	private TreeMap<Calendar, ArrayList<Event>> sortedEvents;
+	
 	
 	private static final int WEEK_TITLE_WIDTH_DP = 0;
 	private final int TABLE_ROW_HEIGHT = Math.round(50 * densityFactor);
@@ -318,7 +318,7 @@ public class MonthView extends AbstractCalendarView {
 					EventsProvider.EMetaData.EventsMetaData.ICON,
 					EventsProvider.EMetaData.EventsMetaData.TITLE,
 					};
-			Cursor result = dm.createEventProjectionByDateFromLocalDb(projection, date, null, DataManagement.TM_EVENTS_ON_GIVEN_MONTH, null);
+			Cursor result = dm.createEventProjectionByDateFromLocalDb(projection, date, 0, DataManagement.TM_EVENTS_ON_GIVEN_MONTH, null);
 			if (result.moveToFirst()) {
 				while (!result.isAfterLast()) {
 					Event eventProjection = new Event();
