@@ -31,6 +31,7 @@ public class CountryManager {
 				result.moveToNext();
 			}
 		}
+		result.close();
 		return countryLabels.toArray(new String[countryLabels.size()]);
 	}
 	
@@ -56,6 +57,7 @@ public class CountryManager {
 					result.moveToNext();
 				}
 			}
+			result.close();
 			return countryValues.toArray(new String[countryValues.size()]);
 		}
 	}
