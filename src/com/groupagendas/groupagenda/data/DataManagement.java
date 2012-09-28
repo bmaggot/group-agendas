@@ -3300,6 +3300,10 @@ private Event createEventFromCursor(Cursor result) {
 			reqEntity.addPart("cost", new StringBody(e.cost));
 			reqEntity.addPart("accomodation", new StringBody(e.accomodation));
 
+			reqEntity.addPart("alarm1", new StringBody(e.alarm1));
+			reqEntity.addPart("alarm2", new StringBody(e.alarm2));
+			reqEntity.addPart("alarm3", new StringBody(e.alarm3));
+			
 			// if(){
 			reqEntity.addPart("reminder1", new StringBody(e.reminder1));
 			reqEntity.addPart("reminder2", new StringBody(e.reminder2));
@@ -3376,7 +3380,7 @@ private Event createEventFromCursor(Cursor result) {
 
 			if (e.icon != null)
 				reqEntity.addPart("icon", new StringBody(e.icon));
-			// if (e.color != null)
+			
 			reqEntity.addPart("color", new StringBody(e.getColor()));
 
 			reqEntity.addPart("title", new StringBody(e.title));
@@ -3435,6 +3439,16 @@ private Event createEventFromCursor(Cursor result) {
 				reqEntity.addPart("groups[]", new StringBody(""));
 			}
 
+			if (e.alarm1 != null) {
+				reqEntity.addPart("alarm1", new StringBody(e.alarm1));
+			}
+			if (e.alarm2 != null) {
+				reqEntity.addPart("alarm2", new StringBody(e.alarm2));
+			}
+			if (e.alarm3 != null) {
+				reqEntity.addPart("alarm3", new StringBody(e.alarm3));
+			}
+			
 			if (e.reminder1 != null) {
 				reqEntity.addPart("reminder1", new StringBody(e.reminder1));
 			}

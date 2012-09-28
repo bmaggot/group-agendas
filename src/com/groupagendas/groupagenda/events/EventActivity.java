@@ -16,11 +16,12 @@ import com.groupagendas.groupagenda.R;
 import com.groupagendas.groupagenda.data.DataManagement;
 import com.groupagendas.groupagenda.utils.DateTimeUtils;
 import com.groupagendas.groupagenda.utils.Prefs;
+import com.groupagendas.groupagenda.utils.Utils;
 
 public class EventActivity extends Activity {
 	public static final int DEFAULT_EVENT_DURATION_IN_MINS = 30;
 	public static final String EXTRA_STRING_FOR_START_CALENDAR = "strTime";
-	
+
 	protected DataManagement dm;
 	protected DateTimeUtils dtUtils;
 	protected EditText descView;
@@ -44,21 +45,21 @@ public class EventActivity extends Activity {
 	protected Button saveButton;
 	protected ImageView iconView;
 	protected ImageView colorView;
-	
+
 	protected Event event;
-	
+
 	protected EditText startView;
 	protected Button startButton;
 
 	protected EditText endView;
 	protected Button endButton;
-	
+
 	protected final static int DIALOG_START = 0;
 	protected final static int DIALOG_END = 1;
-	
+
 	protected String errorStr = "";
 	protected static final int DIALOG_ERROR = 0;
-	
+
 	protected final static int REMINDER1 = 11;
 	protected Calendar reminder1time;
 	protected final static int REMINDER2 = 22;
@@ -66,10 +67,17 @@ public class EventActivity extends Activity {
 	protected final static int REMINDER3 = 33;
 	protected Calendar reminder3time;
 
+	protected final static int ALARM1 = 111;
+	protected Calendar alarm1time;
+	protected final static int ALARM2 = 222;
+	protected Calendar alarm2time;
+	protected final static int ALARM3 = 333;
+	protected Calendar alarm3time;
+
 	protected Prefs prefs;
 
 	protected ContentValues cv;
-	
+
 	protected RelativeLayout addressDetailsPanel;
 	protected TextView addressTrigger;
 	protected TextView detailsTrigger;
@@ -77,7 +85,6 @@ public class EventActivity extends Activity {
 	protected boolean setOwner = false;
 	protected boolean setUid = false;
 
-	
 	protected void setEventData(Event event) {
 
 		if (timezoneArray != null) {
@@ -105,13 +112,21 @@ public class EventActivity extends Activity {
 		event.take_with_you = takewithyouView.getText().toString();
 		event.cost = costView.getText().toString();
 		event.accomodation = accomodationView.getText().toString();
+		if (alarm1time != null) {
+			event.setAlarm1(Utils.formatCalendar(alarm1time, DataManagement.SERVER_TIMESTAMP_FORMAT));
+		}
+		if (alarm2time != null) {
+			event.setAlarm2(Utils.formatCalendar(alarm2time, DataManagement.SERVER_TIMESTAMP_FORMAT));
+		}
+		if (alarm3time != null) {
+			event.setAlarm3(Utils.formatCalendar(alarm3time, DataManagement.SERVER_TIMESTAMP_FORMAT));
+		}
 		event.setReminder1(reminder1time);
 		event.setReminder2(reminder2time);
 		event.setReminder3(reminder3time);
-		
+
 	}
-	
-	
+
 	public String setErrorStr(int testEvent) {
 		switch (testEvent) {
 		case 1: // no title set
