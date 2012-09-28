@@ -1,6 +1,8 @@
 package com.groupagendas.groupagenda.calendar.year;
 
+import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.TreeMap;
 
 import android.view.MotionEvent;
 import android.view.View;
@@ -12,6 +14,7 @@ import com.groupagendas.groupagenda.R;
 import com.groupagendas.groupagenda.calendar.MonthCellState;
 import com.groupagendas.groupagenda.data.CalendarSettings;
 import com.groupagendas.groupagenda.data.Data;
+import com.groupagendas.groupagenda.events.Event;
 import com.groupagendas.groupagenda.utils.Utils;
 
 public class MonthInstance implements OnTouchListener{
@@ -33,7 +36,7 @@ public class MonthInstance implements OnTouchListener{
 		daysTable = (LinearLayout) layout.findViewById(R.id.year_month_table);
 		this.monthNames = monthNames;
 		title = (TextView) layout.findViewById(R.id.year_month_name);
-		setNewDate (date);
+//		setNewDate (date);
 	}
 	
 	private void setFirstShownDate() {
@@ -42,18 +45,18 @@ public class MonthInstance implements OnTouchListener{
 		Utils.setCalendarToFirstDayOfWeek(firstShownDate);
 	}
 
-	public void setNewDate(Calendar date){
+	public void setNewDate(Calendar date, TreeMap<Calendar, ArrayList<Event>> tm){
 		this.date = date;
 		Calendar tmp = Calendar.getInstance();
 		this.todayThisMonth = (tmp.get(Calendar.MONTH) == date.get(Calendar.MONTH) 
 				&& tmp.get(Calendar.YEAR) == date.get(Calendar.YEAR)); 
 		setFirstShownDate();
-		refresh();
+		refresh(tm);
 	}
 	
-	private void refresh() {
+	private void refresh(TreeMap<Calendar, ArrayList<Event>> tm) {
 		title.setText(monthNames[date.get(Calendar.MONTH)]);
-		refreshDayCells();
+		refreshDayCells(tm);
 		refreshWeekNumberCells();
 		refreshWeekEndCells();
 		if (todayThisMonth) markTodayCell();
@@ -103,22 +106,8 @@ public class MonthInstance implements OnTouchListener{
 		}	
 	}
 	
-//	private YearViewMonthInnerCell getDay (Calendar day){
-//		YearViewMonthInnerCell ret = null;
-//		Calendar tmp = (Calendar) firstShownDate.clone();
-//		for (int i = 0; i < ROWS_COUNT; i++){
-//			for (int j = 1; j <= DAYS_PER_WEEK; j++){
-//				if(Utils.isSameDay(day, tmp)){
-//					LinearLayout row = (LinearLayout) daysTable.getChildAt(i);
-//					return (YearViewMonthInnerCell) row.getChildAt(j);
-//				}
-//				tmp.add(Calendar.DATE, 1);
-//			}
-//		}
-//		return ret;
-//	}
 	
-	private void refreshDayCells() {
+	private void refreshDayCells(TreeMap<Calendar, ArrayList<Event>> tm) {
 		
 		Calendar tmp = (Calendar) date.clone();		
 		//set first few days invisible
@@ -136,7 +125,7 @@ public class MonthInstance implements OnTouchListener{
 			dayCell = (YearViewMonthInnerCell) ((LinearLayout)daysTable.getChildAt(0)).getChildAt(j);
 			dayCell.setDayNum("" + day);
 			dayCell.setState(MonthCellState.DEFAULT);
-			dayCell.setHasEvents(!Data.getEventByDate(tmp).isEmpty() && SHOW_BUBBLES);
+			dayCell.setHasEvents(!Utils.getEventsFromTreemap(tmp, tm).isEmpty() && SHOW_BUBBLES);
 			tmp.add(Calendar.DATE, 1);
 			day++;
 		}
@@ -148,7 +137,7 @@ public class MonthInstance implements OnTouchListener{
 							.getChildAt(i)).getChildAt(j);
 					dayCell.setDayNum("" + day);
 					dayCell.setState(MonthCellState.DEFAULT);
-					dayCell.setHasEvents(!Data.getEventByDate(tmp).isEmpty() && SHOW_BUBBLES);
+					dayCell.setHasEvents(!Utils.getEventsFromTreemap(tmp, tm).isEmpty() && SHOW_BUBBLES);
 					day++;
 					tmp.add(Calendar.DATE, 1);
 					if (day > date.getActualMaximum(Calendar.DAY_OF_MONTH))

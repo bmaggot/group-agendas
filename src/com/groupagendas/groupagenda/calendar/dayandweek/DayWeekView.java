@@ -5,8 +5,10 @@ import java.util.Calendar;
 import java.util.List;
 
 import android.content.Context;
+import android.database.Cursor;
 import android.graphics.Color;
 import android.graphics.drawable.GradientDrawable;
+import android.os.AsyncTask;
 import android.util.AttributeSet;
 import android.view.GestureDetector;
 import android.view.MotionEvent;
@@ -19,7 +21,13 @@ import android.widget.TextView;
 import com.groupagendas.groupagenda.EventActivityOnClickListener;
 import com.groupagendas.groupagenda.R;
 import com.groupagendas.groupagenda.calendar.AbstractCalendarView;
+import com.groupagendas.groupagenda.calendar.month.MonthDayFrame;
+import com.groupagendas.groupagenda.calendar.month.MonthView;
+import com.groupagendas.groupagenda.data.CalendarSettings;
+import com.groupagendas.groupagenda.data.DataManagement;
 import com.groupagendas.groupagenda.events.Event;
+import com.groupagendas.groupagenda.events.EventsProvider;
+import com.groupagendas.groupagenda.utils.Utils;
 
 
 public class DayWeekView extends AbstractCalendarView {
@@ -314,7 +322,7 @@ public class DayWeekView extends AbstractCalendarView {
 			drawHourList();
 			
 			addMotionListeners();
-			updateEventLists();
+			new UpdateEventsInfoTask().execute();
 			scrollHourPanel();	
 		}
 		
@@ -363,14 +371,14 @@ public class DayWeekView extends AbstractCalendarView {
 		public void goPrev(){
 			daysShown.prevPage();
 			setTopPanel(); 
-			updateEventLists();
+			new UpdateEventsInfoTask().execute();
 		}
 		
 		@Override
 		public void goNext(){
 			daysShown.nextPage();
 			setTopPanel();
-			updateEventLists();
+			new UpdateEventsInfoTask().execute();
 		}	
 		private void scrollHourPanel() {
 			final float hour = DEFAULT_TIME_TO_SCROLL;
@@ -475,7 +483,64 @@ public class DayWeekView extends AbstractCalendarView {
 		}
 
 	
+		private class UpdateEventsInfoTask extends AsyncTask<Void, Integer, Void> {
+			private Context context = DayWeekView.this.getContext();
+			private DataManagement dm = DataManagement.getInstance(context);
+			
+			/**
+			 * @author justinas.marcinka@gmail.com
+			 * Returns event projection in: id, color, icon, title, start and end calendars. Other fields are not initialized
+			 * @param date
+			 * @return
+			 */
+			private ArrayList<Event>getEventProjectionsForDisplay(Calendar date){
+				ArrayList<Event> list = new ArrayList<Event>();
+				String[] projection = {
+						EventsProvider.EMetaData.EventsMetaData.E_ID,
+						EventsProvider.EMetaData.EventsMetaData.COLOR,
+						EventsProvider.EMetaData.EventsMetaData.TIME_START_UTC_MILLISECONDS,
+						EventsProvider.EMetaData.EventsMetaData.TIME_END_UTC_MILLISECONDS,
+						EventsProvider.EMetaData.EventsMetaData.ICON,
+						EventsProvider.EMetaData.EventsMetaData.TITLE,
+						};
+				Cursor result = dm.createEventProjectionByDateFromLocalDb(projection, date, daysShown.getDaysToShow(), DataManagement.TM_EVENTS_ON_GIVEN_MONTH, null);
+				if (result.moveToFirst()) {
+					while (!result.isAfterLast()) {
+						Event eventProjection = new Event();
+						eventProjection.setEvent_id(result.getInt(result.getColumnIndexOrThrow(EventsProvider.EMetaData.EventsMetaData.E_ID)));
+						eventProjection.setTitle(result.getString(result.getColumnIndexOrThrow(EventsProvider.EMetaData.EventsMetaData.TITLE)));
+						eventProjection.setIcon(result.getString(result.getColumnIndexOrThrow(EventsProvider.EMetaData.EventsMetaData.ICON)));
+						eventProjection.setColor(result.getString(result.getColumnIndexOrThrow(EventsProvider.EMetaData.EventsMetaData.COLOR)));
+						String user_timezone = CalendarSettings.getTimeZone();
+						long timeinMillis = result.getLong(result.getColumnIndexOrThrow(EventsProvider.EMetaData.EventsMetaData.TIME_START_UTC_MILLISECONDS));
+						eventProjection.setStartCalendar(Utils.createCalendar(timeinMillis, user_timezone));
+						timeinMillis = result.getLong(result.getColumnIndexOrThrow(EventsProvider.EMetaData.EventsMetaData.TIME_END_UTC_MILLISECONDS));
+						eventProjection.setEndCalendar(Utils.createCalendar(timeinMillis, user_timezone));
+						list.add(eventProjection);
+						result.moveToNext();
+					}
+				}
+				result.close();
+				return list ;
+				
+			}
 
+			@Override
+			protected Void doInBackground(Void... params) {
+				sortedEvents = dm.sortEvents(getEventProjectionsForDisplay(selectedDate));
+				return null;
+			}
+			
+			protected void onPostExecute(Void result) {
+				daysShown.updateEventLists(sortedEvents);
+				updateEventLists();
+		
+				
+				
+			}
+
+
+		}
 	
 
 }

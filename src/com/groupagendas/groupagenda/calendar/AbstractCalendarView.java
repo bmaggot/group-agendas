@@ -3,7 +3,9 @@ package com.groupagendas.groupagenda.calendar;
  * @author justinas.marcinka@gmail.com
  */
 
+import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.TreeMap;
 
 import android.app.Activity;
 import android.content.Context;
@@ -21,9 +23,10 @@ import android.widget.TextView;
 
 import com.groupagendas.groupagenda.R;
 import com.groupagendas.groupagenda.data.CalendarSettings;
+import com.groupagendas.groupagenda.events.Event;
 
 public abstract class AbstractCalendarView extends LinearLayout {
-	
+	protected TreeMap<Calendar, ArrayList<Event>> sortedEvents;
 	protected GestureDetector swipeGestureDetector;
 	
 	protected Calendar selectedDate;
