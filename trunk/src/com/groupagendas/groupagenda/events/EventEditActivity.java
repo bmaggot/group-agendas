@@ -146,7 +146,7 @@ public class EventEditActivity extends EventActivity {
 
 		LinearLayout reminder1container = (LinearLayout) findViewById(R.id.reminder_container1);
 		final EditText reminder1 = (EditText) findViewById(R.id.reminder1);
-		if (event != null && event.reminder1 != null) {
+		if (event != null && event.reminder1 != null && !event.reminder1.equals("null")) {
 			reminder1.setText(event.reminder1);
 		} else {
 			reminder1.setText("");
@@ -168,7 +168,7 @@ public class EventEditActivity extends EventActivity {
 
 		LinearLayout reminder2container = (LinearLayout) findViewById(R.id.reminder_container2);
 		final EditText reminder2 = (EditText) findViewById(R.id.reminder2);
-		if (event != null && event.reminder2 != null) {
+		if (event != null && event.reminder2 != null && !event.reminder2.equals("null")) {
 			reminder2.setText(event.reminder2);
 		} else {
 			reminder2.setText("");
@@ -190,7 +190,7 @@ public class EventEditActivity extends EventActivity {
 
 		LinearLayout reminder3container = (LinearLayout) findViewById(R.id.reminder_container3);
 		final EditText reminder3 = (EditText) findViewById(R.id.reminder3);
-		if (event != null && event.reminder3 != null) {
+		if (event != null && event.reminder3 != null && !event.reminder3.equals("null")) {
 			reminder3.setText(event.reminder3);
 		} else {
 			reminder3.setText("");
