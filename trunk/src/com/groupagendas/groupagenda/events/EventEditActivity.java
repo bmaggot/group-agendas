@@ -70,6 +70,7 @@ public class EventEditActivity extends EventActivity {
 	protected final static int DELETE_DIALOG = 1;
 	protected final static int MY_INVITED_ENTRY_ID = 99999;
 	private boolean remindersShown = false;
+	private boolean alarmsShown = false;
 
 	private ArrayList<AutoIconItem> autoIcons = null;
 
@@ -209,6 +210,90 @@ public class EventEditActivity extends EventActivity {
 				showDateTimeDialog(reminder3, REMINDER3);
 			}
 		});
+		
+		// alarms
+		final LinearLayout alarmBlock = (LinearLayout) findViewById(R.id.alarm_block);
+		TextView setAlarmTrigger = (TextView) findViewById(R.id.setAlarmTrigger);
+		setAlarmTrigger.setOnClickListener(new OnClickListener() {
+
+			@Override
+			public void onClick(View v) {
+				if (alarmsShown) {
+					alarmsShown = false;
+					alarmBlock.setVisibility(View.GONE);
+				} else {
+					alarmsShown = true;
+					alarmBlock.setVisibility(View.VISIBLE);
+				}
+			}
+		});
+
+		LinearLayout alarm1container = (LinearLayout) findViewById(R.id.alarm_container1);
+		final EditText alarm1 = (EditText) findViewById(R.id.alarm1);
+		if (event != null && event.alarm1 != null && !event.alarm1.equals("null")) {
+			alarm1.setText(event.alarm1);
+		} else {
+			alarm1.setText("");
+		}
+		alarm1container.setOnClickListener(new OnClickListener() {
+
+			@Override
+			public void onClick(View v) {
+				showDateTimeDialog(alarm1, ALARM1);
+			}
+		});
+		alarm1.setOnClickListener(new OnClickListener() {
+
+			@Override
+			public void onClick(View v) {
+				showDateTimeDialog(alarm1, ALARM1);
+			}
+		});
+
+		LinearLayout alarm2container = (LinearLayout) findViewById(R.id.alarm_container2);
+		final EditText alarm2 = (EditText) findViewById(R.id.alarm2);
+		if (event != null && event.alarm2 != null && !event.alarm2.equals("null")) {
+			alarm2.setText(event.alarm2);
+		} else {
+			alarm2.setText("");
+		}
+		alarm2container.setOnClickListener(new OnClickListener() {
+
+			@Override
+			public void onClick(View v) {
+				showDateTimeDialog(alarm2, ALARM2);
+			}
+		});
+		alarm2.setOnClickListener(new OnClickListener() {
+
+			@Override
+			public void onClick(View v) {
+				showDateTimeDialog(alarm2, ALARM2);
+			}
+		});
+
+		LinearLayout alarm3container = (LinearLayout) findViewById(R.id.alarm_container3);
+		final EditText alarm3 = (EditText) findViewById(R.id.alarm3);
+		if (event != null && event.alarm3 != null && !event.alarm3.equals("null")) {
+			alarm3.setText(event.alarm3);
+		} else {
+			alarm3.setText("");
+		}
+		alarm3container.setOnClickListener(new OnClickListener() {
+
+			@Override
+			public void onClick(View v) {
+				showDateTimeDialog(alarm3, ALARM3);
+			}
+		});
+		alarm3.setOnClickListener(new OnClickListener() {
+
+			@Override
+			public void onClick(View v) {
+				showDateTimeDialog(alarm3, ALARM3);
+			}
+		});
+		
 		if (event.is_owner) {
 			saveButton.setVisibility(View.VISIBLE);
 			saveButton.setOnClickListener(new OnClickListener() {
@@ -1133,6 +1218,15 @@ public class EventEditActivity extends EventActivity {
 					break;
 				case DIALOG_END:
 					endCalendar = mDateTimePicker.getCalendar();
+					break;
+				case ALARM1:
+					alarm1time = mDateTimePicker.getCalendar();
+					break;
+				case ALARM2:
+					alarm2time = mDateTimePicker.getCalendar();
+					break;
+				case ALARM3:
+					alarm3time = mDateTimePicker.getCalendar();
 					break;
 				case REMINDER1:
 					reminder1time = mDateTimePicker.getCalendar();

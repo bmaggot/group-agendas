@@ -73,14 +73,14 @@ private final Cursor databaseRow;
 	
 	
 	
-	public String reminder1;
-	public String reminder2;
-	public String reminder3;
-	public String alarm1 = "null";
+	public String reminder1 = "";
+	public String reminder2 = "";
+	public String reminder3 = "";
+	public String alarm1 = "";
 	public boolean alarm1fired = false;
-	public String alarm2 = "null";
+	public String alarm2 = "";
 	public boolean alarm2fired = false;
-	public String alarm3 = "null";
+	public String alarm3 = "";
 	public boolean alarm3fired = false;
 	
 	public String created;
@@ -146,16 +146,7 @@ private final Cursor databaseRow;
 
 	@Override
 	public String getColor() {
-		if (color == null) {
-			if (databaseRow != null) {
-				int colIndex = databaseRow
-						.getColumnIndex(EventsProvider.EMetaData.EventsMetaData.COLOR);
-				if (colIndex >= 0)
-					this.color = databaseRow.getString(colIndex);
-				else this.color = "null";
-			}
-
-			if (color.equalsIgnoreCase("null"))
+		if (color == null || color.equalsIgnoreCase("null")) {
 				this.color = DEFAULT_COLOR;
 		}
 
