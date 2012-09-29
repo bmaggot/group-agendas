@@ -33,6 +33,8 @@ import android.widget.ViewSwitcher;
 
 import com.groupagendas.groupagenda.R;
 
+// TODO 2012-09-29 paspaudus ivedinet Reminder1 kuriant eventa 2x issoko timepickeris
+//		ir tik po antrojo ivedimo nusistate reminderio laikas. Problems?
 
 public class DateTimePicker extends RelativeLayout implements View.OnClickListener, OnDateChangedListener, OnTimeChangedListener {
 
