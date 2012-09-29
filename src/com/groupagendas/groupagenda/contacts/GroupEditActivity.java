@@ -38,6 +38,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.groupagendas.groupagenda.R;
+import com.groupagendas.groupagenda.data.ContactManagement;
 import com.groupagendas.groupagenda.data.DataManagement;
 import com.groupagendas.groupagenda.error.report.Reporter;
 import com.groupagendas.groupagenda.utils.MapUtils;
@@ -154,7 +155,6 @@ public class GroupEditActivity extends Activity implements OnClickListener {
 
 		@Override
 		protected Boolean doInBackground(Group... groups) {
-			boolean success = false;
 			boolean check = true;
 			String temp = "";
 			ContentValues cv = new ContentValues();
@@ -170,7 +170,7 @@ public class GroupEditActivity extends Activity implements OnClickListener {
 			
 			// contacts
 			cv.put(ContactsProvider.CMetaData.GroupsMetaData.CONTACTS, MapUtils.mapToString(editedGroup.contacts));
-			cv.put(ContactsProvider.CMetaData.GroupsMetaData.CONTACTS_COUNT, editedGroup.contacts.size());
+			cv.put(ContactsProvider.CMetaData.GroupsMetaData.CONTACT_COUNT, editedGroup.contacts.size());
 			
 			if(editedGroup.image_bytes != null){
 				cv.put(ContactsProvider.CMetaData.GroupsMetaData.IMAGE_BYTES, editedGroup.image_bytes);
@@ -178,10 +178,7 @@ public class GroupEditActivity extends Activity implements OnClickListener {
 			}
 			
 			if(check){
-				success = dm.createGroup(editedGroup);
-				if(!success){
-					cv.put(ContactsProvider.CMetaData.GroupsMetaData.NEED_UPDATE, 2);
-				}
+				check = ContactManagement.insertGroup(editedGroup);
 				getContentResolver().insert(ContactsProvider.CMetaData.GroupsMetaData.CONTENT_URI, cv);
 			}
 			
@@ -211,7 +208,6 @@ public class GroupEditActivity extends Activity implements OnClickListener {
 
 		@Override
 		protected Boolean doInBackground(Void... groups) {
-			boolean success = false;
 			boolean check = true;
 			String temp = "";
 			ContentValues cv = new ContentValues();
@@ -227,7 +223,7 @@ public class GroupEditActivity extends Activity implements OnClickListener {
 			
 			// contacts
 			cv.put(ContactsProvider.CMetaData.GroupsMetaData.CONTACTS, MapUtils.mapToString(editedGroup.contacts));
-			cv.put(ContactsProvider.CMetaData.GroupsMetaData.CONTACTS_COUNT, editedGroup.contacts.size());
+			cv.put(ContactsProvider.CMetaData.GroupsMetaData.CONTACT_COUNT, editedGroup.contacts.size());
 			
 			// image
 			editedGroup.remove_image = removeImage.isChecked();
@@ -244,13 +240,13 @@ public class GroupEditActivity extends Activity implements OnClickListener {
 			if(check){
 				Uri uri = Uri.parse(ContactsProvider.CMetaData.GroupsMetaData.CONTENT_URI+"/"+editedGroup.group_id);
 				getContentResolver().update(uri, cv, null, null);
-				success = dm.editGroup(editedGroup);
+				check = dm.editGroup(editedGroup);
 				
-				if(!success){
-					cv = new ContentValues();
-					cv.put(ContactsProvider.CMetaData.GroupsMetaData.NEED_UPDATE, 1);
-					getContentResolver().update(uri, cv, null, null);
-				}
+//				if(!success){
+//					cv = new ContentValues();
+//					cv.put(ContactsProvider.CMetaData.GroupsMetaData.NEED_UPDATE, 1);
+//					getContentResolver().update(uri, cv, null, null);
+//				}
 			}
 			
 			return check;
@@ -281,9 +277,9 @@ public class GroupEditActivity extends Activity implements OnClickListener {
 
 		@Override
 		protected Group doInBackground(Integer... id) {
-			editedGroup = dm.getGroup(GroupEditActivity.this, id[0]);
+			editedGroup = ContactManagement.getGroupFromLocalDb(id[0], 0);
 
-			ArrayList<Contact> contacts = dm.getContactsFromLocalDb("");
+			ArrayList<Contact> contacts = ContactManagement.getContactsFromLocalDb(null);
 			getContactsList(contacts, false);
 
 			return editedGroup;
@@ -311,7 +307,7 @@ public class GroupEditActivity extends Activity implements OnClickListener {
 		}
 		@Override
 		protected Void doInBackground(Void... params) {
-			ArrayList<Contact> contacts = dm.getContactsFromLocalDb("");
+			ArrayList<Contact> contacts = ContactManagement.getContactsFromLocalDb(null);
 			getContactsList(contacts, true);
 			return null;
 		}

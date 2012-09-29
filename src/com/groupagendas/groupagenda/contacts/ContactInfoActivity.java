@@ -3,7 +3,6 @@ package com.groupagendas.groupagenda.contacts;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
-import android.content.ContentValues;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
@@ -25,7 +24,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.groupagendas.groupagenda.R;
-import com.groupagendas.groupagenda.data.DataManagement;
+import com.groupagendas.groupagenda.data.ContactManagement;
 import com.groupagendas.groupagenda.utils.DateTimeUtils;
 import com.groupagendas.groupagenda.utils.Utils;
 
@@ -35,7 +34,6 @@ public class ContactInfoActivity extends Activity {
 	private TableRow.LayoutParams params;
 	private LinearLayout.LayoutParams paramsD;
 
-	private DataManagement dm;
 	private Intent intent;
 	
 	private Toast toast;
@@ -48,33 +46,32 @@ public class ContactInfoActivity extends Activity {
 	@Override
 	public void onResume() {
 		super.onResume();
+		this.setContentView(R.layout.contact_info);
+
+		table = (TableLayout) findViewById(R.id.table);
+		
 		new GetGroupContactsTask().execute();
 	}
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		this.setContentView(R.layout.contact_info);
 
-		dm = DataManagement.getInstance(this);
 		dtUtils = new DateTimeUtils(this);
 
 		intent = getIntent();
-
-		table = (TableLayout) findViewById(R.id.table);
 
 		params = new TableRow.LayoutParams(LayoutParams.FILL_PARENT, LayoutParams.WRAP_CONTENT);
 		params.setMargins(0, 10, 0, 10);
 
 		paramsD = new LinearLayout.LayoutParams(LayoutParams.FILL_PARENT, 1);
-
 	}
 
 	class GetGroupContactsTask extends AsyncTask<Void, Contact, Contact> {
 
 		@Override
 		protected Contact doInBackground(Void... type) {
-			Contact contact = dm.getContact(intent.getIntExtra("contactId", 0));
+			Contact contact = ContactManagement.getContactFromLocalDb(intent.getIntExtra("contactId", 0), intent.getLongExtra("contactCreated", 0));
 			return contact;
 		}
 
@@ -143,15 +140,15 @@ public class ContactInfoActivity extends Activity {
 			
 			Uri uri = Uri.parse(ContactsProvider.CMetaData.ContactsMetaData.CONTENT_URI+"/"+mContact.contact_id);
 			
-			Boolean result = dm.removeContact(mContact.contact_id);
+			Boolean result = ContactManagement.removeContactFromRemoteDb(mContact.contact_id);
 			
 			if(result){
 				getContentResolver().delete(uri, null, null);
 			}else{
-				ContentValues values = new ContentValues();
-				values.put(ContactsProvider.CMetaData.ContactsMetaData.NEED_UPDATE, 3);
-				
-				getContentResolver().update(uri, values, null, null);
+//				ContentValues values = new ContentValues();
+//				values.put(ContactsProvider.CMetaData.ContactsMetaData.NEED_UPDATE, 3);
+//				
+//				getContentResolver().update(uri, values, null, null);
 			}
 			
 			return true;

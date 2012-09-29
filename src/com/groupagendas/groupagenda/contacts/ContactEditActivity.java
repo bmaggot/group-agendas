@@ -42,6 +42,7 @@ import android.widget.Spinner;
 import android.widget.Toast;
 
 import com.groupagendas.groupagenda.R;
+import com.groupagendas.groupagenda.data.ContactManagement;
 import com.groupagendas.groupagenda.data.DataManagement;
 import com.groupagendas.groupagenda.error.report.Reporter;
 import com.groupagendas.groupagenda.utils.CountryManager;
@@ -261,9 +262,9 @@ public class ContactEditActivity extends Activity implements OnClickListener, On
 
 		@Override
 		protected Contact doInBackground(Integer... id) {
-			editedContact = dm.getContact(id[0]);
+			editedContact = ContactManagement.getContactFromLocalDb(id[0], 0);
 
-			ArrayList<Group> groups = dm.getGroupsFromLocalDb();
+			ArrayList<Group> groups = ContactManagement.getGroupsFromLocalDb(null);
 			getGroupsList(groups, false);
 
 			return editedContact;
@@ -320,7 +321,6 @@ public class ContactEditActivity extends Activity implements OnClickListener, On
 
 		@Override
 		protected Boolean doInBackground(Contact... contacts) {
-			boolean success = false;
 			boolean check = true;
 			String temp = "";
 			ContentValues cv = new ContentValues();
@@ -386,13 +386,13 @@ public class ContactEditActivity extends Activity implements OnClickListener, On
 			if(check){
 				Uri uri = Uri.parse(ContactsProvider.CMetaData.ContactsMetaData.CONTENT_URI+"/"+editedContact.contact_id);
 				getContentResolver().update(uri, cv, null, null);
-				success = dm.editContact(editedContact);
+				check = ContactManagement.editContactOnRemoteDb(editedContact);
 				
-				if(!success){
-					cv = new ContentValues();
-					cv.put(ContactsProvider.CMetaData.ContactsMetaData.NEED_UPDATE, 1);
-					getContentResolver().update(uri, cv, null, null);
-				}
+//				if(!success){
+//					cv = new ContentValues();
+//					cv.put(ContactsProvider.CMetaData.ContactsMetaData.NEED_UPDATE, 1);
+//					getContentResolver().update(uri, cv, null, null);
+//				}
 			}
 			
 			return check;
@@ -414,7 +414,6 @@ public class ContactEditActivity extends Activity implements OnClickListener, On
 
 		@Override
 		protected Boolean doInBackground(Contact... groups) {
-			boolean success = false;
 			boolean check = true;
 			String temp = "";
 			ContentValues cv = new ContentValues();
@@ -472,11 +471,11 @@ public class ContactEditActivity extends Activity implements OnClickListener, On
 			}
 			
 			if(check){
-				success = dm.createContact(editedContact);
-				if(!success){
-					cv.put(ContactsProvider.CMetaData.ContactsMetaData.NEED_UPDATE, 2);
-				}
-				getContentResolver().insert(ContactsProvider.CMetaData.ContactsMetaData.CONTENT_URI, cv);
+				check = ContactManagement.insertContact(editedContact);
+//				if(!success){
+//					cv.put(ContactsProvider.CMetaData.ContactsMetaData.NEED_UPDATE, 2);
+//				}
+//				getContentResolver().insert(ContactsProvider.CMetaData.ContactsMetaData.CONTENT_URI, cv);
 			}
 			
 			return check;
@@ -501,7 +500,7 @@ public class ContactEditActivity extends Activity implements OnClickListener, On
 
 		@Override
 		protected Void doInBackground(Void... params) {
-			ArrayList<Group> groups = dm.getGroupsFromLocalDb();
+			ArrayList<Group> groups = ContactManagement.getGroupsFromLocalDb(null);
 			getGroupsList(groups, true);
 			return null;
 		}

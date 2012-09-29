@@ -48,18 +48,15 @@ public class ContactsProvider extends ContentProvider{
 			public static final String IMAGE = "image";
 			public static final String IMAGE_URL = "image_url";
 			public static final String IMAGE_THUMB_URL = "image_thumb_url";
-			public static final String IMAGE_BYTES		= "image_bytes";
-			public static final String REMOVE_IMAGE		= "remove_image";
+			public static final String IMAGE_BYTES = "image_bytes";
+			public static final String REMOVE_IMAGE = "remove_image";
 			
-			public static final String CREATED = "created";
-			public static final String MODOFIED = "modified";
+			public static final String CREATED = "timestamp_created";
+			public static final String MODIFIED = "timestamp_modified";
 			public static final String AGENDA_VIEW = "agenda_view";
 			public static final String REGISTERED = "registered";
 			public static final String GROUPS = "groups";
-			
-			public static final String NEED_UPDATE = "need_update";
-			
-			
+
 			public static final String DEFAULT_SORT_ORDER = NAME+" COLLATE NOCASE ASC";
 		}
 		
@@ -70,8 +67,8 @@ public class ContactsProvider extends ContentProvider{
 			
 			public static final String G_ID = "group_id";
 			public static final String TITLE = "title";
-			public static final String CREATED = "created";
-			public static final String MODIFIED = "modified";
+			public static final String CREATED = "timestamp_created";
+			public static final String MODIFIED = "timestamp_modified";
 			public static final String DELETED = "deleted";
 			
 			public static final String IMAGE = "image";
@@ -80,10 +77,8 @@ public class ContactsProvider extends ContentProvider{
 			public static final String IMAGE_BYTES		= "image_bytes";
 			public static final String REMOVE_IMAGE		= "remove_image";
 			
-			public static final String CONTACTS_COUNT = "contacts_count";
+			public static final String CONTACT_COUNT = "contact_count";
 			public static final String CONTACTS = "contacts";
-			
-			public static final String NEED_UPDATE = "need_update";
 			
 			public static final String DEFAULT_SORT_ORDER = TITLE+" COLLATE NOCASE ASC";
 		}
@@ -114,12 +109,10 @@ public class ContactsProvider extends ContentProvider{
 		CM.put(CMetaData.ContactsMetaData.REMOVE_IMAGE, CMetaData.ContactsMetaData.REMOVE_IMAGE);
 		
 		CM.put(CMetaData.ContactsMetaData.CREATED, CMetaData.ContactsMetaData.CREATED);
-		CM.put(CMetaData.ContactsMetaData.MODOFIED, CMetaData.ContactsMetaData.MODOFIED);
+		CM.put(CMetaData.ContactsMetaData.MODIFIED, CMetaData.ContactsMetaData.MODIFIED);
 		CM.put(CMetaData.ContactsMetaData.AGENDA_VIEW, CMetaData.ContactsMetaData.AGENDA_VIEW);
 		CM.put(CMetaData.ContactsMetaData.REGISTERED, CMetaData.ContactsMetaData.REGISTERED);
 		CM.put(CMetaData.ContactsMetaData.GROUPS, CMetaData.ContactsMetaData.GROUPS);
-		
-		CM.put(CMetaData.ContactsMetaData.NEED_UPDATE, CMetaData.ContactsMetaData.NEED_UPDATE);
 	}
 	// END Table Projection Map
 	
@@ -129,19 +122,20 @@ public class ContactsProvider extends ContentProvider{
 	static {
 		GM = new HashMap<String, String>();
 		GM.put(CMetaData.GroupsMetaData.G_ID, CMetaData.GroupsMetaData.G_ID);
+		
 		GM.put(CMetaData.GroupsMetaData.TITLE, CMetaData.GroupsMetaData.TITLE);
 		GM.put(CMetaData.GroupsMetaData.CREATED, CMetaData.GroupsMetaData.CREATED);
 		GM.put(CMetaData.GroupsMetaData.MODIFIED, CMetaData.GroupsMetaData.MODIFIED);
 		GM.put(CMetaData.GroupsMetaData.DELETED, CMetaData.GroupsMetaData.DELETED);
+		
 		GM.put(CMetaData.GroupsMetaData.IMAGE, CMetaData.GroupsMetaData.IMAGE);
 		GM.put(CMetaData.GroupsMetaData.IMAGE_URL, CMetaData.GroupsMetaData.IMAGE_URL);
 		GM.put(CMetaData.GroupsMetaData.IMAGE_THUMB_URL, CMetaData.GroupsMetaData.IMAGE_THUMB_URL);
 		GM.put(CMetaData.GroupsMetaData.IMAGE_BYTES, CMetaData.GroupsMetaData.IMAGE_BYTES);
 		GM.put(CMetaData.GroupsMetaData.REMOVE_IMAGE, CMetaData.GroupsMetaData.REMOVE_IMAGE);
-		GM.put(CMetaData.GroupsMetaData.CONTACTS_COUNT, CMetaData.GroupsMetaData.CONTACTS_COUNT);
-		GM.put(CMetaData.GroupsMetaData.CONTACTS, CMetaData.GroupsMetaData.CONTACTS);
 		
-		GM.put(CMetaData.GroupsMetaData.NEED_UPDATE, CMetaData.GroupsMetaData.NEED_UPDATE);
+		GM.put(CMetaData.GroupsMetaData.CONTACT_COUNT, CMetaData.GroupsMetaData.CONTACT_COUNT);
+		GM.put(CMetaData.GroupsMetaData.CONTACTS, CMetaData.GroupsMetaData.CONTACTS);
 	}
 	// END Table Projection Map
 	
@@ -338,13 +332,11 @@ private static class DatabaseHelper extends SQLiteOpenHelper {
 				+CMetaData.ContactsMetaData.IMAGE_BYTES+" BLOB ,"
 				+CMetaData.ContactsMetaData.REMOVE_IMAGE+" TEXT ,"
 				
-				+CMetaData.ContactsMetaData.CREATED+" TEXT ,"
-				+CMetaData.ContactsMetaData.MODOFIED+" TEXT ,"
+				+CMetaData.ContactsMetaData.CREATED+" INT ,"
+				+CMetaData.ContactsMetaData.MODIFIED+" INT ,"
 				+CMetaData.ContactsMetaData.AGENDA_VIEW+" TEXT ,"
 				+CMetaData.ContactsMetaData.GROUPS+" TEXT ,"
-				+CMetaData.ContactsMetaData.REGISTERED+" TEXT ,"
-			
-			+CMetaData.ContactsMetaData.NEED_UPDATE+" INTEGER DEFAULT 0 )";
+				+CMetaData.ContactsMetaData.REGISTERED+" TEXT)";
 				
 			db.execSQL(query);
 			
@@ -352,8 +344,8 @@ private static class DatabaseHelper extends SQLiteOpenHelper {
 				+CMetaData.GROUPS_TABLE+" ("
 				+CMetaData.GroupsMetaData.G_ID+" INTEGER PRIMARY KEY,"
 				+CMetaData.GroupsMetaData.TITLE+" TEXT ,"
-				+CMetaData.GroupsMetaData.CREATED+" TEXT ,"
-				+CMetaData.GroupsMetaData.MODIFIED+" TEXT ,"
+				+CMetaData.GroupsMetaData.CREATED+" INTEGER ,"
+				+CMetaData.GroupsMetaData.MODIFIED+" INTEGER ,"
 				+CMetaData.GroupsMetaData.DELETED+" TEXT ,"
 				
 				+CMetaData.GroupsMetaData.IMAGE+" TEXT ,"
@@ -362,10 +354,8 @@ private static class DatabaseHelper extends SQLiteOpenHelper {
 				+CMetaData.GroupsMetaData.IMAGE_BYTES+" BLOB ,"
 				+CMetaData.GroupsMetaData.REMOVE_IMAGE+" TEXT ,"
 				
-				+CMetaData.GroupsMetaData.CONTACTS_COUNT+" INTEGER ,"
-				+CMetaData.GroupsMetaData.CONTACTS+" TEXT ,"
-				
-				+CMetaData.GroupsMetaData.NEED_UPDATE+" INTEGER DEFAULT 0 )";
+				+CMetaData.GroupsMetaData.CONTACT_COUNT+" INTEGER ,"
+				+CMetaData.GroupsMetaData.CONTACTS+" TEXT)";
 				
 			db.execSQL(query);
 		}
