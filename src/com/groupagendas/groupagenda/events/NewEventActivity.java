@@ -44,6 +44,7 @@ import com.groupagendas.groupagenda.account.Account;
 import com.groupagendas.groupagenda.contacts.Contact;
 import com.groupagendas.groupagenda.contacts.ContactsActivity;
 import com.groupagendas.groupagenda.data.CalendarSettings;
+import com.groupagendas.groupagenda.data.ContactManagement;
 import com.groupagendas.groupagenda.data.Data;
 import com.groupagendas.groupagenda.data.DataManagement;
 import com.groupagendas.groupagenda.settings.AutoColorItem;
@@ -953,7 +954,7 @@ public class NewEventActivity extends EventActivity {
 
 		@Override
 		protected Void doInBackground(Void... params) {
-			ArrayList<Contact> contacts = dm.getContactsFromLocalDb("");
+			ArrayList<Contact> contacts = ContactManagement.getContactsFromLocalDb(null);
 			int l = contacts.size();
 			titles = new CharSequence[l];
 			ids = new int[l];
