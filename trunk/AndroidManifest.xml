@@ -2,7 +2,8 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.groupagendas.groupagenda"
     android:versionCode="17"
-    android:versionName="0.9.55" >
+    android:versionName="0.9.55"
+	xmlns:tools="http://schemas.android.com/tools">
 
     <uses-sdk
         android:maxSdkVersion="16"
@@ -127,6 +128,7 @@
         </activity>
 
         <provider
+            android:exported="false"
             android:name=".contacts.ContactsProvider"
             android:authorities="com.groupagendas.groupagenda.contacts.ContactsProvider"
             android:label="ContactsProvider" >
@@ -134,7 +136,8 @@
         <provider
             android:name=".account.AccountProvider"
             android:authorities="com.groupagendas.groupagenda.account.AccountProvider"
-            android:label="AccountProvider" >
+            android:label="AccountProvider"
+            android:exported="false">
         </provider>
         <provider
             android:name=".events.EventsProvider"
@@ -148,7 +151,8 @@
             
         </provider>
 
-        <receiver android:name=".ConnectReceiver" >
+        <receiver android:name=".ConnectReceiver"
+            android:exported="false">
             <intent-filter>
                 <action android:name="android.net.conn.CONNECTIVITY_CHANGE" />
             </intent-filter>
