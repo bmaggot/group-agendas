@@ -14,15 +14,18 @@ public class GroupAgendasActivity extends Activity {
         super.onCreate(savedInstanceState);
 		SharedPreferences prefs = getSharedPreferences("LATEST_CREDENTIALS", MODE_PRIVATE);
         
+	    if ((getIntent().getFlags() & Intent.FLAG_ACTIVITY_BROUGHT_TO_FRONT) != 0) {
+            finish();
+	        return;
+	    }
+
         if (!prefs.getBoolean("logged", false)) {
         	startActivity(new Intent(GroupAgendasActivity.this, LoginActivity.class));
             finish();
-        } else {
-        	Intent intent = new Intent(GroupAgendasActivity.this, NavbarActivity.class);
-        	startActivity(intent);
-            finish();
+            return;
         }
         
         finish();
+        return;
     }
 }
