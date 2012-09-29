@@ -49,6 +49,7 @@ import com.groupagendas.groupagenda.chat.ChatThreadActivity;
 import com.groupagendas.groupagenda.contacts.ContactsActivity;
 import com.groupagendas.groupagenda.contacts.ContactsProvider;
 import com.groupagendas.groupagenda.data.CalendarSettings;
+import com.groupagendas.groupagenda.data.ContactManagement;
 import com.groupagendas.groupagenda.data.Data;
 import com.groupagendas.groupagenda.data.DataManagement;
 import com.groupagendas.groupagenda.events.Event;
@@ -90,9 +91,6 @@ public class NavbarActivity extends Activity {
 	private EditText searchView;
 	private EntryAdapter entryAdapter;
 	private ViewState viewState;
-
-	// TODO investigate WHY IS this shit created
-	// private Prefs prefs;
 
 	private boolean dataLoaded = false;
 	private int loadPhase = 0;
@@ -165,17 +163,17 @@ public class NavbarActivity extends Activity {
 						publishProgress(total);
 					case 2:// Load contacts
 						if (DataManagement.networkAvailable) 
-							dm.getContactsFromRemoteDb(null);
+							ContactManagement.getContacts();
 						else
-							dm.getContactsFromLocalDb("");
+							ContactManagement.getContactsFromLocalDb(null);
 						loadPhase++;
 						total = 40;
 						publishProgress(total);
 					case 3:// Load groups
 						if (DataManagement.networkAvailable) 
-							dm.getGroupsFromRemoteDb();
+							ContactManagement.getGroups();
 						else
-							dm.getGroupsFromLocalDb();
+							ContactManagement.getGroupsFromLocalDb(null);
 						loadPhase++;
 						total = 50;
 						publishProgress(total);
@@ -277,12 +275,8 @@ public class NavbarActivity extends Activity {
 
 		restoreMe(savedInstanceState);
 
-		if (this.getIntent().getExtras().getBoolean(GroupAgendasActivity.LOAD_REMOTE_DATA)) {
-			if (!dataLoaded && (progressDialog == null))
-					new LoadViewTask().execute();
-		} else {
-			switchToView();
-		}
+		if (!dataLoaded && (progressDialog == null))
+				new LoadViewTask().execute();
 
 		mInflater = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 
