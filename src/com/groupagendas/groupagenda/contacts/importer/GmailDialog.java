@@ -30,8 +30,8 @@ import android.widget.Toast;
 
 import com.groupagendas.groupagenda.R;
 import com.groupagendas.groupagenda.contacts.Contact;
+import com.groupagendas.groupagenda.data.ContactManagement;
 import com.groupagendas.groupagenda.data.Data;
-import com.groupagendas.groupagenda.data.DataManagement;
 import com.groupagendas.groupagenda.error.report.Reporter;
 
 public class GmailDialog extends Dialog {
@@ -41,7 +41,7 @@ public class GmailDialog extends Dialog {
 	private Button getContacts;
 	private static SharedPreferences prefs;
 	
-	public GmailDialog(Activity context, int styleResId) {
+	public GmailDialog(final Activity context, int styleResId) {
 		super(context, styleResId);
 
 		this.context = context;
@@ -98,6 +98,7 @@ public class GmailDialog extends Dialog {
 				Toast.makeText(GmailDialog.this.context, R.string.contact_import_dialog_finished_gimp, Toast.LENGTH_SHORT);
 				Data.returnedFromContactImport = true;
 				dismiss();
+				context.finish();
 			}
 		});
 	}
@@ -332,7 +333,7 @@ public class GmailDialog extends Dialog {
 	private class createContactTask extends AsyncTask<Object, Void, Boolean> {
 		@Override
 		protected Boolean doInBackground(Object... params) {
-			return DataManagement.getInstance(context).createContact((Contact) params[1]);
+			return ContactManagement.insertContact((Contact) params[1]);
 		}
 	}
 	
