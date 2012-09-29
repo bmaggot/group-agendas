@@ -43,7 +43,6 @@ public class Data {
 
 	private static Editor _editor = null;
 
-	private static String token = null;
 	private static String timezone = null;
 	private static String serverUrl = DEFAULT_SERVER_URL;
 	private static String email = DEFAULT_EMAIL;
@@ -207,11 +206,15 @@ public class Data {
 	}
 
 	public static String getToken() {
-		return token;
+		SharedPreferences sPrefs = mContext.getSharedPreferences("LATEST_CREDENTIALS", 0);
+		String response = sPrefs.getString("token", "");
+		return response;
 	}
 
 	protected static void setToken(String token) {
-		Data.token = token;
+		Editor editor = mContext.getSharedPreferences("LATEST_CREDENTIALS", 0).edit();
+		editor.putString("token", token);
+		editor.commit();
 	}
 
 	protected static String getTimezone() {
@@ -326,26 +329,50 @@ public class Data {
 		Data.colorNotes = colorNotes;
 	}
 
+	/**
+	 * @deprecated Create new object and get value afterwards.
+	 * @since 2012-09-29
+	 */
 	public static Account getAccount() {
 		return account;
 	}
 
+	/**
+	 * @deprecated Create new object and set value afterwards.
+	 * @since 2012-09-29
+	 */
 	protected static void setAccount(Account account) {
 		Data.account = account;
 	}
 
+	/**
+	 * @deprecated Use ContactManagement.getContactsFromLocalDb(null) instead.
+	 * @since 2012-09-29
+	 */
 	public static ArrayList<Contact> getContacts() {
 		return contacts;
 	}
 
+	/**
+	 * @deprecated Use {@link ContactManagement.insertContact(Contact contact)} instead.
+	 * @since 2012-09-29
+	 */
 	public static void setContacts(ArrayList<Contact> contacts) {
 		Data.contacts = contacts;
 	}
 
+	/**
+	 * @deprecated Use ContactManagement.getGroupsFromLocalDb(null) instead.
+	 * @since 2012-09-29
+	 */
 	protected static ArrayList<Group> getGroups() {
 		return groups;
 	}
 
+	/**
+	 * @deprecated Use {@link ContactManagement.insertGroup(Group group)} instead.
+	 * @since 2012-09-29
+	 */
 	protected static void setGroups(ArrayList<Group> groups) {
 		Data.groups = groups;
 	}
