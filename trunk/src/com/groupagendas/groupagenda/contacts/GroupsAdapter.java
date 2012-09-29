@@ -43,11 +43,11 @@ public class GroupsAdapter extends AbstractAdapter<Group> implements Filterable{
 		
 		StringBuilder contactsText;
 		if(group.contact_count == 1){
-			contactsText = new StringBuilder("1 ").append(String.valueOf(R.string.contact));
+			contactsText = new StringBuilder("1 ").append(getContext().getResources().getString(R.string.contact));
 		} else if (group.contact_count % 10 == 1) {
-			contactsText = new StringBuilder(String.valueOf(group.contact_count)).append(String.valueOf(R.string.contact));
+			contactsText = new StringBuilder(String.valueOf(group.contact_count)).append(getContext().getResources().getString(R.string.contact));
 		} else {
-			contactsText = new StringBuilder(String.valueOf(group.contact_count)).append(" ").append(String.valueOf(R.string.contacts));
+			contactsText = new StringBuilder(String.valueOf(group.contact_count)).append(" ").append(getContext().getResources().getString(R.string.contact));
 		}
 		holder.contact.setText(contactsText.toString());
 
