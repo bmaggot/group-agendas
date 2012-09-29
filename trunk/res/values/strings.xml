@@ -244,4 +244,5 @@
     <string name="login_ga_logo_placeholder">GroupAgendas logo</string>    
     <string name="import_phone_contacts">Importing phone contacts…</string>
     <string name="import_phone_contacts_done">Importing phone contacts is done!</string>
+    <string name="group_icon_placeholder">Group\'s icon placeholder</string>
 </resources>
