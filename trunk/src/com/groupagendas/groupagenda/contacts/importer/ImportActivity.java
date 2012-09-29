@@ -16,8 +16,8 @@ import android.widget.Toast;
 
 import com.groupagendas.groupagenda.R;
 import com.groupagendas.groupagenda.contacts.Contact;
+import com.groupagendas.groupagenda.data.ContactManagement;
 import com.groupagendas.groupagenda.data.Data;
-import com.groupagendas.groupagenda.data.DataManagement;
 
 public class ImportActivity extends Activity {
 
@@ -135,7 +135,7 @@ public class ImportActivity extends Activity {
 				phoneContact.name = firstName;
 				phoneContact.lastname = lastName;
 				phoneContact.phone1 = phoneNumber;
-				DataManagement.getInstance(activity).createContact(phoneContact);
+				ContactManagement.insertContact(phoneContact);
 			}
 			phones.close();
 			// import phone contacts
@@ -173,7 +173,7 @@ public class ImportActivity extends Activity {
 				phoneContact.email = getContactEmail(rawContactId, (ImportActivity) activity, phoneContact);
 				phoneContact.phone1 = getContactPhoneNumber(rawContactId, (ImportActivity) activity, phoneContact);
 				phoneContact.lastname = lastName;
-				DataManagement.getInstance(activity).createContact(phoneContact);
+				ContactManagement.insertContact(phoneContact);
 			}
 			phoneContacts.close();
 //			TODO update contacts list in local DB
