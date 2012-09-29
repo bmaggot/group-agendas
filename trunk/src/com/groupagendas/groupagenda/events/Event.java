@@ -26,7 +26,6 @@ private static final int REMINDER_1 = 1;
 private static final int REMINDER_2 = 2;
 private static final int REMINDER_3 = 3;
 //TODO implement or delete. Luko pasiulytas optimizavimas
-@SuppressWarnings("unused")
 private final Cursor databaseRow;
 
 //	TODO set all default fields and getters
