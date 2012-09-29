@@ -5,7 +5,6 @@ import java.util.ArrayList;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.app.ListActivity;
-import android.content.ContentValues;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.Uri;
@@ -20,6 +19,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.groupagendas.groupagenda.R;
+import com.groupagendas.groupagenda.data.ContactManagement;
 import com.groupagendas.groupagenda.data.DataManagement;
 
 public class GroupContactsActivity extends ListActivity {
@@ -28,6 +28,7 @@ public class GroupContactsActivity extends ListActivity {
 	private Intent intent;
 
 	private ArrayList<Contact> contacts;
+	private ContactsAdapter cAdapter;
 	
 	private TextView groupNameView;
 	private String groupName;
@@ -74,15 +75,17 @@ public class GroupContactsActivity extends ListActivity {
 		protected ArrayList<Contact> doInBackground(Void... type) {
 			int id = intent.getIntExtra("groupId", 0);
 			String where = ContactsProvider.CMetaData.ContactsMetaData.GROUPS+" LIKE '%="+id+"&%' OR "+ContactsProvider.CMetaData.ContactsMetaData.GROUPS+" LIKE '%="+id+"'";
-			contacts = dm.getContactsFromLocalDb(where);
+			contacts = ContactManagement.getContactsFromLocalDb(where);
 			return contacts;
 		}
 
 		@Override
 		protected void onPostExecute(ArrayList<Contact> contacts) {
-			if (contacts != null)
-				setListAdapter(new ContactsAdapter(contacts, GroupContactsActivity.this, GroupContactsActivity.this));
-
+			if (contacts != null) {
+				cAdapter = new ContactsAdapter(contacts, GroupContactsActivity.this);
+				cAdapter.notifyDataSetChanged();
+			}
+			
 			super.onPostExecute(contacts);
 		}
 
@@ -102,10 +105,9 @@ public class GroupContactsActivity extends ListActivity {
 				if(result){
 					getContentResolver().delete(uri, null, null);
 				}else{
-					ContentValues values = new ContentValues();
-					values.put(ContactsProvider.CMetaData.GroupsMetaData.NEED_UPDATE, 3);
-					
-					getContentResolver().update(uri, values, null, null);
+//					ContentValues values = new ContentValues();
+//					values.put(ContactsProvider.CMetaData.GroupsMetaData.NEED_UPDATE, 3);					
+//					getContentResolver().update(uri, values, null, null);
 				}
 			}
 			

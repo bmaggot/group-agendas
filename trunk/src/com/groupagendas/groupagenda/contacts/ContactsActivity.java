@@ -50,6 +50,7 @@ import android.widget.Toast;
 
 import com.groupagendas.groupagenda.R;
 import com.groupagendas.groupagenda.contacts.importer.ImportActivity;
+import com.groupagendas.groupagenda.data.ContactManagement;
 import com.groupagendas.groupagenda.data.Data;
 import com.groupagendas.groupagenda.data.DataManagement;
 import com.groupagendas.groupagenda.data.OfflineData;
@@ -60,8 +61,9 @@ import com.makeramen.segmented.SegmentedRadioGroup;
 
 public class ContactsActivity extends ListActivity implements OnCheckedChangeListener {
 	private SegmentedRadioGroup segmentedButtons;
-
 	private DataManagement dm;
+	private ArrayList<Contact> contacts;
+	private ArrayList<Group> groups;
 
 	private final String CONTACTS_TASK = "contactsTask";
 	private final String GROUPS_TASK = "groupsTask";
@@ -83,25 +85,25 @@ public class ContactsActivity extends ListActivity implements OnCheckedChangeLis
 	private int sideIndexHeight; // height of side index
 	private int indexListSize; // number of items in the side index
 	private int displayedIndexListSize; // number of visible items in the SI
-	private TreeMap<Integer, String> indexList = null; // list with items for
-														// side index
+	private TreeMap<Integer, String> indexList = null; // list with items for side index
 
 	private SharedPreferences.Editor editor;
 	private SharedPreferences preferences;
 
+	private LinearLayout sideIndex;
+	private ListView contactList;
 	private EditText searchView;
 
 	private ContactsAdapter cAdapter;
 	private GroupsAdapter gAdapter;
 
 	private Button importButton;
-
+	
 	@Override
 	public void onWindowFocusChanged(boolean hasFocus) {
 		super.onWindowFocusChanged(hasFocus);
 
-
-		LinearLayout sideIndex = (LinearLayout) findViewById(R.id.sideIndex);
+		sideIndex = (LinearLayout) findViewById(R.id.sideIndex);
 		sideIndexHeight = sideIndex.getHeight();
 		sideIndex.removeAllViews();
 
@@ -174,45 +176,32 @@ public class ContactsActivity extends ListActivity implements OnCheckedChangeLis
 	@Override
 	public void onResume() {
 		super.onResume();
-		LinearLayout sideIndex = (LinearLayout) findViewById(R.id.sideIndex);
+		initUI();
 
 		CURRENT_LIST = preferences.getInt("ContactsActivityList", CURRENT_LIST);
 		CURRENT_TASK = preferences.getString("ContactsActivityTask", CURRENT_TASK);
+		
 		sideIndex.setVisibility(View.GONE);
 
-		if (Data.returnedFromContactImport) {
-			Data.setContacts(dm.getContactsFromRemoteDb(null));
-			dm.updateContactsAdapter(Data.getContacts(), cAdapter);
+		if (CURRENT_TASK.equals(CONTACTS_TASK)) {
+			contacts = ContactManagement.getContactsFromLocalDb(null);
+			cAdapter = new ContactsAdapter(contacts, this);
+			contactList.setAdapter(cAdapter);
 			cAdapter.notifyDataSetChanged();
 
-			if ((Data.importStats != null) && (Data.importStats[0] > 0)) {
-				Toast.makeText(this.getApplicationContext(),
-						"Successfully imported " + Data.importStats[0] + "/" + Data.importStats[2] + " contacts.", Toast.LENGTH_LONG)
-						.show();
-			}
-
-			if ((Data.importStats != null) && (Data.importStats[1] > 0)) {
-				Toast.makeText(this.getApplicationContext(),
-						"Failed to import " + Data.importStats[1] + "/" + Data.importStats[2] + " contacts.", Toast.LENGTH_LONG).show();
-			}
-
-			Data.returnedFromContactImport = false;
-		}
-
-		if (CURRENT_TASK.equals(CONTACTS_TASK)) {
-			setListAdapter(cAdapter);
-
-			// TODO: put this shit into the right place. \m/
-			if (dm.loadContacts(this, cAdapter) > 10) {
+			showImportStats();
+			
+			if (contacts.size() > 10) {
 				indexList = createIndex();
 				sideIndex.setVisibility(View.VISIBLE);
 			}
 		} else if (CURRENT_TASK.equals(GROUPS_TASK)) {
-			setListAdapter(gAdapter);
-			dm.loadGroups(this, gAdapter);
+			groups = ContactManagement.getGroupsFromLocalDb(null);
+			gAdapter = new GroupsAdapter(groups, this);
+			contactList.setAdapter(gAdapter);
+			gAdapter.notifyDataSetChanged();
 		}
 
-		importButton = (Button) findViewById(R.id.import_button);
 		if (!Data.showSaveButtonInContactsForm) {
 			importButton.setText(R.string.contact_import_button);
 			importButton.setOnClickListener(new OnClickListener() {
@@ -286,10 +275,6 @@ public class ContactsActivity extends ListActivity implements OnCheckedChangeLis
 		searchView.addTextChangedListener(filterTextWatcher);
 
 		mGestureDetector = new GestureDetector(this, new SideIndexGestureListener());
-
-		cAdapter = new ContactsAdapter(dm.getContacts(), this, getApplicationContext());
-		gAdapter = new GroupsAdapter(dm.getGroups(), this);
-
 	}
 
 	@Override
@@ -325,7 +310,7 @@ public class ContactsActivity extends ListActivity implements OnCheckedChangeLis
 	};
 
 	private TreeMap<Integer, String> createIndex() {
-		ArrayList<Contact> contactList = dm.getContacts();
+		ArrayList<Contact> contactList = contacts;
 
 		if (contactList != null) {
 			TreeMap<Integer, String> tmpIndexList = new TreeMap<Integer, String>();
@@ -383,38 +368,39 @@ public class ContactsActivity extends ListActivity implements OnCheckedChangeLis
 			if (CURRENT_LIST == CONTACTS_LIST) {
 				if (Data.selectedContacts.size() > 0) {
 					for (int i = 0; i < Data.selectedContacts.size(); i++) {
-						if (Data.selectedContacts.get(i).contact_id == dm.getContacts().get(position).contact_id) {
+						if (Data.selectedContacts.get(i).contact_id == contacts.get(position).contact_id) {
 							Data.selectedContacts.remove(i);
 							v.setBackgroundColor(Color.WHITE);
 							break;
 						} else {
-							Data.selectedContacts.add(dm.getContacts().get(position));
+							Data.selectedContacts.add(contacts.get(position));
 							v.setBackgroundColor(Color.LTGRAY);
 							break;
 						}
 					}
 				} else {
-					Data.selectedContacts.add(dm.getContacts().get(position));
+					Data.selectedContacts.add(contacts.get(position));
 					v.setBackgroundColor(Color.LTGRAY);
 				}
 			} else if (CURRENT_LIST == GROUPS_LIST) {
 				Intent groupIntent = new Intent(ContactsActivity.this, GroupContactsActivity.class);
-				groupIntent.putExtra("groupName", dm.getGroups().get(position).title);
-				groupIntent.putExtra("groupId", dm.getGroups().get(position).group_id);
+				groupIntent.putExtra("groupName", ContactManagement.getGroupsFromLocalDb(null).get(position).title);
+				groupIntent.putExtra("groupId", ContactManagement.getGroupsFromLocalDb(null).get(position).group_id);
 				startActivity(groupIntent);
 			}
 		} else {
 			if (CURRENT_LIST == CONTACTS_LIST) {
 				Intent contactIntent = new Intent(ContactsActivity.this, ContactInfoActivity.class);
-				StringBuilder sb = new StringBuilder(dm.getContacts().get(position).name).append(" ").append(
-						dm.getContacts().get(position).lastname);
+				StringBuilder sb = new StringBuilder(contacts.get(position).name).append(" ").append(
+						contacts.get(position).lastname);
 				contactIntent.putExtra("contactName", sb.toString());
-				contactIntent.putExtra("contactId", dm.getContacts().get(position).contact_id);
+				contactIntent.putExtra("contactId", contacts.get(position).contact_id);
+				contactIntent.putExtra("contactCreated", contacts.get(position).created);
 				startActivity(contactIntent);
 			} else if (CURRENT_LIST == GROUPS_LIST) {
 				Intent groupIntent = new Intent(ContactsActivity.this, GroupContactsActivity.class);
-				groupIntent.putExtra("groupName", dm.getGroups().get(position).title);
-				groupIntent.putExtra("groupId", dm.getGroups().get(position).group_id);
+				groupIntent.putExtra("groupName", ContactManagement.getGroupsFromLocalDb(null).get(position).title);
+				groupIntent.putExtra("groupId", ContactManagement.getGroupsFromLocalDb(null).get(position).group_id);
 				startActivity(groupIntent);
 			}
 		}
@@ -434,7 +420,7 @@ public class ContactsActivity extends ListActivity implements OnCheckedChangeLis
 				// Toast.LENGTH_SHORT).show();
 				setListAdapter(cAdapter);
 
-				if (dm.loadContacts(this, cAdapter) > 10)
+				if (contacts.size() > 10)
 					sideIndex.setVisibility(View.VISIBLE);
 
 				editor.putString("ContactsActivityTask", CONTACTS_TASK);
@@ -448,8 +434,10 @@ public class ContactsActivity extends ListActivity implements OnCheckedChangeLis
 				// Toast.makeText(this,
 				// getString(R.string.waiting_for_groups_load),
 				// Toast.LENGTH_SHORT).show();
-				setListAdapter(gAdapter);
-				dm.loadGroups(this, gAdapter);
+				groups = ContactManagement.getGroupsFromLocalDb(null);
+				gAdapter = new GroupsAdapter(groups, this);
+				contactList.setAdapter(gAdapter);
+				gAdapter.notifyDataSetChanged();
 
 				editor.putString("ContactsActivityTask", GROUPS_TASK);
 				editor.putInt("ContactsActivityList", GROUPS_LIST);
@@ -522,6 +510,30 @@ public class ContactsActivity extends ListActivity implements OnCheckedChangeLis
 
 		ListView listView = getListView();
 		listView.setSelection(indexMin);
+	}
+
+	public void initUI() {
+		contactList = (ListView) findViewById(android.R.id.list);
+		importButton = (Button) findViewById(R.id.import_button);
+		sideIndex = (LinearLayout) findViewById(R.id.sideIndex);
+		segmentedButtons = (SegmentedRadioGroup) findViewById(R.id.segmentedButtons);
+	}
+	
+	public void showImportStats() {
+		if (Data.returnedFromContactImport) {
+			if ((Data.importStats != null) && (Data.importStats[0] > 0)) {
+				Toast.makeText(this.getApplicationContext(),
+						"Successfully imported " + Data.importStats[0] + "/" + Data.importStats[2] + " contacts.", Toast.LENGTH_LONG)
+						.show();
+			}
+
+			if ((Data.importStats != null) && (Data.importStats[1] > 0)) {
+				Toast.makeText(this.getApplicationContext(),
+						"Failed to import " + Data.importStats[1] + "/" + Data.importStats[2] + " contacts.", Toast.LENGTH_LONG).show();
+			}
+
+			Data.returnedFromContactImport = false;
+		}
 	}
 
 	public class AddNewPersonsToEvent extends AsyncTask<Void, Void, Void> {
