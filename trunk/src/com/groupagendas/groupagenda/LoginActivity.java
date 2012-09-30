@@ -140,7 +140,6 @@ public class LoginActivity extends Activity {
 				InputMethodManager imm = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
 				imm.hideSoftInputFromWindow(passwordText.getWindowToken(), 0);
 				Intent intent = new Intent(LoginActivity.this, NavbarActivity.class);
-				intent.putExtra(GroupAgendasActivity.LOAD_REMOTE_DATA, true);
 				startActivity(intent);
 				finish();
 			} else {
