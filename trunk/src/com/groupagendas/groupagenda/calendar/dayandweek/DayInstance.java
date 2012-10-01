@@ -9,7 +9,6 @@ import java.util.TreeMap;
 import android.app.Activity;
 import android.content.Context;
 
-import com.groupagendas.groupagenda.data.Data;
 import com.groupagendas.groupagenda.data.DataManagement;
 import com.groupagendas.groupagenda.events.Event;
 import com.groupagendas.groupagenda.utils.Utils;

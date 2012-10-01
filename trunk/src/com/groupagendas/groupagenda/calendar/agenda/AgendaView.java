@@ -15,10 +15,7 @@ import android.widget.TextView;
 
 import com.groupagendas.groupagenda.R;
 import com.groupagendas.groupagenda.calendar.AbstractCalendarView;
-import com.groupagendas.groupagenda.calendar.month.MonthDayFrame;
-import com.groupagendas.groupagenda.calendar.month.MonthView;
 import com.groupagendas.groupagenda.data.CalendarSettings;
-import com.groupagendas.groupagenda.data.Data;
 import com.groupagendas.groupagenda.data.DataManagement;
 import com.groupagendas.groupagenda.events.Event;
 import com.groupagendas.groupagenda.events.EventsProvider;
@@ -200,7 +197,7 @@ public class AgendaView extends AbstractCalendarView {
 			
 			Cursor result = dm.createEventProjectionByDateFromLocalDb(
 					projection, dateStart, 7,
-					DataManagement.TM_EVENTS_FROM_GIVEN_DATE, null);
+					DataManagement.TM_EVENTS_FROM_GIVEN_DATE, null, true);
 			if (result.moveToFirst()) {
 				while (!result.isAfterLast()) {
 					Event eventProjection = new Event();

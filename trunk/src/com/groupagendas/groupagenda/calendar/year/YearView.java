@@ -195,7 +195,7 @@ public class YearView extends AbstractCalendarView {
 				EventsProvider.EMetaData.EventsMetaData.ICON,
 				EventsProvider.EMetaData.EventsMetaData.TITLE,
 				};
-		Cursor result = dm.createEventProjectionByDateFromLocalDb(projection, date, 0, DataManagement.TM_EVENTS_ON_GIVEN_YEAR, null);
+		Cursor result = dm.createEventProjectionByDateFromLocalDb(projection, date, 0, DataManagement.TM_EVENTS_ON_GIVEN_YEAR, null, true);
 		if (result.moveToFirst()) {
 			while (!result.isAfterLast()) {
 				Event eventProjection = new Event();
