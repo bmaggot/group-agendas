@@ -37,7 +37,6 @@ import az.mecid.android.QuickAction;
 
 import com.groupagendas.groupagenda.account.Account;
 import com.groupagendas.groupagenda.account.AccountProvider;
-import com.groupagendas.groupagenda.alarm.AlarmReceiver;
 import com.groupagendas.groupagenda.calendar.AbstractCalendarView;
 import com.groupagendas.groupagenda.calendar.agenda.AgendaView;
 import com.groupagendas.groupagenda.calendar.dayandweek.DayWeekView;
@@ -781,7 +780,7 @@ public class NavbarActivity extends Activity {
 	}
 	
 	public void setAlarmsToAllEvents(){
-		AlarmReceiver alarm = new AlarmReceiver();
+//		AlarmReceiver alarm = new AlarmReceiver();
 		//TODO Justui V
 //		for (Event event : Data.getEvents()) {
 //			if (!event.alarm1fired && !event.alarm1.equals("null")) {
