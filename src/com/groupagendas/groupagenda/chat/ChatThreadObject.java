@@ -1,92 +1,121 @@
 package com.groupagendas.groupagenda.chat;
 
-import java.util.Calendar;
-
 public class ChatThreadObject {
-	public int event_id;
-	public int user_id;
-	public String type;
-	public String confirmed;
-	public int contact_author_id;
-	public String title;
-	public String icon;
-	public String color;
-	public String description;
-	public String location;
-	public String accomodation;
-	public String cost;
-	public String take_with_you;
-	public String go_by;
-	public String country;
-	public String city;
-	public String street;
-	public String zip;
-	public String timezone;
-	public String time_start;
-	public Calendar time_startCalendar;
-	public String time_end;
-	public Calendar time_endCalendar;
-	public boolean all_day_event;
-	public String reminder1;
-	public Calendar reminder1calendar;
-	public String reminder2;
-	public Calendar reminder2calendar;
-	public String reminder3;
-	public Calendar reminder3calendar;
-	public String google_uid;
-	public String native_id;
-	public String wp;
-	public String created;
-	public Calendar createdCalendar;
-	public String modified;
-	public Calendar modifiedCalendar;
-	public boolean from_feed;
-	public int message_count;
-	public String message_last;
-	public Calendar message_lastCalendar;
-	public int attendant_1_count;
-	public int attendant_2_count;
-	public int attendant_0_count;
-	public int attendant_4_count;
-	public int total_invited;
-	public int sport_team_id;
-	public String sport_event_type;
-	public String sport_location;
-	public String sport_field;
-	public String sport_opponent;
-	public String sport_referee;
-	public String sport_time_assembly;
-	public String sport_time_arrival;
-	public String sport_arrival_address;
-	public String sport_start_return_trip;
-	public String sport_time_return;
-	public int poll_voted_count;
-	public int poll_pending_count;
-	public int poll_rejected_count;
-	public int poll_invited_count;
-	public int org_id;
-	public String repeat_group;
-	public String repeat_data;
-	public String alarm1;
-	public Calendar alarm1calendar;
-	public String alarm2;
-	public Calendar alarm2calendar;
-	public String alarm3;
-	public Calendar alarm3calendar;
-	public boolean alarm1_fired;
-	public boolean alarm2_fired;
-	public boolean alarm3_fired;
-	public String my_time_start;
-	public Calendar my_time_startCalendar;
-	public String my_time_end;
-	public Calendar my_time_endCalendar;
-	public String created_local;
-	public Calendar created_localCalendar;
-	public String modified_local;
-	public Calendar modified_localCalendar;
-	public int status;
-	public boolean is_owner;
-	public int new_messages;
-	public String creator_fullname;
-	public int creator_contact_id;
+	private int chat_thread_id;
+	private int event_id;
+	private int contact_author_id;
+	private int message_count;
+	private String message_last;
+	private int new_messages;
+	private int successfully_uploaded = 0;
+	private long created;
+	private long modified;
+	/**
+	 * @return the chat_thread_id
+	 */
+	public int getChat_thread_id() {
+		return chat_thread_id;
+	}
+	/**
+	 * @param chat_thread_id the chat_thread_id to set
+	 */
+	public void setChat_thread_id(int chat_thread_id) {
+		this.chat_thread_id = chat_thread_id;
+	}
+	/**
+	 * @return the event_id
+	 */
+	public int getEvent_id() {
+		return event_id;
+	}
+	/**
+	 * @param event_id the event_id to set
+	 */
+	public void setEvent_id(int event_id) {
+		this.event_id = event_id;
+	}
+	/**
+	 * @return the contact_author_id
+	 */
+	public int getContact_author_id() {
+		return contact_author_id;
+	}
+	/**
+	 * @param contact_author_id the contact_author_id to set
+	 */
+	public void setContact_author_id(int contact_author_id) {
+		this.contact_author_id = contact_author_id;
+	}
+	/**
+	 * @return the message_count
+	 */
+	public int getMessage_count() {
+		return message_count;
+	}
+	/**
+	 * @param message_count the message_count to set
+	 */
+	public void setMessage_count(int message_count) {
+		this.message_count = message_count;
+	}
+	/**
+	 * @return the message_last
+	 */
+	public String getMessage_last() {
+		return message_last;
+	}
+	/**
+	 * @param message_last the message_last to set
+	 */
+	public void setMessage_last(String message_last) {
+		this.message_last = message_last;
+	}
+	/**
+	 * @return the new_messages
+	 */
+	public int getNew_messages() {
+		return new_messages;
+	}
+	/**
+	 * @param new_messages the new_messages to set
+	 */
+	public void setNew_messages(int new_messages) {
+		this.new_messages = new_messages;
+	}
+	/**
+	 * @return the successfully_uploaded
+	 */
+	public int getSuccessfully_uploaded() {
+		return successfully_uploaded;
+	}
+	/**
+	 * @param successfully_uploaded the successfully_uploaded to set
+	 */
+	public void setSuccessfully_uploaded(int successfully_uploaded) {
+		this.successfully_uploaded = successfully_uploaded;
+	}
+	/**
+	 * @return the created
+	 */
+	public long getCreated() {
+		return created;
+	}
+	/**
+	 * @param created the created to set
+	 */
+	public void setCreated(long created) {
+		this.created = created;
+	}
+	/**
+	 * @return the modified
+	 */
+	public long getModified() {
+		return modified;
+	}
+	/**
+	 * @param modified the modified to set
+	 */
+	public void setModified(long modified) {
+		this.modified = modified;
+	}
 }
