@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     package="com.groupagendas.groupagenda"
     android:versionCode="17"
-    android:versionName="0.9.55"
-	xmlns:tools="http://schemas.android.com/tools">
+    android:versionName="0.9.55" >
 
     <uses-sdk
         android:maxSdkVersion="16"
@@ -57,6 +57,7 @@
             android:theme="@android:style/Theme.NoTitleBar" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
+
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
@@ -127,37 +128,44 @@
         </activity>
 
         <provider
-            android:exported="false"
             android:name=".contacts.ContactsProvider"
             android:authorities="com.groupagendas.groupagenda.contacts.ContactsProvider"
+            android:exported="false"
             android:label="ContactsProvider" >
+        </provider>
+        <provider
+            android:name=".chat.ChatThreadsProvider"
+            android:authorities="com.groupagendas.groupagenda.chat.ChatThreadsProvider"
+            android:exported="false"
+            android:label="ChatThreadsProvider" >
         </provider>
         <provider
             android:name=".account.AccountProvider"
             android:authorities="com.groupagendas.groupagenda.account.AccountProvider"
-            android:label="AccountProvider"
-            android:exported="false">
+            android:exported="false"
+            android:label="AccountProvider" >
         </provider>
         <provider
             android:name=".events.EventsProvider"
             label="EventsProvider"
             android:authorities="com.groupagendas.groupagenda.events.EventsProvider" >
         </provider>
-        <provider 
-            android:exported="false"
+        <provider
             android:name=".templates.TemplatesProvider"
-        	android:authorities="com.groupagendas.groupagenda.templates.TemplatesProvider" >
-            
+            android:authorities="com.groupagendas.groupagenda.templates.TemplatesProvider"
+            android:exported="false" >
         </provider>
 
-        <receiver android:name=".ConnectReceiver"
-            android:exported="false">
+        <receiver
+            android:name=".ConnectReceiver"
+            android:exported="false" >
             <intent-filter>
                 <action android:name="android.net.conn.CONNECTIVITY_CHANGE" />
             </intent-filter>
         </receiver>
 
-        <service android:name=".UpdateService"
+        <service
+            android:name=".UpdateService"
             android:exported="false" >
             <intent-filter>
                 <action android:name="com.groupagendas.groupagenda.UpdateService" />
