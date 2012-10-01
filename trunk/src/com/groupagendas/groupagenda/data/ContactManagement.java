@@ -21,8 +21,8 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import android.app.Activity;
 import android.content.ContentValues;
+import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteException;
 import android.net.Uri;
@@ -323,7 +323,7 @@ public class ContactManagement {
 	 * @since 2012-09Ð28
 	 * @version 0.1
 	 */
-	public static ArrayList<Contact> getContactsFromLocalDb(Activity context, String where) {
+	public static ArrayList<Contact> getContactsFromLocalDb(Context context, String where) {
 		ArrayList<Contact> contacts = new ArrayList<Contact>();
 		Cursor cur;
 		Contact temp;
@@ -670,7 +670,7 @@ public class ContactManagement {
 	 * @since 2012-09Ð28
 	 * @version 0.1
 	 */
-	public static void insertContactToLocalDb(Activity context, Contact contact, int id) {
+	public static void insertContactToLocalDb(Context context, Contact contact, int id) {
 		ContentValues cv = new ContentValues();
 
 		if (id > 0)
@@ -725,7 +725,7 @@ public class ContactManagement {
 		}
 	}
 
-	public static boolean insertContact(Activity context, Contact contact) {
+	public static boolean insertContact(Context context, Contact contact) {
 		boolean success = false;
 		int destination_id = 0;
 
@@ -756,7 +756,7 @@ public class ContactManagement {
 	 * @since 2012-09Ð28
 	 * @version 0.1
 	 */
-	public static boolean updateContactIdInLocalDb(Activity context, long created, int id) {
+	public static boolean updateContactIdInLocalDb(Context context, long created, int id) {
 		ContentValues cv = new ContentValues();
 		boolean success = false;
 		int queryResult = 0;
@@ -789,7 +789,7 @@ public class ContactManagement {
 	 * @since 2012-09Ð28
 	 * @version 0.1
 	 */
-	public static Contact getContactFromLocalDb(Activity context, int id, long created) {
+	public static Contact getContactFromLocalDb(Context context, int id, long created) {
 		Cursor cur;
 		Contact temp = null;
 
@@ -821,7 +821,7 @@ public class ContactManagement {
 	 * @version 1.0
 	 * @since 2012-09-24
 	 */
-	public static void getContacts(Activity context) {
+	public static void getContacts(Context context) {
 		ArrayList<Contact> contacts = getContactsFromRemoteDb(null);
 
 		for (Contact contact : contacts) {
@@ -841,7 +841,7 @@ public class ContactManagement {
 	 * @version 1.0
 	 * @since 2012-09-24
 	 */
-	public static void getGroups(Activity context) {
+	public static void getGroups(Context context) {
 		ArrayList<Group> groups = getGroupsFromRemoteDb(null);
 
 		for (Group group : groups) {
@@ -864,7 +864,7 @@ public class ContactManagement {
 	 * @since 2012-09Ð28
 	 * @version 0.1
 	 */
-	public static ArrayList<Group> getGroupsFromLocalDb(Activity context, String where) {
+	public static ArrayList<Group> getGroupsFromLocalDb(Context context, String where) {
 		ArrayList<Group> contacts = new ArrayList<Group>();
 		Cursor cur;
 		Group temp;
@@ -935,7 +935,7 @@ public class ContactManagement {
 	 * @since 2012-09Ð28
 	 * @version 0.1
 	 */
-	public static boolean updateGroupIdInLocalDb(Activity context, long created, int id) {
+	public static boolean updateGroupIdInLocalDb(Context context, long created, int id) {
 		ContentValues cv = new ContentValues();
 		boolean success = false;
 		int queryResult = 0;
@@ -956,7 +956,7 @@ public class ContactManagement {
 		return success;
 	}
 
-	public static boolean insertGroup(Activity context, Group group) {
+	public static boolean insertGroup(Context context, Group group) {
 		boolean success = false;
 		int destination_id = 0;
 
@@ -986,7 +986,7 @@ public class ContactManagement {
 	 * @since 2012-09Ð29
 	 * @version 0.1
 	 */
-	public static void insertGroupToLocalDb(Activity context, Group group, int id) {
+	public static void insertGroupToLocalDb(Context context, Group group, int id) {
 		ContentValues cv = new ContentValues();
 
 		if (id > 0)
@@ -1171,7 +1171,7 @@ public class ContactManagement {
 	 * @since 2012-09Ð28
 	 * @version 0.1
 	 */
-	public static Group getGroupFromLocalDb(Activity context, int id, long created) {
+	public static Group getGroupFromLocalDb(Context context, int id, long created) {
 		Cursor cur;
 		Group temp = null;
 
