@@ -44,7 +44,7 @@ public class ContactManagement {
 	 * 
 	 * @author meska.lt@gmail.com
 	 * @return ArrayList of Contact objects got from response.
-	 * @since 2012-09ï¿½28
+	 * @since 2012-09-28
 	 * @version 0.1
 	 */
 	public static void getContactsFromRemoteDb(Context context, HashSet<Integer> groupIds) {
@@ -314,10 +314,9 @@ public class ContactManagement {
 	 * it.
 	 * 
 	 * @author meska.lt@gmail.com
-	 * @param where
-	 *            ï¿½ DOCUMENTATION PENDING
+	 * @param where - DOCUMENTATION PENDING
 	 * @return ArrayList of Contact objects got from response.
-	 * @since 2012-09ï¿½28
+	 * @since 2012-09-28
 	 * @version 0.1
 	 */
 	public static ArrayList<Contact> getContactsFromLocalDb(Context context, String where) {
@@ -664,7 +663,7 @@ public class ContactManagement {
 	 *            - Contact object containing validated contact data.
 	 * @param id
 	 *            - ID corresponding integer.
-	 * @since 2012-09ï¿½28
+	 * @since 2012-09-½28
 	 * @version 0.1
 	 */
 	public static void insertContactToLocalDb(Context context, Contact contact, int id) {
@@ -745,12 +744,10 @@ public class ContactManagement {
 	 * contains corresponding creation time submitted) ID.
 	 * 
 	 * @author meska.lt@gmail.com
-	 * @param created
-	 *            ï¿½ Long UNIX timestamp, destination's creation date.
-	 * @param id
-	 *            ï¿½ Contact's ID.
+	 * @param created - Long UNIX timestamp, destination's creation date.
+	 * @param id - Contact's ID.
 	 * @return Update's state. True if update succeeded.
-	 * @since 2012-09ï¿½28
+	 * @since 2012-09-28
 	 * @version 0.1
 	 */
 	public static boolean updateContactIdInLocalDb(Context context, long created, int id) {
@@ -783,7 +780,7 @@ public class ContactManagement {
 	 * @param id
 	 *            ï¿½ Contact's ID.
 	 * @return Contact object.
-	 * @since 2012-09ï¿½28
+	 * @since 2012-09-28
 	 * @version 0.1
 	 */
 	public static Contact getContactFromLocalDb(Context context, int id, long created) {
@@ -819,7 +816,7 @@ public class ContactManagement {
 	 * @param where
 	 *            ï¿½ DOCUMENTATION PENDING
 	 * @return ArrayList of Contact objects got from response.
-	 * @since 2012-09ï¿½28
+	 * @since 2012-09-28
 	 * @version 0.1
 	 */
 	public static ArrayList<Group> getGroupsFromLocalDb(Context context, String where) {
@@ -885,12 +882,10 @@ public class ContactManagement {
 	 * contains corresponding creation time submitted) ID.
 	 * 
 	 * @author meska.lt@gmail.com
-	 * @param created
-	 *            ï¿½ Long UNIX timestamp, destination's creation date.
-	 * @param id
-	 *            ï¿½ Group's ID.
+	 * @param created - Long UNIX timestamp, destination's creation date.
+	 * @param id - Group's ID.
 	 * @return Update's state. True if update succeeded.
-	 * @since 2012-09ï¿½28
+	 * @since 2012-09-28
 	 * @version 0.1
 	 */
 	public static boolean updateGroupIdInLocalDb(Context context, long created, int id) {
@@ -937,11 +932,10 @@ public class ContactManagement {
 	 * submitted.
 	 * 
 	 * @author meska.lt@gmail.com
-	 * @param group
-	 *            - Group object containing validated group data.
+	 * @param group - Group object containing validated group data.
 	 * @param id
 	 *            - ID corresponding integer.
-	 * @since 2012-09ï¿½29
+	 * @since 2012-09-29
 	 * @version 0.1
 	 */
 	public static void insertGroupToLocalDb(Context context, Group group, int id) {
@@ -1123,10 +1117,9 @@ public class ContactManagement {
 	 * Executes a call to SQLite database and retrieving group entry's data.
 	 * 
 	 * @author meska.lt@gmail.com
-	 * @param id
-	 *            ï¿½ Group's ID.
+	 * @param id - Group's ID.
 	 * @return Group object.
-	 * @since 2012-09ï¿½28
+	 * @since 2012-09-28
 	 * @version 0.1
 	 */
 	public static Group getGroupFromLocalDb(Context context, int id, long created) {
@@ -1159,7 +1152,7 @@ public class ContactManagement {
 	 * 
 	 * @author meska.lt@gmail.com
 	 * @return ArrayList of Contact objects got from response.
-	 * @since 2012-09ï¿½28
+	 * @since 2012-09-28
 	 * @version 0.1
 	 */
 	public static void getGroupsFromRemoteDb(Context context, HashSet<Integer> contactIds) {
