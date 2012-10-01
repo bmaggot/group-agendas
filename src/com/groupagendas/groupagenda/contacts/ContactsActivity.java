@@ -1,7 +1,6 @@
 package com.groupagendas.groupagenda.contacts;
 
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.TreeMap;
 import java.util.concurrent.ExecutionException;
 
@@ -14,11 +13,9 @@ import org.apache.http.entity.mime.MultipartEntity;
 import org.apache.http.entity.mime.content.StringBody;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.util.EntityUtils;
-import org.json.JSONException;
 import org.json.JSONObject;
 
 import android.app.ListActivity;
-import android.content.ContentValues;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Color;
@@ -55,8 +52,6 @@ import com.groupagendas.groupagenda.data.Data;
 import com.groupagendas.groupagenda.data.DataManagement;
 import com.groupagendas.groupagenda.data.OfflineData;
 import com.groupagendas.groupagenda.error.report.Reporter;
-import com.groupagendas.groupagenda.events.Event;
-import com.groupagendas.groupagenda.events.EventsProvider;
 import com.makeramen.segmented.SegmentedRadioGroup;
 
 public class ContactsActivity extends ListActivity implements OnCheckedChangeListener {
@@ -584,315 +579,12 @@ public class ContactsActivity extends ListActivity implements OnCheckedChangeLis
 
 	}
 
-	// TODO WHAT THE FUCK IS THIS?!
-	public class UpdateEventByIdFromRemoteDb extends AsyncTask<Integer, Void, Void> {
 
+	public class UpdateEventByIdFromRemoteDb extends AsyncTask<Integer, Void, Void> {
 		@Override
 		protected Void doInBackground(Integer... params) {
 			try {
-	
-				int event_id = params[0];
-				HttpClient hc = new DefaultHttpClient();
-				HttpPost post = new HttpPost(Data.getServerUrl() + "mobile/events_get");
-
-				MultipartEntity reqEntity = new MultipartEntity(HttpMultipartMode.BROWSER_COMPATIBLE);
-
-				reqEntity.addPart("token", new StringBody(Data.getToken()));
-				reqEntity.addPart("event_id", new StringBody(String.valueOf(event_id)));
-
-				post.setEntity(reqEntity);
-				HttpResponse rp = null;
-				rp = hc.execute(post);
-				if (rp.getStatusLine().getStatusCode() == HttpStatus.SC_OK) {
-					String resp = EntityUtils.toString(rp.getEntity());
-					if (resp != null) {
-						JSONObject e1 = new JSONObject(resp);
-						boolean success = e1.getBoolean("success");
-						if (!success) {
-							Log.e("Edit event status ERROR", e1.getJSONObject("error").getString("reason"));
-						} else {
-							JSONObject e = e1.getJSONObject("event");
-							Event event = new Event();
-							ContentValues cv = new ContentValues();
-
-							try {
-								event.event_id = e.getInt("event_id");
-								cv.put(EventsProvider.EMetaData.EventsMetaData.E_ID, event.event_id);
-							} catch (JSONException ex) {
-								Reporter.reportError(this.getClass().toString(), Thread.currentThread().getStackTrace()[2].getMethodName()
-										.toString(), ex.getMessage());
-							}
-							try {
-								event.user_id = e.getInt("user_id");
-								cv.put(EventsProvider.EMetaData.EventsMetaData.USER_ID, event.user_id);
-							} catch (JSONException ex) {
-								Reporter.reportError(this.getClass().toString(), Thread.currentThread().getStackTrace()[2].getMethodName()
-										.toString(), ex.getMessage());
-							}
-
-							try {
-								event.status = e.getInt("status");
-								cv.put(EventsProvider.EMetaData.EventsMetaData.STATUS, event.status);
-							} catch (JSONException ex) {
-								Reporter.reportError(this.getClass().toString(), Thread.currentThread().getStackTrace()[2].getMethodName()
-										.toString(), ex.getMessage());
-							}
-							try {
-								int is_owner = e.getInt("is_owner");
-								event.is_owner = is_owner == 1;
-								cv.put(EventsProvider.EMetaData.EventsMetaData.IS_OWNER, event.is_owner);
-							} catch (JSONException ex) {
-								Reporter.reportError(this.getClass().toString(), Thread.currentThread().getStackTrace()[2].getMethodName()
-										.toString(), ex.getMessage());
-							}
-							try {
-								event.type = e.getString("type");
-								cv.put(EventsProvider.EMetaData.EventsMetaData.TYPE, event.type);
-							} catch (JSONException ex) {
-								Reporter.reportError(this.getClass().toString(), Thread.currentThread().getStackTrace()[2].getMethodName()
-										.toString(), ex.getMessage());
-							}
-
-							try {
-								event.title = e.getString("title");
-								cv.put(EventsProvider.EMetaData.EventsMetaData.TITLE, event.title);
-							} catch (JSONException ex) {
-								Reporter.reportError(this.getClass().toString(), Thread.currentThread().getStackTrace()[2].getMethodName()
-										.toString(), ex.getMessage());
-							}
-							try {
-								event.icon = e.getString("icon");
-								cv.put(EventsProvider.EMetaData.EventsMetaData.ICON, event.icon);
-							} catch (JSONException ex) {
-								Reporter.reportError(this.getClass().toString(), Thread.currentThread().getStackTrace()[2].getMethodName()
-										.toString(), ex.getMessage());
-							}
-							try {
-								event.setColor(e.getString("color"));
-								cv.put(EventsProvider.EMetaData.EventsMetaData.COLOR, event.getColor());
-							} catch (JSONException ex) {
-								Reporter.reportError(this.getClass().toString(), Thread.currentThread().getStackTrace()[2].getMethodName()
-										.toString(), ex.getMessage());
-							}
-							try {
-								event.description_ = e.getString("description");
-								cv.put(EventsProvider.EMetaData.EventsMetaData.DESC, event.description_);
-							} catch (JSONException ex) {
-								Reporter.reportError(this.getClass().toString(), Thread.currentThread().getStackTrace()[2].getMethodName()
-										.toString(), ex.getMessage());
-							}
-
-							try {
-								event.location = e.getString("location");
-								cv.put(EventsProvider.EMetaData.EventsMetaData.LOCATION, event.location);
-							} catch (JSONException ex) {
-								Reporter.reportError(this.getClass().toString(), Thread.currentThread().getStackTrace()[2].getMethodName()
-										.toString(), ex.getMessage());
-							}
-							try {
-								event.accomodation = e.getString("accomodation");
-								cv.put(EventsProvider.EMetaData.EventsMetaData.ACCOMODATION, event.accomodation);
-							} catch (JSONException ex) {
-								Reporter.reportError(this.getClass().toString(), Thread.currentThread().getStackTrace()[2].getMethodName()
-										.toString(), ex.getMessage());
-							}
-
-							try {
-								event.cost = e.getString("cost");
-								cv.put(EventsProvider.EMetaData.EventsMetaData.COST, event.cost);
-							} catch (JSONException ex) {
-								Reporter.reportError(this.getClass().toString(), Thread.currentThread().getStackTrace()[2].getMethodName()
-										.toString(), ex.getMessage());
-							}
-							try {
-								event.take_with_you = e.getString("take_with_you");
-								cv.put(EventsProvider.EMetaData.EventsMetaData.TAKE_WITH_YOU, event.take_with_you);
-							} catch (JSONException ex) {
-								Reporter.reportError(this.getClass().toString(), Thread.currentThread().getStackTrace()[2].getMethodName()
-										.toString(), ex.getMessage());
-							}
-							try {
-								event.go_by = e.getString("go_by");
-								cv.put(EventsProvider.EMetaData.EventsMetaData.GO_BY, event.go_by);
-							} catch (JSONException ex) {
-								Reporter.reportError(this.getClass().toString(), Thread.currentThread().getStackTrace()[2].getMethodName()
-										.toString(), ex.getMessage());
-							}
-
-							try {
-								event.country = e.getString("country");
-								cv.put(EventsProvider.EMetaData.EventsMetaData.COUNTRY, event.country);
-							} catch (JSONException ex) {
-								Reporter.reportError(this.getClass().toString(), Thread.currentThread().getStackTrace()[2].getMethodName()
-										.toString(), ex.getMessage());
-							}
-							try {
-								event.city = e.getString("city");
-								cv.put(EventsProvider.EMetaData.EventsMetaData.CITY, event.city);
-							} catch (JSONException ex) {
-								Reporter.reportError(this.getClass().toString(), Thread.currentThread().getStackTrace()[2].getMethodName()
-										.toString(), ex.getMessage());
-							}
-							try {
-								event.street = e.getString("street");
-								cv.put(EventsProvider.EMetaData.EventsMetaData.STREET, event.street);
-							} catch (JSONException ex) {
-								Reporter.reportError(this.getClass().toString(), Thread.currentThread().getStackTrace()[2].getMethodName()
-										.toString(), ex.getMessage());
-							}
-							try {
-								event.zip = e.getString("zip");
-								cv.put(EventsProvider.EMetaData.EventsMetaData.ZIP, event.zip);
-							} catch (JSONException ex) {
-								Reporter.reportError(this.getClass().toString(), Thread.currentThread().getStackTrace()[2].getMethodName()
-										.toString(), ex.getMessage());
-							}
-
-							try {
-								event.timezone = e.getString("timezone");
-								cv.put(EventsProvider.EMetaData.EventsMetaData.TIMEZONE, event.timezone);
-							} catch (JSONException ex) {
-								Reporter.reportError(this.getClass().toString(), Thread.currentThread().getStackTrace()[2].getMethodName()
-										.toString(), ex.getMessage());
-							}
-							
-							
-
-
-							try {
-								event.reminder1 = e.getString("reminder1");
-								cv.put(EventsProvider.EMetaData.EventsMetaData.REMINDER1, event.reminder1);
-							} catch (JSONException ex) {
-								Reporter.reportError(this.getClass().toString(), Thread.currentThread().getStackTrace()[2].getMethodName()
-										.toString(), ex.getMessage());
-							}
-							try {
-								event.reminder2 = e.getString("reminder2");
-								cv.put(EventsProvider.EMetaData.EventsMetaData.REMINDER2, event.reminder2);
-							} catch (JSONException ex) {
-								Reporter.reportError(this.getClass().toString(), Thread.currentThread().getStackTrace()[2].getMethodName()
-										.toString(), ex.getMessage());
-							}
-							try {
-								event.reminder3 = e.getString("reminder3");
-								cv.put(EventsProvider.EMetaData.EventsMetaData.REMINDER3, event.reminder3);
-							} catch (JSONException ex) {
-								Reporter.reportError(this.getClass().toString(), Thread.currentThread().getStackTrace()[2].getMethodName()
-										.toString(), ex.getMessage());
-							}
-
-							try {
-								event.created = e.getString("created");
-								cv.put(EventsProvider.EMetaData.EventsMetaData.CREATED, event.created);
-							} catch (JSONException ex) {
-								Reporter.reportError(this.getClass().toString(), Thread.currentThread().getStackTrace()[2].getMethodName()
-										.toString(), ex.getMessage());
-							}
-							try {
-								event.modified = e.getString("modified");
-								cv.put(EventsProvider.EMetaData.EventsMetaData.MODIFIED, event.modified);
-							} catch (JSONException ex) {
-								Reporter.reportError(this.getClass().toString(), Thread.currentThread().getStackTrace()[2].getMethodName()
-										.toString(), ex.getMessage());
-							}
-
-							try {
-								event.attendant_1_count = e.getInt("attendant_1_count");
-								cv.put(EventsProvider.EMetaData.EventsMetaData.ATTENDANT_1_COUNT, event.attendant_1_count);
-							} catch (JSONException ex) {
-								Reporter.reportError(this.getClass().toString(), Thread.currentThread().getStackTrace()[2].getMethodName()
-										.toString(), ex.getMessage());
-							}
-							try {
-								event.attendant_2_count = e.getInt("attendant_2_count");
-								cv.put(EventsProvider.EMetaData.EventsMetaData.ATTENDANT_2_COUNT, event.attendant_2_count);
-							} catch (JSONException ex) {
-								Reporter.reportError(this.getClass().toString(), Thread.currentThread().getStackTrace()[2].getMethodName()
-										.toString(), ex.getMessage());
-							}
-							try {
-								event.attendant_0_count = e.getInt("attendant_0_count");
-								cv.put(EventsProvider.EMetaData.EventsMetaData.ATTENDANT_0_COUNT, event.attendant_0_count);
-							} catch (JSONException ex) {
-								Reporter.reportError(this.getClass().toString(), Thread.currentThread().getStackTrace()[2].getMethodName()
-										.toString(), ex.getMessage());
-							}
-							try {
-								event.attendant_4_count = e.getInt("attendant_4_count");
-								cv.put(EventsProvider.EMetaData.EventsMetaData.ATTENDANT_4_COUNT, event.attendant_4_count);
-							} catch (JSONException ex) {
-								Reporter.reportError(this.getClass().toString(), Thread.currentThread().getStackTrace()[2].getMethodName()
-										.toString(), ex.getMessage());
-							}
-
-							try {
-								int is_sports_event = e.getInt("is_sports_event");
-								event.is_sports_event = is_sports_event == 1;
-								cv.put(EventsProvider.EMetaData.EventsMetaData.IS_SPORTS_EVENT, event.is_sports_event);
-							} catch (JSONException ex) {
-								Reporter.reportError(this.getClass().toString(), Thread.currentThread().getStackTrace()[2].getMethodName()
-										.toString(), ex.getMessage());
-							}
-							try {
-								event.creator_fullname = e.getString("creator_fullname");
-								cv.put(EventsProvider.EMetaData.EventsMetaData.CREATOR_FULLNAME, event.creator_fullname);
-							} catch (JSONException ex) {
-								Reporter.reportError(this.getClass().toString(), Thread.currentThread().getStackTrace()[2].getMethodName()
-										.toString(), ex.getMessage());
-							}
-							try {
-								event.creator_contact_id = e.getInt("creator_contact_id");
-								cv.put(EventsProvider.EMetaData.EventsMetaData.CREATOR_CONTACT_ID, event.creator_contact_id);
-							} catch (JSONException ex) {
-								Reporter.reportError(this.getClass().toString(), Thread.currentThread().getStackTrace()[2].getMethodName()
-										.toString(), ex.getMessage());
-							}
-
-							try {
-								String assigned_contacts = e.getString("assigned_contacts");
-								cv.put(EventsProvider.EMetaData.EventsMetaData.ASSIGNED_CONTACTS, assigned_contacts);
-							} catch (JSONException ex) {
-								Reporter.reportError(this.getClass().toString(), Thread.currentThread().getStackTrace()[2].getMethodName()
-										.toString(), ex.getMessage());
-							}
-
-							try {
-								String assigned_groups = e.getString("assigned_groups");
-								cv.put(EventsProvider.EMetaData.EventsMetaData.ASSIGNED_GROUPS, assigned_groups);
-							} catch (JSONException ex) {
-								Reporter.reportError(this.getClass().toString(), Thread.currentThread().getStackTrace()[2].getMethodName()
-										.toString(), ex.getMessage());
-							}
-
-							try {
-								String invited = e.getString("invited");
-								cv.put(EventsProvider.EMetaData.EventsMetaData.INVITED, invited);
-							} catch (JSONException ex) {
-								Reporter.reportError(this.getClass().toString(), Thread.currentThread().getStackTrace()[2].getMethodName()
-										.toString(), ex.getMessage());
-							}
-
-							try {
-								int all_day = e.getInt("all_day");
-								event.is_all_day = all_day == 1;
-							} catch (JSONException ex) {
-								Reporter.reportError(this.getClass().toString(), Thread.currentThread().getStackTrace()[2].getMethodName()
-										.toString(), ex.getMessage());
-							}
-
-							// //
-							dm.getContext().getContentResolver().insert(EventsProvider.EMetaData.EventsMetaData.CONTENT_URI, cv);
-							Event tmpEvent = dm.getEventFromLocalDb(event_id);
-							if (tmpEvent.getStartCalendar() == null) {
-								tmpEvent.setStartCalendar((Calendar) event.getStartCalendar().clone());
-							}
-							if (tmpEvent.getEndCalendar() == null) {
-								tmpEvent.setEndCalendar((Calendar) event.getEndCalendar().clone());
-							}
-							dm.updateEventInsideLocalDb(tmpEvent);
-						}
-					}
-				}
+				dm.updateEventByIdFromRemoteDb(params[0]);
 			} catch (Exception e) {
 				Reporter.reportError(this.getClass().toString(), Thread.currentThread().getStackTrace()[2].getMethodName().toString(),
 						e.getMessage());

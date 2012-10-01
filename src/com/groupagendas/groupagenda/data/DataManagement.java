@@ -1239,6 +1239,8 @@ public class DataManagement {
 	private Event createEventFromJSON(JSONObject e) {
 		Event event = new Event();
 		String timezone = CalendarSettings.getTimeZone();
+		long unixTimestamp;
+		
 		day_index_formatter = new SimpleDateFormat(EventsProvider.EMetaData.EventsIndexesMetaData.DAY_COLUMN_FORMAT);
 		month_index_formatter = new SimpleDateFormat(EventsProvider.EMetaData.EventsIndexesMetaData.MONTH_COLUMN_FORMAT);
 		// critical event info. If fetch fails, return null
@@ -1246,7 +1248,7 @@ public class DataManagement {
 			event.setEvent_id(e.getInt("event_id"));
 			event.setTimezone(e.getString("timezone"));
 			// EVENT TIME START
-			long unixTimestamp = e.getLong("timestamp_start_utc");
+			unixTimestamp = e.getLong("timestamp_start_utc");
 			event.setStartCalendar(Utils.createCalendar(Utils.unixTimestampToMilis(unixTimestamp), timezone));
 			// EVENT TIME END
 			unixTimestamp = e.getLong("timestamp_end_utc");
@@ -1363,7 +1365,6 @@ public class DataManagement {
 		}
 
 		// reminders
-
 		try {
 			event.setReminder1(e.getString("reminder1"));
 		} catch (JSONException e1) {
@@ -1384,7 +1385,6 @@ public class DataManagement {
 		}
 
 		// alarms
-
 		try {
 			event.setAlarm1(e.getString("alarm1"));
 		} catch (JSONException e1) {
@@ -1423,13 +1423,14 @@ public class DataManagement {
 		}
 
 		try {
-			event.setCreated(e.getString("created"));
+			unixTimestamp = e.getLong("timestamp_created");
+			event.setCreatedMillisUtc(unixTimestamp);
 		} catch (JSONException e1) {
 			Reporter.reportError(this.getClass().toString(), Thread.currentThread().getStackTrace()[2].getMethodName().toString(),
 					e1.getMessage());
 		}
 		try {
-			event.setModified(e.getString("modified"));
+			event.setModifiedMillisUtc(e.getLong("timestamp_modified"));
 		} catch (JSONException e1) {
 			Reporter.reportError(this.getClass().toString(), Thread.currentThread().getStackTrace()[2].getMethodName().toString(),
 					e1.getMessage());
@@ -1612,8 +1613,8 @@ public class DataManagement {
 		cv.put(EventsProvider.EMetaData.EventsMetaData.ALARM2, event.getAlarm2());
 		cv.put(EventsProvider.EMetaData.EventsMetaData.ALARM3, event.getAlarm3());
 
-		cv.put(EventsProvider.EMetaData.EventsMetaData.CREATED, event.getCreated());
-		cv.put(EventsProvider.EMetaData.EventsMetaData.MODIFIED, event.getModified());
+		cv.put(EventsProvider.EMetaData.EventsMetaData.CREATED, event.getCreatedUtc());
+		cv.put(EventsProvider.EMetaData.EventsMetaData.MODIFIED, event.getModifiedMillisUtc());
 
 		cv.put(EventsProvider.EMetaData.EventsMetaData.ASSIGNED_CONTACTS, event.getAssigned_contacts_DB_entry());
 		cv.put(EventsProvider.EMetaData.EventsMetaData.ASSIGNED_GROUPS, event.getAssigned_groups_DB_entry());
@@ -1851,6 +1852,9 @@ public class DataManagement {
 
 	private Event createEventFromCursor(Cursor result) {
 		Event item = new Event();
+		user_timezone = CalendarSettings.getTimeZone();
+		long timeinMillis;
+		
 		item.setEvent_id(result.getInt(result.getColumnIndex(EventsProvider.EMetaData.EventsMetaData.E_ID)));
 		item.setUser_id(result.getInt(result.getColumnIndex(EventsProvider.EMetaData.EventsMetaData.USER_ID)));
 		item.setNeedUpdate(result.getInt(result.getColumnIndex(EventsProvider.EMetaData.EventsMetaData.NEED_UPDATE)));
@@ -1891,8 +1895,8 @@ public class DataManagement {
 
 		item.setTimezone(result.getString(result.getColumnIndex(EventsProvider.EMetaData.EventsMetaData.TIMEZONE)));
 
-		user_timezone = CalendarSettings.getTimeZone();
-		long timeinMillis = result.getLong(result.getColumnIndex(EventsProvider.EMetaData.EventsMetaData.TIME_START_UTC_MILLISECONDS));
+		
+		timeinMillis = result.getLong(result.getColumnIndex(EventsProvider.EMetaData.EventsMetaData.TIME_START_UTC_MILLISECONDS));
 		item.setStartCalendar(Utils.createCalendar(timeinMillis, user_timezone));
 		timeinMillis = result.getLong(result.getColumnIndex(EventsProvider.EMetaData.EventsMetaData.TIME_END_UTC_MILLISECONDS));
 		item.setEndCalendar(Utils.createCalendar(timeinMillis, user_timezone));
@@ -1901,8 +1905,8 @@ public class DataManagement {
 		item.setReminder2(result.getString(result.getColumnIndex(EventsProvider.EMetaData.EventsMetaData.REMINDER2)));
 		item.setReminder3(result.getString(result.getColumnIndex(EventsProvider.EMetaData.EventsMetaData.REMINDER3)));
 
-		item.setCreated(result.getString(result.getColumnIndex(EventsProvider.EMetaData.EventsMetaData.CREATED)));
-		item.setModified(result.getString(result.getColumnIndex(EventsProvider.EMetaData.EventsMetaData.MODIFIED)));
+		item.setCreatedMillisUtc(result.getLong(result.getColumnIndex(EventsProvider.EMetaData.EventsMetaData.CREATED_UTC_MILLISECONDS)));
+		item.setModifiedMillisUtc(result.getLong(result.getColumnIndex(EventsProvider.EMetaData.EventsMetaData.MODIFIED_UTC_MILLISECONDS)));
 
 		item.setAssigned_contacts_DB_entry(result.getString(result
 				.getColumnIndex(EventsProvider.EMetaData.EventsMetaData.ASSIGNED_CONTACTS)));
