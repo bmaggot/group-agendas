@@ -120,6 +120,7 @@ private static final int REMINDER_3 = 3;
 	 * public String repeat_data;
 	 * public String created_local;
 	 * public String modified_local;
+	 * public String wp; (work private)
 	 * */
 	
 	@Override
