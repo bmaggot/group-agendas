@@ -2,7 +2,6 @@ package com.groupagendas.groupagenda.events;
 
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.concurrent.ExecutionException;
 
 import android.app.AlertDialog;
 import android.app.Dialog;

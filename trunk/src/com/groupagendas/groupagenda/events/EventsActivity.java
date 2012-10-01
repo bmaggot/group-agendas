@@ -1,5 +1,7 @@
 package com.groupagendas.groupagenda.events;
 
+import java.util.ArrayList;
+
 import android.app.ListActivity;
 import android.content.Intent;
 import android.os.Bundle;
@@ -57,7 +59,6 @@ public class EventsActivity extends ListActivity {
 		radioButton.setOnCheckedChangeListener(btnNavBarOnCheckedChangeListener);
 
 		setListAdapter(eventsAdapter);
-//		TODO wtf is this for????
 		dm.loadEvents(this, eventsAdapter);
 		if(NavbarActivity.showInvites && AgendaUtils.newInvites != 0){
 			NavbarActivity.showInvites = false;
@@ -75,7 +76,7 @@ public class EventsActivity extends ListActivity {
 
 		topView = (TextView) findViewById(R.id.topText);
 		
-		eventsAdapter = new EventsAdapter(dm.getEvents(), this);
+		eventsAdapter = new EventsAdapter(new ArrayList<Event>(), this);
 	}
 
 	@Override
