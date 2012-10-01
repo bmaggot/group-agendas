@@ -61,7 +61,7 @@ public class CalendarSettings {
 	}
 
 	public static String getDateFormat() {
-		Account account = Data.getAccount();
+		Account account = new Account();
 		if (account != null) {
 			if (!account.getSetting_date_format().equalsIgnoreCase("null")) {
 				formatterDateFormat = account.getSetting_date_format();

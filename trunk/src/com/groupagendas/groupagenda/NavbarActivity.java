@@ -147,7 +147,6 @@ public class NavbarActivity extends Activity {
 						getContentResolver().delete(TemplatesProvider.TMetaData.TemplatesMetaData.CONTENT_URI, "", null);
 						getContentResolver().delete(EventsProvider.EMetaData.EventsMetaData.CONTENT_URI, "", null);
 						getContentResolver().getType(EventsProvider.EMetaData.EventsMetaData.CONTENT_URI);
-						Data.clearData();
 
 						loadPhase++;
 						total = 10;
@@ -163,7 +162,7 @@ public class NavbarActivity extends Activity {
 						publishProgress(total);
 					case 2:// Load contacts
 						if (DataManagement.networkAvailable) 
-							ContactManagement.getContacts(NavbarActivity.this);
+							ContactManagement.getContactsFromRemoteDb(NavbarActivity.this, null);
 						else
 							ContactManagement.getContactsFromLocalDb(NavbarActivity.this, null);
 						loadPhase++;
@@ -171,7 +170,7 @@ public class NavbarActivity extends Activity {
 						publishProgress(total);
 					case 3:// Load groups
 						if (DataManagement.networkAvailable) 
-							ContactManagement.getGroups(NavbarActivity.this);
+							ContactManagement.getGroupsFromRemoteDb(NavbarActivity.this, null);
 						else
 							ContactManagement.getGroupsFromLocalDb(NavbarActivity.this, null);
 						loadPhase++;
@@ -198,7 +197,7 @@ public class NavbarActivity extends Activity {
 
 					case 6: // Load chat threads if network available TODO load offline
 						if (DataManagement.networkAvailable)
-							dm.getChatThreads();
+//							dm.getChatThreads();
 						dm.getAddressesFromRemoteDb();
 						loadPhase++;
 						total = 100;
