@@ -434,6 +434,8 @@ public class AccountActivity extends Activity implements OnClickListener{
 	
 	@Override
 	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+		Account account = new Account();
+		
 		if (resultCode != RESULT_OK)
 			return;
 
@@ -459,7 +461,7 @@ public class AccountActivity extends Activity implements OnClickListener{
 				
 				ByteArrayOutputStream baos = new ByteArrayOutputStream();  
 				photo.compress(Bitmap.CompressFormat.PNG, 100, baos);
-				Data.getAccount().image_bytes = baos.toByteArray();
+				account.image_bytes = baos.toByteArray();
 			}
 
 			File f = new File(mImageCaptureUri.getPath());

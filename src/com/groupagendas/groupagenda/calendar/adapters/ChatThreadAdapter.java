@@ -23,9 +23,9 @@ public class ChatThreadAdapter extends AbstractAdapter<ChatThreadObject> {
 		}
 		ChatThreadObject chatThread = (ChatThreadObject) this.getItem(i);
 		TextView title = (TextView) view.findViewById(R.id.chat_message_body);
-		title.setText(chatThread.title);
+//		title.setText(chatThread.title);
 		TextView chatTime = (TextView) view.findViewById(R.id.chat_message_time);
-		chatTime.setText(chatThread.message_last);
+//		chatTime.setText(chatThread.message_last);
 		return view;
 	}
 

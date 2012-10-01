@@ -40,17 +40,16 @@ public class ContactManagement {
 	 * Get all contact entries from remote database.
 	 * 
 	 * Executes a call to remote database and retrieves all contact entries from
-	 * it.
+	 * it. While retrieving, each contact entry is stored in SQLite database. 
 	 * 
 	 * @author meska.lt@gmail.com
 	 * @return ArrayList of Contact objects got from response.
 	 * @since 2012-09�28
 	 * @version 0.1
 	 */
-	public static ArrayList<Contact> getContactsFromRemoteDb(HashSet<Integer> groupIds) {
+	public static void getContactsFromRemoteDb(Context context, HashSet<Integer> groupIds) {
 		boolean success = false;
 		String error = null;
-		ArrayList<Contact> contacts = null;
 		@SuppressWarnings("unused")
 		Account account = new Account();
 		HttpClient hc = new DefaultHttpClient();
@@ -91,7 +90,6 @@ public class ContactManagement {
 						JSONArray cs = object.getJSONArray("contacts");
 						int count = cs.length();
 						if (count > 0) {
-							contacts = new ArrayList<Contact>(count);
 							for (int i = 0; i < count; i++) {
 								JSONObject c = cs.getJSONObject(i);
 								Contact contact = new Contact();
@@ -295,7 +293,7 @@ public class ContactManagement {
 									Log.e("getContactsFromRemoteDb(contactIds)", "Failed getting groups.");
 								}
 
-								contacts.add(contact);
+								insertContactToLocalDb(context, contact, 0);
 							}
 						}
 					}
@@ -307,7 +305,6 @@ public class ContactManagement {
 		}
 
 		Data.setLoadContactsData(false);
-		return contacts;
 	}
 
 	/**
@@ -388,7 +385,7 @@ public class ContactManagement {
 				cur.moveToNext();
 			}
 		} else {
-			Log.e("getContactsFromLocalDb()", "Empty or no response from local db.");
+			Log.i("getContactsFromLocalDb()", "Empty or no response from local db.");
 		}
 
 		cur.close();
@@ -811,45 +808,6 @@ public class ContactManagement {
 		return temp;
 	}
 
-	/**
-	 * Get all contacts.
-	 * 
-	 * Get all contacts from remote database and store them in local database
-	 * and temporary memory.
-	 * 
-	 * @author meska.lt@gmail.com
-	 * @version 1.0
-	 * @since 2012-09-24
-	 */
-	public static void getContacts(Context context) {
-		ArrayList<Contact> contacts = getContactsFromRemoteDb(null);
-
-		for (Contact contact : contacts) {
-			insertContactToLocalDb(context, contact, 0);
-		}
-
-		contacts = null;
-	}
-
-	/**
-	 * Get all groups.
-	 * 
-	 * Get all groups from remote database and store them in local database and
-	 * temporary memory.
-	 * 
-	 * @author meska.lt@gmail.com
-	 * @version 1.0
-	 * @since 2012-09-24
-	 */
-	public static void getGroups(Context context) {
-		ArrayList<Group> groups = getGroupsFromRemoteDb(null);
-
-		for (Group group : groups) {
-			insertGroupToLocalDb(context, group, 0);
-		}
-
-		groups = null;
-	}
 
 	/**
 	 * Get all group entries from local database.
@@ -912,7 +870,7 @@ public class ContactManagement {
 				cur.moveToNext();
 			}
 		} else {
-			Log.e("getGroupsFromLocalDb()", "Empty or no response from local db.");
+			Log.i("getGroupsFromLocalDb()", "Empty or no response from local db.");
 		}
 
 		cur.close();
@@ -1204,10 +1162,9 @@ public class ContactManagement {
 	 * @since 2012-09�28
 	 * @version 0.1
 	 */
-	public static ArrayList<Group> getGroupsFromRemoteDb(HashSet<Integer> contactIds) {
+	public static void getGroupsFromRemoteDb(Context context, HashSet<Integer> contactIds) {
 		boolean success = false;
 		String error = null;
-		ArrayList<Group> groups = null;
 		@SuppressWarnings("unused")
 		Account account = new Account();
 		HttpClient hc = new DefaultHttpClient();
@@ -1248,7 +1205,6 @@ public class ContactManagement {
 						JSONArray gs = object.getJSONArray("groups");
 						int count = gs.length();
 						if (count > 0) {
-							groups = new ArrayList<Group>(count);
 							for (int i = 0; i < count; i++) {
 								JSONObject g = gs.getJSONObject(i);
 								Group group = new Group();
@@ -1345,7 +1301,7 @@ public class ContactManagement {
 									Log.e("getGroupsFromRemoteDb(contactIds)", "Failed getting contacts.");
 								}
 
-								groups.add(group);
+								insertGroupToLocalDb(context, group, 0);
 							}
 						}
 					}
@@ -1357,7 +1313,6 @@ public class ContactManagement {
 		}
 
 		Data.setLoadContactsData(false);
-		return groups;
 	}
 
 	// TODO removeContactFromRemoteDb(int id) documentation

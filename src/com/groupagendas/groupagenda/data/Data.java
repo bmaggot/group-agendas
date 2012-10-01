@@ -43,7 +43,7 @@ public class Data {
 
 	private static Editor _editor = null;
 
-	private static String timezone = null;
+//	private static String timezone = null;
 	private static String serverUrl = DEFAULT_SERVER_URL;
 	private static String email = DEFAULT_EMAIL;
 	private static String password = DEFAULT_PASSWORD;
@@ -54,9 +54,6 @@ public class Data {
 	private static int user_id;
 	private static String colorMyEvent, colorAttending, colorPending, colorInvitation, colorNotes;
 
-	private static Account account;
-	private static ArrayList<Contact> contacts;
-	private static ArrayList<Group> groups;
 	private static ArrayList<Event> events;
 	private static TreeMap<Calendar, ArrayList<Event>> sortedEvents;
 	private static ArrayList<ChatMessageObject> chatMessages = new ArrayList<ChatMessageObject>();
@@ -217,13 +214,13 @@ public class Data {
 		editor.commit();
 	}
 
-	protected static String getTimezone() {
-		return timezone;
-	}
+//	protected static String getTimezone() {
+//		return timezone;
+//	}
 
-	protected static void setTimezone(String timezone) {
-		Data.timezone = timezone;
-	}
+//	protected static void setTimezone(String timezone) {
+//		Data.timezone = timezone;
+//	}
 
 	public static String getServerUrl() {
 		return serverUrl;
@@ -333,49 +330,49 @@ public class Data {
 	 * @deprecated Create new object and get value afterwards.
 	 * @since 2012-09-29
 	 */
-	public static Account getAccount() {
-		return account;
-	}
+//	public static Account getAccount() {
+//		return account;
+//	}
 
 	/**
 	 * @deprecated Create new object and set value afterwards.
 	 * @since 2012-09-29
 	 */
-	protected static void setAccount(Account account) {
-		Data.account = account;
-	}
+//	protected static void setAccount(Account account) {
+//		Data.account = account;
+//	}
 
 	/**
 	 * @deprecated Use ContactManagement.getContactsFromLocalDb(null) instead.
 	 * @since 2012-09-29
 	 */
-	public static ArrayList<Contact> getContacts() {
-		return contacts;
-	}
+//	public static ArrayList<Contact> getContacts() {
+//		return contacts;
+//	}
 
 	/**
 	 * @deprecated Use {@link ContactManagement.insertContact(Contact contact)} instead.
 	 * @since 2012-09-29
 	 */
-	public static void setContacts(ArrayList<Contact> contacts) {
-		Data.contacts = contacts;
-	}
+//	public static void setContacts(ArrayList<Contact> contacts) {
+//		Data.contacts = contacts;
+//	}
 
 	/**
 	 * @deprecated Use ContactManagement.getGroupsFromLocalDb(null) instead.
 	 * @since 2012-09-29
 	 */
-	protected static ArrayList<Group> getGroups() {
-		return groups;
-	}
+//	protected static ArrayList<Group> getGroups() {
+//		return groups;
+//	}
 
 	/**
 	 * @deprecated Use {@link ContactManagement.insertGroup(Group group)} instead.
 	 * @since 2012-09-29
 	 */
-	protected static void setGroups(ArrayList<Group> groups) {
-		Data.groups = groups;
-	}
+//	protected static void setGroups(ArrayList<Group> groups) {
+//		Data.groups = groups;
+//	}
 /**
  * @deprecated
  * @return
@@ -458,13 +455,6 @@ public class Data {
 		if (_editor == null)
 			return;
 		_editor.commit();
-	}
-
-	public static void clearData() {
-		account = new Account();
-		contacts = new ArrayList<Contact>();
-		groups = new ArrayList<Group>();
-		events = new ArrayList<Event>();
 	}
 
 }
