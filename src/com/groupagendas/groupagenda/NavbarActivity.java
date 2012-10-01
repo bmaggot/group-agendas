@@ -225,7 +225,7 @@ public class NavbarActivity extends Activity {
 				progressDialog.setMessage(getString(R.string.loading_groups));
 				break;
 			case 50:
-				progressDialog.setMessage(getString(R.string.loading_templates));
+//				progressDialog.setMessage(getString(R.string.loading_templates));
 				break;
 			case 60:
 				progressDialog.setMessage(getString(R.string.loading_events));
