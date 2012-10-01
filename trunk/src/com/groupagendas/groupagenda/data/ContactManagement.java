@@ -221,12 +221,16 @@ public class ContactManagement {
 									temp = c.getString(ContactsProvider.CMetaData.ContactsMetaData.IMAGE_URL);
 									if (temp != null && !temp.equals("null")) {
 										contact.image_url = temp;
-										contact.image_bytes = DataManagement.imageToBytes(contact.image_url);
+										try {
+											contact.image_bytes = DataManagement.imageToBytes(contact.image_url);
+										} catch(Exception e) {
+											Log.e("getContactsFromRemoteDb(contactIds)", "Failed getting image_bytes.");
+										}
 									} else
 										contact.image_url = "";
 								} catch (JSONException e) {
 									contact.image = false;
-									Log.e("getContactsFromRemoteDb(contactIds)", "Failed getting image_url & image_bytes.");
+									Log.e("getContactsFromRemoteDb(contactIds)", "Failed getting image_url and/or image_bytes.");
 								}
 
 								try {
@@ -1261,7 +1265,11 @@ public class ContactManagement {
 									temp = g.getString(ContactsProvider.CMetaData.GroupsMetaData.IMAGE_URL);
 									if (temp != null && !temp.equals("null")) {
 										group.image_url = temp;
-										group.image_bytes = DataManagement.imageToBytes(group.image_url);
+										try {
+											group.image_bytes = DataManagement.imageToBytes(group.image_url);
+										} catch (Exception e) {
+											Log.e("getContactsFromRemoteDb(contactIds)", "Failed getting image_bytes.");
+										}
 									} else
 										group.image_url = "";
 								} catch (JSONException e) {
