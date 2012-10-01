@@ -119,27 +119,27 @@ public class ChatMessageActivity extends Activity {
 								JSONArray chatMessages = object.getJSONArray("items");
 								Data.getChatMessages().clear();
 								for (int i = 0, l = chatMessages.length(); i < l; i++) {
-									final JSONObject chatMessage = chatMessages.getJSONObject(i);
-									ChatMessageObject message = new ChatMessageObject();
-									message.messageId = chatMessage.getInt("message_id");
-									message.eventId = chatMessage.getInt("event_id");
-									message.dateTime = chatMessage.getString("datetime");
-									message.dateTimeCalendar = Utils.stringToCalendar(message.dateTime,
-											DataManagement.SERVER_TIMESTAMP_FORMAT);
-									message.userId = chatMessage.getInt("user_id");
-									message.message = chatMessage.getString("message");
-									String deleted = chatMessage.getString("deleted");
-									message.deleted = !deleted.equals("null");
-									message.updated = chatMessage.getString("updated");
-									message.updatedCalendar = Utils.stringToCalendar(message.updated,
-											DataManagement.SERVER_TIMESTAMP_FORMAT);
-									message.fullname = chatMessage.getString("fullname");
-									message.contactId = chatMessage.getString("contact_id");
-									message.dateTimeConverted = chatMessage.getString("datetime_conv");
-									message.dateTimeConvertedCalendar = Utils.stringToCalendar(message.dateTimeConverted,
-											DataManagement.SERVER_TIMESTAMP_FORMAT);
-									message.formatedDateTime = chatMessage.getString("formatted_datetime");
-									Data.getChatMessages().add(message);
+//									final JSONObject chatMessage = chatMessages.getJSONObject(i);
+//									ChatMessageObject message = new ChatMessageObject();
+//									message.messageId = chatMessage.getInt("message_id");
+//									message.eventId = chatMessage.getInt("event_id");
+//									message.dateTime = chatMessage.getString("datetime");
+//									message.dateTimeCalendar = Utils.stringToCalendar(message.dateTime,
+//											DataManagement.SERVER_TIMESTAMP_FORMAT);
+//									message.userId = chatMessage.getInt("user_id");
+//									message.message = chatMessage.getString("message");
+//									String deleted = chatMessage.getString("deleted");
+//									message.deleted = !deleted.equals("null");
+//									message.updated = chatMessage.getString("updated");
+//									message.updatedCalendar = Utils.stringToCalendar(message.updated,
+//											DataManagement.SERVER_TIMESTAMP_FORMAT);
+//									message.fullname = chatMessage.getString("fullname");
+//									message.contactId = chatMessage.getString("contact_id");
+//									message.dateTimeConverted = chatMessage.getString("datetime_conv");
+//									message.dateTimeConvertedCalendar = Utils.stringToCalendar(message.dateTimeConverted,
+//											DataManagement.SERVER_TIMESTAMP_FORMAT);
+//									message.formatedDateTime = chatMessage.getString("formatted_datetime");
+//									Data.getChatMessages().add(message);
 								}
 							}
 						}
