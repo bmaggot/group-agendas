@@ -79,11 +79,6 @@ public class EventsProvider extends ContentProvider{
 			public static final String ZIP 		= "zip";
 			
 			public static final String TIMEZONE = "timezone";
-			public static final String TIME_START = "time_start";
-			public static final String TIME_END = "time_end";
-			public static final String TIME = "time";
-			public static final String MY_TIME_START = "my_time_start";
-			public static final String MY_TIME_END = "my_time_end";
 			public static final String TIME_START_UTC_MILLISECONDS = "time_start_utc";
 			public static final String TIME_END_UTC_MILLISECONDS = "time_end_utc";
 			
@@ -97,6 +92,8 @@ public class EventsProvider extends ContentProvider{
 			
 			public static final String CREATED = "created";
 			public static final String MODIFIED = "modified";
+			public static final String CREATED_UTC_MILLISECONDS = "created_utc";
+			public static final String MODIFIED_UTC_MILLISECONDS = "modified_utc";
 			
 			public static final String ATTENDANT_1_COUNT = "attendant_1_count";
 			public static final String ATTENDANT_2_COUNT = "attendant_2_count";
@@ -109,7 +106,7 @@ public class EventsProvider extends ContentProvider{
 			
 			public static final String NEED_UPDATE = "need_update";
 			
-			public static final String DEFAULT_SORT_ORDER = MY_TIME_START+" ASC";
+			public static final String DEFAULT_SORT_ORDER = TIME_START_UTC_MILLISECONDS+" ASC";
 			public static final String IS_BIRTHDAY = "is_birthday";
 			public static String IS_ALL_DAY = "is_all_day";
 			
@@ -152,11 +149,6 @@ public class EventsProvider extends ContentProvider{
 		EM.put(EMetaData.EventsMetaData.ZIP, EMetaData.EventsMetaData.ZIP);
 		
 		EM.put(EMetaData.EventsMetaData.TIMEZONE, EMetaData.EventsMetaData.TIMEZONE);
-		EM.put(EMetaData.EventsMetaData.TIME_START, EMetaData.EventsMetaData.TIME_START);
-		EM.put(EMetaData.EventsMetaData.TIME_END, EMetaData.EventsMetaData.TIME_END);
-		EM.put(EMetaData.EventsMetaData.TIME, EMetaData.EventsMetaData.TIME);
-		EM.put(EMetaData.EventsMetaData.MY_TIME_START, EMetaData.EventsMetaData.MY_TIME_START);
-		EM.put(EMetaData.EventsMetaData.MY_TIME_END, EMetaData.EventsMetaData.MY_TIME_END);
 		EM.put(EMetaData.EventsMetaData.TIME_START_UTC_MILLISECONDS, EMetaData.EventsMetaData.TIME_START_UTC_MILLISECONDS);
 		EM.put(EMetaData.EventsMetaData.TIME_END_UTC_MILLISECONDS, EMetaData.EventsMetaData.TIME_END_UTC_MILLISECONDS);
 		
@@ -170,6 +162,8 @@ public class EventsProvider extends ContentProvider{
 		
 		EM.put(EMetaData.EventsMetaData.CREATED, EMetaData.EventsMetaData.CREATED);
 		EM.put(EMetaData.EventsMetaData.MODIFIED, EMetaData.EventsMetaData.MODIFIED);
+		EM.put(EMetaData.EventsMetaData.CREATED_UTC_MILLISECONDS, EMetaData.EventsMetaData.CREATED_UTC_MILLISECONDS);
+		EM.put(EMetaData.EventsMetaData.MODIFIED_UTC_MILLISECONDS, EMetaData.EventsMetaData.MODIFIED_UTC_MILLISECONDS);
 		
 		EM.put(EMetaData.EventsMetaData.ATTENDANT_1_COUNT, EMetaData.EventsMetaData.ATTENDANT_1_COUNT);
 		EM.put(EMetaData.EventsMetaData.ATTENDANT_2_COUNT, EMetaData.EventsMetaData.ATTENDANT_2_COUNT);
@@ -348,7 +342,6 @@ public class EventsProvider extends ContentProvider{
 
 		@Override
 		public void onCreate(SQLiteDatabase db) {
-			//TODO add is all day column
 			String query =	"CREATE TABLE "
 				+EMetaData.EVENTS_TABLE+" ("
 				+EMetaData.EventsMetaData.E_ID+" INTEGER,"
@@ -382,11 +375,6 @@ public class EventsProvider extends ContentProvider{
 				+EMetaData.EventsMetaData.ZIP+" TEXT ,"
 				
 				+EMetaData.EventsMetaData.TIMEZONE+" TEXT ,"
-				+EMetaData.EventsMetaData.TIME_START+" TEXT ,"
-				+EMetaData.EventsMetaData.TIME_END+" TEXT ,"
-				+EMetaData.EventsMetaData.TIME+" TEXT ,"
-				+EMetaData.EventsMetaData.MY_TIME_START+" TEXT ,"
-				+EMetaData.EventsMetaData.MY_TIME_END+" TEXT ,"
 				+EMetaData.EventsMetaData.TIME_START_UTC_MILLISECONDS+" INTEGER ,"
 				+EMetaData.EventsMetaData.TIME_END_UTC_MILLISECONDS+" INTEGER ,"
 				
@@ -398,6 +386,8 @@ public class EventsProvider extends ContentProvider{
 				+EMetaData.EventsMetaData.ALARM2+" TEXT ,"
 				+EMetaData.EventsMetaData.ALARM3+" TEXT ,"
 				
+				+EMetaData.EventsMetaData.CREATED_UTC_MILLISECONDS+" INTEGER ,"
+				+EMetaData.EventsMetaData.MODIFIED_UTC_MILLISECONDS+" INTEGER ,"
 				+EMetaData.EventsMetaData.CREATED+" TEXT ,"
 				+EMetaData.EventsMetaData.MODIFIED+" TEXT ,"
 				
