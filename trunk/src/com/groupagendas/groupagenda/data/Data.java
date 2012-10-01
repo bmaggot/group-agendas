@@ -54,7 +54,7 @@ public class Data {
 	private static int user_id;
 	private static String colorMyEvent, colorAttending, colorPending, colorInvitation, colorNotes;
 
-	private static ArrayList<Event> events;
+
 	private static TreeMap<Calendar, ArrayList<Event>> sortedEvents;
 	private static ArrayList<ChatMessageObject> chatMessages = new ArrayList<ChatMessageObject>();
 	private static ArrayList<ChatThreadObject> chatThreads = new ArrayList<ChatThreadObject>();
@@ -373,20 +373,6 @@ public class Data {
 //	protected static void setGroups(ArrayList<Group> groups) {
 //		Data.groups = groups;
 //	}
-/**
- * @deprecated
- * @return
- */
-	public static ArrayList<Event> getEvents() {
-		return events;
-	}
-/**
- * @deprecated
- * @param events
- */
-	protected static void setEvents(ArrayList<Event> events) {
-		Data.events = events;
-	}
 
 	public static TreeMap<Calendar, ArrayList<Event>> getSortedEvents() {
 		return sortedEvents;
