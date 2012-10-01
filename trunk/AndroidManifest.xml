@@ -134,8 +134,8 @@
             android:label="ContactsProvider" >
         </provider>
         <provider
-            android:name=".chat.ChatThreadsProvider"
-            android:authorities="com.groupagendas.groupagenda.chat.ChatThreadsProvider"
+            android:name=".chat.ChatProvider"
+            android:authorities="com.groupagendas.groupagenda.chat.ChatProvider"
             android:exported="false"
             android:label="ChatThreadsProvider" >
         </provider>
