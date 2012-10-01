@@ -94,7 +94,33 @@ private static final int REMINDER_3 = 3;
 	
 	private ArrayList<Invited> invited = null;
 	private String invited_DB_entry = "";
-
+	
+	//TODO implement event missing attributes 
+	/* public String confirmed;
+	 * public Calendar createdCalendar;
+	 * public Calendar modifiedCalendar;
+	 * public int total_invited;
+	 * public int sport_team_id;
+	 * public String sport_event_type;
+	 * public String sport_location;
+	 * public String sport_field;
+	 * public String sport_opponent;
+	 * public String sport_referee;
+	 * public String sport_time_assembly;
+	 * public String sport_time_arrival;
+	 * public String sport_arrival_address;
+	 * public String sport_start_return_trip;
+	 * public String sport_time_return;
+	 * public int poll_voted_count;
+	 * public int poll_pending_count;
+	 * public int poll_rejected_count;
+	 * public int poll_invited_count;
+	 * public int org_id;
+	 * public String repeat_group;
+	 * public String repeat_data;
+	 * public String created_local;
+	 * public String modified_local;
+	 * */
 	
 	@Override
 	public String toString(){
