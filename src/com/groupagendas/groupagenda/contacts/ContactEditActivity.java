@@ -262,9 +262,9 @@ public class ContactEditActivity extends Activity implements OnClickListener, On
 
 		@Override
 		protected Contact doInBackground(Integer... id) {
-			editedContact = ContactManagement.getContactFromLocalDb(id[0], 0);
+			editedContact = ContactManagement.getContactFromLocalDb(ContactEditActivity.this, id[0], 0);
 
-			ArrayList<Group> groups = ContactManagement.getGroupsFromLocalDb(null);
+			ArrayList<Group> groups = ContactManagement.getGroupsFromLocalDb(ContactEditActivity.this, null);
 			getGroupsList(groups, false);
 
 			return editedContact;
@@ -471,7 +471,7 @@ public class ContactEditActivity extends Activity implements OnClickListener, On
 			}
 			
 			if(check){
-				check = ContactManagement.insertContact(editedContact);
+				check = ContactManagement.insertContact(ContactEditActivity.this, editedContact);
 //				if(!success){
 //					cv.put(ContactsProvider.CMetaData.ContactsMetaData.NEED_UPDATE, 2);
 //				}
@@ -500,7 +500,7 @@ public class ContactEditActivity extends Activity implements OnClickListener, On
 
 		@Override
 		protected Void doInBackground(Void... params) {
-			ArrayList<Group> groups = ContactManagement.getGroupsFromLocalDb(null);
+			ArrayList<Group> groups = ContactManagement.getGroupsFromLocalDb(ContactEditActivity.this, null);
 			getGroupsList(groups, true);
 			return null;
 		}

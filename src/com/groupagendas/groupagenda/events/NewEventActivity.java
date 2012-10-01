@@ -702,7 +702,7 @@ public class NewEventActivity extends EventActivity {
 		TemplatesDialogData temp;
 		TemplatesAdapter dialogDataAdapter = null;
 
-		cur = Data.getmContext().getContentResolver().query(TemplatesMetaData.CONTENT_URI, columns, null, null, TemplatesMetaData.DEFAULT_SORT_ORDER);
+		cur = this.getContentResolver().query(TemplatesMetaData.CONTENT_URI, columns, null, null, TemplatesMetaData.DEFAULT_SORT_ORDER);
 
 		if (cur.moveToFirst()) {
 			while (!cur.isAfterLast()) {
@@ -954,7 +954,7 @@ public class NewEventActivity extends EventActivity {
 
 		@Override
 		protected Void doInBackground(Void... params) {
-			ArrayList<Contact> contacts = ContactManagement.getContactsFromLocalDb(null);
+			ArrayList<Contact> contacts = ContactManagement.getContactsFromLocalDb(NewEventActivity.this, null);
 			int l = contacts.size();
 			titles = new CharSequence[l];
 			ids = new int[l];
