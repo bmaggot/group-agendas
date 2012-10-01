@@ -723,8 +723,7 @@ public class NavbarActivity extends Activity {
 					buttonView.setChecked(false);
 					break;
 				case R.id.btnChatThreads:
-					startActivity(new Intent(NavbarActivity.this,
-							ChatThreadActivity.class));
+//					startActivity(new Intent(NavbarActivity.this, ChatThreadActivity.class));
 					break;
 				case R.id.btnContacts:
 					Data.newEventPar = false;
