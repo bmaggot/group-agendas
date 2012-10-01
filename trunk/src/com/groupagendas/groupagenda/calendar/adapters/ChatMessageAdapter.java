@@ -27,26 +27,26 @@ public class ChatMessageAdapter extends AbstractAdapter<ChatMessageObject> {
 		}
 
 		final ChatMessageObject chatMessage = (ChatMessageObject) this.getItem(i);
-		if (!chatMessage.deleted) {
-			Account account = new Account();
-			TextView messageBody = (TextView) view.findViewById(R.id.chat_message_body);
-			messageBody.setText(chatMessage.message);
-			TextView chatTime = (TextView) view.findViewById(R.id.chat_message_time);
-			chatTime.setText(chatMessage.dateTime);
-			if (chatMessage.userId == account.getUser_id()) {
-				view.findViewById(R.id.kubiks).setVisibility(View.VISIBLE);
-				
-				TextView iksiuks = (TextView) view.findViewById(R.id.chat_message_delete);
-				iksiuks.setVisibility(View.VISIBLE);
-				iksiuks.setOnClickListener(new OnClickListener() {
-					@Override
-					public void onClick(View v) {
-						Toast.makeText(getContext(), R.string.delete_chatm_progress, Toast.LENGTH_SHORT).show();
-						DataManagement.getInstance(getContext()).removeChatMessage(chatMessage.messageId, chatMessage.eventId);
-					}
-				});
-			}
-		}
+//		if (!chatMessage.deleted) {
+//			Account account = new Account();
+//			TextView messageBody = (TextView) view.findViewById(R.id.chat_message_body);
+//			messageBody.setText(chatMessage.message);
+//			TextView chatTime = (TextView) view.findViewById(R.id.chat_message_time);
+//			chatTime.setText(chatMessage.dateTime);
+//			if (chatMessage.userId == account.getUser_id()) {
+//				view.findViewById(R.id.kubiks).setVisibility(View.VISIBLE);
+//				
+//				TextView iksiuks = (TextView) view.findViewById(R.id.chat_message_delete);
+//				iksiuks.setVisibility(View.VISIBLE);
+//				iksiuks.setOnClickListener(new OnClickListener() {
+//					@Override
+//					public void onClick(View v) {
+//						Toast.makeText(getContext(), R.string.delete_chatm_progress, Toast.LENGTH_SHORT).show();
+//						DataManagement.getInstance(getContext()).removeChatMessage(chatMessage.messageId, chatMessage.eventId);
+//					}
+//				});
+//			}
+//		}
 		
 		return view;
 	}
