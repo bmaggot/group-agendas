@@ -14,6 +14,9 @@ import org.apache.http.util.EntityUtils;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
+import com.groupagendas.groupagenda.chat.ChatMessageObject;
+import com.groupagendas.groupagenda.utils.Utils;
+
 public class ChatManagement {
 
 	/**
@@ -27,7 +30,7 @@ public class ChatManagement {
 	 * @since 2012-10P01
 	 * @version 0.1
 	 */
-	public static void getChatThreadsFromRemoteDB(){
+	public static void getChatMessagesFromRemoteDB(){
 		boolean success = false;
 		String error = null;
 		HttpClient hc = new DefaultHttpClient();
@@ -49,8 +52,31 @@ public class ChatManagement {
 					JSONObject object = new JSONObject(resp);
 					boolean getSuccess = object.getBoolean("success");
 					if (getSuccess) {
-						JSONArray chatThreads = object.getJSONArray("items");
+						JSONArray chatMessages = object.getJSONArray("items");
+						ChatMessageObject message = new ChatMessageObject();
+						for (int i = 0, l = chatMessages.length(); i < l; i++) {
+							final JSONObject chatMessage = chatMessages.getJSONObject(i);
+							String tmp = "";
+							message.messageId = chatMessage.getInt("message_id");
+							message.eventId = chatMessage.getInt("event_id");
+							message.dateTime = chatMessage.getString("datetime");
+							message.dateTimeCalendar = Utils.stringToCalendar(message.dateTime, DataManagement.SERVER_TIMESTAMP_FORMAT);
+							message.userId = chatMessage.getInt("user_id");
+							message.message = chatMessage.getString("message");
+							String deleted = chatMessage.getString("deleted");
+							message.deleted = !deleted.equals("null");
+							message.updated = chatMessage.getString("updated");
+							message.updatedCalendar = Utils.stringToCalendar(message.updated, DataManagement.SERVER_TIMESTAMP_FORMAT);
+							message.fullname = chatMessage.getString("fullname");
+							message.contactId = chatMessage.getString("contact_id");
+							message.dateTimeConverted = chatMessage.getString("datetime_conv");
+							message.dateTimeConvertedCalendar = Utils.stringToCalendar(message.dateTimeConverted,
+									DataManagement.SERVER_TIMESTAMP_FORMAT);
+							message.formatedDateTime = chatMessage.getString("formatted_datetime");
+						}
+							
 					}
+				}
 			}
 		} catch (Exception e) {
 			
