@@ -40,6 +40,7 @@ import android.widget.Spinner;
 import android.widget.Toast;
 
 import com.groupagendas.groupagenda.R;
+import com.groupagendas.groupagenda.data.Data;
 import com.groupagendas.groupagenda.data.DataManagement;
 import com.groupagendas.groupagenda.error.report.Reporter;
 import com.groupagendas.groupagenda.timezone.TimezoneManager;
@@ -458,7 +459,7 @@ public class AccountActivity extends Activity implements OnClickListener{
 				
 				ByteArrayOutputStream baos = new ByteArrayOutputStream();  
 				photo.compress(Bitmap.CompressFormat.PNG, 100, baos);
-				dm.getAccount().image_bytes = baos.toByteArray();
+				Data.getAccount().image_bytes = baos.toByteArray();
 			}
 
 			File f = new File(mImageCaptureUri.getPath());
