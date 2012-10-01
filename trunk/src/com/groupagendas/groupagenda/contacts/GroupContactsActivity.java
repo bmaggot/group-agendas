@@ -75,7 +75,7 @@ public class GroupContactsActivity extends ListActivity {
 		protected ArrayList<Contact> doInBackground(Void... type) {
 			int id = intent.getIntExtra("groupId", 0);
 			String where = ContactsProvider.CMetaData.ContactsMetaData.GROUPS+" LIKE '%="+id+"&%' OR "+ContactsProvider.CMetaData.ContactsMetaData.GROUPS+" LIKE '%="+id+"'";
-			contacts = ContactManagement.getContactsFromLocalDb(where);
+			contacts = ContactManagement.getContactsFromLocalDb(GroupContactsActivity.this, where);
 			return contacts;
 		}
 

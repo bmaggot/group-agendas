@@ -71,7 +71,7 @@ public class ContactInfoActivity extends Activity {
 
 		@Override
 		protected Contact doInBackground(Void... type) {
-			Contact contact = ContactManagement.getContactFromLocalDb(intent.getIntExtra("contactId", 0), intent.getLongExtra("contactCreated", 0));
+			Contact contact = ContactManagement.getContactFromLocalDb(ContactInfoActivity.this, intent.getIntExtra("contactId", 0), intent.getLongExtra("contactCreated", 0));
 			return contact;
 		}
 

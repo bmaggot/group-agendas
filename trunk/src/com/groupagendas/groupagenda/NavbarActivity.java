@@ -163,17 +163,17 @@ public class NavbarActivity extends Activity {
 						publishProgress(total);
 					case 2:// Load contacts
 						if (DataManagement.networkAvailable) 
-							ContactManagement.getContacts();
+							ContactManagement.getContacts(NavbarActivity.this);
 						else
-							ContactManagement.getContactsFromLocalDb(null);
+							ContactManagement.getContactsFromLocalDb(NavbarActivity.this, null);
 						loadPhase++;
 						total = 40;
 						publishProgress(total);
 					case 3:// Load groups
 						if (DataManagement.networkAvailable) 
-							ContactManagement.getGroups();
+							ContactManagement.getGroups(NavbarActivity.this);
 						else
-							ContactManagement.getGroupsFromLocalDb(null);
+							ContactManagement.getGroupsFromLocalDb(NavbarActivity.this, null);
 						loadPhase++;
 						total = 50;
 						publishProgress(total);

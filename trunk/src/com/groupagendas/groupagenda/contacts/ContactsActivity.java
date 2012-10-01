@@ -179,7 +179,7 @@ public class ContactsActivity extends ListActivity implements OnCheckedChangeLis
 		sideIndex.setVisibility(View.GONE);
 
 		if (CURRENT_TASK.equals(CONTACTS_TASK)) {
-			contacts = ContactManagement.getContactsFromLocalDb(null);
+			contacts = ContactManagement.getContactsFromLocalDb(ContactsActivity.this, null);
 			cAdapter = new ContactsAdapter(contacts, this);
 			contactList.setAdapter(cAdapter);
 			cAdapter.notifyDataSetChanged();
@@ -191,7 +191,7 @@ public class ContactsActivity extends ListActivity implements OnCheckedChangeLis
 				sideIndex.setVisibility(View.VISIBLE);
 			}
 		} else if (CURRENT_TASK.equals(GROUPS_TASK)) {
-			groups = ContactManagement.getGroupsFromLocalDb(null);
+			groups = ContactManagement.getGroupsFromLocalDb(ContactsActivity.this, null);
 			gAdapter = new GroupsAdapter(groups, this);
 			contactList.setAdapter(gAdapter);
 			gAdapter.notifyDataSetChanged();
@@ -379,8 +379,8 @@ public class ContactsActivity extends ListActivity implements OnCheckedChangeLis
 				}
 			} else if (CURRENT_LIST == GROUPS_LIST) {
 				Intent groupIntent = new Intent(ContactsActivity.this, GroupContactsActivity.class);
-				groupIntent.putExtra("groupName", ContactManagement.getGroupsFromLocalDb(null).get(position).title);
-				groupIntent.putExtra("groupId", ContactManagement.getGroupsFromLocalDb(null).get(position).group_id);
+				groupIntent.putExtra("groupName", ContactManagement.getGroupsFromLocalDb(ContactsActivity.this, null).get(position).title);
+				groupIntent.putExtra("groupId", ContactManagement.getGroupsFromLocalDb(ContactsActivity.this, null).get(position).group_id);
 				startActivity(groupIntent);
 			}
 		} else {
@@ -394,8 +394,8 @@ public class ContactsActivity extends ListActivity implements OnCheckedChangeLis
 				startActivity(contactIntent);
 			} else if (CURRENT_LIST == GROUPS_LIST) {
 				Intent groupIntent = new Intent(ContactsActivity.this, GroupContactsActivity.class);
-				groupIntent.putExtra("groupName", ContactManagement.getGroupsFromLocalDb(null).get(position).title);
-				groupIntent.putExtra("groupId", ContactManagement.getGroupsFromLocalDb(null).get(position).group_id);
+				groupIntent.putExtra("groupName", ContactManagement.getGroupsFromLocalDb(ContactsActivity.this, null).get(position).title);
+				groupIntent.putExtra("groupId", ContactManagement.getGroupsFromLocalDb(ContactsActivity.this, null).get(position).group_id);
 				startActivity(groupIntent);
 			}
 		}
@@ -429,7 +429,7 @@ public class ContactsActivity extends ListActivity implements OnCheckedChangeLis
 				// Toast.makeText(this,
 				// getString(R.string.waiting_for_groups_load),
 				// Toast.LENGTH_SHORT).show();
-				groups = ContactManagement.getGroupsFromLocalDb(null);
+				groups = ContactManagement.getGroupsFromLocalDb(ContactsActivity.this, null);
 				gAdapter = new GroupsAdapter(groups, this);
 				contactList.setAdapter(gAdapter);
 				gAdapter.notifyDataSetChanged();

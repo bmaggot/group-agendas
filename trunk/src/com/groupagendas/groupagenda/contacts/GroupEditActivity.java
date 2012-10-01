@@ -178,7 +178,7 @@ public class GroupEditActivity extends Activity implements OnClickListener {
 			}
 			
 			if(check){
-				check = ContactManagement.insertGroup(editedGroup);
+				check = ContactManagement.insertGroup(GroupEditActivity.this, editedGroup);
 				getContentResolver().insert(ContactsProvider.CMetaData.GroupsMetaData.CONTENT_URI, cv);
 			}
 			
@@ -277,9 +277,9 @@ public class GroupEditActivity extends Activity implements OnClickListener {
 
 		@Override
 		protected Group doInBackground(Integer... id) {
-			editedGroup = ContactManagement.getGroupFromLocalDb(id[0], 0);
+			editedGroup = ContactManagement.getGroupFromLocalDb(GroupEditActivity.this, id[0], 0);
 
-			ArrayList<Contact> contacts = ContactManagement.getContactsFromLocalDb(null);
+			ArrayList<Contact> contacts = ContactManagement.getContactsFromLocalDb(GroupEditActivity.this, null);
 			getContactsList(contacts, false);
 
 			return editedGroup;
@@ -307,7 +307,7 @@ public class GroupEditActivity extends Activity implements OnClickListener {
 		}
 		@Override
 		protected Void doInBackground(Void... params) {
-			ArrayList<Contact> contacts = ContactManagement.getContactsFromLocalDb(null);
+			ArrayList<Contact> contacts = ContactManagement.getContactsFromLocalDb(GroupEditActivity.this, null);
 			getContactsList(contacts, true);
 			return null;
 		}

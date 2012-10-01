@@ -135,7 +135,7 @@ public class ImportActivity extends Activity {
 				phoneContact.name = firstName;
 				phoneContact.lastname = lastName;
 				phoneContact.phone1 = phoneNumber;
-				ContactManagement.insertContact(phoneContact);
+				ContactManagement.insertContact(ImportActivity.this, phoneContact);
 			}
 			phones.close();
 			// import phone contacts
@@ -173,7 +173,7 @@ public class ImportActivity extends Activity {
 				phoneContact.email = getContactEmail(rawContactId, (ImportActivity) activity, phoneContact);
 				phoneContact.phone1 = getContactPhoneNumber(rawContactId, (ImportActivity) activity, phoneContact);
 				phoneContact.lastname = lastName;
-				ContactManagement.insertContact(phoneContact);
+				ContactManagement.insertContact(ImportActivity.this, phoneContact);
 			}
 			phoneContacts.close();
 //			TODO update contacts list in local DB
