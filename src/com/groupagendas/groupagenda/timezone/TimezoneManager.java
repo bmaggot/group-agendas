@@ -25,7 +25,7 @@ public class TimezoneManager {
 				result.moveToNext();
 			}
 		}
-		
+		result.close();
 		return timezoneLabels;
 	}
 	
@@ -45,6 +45,7 @@ public class TimezoneManager {
 					result.moveToNext();
 				}
 			}
+			result.close();
 			return timezoneValues;
 		}
 	}
