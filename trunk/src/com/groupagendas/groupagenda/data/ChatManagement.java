@@ -14,8 +14,13 @@ import org.apache.http.util.EntityUtils;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
-import com.groupagendas.groupagenda.chat.ChatMessageObject;
-import com.groupagendas.groupagenda.utils.Utils;
+import android.content.ContentValues;
+import android.content.Context;
+import android.database.sqlite.SQLiteException;
+import android.util.Log;
+
+import com.groupagendas.groupagenda.chat.ChatProvider;
+import com.groupagendas.groupagenda.chat.ChatProvider.CMMetaData;
 
 public class ChatManagement {
 
@@ -30,7 +35,7 @@ public class ChatManagement {
 	 * @since 2012-10P01
 	 * @version 0.1
 	 */
-	public static void getChatMessagesFromRemoteDB(){
+	public static void getChatMessagesFromRemoteDB(Context context){
 		boolean success = false;
 		String error = null;
 		HttpClient hc = new DefaultHttpClient();
@@ -50,26 +55,32 @@ public class ChatManagement {
 				String resp = EntityUtils.toString(rp.getEntity());
 				if (resp != null) {
 					JSONObject object = new JSONObject(resp);
-					boolean getSuccess = object.getBoolean("success");
-					if (getSuccess) {
+					success = object.getBoolean("success");
+					if (success) {
 						JSONArray chatMessages = object.getJSONArray("items");
-						ChatMessageObject message = new ChatMessageObject();
+						ContentValues cv = new ContentValues();
 						for (int i = 0, l = chatMessages.length(); i < l; i++) {
 							final JSONObject chatMessage = chatMessages.getJSONObject(i);
-							message.messageId = chatMessage.getInt("message_id");
-							message.eventId = chatMessage.getInt("event_id");
-							message.dateTime = chatMessage.getString("datetime");
-							message.userId = chatMessage.getInt("user_id");
-							message.message = chatMessage.getString("message");
+							cv.put(CMMetaData.ChatMetaData.M_ID, chatMessage.getInt("message_id"));
+							cv.put(CMMetaData.ChatMetaData.E_ID, chatMessage.getInt("event_id"));
+							cv.put(CMMetaData.ChatMetaData.DATE_TIME, chatMessage.getString("datetime"));
+							cv.put(CMMetaData.ChatMetaData.USER_ID, chatMessage.getInt("user_id"));
+							cv.put(CMMetaData.ChatMetaData.MESSAGE, chatMessage.getString("message"));
 							String deleted = chatMessage.getString("deleted");
-							message.deleted = !deleted.equals("null");
-							message.updated = chatMessage.getString("updated");
-							message.fullname = chatMessage.getString("fullname");
-							message.contactId = chatMessage.getString("contact_id");
-							message.dateTimeConverted = chatMessage.getString("datetime_conv");
-							message.formatedDateTime = chatMessage.getString("formatted_datetime");
+							cv.put(CMMetaData.ChatMetaData.DELETED, !deleted.equals("null"));
+							cv.put(CMMetaData.ChatMetaData.UPDATED, chatMessage.getString("updated"));
+							
+							
+							try {
+								context.getContentResolver().insert(ChatProvider.CMMetaData.ChatMetaData.CONTENT_URI, cv);
+							} catch (SQLiteException e) {
+								Log.e("getChatMessagesFromRemoteDB(chat, "+chatMessage.getInt("message_id")+")", e.getMessage());
+							}
 						}
 							
+					} else {
+						error = object.getString("error");
+						Data.setERROR(error);
 					}
 				}
 			}
