@@ -20,7 +20,7 @@ public class EventStatusUpdater extends AsyncTask<Object, Void, Void>{
 		ContentValues values = new ContentValues();
 		values.put(EventsProvider.EMetaData.EventsMetaData.STATUS, status);
 		if(!success){
-			values.put(EventsProvider.EMetaData.EventsMetaData.NEED_UPDATE, 4);
+//			values.put(EventsProvider.EMetaData.EventsMetaData.NEED_UPDATE, 4);
 		}
 		String where = EventsProvider.EMetaData.EventsMetaData.E_ID+"="+event_id;
 		dm.getContext().getContentResolver().update(EventsProvider.EMetaData.EventsMetaData.CONTENT_URI, values, where, null);

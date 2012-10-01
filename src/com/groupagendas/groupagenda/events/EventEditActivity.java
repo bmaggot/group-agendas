@@ -115,7 +115,7 @@ public class EventEditActivity extends EventActivity {
 		event_id = intent.getIntExtra("event_id", 0);
 
 		if ((event_id > 0)) {
-			event = dm.getEventFromLocalDb(event_id);
+			event = dm.getEventFromLocalDb(this, event_id);
 			chatMessengerButton.setOnClickListener(new OnClickListener() {
 
 				@Override
@@ -631,7 +631,7 @@ public class EventEditActivity extends EventActivity {
 			if (intent.getBooleanExtra("isNative", false)) {
 				return dm.getNativeCalendarEvent(ids[0]);
 			} else {
-				return dm.getEventFromLocalDb(ids[0]);
+				return dm.getEventFromLocalDb(getParent(), ids[0]);
 			}
 		}
 
@@ -1074,9 +1074,7 @@ public class EventEditActivity extends EventActivity {
 			setEventData(event);
 			int testEvent = event.isValid();
 			if (testEvent == 0) {
-				dm.updateEventByIdFromRemoteDb(event);
-				
-			
+				dm.updateEvent(event);
 				return true;
 			}else {
 				errorStr = setErrorStr(testEvent);

@@ -90,8 +90,6 @@ public class EventsProvider extends ContentProvider{
 			public static final String ALARM2 = "alarm2";
 			public static final String ALARM3 = "alarm3";
 			
-			public static final String CREATED = "created";
-			public static final String MODIFIED = "modified";
 			public static final String CREATED_UTC_MILLISECONDS = "created_utc";
 			public static final String MODIFIED_UTC_MILLISECONDS = "modified_utc";
 			
@@ -104,7 +102,7 @@ public class EventsProvider extends ContentProvider{
 			public static final String ASSIGNED_GROUPS = "assigned_groups";
 			public static final String INVITED = "invited";
 			
-			public static final String NEED_UPDATE = "need_update";
+			public static final String UPLOADED_SUCCESSFULLY = "uploaded";
 			
 			public static final String DEFAULT_SORT_ORDER = TIME_START_UTC_MILLISECONDS+" ASC";
 			public static final String IS_BIRTHDAY = "is_birthday";
@@ -160,8 +158,7 @@ public class EventsProvider extends ContentProvider{
 		EM.put(EMetaData.EventsMetaData.ALARM2, EMetaData.EventsMetaData.ALARM2);
 		EM.put(EMetaData.EventsMetaData.ALARM3, EMetaData.EventsMetaData.ALARM3);
 		
-		EM.put(EMetaData.EventsMetaData.CREATED, EMetaData.EventsMetaData.CREATED);
-		EM.put(EMetaData.EventsMetaData.MODIFIED, EMetaData.EventsMetaData.MODIFIED);
+
 		EM.put(EMetaData.EventsMetaData.CREATED_UTC_MILLISECONDS, EMetaData.EventsMetaData.CREATED_UTC_MILLISECONDS);
 		EM.put(EMetaData.EventsMetaData.MODIFIED_UTC_MILLISECONDS, EMetaData.EventsMetaData.MODIFIED_UTC_MILLISECONDS);
 		
@@ -175,7 +172,7 @@ public class EventsProvider extends ContentProvider{
 		EM.put(EMetaData.EventsMetaData.ASSIGNED_GROUPS, EMetaData.EventsMetaData.ASSIGNED_GROUPS);
 		EM.put(EMetaData.EventsMetaData.INVITED, EMetaData.EventsMetaData.INVITED);
 		
-		EM.put(EMetaData.EventsMetaData.NEED_UPDATE, EMetaData.EventsMetaData.NEED_UPDATE);
+		EM.put(EMetaData.EventsMetaData.UPLOADED_SUCCESSFULLY, EMetaData.EventsMetaData.UPLOADED_SUCCESSFULLY);
 		
 	}
 	// END Table Projection Map
@@ -255,9 +252,9 @@ public class EventsProvider extends ContentProvider{
 					+EMetaData.EVENT_DAY_INDEX_TABLE + "." + EMetaData.EventsIndexesMetaData.EVENT_ID);
 			orderBy = (TextUtils.isEmpty(sortOrder)) ? EMetaData.EventsMetaData.DEFAULT_SORT_ORDER : sortOrder;
 			break;
-		case EVENTS_BETWEEN_DATES:
-			orderBy = null;
-			break;
+//		case EVENTS_BETWEEN_DATES:
+//			orderBy = null;
+//			break;
 		default:
 			throw new IllegalArgumentException("Unknow URI " + uri);
 		}
@@ -388,8 +385,7 @@ public class EventsProvider extends ContentProvider{
 				
 				+EMetaData.EventsMetaData.CREATED_UTC_MILLISECONDS+" INTEGER ,"
 				+EMetaData.EventsMetaData.MODIFIED_UTC_MILLISECONDS+" INTEGER ,"
-				+EMetaData.EventsMetaData.CREATED+" TEXT ,"
-				+EMetaData.EventsMetaData.MODIFIED+" TEXT ,"
+
 				
 				+EMetaData.EventsMetaData.ATTENDANT_1_COUNT+" TEXT ,"
 				+EMetaData.EventsMetaData.ATTENDANT_2_COUNT+" TEXT ,"
@@ -399,8 +395,8 @@ public class EventsProvider extends ContentProvider{
 				+EMetaData.EventsMetaData.ASSIGNED_CONTACTS+" TEXT ,"
 				+EMetaData.EventsMetaData.ASSIGNED_GROUPS+" TEXT ,"
 				+EMetaData.EventsMetaData.INVITED+" TEXT ,"
-				+EMetaData.EventsMetaData.NEED_UPDATE+" INTEGER DEFAULT 0, "
-				+ "PRIMARY KEY (" + EMetaData.EventsMetaData.E_ID +") ON CONFLICT REPLACE"
+				+EMetaData.EventsMetaData.UPLOADED_SUCCESSFULLY+" INTEGER DEFAULT 0, "
+				+ "PRIMARY KEY (" + EMetaData.EventsMetaData.E_ID +  ", " + EMetaData.EventsMetaData.CREATED_UTC_MILLISECONDS+ ") ON CONFLICT REPLACE"
 				+")";
 			db.execSQL(query);
 			
