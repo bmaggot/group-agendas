@@ -1,20 +1,97 @@
 package com.groupagendas.groupagenda.chat;
 
-import java.util.Calendar;
 
 public class ChatMessageObject {
-	public int messageId;
-	public int eventId;
-	public String dateTime;
-	public Calendar dateTimeCalendar;
-	public int userId;
-	public String message;
-	public boolean deleted;
-	public String updated;
-	public Calendar updatedCalendar;
-	public String fullname;
-	public String contactId;
-	public String dateTimeConverted;
-	public Calendar dateTimeConvertedCalendar;
-	public String formatedDateTime;
+	private int messageId;
+	private int eventId;
+	private String dateTime;
+	private int userId;
+	private String message;
+	private boolean deleted;
+	private String updated;
+	
+	/**
+	 * @return the messageId
+	 */
+	public int getMessageId() {
+		return messageId;
+	}
+	/**
+	 * @param messageId the messageId to set
+	 */
+	public void setMessageId(int messageId) {
+		this.messageId = messageId;
+	}
+	/**
+	 * @return the eventId
+	 */
+	public int getEventId() {
+		return eventId;
+	}
+	/**
+	 * @param eventId the eventId to set
+	 */
+	public void setEventId(int eventId) {
+		this.eventId = eventId;
+	}
+	/**
+	 * @return the dateTime
+	 */
+	public String getDateTime() {
+		return dateTime;
+	}
+	/**
+	 * @param dateTime the dateTime to set
+	 */
+	public void setDateTime(String dateTime) {
+		this.dateTime = dateTime;
+	}
+	/**
+	 * @return the userId
+	 */
+	public int getUserId() {
+		return userId;
+	}
+	/**
+	 * @param userId the userId to set
+	 */
+	public void setUserId(int userId) {
+		this.userId = userId;
+	}
+	/**
+	 * @return the message
+	 */
+	public String getMessage() {
+		return message;
+	}
+	/**
+	 * @param message the message to set
+	 */
+	public void setMessage(String message) {
+		this.message = message;
+	}
+	/**
+	 * @return the deleted
+	 */
+	public boolean isDeleted() {
+		return deleted;
+	}
+	/**
+	 * @param deleted the deleted to set
+	 */
+	public void setDeleted(boolean deleted) {
+		this.deleted = deleted;
+	}
+	/**
+	 * @return the updated
+	 */
+	public String getUpdated() {
+		return updated;
+	}
+	/**
+	 * @param updated the updated to set
+	 */
+	public void setUpdated(String updated) {
+		this.updated = updated;
+	}
 }
