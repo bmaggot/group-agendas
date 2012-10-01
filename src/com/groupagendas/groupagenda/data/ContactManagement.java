@@ -21,6 +21,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import android.app.Activity;
 import android.content.ContentValues;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteException;
@@ -322,12 +323,12 @@ public class ContactManagement {
 	 * @since 2012-09Ð28
 	 * @version 0.1
 	 */
-	public static ArrayList<Contact> getContactsFromLocalDb(String where) {
+	public static ArrayList<Contact> getContactsFromLocalDb(Activity context, String where) {
 		ArrayList<Contact> contacts = new ArrayList<Contact>();
 		Cursor cur;
 		Contact temp;
 
-		cur = Data.getmContext().getContentResolver()
+		cur = context.getContentResolver()
 				.query(ContactsProvider.CMetaData.ContactsMetaData.CONTENT_URI, null, where, null, null);
 
 		if (cur.moveToFirst()) {
@@ -669,7 +670,7 @@ public class ContactManagement {
 	 * @since 2012-09Ð28
 	 * @version 0.1
 	 */
-	public static void insertContactToLocalDb(Contact contact, int id) {
+	public static void insertContactToLocalDb(Activity context, Contact contact, int id) {
 		ContentValues cv = new ContentValues();
 
 		if (id > 0)
@@ -718,13 +719,13 @@ public class ContactManagement {
 		cv.put(ContactsProvider.CMetaData.ContactsMetaData.COLOR, contact.getColor());
 
 		try {
-			Data.getmContext().getContentResolver().insert(ContactsProvider.CMetaData.ContactsMetaData.CONTENT_URI, cv);
+			context.getContentResolver().insert(ContactsProvider.CMetaData.ContactsMetaData.CONTENT_URI, cv);
 		} catch (SQLiteException e) {
 			Log.e("insertContactToLocalDb(contact, " + id + ")", e.getMessage());
 		}
 	}
 
-	public static boolean insertContact(Contact contact) {
+	public static boolean insertContact(Activity context, Contact contact) {
 		boolean success = false;
 		int destination_id = 0;
 
@@ -732,9 +733,9 @@ public class ContactManagement {
 
 		if (destination_id > 0) {
 			success = true;
-			insertContactToLocalDb(contact, destination_id);
+			insertContactToLocalDb(context, contact, destination_id);
 		} else {
-			insertContactToLocalDb(contact, 0);
+			insertContactToLocalDb(context, contact, 0);
 		}
 
 		return success;
@@ -755,7 +756,7 @@ public class ContactManagement {
 	 * @since 2012-09Ð28
 	 * @version 0.1
 	 */
-	public static boolean updateContactIdInLocalDb(long created, int id) {
+	public static boolean updateContactIdInLocalDb(Activity context, long created, int id) {
 		ContentValues cv = new ContentValues();
 		boolean success = false;
 		int queryResult = 0;
@@ -764,7 +765,7 @@ public class ContactManagement {
 		cv.put(ContactsProvider.CMetaData.ContactsMetaData.C_ID, id);
 
 		try {
-			queryResult = Data.getmContext().getContentResolver()
+			queryResult = context.getContentResolver()
 					.update(ContactsProvider.CMetaData.ContactsMetaData.CONTENT_URI, cv, where, null);
 		} catch (SQLiteException e) {
 			Log.e("updateContactIdInLocalDb(" + created + ", " + id + ")", e.getMessage());
@@ -788,19 +789,19 @@ public class ContactManagement {
 	 * @since 2012-09Ð28
 	 * @version 0.1
 	 */
-	public static Contact getContactFromLocalDb(int id, long created) {
+	public static Contact getContactFromLocalDb(Activity context, int id, long created) {
 		Cursor cur;
 		Contact temp = null;
 
 		if (id > 0) {
 			Uri uri = Uri.parse(ContactsProvider.CMetaData.ContactsMetaData.CONTENT_URI + "/" + id);
-			cur = Data.getmContext().getContentResolver().query(uri, null, null, null, null);
+			cur = context.getContentResolver().query(uri, null, null, null, null);
 			if (cur.moveToFirst())
 				temp = new Contact(cur);
 		} else {
 			if (created > 0) {
 				String where = ContactsProvider.CMetaData.ContactsMetaData.CREATED + "=" + created;
-				cur = Data.getmContext().getContentResolver()
+				cur = context.getContentResolver()
 						.query(ContactsProvider.CMetaData.ContactsMetaData.CONTENT_URI, null, where, null, null);
 				if (cur.moveToFirst())
 					temp = new Contact(cur);
@@ -820,11 +821,11 @@ public class ContactManagement {
 	 * @version 1.0
 	 * @since 2012-09-24
 	 */
-	public static void getContacts() {
+	public static void getContacts(Activity context) {
 		ArrayList<Contact> contacts = getContactsFromRemoteDb(null);
 
 		for (Contact contact : contacts) {
-			insertContactToLocalDb(contact, 0);
+			insertContactToLocalDb(context, contact, 0);
 		}
 
 		contacts = null;
@@ -840,11 +841,11 @@ public class ContactManagement {
 	 * @version 1.0
 	 * @since 2012-09-24
 	 */
-	public static void getGroups() {
+	public static void getGroups(Activity context) {
 		ArrayList<Group> groups = getGroupsFromRemoteDb(null);
 
 		for (Group group : groups) {
-			insertGroupToLocalDb(group, 0);
+			insertGroupToLocalDb(context, group, 0);
 		}
 
 		groups = null;
@@ -863,12 +864,12 @@ public class ContactManagement {
 	 * @since 2012-09Ð28
 	 * @version 0.1
 	 */
-	public static ArrayList<Group> getGroupsFromLocalDb(String where) {
+	public static ArrayList<Group> getGroupsFromLocalDb(Activity context, String where) {
 		ArrayList<Group> contacts = new ArrayList<Group>();
 		Cursor cur;
 		Group temp;
 
-		cur = Data.getmContext().getContentResolver().query(ContactsProvider.CMetaData.GroupsMetaData.CONTENT_URI, null, where, null, null);
+		cur = context.getContentResolver().query(ContactsProvider.CMetaData.GroupsMetaData.CONTENT_URI, null, where, null, null);
 
 		if (cur.moveToFirst()) {
 			while (!cur.isAfterLast()) {
@@ -934,7 +935,7 @@ public class ContactManagement {
 	 * @since 2012-09Ð28
 	 * @version 0.1
 	 */
-	public static boolean updateGroupIdInLocalDb(long created, int id) {
+	public static boolean updateGroupIdInLocalDb(Activity context, long created, int id) {
 		ContentValues cv = new ContentValues();
 		boolean success = false;
 		int queryResult = 0;
@@ -943,7 +944,7 @@ public class ContactManagement {
 		cv.put(ContactsProvider.CMetaData.GroupsMetaData.G_ID, id);
 
 		try {
-			queryResult = Data.getmContext().getContentResolver()
+			queryResult = context.getContentResolver()
 					.update(ContactsProvider.CMetaData.GroupsMetaData.CONTENT_URI, cv, where, null);
 		} catch (SQLiteException e) {
 			Log.e("updateGroupIdInLocalDb(" + created + ", " + id + ")", e.getMessage());
@@ -955,7 +956,7 @@ public class ContactManagement {
 		return success;
 	}
 
-	public static boolean insertGroup(Group group) {
+	public static boolean insertGroup(Activity context, Group group) {
 		boolean success = false;
 		int destination_id = 0;
 
@@ -963,9 +964,9 @@ public class ContactManagement {
 
 		if (destination_id > 0) {
 			success = true;
-			insertGroupToLocalDb(group, destination_id);
+			insertGroupToLocalDb(context, group, destination_id);
 		} else {
-			insertGroupToLocalDb(group, 0);
+			insertGroupToLocalDb(context, group, 0);
 		}
 
 		return success;
@@ -985,7 +986,7 @@ public class ContactManagement {
 	 * @since 2012-09Ð29
 	 * @version 0.1
 	 */
-	public static void insertGroupToLocalDb(Group group, int id) {
+	public static void insertGroupToLocalDb(Activity context, Group group, int id) {
 		ContentValues cv = new ContentValues();
 
 		if (id > 0)
@@ -1017,7 +1018,7 @@ public class ContactManagement {
 		cv.put(ContactsProvider.CMetaData.GroupsMetaData.CONTACTS, MapUtils.mapToString(group.contacts));
 
 		try {
-			Data.getmContext().getContentResolver().insert(ContactsProvider.CMetaData.GroupsMetaData.CONTENT_URI, cv);
+			context.getContentResolver().insert(ContactsProvider.CMetaData.GroupsMetaData.CONTENT_URI, cv);
 		} catch (SQLiteException e) {
 			Log.e("insertGroupToLocalDb(group, " + id + ")", e.getMessage());
 		}
@@ -1170,19 +1171,19 @@ public class ContactManagement {
 	 * @since 2012-09Ð28
 	 * @version 0.1
 	 */
-	public static Group getGroupFromLocalDb(int id, long created) {
+	public static Group getGroupFromLocalDb(Activity context, int id, long created) {
 		Cursor cur;
 		Group temp = null;
 
 		if (id > 0) {
 			Uri uri = Uri.parse(ContactsProvider.CMetaData.GroupsMetaData.CONTENT_URI + "/" + id);
-			cur = Data.getmContext().getContentResolver().query(uri, null, null, null, null);
+			cur = context.getContentResolver().query(uri, null, null, null, null);
 			if (cur.moveToFirst())
 				temp = new Group(cur);
 		} else {
 			if (created > 0) {
 				String where = ContactsProvider.CMetaData.GroupsMetaData.CREATED + "=" + created;
-				cur = Data.getmContext().getContentResolver()
+				cur = context.getContentResolver()
 						.query(ContactsProvider.CMetaData.GroupsMetaData.CONTENT_URI, null, where, null, null);
 				if (cur.moveToFirst())
 					temp = new Group(cur);
