@@ -4174,7 +4174,6 @@ public class DataManagement {
 			event.setUploadedToServer(false);
 		}	
 		updateEventInLocalDb(event);
-
 	}
 
 	public static final int TM_EVENTS_FROM_GIVEN_DATE = 0;
@@ -4205,10 +4204,11 @@ public class DataManagement {
 	 *         has to set Event objects after return
 	 */
 	public Cursor createEventProjectionByDateFromLocalDb(String[] projection, Calendar date, int daysToSelect, int eventTimeMode,
-			String sortOrder) {
+			String sortOrder, boolean filterRejected) {
 		day_index_formatter = new SimpleDateFormat(EventsProvider.EMetaData.EventsIndexesMetaData.DAY_COLUMN_FORMAT);
 		month_index_formatter = new SimpleDateFormat(EventsProvider.EMetaData.EventsIndexesMetaData.MONTH_COLUMN_FORMAT);
 		String where;
+		
 		Uri uri;
 		if (date != null) {
 			switch (eventTimeMode) {
@@ -4282,6 +4282,10 @@ public class DataManagement {
 			where = null;
 			uri = EventsProvider.EMetaData.EventsMetaData.CONTENT_URI;
 		}
+		
+		String rejectedFilter = " AND " + EventsProvider.EMetaData.EventsMetaData.STATUS + "!=" + Event.REJECTED;
+		if (filterRejected) where += rejectedFilter;
+		
 		return getContext().getContentResolver().query(uri, projection, where, null, sortOrder);
 
 	}
