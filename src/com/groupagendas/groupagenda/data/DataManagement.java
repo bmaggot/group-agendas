@@ -916,6 +916,7 @@ public class DataManagement {
 
 			Items.add(item);
 		}
+		result.close();
 
 		return Items;
 	}
@@ -993,6 +994,7 @@ public class DataManagement {
 
 			result.moveToNext();
 		}
+		result.close();
 
 		return Items;
 	}
@@ -1106,13 +1108,7 @@ public class DataManagement {
 		return success;
 	}
 
-	/**
-	 * @deprecated
-	 * @return
-	 */
-	public ArrayList<Event> getEvents() {
-		return Data.getEvents();
-	}
+
 
 	/**
 	 * Loads all actual events from local db to given adapter.
@@ -1130,20 +1126,23 @@ public class DataManagement {
 		today.set(Calendar.MINUTE, 0);
 		today.set(Calendar.SECOND, 0);
 		today.set(Calendar.MILLISECOND, 0);
-		events = getEventsFromLocalDb(today, null);
-
-		ArrayList<Event> onlyInvites = null;
-		if (NavbarActivity.showInvites) {
-			onlyInvites = filterInvites(events);
-			eventsSize = onlyInvites.size();
-		} else {
-			eventsSize = events.size();
-		}
-		if (onlyInvites != null && onlyInvites.size() > 0) {
-			updateEventsAdapter(onlyInvites, eAdapter);
-		} else {
-			updateEventsAdapter(events, eAdapter);
-		}
+		
+		updateEventsAdapter(new ArrayList<Event>(), eAdapter);
+//		TODO Justas M: rewrite
+//		events = getEventsFromLocalDb(today, null);
+//
+//		ArrayList<Event> onlyInvites = null;
+//		if (NavbarActivity.showInvites) {
+//			onlyInvites = filterInvites(events);
+//			eventsSize = onlyInvites.size();
+//		} else {
+//			eventsSize = events.size();
+//		}
+//		if (onlyInvites != null && onlyInvites.size() > 0) {
+//			updateEventsAdapter(onlyInvites, eAdapter);
+//		} else {
+//			updateEventsAdapter(events, eAdapter);
+//		}
 
 		return eventsSize;
 	}
@@ -2058,7 +2057,8 @@ public class DataManagement {
 
 			String assigned_contacts = result.getString(result.getColumnIndex(EventsProvider.EMetaData.EventsMetaData.ASSIGNED_CONTACTS));
 			if (assigned_contacts != null && !assigned_contacts.equals("null")) {
-				try {
+				if (assigned_contacts.length() == 0) item.setAssigned_contacts(new int[0]);
+				else try {
 					item.setAssigned_contacts(Utils.jsonStringToArray(assigned_contacts));
 				} catch (JSONException e) {
 					Reporter.reportError(this.getClass().toString(), Thread.currentThread().getStackTrace()[2].getMethodName().toString(),
@@ -2069,7 +2069,8 @@ public class DataManagement {
 
 			String assigned_groups = item.getAssigned_groups_DB_entry();
 			if (assigned_groups != null && !assigned_groups.equals("null")) {
-				try {
+				if (assigned_groups.length() == 0) item.setAssigned_groups(new int[0]);
+				else try {
 					item.setAssigned_groups(Utils.jsonStringToArray(assigned_groups));
 				} catch (JSONException e) {
 					Reporter.reportError(this.getClass().toString(), Thread.currentThread().getStackTrace()[2].getMethodName().toString(),
@@ -2080,11 +2081,12 @@ public class DataManagement {
 
 			String invitedJson = item.getInvited_DB_entry();
 			if (invitedJson != null && !invitedJson.equals("null")) {
+				ArrayList<Invited> invitedList = new ArrayList<Invited>();
 				try {
 
 					JSONArray arr = new JSONArray(invitedJson);
 					if (arr.length() > 0) {
-						ArrayList<Invited> invitedList = new ArrayList<Invited>();
+						
 
 						for (int i = 0, l = arr.length(); i < l; i++) {
 							JSONObject obj = arr.getJSONObject(i);
@@ -4104,7 +4106,7 @@ public class DataManagement {
 	 */
 	public void createNewEvent(Event event) {
 
-		if (networkAvailable) {
+		if (networkAvailable) {//TODO TEST
 			int id = createEventInRemoteDb(event);
 
 			if (id > 0) {
