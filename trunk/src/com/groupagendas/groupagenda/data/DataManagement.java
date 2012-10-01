@@ -4445,7 +4445,7 @@ public class DataManagement {
 
 				} else {
 					uri = EventsProvider.EMetaData.EventsMetaData.CONTENT_URI;
-					where += EventsProvider.EMetaData.EventsMetaData.TIME_START_UTC_MILLISECONDS + ">" + date.getTimeInMillis();
+					where += EventsProvider.EMetaData.EventsMetaData.TIME_END_UTC_MILLISECONDS + ">" + date.getTimeInMillis();
 				}
 
 				where += ")";
