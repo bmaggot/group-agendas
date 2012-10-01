@@ -101,6 +101,7 @@ public class EventActivity extends Activity {
 
 		// calendars
 		event.setStartCalendar(startCalendar);
+		
 		event.setEndCalendar(endCalendar);
 		event.setModifiedMillisUtc(Calendar.getInstance().getTimeInMillis());
 
@@ -125,6 +126,7 @@ public class EventActivity extends Activity {
 		event.setReminder1(reminder1time);
 		event.setReminder2(reminder2time);
 		event.setReminder3(reminder3time);
+		
 
 	}
 

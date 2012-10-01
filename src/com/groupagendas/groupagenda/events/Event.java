@@ -39,7 +39,7 @@ private static final int REMINDER_3 = 3;
 	public int attendant_0_count;
 	public int attendant_4_count;
 	
-	private boolean uploadedToServer;
+	private boolean uploadedToServer = false;
 	public boolean isNative = false;
 	public boolean is_sports_event;	
 	public boolean is_owner;

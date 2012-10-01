@@ -1094,6 +1094,7 @@ public class NewEventActivity extends EventActivity {
 			boolean success = false;
 
 			NewEventActivity.super.setEventData(event);
+			event.setStatus(Event.ACCEPTED);
 
 			int testEvent = event.isValid();
 

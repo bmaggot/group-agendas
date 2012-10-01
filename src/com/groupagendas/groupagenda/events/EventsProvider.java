@@ -195,9 +195,7 @@ public class EventsProvider extends ContentProvider{
 	private static final int ALL_EVENTS = 0;
 	private static final int ONE_EVENTS = 1;
 	private static final int DAY_INDEX = 2;
-
 	private static final int EVENTS_ON_DATE = 3;
-	private static final int EVENTS_BETWEEN_DATES = 4;
 
 	static {
 		mUriMatcher = new UriMatcher(UriMatcher.NO_MATCH);
