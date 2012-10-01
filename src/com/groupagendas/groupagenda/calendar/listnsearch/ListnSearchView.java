@@ -4,10 +4,13 @@ package com.groupagendas.groupagenda.calendar.listnsearch;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.TreeMap;
 
 import android.content.Context;
+import android.database.Cursor;
 import android.graphics.Color;
 import android.graphics.drawable.BitmapDrawable;
+import android.os.AsyncTask;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.AttributeSet;
@@ -24,7 +27,9 @@ import com.groupagendas.groupagenda.EventActivityOnClickListener;
 import com.groupagendas.groupagenda.R;
 import com.groupagendas.groupagenda.data.CalendarSettings;
 import com.groupagendas.groupagenda.data.Data;
+import com.groupagendas.groupagenda.data.DataManagement;
 import com.groupagendas.groupagenda.events.Event;
+import com.groupagendas.groupagenda.events.EventsProvider;
 import com.groupagendas.groupagenda.utils.DrawingUtils;
 import com.groupagendas.groupagenda.utils.Utils;
 
@@ -42,35 +47,6 @@ public class ListnSearchView extends LinearLayout {
 	private EditText searchField;
 	
 	SectionListItem[] eventsArray;
-	
-	SectionListItem[] exampleArray = { // Comment to prevent re-format
-			new SectionListItem("Test 1 - A", "A"), //
-					new SectionListItem("Test 2 - A", "A"), //
-					new SectionListItem("Test 3 - A", "A"), //
-					new SectionListItem("Test 4 - A", "A"), //
-					new SectionListItem("Test 5 - A", "A"), //
-					new SectionListItem("Test 6 - B", "B"), //
-					new SectionListItem("Test 7 - B", "B"), //
-					new SectionListItem("Test 8 - B", "B"), //
-					new SectionListItem("Test 9 - Long", "Long section"), //
-					new SectionListItem("Test 10 - Long", "Long section"), //
-					new SectionListItem("Test 11 - Long", "Long section"), //
-					new SectionListItem("Test 12 - Long", "Long section"), //
-					new SectionListItem("Test 13 - Long", "Long section"), //
-					new SectionListItem("Test 14 - A again", "A"), //
-					new SectionListItem("Test 15 - A again", "A"), //
-					new SectionListItem("Test 16 - A again", "A"), //
-					new SectionListItem("Test 17 - B again", "B"), //
-					new SectionListItem("Test 18 - B again", "B"), //
-					new SectionListItem("Test 19 - B again", "B"), //
-					new SectionListItem("Test 20 - B again", "B"), //
-					new SectionListItem("Test 21 - B again", "B"), //
-					new SectionListItem("Test 22 - B again", "B"), //
-					new SectionListItem("Test 23 - C", "C"), //
-					new SectionListItem("Test 24 - C", "C"), //
-					new SectionListItem("Test 25 - C", "C"), //
-					new SectionListItem("Test 26 - C", "C"), //
-			};
 
 	private String[] weekDayNames;
 
@@ -92,14 +68,10 @@ public ListnSearchView(Context context, AttributeSet attrs) {
 
 
 public void init(){
-	Calendar listStartDate = Utils.createNewTodayCalendar();
-	setEventsList(listStartDate);
-	arrayAdapter = new StandardArrayAdapter(getContext(), R.id.agenda_entry_title_placeholder, eventsArray);
-	sectionAdapter = new SectionListAdapter(mInflater, arrayAdapter);
-	listView = (SectionListView) findViewById(R.id.section_list_view);
-	listView.setAdapter(sectionAdapter);
-	listView.setDrawingCacheBackgroundColor(Color.TRANSPARENT);
 	
+	listView = (SectionListView) findViewById(R.id.section_list_view);
+	new GetEventsInfoTask().execute();
+	listView.setDrawingCacheBackgroundColor(Color.TRANSPARENT);
 	searchField = (EditText) findViewById(R.id.listnsearch_search);
 	searchField.addTextChangedListener(new TextWatcher() {
 		
@@ -116,7 +88,7 @@ public void init(){
 		
 		@Override
 		public void afterTextChanged(Editable s) {
-			if (!prevEntry.equalsIgnoreCase(s.toString())){
+			if (arrayAdapter != null && !prevEntry.equalsIgnoreCase(s.toString())){
 				arrayAdapter.setList(filterEvents(s.toString(), eventsArray));
 			}
 		}
@@ -141,29 +113,7 @@ private SectionListItem[] filterEvents (String filterString, SectionListItem[] e
 }
 
 
-	private void setEventsList(Calendar date) {
-		
-		ArrayList<SectionListItem> list = new ArrayList<SectionListItem>();
-		String section;
-	while (!date.after(Data.lastEventsKey())){
-		
-		section = weekDayNames[date.get(Calendar.DAY_OF_WEEK) - 1];
-		section += ", ";
-		section += date.get(Calendar.DAY_OF_MONTH);
-		section += " ";
-		section += monthNames[date.get(Calendar.MONTH)];
-		section += " ";
-		section += date.get(Calendar.YEAR);
-				
-		for (Event e : Data.getEventByDate(date)){
-			list.add(new SectionListItem(e, section));
-		}
-		
-		date.add(Calendar.DATE, 1);	
-	}
-	eventsArray =  list.toArray(new SectionListItem[list.size()]);
 	
-}
 
 
 	private class StandardArrayAdapter extends ArrayAdapter<SectionListItem> {
@@ -245,38 +195,90 @@ private SectionListItem[] filterEvents (String filterString, SectionListItem[] e
 		}
 	}
 
-	
+	private class GetEventsInfoTask extends AsyncTask<Void, Integer, Void> {
+		private Context context = ListnSearchView.this.getContext();
+		private DataManagement dm = DataManagement.getInstance(context);
+		protected Calendar listStartDate = Utils.createNewTodayCalendar();
+		protected TreeMap<Calendar, ArrayList<Event>> sortedEvents;
+		/**
+		 * @author justinas.marcinka@gmail.com
+		 * Returns event projection in: id, color, icon, title, start and end calendars. Other fields are not initialized
+		 * @param date
+		 * @return
+		 */
+		private ArrayList<Event>getEventProjectionsForDisplay(Calendar date){
+			ArrayList<Event> list = new ArrayList<Event>();
+			String[] projection = {
+					EventsProvider.EMetaData.EventsMetaData.E_ID,
+					EventsProvider.EMetaData.EventsMetaData.COLOR,
+					EventsProvider.EMetaData.EventsMetaData.TIME_START_UTC_MILLISECONDS,
+					EventsProvider.EMetaData.EventsMetaData.TIME_END_UTC_MILLISECONDS,
+					EventsProvider.EMetaData.EventsMetaData.ICON,
+					EventsProvider.EMetaData.EventsMetaData.TITLE,
+					};
+			Cursor result = dm.createEventProjectionByDateFromLocalDb(projection, date, 0, DataManagement.TM_EVENTS_FROM_GIVEN_DATE, null);
+			if (result.moveToFirst()) {
+				while (!result.isAfterLast()) {
+					Event eventProjection = new Event();
+					eventProjection.setEvent_id(result.getInt(result.getColumnIndexOrThrow(EventsProvider.EMetaData.EventsMetaData.E_ID)));
+					eventProjection.setTitle(result.getString(result.getColumnIndexOrThrow(EventsProvider.EMetaData.EventsMetaData.TITLE)));
+					eventProjection.setIcon(result.getString(result.getColumnIndexOrThrow(EventsProvider.EMetaData.EventsMetaData.ICON)));
+					eventProjection.setColor(result.getString(result.getColumnIndexOrThrow(EventsProvider.EMetaData.EventsMetaData.COLOR)));
+					String user_timezone = CalendarSettings.getTimeZone();
+					long timeinMillis = result.getLong(result.getColumnIndexOrThrow(EventsProvider.EMetaData.EventsMetaData.TIME_START_UTC_MILLISECONDS));
+					eventProjection.setStartCalendar(Utils.createCalendar(timeinMillis, user_timezone));
+					timeinMillis = result.getLong(result.getColumnIndexOrThrow(EventsProvider.EMetaData.EventsMetaData.TIME_END_UTC_MILLISECONDS));
+					eventProjection.setEndCalendar(Utils.createCalendar(timeinMillis, user_timezone));
+					list.add(eventProjection);
+					result.moveToNext();
+				}
+			}
+			result.close();
+			return list ;
+			
+		}
 
+		@Override
+		protected Void doInBackground(Void... params) {
+			sortedEvents = dm.sortEvents(getEventProjectionsForDisplay(listStartDate));
+			return null;
+		}
 
-//	@Override
-//	public void onCreate(final Bundle savedInstanceState) {
-//		super.onCreate(savedInstanceState);
-//		setContentView(R.layout.main);
+		protected void setEventsList(Calendar date) {
+			
+			ArrayList<SectionListItem> list = new ArrayList<SectionListItem>();
+			String section;
+		while (!date.after(Data.lastEventsKey())){
+			
+			section = weekDayNames[date.get(Calendar.DAY_OF_WEEK) - 1];
+			section += ", ";
+			section += date.get(Calendar.DAY_OF_MONTH);
+			section += " ";
+			section += monthNames[date.get(Calendar.MONTH)];
+			section += " ";
+			section += date.get(Calendar.YEAR);
+					
+			for (Event e : Utils.getEventsFromTreemap(date, sortedEvents)){
+				list.add(new SectionListItem(e, section));
+			}
+			
+			date.add(Calendar.DATE, 1);	
+		}
+		eventsArray =  list.toArray(new SectionListItem[list.size()]);
 		
-//	}
+	}
+		
+		protected void onPostExecute(Void result) {
+			setEventsList(listStartDate);
+			arrayAdapter = new StandardArrayAdapter(getContext(), R.id.agenda_entry_title_placeholder, eventsArray);
+			sectionAdapter = new SectionListAdapter(mInflater, arrayAdapter);
+			if(listView != null)
+				listView.setAdapter(sectionAdapter);
+			
+		}
 
-//	@Override
-//	public boolean onCreateOptionsMenu(Menu menu) {
-//		MenuInflater inflater = getMenuInflater();
-//		inflater.inflate(R.menu.test_menu, menu);
-//		return true;
-//	}
 
-//	@Override
-//	public boolean onOptionsItemSelected(MenuItem item) {
-//		switch (item.getItemId()) {
-//		case R.id.standard_list:
-//			arrayAdapter = new StandardArrayAdapter(this, R.id.example_text_view, exampleArray);
-//			sectionAdapter = new SectionListAdapter(getLayoutInflater(), arrayAdapter);
-//			listView.setAdapter(sectionAdapter);
-//			return true;
-//		case R.id.empty_list:
-//			arrayAdapter = new StandardArrayAdapter(this, R.id.example_text_view, new SectionListItem[] {});
-//			sectionAdapter = new SectionListAdapter(getLayoutInflater(), arrayAdapter);
-//			listView.setAdapter(sectionAdapter);
-//			return true;
-//		default:
-//			return super.onOptionsItemSelected(item);
-//		}
-//	}
+	}	
+
+
 }
