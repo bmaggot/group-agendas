@@ -102,6 +102,7 @@ public class EventActivity extends Activity {
 		// calendars
 		event.setStartCalendar(startCalendar);
 		event.setEndCalendar(endCalendar);
+		event.setModifiedMillisUtc(Calendar.getInstance().getTimeInMillis());
 
 		event.country = countryArray[countrySpinner.getSelectedItemPosition()];
 		event.zip = zipView.getText().toString();

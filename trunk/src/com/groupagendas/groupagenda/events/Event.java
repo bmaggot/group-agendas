@@ -31,7 +31,6 @@ private static final int REMINDER_3 = 3;
 	
 	public int event_id;
 	public int user_id;
-	private int NeedUpdate = 0;   //Update status TODO find out, what it means!!!!!
 	public int status;
 	public int creator_contact_id;
 	
@@ -40,6 +39,7 @@ private static final int REMINDER_3 = 3;
 	public int attendant_0_count;
 	public int attendant_4_count;
 	
+	private boolean uploadedToServer;
 	public boolean isNative = false;
 	public boolean is_sports_event;	
 	public boolean is_owner;
@@ -702,11 +702,11 @@ public String getAssigned_groups_DB_entry() {
 public String getInvited_DB_entry() {
 	return invited_DB_entry;
 }
-public int getNeedUpdate() {
-	return NeedUpdate;
+public boolean isUploadedToServer() {
+	return uploadedToServer;
 }
-public void setNeedUpdate(int needUpdate) {
-	NeedUpdate = needUpdate;
+public void setUploadedToServer(boolean bool) {
+	uploadedToServer = bool;
 }
 public int getInvitedCount() {
 	return getInvited().size();

@@ -834,7 +834,8 @@ public class NewEventActivity extends EventActivity {
 
 		@Override
 		protected Boolean doInBackground(Event... events) {
-			NewEventActivity.super.setEventData(event);
+			setEventData(event);
+			event.setCreatedMillisUtc(Calendar.getInstance().getTimeInMillis()); // set create time
 
 			int testEvent = event.isValid();
 			if (testEvent == 0) {
