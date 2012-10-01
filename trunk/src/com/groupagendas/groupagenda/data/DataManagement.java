@@ -4307,12 +4307,15 @@ public class DataManagement {
 	 * @param event
 	 */
 	public void deleteEvent(int event_id) {
-		
+		Boolean deletedFromRemote = false;
 		if (networkAvailable) {
-			Boolean result = removeEvent(event_id);
-		} else {
+			 deletedFromRemote = removeEvent(event_id);
+		}
+
+		if (!deletedFromRemote){
 			//TODO add delete event task to tasks list for server remote
 		}	
+		
 		deleteEventFromLocalDb(event_id);	
 	}
 
