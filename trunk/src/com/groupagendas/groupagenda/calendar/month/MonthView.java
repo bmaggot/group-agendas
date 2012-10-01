@@ -3,7 +3,6 @@ package com.groupagendas.groupagenda.calendar.month;
 
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.TreeMap;
 
 import android.content.Context;
 import android.database.Cursor;
