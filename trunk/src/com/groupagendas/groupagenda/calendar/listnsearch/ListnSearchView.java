@@ -28,9 +28,11 @@ import com.groupagendas.groupagenda.R;
 import com.groupagendas.groupagenda.data.CalendarSettings;
 import com.groupagendas.groupagenda.data.Data;
 import com.groupagendas.groupagenda.data.DataManagement;
+import com.groupagendas.groupagenda.data.EventManagement;
 import com.groupagendas.groupagenda.events.Event;
 import com.groupagendas.groupagenda.events.EventsProvider;
 import com.groupagendas.groupagenda.utils.DrawingUtils;
+import com.groupagendas.groupagenda.utils.TreeMapUtils;
 import com.groupagendas.groupagenda.utils.Utils;
 
 
@@ -216,7 +218,7 @@ private SectionListItem[] filterEvents (String filterString, SectionListItem[] e
 					EventsProvider.EMetaData.EventsMetaData.ICON,
 					EventsProvider.EMetaData.EventsMetaData.TITLE,
 					};
-			Cursor result = dm.createEventProjectionByDateFromLocalDb(projection, date, 0, DataManagement.TM_EVENTS_FROM_GIVEN_DATE, null, true);
+			Cursor result = EventManagement.createEventProjectionByDateFromLocalDb(context, projection, date, 0, EventManagement.TM_EVENTS_FROM_GIVEN_DATE, null, true);
 			if (result.moveToFirst()) {
 				while (!result.isAfterLast()) {
 					Event eventProjection = new Event();
@@ -240,7 +242,7 @@ private SectionListItem[] filterEvents (String filterString, SectionListItem[] e
 
 		@Override
 		protected Void doInBackground(Void... params) {
-			sortedEvents = dm.sortEvents(getEventProjectionsForDisplay(listStartDate));
+			sortedEvents = TreeMapUtils.sortEvents(getEventProjectionsForDisplay(listStartDate));
 			return null;
 		}
 
@@ -248,7 +250,7 @@ private SectionListItem[] filterEvents (String filterString, SectionListItem[] e
 			
 			ArrayList<SectionListItem> list = new ArrayList<SectionListItem>();
 			String section;
-		while (!date.after(Data.lastEventsKey())){
+		while (!date.after(sortedEvents.lastKey())){
 			
 			section = weekDayNames[date.get(Calendar.DAY_OF_WEEK) - 1];
 			section += ", ";

@@ -51,6 +51,7 @@ import com.groupagendas.groupagenda.data.CalendarSettings;
 import com.groupagendas.groupagenda.data.ContactManagement;
 import com.groupagendas.groupagenda.data.Data;
 import com.groupagendas.groupagenda.data.DataManagement;
+import com.groupagendas.groupagenda.data.EventManagement;
 import com.groupagendas.groupagenda.events.Event;
 import com.groupagendas.groupagenda.events.EventsActivity;
 import com.groupagendas.groupagenda.events.EventsProvider;
@@ -187,7 +188,7 @@ public class NavbarActivity extends Activity {
 						
 					case 5: // Load events
 						if (DataManagement.networkAvailable)
-							dm.getEventsFromRemoteDb("");
+							EventManagement.getEventsFromRemoteDb(NavbarActivity.this, "");
 						else
 							dm.getEventsFromLocalDb();
 						loadPhase++;

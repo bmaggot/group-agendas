@@ -398,9 +398,6 @@ public class Data {
 		Data.chatThreads = chatThreads;
 	}
 
-	public static Calendar lastEventsKey() {
-		return Data.sortedEvents.lastKey();
-	}
 
 	public static ArrayList<Event> getEventByDate(Calendar date) {
 		if (date != null && sortedEvents != null) {

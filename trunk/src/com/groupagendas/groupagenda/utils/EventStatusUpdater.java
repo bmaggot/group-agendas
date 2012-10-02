@@ -25,7 +25,7 @@ public class EventStatusUpdater extends AsyncTask<Object, Void, Void>{
 		String where = EventsProvider.EMetaData.EventsMetaData.E_ID+"="+event_id;
 		dm.getContext().getContentResolver().update(EventsProvider.EMetaData.EventsMetaData.CONTENT_URI, values, where, null);
 		try {
-			dm.updateEventByIdFromRemoteDb(event_id);
+			dm.updateEventByIdFromRemoteDb(event_id, dm.getContext()); //TODO solve this problem
 		} catch (ExecutionException e) {
 			Reporter.reportError(this.getClass().toString(), Thread.currentThread().getStackTrace()[2].getMethodName()
 					.toString(), e.getMessage());

@@ -46,7 +46,7 @@ public class EventActivity extends Activity {
 	protected ImageView iconView;
 	protected ImageView colorView;
 
-	protected Event event;
+
 
 	protected EditText startView;
 	protected Button startButton;
@@ -85,7 +85,7 @@ public class EventActivity extends Activity {
 	protected boolean setOwner = false;
 	protected boolean setUid = false;
 
-	protected void setEventData(Event event) {
+	protected Event setEventData(Event event) {
 
 		if (timezoneArray != null) {
 			event.timezone = timezoneArray[timezoneSpinner.getSelectedItemPosition()];
@@ -101,7 +101,6 @@ public class EventActivity extends Activity {
 
 		// calendars
 		event.setStartCalendar(startCalendar);
-		
 		event.setEndCalendar(endCalendar);
 		event.setModifiedMillisUtc(Calendar.getInstance().getTimeInMillis());
 
@@ -126,7 +125,7 @@ public class EventActivity extends Activity {
 		event.setReminder1(reminder1time);
 		event.setReminder2(reminder2time);
 		event.setReminder3(reminder3time);
-		
+		return event;
 
 	}
 

@@ -28,6 +28,7 @@ private static final int REMINDER_3 = 3;
 //	TODO set all default fields and getters
 	public static final String DEFAULT_COLOR = "21C0DB";
 	private static final String DEFAULT_TYPE = "p";
+	private static final String DEFAULT_DESCRIPTION = "";
 	
 	public int event_id;
 	public int user_id;
@@ -335,6 +336,7 @@ private static final int REMINDER_3 = 3;
 		return timezone;
 	}
 	public String getDescription() {
+		if (description_ == null || description_.equalsIgnoreCase("null")) description_ = DEFAULT_DESCRIPTION;
 		return description_;
 	}
 	

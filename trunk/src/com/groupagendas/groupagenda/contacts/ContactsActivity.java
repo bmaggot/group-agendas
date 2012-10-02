@@ -584,7 +584,7 @@ public class ContactsActivity extends ListActivity implements OnCheckedChangeLis
 		@Override
 		protected Void doInBackground(Integer... params) {
 			try {
-				dm.updateEventByIdFromRemoteDb(params[0]);
+				dm.updateEventByIdFromRemoteDb(params[0], ContactsActivity.this); //TODO solve this shit.
 			} catch (Exception e) {
 				Reporter.reportError(this.getClass().toString(), Thread.currentThread().getStackTrace()[2].getMethodName().toString(),
 						e.getMessage());
