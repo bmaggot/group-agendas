@@ -886,6 +886,7 @@ public class EventManagement {
 		cv.put(EventsProvider.EMetaData.EventsMetaData.ASSIGNED_CONTACTS, event.getAssigned_contacts_DB_entry());
 		cv.put(EventsProvider.EMetaData.EventsMetaData.ASSIGNED_GROUPS, event.getAssigned_groups_DB_entry());
 		cv.put(EventsProvider.EMetaData.EventsMetaData.INVITED, event.getInvited_DB_entry());
+		cv.put(EventsProvider.EMetaData.EventsMetaData.MESSAGES_COUNT, event.getMessage_count());
 		return cv;
 	}
 
@@ -951,6 +952,7 @@ public class EventManagement {
 				.getColumnIndex(EventsProvider.EMetaData.EventsMetaData.ASSIGNED_CONTACTS)));
 		item.setAssigned_groups_DB_entry(result.getString(result.getColumnIndex(EventsProvider.EMetaData.EventsMetaData.ASSIGNED_GROUPS)));
 		item.setInvited_DB_entry(result.getString(result.getColumnIndex(EventsProvider.EMetaData.EventsMetaData.INVITED)));
+		item.setMessage_count(result.getInt(result.getColumnIndex(EventsProvider.EMetaData.EventsMetaData.MESSAGES_COUNT)));
 
 		return item;
 	}	
@@ -1243,6 +1245,13 @@ public class EventManagement {
 			event.setInvited_DB_entry(e.getString("invited"));
 		} catch (JSONException e1) {
 			event.setInvited_DB_entry("");
+			Reporter.reportError(CLASS_NAME, Thread.currentThread().getStackTrace()[2].getMethodName().toString(),
+					e1.getMessage());
+		}
+		try {
+			event.setMessage_count(e.getInt("message_count"));
+		} catch (JSONException e1) {
+			event.setMessage_count(0);
 			Reporter.reportError(CLASS_NAME, Thread.currentThread().getStackTrace()[2].getMethodName().toString(),
 					e1.getMessage());
 		}
