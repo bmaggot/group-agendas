@@ -374,13 +374,8 @@ public class Data {
 //		Data.groups = groups;
 //	}
 
-	public static TreeMap<Calendar, ArrayList<Event>> getSortedEvents() {
-		return sortedEvents;
-	}
 
-	public static void setSortedEvents(TreeMap<Calendar, ArrayList<Event>> sortedEvents) {
-		Data.sortedEvents = sortedEvents;
-	}
+
 
 	public static ArrayList<ChatMessageObject> getChatMessages() {
 		return chatMessages;
@@ -396,19 +391,6 @@ public class Data {
 
 	public static void setChatThreads(ArrayList<ChatThreadObject> chatThreads) {
 		Data.chatThreads = chatThreads;
-	}
-
-
-	public static ArrayList<Event> getEventByDate(Calendar date) {
-		if (date != null && sortedEvents != null) {
-			if (sortedEvents.containsKey(date)) {
-				return sortedEvents.get(date);
-			} else {
-				return new ArrayList<Event>();
-			}
-		} else {
-			return new ArrayList<Event>();
-		}
 	}
 
 	protected static void setUserId(int id) {
