@@ -18,9 +18,11 @@ import com.groupagendas.groupagenda.calendar.adapters.AbstractAdapter;
 import com.groupagendas.groupagenda.utils.Utils;
 
 public class GroupsAdapter extends AbstractAdapter<Group> implements Filterable{
+	List<Group> allGroups;
 
 	public GroupsAdapter(List<Group> objects, Activity context) {
 		super(context, objects);
+		allGroups = objects;
 	}
 
 	@Override
@@ -91,13 +93,16 @@ public class GroupsAdapter extends AbstractAdapter<Group> implements Filterable{
             }
             
             private List<Group> getFilteredResults(CharSequence constraint) {
-                List<Group> items = GroupsAdapter.this.list;
+                List<Group> items = allGroups;
                 List<Group> filteredItems = new ArrayList<Group>();
                 for(int i=0;i< items.size();i++){
                     if(items.get(i).title.toLowerCase().startsWith(constraint.toString().toLowerCase())){
                     	filteredItems.add(items.get(i));
                     }
                 }
+                
+				if (filteredItems.size() < 1)
+					filteredItems = items;
 
                 return filteredItems;
             }

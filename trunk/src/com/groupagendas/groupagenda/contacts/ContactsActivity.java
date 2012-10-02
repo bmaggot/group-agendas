@@ -177,6 +177,8 @@ public class ContactsActivity extends ListActivity implements OnCheckedChangeLis
 		CURRENT_TASK = preferences.getString("ContactsActivityTask", CURRENT_TASK);
 		
 		sideIndex.setVisibility(View.GONE);
+		
+		searchView.addTextChangedListener(filterTextWatcher);
 
 		if (CURRENT_TASK.equals(CONTACTS_TASK)) {
 			contacts = ContactManagement.getContactsFromLocalDb(ContactsActivity.this, null);
@@ -243,6 +245,7 @@ public class ContactsActivity extends ListActivity implements OnCheckedChangeLis
 		editor.putString("ContactsActivityTask", CURRENT_TASK);
 		editor.putInt("ContactsActivityList", CURRENT_LIST);
 		editor.commit();
+		searchView.removeTextChangedListener(filterTextWatcher);
 	}
 
 	@Override

@@ -8,8 +8,8 @@ import android.view.View;
 import android.view.Window;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
-import android.widget.ArrayAdapter;
 import android.widget.EditText;
+import android.widget.Filterable;
 import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.Spinner;
@@ -18,7 +18,7 @@ import com.groupagendas.groupagenda.R;
 
 public class SearchDialog extends Dialog {
 
-	public SearchDialog(Activity context, int styleResId, final ListAdapter adapter, final Object destination) {
+	public SearchDialog(Activity context, int styleResId, final Filterable adapter, final Object destination) {
 		super(context);
 		this.requestWindowFeature(Window.FEATURE_NO_TITLE);
 		this.setContentView(R.layout.search_dialog);
@@ -35,7 +35,7 @@ public class SearchDialog extends Dialog {
 			@Override
 			public void onTextChanged(CharSequence s, int start, int before, int count) {
 				if (s != null) {
-					((ArrayAdapter<?>) adapter).getFilter().filter(s);
+					adapter.getFilter().filter(s);
 				}
 			}
 		};
@@ -44,7 +44,7 @@ public class SearchDialog extends Dialog {
 		dialogSearch.addTextChangedListener(filterTextWatcher);
 		
 		ListView dialogList = (ListView) findViewById(R.id.dialog_list);
-		dialogList.setAdapter(adapter);
+		dialogList.setAdapter((ListAdapter) adapter);
 		dialogList.setOnItemClickListener(new OnItemClickListener() {
 
 			@Override

@@ -22,9 +22,11 @@ import com.groupagendas.groupagenda.utils.Utils;
 
 public class ContactsAdapter extends AbstractAdapter<Contact> implements Filterable {
 	private int bubbleHeightDP = 15;
+	List<Contact> allContacts;
 
 	public ContactsAdapter(List<Contact> objects, Activity context) {
 		super(context, objects);
+		allContacts = objects;
 	}
 
 	@Override
@@ -121,7 +123,7 @@ public class ContactsAdapter extends AbstractAdapter<Contact> implements Filtera
 			}
 
 			private List<Contact> getFilteredResults(CharSequence constraint) {
-				List<Contact> items = ContactsAdapter.this.list;
+				List<Contact> items = allContacts;
 				List<Contact> filteredItems = new ArrayList<Contact>();
 
 				for (int i = 0; i < items.size(); i++) {
@@ -130,6 +132,9 @@ public class ContactsAdapter extends AbstractAdapter<Contact> implements Filtera
 						filteredItems.add(items.get(i));
 					}
 				}
+
+				if (filteredItems.size() < 1)
+					filteredItems = items;
 
 				return filteredItems;
 			}
