@@ -1,6 +1,7 @@
 package com.groupagendas.groupagenda.data;
 
 import java.io.UnsupportedEncodingException;
+import java.util.ArrayList;
 
 import org.apache.http.HttpResponse;
 import org.apache.http.HttpStatus;
@@ -17,6 +18,7 @@ import org.json.JSONObject;
 
 import android.content.ContentValues;
 import android.content.Context;
+import android.database.Cursor;
 import android.database.sqlite.SQLiteException;
 import android.util.Log;
 import android.widget.Toast;
@@ -25,51 +27,88 @@ import com.groupagendas.groupagenda.R;
 import com.groupagendas.groupagenda.chat.ChatMessageObject;
 import com.groupagendas.groupagenda.chat.ChatProvider;
 import com.groupagendas.groupagenda.chat.ChatProvider.CMMetaData;
+import com.groupagendas.groupagenda.chat.ChatThreadObject;
+import com.groupagendas.groupagenda.events.EventsProvider;
 
 public class ChatManagement {
 
 	private static String TOKEN = "token";
 
+	/**
+	 * Make ChatMessageObject from JSON.
+	 * 
+	 * Makes ChatMessageObject from valid JSON object
+	 * 
+	 * @author justas@mobileapps.lt
+	 * @return ChatMessageObject
+	 * @since 2012-10A02
+	 * @version 0.1
+	 */
+
 	public static ChatMessageObject makeChatMessageObjectFromJSON(JSONObject json) {
 		ChatMessageObject chatMessage = new ChatMessageObject();
 		try {
-			chatMessage.setMessageId(json.getInt("message_id"));
-			chatMessage.setEventId(json.getInt("event_id"));
-			chatMessage.setDateTime(json.getString("datetime"));
-			chatMessage.setUserId(json.getInt("user_id"));
-			chatMessage.setMessage(json.getString("message"));
-			String deleted = json.getString("deleted");
+			chatMessage.setMessageId(json.getInt(CMMetaData.ChatMetaData.M_ID));
+			chatMessage.setEventId(json.getInt(CMMetaData.ChatMetaData.E_ID));
+			chatMessage.setCreated(json.getLong(CMMetaData.ChatMetaData.CREATED));
+			chatMessage.setUserId(json.getInt(CMMetaData.ChatMetaData.USER_ID));
+			chatMessage.setMessage(json.getString(CMMetaData.ChatMetaData.MESSAGE));
+			String deleted = json.getString(CMMetaData.ChatMetaData.DELETED);
 			chatMessage.setDeleted(!deleted.equals("null"));
-			chatMessage.setUpdated(json.getString("updated"));
+			chatMessage.setUpdated(json.getString(CMMetaData.ChatMetaData.UPDATED));
 		} catch (JSONException e) {
 			Log.e("makeChatMessageObjectFromJSON(JSONObject json)", e.getMessage());
 		}
 		return chatMessage;
 	}
 
+	/**
+	 * Make ChatMessage ContentValues object from JSON.
+	 * 
+	 * Makes ChatMessage ContentValues (insertable to local DB) object from
+	 * valid JSON object
+	 * 
+	 * @author justas@mobileapps.lt
+	 * @return ContentValues object
+	 * @since 2012-10A02
+	 * @version 0.1
+	 */
+
 	public static ContentValues makeChatMessageObjectContentValueFromJSON(JSONObject json) {
 		ContentValues cv = new ContentValues();
 		try {
-			cv.put(CMMetaData.ChatMetaData.M_ID, json.getInt("message_id"));
-			cv.put(CMMetaData.ChatMetaData.E_ID, json.getInt("event_id"));
-			cv.put(CMMetaData.ChatMetaData.DATE_TIME, json.getString("datetime"));
-			cv.put(CMMetaData.ChatMetaData.USER_ID, json.getInt("user_id"));
-			cv.put(CMMetaData.ChatMetaData.MESSAGE, json.getString("message"));
-			String deleted = json.getString("deleted");
+			cv.put(CMMetaData.ChatMetaData.M_ID, json.getInt(CMMetaData.ChatMetaData.M_ID));
+			cv.put(CMMetaData.ChatMetaData.E_ID, json.getInt(CMMetaData.ChatMetaData.E_ID));
+			cv.put(CMMetaData.ChatMetaData.CREATED, json.getString(CMMetaData.ChatMetaData.CREATED));
+			cv.put(CMMetaData.ChatMetaData.USER_ID, json.getInt(CMMetaData.ChatMetaData.USER_ID));
+			cv.put(CMMetaData.ChatMetaData.MESSAGE, json.getString(CMMetaData.ChatMetaData.MESSAGE));
+			String deleted = json.getString(CMMetaData.ChatMetaData.DELETED);
 			cv.put(CMMetaData.ChatMetaData.DELETED, !deleted.equals("null"));
-			cv.put(CMMetaData.ChatMetaData.UPDATED, json.getString("updated"));
+			cv.put(CMMetaData.ChatMetaData.UPDATED, json.getString(CMMetaData.ChatMetaData.UPDATED));
 		} catch (Exception e) {
 			Log.e("makeChatMessageObjectContentValuesFromJSON(JSONObject json)", e.getMessage());
 		}
 		return cv;
 	}
 
+	/**
+	 * Make ChatMessage ContentValues object from ChatMessageObject.
+	 * 
+	 * Makes ChatMessage ContentValues (insertable to local DB) object from
+	 * valid ChatMessageObject object
+	 * 
+	 * @author justas@mobileapps.lt
+	 * @return ContentValues object
+	 * @since 2012-10A02
+	 * @version 0.1
+	 */
+
 	public static ContentValues makeContentValuesFromChatMessageObject(ChatMessageObject chatMessage) {
 		ContentValues cv = new ContentValues();
 		try {
 			cv.put(CMMetaData.ChatMetaData.M_ID, chatMessage.getMessageId());
 			cv.put(CMMetaData.ChatMetaData.E_ID, chatMessage.getEventId());
-			cv.put(CMMetaData.ChatMetaData.DATE_TIME, chatMessage.getDateTime());
+			cv.put(CMMetaData.ChatMetaData.CREATED, chatMessage.getCreated());
 			cv.put(CMMetaData.ChatMetaData.USER_ID, chatMessage.getUserId());
 			cv.put(CMMetaData.ChatMetaData.MESSAGE, chatMessage.getMessage());
 			cv.put(CMMetaData.ChatMetaData.DELETED, chatMessage.isDeleted());
@@ -91,14 +130,15 @@ public class ChatManagement {
 	 * @version 0.1
 	 */
 
-	public static boolean getChatMessagesFromRemoteDb(Context context) {
+	public static boolean getChatMessagesForEventFromRemoteDb(Context context, int eventId) {
 		boolean success = false;
 		HttpClient hc = new DefaultHttpClient();
-		HttpPost post = new HttpPost(Data.getServerUrl() + "mobile/chat_threads");
+		HttpPost post = new HttpPost(Data.getServerUrl() + "mobile/chat_get");
 		MultipartEntity reqEntity = new MultipartEntity(HttpMultipartMode.BROWSER_COMPATIBLE);
 
 		try {
 			reqEntity.addPart(TOKEN, new StringBody(Data.getToken()));
+			reqEntity.addPart("event_id", new StringBody(String.valueOf(eventId)));
 		} catch (UnsupportedEncodingException e1) {
 			e1.printStackTrace();
 		}
@@ -123,10 +163,41 @@ public class ChatManagement {
 				}
 			}
 		} catch (Exception e) {
-			Log.e("getChatMessagesFromRemoteDb(Context context)", e.getMessage());
+			Log.e("getChatMessagesForEventFromRemoteDb(Context context, int eventId " + eventId + ")", e.getMessage());
 		}
 		return success;
 	}
+
+	public static ArrayList<ChatMessageObject> getChatMessagesForEventFromLocalDb(Context context, int eventId) {
+		ArrayList<ChatMessageObject> chatMessages = new ArrayList<ChatMessageObject>();
+		Cursor cur;
+		String selection = ChatProvider.CMMetaData.ChatMetaData.E_ID + "=" + eventId;
+		cur = context.getContentResolver().query(ChatProvider.CMMetaData.ChatMetaData.CONTENT_URI, null, selection, null, null);
+
+		if (cur.moveToFirst()) {
+			while (!cur.isAfterLast()) {
+				ChatMessageObject message = new ChatMessageObject();
+				message.setMessageId(cur.getInt(cur.getColumnIndex(ChatProvider.CMMetaData.ChatMetaData.M_ID)));
+				message.setEventId(cur.getInt(cur.getColumnIndex(ChatProvider.CMMetaData.ChatMetaData.E_ID)));
+				message.setCreated(cur.getLong(cur.getColumnIndex(ChatProvider.CMMetaData.ChatMetaData.CREATED)));
+				message.setUserId(cur.getInt(cur.getColumnIndex(ChatProvider.CMMetaData.ChatMetaData.USER_ID)));
+				message.setMessage(cur.getString(cur.getColumnIndex(ChatProvider.CMMetaData.ChatMetaData.MESSAGE)));
+				message.setDeleted(!cur.getString(cur.getColumnIndex(ChatProvider.CMMetaData.ChatMetaData.DELETED)).equals("null"));
+				message.setUpdated(cur.getString(cur.getColumnIndex(ChatProvider.CMMetaData.ChatMetaData.UPDATED)));
+				chatMessages.add(message);
+			}
+		}
+		return chatMessages;
+	}
+
+	/**
+	 * Inserts ChatMessage ContentValue object into local DB.
+	 * 
+	 * @author justas@mobileapps.lt
+	 * @return boolean success
+	 * @since 2012-10A02
+	 * @version 0.1
+	 */
 
 	public static boolean insertChatMessageContentValueToLocalDb(Context context, ContentValues cv) {
 		try {
@@ -138,13 +209,31 @@ public class ChatManagement {
 		}
 	}
 
-	public static boolean insertChatMessageToLoacalDb(Context context, ChatMessageObject chatMessageObject) {
+	/**
+	 * Inserts ChatMessage object into local DB.
+	 * 
+	 * @author justas@mobileapps.lt
+	 * @return boolean success
+	 * @since 2012-10A02
+	 * @version 0.1
+	 */
+
+	public static boolean insertChatMessageToLocalDb(Context context, ChatMessageObject chatMessageObject) {
 		if (insertChatMessageContentValueToLocalDb(context, makeContentValuesFromChatMessageObject(chatMessageObject))) {
 			return true;
 		} else {
 			return false;
 		}
 	}
+
+	/**
+	 * Removes ChatMessage by message id from remote and local DB.
+	 * 
+	 * @author justas@mobileapps.lt
+	 * @return boolean success
+	 * @since 2012-10A02
+	 * @version 0.1
+	 */
 
 	public static boolean removeChatMessageFromRemoteDb(Context context, int messageId) {
 		boolean success = false;
@@ -184,6 +273,15 @@ public class ChatManagement {
 		return success;
 	}
 
+	/**
+	 * Removes ChatMessage by message id from local DB.
+	 * 
+	 * @author justas@mobileapps.lt
+	 * @return boolean success
+	 * @since 2012-10A02
+	 * @version 0.1
+	 */
+
 	public static boolean removeChatMessageFromLocalDb(Context context, int messageId) {
 		boolean success = false;
 		try {
@@ -195,6 +293,16 @@ public class ChatManagement {
 		}
 		return success;
 	}
+
+	/**
+	 * Sends chat message to remote DB and stores it to local db by response
+	 * from server.
+	 * 
+	 * @author justas@mobileapps.lt
+	 * @return boolean success
+	 * @since 2012-10A02
+	 * @version 0.1
+	 */
 
 	public static boolean postChatMessage(Context context, String message, int eventId) {
 		boolean success = false;
@@ -237,5 +345,32 @@ public class ChatManagement {
 			Log.e("postChatMessage(Context context, message " + message + ", event id " + eventId + ")", e.getMessage());
 		}
 		return success;
+	}
+
+	public static ArrayList<ChatThreadObject> getConverstionsFromLocalDb(Context context, int eventId) {
+		Cursor cur;
+		String[] projection = { EventsProvider.EMetaData.EventsMetaData.E_ID, EventsProvider.EMetaData.EventsMetaData.TITLE,
+				EventsProvider.EMetaData.EventsMetaData.TIME_START_UTC_MILLISECONDS };
+		String selection = EventsProvider.EMetaData.EventsMetaData.MESSAGES_COUNT + ">0";
+		String[] selectionArgs = { "GROUP BY " + ChatProvider.CMMetaData.ChatMetaData.E_ID };
+		String sortOrder = EventsProvider.EMetaData.EventsMetaData.TIME_START_UTC_MILLISECONDS;
+		ArrayList<ChatThreadObject> conversations = new ArrayList<ChatThreadObject>();
+
+		cur = context.getContentResolver().query(EventsProvider.EMetaData.EventsMetaData.CONTENT_URI, projection, selection, selectionArgs,
+				sortOrder);
+
+		if (cur.moveToFirst()) {
+			while (!cur.isAfterLast()) {
+				ChatThreadObject conversation = new ChatThreadObject();
+				conversation.setEvent_id(cur.getInt(cur.getColumnIndex(EventsProvider.EMetaData.EventsMetaData.E_ID)));
+				conversation.setTitle(cur.getString(cur.getColumnIndex(EventsProvider.EMetaData.EventsMetaData.TITLE)));
+				conversation.setTimeStart(cur.getLong(cur
+						.getColumnIndex(EventsProvider.EMetaData.EventsMetaData.TIME_START_UTC_MILLISECONDS)));
+				conversation.setMessage_count(cur.getInt(cur.getColumnIndex(EventsProvider.EMetaData.EventsMetaData.MESSAGES_COUNT)));
+				conversations.add(conversation);
+			}
+		}
+
+		return conversations;
 	}
 }
