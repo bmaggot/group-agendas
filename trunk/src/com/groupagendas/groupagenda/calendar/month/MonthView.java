@@ -21,7 +21,6 @@ import com.groupagendas.groupagenda.calendar.AbstractCalendarView;
 import com.groupagendas.groupagenda.calendar.MonthCellState;
 import com.groupagendas.groupagenda.calendar.adapters.MonthAdapter;
 import com.groupagendas.groupagenda.data.CalendarSettings;
-import com.groupagendas.groupagenda.data.DataManagement;
 import com.groupagendas.groupagenda.data.EventManagement;
 import com.groupagendas.groupagenda.events.Event;
 import com.groupagendas.groupagenda.events.EventsProvider;
@@ -140,7 +139,7 @@ public class MonthView extends AbstractCalendarView {
 
 	@Override
 	protected void updateEventLists() {
-		eventsAdapter.setList(Utils.getEventsFromTreemap(selectedDate, sortedEvents));
+		eventsAdapter.setList(TreeMapUtils.getEventsFromTreemap(selectedDate, sortedEvents));
 		eventsAdapter.notifyDataSetChanged();
 		
 	}
@@ -301,7 +300,6 @@ public class MonthView extends AbstractCalendarView {
 
 	private class UpdateEventsInfoTask extends AsyncTask<Void, Integer, Void> {
 		private Context context = MonthView.this.getContext();
-		private DataManagement dm = DataManagement.getInstance(context);
 		
 		/**
 		 * @author justinas.marcinka@gmail.com
@@ -352,7 +350,7 @@ public class MonthView extends AbstractCalendarView {
 			Calendar tmp = (Calendar) firstShownDate.clone();		
 			for (MonthDayFrame frame : daysList){
 				if(!frame.hasBubbles){		
-					frame.DrawColourBubbles(Utils.getEventsFromTreemap(tmp, sortedEvents), FRAME_WIDTH);
+					frame.DrawColourBubbles(TreeMapUtils.getEventsFromTreemap(tmp, sortedEvents), FRAME_WIDTH);
 				}		
 				tmp.add(Calendar.DATE, 1);
 			}

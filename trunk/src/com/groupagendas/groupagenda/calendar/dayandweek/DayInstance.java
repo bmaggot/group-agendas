@@ -11,6 +11,7 @@ import android.content.Context;
 
 import com.groupagendas.groupagenda.data.DataManagement;
 import com.groupagendas.groupagenda.events.Event;
+import com.groupagendas.groupagenda.utils.TreeMapUtils;
 import com.groupagendas.groupagenda.utils.Utils;
 
 
@@ -42,7 +43,7 @@ public class DayInstance  {
 
 		
 		private void updateEventLists(TreeMap<Calendar, ArrayList<Event>> tm) {
-			ArrayList<Event> events = Utils.getEventsFromTreemap(selectedDate, tm);
+			ArrayList<Event> events = TreeMapUtils.getEventsFromTreemap(selectedDate, tm);
 			allDayEvents = new ArrayList<Event>();
 			hourEventsList = new ArrayList<Event>();
 			hourEventsTimetable = null;

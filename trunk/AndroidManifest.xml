@@ -148,6 +148,7 @@
         <provider
             android:name=".events.EventsProvider"
             label="EventsProvider"
+             android:exported="false"
             android:authorities="com.groupagendas.groupagenda.events.EventsProvider" >
         </provider>
         <provider
@@ -221,6 +222,7 @@
         <provider
             android:name=".timezone.TimezoneProvider"
             label="TimezoneProvider"
+            android:exported="false"
             android:authorities="com.groupagendas.groupagenda.timezone.TimezoneProvider" >
         </provider>
 
@@ -261,6 +263,7 @@
         <activity
             android:name=".contacts.importer.RequestTokenActivity"
             android:launchMode="singleTask"
+            android:exported="false"
             android:theme="@android:style/Theme.NoTitleBar" >
             <intent-filter>
                 <action android:name="android.intent.action.VIEW" />

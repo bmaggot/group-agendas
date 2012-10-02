@@ -13,8 +13,8 @@ import android.widget.TextView;
 import com.groupagendas.groupagenda.R;
 import com.groupagendas.groupagenda.calendar.MonthCellState;
 import com.groupagendas.groupagenda.data.CalendarSettings;
-import com.groupagendas.groupagenda.data.Data;
 import com.groupagendas.groupagenda.events.Event;
+import com.groupagendas.groupagenda.utils.TreeMapUtils;
 import com.groupagendas.groupagenda.utils.Utils;
 
 public class MonthInstance implements OnTouchListener{
@@ -125,7 +125,7 @@ public class MonthInstance implements OnTouchListener{
 			dayCell = (YearViewMonthInnerCell) ((LinearLayout)daysTable.getChildAt(0)).getChildAt(j);
 			dayCell.setDayNum("" + day);
 			dayCell.setState(MonthCellState.DEFAULT);
-			dayCell.setHasEvents(!Utils.getEventsFromTreemap(tmp, tm).isEmpty() && SHOW_BUBBLES);
+			dayCell.setHasEvents(!TreeMapUtils.getEventsFromTreemap(tmp, tm).isEmpty() && SHOW_BUBBLES);
 			tmp.add(Calendar.DATE, 1);
 			day++;
 		}
@@ -137,7 +137,7 @@ public class MonthInstance implements OnTouchListener{
 							.getChildAt(i)).getChildAt(j);
 					dayCell.setDayNum("" + day);
 					dayCell.setState(MonthCellState.DEFAULT);
-					dayCell.setHasEvents(!Utils.getEventsFromTreemap(tmp, tm).isEmpty() && SHOW_BUBBLES);
+					dayCell.setHasEvents(!TreeMapUtils.getEventsFromTreemap(tmp, tm).isEmpty() && SHOW_BUBBLES);
 					day++;
 					tmp.add(Calendar.DATE, 1);
 					if (day > date.getActualMaximum(Calendar.DAY_OF_MONTH))
