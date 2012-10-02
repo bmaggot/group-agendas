@@ -106,7 +106,8 @@ public class EventsProvider extends ContentProvider{
 			
 			public static final String DEFAULT_SORT_ORDER = TIME_START_UTC_MILLISECONDS+" ASC";
 			public static final String IS_BIRTHDAY = "is_birthday";
-			public static String IS_ALL_DAY = "is_all_day";
+			public static final String IS_ALL_DAY = "is_all_day";
+			public static final String MESSAGES_COUNT = "messages_count";
 			
 		}
 	}
@@ -171,6 +172,7 @@ public class EventsProvider extends ContentProvider{
 		EM.put(EMetaData.EventsMetaData.ASSIGNED_CONTACTS, EMetaData.EventsMetaData.ASSIGNED_CONTACTS);
 		EM.put(EMetaData.EventsMetaData.ASSIGNED_GROUPS, EMetaData.EventsMetaData.ASSIGNED_GROUPS);
 		EM.put(EMetaData.EventsMetaData.INVITED, EMetaData.EventsMetaData.INVITED);
+		EM.put(EMetaData.EventsMetaData.MESSAGES_COUNT, EMetaData.EventsMetaData.MESSAGES_COUNT);
 		
 		EM.put(EMetaData.EventsMetaData.UPLOADED_SUCCESSFULLY, EMetaData.EventsMetaData.UPLOADED_SUCCESSFULLY);
 		
@@ -394,6 +396,7 @@ public class EventsProvider extends ContentProvider{
 				+EMetaData.EventsMetaData.ASSIGNED_GROUPS+" TEXT ,"
 				+EMetaData.EventsMetaData.INVITED+" TEXT ,"
 				+EMetaData.EventsMetaData.UPLOADED_SUCCESSFULLY+" INTEGER DEFAULT 0, "
+				+EMetaData.EventsMetaData.MESSAGES_COUNT+" INTEGER DEFAULT 0, "
 				+ "PRIMARY KEY (" + EMetaData.EventsMetaData.E_ID +  ", " + EMetaData.EventsMetaData.CREATED_UTC_MILLISECONDS+ ") ON CONFLICT REPLACE"
 				+")";
 			db.execSQL(query);

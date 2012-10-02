@@ -101,6 +101,8 @@ private static final int REMINDER_3 = 3;
 	private ArrayList<Invited> invited = null;
 	private String invited_DB_entry = "";
 	
+	private int message_count = 0;
+	
 	//TODO implement event missing attributes 
 	/* public String confirmed;
 	 * public Calendar createdCalendar;
@@ -129,6 +131,7 @@ private static final int REMINDER_3 = 3;
 	 * public String wp; (work private)
 	 * */
 	
+
 	@Override
 	public String toString(){
 		String text = this.title;
@@ -753,7 +756,12 @@ public Invited getInvited(int i) {
 	return getInvited().get(i);
 }
 
-
+public int getMessage_count() {
+	return message_count;
+}
+public void setMessage_count(int message_count) {
+	this.message_count = message_count;
+}
 
 
 	
