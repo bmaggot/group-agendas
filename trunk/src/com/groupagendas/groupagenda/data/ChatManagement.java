@@ -75,8 +75,7 @@ public class ChatManagement {
 			cv.put(CMMetaData.ChatMetaData.DELETED, chatMessage.isDeleted());
 			cv.put(CMMetaData.ChatMetaData.UPDATED, chatMessage.getUpdated());
 		} catch (Exception e) {
-			Log.e("makeContentValuesFromChatMessageObject(ChatMessageObject " + chatMessage.getMessageId() + ")",
-					e.getMessage());
+			Log.e("makeContentValuesFromChatMessageObject(ChatMessageObject " + chatMessage.getMessageId() + ")", e.getMessage());
 		}
 		return cv;
 	}
@@ -115,7 +114,7 @@ public class ChatManagement {
 					if (success) {
 						JSONArray chatMessages = object.getJSONArray("items");
 						for (int i = 0, l = chatMessages.length(); i < l; i++) {
-							insertChatMessageContentValueToLoacalDb(context,
+							insertChatMessageContentValueToLocalDb(context,
 									makeChatMessageObjectContentValueFromJSON(chatMessages.getJSONObject(i)));
 						}
 					} else {
@@ -129,7 +128,7 @@ public class ChatManagement {
 		return success;
 	}
 
-	public static boolean insertChatMessageContentValueToLoacalDb(Context context, ContentValues cv) {
+	public static boolean insertChatMessageContentValueToLocalDb(Context context, ContentValues cv) {
 		try {
 			context.getContentResolver().insert(ChatProvider.CMMetaData.ChatMetaData.CONTENT_URI, cv);
 			return true;
@@ -140,7 +139,7 @@ public class ChatManagement {
 	}
 
 	public static boolean insertChatMessageToLoacalDb(Context context, ChatMessageObject chatMessageObject) {
-		if (insertChatMessageContentValueToLoacalDb(context, makeContentValuesFromChatMessageObject(chatMessageObject))) {
+		if (insertChatMessageContentValueToLocalDb(context, makeContentValuesFromChatMessageObject(chatMessageObject))) {
 			return true;
 		} else {
 			return false;
@@ -223,7 +222,8 @@ public class ChatManagement {
 						JSONObject object = new JSONObject(resp);
 						success = object.getBoolean("success");
 						if (success) {
-							// TODO MAKE SUCCESS MESSAGE
+							insertChatMessageContentValueToLocalDb(context,
+									makeChatMessageObjectContentValueFromJSON(object.getJSONObject("message")));
 						} else {
 							Toast.makeText(context, object.getString("error"), Toast.LENGTH_LONG);
 						}
@@ -235,17 +235,6 @@ public class ChatManagement {
 			}
 		} catch (Exception e) {
 			Log.e("postChatMessage(Context context, message " + message + ", event id " + eventId + ")", e.getMessage());
-		}
-		return success;
-	}
-
-	public static boolean insertChatMessageIntoLocalDb(Context context, ContentValues cv) {
-		boolean success = false;
-		try {
-			context.getContentResolver().insert(ChatProvider.CMMetaData.ChatMetaData.CONTENT_URI, cv);
-			success = true;
-		} catch (Exception e) {
-			Log.e("removeChatMessageFromLoacalDB(Context context, int " + cv.get("message_id") + ")", e.getMessage());
 		}
 		return success;
 	}
