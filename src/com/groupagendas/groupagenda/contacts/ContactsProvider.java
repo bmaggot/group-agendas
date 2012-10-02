@@ -20,7 +20,7 @@ public class ContactsProvider extends ContentProvider{
 
 	public static class CMetaData {
 		public static final String AUTHORITY = "com.groupagendas.groupagenda.contacts.ContactsProvider";
-		public static final String DATABASE_NAME = "local.sqlite";
+		public static final String DATABASE_NAME = "contacts.sqlite";
 
 		public static final int DATABASE_VERSION = 1;
 
