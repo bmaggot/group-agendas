@@ -17,8 +17,10 @@ import com.groupagendas.groupagenda.R;
 import com.groupagendas.groupagenda.calendar.AbstractCalendarView;
 import com.groupagendas.groupagenda.data.CalendarSettings;
 import com.groupagendas.groupagenda.data.DataManagement;
+import com.groupagendas.groupagenda.data.EventManagement;
 import com.groupagendas.groupagenda.events.Event;
 import com.groupagendas.groupagenda.events.EventsProvider;
+import com.groupagendas.groupagenda.utils.TreeMapUtils;
 import com.groupagendas.groupagenda.utils.Utils;
 
 public class AgendaView extends AbstractCalendarView {
@@ -195,9 +197,9 @@ public class AgendaView extends AbstractCalendarView {
 					EventsProvider.EMetaData.EventsMetaData.ICON,
 					EventsProvider.EMetaData.EventsMetaData.TITLE};
 			
-			Cursor result = dm.createEventProjectionByDateFromLocalDb(
+			Cursor result = EventManagement.createEventProjectionByDateFromLocalDb(context,
 					projection, dateStart, 7,
-					DataManagement.TM_EVENTS_FROM_GIVEN_DATE, null, true);
+					EventManagement.TM_EVENTS_FROM_GIVEN_DATE, null, true);
 			if (result.moveToFirst()) {
 				while (!result.isAfterLast()) {
 					Event eventProjection = new Event();
@@ -235,7 +237,7 @@ public class AgendaView extends AbstractCalendarView {
 
 		@Override
 		protected Void doInBackground(Void... params) {
-			sortedEvents = dm
+			sortedEvents = TreeMapUtils
 					.sortEvents(getEventProjectionsForDisplay(shownDate));
 			return null;
 		}

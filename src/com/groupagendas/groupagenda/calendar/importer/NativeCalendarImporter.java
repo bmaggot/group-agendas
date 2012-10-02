@@ -12,6 +12,7 @@ import android.os.Build;
 
 import com.groupagendas.groupagenda.account.Account;
 import com.groupagendas.groupagenda.data.DataManagement;
+import com.groupagendas.groupagenda.data.EventManagement;
 import com.groupagendas.groupagenda.events.Event;
 import com.groupagendas.groupagenda.utils.Utils;
 
@@ -50,7 +51,7 @@ public class NativeCalendarImporter {
 	    	event.timezone = account.getTimezone();
 	    	event.birthday = true;
 	    	DataManagement dm = DataManagement.getInstance(context);
-	    	dm.createEventInRemoteDb(event);
+	    	EventManagement.createEventInRemoteDb(event);
 	    	cursor.moveToNext();
 	    }
 	}

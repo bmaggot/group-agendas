@@ -17,8 +17,10 @@ import com.groupagendas.groupagenda.calendar.AbstractCalendarView;
 import com.groupagendas.groupagenda.calendar.MonthCellState;
 import com.groupagendas.groupagenda.data.CalendarSettings;
 import com.groupagendas.groupagenda.data.DataManagement;
+import com.groupagendas.groupagenda.data.EventManagement;
 import com.groupagendas.groupagenda.events.Event;
 import com.groupagendas.groupagenda.events.EventsProvider;
+import com.groupagendas.groupagenda.utils.TreeMapUtils;
 import com.groupagendas.groupagenda.utils.Utils;
 
 public class YearView extends AbstractCalendarView {
@@ -195,7 +197,7 @@ public class YearView extends AbstractCalendarView {
 				EventsProvider.EMetaData.EventsMetaData.ICON,
 				EventsProvider.EMetaData.EventsMetaData.TITLE,
 				};
-		Cursor result = dm.createEventProjectionByDateFromLocalDb(projection, date, 0, DataManagement.TM_EVENTS_ON_GIVEN_YEAR, null, true);
+		Cursor result = EventManagement.createEventProjectionByDateFromLocalDb(context, projection, date, 0, EventManagement.TM_EVENTS_ON_GIVEN_YEAR, null, true);
 		if (result.moveToFirst()) {
 			while (!result.isAfterLast()) {
 				Event eventProjection = new Event();
@@ -219,7 +221,7 @@ public class YearView extends AbstractCalendarView {
 
 	@Override
 	protected Void doInBackground(Void... params) {
-		sortedEvents = dm.sortEvents(getEventProjectionsForDisplay(selectedDate));
+		sortedEvents = TreeMapUtils.sortEvents(getEventProjectionsForDisplay(selectedDate));
 		return null;
 	}
 	

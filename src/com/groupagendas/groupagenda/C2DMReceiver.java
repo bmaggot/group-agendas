@@ -12,9 +12,11 @@ import android.util.Log;
 import com.google.android.c2dm.C2DMBaseReceiver;
 import com.groupagendas.groupagenda.chat.ChatMessageActivity;
 import com.groupagendas.groupagenda.data.DataManagement;
+import com.groupagendas.groupagenda.data.EventManagement;
 import com.groupagendas.groupagenda.error.report.Reporter;
 import com.groupagendas.groupagenda.events.EventsActivity;
 import com.groupagendas.groupagenda.utils.AgendaUtils;
+import com.groupagendas.groupagenda.utils.Utils;
 
 public class C2DMReceiver extends C2DMBaseReceiver {
 	private static boolean isChatMessage = false;
@@ -78,7 +80,7 @@ public class C2DMReceiver extends C2DMBaseReceiver {
 			notification.flags = Notification.FLAG_AUTO_CANCEL;
 
 			Intent notificationIntent;
-			com.groupagendas.groupagenda.events.Event event = DataManagement.getInstance(context).getEventFromLocalDb(context, Integer.parseInt(rel_id));
+			com.groupagendas.groupagenda.events.Event event = EventManagement.getEventFromLocalDb(context, Integer.parseInt(rel_id));
 			if(isChatMessage){
 				notificationIntent = new Intent(context, ChatMessageActivity.class);
 				notificationIntent.putExtra("event_id", event.event_id);
@@ -92,7 +94,7 @@ public class C2DMReceiver extends C2DMBaseReceiver {
 				notificationIntent = new Intent(context, EventsActivity.class);
 				NavbarActivity.showInvites = true;
 				if (getEventById(rel_id, context) == null) {
-					DataManagement.getInstance(context).getEventsFromRemoteDb("");
+					EventManagement.getEventsFromRemoteDb(context, "");
 				}
 				if (event != null) {
 					notificationIntent.putExtra("event_id", event.event_id);

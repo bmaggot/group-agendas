@@ -47,6 +47,7 @@ import com.groupagendas.groupagenda.data.CalendarSettings;
 import com.groupagendas.groupagenda.data.ContactManagement;
 import com.groupagendas.groupagenda.data.Data;
 import com.groupagendas.groupagenda.data.DataManagement;
+import com.groupagendas.groupagenda.data.EventManagement;
 import com.groupagendas.groupagenda.settings.AutoColorItem;
 import com.groupagendas.groupagenda.settings.AutoIconItem;
 import com.groupagendas.groupagenda.templates.TemplatesAdapter;
@@ -83,7 +84,7 @@ public class NewEventActivity extends EventActivity {
 	private boolean remindersShown = false;
 	private boolean alarmsShown = false;
 	private boolean countrySelected = false;
-
+	protected Event event;
 	private CheckBox templateTrigger;
 
 	@Override
@@ -839,7 +840,7 @@ public class NewEventActivity extends EventActivity {
 
 			int testEvent = event.isValid();
 			if (testEvent == 0) {
-				dm.createNewEvent(event);	
+				EventManagement.createNewEvent(NewEventActivity.this, event);	
 				Data.selectedContacts.clear(); //TODO should it be handled this way?
 				return true;
 			} else {
@@ -971,7 +972,7 @@ public class NewEventActivity extends EventActivity {
 
 	}
 
-	private void showDateTimeDialog(final EditText view, final int id) {
+	private void showDateTimeDialog(final EditText view, final int id) { //TODO put to parent
 		// Create the dialog
 		final Dialog mDateTimeDialog = new Dialog(this);
 		// Inflate the root layout
