@@ -35,13 +35,12 @@ public class ChatProvider extends ContentProvider {
 
 			public static final String M_ID = "message_id";
 			public static final String E_ID = "event_id";
-			public static final String DATE_TIME = "datetime";
 			public static final String USER_ID = "user_id";
 			public static final String MESSAGE = "message";
 			public static final String DELETED = "deleted";
 			public static final String UPDATED = "updated";
 			public static final String SUCCESSFULLY_UPLOADED = "successfully_uploaded";
-			public static final String CREATED = "created";
+			public static final String CREATED = "timestamp";
 			public static final String MODIFIED = "modified";
 			
 			public static final String DEFAULT_SORT_ORDER = M_ID+" COLLATE NOCASE ASC";
@@ -53,7 +52,6 @@ public class ChatProvider extends ContentProvider {
 		CTM = new HashMap<String, String>();
 		CTM.put(CMMetaData.ChatMetaData.M_ID, CMMetaData.ChatMetaData.M_ID);
 		CTM.put(CMMetaData.ChatMetaData.E_ID, CMMetaData.ChatMetaData.E_ID);
-		CTM.put(CMMetaData.ChatMetaData.DATE_TIME , CMMetaData.ChatMetaData.DATE_TIME);
 		CTM.put(CMMetaData.ChatMetaData.USER_ID, CMMetaData.ChatMetaData.USER_ID);
 		CTM.put(CMMetaData.ChatMetaData.MESSAGE, CMMetaData.ChatMetaData.MESSAGE);
 		CTM.put(CMMetaData.ChatMetaData.DELETED, CMMetaData.ChatMetaData.DELETED);
@@ -193,7 +191,6 @@ public class ChatProvider extends ContentProvider {
 			String query = "CREATE TABLE " + CMMetaData.CHAT_TABLE + " (" 
 					+ CMMetaData.ChatMetaData.M_ID + " INTEGER"
 					+ CMMetaData.ChatMetaData.E_ID + "INTEGER"
-					+ CMMetaData.ChatMetaData.DATE_TIME + "TEXT"
 					+ CMMetaData.ChatMetaData.USER_ID + "INTEGER" 
 					+ CMMetaData.ChatMetaData.MESSAGE + "TEXT"
 					+ CMMetaData.ChatMetaData.DELETED + "TEXT"
