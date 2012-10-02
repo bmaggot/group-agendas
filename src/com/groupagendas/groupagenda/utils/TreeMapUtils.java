@@ -4,8 +4,6 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.TreeMap;
-
-import com.groupagendas.groupagenda.data.Data;
 import com.groupagendas.groupagenda.events.Event;
 
 public class TreeMapUtils {
@@ -63,15 +61,15 @@ public class TreeMapUtils {
 		return tm;
 	}
 
-	public static void putEventIntoTreeMap(Event event) {
+	public static void putEventIntoTreeMap(TreeMap<Calendar, ArrayList<Event>> tm,Event event) {
 		String date_format = SERVER_TIMESTAMP_FORMAT;
 		Calendar event_start = (Calendar) event.getStartCalendar().clone();
 		String dayStr = new SimpleDateFormat("yyyy-MM-dd").format(event_start.getTime());
 		Calendar event_day = Utils.stringToCalendar(dayStr + " 00:00:00", date_format);
-		Data.setSortedEvents(putValueIntoTreeMap(Data.getSortedEvents(), event_day, event));
+		tm = putValueIntoTreeMap(tm, event_day, event);
 	}
 
-	public static void deleteEventfromTheTreeMap(Event event) {
+	public static void deleteEventfromTheTreeMap(TreeMap<Calendar, ArrayList<Event>> tm, Event event) {
 		Calendar event_start = null;
 		Calendar event_end = null;
 		Calendar tmp_event_start = null;
@@ -87,13 +85,13 @@ public class TreeMapUtils {
 			if (difference == 0) {
 				String dayStr = new SimpleDateFormat("yyyy-MM-dd").format(event_start.getTime());
 				Calendar eventDay = Utils.stringToCalendar(dayStr + " 00:00:00", SERVER_TIMESTAMP_FORMAT);
-				Data.getSortedEvents().get(eventDay).remove(event);
+				tm.get(eventDay).remove(event);
 			} else if (difference >= 0) {
 				Calendar eventDay = null;
 				for (int i = 0; i < difference; i++) {
 					String dayStr = new SimpleDateFormat("yyyy-MM-dd").format(event_start.getTime());
 					eventDay = Utils.stringToCalendar(dayStr + " 00:00:00", SERVER_TIMESTAMP_FORMAT);
-					Data.getSortedEvents().get(eventDay).remove(event);
+					tm.get(eventDay).remove(event);
 					event_start.add(Calendar.DAY_OF_MONTH, 1);
 				}
 				String dayStr = new SimpleDateFormat("yyyy-MM-dd").format(event_end.getTime());
@@ -101,14 +99,14 @@ public class TreeMapUtils {
 				if (eventTmpEnd.after(eventDay) && event_end.after(eventTmpEnd)) {
 					dayStr = new SimpleDateFormat("yyyy-MM-dd").format(event_start.getTime());
 					event_start = Utils.stringToCalendar(dayStr + " 00:00:00", SERVER_TIMESTAMP_FORMAT);
-					Data.getSortedEvents().get(event_start).remove(event);
+					tm.get(event_start).remove(event);
 				}
 			}
 		}
 	}
 
-	public void putNewEventIntoTreeMap(Event event) {
-		TreeMap<Calendar, ArrayList<Event>> tm = Data.getSortedEvents();
+	public void putNewEventIntoTreeMap(TreeMap<Calendar, ArrayList<Event>> tm, Event event) {
+		
 		Calendar event_start = null;
 		Calendar event_end = null;
 		Calendar tmp_event_start = null;
@@ -142,6 +140,5 @@ public class TreeMapUtils {
 				}
 			}
 		}
-		Data.setSortedEvents(tm);
 	}
 }
