@@ -106,15 +106,15 @@ public class EventActivity extends Activity {
 		event.setEndCalendar(endCalendar);
 		event.setModifiedMillisUtc(Calendar.getInstance().getTimeInMillis());
 
-		event.country = countryArray[countrySpinner.getSelectedItemPosition()];
-		event.zip = zipView.getText().toString();
-		event.city = cityView.getText().toString();
-		event.street = streetView.getText().toString();
-		event.location = locationView.getText().toString();
-		event.go_by = gobyView.getText().toString();
-		event.take_with_you = takewithyouView.getText().toString();
-		event.cost = costView.getText().toString();
-		event.accomodation = accomodationView.getText().toString();
+		event.setCountry(countryArray[countrySpinner.getSelectedItemPosition()]);
+		event.setZip(zipView.getText().toString());
+		event.setCity(cityView.getText().toString());
+		event.setStreet(streetView.getText().toString());
+		event.setLocation(locationView.getText().toString());
+		event.setGo_by(gobyView.getText().toString());
+		event.setTake_with_you(takewithyouView.getText().toString());
+		event.setCost(costView.getText().toString());
+		event.setAccomodation(accomodationView.getText().toString());
 		if (alarm1time != null) {
 			event.setAlarm1(Utils.formatCalendar(alarm1time, DataManagement.SERVER_TIMESTAMP_FORMAT));
 		}
@@ -127,6 +127,8 @@ public class EventActivity extends Activity {
 		event.setReminder1(reminder1time);
 		event.setReminder2(reminder2time);
 		event.setReminder3(reminder3time);
+		event.setIcon(selectedIcon);
+		event.setColor(selectedColor);
 		return event;
 
 	}
@@ -147,4 +149,6 @@ public class EventActivity extends Activity {
 			return getString(R.string.unknown_event_error);
 		}
 	}
+	
+	
 }

@@ -126,6 +126,26 @@ public class EventEditActivity extends EventActivity {
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.event_edit);
+
+	}
+	
+	@Override
+	public void onResume() {
+		super.onResume();
+		initViewItems();
+		hideAddressPanel();
+		hideDetailsPanel();
+		addressPanel.setVisibility(View.GONE);
+		detailsPanel.setVisibility(View.GONE);
+		addressDetailsPanel.setVisibility(View.VISIBLE);
+		
+		event_id = intent.getIntExtra("event_id", 0); //TODO implement offline mode event Edit
+		if (event_id > 0) {
+			new GetEventTask().execute(event_id);
+				}
+	}
+
+	private void initViewItems() {
 		
 		
 		pb = (ProgressBar) findViewById(R.id.progress);
@@ -436,22 +456,8 @@ public class EventEditActivity extends EventActivity {
 			}
 		});
 	}
-
-	@Override
-	public void onResume() {
-		super.onResume();
-		hideAddressPanel();
-		hideDetailsPanel();
-		addressPanel.setVisibility(View.GONE);
-		detailsPanel.setVisibility(View.GONE);
-		addressDetailsPanel.setVisibility(View.VISIBLE);
 		
-		event_id = intent.getIntExtra("event_id", 0); //TODO implement offline mode event Edit
-		if (event_id > 0) {
-			new GetEventTask().execute(event_id);
-				}
-	}
-
+	
 	@Override
 	public boolean onKeyDown(int keyCode, KeyEvent event) {
 		if (keyCode == KeyEvent.KEYCODE_BACK) {
@@ -527,7 +533,6 @@ public class EventEditActivity extends EventActivity {
 			titleView.setText(result.getTitle());
 // if this user is owner of event, fields can be edited		
 			if (result.is_owner()) {
-				titleView.addTextChangedListener(filterTextWatcher);
 				saveButton.setVisibility(View.VISIBLE);
 				deleteButton.setVisibility(View.VISIBLE);
 				
@@ -699,6 +704,27 @@ public class EventEditActivity extends EventActivity {
 				zipView.setText(result.zip);
 				showView(zipView, addressLine);		
 			}
+			if (result.getLocation().length() > 0) {
+				locationView.setText(result.location);
+				showView(locationView, detailsLine);
+			}
+			if (result.getGo_by().length() > 0 ) {
+				gobyView.setText(result.go_by);
+				showView(gobyView, detailsLine);	
+			}			
+			if (result.getTake_with_you().length() > 0 ) {
+				takewithyouView.setText(result.take_with_you);
+				showView(takewithyouView, detailsLine);	
+			}	
+			if (result.getCost().length() > 0 ) {
+				costView.setText(result.cost);
+				showView(costView, detailsLine);
+			}
+			if (result.getAccomodation().length() > 0 ) {
+				accomodationView.setText(result.accomodation);
+				showView(accomodationView, detailsLine);
+			}
+			
 
 			chatMessengerButton.setOnClickListener(new OnClickListener() {
 
@@ -712,6 +738,7 @@ public class EventEditActivity extends EventActivity {
 				}
 			});
 			
+	
 			
 	
 //		TODO JUSTUI V implement with timestamps from API		
@@ -755,24 +782,6 @@ public class EventEditActivity extends EventActivity {
 //			inviteButton.setBackgroundResource(R.drawable.event_invite_people_button_standalone);
 //			}
 
-		
-		
-		
-		
-
-
-		
-				
-
-
-//			}
-//
-//			
-
-			
-
-
-
 			// type TODO DEAD-CODE
 			// typeSpinner = (Spinner) findViewById(R.id.typeSpinner);
 			// ArrayAdapter<CharSequence> adapterType =
@@ -808,11 +817,6 @@ public class EventEditActivity extends EventActivity {
 			// }
 			// }
 			// });
-			
-	//TODO 		
-			
-			
-			
 
 
 
@@ -831,26 +835,7 @@ public class EventEditActivity extends EventActivity {
 			// }
 			// });
 			
-			if (result.location != null && !result.location.equals("null")) {
-				locationView.setText(result.location);
-				showView(locationView, detailsLine);
-			}
-			if (result.go_by != null && !result.go_by.equals("null")) {
-				gobyView.setText(result.go_by);
-				showView(gobyView, detailsLine);	
-			}			
-			if (result.take_with_you != null && !result.take_with_you.equals("null")) {
-				takewithyouView.setText(result.take_with_you);
-				showView(takewithyouView, detailsLine);	
-			}	
-			if (result.cost != null && !result.cost.equals("null")) {
-				costView.setText(result.cost);
-				showView(costView, detailsLine);
-			}
-			if (result.accomodation != null && !result.accomodation.equals("null")) {
-				accomodationView.setText(result.accomodation);
-				showView(accomodationView, detailsLine);
-			}
+
 
 //				
 //
@@ -893,52 +878,10 @@ public class EventEditActivity extends EventActivity {
 		}
 	}
 
-	private void editDb(int event_id, int status, boolean success) {
-		Object[] array = { event_id, status, success, dm };
-		new EventStatusUpdater().execute(array);
-	}
-
-	private TextWatcher filterTextWatcher = new TextWatcher() {
-
-		@Override
-		public void afterTextChanged(Editable s) {
-		}
-
-		@Override
-		public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-		}
-
-		@Override
-		public void onTextChanged(CharSequence s, int start, int before, int count) {
-			//TODO autoicons
-//			if (s != null) {
-////				if (result.icon == null || event.icon.equals("null") || event.icon.equals("")) {
-//////					for (int i = 0, l = autoIcons.size(); i < l; i++) {
-//////						final AutoIconItem autoIcon = autoIcons.get(i);
-////////						if (s.toString().contains(autoIcon.keyword)) {
-////////							event.icon = autoIcon.icon;
-////////							int iconId = getResources().getIdentifier(autoIcon.icon, "drawable", "com.groupagendas.groupagenda");
-////////							iconView.setImageResource(iconId);
-////////						}
-//////					}
-////				}
-//				// if (event.color == null || event.color.equals("null") ||
-//				// event.color.equals("")) {
-//				// for (int i = 0, l = autoColors.size(); i < l; i++) {
-//				// final AutoColorItem autoColor = autoColors.get(i);
-//				// if (s.toString().contains(autoColor.keyword)) {
-//				// event.setColor(autoColor.color);
-//				// String nameColor = "calendarbubble_" + autoColor.color + "_";
-//				// int image = getResources().getIdentifier(nameColor,
-//				// "drawable", "com.groupagendas.groupagenda");
-//				// colorView.setImageResource(image);
-//				// }
-//				// }
-//				// }
-//			}
-		}
-
-	};
+//	private void editDb(int event_id, int status, boolean success) {
+//		Object[] array = { event_id, status, success, dm };
+//		new EventStatusUpdater().execute(array);
+//	}
 
 
 	class UpdateEventTask extends AsyncTask<Event, Void, Boolean> {
