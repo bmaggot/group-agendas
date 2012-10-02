@@ -6,7 +6,9 @@
  */
 package com.groupagendas.groupagenda.calendar.year;
 
+import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.TreeMap;
 
 import android.app.Dialog;
 import android.content.Context;
@@ -19,7 +21,9 @@ import com.groupagendas.groupagenda.R;
 import com.groupagendas.groupagenda.calendar.adapters.YearViewEventsAdapter;
 import com.groupagendas.groupagenda.data.Data;
 import com.groupagendas.groupagenda.data.DataManagement;
+import com.groupagendas.groupagenda.events.Event;
 import com.groupagendas.groupagenda.events.NewEventActivity;
+import com.groupagendas.groupagenda.utils.TreeMapUtils;
 import com.groupagendas.groupagenda.utils.Utils;
 
 public class YearViewOnClickDialog extends Dialog implements android.view.View.OnClickListener{
@@ -34,9 +38,11 @@ public class YearViewOnClickDialog extends Dialog implements android.view.View.O
 	 * Constructor that should be used to create this dialog with default dialog style
 	 * @param context Context activity for this dialog
 	 * @param selectedDate Date that is used to fill dialog events list and title
+	 * @param tm 
+	 * @param events Events list for this dialog
 	 */
-	public YearViewOnClickDialog(Context context, Calendar selectedDate) {
-		this (context, selectedDate, 0);
+	public YearViewOnClickDialog(Context context, Calendar selectedDate, TreeMap<Calendar, ArrayList<Event>> tm) {
+		this (context, selectedDate, 0, tm);
 		
 		
 	}
@@ -46,9 +52,11 @@ public class YearViewOnClickDialog extends Dialog implements android.view.View.O
 	 * @param context Context activity for this dialog
 	 * @param selectedDate Date that is used to fill dialog events list and title
 	 * @param styleResId custom dialog style
+	 * @param tm 
+	 * @param events Events list for this dialog
 	 */
 	public YearViewOnClickDialog (final Context context, Calendar selectedDate,
-			int styleResId) {
+			int styleResId, TreeMap<Calendar, ArrayList<Event>> tm) {
 		super(context, styleResId);
 		this.context = context;
 		this.setCanceledOnTouchOutside(true);
@@ -71,7 +79,7 @@ public class YearViewOnClickDialog extends Dialog implements android.view.View.O
 		
 		
 		
-		eventsAdapter = new YearViewEventsAdapter(context, Data.getEventByDate(selectedDate));
+		eventsAdapter = new YearViewEventsAdapter(context, TreeMapUtils.getEventsFromTreemap(selectedDate, tm));
 		eventsList.setAdapter(eventsAdapter);
 		eventsAdapter.notifyDataSetChanged();
 		

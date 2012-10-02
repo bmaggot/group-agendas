@@ -17,7 +17,6 @@ import com.groupagendas.groupagenda.R;
 import com.groupagendas.groupagenda.calendar.AbstractCalendarView;
 import com.groupagendas.groupagenda.calendar.agenda.AgendaFrame;
 import com.groupagendas.groupagenda.data.CalendarSettings;
-import com.groupagendas.groupagenda.data.DataManagement;
 import com.groupagendas.groupagenda.data.EventManagement;
 import com.groupagendas.groupagenda.events.Event;
 import com.groupagendas.groupagenda.events.EventsProvider;
@@ -140,7 +139,6 @@ public class MiniMonthView extends AbstractCalendarView {
 		daysList = new ArrayList<AgendaFrame>();
 		
 		
-//	TODO	miniMonthTable.setOnTouchListener(createListener(swipeGestureDetector));
 		TableLayout.LayoutParams rowLp = new TableLayout.LayoutParams(
 		        ViewGroup.LayoutParams.FILL_PARENT,
 		        ViewGroup.LayoutParams.FILL_PARENT,
@@ -229,7 +227,6 @@ public class MiniMonthView extends AbstractCalendarView {
 	
 	private class UpdateEventsInfoTask extends AsyncTask<Void, Integer, Void> {
 		private Context context = MiniMonthView.this.getContext();
-		private DataManagement dm = DataManagement.getInstance(context);
 		
 		/**
 		 * @author justinas.marcinka@gmail.com
@@ -280,7 +277,7 @@ public class MiniMonthView extends AbstractCalendarView {
 			
 			for (AgendaFrame frame : daysList){	
 				if (tmp.get(Calendar.MONTH) == selectedDate.get(Calendar.MONTH)){
-					frame.setEventList(Utils.getEventsFromTreemap(tmp, sortedEvents));
+					frame.setEventList(TreeMapUtils.getEventsFromTreemap(tmp, sortedEvents));
 				}else {
 					frame.setEventList(new ArrayList<Event>());
 				}

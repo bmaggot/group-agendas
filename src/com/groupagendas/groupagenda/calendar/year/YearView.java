@@ -129,7 +129,7 @@ public class YearView extends AbstractCalendarView {
 				if (clickedDay.getState() != MonthCellState.OTHER_MONTH){
 						unselectDate(selectedDate);
 						selectDate(date, clickedDay);
-						YearViewOnClickDialog dialog = new YearViewOnClickDialog(getContext(), selectedDate, R.style.yearview_eventlist);
+						YearViewOnClickDialog dialog = new YearViewOnClickDialog(getContext(), selectedDate, R.style.yearview_eventlist, sortedEvents);
 						dialog.show();
 				}
 			}

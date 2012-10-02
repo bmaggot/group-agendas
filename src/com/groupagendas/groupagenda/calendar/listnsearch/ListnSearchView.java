@@ -26,7 +26,6 @@ import android.widget.TextView;
 import com.groupagendas.groupagenda.EventActivityOnClickListener;
 import com.groupagendas.groupagenda.R;
 import com.groupagendas.groupagenda.data.CalendarSettings;
-import com.groupagendas.groupagenda.data.Data;
 import com.groupagendas.groupagenda.data.DataManagement;
 import com.groupagendas.groupagenda.data.EventManagement;
 import com.groupagendas.groupagenda.events.Event;
@@ -260,7 +259,7 @@ private SectionListItem[] filterEvents (String filterString, SectionListItem[] e
 			section += " ";
 			section += date.get(Calendar.YEAR);
 					
-			for (Event e : Utils.getEventsFromTreemap(date, sortedEvents)){
+			for (Event e : TreeMapUtils.getEventsFromTreemap(date, sortedEvents)){
 				list.add(new SectionListItem(e, section));
 			}
 			

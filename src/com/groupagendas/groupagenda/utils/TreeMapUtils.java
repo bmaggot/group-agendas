@@ -8,6 +8,17 @@ import com.groupagendas.groupagenda.events.Event;
 
 public class TreeMapUtils {
 	public static final String SERVER_TIMESTAMP_FORMAT = "yyyy-MM-dd HH:mm:ss";
+	
+	
+	public static ArrayList<Event> getEventsFromTreemap(Calendar date, TreeMap<Calendar, ArrayList<Event>> tm){
+		if (date != null && tm != null)
+			if (tm.containsKey(date)) {
+				return tm.get(date);
+			} 
+			return new ArrayList<Event>();
+		
+	}
+	
 	public static TreeMap<Calendar, ArrayList<Event>> sortEvents(ArrayList<Event> events) {
 		TreeMap<Calendar, ArrayList<Event>> tm = new TreeMap<Calendar, ArrayList<Event>>();
 		Calendar event_start = null;

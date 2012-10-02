@@ -16,7 +16,6 @@ import android.widget.TextView;
 import com.groupagendas.groupagenda.R;
 import com.groupagendas.groupagenda.calendar.AbstractCalendarView;
 import com.groupagendas.groupagenda.data.CalendarSettings;
-import com.groupagendas.groupagenda.data.DataManagement;
 import com.groupagendas.groupagenda.data.EventManagement;
 import com.groupagendas.groupagenda.events.Event;
 import com.groupagendas.groupagenda.events.EventsProvider;
@@ -178,7 +177,6 @@ public class AgendaView extends AbstractCalendarView {
 	
 	private class UpdateEventsInfoTask extends AsyncTask<Void, Integer, Void> {
 		private Context context = AgendaView.this.getContext();
-		private DataManagement dm = DataManagement.getInstance(context);
 
 		/**
 		 * @author justinas.marcinka@gmail.com Returns event projection in: id,
@@ -245,7 +243,7 @@ public class AgendaView extends AbstractCalendarView {
 		protected void onPostExecute(Void result) {
 			Calendar tmp = (Calendar) shownDate.clone();
 			for (AgendaFrame frame : daysList){	
-				frame.setEventList(Utils.getEventsFromTreemap(tmp, sortedEvents));
+				frame.setEventList(TreeMapUtils.getEventsFromTreemap(tmp, sortedEvents));
 				tmp.add(Calendar.DATE, 1);
 				frame.UpdateList();
 			}

@@ -4,23 +4,20 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.TimeZone;
-import java.util.TreeMap;
 import java.util.regex.Pattern;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 
+import android.graphics.Bitmap;
+import android.text.format.DateFormat;
+
 import com.groupagendas.groupagenda.data.CalendarSettings;
 import com.groupagendas.groupagenda.data.DataManagement;
 import com.groupagendas.groupagenda.error.report.Reporter;
-import com.groupagendas.groupagenda.events.Event;
-
-import android.graphics.Bitmap;
-import android.text.format.DateFormat;
 
 
 
@@ -308,14 +305,7 @@ public static Calendar createCalendar(long timeInMilis, String timezone) {
 	return cal;
 }
 	
-public static ArrayList<Event> getEventsFromTreemap(Calendar date, TreeMap<Calendar, ArrayList<Event>> tm){
-	if (date != null && tm != null)
-		if (tm.containsKey(date)) {
-			return tm.get(date);
-		} 
-		return new ArrayList<Event>();
-	
-}
+
 
 
 
