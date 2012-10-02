@@ -84,6 +84,8 @@ public class EventActivity extends Activity {
 	protected ProgressBar pb;
 	protected boolean setOwner = false;
 	protected boolean setUid = false;
+	protected String selectedIcon = Event.DEFAULT_ICON;
+	protected String selectedColor = Event.DEFAULT_COLOR;
 
 	protected Event setEventData(Event event) {
 

@@ -44,7 +44,6 @@ import com.groupagendas.groupagenda.calendar.listnsearch.ListnSearchView;
 import com.groupagendas.groupagenda.calendar.minimonth.MiniMonthView;
 import com.groupagendas.groupagenda.calendar.month.MonthView;
 import com.groupagendas.groupagenda.calendar.year.YearView;
-import com.groupagendas.groupagenda.chat.ChatThreadActivity;
 import com.groupagendas.groupagenda.contacts.ContactsActivity;
 import com.groupagendas.groupagenda.contacts.ContactsProvider;
 import com.groupagendas.groupagenda.data.CalendarSettings;

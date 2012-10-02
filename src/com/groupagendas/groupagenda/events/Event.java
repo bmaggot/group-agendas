@@ -27,8 +27,13 @@ private static final int REMINDER_3 = 3;
 
 //	TODO set all default fields and getters
 	public static final String DEFAULT_COLOR = "21C0DB";
+	public static final String DEFAULT_ICON = "";
+	private static final String DEFAULT_ICON_IMG = "no_icon";
 	private static final String DEFAULT_TYPE = "p";
 	private static final String DEFAULT_DESCRIPTION = "";
+	
+	private static final String EMPTY_ENTRY = "";
+	
 	
 	public int event_id;
 	public int user_id;
@@ -158,6 +163,7 @@ private static final int REMINDER_3 = 3;
 	 * @return resource id of icon image for this event. If event has no icon, 0 will be returned
 	 */
 	public int getIconId(Context context) {
+		if (getIcon() == DEFAULT_ICON) return context.getResources().getIdentifier(DEFAULT_ICON_IMG, "drawable", context.getPackageName());
 		return context.getResources().getIdentifier(this.icon, "drawable", context.getPackageName());
 	}
 
@@ -172,7 +178,6 @@ private static final int REMINDER_3 = 3;
 	
 	public void setColor(String color) {
 		this.color = DEFAULT_COLOR;
-		
 		if (color != null && (color.matches("[a-fA-F0-9]{6,8}")))
 			if (!color.equalsIgnoreCase("null")) this.color = color;
 		
@@ -341,6 +346,8 @@ private static final int REMINDER_3 = 3;
 	}
 	
 	public void setTitle(String title) {
+		this.title = DEFAULT_TITLE;
+		if (title != null && !title.equalsIgnoreCase("null"))
 		this.title = title;
 	}
 	public int getEvent_id() {
@@ -377,8 +384,8 @@ private static final int REMINDER_3 = 3;
 	 * @return
 	 */
 	public String getIcon() {
-		if (icon == null) {
-				this.icon = "null";
+		if (icon == null || icon.equalsIgnoreCase("null")) {
+				this.icon = DEFAULT_ICON;
 		}
 		return icon;
 	}
@@ -621,46 +628,75 @@ public void setIs_owner(boolean is_owner) {
 	this.is_owner = is_owner;
 }
 public void setType(String type) {
-	this.type = type;
+	this.type = DEFAULT_TYPE;
+	if (type != null && !type.equalsIgnoreCase("null"))
+			this.type = type;
 }
 public void setCreator_fullname(String creator_fullname) {
+
+	this.creator_fullname = EMPTY_ENTRY;
+	if (creator_fullname != null && !creator_fullname.equalsIgnoreCase("null"))
 	this.creator_fullname = creator_fullname;
 }
 public void setCreator_contact_id(int creator_contact_id) {
 	this.creator_contact_id = creator_contact_id;
 }
 public void setIcon(String icon) {
-	this.icon = icon;
+		if (icon != null && !icon.equalsIgnoreCase("null"))
+			this.icon = icon;
+		else
+			this.icon = DEFAULT_ICON;
 }
 public void setDescription(String description_) {
-	this.description_ = description_;
+	if (description_ != null && !description_.equalsIgnoreCase("null"))
+		this.description_ = description_;
+	else
+		this.description_ = DEFAULT_DESCRIPTION;
 }
 public void setLocation(String location) {
-	this.location = location;
+	if (location == null || location.equalsIgnoreCase("null"))
+		this.location = EMPTY_ENTRY;
+	else
+		this.location = location;
 }
 public void setAccomodation(String accomodation) {
+	if (accomodation == null || accomodation.equalsIgnoreCase("null"))
+		this.accomodation = EMPTY_ENTRY;
+	else
 	this.accomodation = accomodation;
 }
 public void setCost(String cost) {
 	this.cost = cost;
 }
 public void setTake_with_you(String take_with_you) {
-	this.take_with_you = take_with_you;
+	if (take_with_you == null || take_with_you.equalsIgnoreCase("null"))
+		this.take_with_you = EMPTY_ENTRY;
+	else this.take_with_you = take_with_you;
 }
 public void setGo_by(String go_by) {
-	this.go_by = go_by;
+	if (go_by == null || go_by.equalsIgnoreCase("null"))
+		this.go_by = EMPTY_ENTRY;
+	else this.go_by = go_by;
 }
 public void setCountry(String country) {
-	this.country = country;
+	if (country == null || country.equalsIgnoreCase("null"))
+		this.country = EMPTY_ENTRY;
+	else this.country = country;
 }
 public void setCity(String city) {
-	this.city = city;
+	if (city == null || city.equalsIgnoreCase("null"))
+		this.city = EMPTY_ENTRY;
+	else this.city = city;
 }
 public void setStreet(String street) {
-	this.street = street;
+	if (street == null || street.equalsIgnoreCase("null"))
+		this.street = EMPTY_ENTRY;
+	else this.street = street;
 }
 public void setZip(String zip) {
-	this.zip = zip;
+	if (zip == null || zip.equalsIgnoreCase("null"))
+		this.zip = EMPTY_ENTRY;
+	else this.zip = zip;
 }
 public void setTimezone(String timezone) {
 	this.timezone = timezone;
