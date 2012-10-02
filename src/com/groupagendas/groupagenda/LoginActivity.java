@@ -93,9 +93,7 @@ public class LoginActivity extends Activity {
 		SharedPreferences prefs = getSharedPreferences("LATEST_CREDENTIALS", MODE_PRIVATE);
 		stayCheck = (CheckBox) findViewById(R.id.login_stayLoggedIn);
 		
-		stayCheck.setChecked(prefs.getBoolean("stay_logged_in", false));
-		
-		if (stayCheck.isChecked()) {
+		if (prefs.getBoolean("stay_logged_in", false)) {
 			loginText.setText(prefs.getString("email", ""));
 			passwordText.setText(prefs.getString("password", ""));
 
