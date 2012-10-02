@@ -137,7 +137,7 @@ public class NewEventActivity extends EventActivity {
 						if (iconsValues[position].equals("noicon")) {
 							iconView.setImageDrawable(getResources().getDrawable(R.drawable.no_icon));
 						} else {
-							event.icon = iconsValues[position];
+							selectedIcon = iconsValues[position];
 							int iconId = getResources().getIdentifier(iconsValues[position], "drawable", "com.groupagendas.groupagenda");
 							iconView.setImageResource(iconId);
 						}

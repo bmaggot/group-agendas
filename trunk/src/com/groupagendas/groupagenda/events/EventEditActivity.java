@@ -531,23 +531,143 @@ public class EventEditActivity extends EventActivity {
 				saveButton.setVisibility(View.VISIBLE);
 				deleteButton.setVisibility(View.VISIBLE);
 				
+//ICON SELECTION	
+				iconView.setOnClickListener(new OnClickListener() {
+					@Override
+					public void onClick(View v) {
+						final Dialog dialog = new Dialog(EventEditActivity.this);
+						dialog.setContentView(R.layout.list_dialog);
+						dialog.setTitle(R.string.choose_icon);
+
+						GridView gridview = (GridView) dialog.findViewById(R.id.gridview);
+						gridview.setAdapter(new IconsAdapter(EventEditActivity.this, iconsValues));
+
+						gridview.setOnItemClickListener(new OnItemClickListener() {
+							
+
+							@Override
+							public void onItemClick(AdapterView<?> parent,
+									View v, int position, long id) {
+								if (iconsValues[position].equals("noicon")) {
+									selectedIcon = Event.DEFAULT_ICON;
+									iconView.setImageDrawable(getResources().getDrawable(R.drawable.no_icon));
+								} else {
+									selectedIcon = iconsValues[position];
+									int iconId = getResources().getIdentifier(iconsValues[position], "drawable", "com.groupagendas.groupagenda");
+									iconView.setImageResource(iconId);
+								}
+								dialog.dismiss();
+							}
+						});
+
+						dialog.show();
+					}
+				});
+				
+//COLOR SELECTION				
+				colorView.setImageResource(result.getColorBubbleId(EventEditActivity.this));
+				selectedColor = result.getColor();
+				final String[] colorsValues = getResources().getStringArray(R.array.colors_values);
+				colorView.setOnClickListener(new OnClickListener() {
+					@Override
+					public void onClick(View v) {
+						final Dialog dialog = new Dialog(EventEditActivity.this);
+						dialog.setContentView(R.layout.list_dialog);
+						dialog.setTitle(R.string.choose_color);
+
+						GridView gridview = (GridView) dialog.findViewById(R.id.gridview);
+						gridview.setAdapter(new ColorsAdapter(EventEditActivity.this, colorsValues));
+
+						gridview.setOnItemClickListener(new OnItemClickListener() {
+							@Override
+							public void onItemClick(AdapterView<?> parent, View v, int position, long id) {
+								result.setColor(colorsValues[position]);
+								int image = result.getColorBubbleId(getBaseContext());
+								colorView.setImageResource(image);
+								dialog.dismiss();
+							}
+						});
+						dialog.show();
+					}
+				});	
+				
+			
+				
+				showView(timezoneSpinner, addressLine);
+				countrySpinner.setOnItemSelectedListener(new OnItemSelectedListener() {
+					@Override
+					public void onItemSelected(AdapterView<?> arg0, View arg1, int pos, long arg3) {
+
+						if (pos == 0) {
+							ArrayAdapter<String> adapterTimezone = new ArrayAdapter<String>(EventEditActivity.this,  R.layout.search_dialog_item, new String[0]);
+							adapterTimezone.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+							timezoneSpinner.setAdapter(adapterTimezone);
+							timezoneSpinner.setEnabled(false);
+							timezoneArray = null;
+						} else {
+							timezoneSpinner.setEnabled(true);
+							// timezone
+							String[] timezoneLabels = TimezoneManager.getTimezones(EventEditActivity.this, countryArray[pos]);
+							ArrayAdapter<String> adapterTimezone = new ArrayAdapter<String>(EventEditActivity.this,  R.layout.search_dialog_item, timezoneLabels);
+							adapterTimezone.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+							timezoneSpinner.setAdapter(adapterTimezone);
+							timezoneArray = TimezoneManager.getTimezonesValues(EventEditActivity.this, countryArray[pos]);
+
+							if (result.getTimezone() != null && !result.timezone.equals("null")) {
+								pos = Utils.getArrayIndex(timezoneArray, result.getTimezone());
+								timezoneSpinner.setSelection(pos);
+								showView(timezoneSpinner, addressLine);
+								if (!result.is_owner)
+									timezoneSpinner.setEnabled(false);
+							}
+						}
+					}
+					@Override
+					public void onNothingSelected(AdapterView<?> arg0) {
+					}
+				});
+
+				if (result.getCountry() != null && !result.getCountry().equals("null")) {
+					int pos = Utils.getArrayIndex(countryArray, result.getCountry());
+					countrySpinner.setSelection(pos);
+					showView(countrySpinner, addressLine);
+					if (!result.is_owner())
+						countrySpinner.setEnabled(false);
+				}	
+				
+				showView(countrySpinner, addressLine);
+				showView(cityView, addressLine);
+				showView(streetView, addressLine);
+				showView(zipView, addressLine);
+				showView(locationView, detailsLine);
+				showView(gobyView, detailsLine);
+				showView(takewithyouView, detailsLine);
+				showView(costView, detailsLine);
+				showView(accomodationView, detailsLine);
+			
+				
 			} else {
 				titleView.setEnabled(false);
 				endView.setEnabled(false);
 				endButton.setEnabled(false);
 				startView.setEnabled(false);
 				startButton.setEnabled(false);
+				cityView.setEnabled(false);
+				streetView.setEnabled(false);
+				zipView.setEnabled(false);
+				locationView.setEnabled(false);
+				gobyView.setEnabled(false);
+				takewithyouView.setEnabled(false);
+				costView.setEnabled(false);
+				accomodationView.setEnabled(false);
 				saveButton.setVisibility(View.GONE);
-				
 			}
 			
-//			// start
+//START AND END TIME
 			if (result.getStartCalendar() != null) {
 				startView.setText(Utils.formatCalendar(result.getStartCalendar()));
 				startCalendar = (Calendar) result.getStartCalendar().clone();
 			}
-
-// end
 			if (result.getEndCalendar() != null) {
 				endView.setText(Utils.formatCalendar(result.getEndCalendar()));
 				endCalendar = (Calendar) result.getEndCalendar().clone();
@@ -562,8 +682,22 @@ public class EventEditActivity extends EventActivity {
 
 
 			if (!result.getIcon().equals("null")) {
-				int iconId = getResources().getIdentifier(result.getIcon(), "drawable", "com.groupagendas.groupagenda");
-				iconView.setImageResource(iconId);
+				selectedIcon = result.getIcon();
+				iconView.setImageResource(result.getIconId(EventEditActivity.this));
+			}
+			
+			if (result.getCity().length() > 0) {
+				cityView.setText(result.getCity());
+				showView(cityView, addressLine);	
+			}		
+			
+			if (result.getStreet().length() > 0) {
+				streetView.setText(result.street);
+				showView(streetView, addressLine);	
+			}
+			if (result.getZip().length() > 0) {
+				zipView.setText(result.zip);
+				showView(zipView, addressLine);		
 			}
 
 			chatMessengerButton.setOnClickListener(new OnClickListener() {
@@ -577,6 +711,9 @@ public class EventEditActivity extends EventActivity {
 					}
 				}
 			});
+			
+			
+	
 //		TODO JUSTUI V implement with timestamps from API		
 //			if ( null && event.reminder1 != null && !event.reminder1.equals("null")) {
 //			reminder1.setText(event.reminder1);
@@ -611,251 +748,23 @@ public class EventEditActivity extends EventActivity {
 
 
 		
-		int invitedListSize = result.getInvitedCount();//TODOimplement
-		
-
-		if (invitedListSize == 0) {
-			inviteButton.setBackgroundResource(R.drawable.event_invite_people_button_standalone);
-		} //else {
-//			invitesColumn.setVisibility(View.VISIBLE);
-//			inviteButton.setBackgroundResource(R.drawable.event_invite_people_button_notalone);
-//			LinearLayout invitedPersonList = (LinearLayout) findViewById(R.id.invited_person_list);
-//			LayoutInflater inflater = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-//			for (int i = 0, l = event.getInvitedCount(); i < l; i++) {
-//				final Invited invited = event.getInvited(i);
+//		int invitedListSize = result.getInvitedCount();//TODOimplement
+//		
 //
-//				final View view = inflater.inflate(R.layout.event_invited_person_entry, invitedPersonList, false);
-//				if (l == 1) {
-//					view.setBackgroundResource(R.drawable.event_invited_entry_last_background);
-//				} else {
-//					if (i == l - 1)
-//						view.setBackgroundResource(R.drawable.event_invited_entry_last_background);
-//					else
-//						view.setBackgroundResource(R.drawable.event_invited_entry_notalone_background);
-//				}
-//				boolean setEmailRed = false;
-//				if(!invited.inMyList && invited.guid > 0){
-//					invited.email = this.getResources().getString(R.string.add_to_cantact_list);
-//					setEmailRed = true;
-//					view.setOnClickListener(new OnClickListener() {
-//						
-//						@Override
-//						public void onClick(View v) {
-//							Dialog dia = new InviteDialog(EventEditActivity.this, R.style.yearview_eventlist, invited);
-//							dia.show();
-//						}
-//					});
-//				}
-//
-//				invitedPersonList.addView(getInvitedView(invited, inflater, view, mContext, setEmailRed));
+//		if (invitedListSize == 0) {
+//			inviteButton.setBackgroundResource(R.drawable.event_invite_people_button_standalone);
 //			}
-//			if (Data.selectedContacts != null && !Data.selectedContacts.isEmpty()) {
-//				for (Contact contact : Data.selectedContacts) {
-//					final View view = inflater.inflate(R.layout.event_invited_person_entry, invitedPersonList, false);
-//					Invited invited = new Invited();
-//					invited.name = contact.name;
-//					invited.email = contact.email;
-//					invited.status_id = 4;
-//					invitedPersonList.addView(getInvitedView(invited, inflater, view, mContext, false));
-//				}
-//			}
-//		} else if (invitesColumn != null) {
-//			invitesColumn = (LinearLayout) findViewById(R.id.invitesLine);
-//			invitesColumn.setVisibility(View.VISIBLE);
-//			inviteButton.setBackgroundResource(R.drawable.event_invite_people_button_notalone);
-//			LinearLayout invitedPersonList = (LinearLayout) findViewById(R.id.invited_person_list);
-//			invitedPersonList.removeAllViews();
-//			final LayoutInflater inflater = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-//
-//			for (int i = 0, l = event.getInvitedCount(); i < l; i++) {
-//				final Invited invited = event.getInvited(i);
-//
-//				final View view = inflater.inflate(R.layout.event_invited_person_entry, invitedPersonList, false);
-//				if (l == 1) {
-//					view.setBackgroundResource(R.drawable.event_invited_entry_last_background);
-//				} else {
-//					if (i == l - 1 && Data.selectedContacts.isEmpty())
-//						view.setBackgroundResource(R.drawable.event_invited_entry_last_background);
-//					else
-//						view.setBackgroundResource(R.drawable.event_invited_entry_notalone_background);
-//				}
-//				boolean setEmailRed = false;
-//				if(!invited.inMyList && invited.guid > 0){
-//					invited.email = this.getResources().getString(R.string.add_to_cantact_list);
-//					setEmailRed = true;
-//					view.setOnClickListener(new OnClickListener() {
-//						
-//						@Override
-//						public void onClick(View v) {
-//							Dialog dia = new InviteDialog(EventEditActivity.this, R.style.yearview_eventlist, invited);
-//							dia.show();
-//						}
-//					});
-//				}
-//
-//				invitedPersonList.addView(getInvitedView(invited, inflater, view, mContext, setEmailRed));
-//			}
-//			if (Data.selectedContacts != null && !Data.selectedContacts.isEmpty()) {
-//				for (int i = 0, l = Data.selectedContacts.size(); i < l; i++) {
-//					boolean needToShow = true;
-//					Contact contact = Data.selectedContacts.get(i);
-//					final View view = inflater.inflate(R.layout.event_invited_person_entry, invitedPersonList, false);
-//					if (l == 1) {
-//						view.setBackgroundResource(R.drawable.event_invited_entry_last_background);
-//					} else {
-//						if (i == l - 1)
-//							view.setBackgroundResource(R.drawable.event_invited_entry_last_background);
-//						else
-//							view.setBackgroundResource(R.drawable.event_invited_entry_notalone_background);
-//					}
-//					Invited invited = new Invited();
-//					invited.name = contact.name;
-//					for (int j = 0; j < event.getInvitedCount(); j++) {
-//						
-//						Invited displayedInvited = event.getInvited(i);
-//						if (displayedInvited  != null && contact != null && displayedInvited.email != null
-//								&& !displayedInvited.email.equals("null") && displayedInvited.email.equals(contact.email)) {
-//							needToShow = false;
-//						}
-//						if (contact.email.equals(prefs.getString("email", "")))
-//							view.setId(MY_INVITED_ENTRY_ID);
-//					}
-//					invited.email = contact.email;
-//					invited.status_id = 4;
-//					if (needToShow) {
-//						invitedPersonList.addView(getInvitedView(invited, inflater, view, mContext, false));
-//					}
-//				}
-//			}
-//		}
 
 		
+		
+		
+		
 
-//		final View holder = findViewById(R.id.response_to_invitation);
-//		if (holder != null) {
-//			final TextView myButton_status = (TextView) findViewById(R.id.status);
-//			final TextView myButton_yes = (TextView) findViewById(R.id.button_yes);
-//			final TextView myButton_maybe = (TextView) findViewById(R.id.button_maybe);
-//			final TextView myButton_no = (TextView) findViewById(R.id.button_no);
-//
-//			myButton_yes.setOnClickListener(new OnClickListener() {
-//				@Override
-//				public void onClick(View arg0) {
-//					boolean success = dm.changeEventStatus(event.event_id, "1");
-//					TextView myStatus = (TextView) findViewById(MY_INVITED_ENTRY_ID).findViewById(R.id.invited_status);
-//
-//					myButton_yes.setVisibility(View.INVISIBLE);
-//					myButton_maybe.setVisibility(View.VISIBLE);
-//					myButton_no.setVisibility(View.VISIBLE);
-//					myButton_status.setText(mContext.getString(R.string.status_1));
-//					editDb(event.event_id, 1, success);
-//					event.status = 1;
-//
-//					if (myStatus != null)
-//						myStatus.setText(R.string.status_1);
-//				}
-//			});
-//	
-//			myButton_maybe.setOnClickListener(new OnClickListener() {
-//				@Override
-//				public void onClick(View arg0) {
-//					boolean success = dm.changeEventStatus(event.event_id, "2");
-//					TextView myStatus = (TextView) findViewById(MY_INVITED_ENTRY_ID).findViewById(R.id.invited_status);
-//
-//					myButton_yes.setVisibility(View.VISIBLE);
-//					myButton_maybe.setVisibility(View.INVISIBLE);
-//					myButton_no.setVisibility(View.VISIBLE);
-//					myButton_status.setText(mContext.getString(R.string.status_2));
-//					editDb(event.event_id, 2, success);
-//					event.status = 2;
-//
-//					if (myStatus != null)
-//						myStatus.setText(R.string.status_2);
-//				}
-//			});
-//
-//			myButton_no.setOnClickListener(new OnClickListener() {
-//				@Override
-//				public void onClick(View arg0) {
-//					boolean success = dm.changeEventStatus(event.event_id, "0");
-//					TextView myStatus = (TextView) findViewById(MY_INVITED_ENTRY_ID).findViewById(R.id.invited_status);
-//
-//					myButton_yes.setVisibility(View.VISIBLE);
-//					myButton_maybe.setVisibility(View.VISIBLE);
-//					myButton_no.setVisibility(View.INVISIBLE);
-//					myButton_status.setText(mContext.getString(R.string.status_0));
-//					editDb(event.event_id, 0, success);
-//					event.status = 0;
-//
-//					if (myStatus != null)
-//						myStatus.setText(R.string.status_0);
-//				}
-//			});
-//		}
 
 		
-//
-//			if (result.is_owner()) {
-//				iconView.setOnClickListener(new OnClickListener() {
-//					@Override
-//					public void onClick(View v) {
-//						final Dialog dialog = new Dialog(EventEditActivity.this);
-//						dialog.setContentView(R.layout.list_dialog);
-//						dialog.setTitle(R.string.choose_icon);
-//
-//						GridView gridview = (GridView) dialog.findViewById(R.id.gridview);
-//						gridview.setAdapter(new IconsAdapter(EventEditActivity.this, iconsValues));
-//
-//						gridview.setOnItemClickListener(new OnItemClickListener() {
-//							@Override
-//							public void onItemClick(AdapterView<?> parent, View v, int position, long id) {
-//								if (iconsValues[position].equals("noicon")) {
-//									result.setIcon("");
-//									iconView.setImageDrawable(getResources().getDrawable(R.drawable.no_icon));
-//								} else {
-//									result.setIcon(iconsValues[position]);
-//									int iconId = getResources().getIdentifier(iconsValues[position], "drawable",
-//											"com.groupagendas.groupagenda");
-//									iconView.setImageResource(iconId);
-//								}
-//								dialog.dismiss();
-//							}
-//						});
-//
-//						dialog.show();
-//					}
-//				});
-//				
-//
-//				colorView.setImageResource(result.getColorBubbleId(mContext));
-//				
-//				final String[] colorsValues = getResources().getStringArray(R.array.colors_values);
-//				colorView.setOnClickListener(new OnClickListener() {
-//					@Override
-//					public void onClick(View v) {
-//						final Dialog dialog = new Dialog(EventEditActivity.this);
-//						dialog.setContentView(R.layout.list_dialog);
-//						dialog.setTitle(R.string.choose_color);
-//
-//						GridView gridview = (GridView) dialog.findViewById(R.id.gridview);
-//						gridview.setAdapter(new ColorsAdapter(EventEditActivity.this, colorsValues));
-//
-//						gridview.setOnItemClickListener(new OnItemClickListener() {
-//							@Override
-//							public void onItemClick(AdapterView<?> parent, View v, int position, long id) {
-//								result.setColor(colorsValues[position]);
-//								// String nameColor = "calendarbubble_" + TODO and more shit
-//								// event.color + "_";
-//								int image = result.getColorBubbleId(getBaseContext());// getResources().getIdentifier(nameColor,
-//																						// "drawable",
-//																						// "com.groupagendas.groupagenda");
-//								colorView.setImageResource(image);
-//								dialog.dismiss();
-//							}
-//						});
-//						dialog.show();
-//					}
-//				});
+				
+
+
 //			}
 //
 //			
@@ -900,85 +809,13 @@ public class EventEditActivity extends EventActivity {
 			// }
 			// });
 			
+	//TODO 		
 			
 			
-//			if (result.is_owner())
-//				showView(timezoneSpinner, addressLine);
-//	
-//			countrySpinner.setOnItemSelectedListener(new OnItemSelectedListener() {
-//				@Override
-//				public void onItemSelected(AdapterView<?> arg0, View arg1, int pos, long arg3) {
-//
-//					if (pos == 0) {
-//						ArrayAdapter<String> adapterTimezone = new ArrayAdapter<String>(EventEditActivity.this,  R.layout.search_dialog_item, new String[0]);
-//						adapterTimezone.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-//						timezoneSpinner.setAdapter(adapterTimezone);
-//						timezoneSpinner.setEnabled(false);
-//						timezoneArray = null;
-//					} else {
-//						timezoneSpinner.setEnabled(true);
-//						// timezone
-//						String[] timezoneLabels = TimezoneManager.getTimezones(EventEditActivity.this, countryArray[pos]);
-//						ArrayAdapter<String> adapterTimezone = new ArrayAdapter<String>(EventEditActivity.this,  R.layout.search_dialog_item, timezoneLabels);
-//						adapterTimezone.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-//						timezoneSpinner.setAdapter(adapterTimezone);
-//						timezoneArray = TimezoneManager.getTimezonesValues(EventEditActivity.this, countryArray[pos]);
-//
-//						if (result.getTimezone() != null && !result.timezone.equals("null")) {
-//							pos = Utils.getArrayIndex(timezoneArray, result.getTimezone());
-//							timezoneSpinner.setSelection(pos);
-//							showView(timezoneSpinner, addressLine);
-//							if (!result.is_owner)
-//								timezoneSpinner.setEnabled(false);
-//						}
-//					}
-//				}
-//				@Override
-//				public void onNothingSelected(AdapterView<?> arg0) {
-//				}
-//			});
-//
-//			if (result.getCountry() != null && !result.getCountry().equals("null")) {
-//				int pos = Utils.getArrayIndex(countryArray, result.getCountry());
-//				countrySpinner.setSelection(pos);
-//				showView(countrySpinner, addressLine);
-//				if (!result.is_owner())
-//					countrySpinner.setEnabled(false);
-//			}
-//			if (result.is_owner())
-//				showView(countrySpinner, addressLine);
-//
-//			//TODO
-//			if (result.getCity() != null && !result.getCity().equals("null")) {
-//				cityView.setText(result.city);
-//				showView(cityView, addressLine);
-//				if (!result.is_owner())
-//					cityView.setEnabled(false);
-//			}
-//			if (result.is_owner())
-//				showView(cityView, addressLine);
-//
-//		
-//						
-//						
-//			if (result.street != null && !result.street.equals("null")) {
-//				streetView.setText(result.street);
-//				showView(streetView, addressLine);
-//				if (!result.is_owner)
-//					streetView.setEnabled(false);
-//			}
-//			if (result.is_owner)
-//				showView(streetView, addressLine);
-//
-//			
-//			if (result.zip != null && !result.zip.equals("null")) {
-//				zipView.setText(result.zip);
-//				showView(zipView, addressLine);
-//				if (!result.is_owner)
-//					zipView.setEnabled(false);
-//			}
-//			if (result.is_owner)
-//				showView(zipView, addressLine);
+			
+
+
+
 
 			// // Details
 			// detailsLine = (LinearLayout) findViewById(R.id.detailsLine);
@@ -994,54 +831,28 @@ public class EventEditActivity extends EventActivity {
 			// }
 			// });
 			
-//			if (result.location != null && !result.location.equals("null")) {
-//				locationView.setText(result.location);
-//				showView(locationView, detailsLine);
-//				if (!result.is_owner)
-//					locationView.setEnabled(false);
-//			}
-//			if (result.is_owner)
-//				showView(locationView, detailsLine);
-//			
-//			if (result.go_by != null && !result.go_by.equals("null")) {
-//				gobyView.setText(result.go_by);
-//				showView(gobyView, detailsLine);
-//				if (!result.is_owner)
-//					gobyView.setEnabled(false);
-//			}
-//			if (result.is_owner)
-//				showView(gobyView, detailsLine);
-//
-//	
-//						
-//			if (result.take_with_you != null && !result.take_with_you.equals("null")) {
-//				takewithyouView.setText(result.take_with_you);
-//				showView(takewithyouView, detailsLine);
-//				if (!result.is_owner)
-//					takewithyouView.setEnabled(false);
-//			}
-//			if (result.is_owner)
-//				showView(takewithyouView, detailsLine);
-//
-//			
-//			if (result.cost != null && !result.cost.equals("null")) {
-//				costView.setText(result.cost);
-//				showView(costView, detailsLine);
-//				if (!result.is_owner)
-//					costView.setEnabled(false);
-//			}
-//			if (result.is_owner)
-//				showView(costView, detailsLine);
-//
-//			
-//			if (result.accomodation != null && !result.accomodation.equals("null")) {
-//				accomodationView.setText(result.accomodation);
-//				showView(accomodationView, detailsLine);
-//				if (!result.is_owner)
-//					accomodationView.setEnabled(false);
-//			}
-//			if (result.is_owner)
-//				showView(accomodationView, detailsLine);
+			if (result.location != null && !result.location.equals("null")) {
+				locationView.setText(result.location);
+				showView(locationView, detailsLine);
+			}
+			if (result.go_by != null && !result.go_by.equals("null")) {
+				gobyView.setText(result.go_by);
+				showView(gobyView, detailsLine);	
+			}			
+			if (result.take_with_you != null && !result.take_with_you.equals("null")) {
+				takewithyouView.setText(result.take_with_you);
+				showView(takewithyouView, detailsLine);	
+			}	
+			if (result.cost != null && !result.cost.equals("null")) {
+				costView.setText(result.cost);
+				showView(costView, detailsLine);
+			}
+			if (result.accomodation != null && !result.accomodation.equals("null")) {
+				accomodationView.setText(result.accomodation);
+				showView(accomodationView, detailsLine);
+			}
+
+//				
 //
 //			final ViewHolder holder = new ViewHolder();
 //			holder.status = (TextView) findViewById(R.id.status);
