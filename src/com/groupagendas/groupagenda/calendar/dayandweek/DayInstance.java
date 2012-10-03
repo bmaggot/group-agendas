@@ -65,7 +65,7 @@ public class DayInstance  {
 
 		private boolean allDay(Event e) {
 //			return e.is_all_day;
-			if (e.is_all_day) return true;
+			if (e.is_all_day()) return true;
 			
 			if (!e.getStartCalendar().after(selectedDate)){
 				String dayStr = new SimpleDateFormat("yyyy-MM-dd").format(selectedDate.getTime());

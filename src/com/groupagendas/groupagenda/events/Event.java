@@ -21,9 +21,9 @@ public static final int ACCEPTED = 1;
 public static final int MAYBE = 2;
 public static final int NEW_INVITATION = 4;
 
-private static final int REMINDER_1 = 1;
-private static final int REMINDER_2 = 2;
-private static final int REMINDER_3 = 3;
+//private static final int REMINDER_1 = 1;
+//private static final int REMINDER_2 = 2;
+//private static final int REMINDER_3 = 3;
 
 //	TODO set all default fields and getters
 	public static final String DEFAULT_COLOR = "21C0DB";
@@ -33,69 +33,70 @@ private static final int REMINDER_3 = 3;
 	private static final String DEFAULT_DESCRIPTION = "";
 	
 	private static final String EMPTY_ENTRY = "";
+	public static final String PRIVATE = "p";
 	
 	
-	public int event_id;
-	public int user_id;
-	public int status;
-	public int creator_contact_id;
+	private int event_id;
+	private int user_id;
+	private int status;
+	private int creator_contact_id;
 	
-	public int attendant_1_count; 
-	public int attendant_2_count;
-	public int attendant_0_count;
-	public int attendant_4_count;
+	private int attendant_1_count; 
+	private int attendant_2_count;
+	private int attendant_0_count;
+	private int attendant_4_count;
 	
-	private boolean uploadedToServer = false;
-	public boolean isNative = false;
-	public boolean is_sports_event;	
-	public boolean is_owner;
-	public boolean is_all_day;
-	public boolean birthday = false;
+	private boolean uploadedToServer = true;
+	private boolean isNative = false;
+	private boolean is_sports_event;	
+	private boolean is_owner;
+	private boolean is_all_day;
+	private boolean birthday = false;
 	
 	
-	public String type;
-	public String creator_fullname;
-	public String title;
-	public String icon;
+	private String type;
+	private String creator_fullname;
+	private String title;
+	private String icon;
 	private String color;
-	public String description_;
-	public String location;
-	public String accomodation;
-	public String cost;
-	public String take_with_you;
-	public String go_by;
+	private String description_;
+	private String location;
+	private String accomodation;
+	private String cost;
+	private String take_with_you;
+	private String go_by;
 	
-	public String country;
-	public String city;
-	public String street;
-	public String zip;
+	private String country;
+	private String city;
+	private String street;
+	private String zip;
 	
-	public String timezone;
+	private String timezone;
 	private Calendar startCalendar;     //EVENT START TIME. CALENDAR IS IN USER TIMEZONE.
 	private Calendar endCalendar;
 	
 	
 	
-	public String reminder1 = "";
-	public String reminder2 = "";
-	public String reminder3 = "";
-	public String alarm1 = "";
-	public boolean alarm1fired = false;
-	public String alarm2 = "";
-	public boolean alarm2fired = false;
-	public String alarm3 = "";
-	public boolean alarm3fired = false;
+	private Calendar reminder1 = null;
+	private Calendar reminder2 = null;
+	private Calendar reminder3 = null;
+	private Calendar alarm1 = null;
+	private boolean alarm1fired = false;
+	private Calendar alarm2 = null;
+	private boolean alarm2fired = false;
+	private Calendar alarm3 = null;
+	private boolean alarm3fired = false;
 	
-	public long created_millis_utc;
-	public long modified_millis_utc;
+	private long created_millis_utc;
+	private long modified_millis_utc;
 	
 
 
 	
-	public int[] assigned_contacts = null;
+	private int[] assigned_contacts = null;
 	private String assigned_contacts_DB_entry = "";
 	
-	public int[] assigned_groups = null;
+	private int[] assigned_groups = null;
 	private String assigned_groups_DB_entry = "";
 	
 	private ArrayList<Invited> invited = null;
@@ -416,14 +417,25 @@ private static final int REMINDER_3 = 3;
 	public String getStreet() {
 		return street;
 	}
-
-	public String getReminder1() {
+/**
+ * Getter for reminder 1. Returns NULL if not set
+ * @return
+ */
+	public Calendar getReminder1() {
 		return reminder1;
 	}
-	public String getReminder2() {
+	/**
+	 * Getter for reminder 2. Returns NULL if not set
+	 * @return
+	 */
+	public Calendar getReminder2() {
 		return reminder2;
 	}
-	public String getReminder3() {
+	/**
+	 * Getter for reminder 3. Returns NULL if not set
+	 * @return
+	 */
+	public Calendar getReminder3() {
 		return reminder3;
 	}
 
@@ -449,41 +461,41 @@ private static final int REMINDER_3 = 3;
 	
 		
 	public void setReminder1(Calendar reminder1) {
-		this.reminder1 = createReminderString(REMINDER_1, reminder1);
+		this.reminder1 = reminder1;
 	}
 
 	public void setReminder2(Calendar reminder2) {
-		this.reminder2 = createReminderString(REMINDER_2, reminder2);
+		this.reminder2 = reminder2;
 	}
 
 	public void setReminder3(Calendar reminder3) {
-		this.reminder3 = createReminderString(REMINDER_3, reminder3);
+		this.reminder3 = reminder3;
 	}
 
 
-/**
- * Creates new string for reminder with given id. 
- * @param id identifier for reminder.
- * @see Event.REMINDER_1 Event.REMINDER_2 Event.REMINDER_3
- * @param reminder time in Calendar format
- * @return "null" if it's not in future or is same as already defined reminder. Else, returns string representation for given time
- *  
- */
-	private String createReminderString(int id, Calendar reminder) {
-		
-		if (reminder == null) return DEFAULT_REMINDER;
-		
-		if (reminder.after(Calendar.getInstance())) //if it is not in future, return "null"
-			return DEFAULT_REMINDER;
-		
-		String reminderStr  = new SimpleDateFormat(TIMESTAMP_FORMAT).format(reminder.getTime());
-		
-		if (reminderStr.equalsIgnoreCase(reminder1) && id != REMINDER_1) return DEFAULT_REMINDER;
-		if (reminderStr.equalsIgnoreCase(reminder2) && id != REMINDER_2) return DEFAULT_REMINDER;
-		if (reminderStr.equalsIgnoreCase(reminder3) && id != REMINDER_3) return DEFAULT_REMINDER;
-		
-		return reminderStr;
-	}
+///**
+// * Creates new string for reminder with given id. 
+// * @param id identifier for reminder.
+// * @see Event.REMINDER_1 Event.REMINDER_2 Event.REMINDER_3
+// * @param reminder time in Calendar format
+// * @return "null" if it's not in future or is same as already defined reminder. Else, returns string representation for given time
+// *  
+// */
+//	private String createReminderString(int id, Calendar reminder) {
+//		
+//		if (reminder == null) return DEFAULT_REMINDER;
+//		
+//		if (reminder.after(Calendar.getInstance())) //if it is not in future, return "null"
+//			return DEFAULT_REMINDER;
+//		
+//		String reminderStr  = new SimpleDateFormat(TIMESTAMP_FORMAT).format(reminder.getTime());
+//		
+//		if (reminderStr.equalsIgnoreCase(reminder1) && id != REMINDER_1) return DEFAULT_REMINDER;
+//		if (reminderStr.equalsIgnoreCase(reminder2) && id != REMINDER_2) return DEFAULT_REMINDER;
+//		if (reminderStr.equalsIgnoreCase(reminder3) && id != REMINDER_3) return DEFAULT_REMINDER;
+//		
+//		return reminderStr;
+//	}
 	
 	
 	
@@ -541,10 +553,10 @@ public void setInvited_DB_entry(String invited_DB_entry) {
 	this.invited_DB_entry = invited_DB_entry;
 }
 
-public String getAlarm1() {
+public Calendar getAlarm1() {
 	return alarm1;
 }
-public void setAlarm1(String alarm1) {
+public void setAlarm1(Calendar alarm1) {
 	this.alarm1 = alarm1;
 }
 public boolean isAlarm1fired() {
@@ -568,10 +580,10 @@ private boolean isFired(String alarm_fired_string) {
 		
 		return false;
 }
-public String getAlarm2() {
+public Calendar getAlarm2() {
 	return alarm2;
 }
-public void setAlarm2(String alarm2) {
+public void setAlarm2(Calendar alarm2) {
 	this.alarm2 = alarm2;
 }
 public boolean isAlarm2fired() {
@@ -584,10 +596,10 @@ public void setAlarm2fired(String string) {
 	this.alarm2fired = isFired(string);	
 }
 
-public String getAlarm3() {
+public Calendar getAlarm3() {
 	return alarm3;
 }
-public void setAlarm3(String alarm3) {
+public void setAlarm3(Calendar alarm3) {
 	this.alarm3 = alarm3;
 }
 public boolean isAlarm3fired() {
@@ -707,15 +719,15 @@ public void setTimezone(String timezone) {
 //public void setTime(String time) {
 //	this.time = time;
 //}
-public void setReminder1(String reminder1) {
-	this.reminder1 = reminder1;
-}
-public void setReminder2(String reminder2) {
-	this.reminder2 = reminder2;
-}
-public void setReminder3(String reminder3) {
-	this.reminder3 = reminder3;
-}
+//public void setReminder1(String reminder1) {
+//	this.reminder1 = reminder1;
+//}
+//public void setReminder2(String reminder2) {
+//	this.reminder2 = reminder2;
+//}
+//public void setReminder3(String reminder3) {
+//	this.reminder3 = reminder3;
+//}
 public void setAttendant_1_count(int attendant_1_count) {
 	this.attendant_1_count = attendant_1_count;
 }

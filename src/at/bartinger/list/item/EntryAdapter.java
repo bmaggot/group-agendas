@@ -57,14 +57,14 @@ public class EntryAdapter extends BaseAdapter implements Filterable{
 					@Override
 					public void onClick(View v) {
 						Intent intent = new Intent(mContext, EventEditActivity.class);
-						intent.putExtra("event_id", ei.event.event_id);
-						intent.putExtra("type", ei.event.type);
+						intent.putExtra("event_id", ei.event.getEvent_id());
+						intent.putExtra("type", ei.event.getType());
 						mContext.startActivity(intent);
 					}
 				});
 				
 				final TextView title = (TextView) v.findViewById(R.id.title);
-				title.setText(ei.event.title);
+				title.setText(ei.event.getTitle());
 				
 				
 					final ImageView colorView = (ImageView) v.findViewById(R.id.colorView);
@@ -73,7 +73,7 @@ public class EntryAdapter extends BaseAdapter implements Filterable{
 					colorView.setImageResource(image);
 				
 				
-				if (!ei.event.icon.equals("null")) {
+				if (!ei.event.getIcon().equals("null")) {
 					final ImageView iconView = (ImageView) v.findViewById(R.id.iconView);
 					image = ei.event.getIconId(mContext);
 					iconView.setImageResource(image);
@@ -112,7 +112,7 @@ public class EntryAdapter extends BaseAdapter implements Filterable{
 					
 					if(!items.get(i).isSection()){
 						ei = (EntryItem)items.get(i);
-						if(ei.event.title.toLowerCase().startsWith(constraint.toString().toLowerCase())){
+						if(ei.event.getTitle().toLowerCase().startsWith(constraint.toString().toLowerCase())){
 							if(items.get(i-1).isSection()){
 								filtereItems.add(items.get(i-1));
 							}

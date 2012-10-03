@@ -205,11 +205,11 @@ public class EventsHelper {
     public static CEvent generateEvent(Event e) {
         
         CEvent event = new CEvent();
-        event.setId(e.event_id);
-        event.setType(e.type);
-        event.setName(e.title);
-        event.setDescription(e.description_);
-        event.setNative(e.isNative);
+        event.setId(e.getEvent_id());
+        event.setType(e.getType());
+        event.setName(e.getTitle());
+        event.setDescription(e.getDescription());
+        event.setNative(e.isNative());
         
 //        if(e.color != null && !e.color.equals("null") && e.color.length() > 1){
         	event.setColor(Integer.parseInt(e.getColor().replace("#", ""), 16)+0xFF000000);
@@ -217,7 +217,7 @@ public class EventsHelper {
 //        	event.setColor(Color.GRAY);
 //        }
         
-        event.setIcon(e.icon);
+        event.setIcon(e.getIcon());
                
         try{    	
         	Calendar startEventTime = (Calendar) e.getStartCalendar().clone();

@@ -33,9 +33,9 @@ public class AlarmReceiver extends BroadcastReceiver {
 	public void SetAlarm(Context context, long time, Event event, int alarmNumber) {
 		AlarmManager am = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
 		Intent i = new Intent(context, AlarmReceiver.class);
-		i.putExtra("eventId", event.event_id);
+		i.putExtra("eventId", event.getEvent_id());
 		i.putExtra("alarmNr", alarmNumber);
-		PendingIntent pi = PendingIntent.getBroadcast(context, event.event_id + alarmNumber, i, PendingIntent.FLAG_UPDATE_CURRENT);
+		PendingIntent pi = PendingIntent.getBroadcast(context, event.getEvent_id() + alarmNumber, i, PendingIntent.FLAG_UPDATE_CURRENT);
 		am.set(AlarmManager.RTC_WAKEUP, time, pi);
 		Calendar tmp = Calendar.getInstance();
 		tmp.setTimeInMillis(time);

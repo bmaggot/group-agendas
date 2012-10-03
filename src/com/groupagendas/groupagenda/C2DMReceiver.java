@@ -83,7 +83,7 @@ public class C2DMReceiver extends C2DMBaseReceiver {
 			com.groupagendas.groupagenda.events.Event event = EventManagement.getEventFromLocalDb(context, Integer.parseInt(rel_id));
 			if(isChatMessage){
 				notificationIntent = new Intent(context, ChatMessageActivity.class);
-				notificationIntent.putExtra("event_id", event.event_id);
+				notificationIntent.putExtra("event_id", event.getEvent_id());
 				notificationIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
 				PendingIntent contentIntent = PendingIntent.getActivity(context, 0, notificationIntent, PendingIntent.FLAG_UPDATE_CURRENT);
 
@@ -97,9 +97,9 @@ public class C2DMReceiver extends C2DMBaseReceiver {
 					EventManagement.getEventsFromRemoteDb(context, "");
 				}
 				if (event != null) {
-					notificationIntent.putExtra("event_id", event.event_id);
-					notificationIntent.putExtra("type", event.type);
-					notificationIntent.putExtra("isNative", event.isNative);
+					notificationIntent.putExtra("event_id", event.getEvent_id());
+					notificationIntent.putExtra("type", event.getType());
+					notificationIntent.putExtra("isNative", event.isNative());
 
 					notificationIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
 					PendingIntent contentIntent = PendingIntent.getActivity(context, 0, notificationIntent, PendingIntent.FLAG_UPDATE_CURRENT);
@@ -121,7 +121,7 @@ public class C2DMReceiver extends C2DMBaseReceiver {
 		ArrayList<com.groupagendas.groupagenda.events.Event> allEvents = AgendaUtils.getActualEvents(context,
 				DataManagement.getInstance(context).getEventsFromLocalDb());
 		for (com.groupagendas.groupagenda.events.Event event : allEvents) {
-			if (event.event_id == Integer.parseInt(rel_id)) {
+			if (event.getEvent_id() == Integer.parseInt(rel_id)) {
 				return event;
 			}
 		}

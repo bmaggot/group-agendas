@@ -74,8 +74,8 @@ public class NewEventActivity extends EventActivity {
 	private boolean[] selections;
 
 	@SuppressWarnings("unused")
-	private ArrayList<AutoColorItem> autoColors = null;
-	private ArrayList<AutoIconItem> autoIcons = null;
+//	private ArrayList<AutoColorItem> autoColors = null;
+//	private ArrayList<AutoIconItem> autoIcons = null;
 
 	boolean addressPanelVisible = false;
 	boolean detailsPanelVisible = false;
@@ -107,8 +107,8 @@ public class NewEventActivity extends EventActivity {
 		dm = DataManagement.getInstance(this);
 		dtUtils = new DateTimeUtils(this);
 
-		new GetAutoTask().execute();
-		new GetContactsTask().execute();
+//		new GetAutoTask().execute();
+		new GetContactsTask().execute(); //TODO investigate
 
 		cv = new ContentValues();
 		prefs = new Prefs(this);
@@ -166,10 +166,8 @@ public class NewEventActivity extends EventActivity {
 				gridview.setOnItemClickListener(new AdapterView.OnItemClickListener() {
 					@Override
 					public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-						event.setColor(colorsValues[position]);
-						cv.put(EventsProvider.EMetaData.EventsMetaData.COLOR, event.getColor());
-
-						String nameColor = "calendarbubble_" + event.getColor() + "_";
+						selectedColor = (colorsValues[position]);
+						String nameColor = "calendarbubble_" + selectedColor + "_";
 						int image = getResources().getIdentifier(nameColor, "drawable", "com.groupagendas.groupagenda");
 						colorView.setImageResource(image);
 
@@ -184,7 +182,7 @@ public class NewEventActivity extends EventActivity {
 		// title
 		titleView = (EditText) findViewById(R.id.title);
 		titleView.setEnabled(false);
-		titleView.addTextChangedListener(filterTextWatcher);
+//		titleView.addTextChangedListener(filterTextWatcher);
 
 		// type
 		// typeSpinner = (Spinner) findViewById(R.id.typeSpinner);
@@ -489,8 +487,8 @@ public class NewEventActivity extends EventActivity {
 
 				LinearLayout alarm1container = (LinearLayout) findViewById(R.id.alarm_container1);
 				final EditText alarm1 = (EditText) findViewById(R.id.alarm1);
-				if (event != null && event.alarm1 != null && !event.alarm1.equals("null")) {
-					alarm1.setText(event.alarm1);
+				if (event != null && event.getAlarm1() != null) {
+					alarm1.setText(Utils.formatCalendar(event.getAlarm1(), DataManagement.SERVER_TIMESTAMP_FORMAT));
 				} else {
 					alarm1.setText("");
 				}
@@ -511,8 +509,8 @@ public class NewEventActivity extends EventActivity {
 
 				LinearLayout alarm2container = (LinearLayout) findViewById(R.id.alarm_container2);
 				final EditText alarm2 = (EditText) findViewById(R.id.alarm2);
-				if (event != null && event.alarm2 != null && !event.alarm2.equals("null")) {
-					alarm2.setText(event.alarm2);
+				if (event != null && event.getAlarm2() != null) {
+					alarm2.setText(Utils.formatCalendar(event.getAlarm2(), DataManagement.SERVER_TIMESTAMP_FORMAT));
 				} else {
 					alarm2.setText("");
 				}
@@ -533,8 +531,8 @@ public class NewEventActivity extends EventActivity {
 
 				LinearLayout alarm3container = (LinearLayout) findViewById(R.id.alarm_container3);
 				final EditText alarm3 = (EditText) findViewById(R.id.alarm3);
-				if (event != null && event.alarm3 != null && !event.alarm3.equals("null")) {
-					alarm3.setText(event.alarm3);
+				if (event != null && event.getAlarm3() != null) {
+					alarm3.setText(Utils.formatCalendar(event.getAlarm3(), DataManagement.SERVER_TIMESTAMP_FORMAT));
 				} else {
 					alarm3.setText("");
 				}
@@ -621,29 +619,29 @@ public class NewEventActivity extends EventActivity {
 		return view;
 	}
 
-	private TextWatcher filterTextWatcher = new TextWatcher() {
-
-		@Override
-		public void afterTextChanged(Editable s) {
-		}
-
-		@Override
-		public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-		}
-
-		@Override
-		public void onTextChanged(CharSequence s, int start, int before, int count) {
-			if (s != null) {
-				if (event.icon == null || event.icon.equals("null")) {
-					for (int i = 0, l = autoIcons.size(); i < l; i++) {
-						final AutoIconItem autoIcon = autoIcons.get(i);
-						if (s.toString().contains(autoIcon.keyword)) {
-							event.icon = autoIcon.icon;
-							int iconId = getResources().getIdentifier(autoIcon.icon, "drawable", "com.groupagendas.groupagenda");
-							iconView.setImageResource(iconId);
-						}
-					}
-				}
+//	private TextWatcher filterTextWatcher = new TextWatcher() {
+//
+//		@Override
+//		public void afterTextChanged(Editable s) {
+//		}
+//
+//		@Override
+//		public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+//		}
+//
+//		@Override
+//		public void onTextChanged(CharSequence s, int start, int before, int count) {
+//			if (s != null) {
+//				if (event.icon == null || event.icon.equals("null")) {
+//					for (int i = 0, l = autoIcons.size(); i < l; i++) {
+//						final AutoIconItem autoIcon = autoIcons.get(i);
+//						if (s.toString().contains(autoIcon.keyword)) {
+//							event.icon = autoIcon.icon;
+//							int iconId = getResources().getIdentifier(autoIcon.icon, "drawable", "com.groupagendas.groupagenda");
+//							iconView.setImageResource(iconId);
+//						}
+//					}
+//				}
 
 				// if (event.color == null || event.color.equals("null") ||
 				// event.color.equals("")) {
@@ -658,10 +656,10 @@ public class NewEventActivity extends EventActivity {
 				// }
 				// }
 				// }
-			}
-		}
-
-	};
+//			}
+//		}
+//
+//	};
 
 	public void saveEvent(View v) {
 		if (!templateTrigger.isChecked()) {
@@ -925,10 +923,10 @@ public class NewEventActivity extends EventActivity {
 					}
 				}
 
-				event.assigned_contacts = new int[list.size()];
+				event.setAssigned_contacts(new int[list.size()]);
 
 				for (int i = 0, l = list.size(); i < l; i++) {
-					event.assigned_contacts[i] = list.get(i);
+					event.getAssigned_contacts()[i] = list.get(i);
 				}
 				break;
 			}
@@ -939,8 +937,8 @@ public class NewEventActivity extends EventActivity {
 
 		@Override
 		protected Void doInBackground(Void... params) {
-			autoColors = dm.getAutoColors();
-			autoIcons = dm.getAutoIcons();
+//			autoColors = dm.getAutoColors();
+//			autoIcons = dm.getAutoIcons();
 			return null;
 		}
 

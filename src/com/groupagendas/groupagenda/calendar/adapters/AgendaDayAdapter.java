@@ -47,7 +47,7 @@ public class AgendaDayAdapter extends AbstractAdapter<Event> {
 
 		final Event event = list.get(i);
 		TextView text = (TextView) (view.findViewById(R.id.agenda_entry_title_placeholder));	
-		text.setText(event.title);
+		text.setText(event.getTitle());
 		
 		TextView timeText = (TextView) (view.findViewById(R.id.agenda_entry_time_placeholder));
 		if (showTime) {

@@ -66,16 +66,16 @@ public class HourEventView extends RelativeLayout {
 		
 //		Set event TITLE
 		title = (TextView) titleHolder.findViewById(R.id.hour_event_title);
-		title.setText(e.title);
+		title.setText(e.getTitle());
 		title.setSingleLine(showSingleLine);
 	
 		
 		
 //		set event ICON
 		icon = (ImageView) titleHolder.findViewById(R.id.hour_event_icon);
-		if(e.icon == null) e.icon = "null";
 		
-		 if (e.icon.equalsIgnoreCase("null") || !showEventIcon){
+		
+		 if (e.getIcon().length() <= 0 || !showEventIcon){
 				icon.setVisibility(GONE);
 			}else{
 				
