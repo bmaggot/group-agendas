@@ -1181,7 +1181,7 @@ public class DataManagement {
 		return (items);
 	}
 
-	public Event getNativeCalendarEvent(int id) {
+	public Event getNativeCalendarEvent(long id) {
 		Event item = new Event();
 
 		Cursor cursor;

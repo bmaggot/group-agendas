@@ -17,7 +17,7 @@ public class EventActivityOnClickListener implements View.OnClickListener{
 	@Override
   public void onClick(View view) {
 		Intent intent = new Intent(context, EventEditActivity.class);
-		intent.putExtra("event_id", event.getEvent_id());
+		intent.putExtra("event_id", event.getInternalID());
 		intent.putExtra("type", event.getType());
 		intent.putExtra("isNative", event.isNative());
 		context.startActivity(intent);
