@@ -236,18 +236,11 @@ public class MiniMonthView extends AbstractCalendarView {
 		 */
 		private ArrayList<Event>getEventProjectionsForDisplay(Calendar date){
 			ArrayList<Event> list = new ArrayList<Event>();
-			String[] projection = {
-					EventsProvider.EMetaData.EventsMetaData.E_ID,
-					EventsProvider.EMetaData.EventsMetaData.COLOR,
-					EventsProvider.EMetaData.EventsMetaData.TIME_START_UTC_MILLISECONDS,
-					EventsProvider.EMetaData.EventsMetaData.TIME_END_UTC_MILLISECONDS,
-					EventsProvider.EMetaData.EventsMetaData.ICON,
-					EventsProvider.EMetaData.EventsMetaData.TITLE,
-					};
-			Cursor result = EventManagement.createEventProjectionByDateFromLocalDb(context, projection, date, 0, EventManagement.TM_EVENTS_ON_GIVEN_MONTH, null, true);
+			Cursor result = EventManagement.createEventProjectionByDateFromLocalDb(context, EventProjectionForDisplay, date, 0, EventManagement.TM_EVENTS_ON_GIVEN_MONTH, null, true);
 			if (result.moveToFirst()) {
 				while (!result.isAfterLast()) {
 					Event eventProjection = new Event();
+					eventProjection.setInternalID(result.getLong(result.getColumnIndexOrThrow(EventsProvider.EMetaData.EventsMetaData._ID)));
 					eventProjection.setEvent_id(result.getInt(result.getColumnIndexOrThrow(EventsProvider.EMetaData.EventsMetaData.E_ID)));
 					eventProjection.setTitle(result.getString(result.getColumnIndexOrThrow(EventsProvider.EMetaData.EventsMetaData.TITLE)));
 					eventProjection.setIcon(result.getString(result.getColumnIndexOrThrow(EventsProvider.EMetaData.EventsMetaData.ICON)));

@@ -133,6 +133,7 @@ public class EventsProvider extends ContentProvider{
 	
 	static {
 		EM = new HashMap<String, String>();
+		EM.put(EMetaData.EventsMetaData._ID, EMetaData.EventsMetaData._ID);
 		EM.put(EMetaData.EventsMetaData.E_ID, EMetaData.EVENTS_TABLE+ "." + EMetaData.EventsMetaData.E_ID);
 		EM.put(EMetaData.EventsMetaData.USER_ID, EMetaData.EventsMetaData.USER_ID);
 		

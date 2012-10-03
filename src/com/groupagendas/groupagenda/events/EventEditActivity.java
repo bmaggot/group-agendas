@@ -490,6 +490,10 @@ public class EventEditActivity extends EventActivity {
 		@Override
 		protected void onPostExecute(final Event result) {
 			super.onPostExecute(result);
+			if (result == null){
+				throw new IllegalStateException("EVENT NOT FOUND IN LOCAL DB!!!!!!");
+			}
+		
 			event = result;
 			// title
 

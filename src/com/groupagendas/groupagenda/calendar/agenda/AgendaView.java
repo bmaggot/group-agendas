@@ -187,20 +187,16 @@ public class AgendaView extends AbstractCalendarView {
 		 */
 		private ArrayList<Event> getEventProjectionsForDisplay(Calendar dateStart) {
 			ArrayList<Event> list = new ArrayList<Event>();
-			String[] projection = {
-					EventsProvider.EMetaData.EventsMetaData.E_ID,
-					EventsProvider.EMetaData.EventsMetaData.COLOR,
-					EventsProvider.EMetaData.EventsMetaData.TIME_START_UTC_MILLISECONDS,
-					EventsProvider.EMetaData.EventsMetaData.TIME_END_UTC_MILLISECONDS,
-					EventsProvider.EMetaData.EventsMetaData.ICON,
-					EventsProvider.EMetaData.EventsMetaData.TITLE};
 			
 			Cursor result = EventManagement.createEventProjectionByDateFromLocalDb(context,
-					projection, dateStart, 7,
+					EventProjectionForDisplay, dateStart, 7,
 					EventManagement.TM_EVENTS_FROM_GIVEN_DATE, null, true);
 			if (result.moveToFirst()) {
 				while (!result.isAfterLast()) {
 					Event eventProjection = new Event();
+					eventProjection
+					.setInternalID(result.getLong(result
+							.getColumnIndexOrThrow(EventsProvider.EMetaData.EventsMetaData._ID)));
 					eventProjection
 							.setEvent_id(result.getInt(result
 									.getColumnIndexOrThrow(EventsProvider.EMetaData.EventsMetaData.E_ID)));

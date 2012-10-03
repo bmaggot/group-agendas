@@ -24,9 +24,19 @@ import android.widget.TextView;
 import com.groupagendas.groupagenda.R;
 import com.groupagendas.groupagenda.data.CalendarSettings;
 import com.groupagendas.groupagenda.events.Event;
+import com.groupagendas.groupagenda.events.EventsProvider;
 
 public abstract class AbstractCalendarView extends LinearLayout {
 	protected TreeMap<Calendar, ArrayList<Event>> sortedEvents;
+	protected String[] EventProjectionForDisplay = {
+			EventsProvider.EMetaData.EventsMetaData.E_ID,
+			EventsProvider.EMetaData.EventsMetaData._ID,
+			EventsProvider.EMetaData.EventsMetaData.COLOR,
+			EventsProvider.EMetaData.EventsMetaData.TIME_START_UTC_MILLISECONDS,
+			EventsProvider.EMetaData.EventsMetaData.TIME_END_UTC_MILLISECONDS,
+			EventsProvider.EMetaData.EventsMetaData.ICON,
+			EventsProvider.EMetaData.EventsMetaData.TITLE,
+			};
 	protected GestureDetector swipeGestureDetector;
 	
 	protected Calendar selectedDate;

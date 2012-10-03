@@ -26,7 +26,6 @@ import android.widget.TextView;
 import com.groupagendas.groupagenda.EventActivityOnClickListener;
 import com.groupagendas.groupagenda.R;
 import com.groupagendas.groupagenda.data.CalendarSettings;
-import com.groupagendas.groupagenda.data.DataManagement;
 import com.groupagendas.groupagenda.data.EventManagement;
 import com.groupagendas.groupagenda.events.Event;
 import com.groupagendas.groupagenda.events.EventsProvider;
@@ -198,7 +197,6 @@ private SectionListItem[] filterEvents (String filterString, SectionListItem[] e
 
 	private class GetEventsInfoTask extends AsyncTask<Void, Integer, Void> {
 		private Context context = ListnSearchView.this.getContext();
-		private DataManagement dm = DataManagement.getInstance(context);
 		protected Calendar listStartDate = Utils.createNewTodayCalendar();
 		protected TreeMap<Calendar, ArrayList<Event>> sortedEvents;
 		/**
@@ -210,6 +208,7 @@ private SectionListItem[] filterEvents (String filterString, SectionListItem[] e
 		private ArrayList<Event>getEventProjectionsForDisplay(Calendar date){
 			ArrayList<Event> list = new ArrayList<Event>();
 			String[] projection = {
+					EventsProvider.EMetaData.EventsMetaData._ID,
 					EventsProvider.EMetaData.EventsMetaData.E_ID,
 					EventsProvider.EMetaData.EventsMetaData.COLOR,
 					EventsProvider.EMetaData.EventsMetaData.TIME_START_UTC_MILLISECONDS,
@@ -221,6 +220,7 @@ private SectionListItem[] filterEvents (String filterString, SectionListItem[] e
 			if (result.moveToFirst()) {
 				while (!result.isAfterLast()) {
 					Event eventProjection = new Event();
+					eventProjection.setInternalID(result.getLong(result.getColumnIndexOrThrow(EventsProvider.EMetaData.EventsMetaData._ID)));
 					eventProjection.setEvent_id(result.getInt(result.getColumnIndexOrThrow(EventsProvider.EMetaData.EventsMetaData.E_ID)));
 					eventProjection.setTitle(result.getString(result.getColumnIndexOrThrow(EventsProvider.EMetaData.EventsMetaData.TITLE)));
 					eventProjection.setIcon(result.getString(result.getColumnIndexOrThrow(EventsProvider.EMetaData.EventsMetaData.ICON)));
