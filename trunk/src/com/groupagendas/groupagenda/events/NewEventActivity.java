@@ -94,7 +94,6 @@ public class NewEventActivity extends EventActivity {
 
 		// these fields indicate that we will save this user as owner of event
 		// and save his uid
-		setOwner = true;
 		setUid = true;
 
 		setContentView(R.layout.new_event);
