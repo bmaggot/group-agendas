@@ -32,7 +32,10 @@ public class Invited {
 	}
 
 	public String getName() {
-		return name;
+		if (name != null)
+			return name;
+		else
+			return "";
 	}
 
 	public int getGcid() {
@@ -44,27 +47,39 @@ public class Invited {
 	}
 
 	public int getStatus() {
-		return status;
+		if (status >= 0 && status < 5 && status != 3)
+			return status;
+		else
+			return 4;			
 	}
 
 	public void setMy_contact_id(int my_contact_id) {
-		this.my_contact_id = my_contact_id;
+		if (my_contact_id > 0)
+			this.my_contact_id = my_contact_id;
 	}
 
 	public void setName(String name) {
-		this.name = name;
+		if (name != null)
+			this.name = name;
+		else
+			this.name = "";
 	}
 
 	public void setGcid(int gcid) {
-		this.gcid = gcid;
+		if (gcid > 0)
+			this.gcid = gcid;
 	}
 
 	public void setGuid(int guid) {
-		this.guid = guid;
+		if (guid > 0)
+			this.guid = guid;
 	}
 
 	public void setStatus(int status) {
-		this.status = status;
+		if (status >= 0 && status < 5 && status != 3)
+			this.status = status;
+		else
+			this.status = 4;
 	}
 	
 	public Invited() {
@@ -103,8 +118,14 @@ public class Invited {
 	}
 	
 	public String toString() {
-		String result = "";
+		StringBuilder sb = new StringBuilder();
 		
-		return result;
+		sb.append("gname").append(":").append(getName()).append(",");
+		sb.append("gcid").append(":").append(getGcid()).append(",");
+		sb.append("guid").append(":").append(getGuid()).append(",");
+		sb.append("status").append(":").append(getStatus()).append(",");
+		sb.append("my_contact_id").append(":").append(getMy_contact_id());
+		
+		return sb.toString();
 	}
 }
