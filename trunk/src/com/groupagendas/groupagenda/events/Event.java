@@ -30,8 +30,8 @@ private static final String DEFAULT_REMINDER = "null";
 	private static final String EMPTY_ENTRY = "";
 	public static final String PRIVATE = "p";
 	
-	
-	private int event_id;
+	private long internalID;
+	private int event_id; //TODO solve ids over 32k
 	private int user_id;
 	private int status;
 	private int creator_contact_id;
@@ -768,6 +768,12 @@ public int getMessage_count() {
 }
 public void setMessage_count(int message_count) {
 	this.message_count = message_count;
+}
+public long getInternalID() {
+	return internalID;
+}
+public void setInternalID(long internalID) {
+	this.internalID = internalID;
 }
 
 
