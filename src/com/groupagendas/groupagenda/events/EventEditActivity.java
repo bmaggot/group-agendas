@@ -37,6 +37,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.groupagendas.groupagenda.R;
+import com.groupagendas.groupagenda.account.Account;
 import com.groupagendas.groupagenda.chat.ChatMessageActivity;
 import com.groupagendas.groupagenda.contacts.ContactsActivity;
 import com.groupagendas.groupagenda.data.CalendarSettings;
@@ -701,33 +702,34 @@ public class EventEditActivity extends EventActivity {
 					}
 				}
 			});
+			Account account = new Account();
 			if (result.getReminder1() != null) {
-				reminder1.setText(Utils.formatCalendar(result.getReminder1(), DataManagement.SERVER_TIMESTAMP_FORMAT));
+				reminder1.setText(Utils.formatCalendar(result.getReminder1(), account.getSetting_date_format()));
 			} else {
 				reminder1.setText("");
 			}
 			if (result.getReminder2() != null) {
-				reminder2.setText(Utils.formatCalendar(result.getReminder2(), DataManagement.SERVER_TIMESTAMP_FORMAT));
+				reminder2.setText(Utils.formatCalendar(result.getReminder2(), account.getSetting_date_format()));
 			} else {
 				reminder2.setText("");
 			}
 			if (result.getReminder3() != null) {
-				reminder3.setText(Utils.formatCalendar(result.getReminder3(), DataManagement.SERVER_TIMESTAMP_FORMAT));
+				reminder3.setText(Utils.formatCalendar(result.getReminder3(), account.getSetting_date_format()));
 			} else {
 				reminder3.setText("");
 			}
 			if (result.getAlarm1() != null) {
-				alarm1.setText(Utils.formatCalendar(result.getAlarm1(), DataManagement.SERVER_TIMESTAMP_FORMAT));
+				alarm1.setText(Utils.formatCalendar(result.getAlarm1(), account.getSetting_date_format()));
 			} else {
 				alarm1.setText("");
 			}
 			if (result.getAlarm2() != null) {
-				alarm2.setText(Utils.formatCalendar(result.getAlarm2(), DataManagement.SERVER_TIMESTAMP_FORMAT));
+				alarm2.setText(Utils.formatCalendar(result.getAlarm2(), account.getSetting_date_format()));
 			} else {
 				alarm2.setText("");
 			}
 			if (result.getAlarm3() != null) {
-				alarm3.setText(Utils.formatCalendar(result.getAlarm3(), DataManagement.SERVER_TIMESTAMP_FORMAT));
+				alarm3.setText(Utils.formatCalendar(result.getAlarm3(), account.getSetting_date_format()));
 			} else {
 				alarm3.setText("");
 			}
@@ -1008,8 +1010,9 @@ public class EventEditActivity extends EventActivity {
 					reminder3time = mDateTimePicker.getCalendar();
 					break;
 				}
-				if (!timeSet) {
-					view.setText(Utils.formatCalendar(mDateTimePicker.getCalendar(), DataManagement.SERVER_TIMESTAMP_FORMAT));
+				if (timeSet) {
+					Account account = new Account();
+					view.setText(Utils.formatCalendar(mDateTimePicker.getCalendar(), account.getSetting_date_format()));
 				}
 				mDateTimeDialog.dismiss();
 			}
