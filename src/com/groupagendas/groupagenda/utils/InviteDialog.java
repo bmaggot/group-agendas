@@ -34,7 +34,7 @@ public class InviteDialog extends Dialog {
 //		this.context = context;
 		this.invited = invited;
 		this.setContentView(R.layout.contacts_invite);
-		this.setTitle(context.getResources().getString(R.string.do_you_want_to_save_contact) + " " + invited.name + " "
+		this.setTitle(context.getResources().getString(R.string.do_you_want_to_save_contact) + " " + invited.getName() + " "
 				+ context.getResources().getString(R.string.to_your_list));
 
 		inviteAndRequest = (Button) findViewById(R.id.contact_invite_and_request);
@@ -77,7 +77,7 @@ public class InviteDialog extends Dialog {
 
 				MultipartEntity reqEntity = new MultipartEntity(HttpMultipartMode.BROWSER_COMPATIBLE);
 				reqEntity.addPart("token", new StringBody(Data.getToken()));
-				reqEntity.addPart("guid", new StringBody(String.valueOf(invited.guid)));
+				reqEntity.addPart("guid", new StringBody(String.valueOf(invited.getGuid())));
 				if(req){
 					reqEntity.addPart("req_details", new StringBody("1"));
 				}

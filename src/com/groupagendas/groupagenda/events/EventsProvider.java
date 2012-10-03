@@ -12,6 +12,7 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.database.sqlite.SQLiteQueryBuilder;
 import android.net.Uri;
+import android.provider.BaseColumns;
 import android.text.TextUtils;
 
 public class EventsProvider extends ContentProvider{
@@ -25,6 +26,7 @@ public class EventsProvider extends ContentProvider{
 
 		public static final String EVENTS_TABLE = "events";
 		public static final String EVENT_DAY_INDEX_TABLE = "events_days";
+		public static final String INVITED_TABLE = "invited";
 		
 		private static final String events_on_date = "events_on_date";
 		
@@ -38,16 +40,31 @@ public class EventsProvider extends ContentProvider{
 			public static final String DAY_COLUMN_FORMAT = "yyyy-MM-dd";
 			public static final String MONTH_COLUMN_FORMAT = "yyyy-MM";
 			
-			public static final String EVENT_ID = "event_id";
+			public static final String EVENT_ID = "event_internal_id";
 			public static final String DAY = "day";
 			public static final String MONTH = "month";
 			
 		}
 		
-		public static final class EventsMetaData{
+		public static final class InvitedMetaData{
+			public static final Uri CONTENT_URI = Uri.parse("content://" + AUTHORITY + "/" + INVITED_TABLE);	
+			public static final String CONTENT_TYPE = "vnd.android.cursor.dir/vnd.groupagendas.invited_item";
+			
+			public static final String EVENT_ID = "event_internal_id";
+			
+			public static final String STATUS = "status";
+			public static final String MY_CONTACT_ID = "my_contact_id";
+			public static final String GCID = "gcid";
+			public static final String GUID = "guid";
+			public static final String NAME = "gname";
+
+		}
+		
+		public static final class EventsMetaData implements BaseColumns{
 			public static final Uri CONTENT_URI = Uri.parse("content://" + AUTHORITY + "/" + EVENTS_TABLE);
 			public static final String CONTENT_TYPE = "vnd.android.cursor.dir/vnd.formula.events_item";
 			public static final String CONTENT_ITEM_TYPE = "vnd.android.cursor.item/vnd.formula.events_item";
+			
 
 			public static final String E_ID 	= "event_id";
 			public static final String USER_ID 	= "user_id";
@@ -98,9 +115,8 @@ public class EventsProvider extends ContentProvider{
 			public static final String ATTENDANT_0_COUNT = "attendant_0_count";
 			public static final String ATTENDANT_4_COUNT = "attendant_4_count";
 			
-			public static final String ASSIGNED_CONTACTS = "assigned_contacts";
-			public static final String ASSIGNED_GROUPS = "assigned_groups";
-			public static final String INVITED = "invited";
+//			public static final String ASSIGNED_CONTACTS = "assigned_contacts";
+//			public static final String ASSIGNED_GROUPS = "assigned_groups";
 			
 			public static final String UPLOADED_SUCCESSFULLY = "uploaded";
 			
@@ -169,9 +185,8 @@ public class EventsProvider extends ContentProvider{
 		EM.put(EMetaData.EventsMetaData.ATTENDANT_4_COUNT, EMetaData.EventsMetaData.ATTENDANT_4_COUNT);
 		
 		
-		EM.put(EMetaData.EventsMetaData.ASSIGNED_CONTACTS, EMetaData.EventsMetaData.ASSIGNED_CONTACTS);
-		EM.put(EMetaData.EventsMetaData.ASSIGNED_GROUPS, EMetaData.EventsMetaData.ASSIGNED_GROUPS);
-		EM.put(EMetaData.EventsMetaData.INVITED, EMetaData.EventsMetaData.INVITED);
+//		EM.put(EMetaData.EventsMetaData.ASSIGNED_CONTACTS, EMetaData.EventsMetaData.ASSIGNED_CONTACTS);
+//		EM.put(EMetaData.EventsMetaData.ASSIGNED_GROUPS, EMetaData.EventsMetaData.ASSIGNED_GROUPS);
 		EM.put(EMetaData.EventsMetaData.MESSAGES_COUNT, EMetaData.EventsMetaData.MESSAGES_COUNT);
 		
 		EM.put(EMetaData.EventsMetaData.UPLOADED_SUCCESSFULLY, EMetaData.EventsMetaData.UPLOADED_SUCCESSFULLY);
@@ -189,6 +204,19 @@ public class EventsProvider extends ContentProvider{
 		DEM.put(EMetaData.EventsIndexesMetaData.MONTH, EMetaData.EventsIndexesMetaData.MONTH);
 	}
 	
+	// Events day indexes table projection map
+		private static HashMap<String, String> IM;
+		
+		static{
+			IM = new HashMap<String, String>();
+			IM.put(EMetaData.InvitedMetaData.EVENT_ID, EMetaData.InvitedMetaData.EVENT_ID);
+			IM.put(EMetaData.InvitedMetaData.GCID, EMetaData.InvitedMetaData.GCID);
+			IM.put(EMetaData.InvitedMetaData.GUID, EMetaData.InvitedMetaData.GUID);
+			IM.put(EMetaData.InvitedMetaData.MY_CONTACT_ID, EMetaData.InvitedMetaData.MY_CONTACT_ID);
+			IM.put(EMetaData.InvitedMetaData.STATUS, EMetaData.InvitedMetaData.STATUS);
+			IM.put(EMetaData.InvitedMetaData.NAME, EMetaData.InvitedMetaData.NAME);
+		}
+	
 	
 	
 	// UriMatcher
@@ -198,6 +226,7 @@ public class EventsProvider extends ContentProvider{
 	private static final int ONE_EVENTS = 1;
 	private static final int DAY_INDEX = 2;
 	private static final int EVENTS_ON_DATE = 3;
+	private static final int INVITED = 4;
 
 	static {
 		mUriMatcher = new UriMatcher(UriMatcher.NO_MATCH);
@@ -205,6 +234,7 @@ public class EventsProvider extends ContentProvider{
 		mUriMatcher.addURI(EMetaData.AUTHORITY, EMetaData.EVENTS_TABLE+"/#", ONE_EVENTS);
 		mUriMatcher.addURI(EMetaData.AUTHORITY, EMetaData.EVENT_DAY_INDEX_TABLE, DAY_INDEX);
 		mUriMatcher.addURI(EMetaData.AUTHORITY, EMetaData.events_on_date, EVENTS_ON_DATE);
+		mUriMatcher.addURI(EMetaData.AUTHORITY, EMetaData.INVITED_TABLE, INVITED);
 	}
 	// END UriMatcher
 	
@@ -240,16 +270,16 @@ public class EventsProvider extends ContentProvider{
 		case ONE_EVENTS:
 			qb.setTables(EMetaData.EVENTS_TABLE);
 			qb.setProjectionMap(EM);
-			qb.appendWhere(EMetaData.EventsMetaData.E_ID + "=" + uri.getPathSegments().get(1));
+			qb.appendWhere(EMetaData.EventsMetaData._ID + "=" + uri.getPathSegments().get(1));
 			orderBy = (TextUtils.isEmpty(sortOrder)) ? EMetaData.EventsMetaData.DEFAULT_SORT_ORDER : sortOrder;
 			break;
 			
 		case EVENTS_ON_DATE:
 			qb.setProjectionMap(EM);
 			qb.setTables(EMetaData.EVENT_DAY_INDEX_TABLE + "," +  EMetaData.EVENTS_TABLE);
-			qb.appendWhere(EMetaData.EVENTS_TABLE + "." + EMetaData.EventsMetaData.E_ID
+			qb.appendWhere(EMetaData.EventsMetaData._ID
 					+"="
-					+EMetaData.EVENT_DAY_INDEX_TABLE + "." + EMetaData.EventsIndexesMetaData.EVENT_ID);
+					+EMetaData.EventsIndexesMetaData.EVENT_ID);
 			orderBy = (TextUtils.isEmpty(sortOrder)) ? EMetaData.EventsMetaData.DEFAULT_SORT_ORDER : sortOrder;
 			break;
 //		case EVENTS_BETWEEN_DATES:
@@ -281,6 +311,9 @@ public class EventsProvider extends ContentProvider{
 			case DAY_INDEX:
 				count = db.delete(EMetaData.EVENT_DAY_INDEX_TABLE, where, whereArgs);
 				break;
+			case INVITED:
+				count = db.delete(EMetaData.INVITED_TABLE, where, whereArgs);
+				break;
 			default:
 				
 				throw new IllegalArgumentException("Unknow URI "+uri);
@@ -301,7 +334,11 @@ public class EventsProvider extends ContentProvider{
 			break;
 		case DAY_INDEX:
 			rowId = db.replace(EMetaData.EVENT_DAY_INDEX_TABLE, "", values); 
-			insUri = ContentUris.withAppendedId(EMetaData.EventsMetaData.CONTENT_URI, rowId);
+			insUri = ContentUris.withAppendedId(EMetaData.EventsIndexesMetaData.CONTENT_URI, rowId);
+			break;
+		case INVITED:
+			rowId = db.replace(EMetaData.INVITED_TABLE, "", values); 
+			insUri = ContentUris.withAppendedId(EMetaData.InvitedMetaData.CONTENT_URI, rowId);
 			break;
 		default:
 			throw new IllegalArgumentException("Unknow URI " + uri);
@@ -341,6 +378,7 @@ public class EventsProvider extends ContentProvider{
 		public void onCreate(SQLiteDatabase db) {
 			String query =	"CREATE TABLE "
 				+EMetaData.EVENTS_TABLE+" ("
+				+EMetaData.EventsMetaData._ID+" INTEGER PRIMARY KEY AUTOINCREMENT,"
 				+EMetaData.EventsMetaData.E_ID+" INTEGER,"
 				+EMetaData.EventsMetaData.USER_ID+" INTEGER ,"
 				
@@ -392,12 +430,10 @@ public class EventsProvider extends ContentProvider{
 				+EMetaData.EventsMetaData.ATTENDANT_0_COUNT+" TEXT ,"
 				+EMetaData.EventsMetaData.ATTENDANT_4_COUNT+" TEXT ,"
 				
-				+EMetaData.EventsMetaData.ASSIGNED_CONTACTS+" TEXT ,"
-				+EMetaData.EventsMetaData.ASSIGNED_GROUPS+" TEXT ,"
-				+EMetaData.EventsMetaData.INVITED+" TEXT ,"
+//				+EMetaData.EventsMetaData.ASSIGNED_CONTACTS+" TEXT ,"
+//				+EMetaData.EventsMetaData.ASSIGNED_GROUPS+" TEXT ,"
 				+EMetaData.EventsMetaData.UPLOADED_SUCCESSFULLY+" INTEGER DEFAULT 0, "
-				+EMetaData.EventsMetaData.MESSAGES_COUNT+" INTEGER DEFAULT 0, "
-				+ "PRIMARY KEY (" + EMetaData.EventsMetaData.E_ID +  ", " + EMetaData.EventsMetaData.CREATED_UTC_MILLISECONDS+ ") ON CONFLICT REPLACE"
+				+EMetaData.EventsMetaData.MESSAGES_COUNT+" INTEGER DEFAULT 0 "
 				+")";
 			db.execSQL(query);
 			
@@ -408,6 +444,19 @@ public class EventsProvider extends ContentProvider{
 					+ EMetaData.EventsIndexesMetaData.DAY + " TEXT , "
 					+ EMetaData.EventsIndexesMetaData.MONTH + " TEXT , "
 					+ "PRIMARY KEY (" + EMetaData.EventsIndexesMetaData.EVENT_ID + ", " + EMetaData.EventsIndexesMetaData.DAY + ") ON CONFLICT REPLACE"
+					+")";
+			db.execSQL(query);
+			
+			query = "CREATE TABLE "
+					+EMetaData.INVITED_TABLE
+					+ " ("
+					+ EMetaData.InvitedMetaData.EVENT_ID + " INTEGER ,"
+					+ EMetaData.InvitedMetaData.GCID + " INTEGER ,"
+					+ EMetaData.InvitedMetaData.GUID + " INTEGER ,"
+					+ EMetaData.InvitedMetaData.MY_CONTACT_ID + " INTEGER ,"
+					+ EMetaData.InvitedMetaData.STATUS + " INTEGER, "
+					+ EMetaData.InvitedMetaData.NAME + " TEXT, "
+					+  "PRIMARY KEY (" + EMetaData.InvitedMetaData.EVENT_ID + ") ON CONFLICT REPLACE"
 					+")";
 			db.execSQL(query);
 		}
