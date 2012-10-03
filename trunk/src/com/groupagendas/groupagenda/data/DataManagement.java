@@ -7,10 +7,8 @@ import java.net.URL;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Date;
 import java.util.List;
 import java.util.Map;
-import java.util.TreeMap;
 import java.util.concurrent.ExecutionException;
 
 import org.apache.http.HttpEntity;
@@ -49,25 +47,19 @@ import com.bog.calendar.app.model.CEvent;
 import com.bog.calendar.app.model.EventsHelper;
 import com.google.android.c2dm.C2DMessaging;
 import com.google.android.gcm.GCMRegistrar;
-import com.groupagendas.groupagenda.NavbarActivity;
-import com.groupagendas.groupagenda.R;
 import com.groupagendas.groupagenda.account.Account;
 import com.groupagendas.groupagenda.account.AccountProvider;
 import com.groupagendas.groupagenda.address.Address;
 import com.groupagendas.groupagenda.address.AddressProvider.AMetaData.AddressesMetaData;
-import com.groupagendas.groupagenda.chat.ChatMessageObject;
-import com.groupagendas.groupagenda.contacts.Contact;
 import com.groupagendas.groupagenda.contacts.Group;
 import com.groupagendas.groupagenda.error.report.Reporter;
 import com.groupagendas.groupagenda.events.Event;
 import com.groupagendas.groupagenda.events.EventsAdapter;
 import com.groupagendas.groupagenda.events.EventsProvider;
-import com.groupagendas.groupagenda.events.Invited;
 import com.groupagendas.groupagenda.settings.AutoColorItem;
 import com.groupagendas.groupagenda.settings.AutoIconItem;
 import com.groupagendas.groupagenda.templates.TemplatesProvider.TMetaData.TemplatesMetaData;
 import com.groupagendas.groupagenda.utils.Prefs;
-import com.groupagendas.groupagenda.utils.TreeMapUtils;
 import com.groupagendas.groupagenda.utils.Utils;
 
 public class DataManagement {
