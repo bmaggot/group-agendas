@@ -55,7 +55,7 @@ public class C2DMReceiver extends C2DMBaseReceiver {
 		if (receiveIntent.hasExtra("rel_obj") && receiveIntent.getStringExtra("rel_obj").equals("update")) {
 			DataManagement.updateAppData(Integer.parseInt(data));
 			
-		}else if (receiveIntent.hasExtra("rel_id") && receiveIntent.getStringExtra("rel_id") != "" && data != null) {
+		}else if (receiveIntent.hasExtra("rel_id") && receiveIntent.getStringExtra("rel_id") != "") {
 			if(receiveIntent.hasExtra("rel_obj") && receiveIntent.getStringExtra("rel_obj").equals("ch")){
 				isChatMessage = true;
 			} else {
