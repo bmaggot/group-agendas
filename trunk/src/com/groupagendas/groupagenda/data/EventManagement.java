@@ -441,9 +441,9 @@ public class EventManagement {
 	}
 
 	//TODO javadoc
-		public static Event getEventFromLocalDb(Context context, int event_id) {
+		public static Event getEventFromLocalDb(Context context, long internal_ID) {
 			Event item = null;
-			Uri uri = Uri.parse(EventsProvider.EMetaData.EventsMetaData.CONTENT_URI + "/" + event_id);
+			Uri uri = Uri.parse(EventsProvider.EMetaData.EventsMetaData.CONTENT_URI + "/" + internal_ID);
 			Cursor result = context.getContentResolver().query(uri, null, null, null, null);
 			if (result.moveToFirst()) {
 				item = createEventFromCursor(result);
