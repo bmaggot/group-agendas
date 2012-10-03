@@ -52,25 +52,20 @@ import com.groupagendas.groupagenda.utils.Utils;
 import com.ptashek.widgets.datetimepicker.DateTimePicker;
 
 public class EventEditActivity extends EventActivity {
-	
+
 	private TextView topText;
 	private Button deleteButton;
-	
-	
 
-	
-
-	
 	private LinearLayout reminderBlock;
 	private TextView setReminderTrigger;
-	
+
 	private LinearLayout reminder1container;
 	private LinearLayout reminder2container;
 	private LinearLayout reminder3container;
 	private EditText reminder1;
 	private EditText reminder2;
 	private EditText reminder3;
-	
+
 	private LinearLayout alarmBlock;
 	private TextView setAlarmTrigger;
 	private LinearLayout alarm1container;
@@ -79,10 +74,8 @@ public class EventEditActivity extends EventActivity {
 	private EditText alarm1;
 	private EditText alarm2;
 	private EditText alarm3;
-	
-	private int event_id;
-	
 
+	private int event_id;
 
 	private View responsePanel;
 	private LinearLayout invitesColumn;
@@ -91,22 +84,20 @@ public class EventEditActivity extends EventActivity {
 	private boolean remindersShown = false;
 	private boolean alarmsShown = false;
 
-//	private ArrayList<AutoIconItem> autoIcons = null;
+	// private ArrayList<AutoIconItem> autoIcons = null;
 
 	private Intent intent;
 
 	private Button chatMessengerButton;
 	private Button inviteButton;
-	
 
-	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.event_edit);
 
 	}
-	
+
 	@Override
 	public void onResume() {
 		super.onResume();
@@ -116,21 +107,21 @@ public class EventEditActivity extends EventActivity {
 		addressPanel.setVisibility(View.GONE);
 		detailsPanel.setVisibility(View.GONE);
 		addressDetailsPanel.setVisibility(View.VISIBLE);
-		
-		event_id = intent.getIntExtra("event_id", 0); //TODO implement offline mode event Edit
+
+		event_id = intent.getIntExtra("event_id", 0); // TODO implement offline
+														// mode event Edit
 		if (event_id > 0) {
 			new GetEventTask().execute(event_id);
-				}
+		}
 	}
 
 	private void initViewItems() {
-		
-		
+
 		pb = (ProgressBar) findViewById(R.id.progress);
 		intent = getIntent();
-//Top text and SAVE Button
+		// Top text and SAVE Button
 		topText = (TextView) findViewById(R.id.topText);
-		
+
 		String typeStr = "";
 		if (intent.getStringExtra("type") != null) {
 			typeStr = new StringBuilder(intent.getStringExtra("type")).append("_type").toString();
@@ -147,13 +138,13 @@ public class EventEditActivity extends EventActivity {
 				new UpdateEventTask().execute();
 			}
 		});
-		
-// Icon, color and title		
+
+		// Icon, color and title
 		iconView = (ImageView) findViewById(R.id.iconView);
 		colorView = (ImageView) findViewById(R.id.colorView);
 		titleView = (EditText) findViewById(R.id.title);
-		
-// Start and end time buttons
+
+		// Start and end time buttons
 		startButton = (Button) findViewById(R.id.startButton);
 		startButton.setOnClickListener(new OnClickListener() {
 			@Override
@@ -161,7 +152,7 @@ public class EventEditActivity extends EventActivity {
 				showDateTimeDialog(startView, DIALOG_START);
 			}
 		});
-		
+
 		endButton = (Button) findViewById(R.id.endButton);
 		endButton.setOnClickListener(new OnClickListener() {
 			@Override
@@ -170,18 +161,16 @@ public class EventEditActivity extends EventActivity {
 			}
 		});
 
-//EVENT START AND END TIMES
-				startView = (EditText) findViewById(R.id.startView);
-				endView = (EditText) findViewById(R.id.endView);
-				
+		// EVENT START AND END TIMES
+		startView = (EditText) findViewById(R.id.startView);
+		endView = (EditText) findViewById(R.id.endView);
 
-				
-// Description
+		// Description
 		descView = (EditText) findViewById(R.id.descView);
-//Addres and details panel	
+		// Addres and details panel
 		addressDetailsPanel = (RelativeLayout) findViewById(R.id.addressDetailsLine);
-		
-//ADDRESS PANEL
+
+		// ADDRESS PANEL
 		addressPanel = (LinearLayout) findViewById(R.id.addressLine);
 		addressPanel.setOnClickListener(new OnClickListener() {
 
@@ -205,24 +194,24 @@ public class EventEditActivity extends EventActivity {
 				showAddressPanel();
 			}
 		});
-		
+
 		countrySpinnerBlock = (LinearLayout) findViewById(R.id.countrySpinnerBlock);
 		countrySpinner = (Spinner) findViewById(R.id.countrySpinner);
-		final ArrayAdapter<String> adapterCountry = new ArrayAdapter<String>(EventEditActivity.this, R.layout.search_dialog_item, CountryManager.getCountries(EventEditActivity.this));
+		final ArrayAdapter<String> adapterCountry = new ArrayAdapter<String>(EventEditActivity.this, R.layout.search_dialog_item,
+				CountryManager.getCountries(EventEditActivity.this));
 		adapterCountry.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
 		countrySpinner.setAdapter(adapterCountry);
 		countryArray = CountryManager.getCountryValues(EventEditActivity.this);
-		countrySpinnerBlock = (LinearLayout) findViewById(R.id.countrySpinnerBlock); 
-		
+		countrySpinnerBlock = (LinearLayout) findViewById(R.id.countrySpinnerBlock);
+
 		countrySpinnerBlock.setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View arg0) {
 				Dialog dia = new SearchDialog(EventEditActivity.this, R.style.yearview_eventlist_title, adapterCountry, countrySpinner);
-				dia.show();				
+				dia.show();
 			}
 		});
-		
-		
+
 		cityViewBlock = (LinearLayout) findViewById(R.id.cityViewBlock);
 		cityView = (EditText) findViewById(R.id.cityView);
 		streetViewBlock = (LinearLayout) findViewById(R.id.streetViewBlock);
@@ -231,10 +220,8 @@ public class EventEditActivity extends EventActivity {
 		zipView = (EditText) findViewById(R.id.zipView);
 		timezoneSpinnerBlock = (LinearLayout) findViewById(R.id.timezoneSpinnerBlock);
 		timezoneSpinner = (Spinner) findViewById(R.id.timezoneSpinner);
-		
-		
-		
-//DETAILS PANEL		
+
+		// DETAILS PANEL
 		detailsPanel = (LinearLayout) findViewById(R.id.detailsLine);
 		detailsPanel.setOnClickListener(new OnClickListener() {
 
@@ -268,150 +255,148 @@ public class EventEditActivity extends EventActivity {
 		costView = (EditText) findViewById(R.id.costView);
 		accomodationViewBlock = (LinearLayout) findViewById(R.id.accomodationBlock);
 		accomodationView = (EditText) findViewById(R.id.accomodationView);
-		
 
 		chatMessengerButton = (Button) findViewById(R.id.messenger_button);
-		
 
-//REMINDERS PANEL
-			reminderBlock = (LinearLayout) findViewById(R.id.reminder_block);
-			setReminderTrigger = (TextView) findViewById(R.id.setReminderTrigger);
-			setReminderTrigger.setOnClickListener(new OnClickListener() {
+		// REMINDERS PANEL
+		reminderBlock = (LinearLayout) findViewById(R.id.reminder_block);
+		setReminderTrigger = (TextView) findViewById(R.id.setReminderTrigger);
+		setReminderTrigger.setOnClickListener(new OnClickListener() {
 
-				@Override
-				public void onClick(View v) {
-					if (remindersShown) {
-						remindersShown = false;
-						reminderBlock.setVisibility(View.GONE);
-					} else {
-						remindersShown = true;
-						reminderBlock.setVisibility(View.VISIBLE);
-					}
+			@Override
+			public void onClick(View v) {
+				if (remindersShown) {
+					remindersShown = false;
+					reminderBlock.setVisibility(View.GONE);
+				} else {
+					remindersShown = true;
+					reminderBlock.setVisibility(View.VISIBLE);
 				}
-			});
-//		REMINDER1
-			reminder1container = (LinearLayout) findViewById(R.id.reminder_container1);
-			reminder1 = (EditText) findViewById(R.id.reminder1);
-			reminder1container.setOnClickListener(new OnClickListener() {
+			}
+		});
+		// REMINDER1
+		reminder1container = (LinearLayout) findViewById(R.id.reminder_container1);
+		reminder1 = (EditText) findViewById(R.id.reminder1);
+		reminder1container.setOnClickListener(new OnClickListener() {
 
-				@Override
-				public void onClick(View v) {
-					showDateTimeDialog(reminder1, REMINDER1);
+			@Override
+			public void onClick(View v) {
+				showDateTimeDialog(reminder1, REMINDER1);
+			}
+		});
+		reminder1.setOnClickListener(new OnClickListener() {
+
+			@Override
+			public void onClick(View v) {
+				showDateTimeDialog(reminder1, REMINDER1);
+			}
+		});
+		// REMINDER2
+		reminder2container = (LinearLayout) findViewById(R.id.reminder_container2);
+		reminder2 = (EditText) findViewById(R.id.reminder2);
+		reminder2container.setOnClickListener(new OnClickListener() {
+
+			@Override
+			public void onClick(View v) {
+				showDateTimeDialog(reminder2, REMINDER2);
+			}
+		});
+		reminder2.setOnClickListener(new OnClickListener() {
+
+			@Override
+			public void onClick(View v) {
+				showDateTimeDialog(reminder2, REMINDER2);
+			}
+		});
+		// REMINDER3
+		reminder3container = (LinearLayout) findViewById(R.id.reminder_container3);
+		reminder3 = (EditText) findViewById(R.id.reminder3);
+		reminder3container.setOnClickListener(new OnClickListener() {
+
+			@Override
+			public void onClick(View v) {
+				showDateTimeDialog(reminder3, REMINDER3);
+			}
+		});
+		reminder3.setOnClickListener(new OnClickListener() {
+
+			@Override
+			public void onClick(View v) {
+				showDateTimeDialog(reminder3, REMINDER3);
+			}
+		});
+
+		// ALARMS
+		alarmBlock = (LinearLayout) findViewById(R.id.alarm_block);
+		setAlarmTrigger = (TextView) findViewById(R.id.setAlarmTrigger);
+		setAlarmTrigger.setOnClickListener(new OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				if (alarmsShown) {
+					alarmsShown = false;
+					alarmBlock.setVisibility(View.GONE);
+				} else {
+					alarmsShown = true;
+					alarmBlock.setVisibility(View.VISIBLE);
 				}
-			});
-			reminder1.setOnClickListener(new OnClickListener() {
+			}
+		});
 
-				@Override
-				public void onClick(View v) {
-					showDateTimeDialog(reminder1, REMINDER1);
-				}
-			});
-//			REMINDER2
-			reminder2container = (LinearLayout) findViewById(R.id.reminder_container2);
-			reminder2 = (EditText) findViewById(R.id.reminder2);
-			reminder2container.setOnClickListener(new OnClickListener() {
+		// ALARM1
+		alarm1 = (EditText) findViewById(R.id.alarm1);
+		alarm1container = (LinearLayout) findViewById(R.id.alarm_container1);
+		alarm1container.setOnClickListener(new OnClickListener() {
 
-				@Override
-				public void onClick(View v) {
-					showDateTimeDialog(reminder2, REMINDER2);
-				}
-			});
-			reminder2.setOnClickListener(new OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				showDateTimeDialog(alarm1, ALARM1);
+			}
+		});
+		alarm1.setOnClickListener(new OnClickListener() {
 
-				@Override
-				public void onClick(View v) {
-					showDateTimeDialog(reminder2, REMINDER2);
-				}
-			});
-//			REMINDER3
-			reminder3container = (LinearLayout) findViewById(R.id.reminder_container3);
-			reminder3 = (EditText) findViewById(R.id.reminder3);
-			reminder3container.setOnClickListener(new OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				showDateTimeDialog(alarm1, ALARM1);
+			}
+		});
 
-				@Override
-				public void onClick(View v) {
-					showDateTimeDialog(reminder3, REMINDER3);
-				}
-			});
-			reminder3.setOnClickListener(new OnClickListener() {
+		// ALARM2
+		alarm2container = (LinearLayout) findViewById(R.id.alarm_container2);
+		alarm2 = (EditText) findViewById(R.id.alarm2);
+		alarm2container.setOnClickListener(new OnClickListener() {
 
-				@Override
-				public void onClick(View v) {
-					showDateTimeDialog(reminder3, REMINDER3);
-				}
-			});
-			
-//ALARMS
-			alarmBlock = (LinearLayout) findViewById(R.id.alarm_block);
-			setAlarmTrigger = (TextView) findViewById(R.id.setAlarmTrigger);
-			setAlarmTrigger.setOnClickListener(new OnClickListener() {
-				@Override
-				public void onClick(View v) {
-					if (alarmsShown) {
-						alarmsShown = false;
-						alarmBlock.setVisibility(View.GONE);
-					} else {
-						alarmsShown = true;
-						alarmBlock.setVisibility(View.VISIBLE);
-					}
-				}
-			});
+			@Override
+			public void onClick(View v) {
+				showDateTimeDialog(alarm2, ALARM2);
+			}
+		});
+		alarm2.setOnClickListener(new OnClickListener() {
 
-//			ALARM1
-			alarm1 = (EditText) findViewById(R.id.alarm1);
-			alarm1container = (LinearLayout) findViewById(R.id.alarm_container1);
-			alarm1container.setOnClickListener(new OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				showDateTimeDialog(alarm2, ALARM2);
+			}
+		});
 
-				@Override
-				public void onClick(View v) {
-					showDateTimeDialog(alarm1, ALARM1);
-				}
-			});
-			alarm1.setOnClickListener(new OnClickListener() {
+		// ALARM3
+		alarm3container = (LinearLayout) findViewById(R.id.alarm_container3);
+		alarm3 = (EditText) findViewById(R.id.alarm3);
+		alarm3container.setOnClickListener(new OnClickListener() {
 
-				@Override
-				public void onClick(View v) {
-					showDateTimeDialog(alarm1, ALARM1);
-				}
-			});
-			
-//			ALARM2
-			alarm2container = (LinearLayout) findViewById(R.id.alarm_container2);
-			alarm2 = (EditText) findViewById(R.id.alarm2);
-			alarm2container.setOnClickListener(new OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				showDateTimeDialog(alarm3, ALARM3);
+			}
+		});
+		alarm3.setOnClickListener(new OnClickListener() {
 
-				@Override
-				public void onClick(View v) {
-					showDateTimeDialog(alarm2, ALARM2);
-				}
-			});
-			alarm2.setOnClickListener(new OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				showDateTimeDialog(alarm3, ALARM3);
+			}
+		});
 
-				@Override
-				public void onClick(View v) {
-					showDateTimeDialog(alarm2, ALARM2);
-				}
-			});
-
-//			ALARM3
-			alarm3container = (LinearLayout) findViewById(R.id.alarm_container3);
-			alarm3 = (EditText) findViewById(R.id.alarm3);
-			alarm3container.setOnClickListener(new OnClickListener() {
-
-				@Override
-				public void onClick(View v) {
-					showDateTimeDialog(alarm3, ALARM3);
-				}
-			});
-			alarm3.setOnClickListener(new OnClickListener() {
-
-				@Override
-				public void onClick(View v) {
-					showDateTimeDialog(alarm3, ALARM3);
-				}
-			});
-		
-//INVITES SECTION
+		// INVITES SECTION
 		invitesColumn = (LinearLayout) findViewById(R.id.invitesLine);
 		inviteButton = (Button) findViewById(R.id.invite_button);
 		inviteButton.setOnClickListener(new OnClickListener() {
@@ -420,11 +405,11 @@ public class EventEditActivity extends EventActivity {
 			public void onClick(View v) {
 				Data.newEventPar = true;
 				Data.showSaveButtonInContactsForm = true;
-//			TODO	Data.eventForSavingNewInvitedPersons = event;
+				// TODO Data.eventForSavingNewInvitedPersons = event;
 				startActivity(new Intent(EventEditActivity.this, ContactsActivity.class));
 			}
 		});
-		
+
 		responsePanel = findViewById(R.id.response_to_invitation);
 		deleteButton = (Button) findViewById(R.id.event_delete);
 		deleteButton.setOnClickListener(new OnClickListener() {
@@ -434,8 +419,7 @@ public class EventEditActivity extends EventActivity {
 			}
 		});
 	}
-		
-	
+
 	@Override
 	public boolean onKeyDown(int keyCode, KeyEvent event) {
 		if (keyCode == KeyEvent.KEYCODE_BACK) {
@@ -451,7 +435,7 @@ public class EventEditActivity extends EventActivity {
 
 		final TextView emailView = (TextView) view.findViewById(R.id.invited_available_email);
 		emailView.setText(invited.email);
-		if(setEmailRed){
+		if (setEmailRed) {
 			emailView.setTextColor(Color.GREEN);
 		}
 
@@ -488,13 +472,13 @@ public class EventEditActivity extends EventActivity {
 		@Override
 		protected void onPreExecute() {
 			super.onPreExecute();
-			pb.setVisibility(View.VISIBLE);	
+			pb.setVisibility(View.VISIBLE);
 		}
 
 		@Override
 		protected Event doInBackground(Integer... ids) {
-//			autoColors = dm.getAutoColors(); TODO implement or remove shit
-//			autoIcons = dm.getAutoIcons();
+			// autoColors = dm.getAutoColors(); TODO implement or remove shit
+			// autoIcons = dm.getAutoIcons();
 
 			if (intent.getBooleanExtra("isNative", false)) {
 				return dm.getNativeCalendarEvent(ids[0]);
@@ -506,15 +490,16 @@ public class EventEditActivity extends EventActivity {
 		@Override
 		protected void onPostExecute(final Event result) {
 			super.onPostExecute(result);
+			event = result;
 			// title
-			
+
 			titleView.setText(result.getTitle());
-// if this user is owner of event, fields can be edited		
+			// if this user is owner of event, fields can be edited
 			if (result.is_owner()) {
 				saveButton.setVisibility(View.VISIBLE);
 				deleteButton.setVisibility(View.VISIBLE);
-				
-//ICON SELECTION	
+
+				// ICON SELECTION
 				iconView.setOnClickListener(new OnClickListener() {
 					@Override
 					public void onClick(View v) {
@@ -526,17 +511,16 @@ public class EventEditActivity extends EventActivity {
 						gridview.setAdapter(new IconsAdapter(EventEditActivity.this, iconsValues));
 
 						gridview.setOnItemClickListener(new OnItemClickListener() {
-							
 
 							@Override
-							public void onItemClick(AdapterView<?> parent,
-									View v, int position, long id) {
+							public void onItemClick(AdapterView<?> parent, View v, int position, long id) {
 								if (iconsValues[position].equals("noicon")) {
 									selectedIcon = Event.DEFAULT_ICON;
 									iconView.setImageDrawable(getResources().getDrawable(R.drawable.no_icon));
 								} else {
 									selectedIcon = iconsValues[position];
-									int iconId = getResources().getIdentifier(iconsValues[position], "drawable", "com.groupagendas.groupagenda");
+									int iconId = getResources().getIdentifier(iconsValues[position], "drawable",
+											"com.groupagendas.groupagenda");
 									iconView.setImageResource(iconId);
 								}
 								dialog.dismiss();
@@ -546,8 +530,8 @@ public class EventEditActivity extends EventActivity {
 						dialog.show();
 					}
 				});
-				
-//COLOR SELECTION				
+
+				// COLOR SELECTION
 				colorView.setImageResource(result.getColorBubbleId(EventEditActivity.this));
 				selectedColor = result.getColor();
 				final String[] colorsValues = getResources().getStringArray(R.array.colors_values);
@@ -572,17 +556,16 @@ public class EventEditActivity extends EventActivity {
 						});
 						dialog.show();
 					}
-				});	
-				
-			
-				
+				});
+
 				showView(timezoneSpinner, addressLine);
 				countrySpinner.setOnItemSelectedListener(new OnItemSelectedListener() {
 					@Override
 					public void onItemSelected(AdapterView<?> arg0, View arg1, int pos, long arg3) {
 
 						if (pos == 0) {
-							ArrayAdapter<String> adapterTimezone = new ArrayAdapter<String>(EventEditActivity.this,  R.layout.search_dialog_item, new String[0]);
+							ArrayAdapter<String> adapterTimezone = new ArrayAdapter<String>(EventEditActivity.this,
+									R.layout.search_dialog_item, new String[0]);
 							adapterTimezone.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
 							timezoneSpinner.setAdapter(adapterTimezone);
 							timezoneSpinner.setEnabled(false);
@@ -591,7 +574,8 @@ public class EventEditActivity extends EventActivity {
 							timezoneSpinner.setEnabled(true);
 							// timezone
 							String[] timezoneLabels = TimezoneManager.getTimezones(EventEditActivity.this, countryArray[pos]);
-							ArrayAdapter<String> adapterTimezone = new ArrayAdapter<String>(EventEditActivity.this,  R.layout.search_dialog_item, timezoneLabels);
+							ArrayAdapter<String> adapterTimezone = new ArrayAdapter<String>(EventEditActivity.this,
+									R.layout.search_dialog_item, timezoneLabels);
 							adapterTimezone.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
 							timezoneSpinner.setAdapter(adapterTimezone);
 							timezoneArray = TimezoneManager.getTimezonesValues(EventEditActivity.this, countryArray[pos]);
@@ -600,10 +584,11 @@ public class EventEditActivity extends EventActivity {
 								pos = Utils.getArrayIndex(timezoneArray, result.getTimezone());
 								timezoneSpinner.setSelection(pos);
 								showView(timezoneSpinner, addressLine);
-								
+
 							}
 						}
 					}
+
 					@Override
 					public void onNothingSelected(AdapterView<?> arg0) {
 					}
@@ -615,8 +600,8 @@ public class EventEditActivity extends EventActivity {
 					showView(countrySpinner, addressLine);
 					if (!result.is_owner())
 						countrySpinner.setEnabled(false);
-				}	
-				
+				}
+
 				showView(countrySpinner, addressLine);
 				showView(cityView, addressLine);
 				showView(streetView, addressLine);
@@ -626,8 +611,7 @@ public class EventEditActivity extends EventActivity {
 				showView(takewithyouView, detailsLine);
 				showView(costView, detailsLine);
 				showView(accomodationView, detailsLine);
-			
-				
+
 			} else {
 				titleView.setEnabled(false);
 				endView.setEnabled(false);
@@ -644,10 +628,10 @@ public class EventEditActivity extends EventActivity {
 				costView.setEnabled(false);
 				accomodationView.setEnabled(false);
 				saveButton.setVisibility(View.GONE);
-				
+
 			}
-			
-//START AND END TIME
+
+			// START AND END TIME
 			if (result.getStartCalendar() != null) {
 				startView.setText(Utils.formatCalendar(result.getStartCalendar()));
 				startCalendar = (Calendar) result.getStartCalendar().clone();
@@ -657,53 +641,50 @@ public class EventEditActivity extends EventActivity {
 				endCalendar = (Calendar) result.getEndCalendar().clone();
 			}
 
-			
 			if (result.getDescription().length() > 0) {
 				LinearLayout parent = (LinearLayout) descView.getParent();
 				parent.setVisibility(View.VISIBLE);
 				descView.setText(result.getDescription());
 			}
 
-
 			if (!result.getIcon().equals("null")) {
 				selectedIcon = result.getIcon();
 				iconView.setImageResource(result.getIconId(EventEditActivity.this));
 			}
-			
+
 			if (result.getCity().length() > 0) {
 				cityView.setText(result.getCity());
-				showView(cityView, addressLine);	
-			}		
-			
+				showView(cityView, addressLine);
+			}
+
 			if (result.getStreet().length() > 0) {
 				streetView.setText(result.getStreet());
-				showView(streetView, addressLine);	
+				showView(streetView, addressLine);
 			}
 			if (result.getZip().length() > 0) {
 				zipView.setText(result.getZip());
-				showView(zipView, addressLine);		
+				showView(zipView, addressLine);
 			}
 			if (result.getLocation().length() > 0) {
 				locationView.setText(result.getLocation());
 				showView(locationView, detailsLine);
 			}
-			if (result.getGo_by().length() > 0 ) {
+			if (result.getGo_by().length() > 0) {
 				gobyView.setText(result.getGo_by());
-				showView(gobyView, detailsLine);	
-			}			
-			if (result.getTake_with_you().length() > 0 ) {
+				showView(gobyView, detailsLine);
+			}
+			if (result.getTake_with_you().length() > 0) {
 				takewithyouView.setText(result.getTake_with_you());
-				showView(takewithyouView, detailsLine);	
-			}	
-			if (result.getCost().length() > 0 ) {
+				showView(takewithyouView, detailsLine);
+			}
+			if (result.getCost().length() > 0) {
 				costView.setText(result.getCost());
 				showView(costView, detailsLine);
 			}
-			if (result.getAccomodation().length() > 0 ) {
+			if (result.getAccomodation().length() > 0) {
 				accomodationView.setText(result.getAccomodation());
 				showView(accomodationView, detailsLine);
 			}
-			
 
 			chatMessengerButton.setOnClickListener(new OnClickListener() {
 
@@ -716,50 +697,51 @@ public class EventEditActivity extends EventActivity {
 					}
 				}
 			});
-			
-	
-			
-	
-//		TODO JUSTUI V implement with timestamps from API		
-//			if ( null && event.reminder1 != null && !event.reminder1.equals("null")) {
-//			reminder1.setText(event.reminder1);
-//		} else {
-//			reminder1.setText("");
-//		}	
-//if (event != null && event.reminder2 != null && !event.reminder2.equals("null")) {
-//			reminder2.setText(event.reminder2);
-//		} else {
-//			reminder2.setText("");
-//		}
-//if (event != null && event.reminder3 != null && !event.reminder3.equals("null")) {
-//			reminder3.setText(event.reminder3);
-//		} else {
-//			reminder3.setText("");
-//		}
-//	if (event != null && event.alarm1 != null && !event.alarm1.equals("null")) {
-//			alarm1.setText(event.alarm1);
-//		} else {
-//			alarm1.setText("");
-//		}	
-//		if (event != null && event.alarm2 != null && !event.alarm2.equals("null")) {
-//			alarm2.setText(event.alarm2);
-//		} else {
-//			alarm2.setText("");
-//		}	
-//		if (event != null && event.alarm3 != null && !event.alarm3.equals("null")) {
-//			alarm3.setText(event.alarm3);
-//		} else {
-//			alarm3.setText("");
-//		}
 
+			// TODO JUSTUI V implement with timestamps from API
+			// if ( null && event.reminder1 != null &&
+			// !event.reminder1.equals("null")) {
+			// reminder1.setText(event.reminder1);
+			// } else {
+			// reminder1.setText("");
+			// }
+			// if (event != null && event.reminder2 != null &&
+			// !event.reminder2.equals("null")) {
+			// reminder2.setText(event.reminder2);
+			// } else {
+			// reminder2.setText("");
+			// }
+			// if (event != null && event.reminder3 != null &&
+			// !event.reminder3.equals("null")) {
+			// reminder3.setText(event.reminder3);
+			// } else {
+			// reminder3.setText("");
+			// }
+			// if (event != null && event.alarm1 != null &&
+			// !event.alarm1.equals("null")) {
+			// alarm1.setText(event.alarm1);
+			// } else {
+			// alarm1.setText("");
+			// }
+			// if (event != null && event.alarm2 != null &&
+			// !event.alarm2.equals("null")) {
+			// alarm2.setText(event.alarm2);
+			// } else {
+			// alarm2.setText("");
+			// }
+			// if (event != null && event.alarm3 != null &&
+			// !event.alarm3.equals("null")) {
+			// alarm3.setText(event.alarm3);
+			// } else {
+			// alarm3.setText("");
+			// }
 
-		
-//		int invitedListSize = result.getInvitedCount();//TODOimplement
-//		
-//
-//		if (invitedListSize == 0) {
-//			inviteButton.setBackgroundResource(R.drawable.event_invite_people_button_standalone);
-//			}
+			// int invitedListSize = result.getInvitedCount();//TODOimplement
+			//
+			//
+			// if (invitedListSize == 0) {
+			// inviteButton.setBackgroundResource(R.drawable.event_invite_people_button_standalone);
+			// }
 
 			// type TODO DEAD-CODE
 			// typeSpinner = (Spinner) findViewById(R.id.typeSpinner);
@@ -779,9 +761,7 @@ public class EventEditActivity extends EventActivity {
 			// }
 
 			// Time
-			
-			
-		
+
 			// Address
 			// TODO DEAD-CODE
 			// addressLine = (LinearLayout) findViewById(R.id.addressLine);
@@ -797,9 +777,6 @@ public class EventEditActivity extends EventActivity {
 			// }
 			// });
 
-
-
-
 			// // Details
 			// detailsLine = (LinearLayout) findViewById(R.id.detailsLine);
 			// detailsLine.setOnClickListener(new OnClickListener() {
@@ -813,55 +790,52 @@ public class EventEditActivity extends EventActivity {
 			// }
 			// }
 			// });
-			
 
-
-//				
-//
-//			final ViewHolder holder = new ViewHolder();
-//			holder.status = (TextView) findViewById(R.id.status);
-//			holder.button_yes = (TextView) findViewById(R.id.button_yes);
-//			holder.button_maybe = (TextView) findViewById(R.id.button_maybe);
-//			holder.button_no = (TextView) findViewById(R.id.button_no);
-//
-//			responsePanel.setVisibility(View.VISIBLE);
-//
-//			switch (result.getStatus()) {
-//			case Event.REJECTED:
-//				holder.status.setText(mContext.getString(R.string.status_0));
-//				holder.button_yes.setVisibility(View.VISIBLE);
-//				holder.button_maybe.setVisibility(View.VISIBLE);
-//				holder.button_no.setVisibility(View.INVISIBLE);
-//				break;
-//			case Event.ACCEPTED:
-//				holder.status.setText(mContext.getString(R.string.status_1));
-//				holder.button_yes.setVisibility(View.INVISIBLE);
-//				holder.button_maybe.setVisibility(View.VISIBLE);
-//				holder.button_no.setVisibility(View.VISIBLE);
-//				break;
-//			case Event.MAYBE:
-//				holder.status.setText(mContext.getString(R.string.status_2));
-//				holder.button_yes.setVisibility(View.VISIBLE);
-//				holder.button_maybe.setVisibility(View.INVISIBLE);
-//				holder.button_no.setVisibility(View.VISIBLE);
-//				break;
-//			case Event.NEW_INVITATION:
-//				holder.status.setText(mContext.getString(R.string.new_invite));
-//				holder.button_yes.setVisibility(View.VISIBLE);
-//				holder.button_maybe.setVisibility(View.VISIBLE);
-//				holder.button_no.setVisibility(View.VISIBLE);
-//				break;
-//			}
+			//
+			//
+			// final ViewHolder holder = new ViewHolder();
+			// holder.status = (TextView) findViewById(R.id.status);
+			// holder.button_yes = (TextView) findViewById(R.id.button_yes);
+			// holder.button_maybe = (TextView) findViewById(R.id.button_maybe);
+			// holder.button_no = (TextView) findViewById(R.id.button_no);
+			//
+			// responsePanel.setVisibility(View.VISIBLE);
+			//
+			// switch (result.getStatus()) {
+			// case Event.REJECTED:
+			// holder.status.setText(mContext.getString(R.string.status_0));
+			// holder.button_yes.setVisibility(View.VISIBLE);
+			// holder.button_maybe.setVisibility(View.VISIBLE);
+			// holder.button_no.setVisibility(View.INVISIBLE);
+			// break;
+			// case Event.ACCEPTED:
+			// holder.status.setText(mContext.getString(R.string.status_1));
+			// holder.button_yes.setVisibility(View.INVISIBLE);
+			// holder.button_maybe.setVisibility(View.VISIBLE);
+			// holder.button_no.setVisibility(View.VISIBLE);
+			// break;
+			// case Event.MAYBE:
+			// holder.status.setText(mContext.getString(R.string.status_2));
+			// holder.button_yes.setVisibility(View.VISIBLE);
+			// holder.button_maybe.setVisibility(View.INVISIBLE);
+			// holder.button_no.setVisibility(View.VISIBLE);
+			// break;
+			// case Event.NEW_INVITATION:
+			// holder.status.setText(mContext.getString(R.string.new_invite));
+			// holder.button_yes.setVisibility(View.VISIBLE);
+			// holder.button_maybe.setVisibility(View.VISIBLE);
+			// holder.button_no.setVisibility(View.VISIBLE);
+			// break;
+			// }
 
 			pb.setVisibility(View.INVISIBLE);
 		}
 	}
 
-//	private void editDb(int event_id, int status, boolean success) {
-//		Object[] array = { event_id, status, success, dm };
-//		new EventStatusUpdater().execute(array);
-//	}
-
+	// private void editDb(int event_id, int status, boolean success) {
+	// Object[] array = { event_id, status, success, dm };
+	// new EventStatusUpdater().execute(array);
+	// }
 
 	class UpdateEventTask extends AsyncTask<Event, Void, Boolean> {
 
@@ -874,13 +848,13 @@ public class EventEditActivity extends EventActivity {
 
 		@Override
 		protected Boolean doInBackground(Event... events) {
-			Event event = new Event();
+
 			event = setEventData(event);
 			int testEvent = event.isValid();
 			if (testEvent == 0) {
 				EventManagement.updateEvent(EventEditActivity.this, event);
 				return true;
-			}else {
+			} else {
 				errorStr = setErrorStr(testEvent);
 				return false;
 			}
@@ -970,7 +944,10 @@ public class EventEditActivity extends EventActivity {
 		}
 	}
 
-	private void showDateTimeDialog(final EditText view, final int id) { //TODO put to parent
+	private void showDateTimeDialog(final EditText view, final int id) { // TODO
+																			// put
+																			// to
+																			// parent
 		// Create the dialog
 		final Dialog mDateTimeDialog = new Dialog(this);
 		// Inflate the root layout
@@ -990,11 +967,10 @@ public class EventEditActivity extends EventActivity {
 		mDateTimePicker.updateDate(c.get(Calendar.YEAR), c.get(Calendar.MONTH), c.get(Calendar.DAY_OF_MONTH));
 		mDateTimePicker.updateTime(c.get(Calendar.HOUR_OF_DAY), c.get(Calendar.MINUTE));
 
-	
 		final boolean is24h = !CalendarSettings.isUsing_AM_PM();
 		// Setup TimePicker
-				mDateTimePicker.setIs24HourView(is24h);
-				
+		mDateTimePicker.setIs24HourView(is24h);
+
 		// Update demo TextViews when the "OK" button is clicked
 		((Button) mDateTimeDialogView.findViewById(R.id.SetDateTime)).setOnClickListener(new OnClickListener() {
 
@@ -1006,16 +982,12 @@ public class EventEditActivity extends EventActivity {
 				case DIALOG_START:
 					startCalendar = mDateTimePicker.getCalendar();
 					startView.setText(dtUtils.formatDateTime(startCalendar.getTime()));
-							if (!startCalendar.before(endCalendar)) {
-								endCalendar = Calendar.getInstance();
-								endCalendar.setTime(mDateTimePicker
-										.getCalendar().getTime());
-								endCalendar
-										.add(Calendar.MINUTE,
-												NewEventActivity.DEFAULT_EVENT_DURATION_IN_MINS);
-								endView.setText(dtUtils
-										.formatDateTime(endCalendar.getTime()));
-							}
+					if (!startCalendar.before(endCalendar)) {
+						endCalendar = Calendar.getInstance();
+						endCalendar.setTime(mDateTimePicker.getCalendar().getTime());
+						endCalendar.add(Calendar.MINUTE, NewEventActivity.DEFAULT_EVENT_DURATION_IN_MINS);
+						endView.setText(dtUtils.formatDateTime(endCalendar.getTime()));
+					}
 					timeSet = true;
 					break;
 				case DIALOG_END:
@@ -1065,7 +1037,6 @@ public class EventEditActivity extends EventActivity {
 			}
 		});
 
-		
 		// No title on the dialog window
 		mDateTimeDialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
 		// Set the dialog content view
@@ -1091,6 +1062,5 @@ public class EventEditActivity extends EventActivity {
 			return super.onOptionsItemSelected(item);
 		}
 	}
-
 
 }

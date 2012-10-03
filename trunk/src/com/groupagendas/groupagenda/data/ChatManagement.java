@@ -1,6 +1,5 @@
 package com.groupagendas.groupagenda.data;
 
-import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 
 import org.apache.http.HttpResponse;
@@ -12,7 +11,6 @@ import org.apache.http.entity.mime.MultipartEntity;
 import org.apache.http.entity.mime.content.StringBody;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.util.EntityUtils;
-import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -32,7 +30,7 @@ import com.groupagendas.groupagenda.events.EventsProvider;
 
 public class ChatManagement {
 
-	private static String TOKEN = "token";
+	public static String TOKEN = "token";
 
 	/**
 	 * Make ChatMessageObject from JSON.
@@ -117,55 +115,6 @@ public class ChatManagement {
 			Log.e("makeContentValuesFromChatMessageObject(ChatMessageObject " + chatMessage.getMessageId() + ")", e.getMessage());
 		}
 		return cv;
-	}
-
-	/**
-	 * Get all chat message entries from remote database.
-	 * 
-	 * Executes a call to remote database, retrieves all chat messages from it.
-	 * 
-	 * @author justas@mobileapps.lt
-	 * @return boolean success
-	 * @since 2012-10P01
-	 * @version 0.1
-	 */
-
-	public static boolean getChatMessagesForEventFromRemoteDb(Context context, int eventId) {
-		boolean success = false;
-		HttpClient hc = new DefaultHttpClient();
-		HttpPost post = new HttpPost(Data.getServerUrl() + "mobile/chat_get");
-		MultipartEntity reqEntity = new MultipartEntity(HttpMultipartMode.BROWSER_COMPATIBLE);
-
-		try {
-			reqEntity.addPart(TOKEN, new StringBody(Data.getToken()));
-			reqEntity.addPart("event_id", new StringBody(String.valueOf(eventId)));
-		} catch (UnsupportedEncodingException e1) {
-			e1.printStackTrace();
-		}
-
-		post.setEntity(reqEntity);
-		try {
-			HttpResponse rp = hc.execute(post);
-			if (rp.getStatusLine().getStatusCode() == HttpStatus.SC_OK) {
-				String resp = EntityUtils.toString(rp.getEntity());
-				if (resp != null) {
-					JSONObject object = new JSONObject(resp);
-					success = object.getBoolean("success");
-					if (success) {
-						JSONArray chatMessages = object.getJSONArray("items");
-						for (int i = 0, l = chatMessages.length(); i < l; i++) {
-							insertChatMessageContentValueToLocalDb(context,
-									makeChatMessageObjectContentValueFromJSON(chatMessages.getJSONObject(i)));
-						}
-					} else {
-						Toast.makeText(context, object.getString("error"), Toast.LENGTH_LONG);
-					}
-				}
-			}
-		} catch (Exception e) {
-			Log.e("getChatMessagesForEventFromRemoteDb(Context context, int eventId " + eventId + ")", e.getMessage());
-		}
-		return success;
 	}
 
 	public static ArrayList<ChatMessageObject> getChatMessagesForEventFromLocalDb(Context context, int eventId) {
@@ -308,59 +257,6 @@ public class ChatManagement {
 			succcess = removeChatMessageFromLocalDb(context, messageId);
 		}
 		return succcess;
-	}
-	
-	/**
-	 * Sends chat message to remote DB and stores it to local db by response
-	 * from server.
-	 * 
-	 * @author justas@mobileapps.lt
-	 * @return boolean success
-	 * @since 2012-10A02
-	 * @version 0.1
-	 */
-
-	public static boolean postChatMessage(Context context, String message, int eventId) {
-		boolean success = false;
-		try {
-			HttpClient hc = new DefaultHttpClient();
-			HttpPost post = new HttpPost(Data.getServerUrl() + "mobile/chat_post");
-
-			MultipartEntity reqEntity = new MultipartEntity(HttpMultipartMode.BROWSER_COMPATIBLE);
-
-			reqEntity.addPart(TOKEN, new StringBody(Data.getToken()));
-			reqEntity.addPart("event_id", new StringBody(String.valueOf(eventId)));
-			if (message == null) {
-				reqEntity.addPart("message", new StringBody(String.valueOf("")));
-			} else {
-				reqEntity.addPart("message", new StringBody(String.valueOf(message)));
-			}
-
-			post.setEntity(reqEntity);
-			HttpResponse rp = null;
-			if (DataManagement.networkAvailable) {
-				rp = hc.execute(post);
-				if (rp.getStatusLine().getStatusCode() == HttpStatus.SC_OK) {
-					String resp = EntityUtils.toString(rp.getEntity());
-					if (resp != null) {
-						JSONObject object = new JSONObject(resp);
-						success = object.getBoolean("success");
-						if (success) {
-							insertChatMessageContentValueToLocalDb(context,
-									makeChatMessageObjectContentValueFromJSON(object.getJSONObject("message")));
-						} else {
-							Toast.makeText(context, object.getString("error"), Toast.LENGTH_LONG);
-						}
-					}
-				}
-			} else {
-				OfflineData uplooad = new OfflineData("mobile/chat_post", reqEntity);
-				Data.getUnuploadedData().add(uplooad);
-			}
-		} catch (Exception e) {
-			Log.e("postChatMessage(Context context, message " + message + ", event id " + eventId + ")", e.getMessage());
-		}
-		return success;
 	}
 
 	public static ArrayList<ChatThreadObject> getConverstionsFromLocalDb(Context context, int eventId) {

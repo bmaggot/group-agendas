@@ -181,7 +181,7 @@ public class NewEventActivity extends EventActivity {
 
 		// title
 		titleView = (EditText) findViewById(R.id.title);
-		titleView.setEnabled(false);
+		titleView.setEnabled(true);
 //		titleView.addTextChangedListener(filterTextWatcher);
 
 		// type
