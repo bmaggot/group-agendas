@@ -721,15 +721,14 @@ public class EventManagement {
 				reqEntity.addPart("take_with_you", new StringBody(e.getTake_with_you()));
 				reqEntity.addPart("cost", new StringBody(e.getCost()));
 				reqEntity.addPart("accomodation", new StringBody(e.getAccomodation()));
-
-				reqEntity.addPart("a1", new StringBody("" + Utils.millisToUnixTimestamp(e.getAlarm1().getTimeInMillis())));
-				reqEntity.addPart("2", new StringBody("" + Utils.millisToUnixTimestamp(e.getAlarm2().getTimeInMillis())));
-				reqEntity.addPart("a3", new StringBody("" + Utils.millisToUnixTimestamp(e.getAlarm3().getTimeInMillis())));
-
-				// if(){
-				reqEntity.addPart("r1", new StringBody("" + Utils.millisToUnixTimestamp(e.getAlarm1().getTimeInMillis())));
-				reqEntity.addPart("r2", new StringBody("" + Utils.millisToUnixTimestamp(e.getAlarm2().getTimeInMillis())));
-				reqEntity.addPart("r3", new StringBody("" + Utils.millisToUnixTimestamp(e.getAlarm3().getTimeInMillis())));
+//TODO commented because of nullpointer
+//				reqEntity.addPart("a1", new StringBody("" + Utils.millisToUnixTimestamp(e.getAlarm1().getTimeInMillis())));
+//				reqEntity.addPart("2", new StringBody("" + Utils.millisToUnixTimestamp(e.getAlarm2().getTimeInMillis())));
+//				reqEntity.addPart("a3", new StringBody("" + Utils.millisToUnixTimestamp(e.getAlarm3().getTimeInMillis())));
+//
+//				reqEntity.addPart("r1", new StringBody("" + Utils.millisToUnixTimestamp(e.getAlarm1().getTimeInMillis())));
+//				reqEntity.addPart("r2", new StringBody("" + Utils.millisToUnixTimestamp(e.getAlarm2().getTimeInMillis())));
+//				reqEntity.addPart("r3", new StringBody("" + Utils.millisToUnixTimestamp(e.getAlarm3().getTimeInMillis())));
 
 //				if (Data.selectedContacts != null && !Data.selectedContacts.isEmpty()) {
 //					e.assigned_contacts = new int[Data.selectedContacts.size()];

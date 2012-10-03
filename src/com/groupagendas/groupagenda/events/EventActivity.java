@@ -107,6 +107,8 @@ public class EventActivity extends Activity {
 	protected boolean setUid = false;
 	protected String selectedIcon = Event.DEFAULT_ICON;
 	protected String selectedColor = Event.DEFAULT_COLOR;
+	
+	protected Event event;
 
 	protected Event setEventData(Event event) {
 

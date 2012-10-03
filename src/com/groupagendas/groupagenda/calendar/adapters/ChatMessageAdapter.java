@@ -45,7 +45,7 @@ public class ChatMessageAdapter extends AbstractAdapter<ChatMessageObject> {
 					@Override
 					public void onClick(View v) {
 						Toast.makeText(getContext(), R.string.delete_chat_message, Toast.LENGTH_SHORT).show();
-						ChatManagement.removeChatMessageFromRemoteDb(getContext(), chatMessage.getMessageId());
+						ChatManagement.removeChatMessage(getContext(), chatMessage.getMessageId());
 					}
 				});
 			}
