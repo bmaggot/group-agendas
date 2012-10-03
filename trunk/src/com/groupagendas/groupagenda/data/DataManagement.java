@@ -1151,7 +1151,7 @@ public class DataManagement {
 	public ArrayList<Event> filterInvites(ArrayList<Event> events) {
 		ArrayList<Event> newEventList = new ArrayList<Event>();
 		for (Event event : events) {
-			if (event.status == 4) {
+			if (event.getStatus() == 4) {
 				newEventList.add(event);
 			}
 		}
@@ -1194,15 +1194,15 @@ public class DataManagement {
 							"_id=" + id, null, null);
 
 			if (cursor.moveToFirst()) {
-				item.isNative = true;
-				item.is_owner = false;
-				item.type = "p";
-				item.status = 1;
+				item.setNative(true);
+				item.setIs_owner(false);
+				item.setType(Event.PRIVATE);
+				item.setStatus(1);
 
-				item.event_id = cursor.getInt(0);
-				item.title = cursor.getString(1);
-				item.description_ = cursor.getString(2);
-				item.timezone = cursor.getString(6);
+				item.setEvent_id(cursor.getInt(0));
+				item.setTitle(cursor.getString(1));
+				item.setDescription(cursor.getString(2));
+				item.setTimezone(cursor.getString(6));
 
 				item.setStartCalendar(Utils.createCalendar(cursor.getLong(3), item.getTimezone()));
 				item.setEndCalendar(Utils.createCalendar(cursor.getLong(4), item.getTimezone()));
@@ -1249,15 +1249,15 @@ public class DataManagement {
 					while (!cursor.isAfterLast()) {
 						final Event item = new Event();
 
-						item.isNative = true;
-						item.is_owner = false;
-						item.type = "p";
-						item.status = 1;
+						item.setNative(true);
+						item.setIs_owner(false);
+						item.setType(Event.PRIVATE);
+						item.setStatus(1);
 
-						item.event_id = cursor.getInt(0);
-						item.title = cursor.getString(1);
-						item.description_ = cursor.getString(2);
-						item.timezone = cursor.getString(6);
+						item.setEvent_id(cursor.getInt(0));
+						item.setTitle(cursor.getString(1));
+						item.setDescription(cursor.getString(2));
+						item.setTimezone(cursor.getString(6));
 
 						item.setStartCalendar(Utils.createCalendar(cursor.getLong(3), item.getTimezone()));
 
@@ -1308,7 +1308,7 @@ public class DataManagement {
 			MultipartEntity reqEntity = new MultipartEntity(HttpMultipartMode.BROWSER_COMPATIBLE);
 
 			reqEntity.addPart(TOKEN, new StringBody(Data.getToken()));
-			reqEntity.addPart("event_id", new StringBody(String.valueOf(event.event_id)));
+			reqEntity.addPart("event_id", new StringBody(String.valueOf(event.getEvent_id())));
 
 			post.setEntity(reqEntity);
 			HttpResponse rp = hc.execute(post);
@@ -1326,13 +1326,13 @@ public class DataManagement {
 
 						try {
 							int is_sports_event = e.getInt("is_sports_event");
-							event.is_sports_event = is_sports_event == 1;
+							event.setSports_event(is_sports_event == 1);
 						} catch (JSONException ex) {
 							Reporter.reportError(this.getClass().toString(), Thread.currentThread().getStackTrace()[2].getMethodName()
 									.toString(), ex.getMessage());
 						}
 						try {
-							event.creator_fullname = e.getString("creator_fullname");
+							event.setCreator_fullname(e.getString("creator_fullname"));
 						} catch (JSONException ex) {
 							Reporter.reportError(this.getClass().toString(), Thread.currentThread().getStackTrace()[2].getMethodName()
 									.toString(), ex.getMessage());
@@ -1867,57 +1867,57 @@ public class DataManagement {
 			// reqEntity.addPart("alarm_3_utc", new StringBody("" +
 			// Utils.millisToUnixTimestamp(timeInMillis)));
 
-			if (event.getLocation() != null)
-				reqEntity.addPart("location", new StringBody(event.getLocation()));
+//			if (event.getLocation() != null)
+//				reqEntity.addPart("location", new StringBody(event.getLocation()));
+//
+//			if (event.go_by != null)
+//				reqEntity.addPart("go_by", new StringBody(event.go_by));
+//
+//			if (event.take_with_you != null)
+//				reqEntity.addPart("take_with_you", new StringBody(event.take_with_you));
+//
+//			if (event.cost != null)
+//				reqEntity.addPart("cost", new StringBody(event.cost));
+//
+//			if (event.accomodation != null)
+//				reqEntity.addPart("accomodation", new StringBody(event.accomodation));
+//
+//			if (Data.selectedContacts != null && !Data.selectedContacts.isEmpty()) {
+//				event.assigned_contacts = new int[Data.selectedContacts.size()];
+//				int i = 0;
+//				for (Contact contact : Data.selectedContacts) {
+//					event.assigned_contacts[i] = contact.contact_id;
+//					i++;
+//				}
+//			}
 
-			if (event.go_by != null)
-				reqEntity.addPart("go_by", new StringBody(event.go_by));
+//			if (event.assigned_contacts != null) {
+//				for (int i = 0, l = event.assigned_contacts.length; i < l; i++) {
+//					reqEntity.addPart("contacts[]", new StringBody(String.valueOf(event.assigned_contacts[i])));
+//				}
+//			} else {
+//				reqEntity.addPart("contacts[]", new StringBody(""));
+//			}
+//
+//			if (event.assigned_groups != null) {
+//				for (int i = 0, l = event.assigned_groups.length; i < l; i++) {
+//					reqEntity.addPart("groups[]", new StringBody(String.valueOf(event.assigned_groups[i])));
+//				}
+//			} else {
+//				reqEntity.addPart("groups[]", new StringBody(""));
+//			}
 
-			if (event.take_with_you != null)
-				reqEntity.addPart("take_with_you", new StringBody(event.take_with_you));
-
-			if (event.cost != null)
-				reqEntity.addPart("cost", new StringBody(event.cost));
-
-			if (event.accomodation != null)
-				reqEntity.addPart("accomodation", new StringBody(event.accomodation));
-
-			if (Data.selectedContacts != null && !Data.selectedContacts.isEmpty()) {
-				event.assigned_contacts = new int[Data.selectedContacts.size()];
-				int i = 0;
-				for (Contact contact : Data.selectedContacts) {
-					event.assigned_contacts[i] = contact.contact_id;
-					i++;
-				}
-			}
-
-			if (event.assigned_contacts != null) {
-				for (int i = 0, l = event.assigned_contacts.length; i < l; i++) {
-					reqEntity.addPart("contacts[]", new StringBody(String.valueOf(event.assigned_contacts[i])));
-				}
-			} else {
-				reqEntity.addPart("contacts[]", new StringBody(""));
-			}
-
-			if (event.assigned_groups != null) {
-				for (int i = 0, l = event.assigned_groups.length; i < l; i++) {
-					reqEntity.addPart("groups[]", new StringBody(String.valueOf(event.assigned_groups[i])));
-				}
-			} else {
-				reqEntity.addPart("groups[]", new StringBody(""));
-			}
-
-			if (event.reminder1 != null) {
-				reqEntity.addPart("reminder1", new StringBody(event.reminder1));
-			}
-
-			if (event.reminder2 != null) {
-				reqEntity.addPart("reminder2", new StringBody(event.reminder2));
-			}
-
-			if (event.reminder3 != null) {
-				reqEntity.addPart("reminder3", new StringBody(event.reminder3));
-			}
+//			if (event.reminder1 != null) {
+//				reqEntity.addPart("reminder1", new StringBody(event.reminder1));
+//			}
+//
+//			if (event.reminder2 != null) {
+//				reqEntity.addPart("reminder2", new StringBody(event.reminder2));
+//			}
+//
+//			if (event.reminder3 != null) {
+//				reqEntity.addPart("reminder3", new StringBody(event.reminder3));
+//			}
 
 			// TODO find out wtf is bd in event
 			// if (event.birthday) {
@@ -1939,7 +1939,7 @@ public class DataManagement {
 							Log.e("Create event error", object.getJSONObject("error").getString("reason"));
 						}
 						response = object.getInt("template_id");
-						event.event_id = response;
+//						event.event_id = response;
 					}
 				} else {
 					Log.e("setTemplate - status", rp.getStatusLine().getStatusCode() + "");
@@ -1981,7 +1981,7 @@ public class DataManagement {
 
 			if (template_id != 0)
 				cv.put(TemplatesMetaData.T_ID, template_id);
-			else if (template.event_id > 0)
+			else if (template.getEvent_id() > 0)
 				cv.put(TemplatesMetaData.T_ID, template.getEvent_id());
 			else
 				cv.put(TemplatesMetaData.T_ID, 0);
@@ -2062,30 +2062,30 @@ public class DataManagement {
 			else
 				cv.put(TemplatesMetaData.ACCOMODATION, "");
 
-			if (Data.selectedContacts != null && !Data.selectedContacts.isEmpty()) {
-				template.assigned_contacts = new int[Data.selectedContacts.size()];
-				int i = 0;
-				for (Contact contact : Data.selectedContacts) {
-					template.getAssigned_contacts()[i] = contact.contact_id;
-					i++;
-				}
-			}
-
-			if (template.getAssigned_contacts() != null) {
-				for (int i = 0, l = template.getAssigned_contacts().length; i < l; i++) {
-					cv.put(TemplatesMetaData.ASSIGNED_CONTACTS, String.valueOf(template.getAssigned_contacts()[i]));
-				}
-			} else {
-				cv.put(TemplatesMetaData.ASSIGNED_CONTACTS, "");
-			}
-
-			if (template.getAssigned_groups() != null) {
-				for (int i = 0, l = template.getAssigned_groups().length; i < l; i++) {
-					cv.put(TemplatesMetaData.ASSIGNED_GROUPS, String.valueOf(template.getAssigned_groups()[i]));
-				}
-			} else {
-				cv.put(TemplatesMetaData.ASSIGNED_GROUPS, "");
-			}
+//			if (Data.selectedContacts != null && !Data.selectedContacts.isEmpty()) {
+//				template.assigned_contacts = new int[Data.selectedContacts.size()];
+//				int i = 0;
+//				for (Contact contact : Data.selectedContacts) {
+//					template.getAssigned_contacts()[i] = contact.contact_id;
+//					i++;
+//				}
+//			}
+//
+//			if (template.getAssigned_contacts() != null) {
+//				for (int i = 0, l = template.getAssigned_contacts().length; i < l; i++) {
+//					cv.put(TemplatesMetaData.ASSIGNED_CONTACTS, String.valueOf(template.getAssigned_contacts()[i]));
+//				}
+//			} else {
+//				cv.put(TemplatesMetaData.ASSIGNED_CONTACTS, "");
+//			}
+//
+//			if (template.getAssigned_groups() != null) {
+//				for (int i = 0, l = template.getAssigned_groups().length; i < l; i++) {
+//					cv.put(TemplatesMetaData.ASSIGNED_GROUPS, String.valueOf(template.getAssigned_groups()[i]));
+//				}
+//			} else {
+//				cv.put(TemplatesMetaData.ASSIGNED_GROUPS, "");
+//			}
 
 			// if (template.reminder1 != null)
 			// cv.put(TemplatesMetaData.REMINDER1, template.reminder1);
@@ -2125,7 +2125,7 @@ public class DataManagement {
 			Data.getmContext().getContentResolver().insert(TemplatesMetaData.CONTENT_URI, cv);
 			success = true;
 		} catch (Exception e) {
-			Log.e("uploadTemplateToLocalDb(template[event_id=" + template.event_id + "], id=" + template_id + ")", "CATCH!");
+			Log.e("uploadTemplateToLocalDb(template[event_id=" + template.getEvent_id() + "], id=" + template_id + ")", "CATCH!");
 		}
 
 		return success;
@@ -2165,7 +2165,7 @@ public class DataManagement {
 							template = new Event();
 
 							try {
-								template.event_id = e.getInt("template_id");
+								template.setEvent_id(e.getInt("template_id"));
 								// cv.put(EventsProvider.EMetaData.EventsMetaData.E_ID,
 								// template.event_id);
 							} catch (JSONException ex) {
@@ -2210,7 +2210,7 @@ public class DataManagement {
 							// ex.getMessage());
 							// }
 							try {
-								template.title = e.getString("title");
+								template.setTitle(e.getString("title"));
 								// cv.put(EventsProvider.EMetaData.EventsMetaData.TITLE,
 								// template.title);
 							} catch (JSONException ex) {
@@ -2242,7 +2242,7 @@ public class DataManagement {
 										.toString(), ex.getMessage());
 							}
 							try {
-								template.location = e.getString("location");
+								template.setLocation(e.getString("location"));
 								// cv.put(EventsProvider.EMetaData.EventsMetaData.LOCATION,
 								// template.location);
 							} catch (JSONException ex) {
@@ -2250,7 +2250,7 @@ public class DataManagement {
 										.toString(), ex.getMessage());
 							}
 							try {
-								template.accomodation = e.getString("accomodation");
+								template.setAccomodation(e.getString("accomodation"));
 								// cv.put(EventsProvider.EMetaData.EventsMetaData.ACCOMODATION,
 								// template.accomodation);
 							} catch (JSONException ex) {
@@ -2258,7 +2258,7 @@ public class DataManagement {
 										.toString(), ex.getMessage());
 							}
 							try {
-								template.cost = e.getString("cost");
+								template.setCost(e.getString("cost"));
 								// cv.put(EventsProvider.EMetaData.EventsMetaData.COST,
 								// template.cost);
 							} catch (JSONException ex) {
@@ -2266,7 +2266,7 @@ public class DataManagement {
 										.toString(), ex.getMessage());
 							}
 							try {
-								template.take_with_you = e.getString("take_with_you");
+								template.setTake_with_you(e.getString("take_with_you"));
 								// cv.put(EventsProvider.EMetaData.EventsMetaData.TAKE_WITH_YOU,
 								// template.take_with_you);
 							} catch (JSONException ex) {
@@ -2274,7 +2274,7 @@ public class DataManagement {
 										.toString(), ex.getMessage());
 							}
 							try {
-								template.go_by = e.getString("go_by");
+								template.setGo_by(e.getString("go_by"));
 								// cv.put(EventsProvider.EMetaData.EventsMetaData.GO_BY,
 								// template.go_by);
 							} catch (JSONException ex) {
@@ -2283,7 +2283,7 @@ public class DataManagement {
 							}
 							/* Address START */
 							try {
-								template.country = e.getString("country");
+								template.setCountry(e.getString("country"));
 								// cv.put(EventsProvider.EMetaData.EventsMetaData.COUNTRY,
 								// template.country);
 							} catch (JSONException ex) {
@@ -2291,7 +2291,7 @@ public class DataManagement {
 										.toString(), ex.getMessage());
 							}
 							try {
-								template.city = e.getString("city");
+								template.setCity(e.getString("city"));
 								// cv.put(EventsProvider.EMetaData.EventsMetaData.CITY,
 								// template.city);
 							} catch (JSONException ex) {
@@ -2299,7 +2299,7 @@ public class DataManagement {
 										.toString(), ex.getMessage());
 							}
 							try {
-								template.street = e.getString("street");
+								template.setStreet(e.getString("street"));
 								// cv.put(EventsProvider.EMetaData.EventsMetaData.STREET,
 								// template.street);
 							} catch (JSONException ex) {
@@ -2307,7 +2307,7 @@ public class DataManagement {
 										.toString(), ex.getMessage());
 							}
 							try {
-								template.zip = e.getString("zip");
+								template.setZip(e.getString("zip"));
 								// cv.put(EventsProvider.EMetaData.EventsMetaData.ZIP,
 								// template.zip);
 							} catch (JSONException ex) {

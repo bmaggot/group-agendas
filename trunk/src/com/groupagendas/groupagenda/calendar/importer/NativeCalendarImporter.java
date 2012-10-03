@@ -39,19 +39,18 @@ public class NativeCalendarImporter {
 	    for (int i = 0; i < CNames.length; i++) {
 	    	SimpleDateFormat writeFormat = new SimpleDateFormat( "yyyy-MM-dd HH:mm:ss");
 	    	Event event = new Event();
-	    	event.title = cursor.getString(1);
-	    	event.description_ = cursor.getString(2);
+	    	event.setTitle(cursor.getString(1));
+	    	event.setDescription(cursor.getString(2));
 	    	event.setStartCalendar(Utils.stringToCalendar(writeFormat.format(new Date(Long.parseLong(cursor.getString(3)))), DataManagement.SERVER_TIMESTAMP_FORMAT));
 	    	event.getStartCalendar().getTime();
 	    	event.getStartCalendar().clear(Calendar.SECOND);
 	    	event.getStartCalendar().getTime();
 	    	event.setEndCalendar(Utils.stringToCalendar(writeFormat.format(new Date(Long.parseLong(cursor.getString(4)))), DataManagement.SERVER_TIMESTAMP_FORMAT));
 	    	event.getEndCalendar().clear(Calendar.SECOND);
-	    	event.location = cursor.getString(5);
-	    	event.timezone = account.getTimezone();
-	    	event.birthday = true;
-	    	DataManagement dm = DataManagement.getInstance(context);
-	    	EventManagement.createEventInRemoteDb(event);
+	    	event.setLocation(cursor.getString(5));
+	    	event.setTimezone(account.getTimezone());
+	    	event.setBirthday(true);
+	    	EventManagement.createEventInRemoteDb(event); //TODO O kaip su lokalia?
 	    	cursor.moveToNext();
 	    }
 	}

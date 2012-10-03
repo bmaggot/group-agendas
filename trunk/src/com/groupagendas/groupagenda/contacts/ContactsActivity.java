@@ -214,10 +214,10 @@ public class ContactsActivity extends ListActivity implements OnCheckedChangeLis
 
 				@Override
 				public void onClick(View v) {
-					if (Data.eventForSavingNewInvitedPersons != null && !Data.eventForSavingNewInvitedPersons.is_owner) {
+					if (Data.eventForSavingNewInvitedPersons != null && !Data.eventForSavingNewInvitedPersons.is_owner()) {
 						try {
 							new AddNewPersonsToEvent().execute().get();
-							new UpdateEventByIdFromRemoteDb().execute(Data.eventForSavingNewInvitedPersons.event_id).get();
+							new UpdateEventByIdFromRemoteDb().execute(Data.eventForSavingNewInvitedPersons.getEvent_id()).get();
 						} catch (InterruptedException e) {
 							e.printStackTrace();
 						} catch (ExecutionException e) {
@@ -545,7 +545,7 @@ public class ContactsActivity extends ListActivity implements OnCheckedChangeLis
 				MultipartEntity reqEntity = new MultipartEntity(HttpMultipartMode.BROWSER_COMPATIBLE);
 				reqEntity.addPart("token", new StringBody(Data.getToken()));
 				if (Data.eventForSavingNewInvitedPersons != null) {
-					reqEntity.addPart("event_id", new StringBody(String.valueOf(Data.eventForSavingNewInvitedPersons.event_id)));
+					reqEntity.addPart("event_id", new StringBody(String.valueOf(Data.eventForSavingNewInvitedPersons.getEvent_id())));
 				}
 				if (Data.selectedContacts != null && !Data.selectedContacts.isEmpty()) {
 					for (int i = 0, l = Data.selectedContacts.size(); i < l; i++) {

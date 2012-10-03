@@ -51,7 +51,7 @@ public class AlarmActivity extends Activity {
 		this.event = EventManagement.getEventFromLocalDb(this, eventId);
 		this.setContentView(R.layout.alarm_dialog);
 		alarmTitle = (TextView) findViewById(R.id.alarm_title);
-		alarmTitle.setText(event.title);
+		alarmTitle.setText(event.getTitle());
 		eventTime = (TextView) findViewById(R.id.alarm_time);
 		eventTime.setText(Utils.formatCalendar(event.getStartCalendar(), Utils.DATE_FORMAT_LONG)); //TODO set format from approporiate class.  DataManagement should not be used for formatting UI strings
 

@@ -375,9 +375,9 @@ public class EventsProvider extends ContentProvider{
 				+EMetaData.EventsMetaData.TIME_START_UTC_MILLISECONDS+" INTEGER ,"
 				+EMetaData.EventsMetaData.TIME_END_UTC_MILLISECONDS+" INTEGER ,"
 				
-				+EMetaData.EventsMetaData.REMINDER1+" TEXT ,"
-				+EMetaData.EventsMetaData.REMINDER2+" TEXT ,"
-				+EMetaData.EventsMetaData.REMINDER3+" TEXT ,"
+				+EMetaData.EventsMetaData.REMINDER1+" INTEGER ,"
+				+EMetaData.EventsMetaData.REMINDER2+" INTEGER ,"
+				+EMetaData.EventsMetaData.REMINDER3+" INTEGER ,"
 				
 				+EMetaData.EventsMetaData.ALARM1+" TEXT ,"
 				+EMetaData.EventsMetaData.ALARM2+" TEXT ,"

@@ -57,16 +57,16 @@ public class MonthAdapter extends AbstractAdapter<Event> {
 			endTime.setText(timeFormat.format(event.getEndCalendar().getTime()));
 			
 			ImageView icon = (ImageView) view.findViewById(R.id.month_entry_icon_placeholder);
-			if(event.icon == null) event.icon = "null";
 			
-			 if (event.icon.equalsIgnoreCase("null")){
+			
+			 if (event.getIcon().length() <= 0){
 					icon.setVisibility(View.INVISIBLE);
 				}else{
 					icon.setImageResource(event.getIconId(getContext()));
 				}
 			
 			TextView title = (TextView) view.findViewById(R.id.month_entry_title);
-			title.setText(event.title);
+			title.setText(event.getTitle());
 			
 			view.setOnClickListener(new EventActivityOnClickListener(getContext(), event));
 		}

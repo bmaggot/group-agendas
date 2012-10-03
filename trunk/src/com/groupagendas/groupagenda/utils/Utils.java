@@ -300,6 +300,7 @@ public static long millisToUnixTimestamp(long milis) {
  * @return
  */
 public static Calendar createCalendar(long timeInMilis, String timezone) {
+	if (timeInMilis == 0) return null;
 	Calendar cal = Calendar.getInstance(TimeZone.getTimeZone(timezone));
 	cal.setTimeInMillis(timeInMilis);
 	return cal;

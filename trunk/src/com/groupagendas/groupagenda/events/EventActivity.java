@@ -4,9 +4,11 @@ import java.util.Calendar;
 
 import android.app.Activity;
 import android.content.ContentValues;
+import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.Spinner;
@@ -45,8 +47,27 @@ public class EventActivity extends Activity {
 	protected Button saveButton;
 	protected ImageView iconView;
 	protected ImageView colorView;
-
-
+	
+	protected LinearLayout addressPanel;
+	protected LinearLayout addressLine;
+	
+	protected LinearLayout countrySpinnerBlock;
+	protected LinearLayout cityViewBlock;
+	protected LinearLayout streetViewBlock;
+	protected LinearLayout zipViewBlock;
+	protected LinearLayout timezoneSpinnerBlock;
+	
+	protected LinearLayout detailsPanel;
+	protected LinearLayout detailsLine;
+	
+	protected LinearLayout locationViewBlock;
+	protected LinearLayout gobyViewBlock;
+	protected LinearLayout takewithyouViewBlock;
+	protected LinearLayout costViewBlock;
+	protected LinearLayout accomodationViewBlock;
+	
+	protected boolean addressPanelVisible = true;
+	protected boolean detailsPanelVisible = true;
 
 	protected EditText startView;
 	protected Button startButton;
@@ -90,14 +111,14 @@ public class EventActivity extends Activity {
 	protected Event setEventData(Event event) {
 
 		if (timezoneArray != null) {
-			event.timezone = timezoneArray[timezoneSpinner.getSelectedItemPosition()];
+			event.setTimezone(timezoneArray[timezoneSpinner.getSelectedItemPosition()]);
 		}
 		event.setIs_owner(setOwner);
 		if (setUid) {
 			// user_id
 			event.setUser_id(prefs.getUserId());
 		}
-		event.description_ = descView.getText().toString();
+		event.setDescription(descView.getText().toString());
 		// title
 		event.setTitle(titleView.getText().toString());
 
@@ -116,13 +137,13 @@ public class EventActivity extends Activity {
 		event.setCost(costView.getText().toString());
 		event.setAccomodation(accomodationView.getText().toString());
 		if (alarm1time != null) {
-			event.setAlarm1(Utils.formatCalendar(alarm1time, DataManagement.SERVER_TIMESTAMP_FORMAT));
+			event.setAlarm1(alarm1time);
 		}
 		if (alarm2time != null) {
-			event.setAlarm2(Utils.formatCalendar(alarm2time, DataManagement.SERVER_TIMESTAMP_FORMAT));
+			event.setAlarm2(alarm2time);
 		}
 		if (alarm3time != null) {
-			event.setAlarm3(Utils.formatCalendar(alarm3time, DataManagement.SERVER_TIMESTAMP_FORMAT));
+			event.setAlarm3(alarm3time);
 		}
 		event.setReminder1(reminder1time);
 		event.setReminder2(reminder2time);
@@ -150,5 +171,60 @@ public class EventActivity extends Activity {
 		}
 	}
 	
+	public void showAddressPanel() {
+		addressPanelVisible = true;
+		timezoneSpinnerBlock.setVisibility(View.VISIBLE);
+		countrySpinnerBlock.setVisibility(View.VISIBLE);
+		cityViewBlock.setVisibility(View.VISIBLE);
+		streetViewBlock.setVisibility(View.VISIBLE);
+		zipViewBlock.setVisibility(View.VISIBLE);
+	}
+
+	public void hideAddressPanel() {
+		addressPanelVisible = false;
+		if (!detailsPanelVisible && addressDetailsPanel != null && addressPanel != null && detailsPanel != null) {
+			addressDetailsPanel.setVisibility(View.VISIBLE);
+			addressPanel.setVisibility(View.GONE);
+			detailsPanel.setVisibility(View.GONE);
+		}
+		
+		timezoneSpinnerBlock.setVisibility(View.GONE);
+		countrySpinnerBlock.setVisibility(View.GONE);
+		cityViewBlock.setVisibility(View.GONE);
+		streetViewBlock.setVisibility(View.GONE);
+		zipViewBlock.setVisibility(View.GONE);
+	}
+
+	public void showDetailsPanel() {
+		detailsPanelVisible = true;
+		locationViewBlock.setVisibility(View.VISIBLE);
+		gobyViewBlock.setVisibility(View.VISIBLE);
+		takewithyouViewBlock.setVisibility(View.VISIBLE);
+		costViewBlock.setVisibility(View.VISIBLE);
+		accomodationViewBlock.setVisibility(View.VISIBLE);
+	}
+
+	public void hideDetailsPanel() {
+		detailsPanelVisible = false;
+		if (!addressPanelVisible && addressDetailsPanel != null && addressPanel != null && detailsPanel != null) {
+			addressDetailsPanel.setVisibility(View.VISIBLE);
+			addressPanel.setVisibility(View.GONE);
+			detailsPanel.setVisibility(View.GONE);
+		}
+		LinearLayout locationViewBlock = (LinearLayout) findViewById(R.id.locationBlock);
+		locationViewBlock.setVisibility(View.GONE);
+
+		LinearLayout gobyViewBlock = (LinearLayout) findViewById(R.id.go_byBlock);
+		gobyViewBlock.setVisibility(View.GONE);
+
+		LinearLayout takewithyouViewBlock = (LinearLayout) findViewById(R.id.take_with_youBlock);
+		takewithyouViewBlock.setVisibility(View.GONE);
+
+		LinearLayout costViewBlock = (LinearLayout) findViewById(R.id.costBlock);
+		costViewBlock.setVisibility(View.GONE);
+
+		LinearLayout accomodationViewBlock = (LinearLayout) findViewById(R.id.accomodationBlock);
+		accomodationViewBlock.setVisibility(View.GONE);
+	}
 	
 }

@@ -425,7 +425,7 @@ public class DayWeekView extends AbstractCalendarView {
 				for (final Event event : events){
 					View view = mInflater.inflate(R.layout.calendar_dayview_allday_listentry, null);
 					TextView title = (TextView) view.findViewById(R.id.allday_eventtitle);
-					title.setText(event.title);
+					title.setText(event.getTitle());
 					GradientDrawable sd = (GradientDrawable)getContext().getResources().getDrawable(R.drawable.calendar_dayview_secondcolumn_entrybackground);
 					
 //					if (!event.color.equalsIgnoreCase("null")){

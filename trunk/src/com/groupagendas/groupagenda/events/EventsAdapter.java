@@ -75,7 +75,7 @@ public class EventsAdapter extends BaseAdapter implements Filterable{
 		if(event.is_owner()){
 			holder.creator.setText(mContext.getString(R.string.you));
 		}else{
-			holder.creator.setText(event.creator_fullname);
+			holder.creator.setText(event.getCreator_fullname());
 		}
 		
 		// status
@@ -109,8 +109,8 @@ public class EventsAdapter extends BaseAdapter implements Filterable{
 		//}	
 		
 		//
-		holder.status_1.setText(String.valueOf(event.attendant_1_count));
-		holder.status_2.setText(String.valueOf(event.attendant_2_count));
+		holder.status_1.setText(String.valueOf(event.getAttendant_1_count()));
+		holder.status_2.setText(String.valueOf(event.getAttendant_2_count()));
 		
 		holder.button_yes.setOnClickListener(new OnClickListener() {
 			@Override
@@ -194,7 +194,7 @@ public class EventsAdapter extends BaseAdapter implements Filterable{
 
 	@Override
 	public long getItemId(int position) {
-		return events.get(position).event_id;
+		return events.get(position).getEvent_id();
 	}
 	
 	public void setItems(List<Event> items){
@@ -233,31 +233,31 @@ public class EventsAdapter extends BaseAdapter implements Filterable{
                 
                 if(c.equals(mContext.getString(R.string.r_type))){
                 	for(int i=0, l=items.size(); i<l; i++){
-                		if(items.get(i).type.equals("r")){
+                		if(items.get(i).getType().equals("r")){
                 			filtereItems.add(items.get(i));
                 		}
                 	}
                 }else if(c.equals(mContext.getString(R.string.t_type))){
                 	for(int i=0, l=items.size(); i<l; i++){
-                		if(items.get(i).type.equals("t")){
+                		if(items.get(i).getType().equals("t")){
                 			filtereItems.add(items.get(i));
                 		}
                 	}
                 }else if(c.equals(mContext.getString(R.string.o_type))){
                 	for(int i=0, l=items.size(); i<l; i++){
-                		if(items.get(i).type.equals("o")){
+                		if(items.get(i).getType().equals("o")){
                 			filtereItems.add(items.get(i));
                 		}
                 	}
                 }else if(c.equals(mContext.getString(R.string.n_type))){
                 	for(int i=0, l=items.size(); i<l; i++){
-                		if(items.get(i).type.equals("n")){
+                		if(items.get(i).getType().equals("n")){
                 			filtereItems.add(items.get(i));
                 		}
                 	}
                 }else if(c.equals(mContext.getString(R.string.p_type))){
                 	for(int i=0, l=items.size(); i<l; i++){
-                		if(items.get(i).type.equals("p")){
+                		if(items.get(i).getType().equals(Event.PRIVATE)){
                 			filtereItems.add(items.get(i));
                 		}
                 	}
@@ -265,7 +265,7 @@ public class EventsAdapter extends BaseAdapter implements Filterable{
                 	filtereItems = items;
                 }else{
                 	for(int i=0, l=items.size(); i<l; i++){
-                		if(items.get(i).status == Integer.parseInt(c.toString())){
+                		if(items.get(i).getStatus() == Integer.parseInt(c.toString())){
                 			filtereItems.add(items.get(i));
                 		}
                 	}

@@ -57,23 +57,9 @@ public class EventEditActivity extends EventActivity {
 	private Button deleteButton;
 	
 	
-	private LinearLayout addressPanel;
-	private LinearLayout addressLine;
+
 	
-	private LinearLayout countrySpinnerBlock;
-	private LinearLayout cityViewBlock;
-	private LinearLayout streetViewBlock;
-	private LinearLayout zipViewBlock;
-	private LinearLayout timezoneSpinnerBlock;
-	
-	private LinearLayout detailsPanel;
-	private LinearLayout detailsLine;
-	
-	private LinearLayout locationViewBlock;
-	private LinearLayout gobyViewBlock;
-	private LinearLayout takewithyouViewBlock;
-	private LinearLayout costViewBlock;
-	private LinearLayout accomodationViewBlock;
+
 	
 	private LinearLayout reminderBlock;
 	private TextView setReminderTrigger;
@@ -108,15 +94,7 @@ public class EventEditActivity extends EventActivity {
 //	private ArrayList<AutoIconItem> autoIcons = null;
 
 	private Intent intent;
-	
 
-	private boolean addressPanelVisible = true;
-	private boolean detailsPanelVisible = true;
-	
-	
-	
-	
-	
 	private Button chatMessengerButton;
 	private Button inviteButton;
 	
@@ -618,12 +596,11 @@ public class EventEditActivity extends EventActivity {
 							timezoneSpinner.setAdapter(adapterTimezone);
 							timezoneArray = TimezoneManager.getTimezonesValues(EventEditActivity.this, countryArray[pos]);
 
-							if (result.getTimezone() != null && !result.timezone.equals("null")) {
+							if (result.getTimezone() != null && !result.getTimezone().equals("null")) {
 								pos = Utils.getArrayIndex(timezoneArray, result.getTimezone());
 								timezoneSpinner.setSelection(pos);
 								showView(timezoneSpinner, addressLine);
-								if (!result.is_owner)
-									timezoneSpinner.setEnabled(false);
+								
 							}
 						}
 					}
@@ -655,6 +632,7 @@ public class EventEditActivity extends EventActivity {
 				titleView.setEnabled(false);
 				endView.setEnabled(false);
 				endButton.setEnabled(false);
+				timezoneSpinner.setEnabled(false);
 				startView.setEnabled(false);
 				startButton.setEnabled(false);
 				cityView.setEnabled(false);
@@ -666,6 +644,7 @@ public class EventEditActivity extends EventActivity {
 				costView.setEnabled(false);
 				accomodationView.setEnabled(false);
 				saveButton.setVisibility(View.GONE);
+				
 			}
 			
 //START AND END TIME
@@ -697,31 +676,31 @@ public class EventEditActivity extends EventActivity {
 			}		
 			
 			if (result.getStreet().length() > 0) {
-				streetView.setText(result.street);
+				streetView.setText(result.getStreet());
 				showView(streetView, addressLine);	
 			}
 			if (result.getZip().length() > 0) {
-				zipView.setText(result.zip);
+				zipView.setText(result.getZip());
 				showView(zipView, addressLine);		
 			}
 			if (result.getLocation().length() > 0) {
-				locationView.setText(result.location);
+				locationView.setText(result.getLocation());
 				showView(locationView, detailsLine);
 			}
 			if (result.getGo_by().length() > 0 ) {
-				gobyView.setText(result.go_by);
+				gobyView.setText(result.getGo_by());
 				showView(gobyView, detailsLine);	
 			}			
 			if (result.getTake_with_you().length() > 0 ) {
-				takewithyouView.setText(result.take_with_you);
+				takewithyouView.setText(result.getTake_with_you());
 				showView(takewithyouView, detailsLine);	
 			}	
 			if (result.getCost().length() > 0 ) {
-				costView.setText(result.cost);
+				costView.setText(result.getCost());
 				showView(costView, detailsLine);
 			}
 			if (result.getAccomodation().length() > 0 ) {
-				accomodationView.setText(result.accomodation);
+				accomodationView.setText(result.getAccomodation());
 				showView(accomodationView, detailsLine);
 			}
 			
@@ -1062,7 +1041,7 @@ public class EventEditActivity extends EventActivity {
 					break;
 				}
 				if (!timeSet) {
-					view.setText(dtUtils.formatDateTime(mDateTimePicker.getCalendar().getTime()));
+					view.setText(Utils.formatCalendar(mDateTimePicker.getCalendar(), DataManagement.SERVER_TIMESTAMP_FORMAT));
 				}
 				mDateTimeDialog.dismiss();
 			}
@@ -1113,59 +1092,5 @@ public class EventEditActivity extends EventActivity {
 		}
 	}
 
-	public void showAddressPanel() {
-		addressPanelVisible = true;
-		timezoneSpinnerBlock.setVisibility(View.VISIBLE);
-		countrySpinnerBlock.setVisibility(View.VISIBLE);
-		cityViewBlock.setVisibility(View.VISIBLE);
-		streetViewBlock.setVisibility(View.VISIBLE);
-		zipViewBlock.setVisibility(View.VISIBLE);
-	}
 
-	public void hideAddressPanel() {
-		addressPanelVisible = false;
-		if (!detailsPanelVisible && addressDetailsPanel != null && addressPanel != null && detailsPanel != null) {
-			addressDetailsPanel.setVisibility(View.VISIBLE);
-			addressPanel.setVisibility(View.GONE);
-			detailsPanel.setVisibility(View.GONE);
-		}
-		
-		timezoneSpinnerBlock.setVisibility(View.GONE);
-		countrySpinnerBlock.setVisibility(View.GONE);
-		cityViewBlock.setVisibility(View.GONE);
-		streetViewBlock.setVisibility(View.GONE);
-		zipViewBlock.setVisibility(View.GONE);
-	}
-
-	public void showDetailsPanel() {
-		detailsPanelVisible = true;
-		locationViewBlock.setVisibility(View.VISIBLE);
-		gobyViewBlock.setVisibility(View.VISIBLE);
-		takewithyouViewBlock.setVisibility(View.VISIBLE);
-		costViewBlock.setVisibility(View.VISIBLE);
-		accomodationViewBlock.setVisibility(View.VISIBLE);
-	}
-
-	public void hideDetailsPanel() {
-		detailsPanelVisible = false;
-		if (!addressPanelVisible && addressDetailsPanel != null && addressPanel != null && detailsPanel != null) {
-			addressDetailsPanel.setVisibility(View.VISIBLE);
-			addressPanel.setVisibility(View.GONE);
-			detailsPanel.setVisibility(View.GONE);
-		}
-		LinearLayout locationViewBlock = (LinearLayout) findViewById(R.id.locationBlock);
-		locationViewBlock.setVisibility(View.GONE);
-
-		LinearLayout gobyViewBlock = (LinearLayout) findViewById(R.id.go_byBlock);
-		gobyViewBlock.setVisibility(View.GONE);
-
-		LinearLayout takewithyouViewBlock = (LinearLayout) findViewById(R.id.take_with_youBlock);
-		takewithyouViewBlock.setVisibility(View.GONE);
-
-		LinearLayout costViewBlock = (LinearLayout) findViewById(R.id.costBlock);
-		costViewBlock.setVisibility(View.GONE);
-
-		LinearLayout accomodationViewBlock = (LinearLayout) findViewById(R.id.accomodationBlock);
-		accomodationViewBlock.setVisibility(View.GONE);
-	}
 }

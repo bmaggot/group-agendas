@@ -24,7 +24,7 @@ public class AgendaUtils {
 				calendar_end = event.getEndCalendar();
 
 				if (calendar_end.after(now)) {
-					if(event.status == 4){
+					if(event.getStatus() == 4){
 						newInvites++;
 					}
 					
