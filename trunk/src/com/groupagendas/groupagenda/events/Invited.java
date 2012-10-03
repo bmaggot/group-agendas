@@ -7,7 +7,7 @@ public class Invited {
 	public static final int MAYBE = 2;
 	public static final int NEW_INVITATION = 4;
 
-	/** Invited person's id (if person exists in user's contact list) */
+	/** Invited person's fullname */
 	private String name;
 	
 	/** Invited person's id (if person exists in user's contact list) */
@@ -84,6 +84,7 @@ public class Invited {
 	public String toString() {
 		StringBuilder sb = new StringBuilder();
 		
+		sb.append("gname").append(":").append(getName()).append(",");
 		sb.append("gcid").append(":").append(getGcid()).append(",");
 		sb.append("guid").append(":").append(getGuid()).append(",");
 		sb.append("status").append(":").append(getStatus()).append(",");
