@@ -16,11 +16,6 @@ private static final String TIMESTAMP_FORMAT = DataManagement.SERVER_TIMESTAMP_F
 private static final String DEFAULT_REMINDER = "null";
 
 
-public static final int REJECTED = 0;
-public static final int ACCEPTED = 1;
-public static final int MAYBE = 2;
-public static final int NEW_INVITATION = 4;
-
 //private static final int REMINDER_1 = 1;
 //private static final int REMINDER_2 = 2;
 //private static final int REMINDER_3 = 3;
