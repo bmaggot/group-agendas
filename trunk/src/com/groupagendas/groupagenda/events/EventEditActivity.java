@@ -75,7 +75,7 @@ public class EventEditActivity extends EventActivity {
 	private EditText alarm2;
 	private EditText alarm3;
 
-	private int event_id;
+	private long event_internal_id;
 
 	private View responsePanel;
 	private LinearLayout invitesColumn;
@@ -108,10 +108,10 @@ public class EventEditActivity extends EventActivity {
 		detailsPanel.setVisibility(View.GONE);
 		addressDetailsPanel.setVisibility(View.VISIBLE);
 
-		event_id = intent.getIntExtra("event_id", 0); // TODO implement offline
+		event_internal_id = intent.getLongExtra("event_id", 0); // TODO implement offline
 														// mode event Edit
-		if (event_id > 0) {
-			new GetEventTask().execute(event_id);
+		if (event_internal_id > 0) {
+			new GetEventTask().execute(event_internal_id);
 		}
 	}
 
@@ -464,7 +464,7 @@ public class EventEditActivity extends EventActivity {
 //		return view;
 //	}
 
-	class GetEventTask extends AsyncTask<Integer, Event, Event> {
+	class GetEventTask extends AsyncTask<Long, Event, Event> {
 		final DataManagement dm = DataManagement.getInstance(getParent());
 		final String[] iconsValues = getResources().getStringArray(R.array.icons_values);
 		final SharedPreferences prefs = getSharedPreferences("LATEST_CREDENTIALS", MODE_PRIVATE);
@@ -476,7 +476,7 @@ public class EventEditActivity extends EventActivity {
 		}
 
 		@Override
-		protected Event doInBackground(Integer... ids) {
+		protected Event doInBackground(Long... ids) {
 			// autoColors = dm.getAutoColors(); TODO implement or remove shit
 			// autoIcons = dm.getAutoIcons();
 
@@ -690,9 +690,9 @@ public class EventEditActivity extends EventActivity {
 
 				@Override
 				public void onClick(View arg0) {
-					if (event_id > 0) {
+					if (event_internal_id > 0) {
 						Intent intent = new Intent(EventEditActivity.this, ChatMessageActivity.class);
-						intent.putExtra("event_id", event_id);
+						intent.putExtra("event_id", event_internal_id);
 						startActivity(intent);
 					}
 				}
@@ -908,7 +908,7 @@ public class EventEditActivity extends EventActivity {
 	class DeleteEventTask extends AsyncTask<Void, Boolean, Boolean> {
 		@Override
 		protected Boolean doInBackground(Void... type) {
-			if (event_id > 0) {
+			if (event_internal_id > 0) {
 				EventManagement.deleteEvent(EventEditActivity.this, event);
 			}
 			return false;
