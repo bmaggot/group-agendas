@@ -698,43 +698,36 @@ public class EventEditActivity extends EventActivity {
 				}
 			});
 
-			// TODO JUSTUI V implement with timestamps from API
-			// if ( null && event.reminder1 != null &&
-			// !event.reminder1.equals("null")) {
-			// reminder1.setText(event.reminder1);
-			// } else {
-			// reminder1.setText("");
-			// }
-			// if (event != null && event.reminder2 != null &&
-			// !event.reminder2.equals("null")) {
-			// reminder2.setText(event.reminder2);
-			// } else {
-			// reminder2.setText("");
-			// }
-			// if (event != null && event.reminder3 != null &&
-			// !event.reminder3.equals("null")) {
-			// reminder3.setText(event.reminder3);
-			// } else {
-			// reminder3.setText("");
-			// }
-			// if (event != null && event.alarm1 != null &&
-			// !event.alarm1.equals("null")) {
-			// alarm1.setText(event.alarm1);
-			// } else {
-			// alarm1.setText("");
-			// }
-			// if (event != null && event.alarm2 != null &&
-			// !event.alarm2.equals("null")) {
-			// alarm2.setText(event.alarm2);
-			// } else {
-			// alarm2.setText("");
-			// }
-			// if (event != null && event.alarm3 != null &&
-			// !event.alarm3.equals("null")) {
-			// alarm3.setText(event.alarm3);
-			// } else {
-			// alarm3.setText("");
-			// }
+			if (result.getReminder1() != null) {
+				reminder1.setText(result.getReminder1().getTime().toString());
+			} else {
+				reminder1.setText("");
+			}
+			if (result.getReminder2() != null) {
+				reminder2.setText(result.getReminder2().getTime().toString());
+			} else {
+				reminder2.setText("");
+			}
+			if (result.getReminder3() != null) {
+				reminder3.setText(result.getReminder3().getTime().toString());
+			} else {
+				reminder3.setText("");
+			}
+			if (result.getAlarm1() != null) {
+				alarm1.setText(result.getAlarm1().getTime().toString());
+			} else {
+				alarm1.setText("");
+			}
+			if (result.getAlarm2() != null) {
+				alarm2.setText(result.getAlarm2().getTime().toString());
+			} else {
+				alarm2.setText("");
+			}
+			if (result.getAlarm3() != null) {
+				alarm3.setText(result.getAlarm3().getTime().toString());
+			} else {
+				alarm3.setText("");
+			}
 
 			// int invitedListSize = result.getInvitedCount();//TODOimplement
 			//
