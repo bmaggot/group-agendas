@@ -494,47 +494,45 @@ private static final String DEFAULT_REMINDER = "null";
 	
 	
 	
-	public void setAssigned_contacts(int[] assigned_contacts) {
-			this.assigned_contacts = assigned_contacts;
-		}	
-	public int[] getAssigned_contacts() {
-		if (assigned_contacts == null) assigned_contacts = parseAssignedContacts(getAssigned_contacts_DB_entry());
-		return assigned_contacts;
-	}
-	private int[] parseAssignedContacts(String assigned_contacts_DB_entry) {
-		// TODO Auto-generated method stub
-		return new int[0];
-	}
+//	public void setAssigned_contacts(int[] assigned_contacts) {
+//			this.assigned_contacts = assigned_contacts;
+//		}	
+//	public int[] getAssigned_contacts() {
+//		if (assigned_contacts == null) assigned_contacts = parseAssignedContacts(getAssigned_contacts_DB_entry());
+//		return assigned_contacts;
+//	}
+//	private int[] parseAssignedContacts(String assigned_contacts_DB_entry) {
+//		// TODO Auto-generated method stub
+//		return new int[0];
+//	}
+//	
 	
 	
 	
-	
-	public void setAssigned_groups(int[] assigned_groups) {
-		this.assigned_groups = assigned_groups;
-	}
-	
-	public int[] getAssigned_groups() {
-		if (assigned_groups == null) assigned_groups = parseAssignedGroups(getAssigned_groups_DB_entry());
-		return assigned_groups;
-	}
-	private int[] parseAssignedGroups(String assigned_groups_DB_entry) {
-		// TODO Auto-generated method stub
-		return new int[0];
-	}
+//	public void setAssigned_groups(int[] assigned_groups) {
+//		this.assigned_groups = assigned_groups;
+//	}
+//	
+//	public int[] getAssigned_groups() {
+//		if (assigned_groups == null) assigned_groups = parseAssignedGroups(getAssigned_groups_DB_entry());
+//		return assigned_groups;
+//	}
+//	private int[] parseAssignedGroups(String assigned_groups_DB_entry) {
+//		// TODO Auto-generated method stub
+//		return new int[0];
+//	}
 	
 	
 	
 	public void setInvited(ArrayList<Invited> invited) {
 		this.invited = invited;
 	}
-	private ArrayList<Invited> getInvited() {
-		if (invited == null) invited = parseInvitedDBentry(getInvited_DB_entry());
+	public ArrayList<Invited> getInvited() {
+		if (invited == null) invited = new ArrayList<Invited>();
 		return invited;
 	}
-	private ArrayList<Invited> parseInvitedDBentry(String invited_DB_entry2) {
-		// TODO Auto-generated method stub
-		return new ArrayList<Invited>();
-	}
+
+
 
 
 
@@ -741,27 +739,20 @@ public void setIs_all_day(boolean is_all_day) {
 public void setBirthday(boolean birthday) {
 	this.birthday = birthday;
 }
-public String getAssigned_contacts_DB_entry() {
-	return assigned_contacts_DB_entry;
-}
-public String getAssigned_groups_DB_entry() {
-	return assigned_groups_DB_entry;
-}
-public String getInvited_DB_entry() {
-	return invited_DB_entry;
-}
+//public String getAssigned_contacts_DB_entry() {
+//	return assigned_contacts_DB_entry;
+//}
+//public String getAssigned_groups_DB_entry() {
+//	return assigned_groups_DB_entry;
+//}
+
 public boolean isUploadedToServer() {
 	return uploadedToServer;
 }
 public void setUploadedToServer(boolean bool) {
 	uploadedToServer = bool;
 }
-public int getInvitedCount() {
-	return getInvited().size();
-}
-public Invited getInvited(int i) {
-	return getInvited().get(i);
-}
+
 
 public int getMessage_count() {
 	return message_count;

@@ -553,70 +553,70 @@ public class NewEventActivity extends EventActivity {
 
 	@Override
 	public void onResume() {
-		if (Data.selectedContacts != null && !Data.selectedContacts.isEmpty()) {
-			LinearLayout invitedPersonList = (LinearLayout) findViewById(R.id.invited_person_list);
-			invitedPersonList.removeAllViews();
-			final LayoutInflater inflater = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-
-			contactsButton.setBackgroundResource(R.drawable.event_invite_people_button_notalone);
-
-			for (int i = 0, l = Data.selectedContacts.size(); i < l; i++) {
-				Contact contact = Data.selectedContacts.get(i);
-				final View view = inflater.inflate(R.layout.event_invited_person_entry, invitedPersonList, false);
-				if (l == 1) {
-					view.setBackgroundResource(R.drawable.event_invited_entry_last_background);
-				} else {
-					if (i == l - 1)
-						view.setBackgroundResource(R.drawable.event_invited_entry_last_background);
-					else
-						view.setBackgroundResource(R.drawable.event_invited_entry_notalone_background);
-				}
-				Invited invited = new Invited();
-				invited.name = contact.name;
-				invited.email = contact.email;
-				invited.status_id = 4;
-				invitedPersonList.addView(getInvitedView(invited, inflater, view, dm.getContext()));
-			}
-		} else {
+//		if (Data.selectedContacts != null && !Data.selectedContacts.isEmpty()) {
+//			LinearLayout invitedPersonList = (LinearLayout) findViewById(R.id.invited_person_list);
+//			invitedPersonList.removeAllViews();
+//			final LayoutInflater inflater = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+//
+//			contactsButton.setBackgroundResource(R.drawable.event_invite_people_button_notalone);
+//
+//			for (int i = 0, l = Data.selectedContacts.size(); i < l; i++) {
+//				Contact contact = Data.selectedContacts.get(i);
+//				final View view = inflater.inflate(R.layout.event_invited_person_entry, invitedPersonList, false);
+//				if (l == 1) {
+//					view.setBackgroundResource(R.drawable.event_invited_entry_last_background);
+//				} else {
+//					if (i == l - 1)
+//						view.setBackgroundResource(R.drawable.event_invited_entry_last_background);
+//					else
+//						view.setBackgroundResource(R.drawable.event_invited_entry_notalone_background);
+//				}
+//				Invited invited = new Invited();
+//				invited.name = contact.name;
+//				invited.email = contact.email;
+//				invited.status_id = 4;
+//				invitedPersonList.addView(getInvitedView(invited, inflater, view, dm.getContext()));
+//			}
+//		} else {
 			contactsButton.setBackgroundResource(R.drawable.event_invite_people_button_standalone);
 			LinearLayout invitedPersonList = (LinearLayout) findViewById(R.id.invited_person_list);
 			invitedPersonList.removeAllViews();
-		}
+//		}
 		
 		super.onResume();
 	}
 
-	public View getInvitedView(Invited invited, LayoutInflater inflater, View view, Context mContext) {
-		final TextView nameView = (TextView) view.findViewById(R.id.invited_fullname);
-		nameView.setText(invited.name);
-
-		final TextView emailView = (TextView) view.findViewById(R.id.invited_available_email);
-		emailView.setText(invited.email);
-
-		final TextView statusView = (TextView) view.findViewById(R.id.invited_status);
-
-		switch (invited.status_id) {
-		case 0:
-			statusView.setText(mContext.getString(R.string.status_0));
-			break;
-		case 1:
-			statusView.setText(mContext.getString(R.string.status_1));
-			break;
-		case 2:
-			statusView.setText(mContext.getString(R.string.status_2));
-			break;
-		case 4:
-			statusView.setText(mContext.getString(R.string.new_invite));
-			break;
-		}
-
-		if (invited.me) {
-			view.setTag("my_event_status");
-			view.setId(99999);
-		}
-
-		return view;
-	}
+//	public View getInvitedView(Invited invited, LayoutInflater inflater, View view, Context mContext) {
+//		final TextView nameView = (TextView) view.findViewById(R.id.invited_fullname);
+//		nameView.setText(invited.name);
+//
+//		final TextView emailView = (TextView) view.findViewById(R.id.invited_available_email);
+//		emailView.setText(invited.email);
+//
+//		final TextView statusView = (TextView) view.findViewById(R.id.invited_status);
+//
+//		switch (invited.status_id) {
+//		case 0:
+//			statusView.setText(mContext.getString(R.string.status_0));
+//			break;
+//		case 1:
+//			statusView.setText(mContext.getString(R.string.status_1));
+//			break;
+//		case 2:
+//			statusView.setText(mContext.getString(R.string.status_2));
+//			break;
+//		case 4:
+//			statusView.setText(mContext.getString(R.string.new_invite));
+//			break;
+//		}
+//
+//		if (invited.me) {
+//			view.setTag("my_event_status");
+//			view.setId(99999);
+//		}
+//
+//		return view;
+//	}
 
 //	private TextWatcher filterTextWatcher = new TextWatcher() {
 //
@@ -871,27 +871,27 @@ public class NewEventActivity extends EventActivity {
 
 	}
 
-	@Override
-	protected Dialog onCreateDialog(int id) {
-		AlertDialog.Builder builder = new AlertDialog.Builder(this);
-		switch (id) {
-		case DIALOG_ERROR:
-			builder.setMessage(errorStr).setCancelable(false)
-					.setPositiveButton(getString(R.string.ok), new DialogInterface.OnClickListener() {
-						@Override
-						public void onClick(DialogInterface dialog, int id) {
-							dialog.dismiss();
-						}
-					});
-			break;
-		case CHOOSE_CONTACTS_DIALOG:
-			builder.setTitle(getString(R.string.choose_contacts))
-					.setMultiChoiceItems(titles, selections, new DialogSelectionClickHandler())
-					.setPositiveButton(getString(R.string.ok), new DialogButtonClickHandler());
-			break;
-		}
-		return builder.create();
-	}
+//	@Override
+//	protected Dialog onCreateDialog(int id) {
+//		AlertDialog.Builder builder = new AlertDialog.Builder(this);
+//		switch (id) {
+//		case DIALOG_ERROR:
+//			builder.setMessage(errorStr).setCancelable(false)
+//					.setPositiveButton(getString(R.string.ok), new DialogInterface.OnClickListener() {
+//						@Override
+//						public void onClick(DialogInterface dialog, int id) {
+//							dialog.dismiss();
+//						}
+//					});
+//			break;
+//		case CHOOSE_CONTACTS_DIALOG:
+//			builder.setTitle(getString(R.string.choose_contacts))
+//					.setMultiChoiceItems(titles, selections, new DialogSelectionClickHandler())
+//					.setPositiveButton(getString(R.string.ok), new DialogButtonClickHandler());
+//			break;
+//		}
+//		return builder.create();
+//	}
 
 	public class DialogSelectionClickHandler implements DialogInterface.OnMultiChoiceClickListener {
 		@Override
@@ -909,28 +909,28 @@ public class NewEventActivity extends EventActivity {
 		return true;
 	}
 
-	private class DialogButtonClickHandler implements DialogInterface.OnClickListener {
-		@Override
-		public void onClick(DialogInterface dialog, int clicked) {
-			switch (clicked) {
-			case DialogInterface.BUTTON_POSITIVE:
-				ArrayList<Integer> list = new ArrayList<Integer>();
-
-				for (int i = 0, l = ids.length; i < l; i++) {
-					if (selections[i]) {
-						list.add(ids[i]);
-					}
-				}
-
-				event.setAssigned_contacts(new int[list.size()]);
-
-				for (int i = 0, l = list.size(); i < l; i++) {
-					event.getAssigned_contacts()[i] = list.get(i);
-				}
-				break;
-			}
-		}
-	}
+//	private class DialogButtonClickHandler implements DialogInterface.OnClickListener {
+//		@Override
+//		public void onClick(DialogInterface dialog, int clicked) {
+//			switch (clicked) {
+//			case DialogInterface.BUTTON_POSITIVE:
+//				ArrayList<Integer> list = new ArrayList<Integer>();
+//
+//				for (int i = 0, l = ids.length; i < l; i++) {
+//					if (selections[i]) {
+//						list.add(ids[i]);
+//					}
+//				}
+//
+//				event.setAssigned_contacts(new int[list.size()]);
+//
+//				for (int i = 0, l = list.size(); i < l; i++) {
+//					event.getAssigned_contacts()[i] = list.get(i);
+//				}
+//				break;
+//			}
+//		}
+//	}
 
 	class GetAutoTask extends AsyncTask<Void, Void, Void> {
 
@@ -1092,7 +1092,7 @@ public class NewEventActivity extends EventActivity {
 			boolean success = false;
 
 			NewEventActivity.super.setEventData(event);
-			event.setStatus(Event.ACCEPTED);
+			event.setStatus(Invited.ACCEPTED);
 
 			int testEvent = event.isValid();
 
