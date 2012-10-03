@@ -8,6 +8,9 @@ public class Invited {
 	public static final int NEW_INVITATION = 4;
 
 	/** Invited person's id (if person exists in user's contact list) */
+	private String name;
+	
+	/** Invited person's id (if person exists in user's contact list) */
 	private int my_contact_id;
 	
 	/** Invited person's id (if person exists in other user's contact list
@@ -20,6 +23,13 @@ public class Invited {
 	/** Invitation status */
 	private int status;
 
+	public String getName() {
+		if (name != null)
+			return name;
+		else
+			return "";
+	}
+	
 	public int getMy_contact_id() {
 		return my_contact_id;
 	}
@@ -37,6 +47,13 @@ public class Invited {
 			return status;
 		else
 			return 4;			
+	}
+	
+	public void setName(String name) {
+		if (name != null)
+			this.name = name;
+		else
+			this.name = "";
 	}
 
 	public void setMy_contact_id(int my_contact_id) {
