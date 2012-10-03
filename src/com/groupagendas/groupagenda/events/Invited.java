@@ -1,9 +1,5 @@
 package com.groupagendas.groupagenda.events;
 
-import org.json.JSONException;
-import org.json.JSONObject;
-
-import android.util.Log;
 
 public class Invited {
 	public static final int REJECTED = 0;
@@ -13,9 +9,6 @@ public class Invited {
 
 	/** Invited person's id (if person exists in user's contact list) */
 	private int my_contact_id;
-	
-	/** Invited person's fullname */
-	private String name;
 	
 	/** Invited person's id (if person exists in other user's contact list
 	 * and is not registered in GroupAgendas) */
@@ -29,13 +22,6 @@ public class Invited {
 
 	public int getMy_contact_id() {
 		return my_contact_id;
-	}
-
-	public String getName() {
-		if (name != null)
-			return name;
-		else
-			return "";
 	}
 
 	public int getGcid() {
@@ -58,13 +44,6 @@ public class Invited {
 			this.my_contact_id = my_contact_id;
 	}
 
-	public void setName(String name) {
-		if (name != null)
-			this.name = name;
-		else
-			this.name = "";
-	}
-
 	public void setGcid(int gcid) {
 		if (gcid > 0)
 			this.gcid = gcid;
@@ -85,42 +64,9 @@ public class Invited {
 	public Invited() {
 	}
 	
-	public Invited(JSONObject input) {
-		try {
-			setName(input.getString("gname"));
-		} catch (JSONException e) {
-			Log.e("Invited(JSONObject input)", "Failed getting name");
-		}
-		
-		try {
-			setGcid(input.getInt("gcid"));
-		} catch (JSONException e) {
-			Log.e("Invited(JSONObject input)", "Failed getting gcid");
-		}
-		
-		try {
-			setGuid(input.getInt("guid"));
-		} catch (JSONException e) {
-			Log.e("Invited(JSONObject input)", "Failed getting guid");
-		}
-		
-		try {
-			setStatus(input.getInt("status"));
-		} catch (JSONException e) {
-			Log.e("Invited(JSONObject input)", "Failed getting status");
-		}
-		
-		try {
-			setMy_contact_id(input.getInt("my_contact_id"));
-		} catch (JSONException e) {
-			Log.e("Invited(JSONObject input)", "Failed getting my_contact_id");
-		}
-	}
-	
 	public String toString() {
 		StringBuilder sb = new StringBuilder();
 		
-		sb.append("gname").append(":").append(getName()).append(",");
 		sb.append("gcid").append(":").append(getGcid()).append(",");
 		sb.append("guid").append(":").append(getGuid()).append(",");
 		sb.append("status").append(":").append(getStatus()).append(",");
