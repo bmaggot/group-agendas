@@ -721,14 +721,26 @@ public class EventManagement {
 				reqEntity.addPart("take_with_you", new StringBody(e.getTake_with_you()));
 				reqEntity.addPart("cost", new StringBody(e.getCost()));
 				reqEntity.addPart("accomodation", new StringBody(e.getAccomodation()));
-//TODO commented because of nullpointer
-//				reqEntity.addPart("a1", new StringBody("" + Utils.millisToUnixTimestamp(e.getAlarm1().getTimeInMillis())));
-//				reqEntity.addPart("2", new StringBody("" + Utils.millisToUnixTimestamp(e.getAlarm2().getTimeInMillis())));
-//				reqEntity.addPart("a3", new StringBody("" + Utils.millisToUnixTimestamp(e.getAlarm3().getTimeInMillis())));
-//
-//				reqEntity.addPart("r1", new StringBody("" + Utils.millisToUnixTimestamp(e.getAlarm1().getTimeInMillis())));
-//				reqEntity.addPart("r2", new StringBody("" + Utils.millisToUnixTimestamp(e.getAlarm2().getTimeInMillis())));
-//				reqEntity.addPart("r3", new StringBody("" + Utils.millisToUnixTimestamp(e.getAlarm3().getTimeInMillis())));
+				
+				if(e.getAlarm1() != null){
+					reqEntity.addPart("a1", new StringBody("" + Utils.millisToUnixTimestamp(e.getAlarm1().getTimeInMillis())));
+				}
+				if(e.getAlarm2() != null){
+					reqEntity.addPart("a2", new StringBody("" + Utils.millisToUnixTimestamp(e.getAlarm2().getTimeInMillis())));
+				}
+				if(e.getAlarm3() != null){
+					reqEntity.addPart("a3", new StringBody("" + Utils.millisToUnixTimestamp(e.getAlarm3().getTimeInMillis())));
+				}
+
+				if(e.getReminder1() != null){
+					reqEntity.addPart("r1", new StringBody("" + Utils.millisToUnixTimestamp(e.getReminder1().getTimeInMillis())));
+				}
+				if(e.getReminder2() != null){
+					reqEntity.addPart("r2", new StringBody("" + Utils.millisToUnixTimestamp(e.getReminder2().getTimeInMillis())));
+				}
+				if(e.getReminder3() != null){
+					reqEntity.addPart("r3", new StringBody("" + Utils.millisToUnixTimestamp(e.getReminder3().getTimeInMillis())));
+				}
 
 //				if (Data.selectedContacts != null && !Data.selectedContacts.isEmpty()) {
 //					e.assigned_contacts = new int[Data.selectedContacts.size()];
