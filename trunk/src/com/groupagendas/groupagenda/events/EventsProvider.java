@@ -281,11 +281,13 @@ public class EventsProvider extends ContentProvider{
 			qb.appendWhere(EMetaData.EventsMetaData._ID
 					+"="
 					+EMetaData.EventsIndexesMetaData.EVENT_ID);
-			orderBy = (TextUtils.isEmpty(sortOrder)) ? EMetaData.EventsMetaData.DEFAULT_SORT_ORDER : sortOrder;
+			orderBy = (TextUtils.isEmpty(sortOrder)) ? null : sortOrder; 
 			break;
-//		case EVENTS_BETWEEN_DATES:
-//			orderBy = null;
-//			break;
+		case INVITED:
+			qb.setTables(EMetaData.INVITED_TABLE);
+			qb.setProjectionMap(IM);
+			orderBy = (TextUtils.isEmpty(sortOrder)) ? null : sortOrder;
+			break;
 		default:
 			throw new IllegalArgumentException("Unknow URI " + uri);
 		}

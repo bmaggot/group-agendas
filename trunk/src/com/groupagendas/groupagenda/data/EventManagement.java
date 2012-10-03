@@ -447,6 +447,9 @@ public class EventManagement {
 			Cursor result = context.getContentResolver().query(uri, null, null, null, null);
 			if (result.moveToFirst()) {
 				item = createEventFromCursor(result);
+			
+			item.setInvited(getInvitesForEvent(context, item));
+				
 //
 //				String assigned_contacts = result.getString(result.getColumnIndex(EventsProvider.EMetaData.EventsMetaData.ASSIGNED_CONTACTS));
 //				if (assigned_contacts != null && !assigned_contacts.equals("null")) {
@@ -478,6 +481,23 @@ public class EventManagement {
 		}	
 
 		
+private static ArrayList<Invited> getInvitesForEvent(Context context, Event event) {
+		ArrayList<Invited> invites = new ArrayList<Invited>();
+		long id = event.getInternalID();
+		
+		String where = EventsProvider.EMetaData.InvitedMetaData.EVENT_ID + "=" + id; 
+		Uri uri = EventsProvider.EMetaData.InvitedMetaData.CONTENT_URI;
+		Cursor result = context.getContentResolver().query(uri, null, where, null, null);
+		if (result.moveToFirst()){
+			invites.add(createInvitedFromCursor(result));
+			
+		}
+		result.close();
+		return invites;
+	}
+
+
+
 /////////////////////////////////////////////////////METHODS THAT WORK WITH RMOTE DB//////////////////////////////////////////////////////	
 		
 		/**
@@ -1281,6 +1301,14 @@ public class EventManagement {
 		}
 		return item;
 	}
-	
+	private static Invited createInvitedFromCursor(Cursor result) {
+		Invited invited = new Invited();
+		invited.setGcid(result.getInt(result.getColumnIndexOrThrow(EventsProvider.EMetaData.InvitedMetaData.GCID)));
+		invited.setGuid(result.getInt(result.getColumnIndexOrThrow(EventsProvider.EMetaData.InvitedMetaData.GUID)));
+		invited.setMy_contact_id(result.getInt(result.getColumnIndexOrThrow(EventsProvider.EMetaData.InvitedMetaData.MY_CONTACT_ID)));
+		invited.setName(result.getString(result.getColumnIndexOrThrow(EventsProvider.EMetaData.InvitedMetaData.NAME)));
+		invited.setStatus(result.getInt(result.getColumnIndexOrThrow(EventsProvider.EMetaData.InvitedMetaData.STATUS)));
+		return invited;
+	}
 	
 }
