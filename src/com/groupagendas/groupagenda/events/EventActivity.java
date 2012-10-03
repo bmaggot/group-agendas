@@ -103,7 +103,6 @@ public class EventActivity extends Activity {
 	protected TextView addressTrigger;
 	protected TextView detailsTrigger;
 	protected ProgressBar pb;
-	protected boolean setOwner = false;
 	protected boolean setUid = false;
 	protected String selectedIcon = Event.DEFAULT_ICON;
 	protected String selectedColor = Event.DEFAULT_COLOR;
@@ -115,7 +114,6 @@ public class EventActivity extends Activity {
 		if (timezoneArray != null) {
 			event.setTimezone(timezoneArray[timezoneSpinner.getSelectedItemPosition()]);
 		}
-		event.setIs_owner(setOwner);
 		if (setUid) {
 			// user_id
 			event.setUser_id(prefs.getUserId());
