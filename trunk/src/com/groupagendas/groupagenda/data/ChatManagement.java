@@ -227,7 +227,7 @@ public class ChatManagement {
 	}
 
 	/**
-	 * Removes ChatMessage by message id from remote and local DB.
+	 * Removes ChatMessage by message id from remote DB.
 	 * 
 	 * @author justas@mobileapps.lt
 	 * @return boolean success
@@ -256,7 +256,6 @@ public class ChatManagement {
 						JSONObject object = new JSONObject(resp);
 						success = object.getBoolean("success");
 						if (success) {
-							removeChatMessageFromLocalDb(context, messageId);
 							Toast.makeText(context, context.getResources().getString(R.string.delete_chat_message), Toast.LENGTH_LONG);
 						} else {
 							Toast.makeText(context, object.getString("error"), Toast.LENGTH_LONG);
@@ -294,6 +293,23 @@ public class ChatManagement {
 		return success;
 	}
 
+	/**
+	 * Removes ChatMessage by message id from remote and local DB.
+	 * 
+	 * @author justas@mobileapps.lt
+	 * @return boolean success
+	 * @since 2012-10T03
+	 * @version 0.1
+	 */
+	
+	public static boolean removeChatMessage(Context context, int messageId){
+		boolean succcess = false;
+		if(removeChatMessageFromRemoteDb(context, messageId)){
+			succcess = removeChatMessageFromLocalDb(context, messageId);
+		}
+		return succcess;
+	}
+	
 	/**
 	 * Sends chat message to remote DB and stores it to local db by response
 	 * from server.
