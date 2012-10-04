@@ -6,6 +6,7 @@ public class Invited {
 	public static final int ACCEPTED = 1;
 	public static final int MAYBE = 2;
 	public static final int NEW_INVITATION = 4;
+	public static final int OWN_INVITATION_ENTRY = 99999;
 
 	/** Invited person's fullname */
 	private String name;
