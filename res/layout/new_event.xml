@@ -13,7 +13,7 @@
         android:layout_centerVertical="true"
         android:background="@drawable/top_bar_background" >
 
-        <Button android:visibility="gone"
+        <Button
             android:id="@+id/templatesButton"
             android:layout_width="wrap_content"
             android:layout_height="33dp"
@@ -34,7 +34,8 @@
             android:text="@string/templates"
             android:textColor="@color/white"
             android:textSize="14dp"
-            android:textStyle="bold" />
+            android:textStyle="bold"
+            android:visibility="gone" />
 
         <TextView
             android:id="@+id/topText"
@@ -615,6 +616,7 @@
                         android:layout_gravity="center_vertical|right"
                         android:layout_marginRight="15dp"
                         android:background="@null"
+                        android:focusableInTouchMode="false"
                         android:gravity="center"
                         android:inputType="date"
                         android:textColor="@android:color/darker_gray"
@@ -650,6 +652,7 @@
                         android:layout_gravity="center_vertical|right"
                         android:layout_marginRight="15dp"
                         android:background="@null"
+                        android:focusableInTouchMode="false"
                         android:gravity="center"
                         android:inputType="date"
                         android:textColor="@android:color/darker_gray"
@@ -686,6 +689,7 @@
                         android:layout_gravity="center_vertical|right"
                         android:layout_marginRight="15dp"
                         android:background="@null"
+                        android:focusableInTouchMode="false"
                         android:gravity="center"
                         android:inputType="date"
                         android:textColor="@color/darker_gray"
@@ -729,6 +733,7 @@
                         android:layout_gravity="center_vertical|right"
                         android:layout_marginRight="15dp"
                         android:background="@null"
+                        android:focusableInTouchMode="false"
                         android:gravity="center"
                         android:inputType="date"
                         android:textColor="@android:color/darker_gray"
@@ -764,6 +769,7 @@
                         android:layout_gravity="center_vertical|right"
                         android:layout_marginRight="15dp"
                         android:background="@null"
+                        android:focusableInTouchMode="false"
                         android:gravity="center"
                         android:inputType="date"
                         android:textColor="@android:color/darker_gray"
@@ -800,6 +806,7 @@
                         android:layout_gravity="center_vertical|right"
                         android:layout_marginRight="15dp"
                         android:background="@null"
+                        android:focusableInTouchMode="false"
                         android:gravity="center"
                         android:inputType="date"
                         android:textColor="@color/darker_gray"
@@ -850,13 +857,14 @@
                     layout="@layout/event_invitation_section" />
             </LinearLayout>
 
-            <CheckBox android:visibility="gone"
+            <CheckBox
                 android:id="@+id/templateTrigger"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:checked="false"
                 android:text="@string/event_save_as_template"
-                android:textColor="@color/black" />
+                android:textColor="@color/black"
+                android:visibility="gone" />
         </LinearLayout>
     </ScrollView>
 
