@@ -439,7 +439,7 @@ public class NavbarActivity extends Activity {
 	protected void onSaveInstanceState(Bundle outState) {
 		super.onSaveInstanceState(outState);
 		outState.putBoolean("isDataLoaded", dataLoaded);
-		outState.putString("loadPhase", Integer.toString(loadPhase));
+		outState.putInt("loadPhase", loadPhase);
 		outState.putString("viewState", "" + viewState);
 		if (calendarContainer.getChildAt(0) instanceof AbstractCalendarView) {
 			selectedDate = ((AbstractCalendarView) calendarContainer
