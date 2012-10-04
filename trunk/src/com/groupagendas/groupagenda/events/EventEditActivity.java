@@ -421,15 +421,6 @@ public class EventEditActivity extends EventActivity {
 		});
 	}
 
-	@Override
-	public boolean onKeyDown(int keyCode, KeyEvent event) {
-		if (keyCode == KeyEvent.KEYCODE_BACK) {
-			Data.selectedContacts.clear();
-		}
-		finish();
-		return true;
-	}
-
 //	public View getInvitedView(Invited invited, LayoutInflater inflater, View view, Context mContext, boolean setEmailRed) {
 //		final TextView nameView = (TextView) view.findViewById(R.id.invited_fullname);
 //		nameView.setText(invited.name);

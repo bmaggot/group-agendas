@@ -900,15 +900,6 @@ public class NewEventActivity extends EventActivity {
 		}
 	}
 
-	@Override
-	public boolean onKeyDown(int keyCode, KeyEvent event) {
-		if (keyCode == KeyEvent.KEYCODE_BACK) {
-			Data.selectedContacts.clear();
-		}
-		finish();
-		return true;
-	}
-
 //	private class DialogButtonClickHandler implements DialogInterface.OnClickListener {
 //		@Override
 //		public void onClick(DialogInterface dialog, int clicked) {

@@ -532,8 +532,7 @@
                     android:id="@+id/accomodationView"
                     android:layout_width="fill_parent"
                     android:layout_height="wrap_content"
-                    android:inputType="text"
-                    android:textSize="12dp" />
+                    android:inputType="text" />
             </LinearLayout>
 
             <LinearLayout
