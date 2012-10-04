@@ -146,7 +146,7 @@ public class NavbarActivity extends Activity {
 						getContentResolver().delete(TemplatesProvider.TMetaData.TemplatesMetaData.CONTENT_URI, "", null);
 						getContentResolver().delete(EventsProvider.EMetaData.EventsMetaData.CONTENT_URI, "", null);
 						getContentResolver().delete(EventsProvider.EMetaData.EventsIndexesMetaData.CONTENT_URI, "", null);
-						getContentResolver().delete(EventsProvider.EMetaData.InvitedMetaData.CONTENT_URI, "", null);
+//						getContentResolver().delete(EventsProvider.EMetaData.InvitedMetaData.CONTENT_URI, "", null);
 						getContentResolver().getType(EventsProvider.EMetaData.EventsMetaData.CONTENT_URI);
 
 						loadPhase++;

@@ -1,9 +1,12 @@
 package com.groupagendas.groupagenda.data;
 
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Iterator;
 
 import org.apache.http.HttpResponse;
 import org.apache.http.HttpStatus;
@@ -32,6 +35,7 @@ import com.groupagendas.groupagenda.events.Event;
 import com.groupagendas.groupagenda.events.EventsProvider;
 import com.groupagendas.groupagenda.events.Invited;
 import com.groupagendas.groupagenda.utils.Utils;
+import com.pass_retrieve.login2_set;
 
 
 public class EventManagement {
@@ -71,7 +75,6 @@ public class EventManagement {
 				// TODO report error
 			}
 		} else {
-			event.setEvent_id(0);
 			event.setUploadedToServer(false);
 		}	
 		
@@ -120,6 +123,49 @@ public class EventManagement {
 	public static final int TM_EVENTS_ON_GIVEN_DAY = 1;
 	public static final int TM_EVENTS_ON_GIVEN_MONTH = 2;
 	public static final int TM_EVENTS_ON_GIVEN_YEAR = 3;
+	
+	private static final String JSON_TAG_EVENT_ID = "event_id";
+	private static final String JSON_TAG_TIMEZONE = "timezone";
+	private static final String JSON_TAG_TIME_START_UTC = "timestamp_start_utc";
+	private static final String JSON_TAG_TIME_END_UTC = "timestamp_end_utc";
+	private static final String JSON_TAG_USER_ID = "user_id";
+	private static final String JSON_TAG_STATUS = "status";
+	private static final String JSON_TAG_IS_OWNER = "is_owner";
+	private static final String JSON_TAG_TYPE = "type";
+	private static final String JSON_TAG_TITLE = "title";
+	private static final String JSON_TAG_ICON = "icon";
+	private static final String JSON_TAG_COLOR = "color";
+	private static final String JSON_TAG_DESCRIPTION = "description";
+	private static final String JSON_TAG_LOCATION = "location";
+	private static final String JSON_TAG_ACCOMODATION = "accomodation";
+	private static final String JSON_TAG_COST = "cost";
+	private static final String JSON_TAG_TAKE_WITH_YOU = "take_with_you";
+	private static final String JSON_TAG_GO_BY = "go_by";
+	private static final String JSON_TAG_COUNTRY = "country";
+	private static final String JSON_TAG_CITY = "city";
+	private static final String JSON_TAG_STREET = "street";
+	private static final String JSON_TAG_ZIP = "zip";
+	private static final String JSON_TAG_ABSOLUTE_REMINDER_1 = "r1";
+	private static final String JSON_TAG_ABSOLUTE_REMINDER_2 = "r2";
+	private static final String JSON_TAG_ABSOLUTE_REMINDER_3 = "r3";
+	private static final String JSON_TAG_ABSOLUTE_ALARM_1 = "a1";
+	private static final String JSON_TAG_ALARM_1_FIRED = "alarm1_fired";
+	private static final String JSON_TAG_ABSOLUTE_ALARM_2 = "a2";
+	private static final String JSON_TAG_ALARM_2_FIRED = "alarm2_fired";
+	private static final String JSON_TAG_ABSOLUTE_ALARM_3 = "a3";
+	private static final String JSON_TAG_ALARM_3_FIRED = "alarm3_fired";
+	private static final String JSON_TAG_TIMESTAMP_CREATED = "timestamp_created";
+	private static final String JSON_TAG_TIMESTAMP_MODIFIED = "timestamp_modified";
+	private static final String JSON_TAG_ATTENDANT_0_COUNT = "attendant_0_count";
+	private static final String JSON_TAG_ATTENDANT_2_COUNT = "attendant_2_count";
+	private static final String JSON_TAG_ATTENDANT_1_COUNT = "attendant_1_count";
+	private static final String JSON_TAG_ATTENDANT_4_COUNT = "attendant_4_count";
+	private static final String JSON_TAG_IS_SPORTS_EVENT = "is_sports_event";
+	private static final String JSON_TAG_ALL_DAY = "all_day";
+	private static final String JSON_TAG_CREATOR_FULLNAME = "creator_fullname";
+	private static final String JSON_TAG_CREATOR_CONTACT_ID = "is_sports_event";
+	private static final String JSON_TAG_INVITED = "invited";
+	private static final String JSON_TAG_MESSAGE_COUNT = "message_count";
 
 	/**
 	 * @author justinas.marcinka@gmail.com Gets events projections from local
@@ -265,14 +311,21 @@ public class EventManagement {
 					if (success == false) {
 						// // error = object.getString("error");
 					} else {
-						JSONArray es = object.getJSONArray("events");
-						int count = es.length();
-						for (int i = 0; i < count; i++) {
-							JSONObject e = es.getJSONObject(i);
 
+						JSONArray es = object.getJSONArray("events");
+						for (int i = 0; i < es.length(); i++) {
+							try{
+							JSONObject e = es.getJSONObject(i);
+//TODO add to local db only if not native
 							event = createEventFromJSON(e);
 							if (event != null) {
+								event.setUploadedToServer(true);
 								insertEventToLocalDB(context, event);
+							}
+
+							}
+							catch (JSONException ex){
+								Log.e(CLASS_NAME, "JSON");
 							}
 						}
 					}
@@ -308,32 +361,28 @@ public class EventManagement {
 		// 2. INSERT EVENT day indexes into events_days table
 		insertEventToDayIndexTable(context, event);
 		// 3. INSERT EVENT INVITEs
-		insertEventToInvitesTable(context, event);
+//		insertEventToInvitesTable(context, event);
 		}
 	}
 	
 	
 //	TODO javadoc
-	private static void insertEventToInvitesTable(Context context, Event event) {
-		long event_id = event.getInternalID();
-		ContentValues cv;
-		ContentResolver resolver = context.getContentResolver();
-		ArrayList<Invited> invites = event.getInvited();
-		for (Invited invite : invites){
-			cv = new ContentValues();
-			cv.put(EventsProvider.EMetaData.InvitedMetaData.EVENT_ID, event_id);
-			cv.put(EventsProvider.EMetaData.InvitedMetaData.GCID, invite.getGcid());
-			cv.put(EventsProvider.EMetaData.InvitedMetaData.GUID, invite.getGuid());
-			cv.put(EventsProvider.EMetaData.InvitedMetaData.MY_CONTACT_ID, invite.getMy_contact_id());
-			cv.put(EventsProvider.EMetaData.InvitedMetaData.STATUS, invite.getStatus());
-			cv.put(EventsProvider.EMetaData.InvitedMetaData.NAME, invite.getName());
-			resolver.insert(EventsProvider.EMetaData.InvitedMetaData.CONTENT_URI, cv);
-		}
-		
-	
-		
-		
-	}
+//	private static void insertEventToInvitesTable(Context context, Event event) {
+//		long event_id = event.getInternalID();
+//		ContentValues cv;
+//		ContentResolver resolver = context.getContentResolver();
+//		ArrayList<Invited> invites = event.getInvited();
+//		for (Invited invite : invites){
+//			cv = new ContentValues();
+//			cv.put(EventsProvider.EMetaData.InvitedMetaData.EVENT_ID, event_id);
+//			cv.put(EventsProvider.EMetaData.InvitedMetaData.GCID, invite.getGcid());
+//			cv.put(EventsProvider.EMetaData.InvitedMetaData.GUID, invite.getGuid());
+//			cv.put(EventsProvider.EMetaData.InvitedMetaData.MY_CONTACT_ID, invite.getMy_contact_id());
+//			cv.put(EventsProvider.EMetaData.InvitedMetaData.STATUS, invite.getStatus());
+//			cv.put(EventsProvider.EMetaData.InvitedMetaData.NAME, invite.getName());
+//			resolver.insert(EventsProvider.EMetaData.InvitedMetaData.CONTENT_URI, cv);
+//		}	
+//	}
 
 	/**
 	 * @author justinas.marcinka@gmail.com
@@ -448,7 +497,7 @@ public class EventManagement {
 			if (result.moveToFirst()) {
 				item = createEventFromCursor(result);
 			
-			item.setInvited(getInvitesForEvent(context, item));
+//			item.setInvited(getInvitesForEvent(context, item));
 				
 //
 //				String assigned_contacts = result.getString(result.getColumnIndex(EventsProvider.EMetaData.EventsMetaData.ASSIGNED_CONTACTS));
@@ -481,20 +530,20 @@ public class EventManagement {
 		}	
 
 		
-private static ArrayList<Invited> getInvitesForEvent(Context context, Event event) {
-		ArrayList<Invited> invites = new ArrayList<Invited>();
-		long id = event.getInternalID();
-		
-		String where = EventsProvider.EMetaData.InvitedMetaData.EVENT_ID + "=" + id; 
-		Uri uri = EventsProvider.EMetaData.InvitedMetaData.CONTENT_URI;
-		Cursor result = context.getContentResolver().query(uri, null, where, null, null);
-		if (result.moveToFirst()){
-			invites.add(createInvitedFromCursor(result));
-			
-		}
-		result.close();
-		return invites;
-	}
+//private static ArrayList<Invited> getInvitesForEvent(Context context, Event event) {
+//		ArrayList<Invited> invites = new ArrayList<Invited>();
+//		long id = event.getInternalID();
+//		
+//		String where = EventsProvider.EMetaData.InvitedMetaData.EVENT_ID + "=" + id; 
+//		Uri uri = EventsProvider.EMetaData.InvitedMetaData.CONTENT_URI;
+//		Cursor result = context.getContentResolver().query(uri, null, where, null, null);
+//		if (result.moveToFirst()){
+//			invites.add(createInvitedFromCursor(result));
+//			
+//		}
+//		result.close();
+//		return invites;
+//	}
 
 
 
@@ -541,7 +590,7 @@ private static ArrayList<Invited> getInvitesForEvent(Context context, Event even
 					reqEntity.addPart("street", new StringBody(e.getStreet()));
 				if (e.getZip().length() > 0)
 					reqEntity.addPart("zip", new StringBody(e.getZip()));
-				reqEntity.addPart("timezone", new StringBody(e.getTimezone()));
+				reqEntity.addPart(JSON_TAG_TIMEZONE, new StringBody(e.getTimezone()));
 
 				
 				if (e.getLocation().length() > 0)
@@ -866,12 +915,28 @@ private static ArrayList<Invited> getInvitesForEvent(Context context, Event even
 
 		cv.put(EventsProvider.EMetaData.EventsMetaData.CREATED_UTC_MILLISECONDS, event.getCreatedUtc());
 		cv.put(EventsProvider.EMetaData.EventsMetaData.MODIFIED_UTC_MILLISECONDS, event.getModifiedMillisUtc());
+		cv.put(EventsProvider.EMetaData.EventsMetaData.INVITED, parseInvitedListToJSONArray(event.getInvited()));
 // TODO???
 //		cv.put(EventsProvider.EMetaData.EventsMetaData.ASSIGNED_CONTACTS, event.getAssigned_contacts_DB_entry());
 //		cv.put(EventsProvider.EMetaData.EventsMetaData.ASSIGNED_GROUPS, event.getAssigned_groups_DB_entry());
 		cv.put(EventsProvider.EMetaData.EventsMetaData.MESSAGES_COUNT, event.getMessage_count());
 		return cv;
 	}
+
+private static String parseInvitedListToJSONArray(ArrayList<Invited> invited) {
+	if(invited.isEmpty()) return "[]";
+	StringBuilder sb = new StringBuilder();
+	sb.append('[');
+	for (Invited invite : invited){
+		sb.append('{');
+		sb.append(invite.toString());
+		sb.append('}');
+		sb.append(',');
+	}
+	sb.deleteCharAt(sb.length() - 1);
+	sb.append(']');
+	return sb.toString();
+}
 
 //	TODO javadoc
 	protected static Event createEventFromCursor(Cursor result) {
@@ -934,13 +999,17 @@ private static ArrayList<Invited> getInvitesForEvent(Context context, Event even
 
 		item.setCreatedMillisUtc(result.getLong(result.getColumnIndex(EventsProvider.EMetaData.EventsMetaData.CREATED_UTC_MILLISECONDS)));
 		item.setModifiedMillisUtc(result.getLong(result.getColumnIndex(EventsProvider.EMetaData.EventsMetaData.MODIFIED_UTC_MILLISECONDS)));
+		try {
+			item.setInvited(createInvitedListFromJSONArrayString(result.getString(result.getColumnIndex(EventsProvider.EMetaData.EventsMetaData.INVITED))));
+		} catch (JSONException e) {
+			Log.e("Error parsing invited array from local db", "Event ID: " + item.getEvent_id() + " event local ID: " + item.getInternalID());
+		}
 
 //		item.setAssigned_contacts_DB_entry(result.getString(result
 //				.getColumnIndex(EventsProvider.EMetaData.EventsMetaData.ASSIGNED_CONTACTS)));
 //		item.setAssigned_groups_DB_entry(result.getString(result.getColumnIndex(EventsProvider.EMetaData.EventsMetaData.ASSIGNED_GROUPS)));
 
 		item.setMessage_count(result.getInt(result.getColumnIndex(EventsProvider.EMetaData.EventsMetaData.MESSAGES_COUNT)));
-
 		return item;
 	}	
 
@@ -962,127 +1031,223 @@ private static ArrayList<Invited> getInvitesForEvent(Context context, Event even
 	 */
 	protected static Event createEventFromJSON(JSONObject e) {
 		Event event = new Event();
-		String timezone = CalendarSettings.getTimeZone();
 		long unixTimestamp;
+//		
+//		
+//		HashMap<String, String> filterMap = new HashMap<String, String>();
+//		 Iterator keys = e.keys();
+//		
+//		while (keys.hasNext()){
+//			String key = (String)keys.next();
+//			try {
+//				filterMap.put(key, e.getString(key));
+//			} catch (JSONException e1) {
+//				Reporter.reportError(CLASS_NAME, Thread.currentThread().getStackTrace()[2].getMethodName().toString(),
+//						e1.getMessage()); 
+//				e1.printStackTrace();
+//			}
+//
+//		}
+//		
+//		try{
+//			event.setEvent_id(Integer.parseInt(filterMap.get(JSON_TAG_EVENT_ID)));
+//			event.setTimezone(filterMap.get(JSON_TAG_TIMEZONE));
+//			unixTimestamp = Long.parseLong(filterMap.get(JSON_TAG_TIME_START_UTC));
+//			event.setStartCalendar(Utils.createCalendar(Utils.unixTimestampToMilis(unixTimestamp), user_timezone));
+//			unixTimestamp = Long.parseLong(filterMap.get(JSON_TAG_TIME_END_UTC));
+//			event.setEndCalendar(Utils.createCalendar(Utils.unixTimestampToMilis(unixTimestamp), user_timezone));
+//			unixTimestamp = Long.parseLong(filterMap.get(JSON_TAG_TIMESTAMP_CREATED));
+//			event.setCreatedMillisUtc(Utils.unixTimestampToMilis(unixTimestamp));
+//			unixTimestamp = Long.parseLong(filterMap.get(JSON_TAG_TIMESTAMP_MODIFIED));
+//			event.setModifiedMillisUtc(Utils.unixTimestampToMilis(unixTimestamp));
+//		}catch (NumberFormatException ex){
+//			Log.e(CLASS_NAME, "FAILED TO PARSE ESSENTIAL EVENT DATA", ex);
+//			return null;
+//		}
+//		event.setUser_id(Integer.parseInt(filterMap.get(JSON_TAG_USER_ID)));
+//		event.setStatus(Integer.parseInt(filterMap.get(JSON_TAG_STATUS)));
+//		event.setCreator_contact_id(Integer.parseInt(filterMap.get(JSON_TAG_CREATOR_CONTACT_ID)));
+//		
+//		event.setAttendant_0_count(Integer.parseInt(filterMap.get(JSON_TAG_ATTENDANT_0_COUNT)));
+//		event.setAttendant_1_count(Integer.parseInt(filterMap.get(JSON_TAG_ATTENDANT_1_COUNT)));
+//		event.setAttendant_2_count(Integer.parseInt(filterMap.get(JSON_TAG_ATTENDANT_2_COUNT)));
+//		event.setAttendant_4_count(Integer.parseInt(filterMap.get(JSON_TAG_ATTENDANT_4_COUNT)));
+//		
+//		event.setSports_event(Integer.parseInt(filterMap.get(JSON_TAG_IS_SPORTS_EVENT)) == 1);
+//		event.setIs_owner(Integer.parseInt(filterMap.get(JSON_TAG_IS_OWNER)) == 1);
+//		event.setIs_all_day(Integer.parseInt(filterMap.get(JSON_TAG_ALL_DAY)) == 1);
+//		//TODO birthdays????
+//		event.setBirthday(false);
+//		
+//		event.setType(filterMap.get(JSON_TAG_TYPE));
+//		event.setCreator_fullname(filterMap.get(JSON_TAG_CREATOR_FULLNAME));
+//		event.setTitle(filterMap.get(JSON_TAG_TITLE));
+//		event.setIcon(filterMap.get(JSON_TAG_ICON));
+//		event.setColor(filterMap.get(JSON_TAG_COLOR));
+//		event.setDescription(filterMap.get(JSON_TAG_DESCRIPTION));
+//		event.setLocation(filterMap.get(JSON_TAG_LOCATION));
+//		event.setAccomodation(filterMap.get(JSON_TAG_ACCOMODATION));
+//		event.setCost(filterMap.get(JSON_TAG_COST));
+//		event.setTake_with_you(filterMap.get(JSON_TAG_TAKE_WITH_YOU));
+//		event.setGo_by(filterMap.get(JSON_TAG_GO_BY));
+//		
+//		event.setCountry(filterMap.get(JSON_TAG_COUNTRY));
+//		event.setCity(filterMap.get(JSON_TAG_CITY));
+//		event.setStreet(filterMap.get(JSON_TAG_STREET));
+//		event.setZip(filterMap.get(JSON_TAG_ZIP));
+//		event.setMessage_count(Integer.parseInt(filterMap.get(JSON_TAG_MESSAGE_COUNT)));
+//		
+//		try {
+//			event.setInvited(createInvitedListFromJSONArrayString(filterMap.get(JSON_TAG_INVITED)));
+//		} catch (JSONException e1) {
+//			event.setInvited(new ArrayList<Invited>());
+//		}
+//		
 		
-		day_index_formatter = new SimpleDateFormat(EventsProvider.EMetaData.EventsIndexesMetaData.DAY_COLUMN_FORMAT);
-		month_index_formatter = new SimpleDateFormat(EventsProvider.EMetaData.EventsIndexesMetaData.MONTH_COLUMN_FORMAT);
+//		TODO set reminders
+//		private Calendar reminder1 = null;
+//		private Calendar reminder2 = null;
+//		private Calendar reminder3 = null;
+//		private Calendar alarm1 = null;
+//		private boolean alarm1fired = false;
+//		private Calendar alarm2 = null;
+//		private boolean alarm2fired = false;
+//		private Calendar alarm3 = null;
+//		private boolean alarm3fired = false;
+		
+
+		
+
+
+//		day_index_formatter = new SimpleDateFormat(EventsProvider.EMetaData.EventsIndexesMetaData.DAY_COLUMN_FORMAT);
+//		month_index_formatter = new SimpleDateFormat(EventsProvider.EMetaData.EventsIndexesMetaData.MONTH_COLUMN_FORMAT);
 		// critical event info. If fetch fails, return null
 		try {
-			event.setEvent_id(e.getInt("event_id"));
-			event.setTimezone(e.getString("timezone"));
+			event.setEvent_id(e.getInt(JSON_TAG_EVENT_ID));
+			event.setTimezone(e.getString(JSON_TAG_TIMEZONE));
+		} catch (JSONException e1) {
+			Reporter.reportError(CLASS_NAME, Thread.currentThread().getStackTrace()[2].getMethodName().toString(),
+					e1.getMessage());
+		}
 			// EVENT TIME START
-			unixTimestamp = e.getLong("timestamp_start_utc");
-			event.setStartCalendar(Utils.createCalendar(Utils.unixTimestampToMilis(unixTimestamp), timezone));
+			try {
+			unixTimestamp = e.getLong(JSON_TAG_TIME_START_UTC);
+			event.setStartCalendar(Utils.createCalendar(Utils.unixTimestampToMilis(unixTimestamp), user_timezone));
+			} catch (JSONException e1) {
+				Reporter.reportError(CLASS_NAME, Thread.currentThread().getStackTrace()[2].getMethodName().toString(),
+						e1.getMessage());
+			}
+			try {
 			// EVENT TIME END
-			unixTimestamp = e.getLong("timestamp_end_utc");
-			event.setEndCalendar(Utils.createCalendar(Utils.unixTimestampToMilis(unixTimestamp), timezone));
-		} catch (JSONException e1) {
+			unixTimestamp = e.getLong(JSON_TAG_TIME_END_UTC);
+			event.setEndCalendar(Utils.createCalendar(Utils.unixTimestampToMilis(unixTimestamp), user_timezone));
+		}  catch (JSONException e1) {
 			Reporter.reportError(CLASS_NAME, Thread.currentThread().getStackTrace()[2].getMethodName().toString(),
-					e1.getMessage()); 
-			System.out.println("JSON exceptionas");
+					e1.getMessage());
 		}
+		
+		
 
 		try {
-			event.setUser_id(e.getInt("user_id"));
+			event.setUser_id(e.getInt(JSON_TAG_USER_ID));
 		} catch (JSONException e1) {
 			Reporter.reportError(CLASS_NAME, Thread.currentThread().getStackTrace()[2].getMethodName().toString(),
 					e1.getMessage());
 		}
 		try {
-			event.setStatus(e.getInt("status"));
+			event.setStatus(e.getInt(JSON_TAG_STATUS));
 		} catch (JSONException e1) {
 			Reporter.reportError(CLASS_NAME, Thread.currentThread().getStackTrace()[2].getMethodName().toString(),
 					e1.getMessage());
 		}
 		try {
-			event.setIs_owner(e.getInt("is_owner") == 1);
+			event.setIs_owner(e.getInt(JSON_TAG_IS_OWNER) == 1);
 		} catch (JSONException e1) {
 			Reporter.reportError(CLASS_NAME, Thread.currentThread().getStackTrace()[2].getMethodName().toString(),
 					e1.getMessage());
 		}
 		try {
-			event.setType(e.getString("type"));
-		} catch (JSONException e1) {
-			Reporter.reportError(CLASS_NAME, Thread.currentThread().getStackTrace()[2].getMethodName().toString(),
-					e1.getMessage());
-		}
-
-		try {
-			event.setTitle(e.getString("title"));
-		} catch (JSONException e1) {
-			Reporter.reportError(CLASS_NAME, Thread.currentThread().getStackTrace()[2].getMethodName().toString(),
-					e1.getMessage());
-		}
-		try {
-			event.setIcon(e.getString("icon"));
-		} catch (JSONException e1) {
-			Reporter.reportError(CLASS_NAME, Thread.currentThread().getStackTrace()[2].getMethodName().toString(),
-					e1.getMessage());
-		}
-		try {
-			event.setColor(e.getString("color"));
+			event.setType(e.getString(JSON_TAG_TYPE));
 		} catch (JSONException e1) {
 			Reporter.reportError(CLASS_NAME, Thread.currentThread().getStackTrace()[2].getMethodName().toString(),
 					e1.getMessage());
 		}
 
 		try {
-			event.setDescription(e.getString("description"));
+			event.setTitle(e.getString(JSON_TAG_TITLE));
 		} catch (JSONException e1) {
 			Reporter.reportError(CLASS_NAME, Thread.currentThread().getStackTrace()[2].getMethodName().toString(),
 					e1.getMessage());
 		}
 		try {
-			event.setLocation(e.getString("location"));
+			event.setIcon(e.getString(JSON_TAG_ICON));
 		} catch (JSONException e1) {
 			Reporter.reportError(CLASS_NAME, Thread.currentThread().getStackTrace()[2].getMethodName().toString(),
 					e1.getMessage());
 		}
 		try {
-			event.setAccomodation(e.getString("accomodation"));
+			event.setColor(e.getString(JSON_TAG_COLOR));
+		} catch (JSONException e1) {
+			Reporter.reportError(CLASS_NAME, Thread.currentThread().getStackTrace()[2].getMethodName().toString(),
+					e1.getMessage());
+		}
+
+		try {
+			event.setDescription(e.getString(JSON_TAG_DESCRIPTION));
 		} catch (JSONException e1) {
 			Reporter.reportError(CLASS_NAME, Thread.currentThread().getStackTrace()[2].getMethodName().toString(),
 					e1.getMessage());
 		}
 		try {
-			event.setCost(e.getString("cost"));
+			event.setLocation(e.getString(JSON_TAG_LOCATION));
 		} catch (JSONException e1) {
 			Reporter.reportError(CLASS_NAME, Thread.currentThread().getStackTrace()[2].getMethodName().toString(),
 					e1.getMessage());
 		}
 		try {
-			event.setTake_with_you(e.getString("take_with_you"));
+			event.setAccomodation(e.getString(JSON_TAG_ACCOMODATION));
 		} catch (JSONException e1) {
 			Reporter.reportError(CLASS_NAME, Thread.currentThread().getStackTrace()[2].getMethodName().toString(),
 					e1.getMessage());
 		}
 		try {
-			event.setGo_by(e.getString("go_by"));
+			event.setCost(e.getString(JSON_TAG_COST));
 		} catch (JSONException e1) {
 			Reporter.reportError(CLASS_NAME, Thread.currentThread().getStackTrace()[2].getMethodName().toString(),
 					e1.getMessage());
 		}
 		try {
-			event.setCountry(e.getString("country"));
+			event.setTake_with_you(e.getString(JSON_TAG_TAKE_WITH_YOU));
 		} catch (JSONException e1) {
 			Reporter.reportError(CLASS_NAME, Thread.currentThread().getStackTrace()[2].getMethodName().toString(),
 					e1.getMessage());
 		}
 		try {
-			event.setCity(e.getString("city"));
+			event.setGo_by(e.getString(JSON_TAG_GO_BY));
 		} catch (JSONException e1) {
 			Reporter.reportError(CLASS_NAME, Thread.currentThread().getStackTrace()[2].getMethodName().toString(),
 					e1.getMessage());
 		}
 		try {
-			event.setStreet(e.getString("street"));
+			event.setCountry(e.getString(JSON_TAG_COUNTRY));
 		} catch (JSONException e1) {
 			Reporter.reportError(CLASS_NAME, Thread.currentThread().getStackTrace()[2].getMethodName().toString(),
 					e1.getMessage());
 		}
 		try {
-			event.setZip(e.getString("zip"));
+			event.setCity(e.getString(JSON_TAG_CITY));
+		} catch (JSONException e1) {
+			Reporter.reportError(CLASS_NAME, Thread.currentThread().getStackTrace()[2].getMethodName().toString(),
+					e1.getMessage());
+		}
+		try {
+			event.setStreet(e.getString(JSON_TAG_STREET));
+		} catch (JSONException e1) {
+			Reporter.reportError(CLASS_NAME, Thread.currentThread().getStackTrace()[2].getMethodName().toString(),
+					e1.getMessage());
+		}
+		try {
+			event.setZip(e.getString(JSON_TAG_ZIP));
 		} catch (JSONException e1) {
 			Reporter.reportError(CLASS_NAME, Thread.currentThread().getStackTrace()[2].getMethodName().toString(),
 					e1.getMessage());
@@ -1090,20 +1255,20 @@ private static ArrayList<Invited> getInvitesForEvent(Context context, Event even
 
 		// reminders
 		try {
-			event.setReminder1(Utils.createCalendar(e.getLong("r1"), user_timezone));
+			event.setReminder1(Utils.createCalendar(e.getLong(JSON_TAG_ABSOLUTE_REMINDER_1), user_timezone));
 		} catch (JSONException e1) {
 //			Reporter.reportError(CLASS_NAME, Thread.currentThread().getStackTrace()[2].getMethodName().toString(),
 //					e1.getMessage());
 		}
 		try {
-			event.setReminder2(Utils.createCalendar(e.getLong("r2"), user_timezone));
+			event.setReminder2(Utils.createCalendar(e.getLong(JSON_TAG_ABSOLUTE_REMINDER_2), user_timezone));
 		} catch (JSONException e1) {
 //			System.out.println("LONG PARSE FAILED");
 //			Reporter.reportError(CLASS_NAME, Thread.currentThread().getStackTrace()[2].getMethodName().toString(),
 //					e1.getMessage());
 		}
 		try {
-			event.setReminder3(Utils.createCalendar(e.getLong("r3"), user_timezone));
+			event.setReminder3(Utils.createCalendar(e.getLong(JSON_TAG_ABSOLUTE_REMINDER_3), user_timezone));
 		} catch (JSONException e1) {
 //			System.out.println("LONG PARSE FAILED");
 //			Reporter.reportError(CLASS_NAME, Thread.currentThread().getStackTrace()[2].getMethodName().toString(),
@@ -1112,117 +1277,117 @@ private static ArrayList<Invited> getInvitesForEvent(Context context, Event even
 
 		// alarms
 		try {
-			event.setAlarm1(Utils.createCalendar(e.getLong("a1"), user_timezone));
+			event.setAlarm1(Utils.createCalendar(e.getLong(JSON_TAG_ABSOLUTE_ALARM_1), user_timezone));
 		} catch (JSONException e1) {
 //			System.out.println("LONG PARSE FAILED");
 //			Reporter.reportError(CLASS_NAME, Thread.currentThread().getStackTrace()[2].getMethodName().toString(),
 //					e1.getMessage());
 		}
 		try {
-			event.setAlarm1fired(e.getString("alarm1_fired"));
+			event.setAlarm1fired(e.getString(JSON_TAG_ALARM_1_FIRED));
 		} catch (JSONException e1) {
 //			System.out.println("LONG PARSE FAILED");
 			Reporter.reportError(CLASS_NAME, Thread.currentThread().getStackTrace()[2].getMethodName().toString(),
 					e1.getMessage());
 		}
 		try {
-			event.setAlarm2(Utils.createCalendar(e.getLong("a2"), user_timezone));
+			event.setAlarm2(Utils.createCalendar(e.getLong(JSON_TAG_ABSOLUTE_ALARM_2), user_timezone));
 		} catch (JSONException e1) {
 //			System.out.println("LONG PARSE FAILED");
 //			Reporter.reportError(CLASS_NAME, Thread.currentThread().getStackTrace()[2].getMethodName().toString(),
 //					e1.getMessage());
 		}
 		try {
-			event.setAlarm2fired(e.getString("alarm2_fired"));
+			event.setAlarm2fired(e.getString(JSON_TAG_ALARM_2_FIRED));
 		} catch (JSONException e1) {
 //			System.out.println("LONG PARSE FAILED");
 			Reporter.reportError(CLASS_NAME, Thread.currentThread().getStackTrace()[2].getMethodName().toString(),
 					e1.getMessage());
 		}
 		try {
-			event.setAlarm3(Utils.createCalendar(e.getLong("a3"), user_timezone));
+			event.setAlarm3(Utils.createCalendar(e.getLong(JSON_TAG_ABSOLUTE_ALARM_3), user_timezone));
 		} catch (JSONException e1) {
 //			System.out.println("LONG PARSE FAILED");
 //			Reporter.reportError(CLASS_NAME, Thread.currentThread().getStackTrace()[2].getMethodName().toString(),
 //					e1.getMessage());
 		}
 		try {
-			event.setAlarm3fired(e.getString("alarm3_fired"));
+			event.setAlarm3fired(e.getString(JSON_TAG_ALARM_3_FIRED));
 		} catch (JSONException e1) {
 			Reporter.reportError(CLASS_NAME, Thread.currentThread().getStackTrace()[2].getMethodName().toString(),
 					e1.getMessage());
 		}
 
 		try {
-			unixTimestamp = e.getLong("timestamp_created");
+			unixTimestamp = e.getLong(JSON_TAG_TIMESTAMP_CREATED);
 			event.setCreatedMillisUtc(unixTimestamp);
 		} catch (JSONException e1) {
 			Reporter.reportError(CLASS_NAME, Thread.currentThread().getStackTrace()[2].getMethodName().toString(),
 					e1.getMessage());
 		}
 		try {
-			event.setModifiedMillisUtc(e.getLong("timestamp_modified"));
+			event.setModifiedMillisUtc(e.getLong(JSON_TAG_TIMESTAMP_MODIFIED));
 		} catch (JSONException e1) {
 			Reporter.reportError(CLASS_NAME, Thread.currentThread().getStackTrace()[2].getMethodName().toString(),
 					e1.getMessage());
 		}
 
 		try {
-			event.setAttendant_0_count(e.getInt("attendant_0_count"));
+			event.setAttendant_0_count(e.getInt(JSON_TAG_ATTENDANT_0_COUNT));
 		} catch (JSONException e1) {
 			Reporter.reportError(CLASS_NAME, Thread.currentThread().getStackTrace()[2].getMethodName().toString(),
 					e1.getMessage());
 		}
 		try {
-			event.setAttendant_1_count(e.getInt("attendant_1_count"));
-		} catch (JSONException e1) {
-			Reporter.reportError(CLASS_NAME, Thread.currentThread().getStackTrace()[2].getMethodName().toString(),
-					e1.getMessage());
-		}
-
-		try {
-			event.setAttendant_2_count(e.getInt("attendant_2_count"));
+			event.setAttendant_1_count(e.getInt(JSON_TAG_ATTENDANT_1_COUNT));
 		} catch (JSONException e1) {
 			Reporter.reportError(CLASS_NAME, Thread.currentThread().getStackTrace()[2].getMethodName().toString(),
 					e1.getMessage());
 		}
 
 		try {
-			event.setAttendant_4_count(e.getInt("attendant_4_count"));
+			event.setAttendant_2_count(e.getInt(JSON_TAG_ATTENDANT_2_COUNT));
 		} catch (JSONException e1) {
 			Reporter.reportError(CLASS_NAME, Thread.currentThread().getStackTrace()[2].getMethodName().toString(),
 					e1.getMessage());
 		}
 
 		try {
-			event.setSports_event(e.getInt("is_sports_event") == 1);
-		} catch (JSONException e1) {
-			Reporter.reportError(CLASS_NAME, Thread.currentThread().getStackTrace()[2].getMethodName().toString(),
-					e1.getMessage());
-		}
-		try {
-			event.setIs_all_day(e.getInt("all_day") == 1);
+			event.setAttendant_4_count(e.getInt(JSON_TAG_ATTENDANT_4_COUNT));
 		} catch (JSONException e1) {
 			Reporter.reportError(CLASS_NAME, Thread.currentThread().getStackTrace()[2].getMethodName().toString(),
 					e1.getMessage());
 		}
 
 		try {
-			event.setCreator_fullname(e.getString("creator_fullname"));
+			event.setSports_event(e.getInt(JSON_TAG_IS_SPORTS_EVENT) == 1);
 		} catch (JSONException e1) {
 			Reporter.reportError(CLASS_NAME, Thread.currentThread().getStackTrace()[2].getMethodName().toString(),
 					e1.getMessage());
 		}
 		try {
-			event.setCreator_contact_id(e.getInt("creator_contact_id"));
+			event.setIs_all_day(e.getInt(JSON_TAG_ALL_DAY) == 1);
+		} catch (JSONException e1) {
+			Reporter.reportError(CLASS_NAME, Thread.currentThread().getStackTrace()[2].getMethodName().toString(),
+					e1.getMessage());
+		}
+
+		try {
+			event.setCreator_fullname(e.getString(JSON_TAG_CREATOR_FULLNAME));
+		} catch (JSONException e1) {
+			Reporter.reportError(CLASS_NAME, Thread.currentThread().getStackTrace()[2].getMethodName().toString(),
+					e1.getMessage());
+		}
+		try {
+			event.setCreator_contact_id(e.getInt(JSON_TAG_CREATOR_CONTACT_ID));
 		} catch (JSONException e1) {
 			event.setCreator_contact_id(0);
 			Reporter.reportError(CLASS_NAME, Thread.currentThread().getStackTrace()[2].getMethodName().toString(),
 					e1.getMessage());
 		}
-		
-// TODO or NOT TODO, thats the question... to Deividas (www.askdavid.com)
-		
+//		
+//// TODO or NOT TODO, thats the question... to Deividas (www.askdavid.com)
+//		
 //		try {
 //			event.setAssigned_contacts_DB_entry(e.getString("assigned_contacts"));
 //		} catch (JSONException e1) {
@@ -1238,31 +1403,35 @@ private static ArrayList<Invited> getInvitesForEvent(Context context, Event even
 //					e1.getMessage());
 //		}
 		try {
-			event.setInvited(createInvitedListFromJSONArray(e.getJSONArray("invited")));
+			String jsonstring = e.getString(JSON_TAG_INVITED);
+			event.setInvited(createInvitedListFromJSONArrayString(jsonstring));
 		} catch (JSONException e1) {
-			event.setInvited_DB_entry("");
-			Reporter.reportError(CLASS_NAME, Thread.currentThread().getStackTrace()[2].getMethodName().toString(),
-					e1.getMessage());
+			event.setInvited(new ArrayList<Invited>());
+
 		}
-		try {
-			event.setMessage_count(e.getInt("message_count"));
-		} catch (JSONException e1) {
-			event.setMessage_count(0);
-			Reporter.reportError(CLASS_NAME, Thread.currentThread().getStackTrace()[2].getMethodName().toString(),
-					e1.getMessage());
-		}
+//		try {
+//			event.setMessage_count(e.getInt(JSON_TAG_MESSAGE_COUNT));
+//		} catch (JSONException e1) {
+//			event.setMessage_count(0);
+//			Reporter.reportError(CLASS_NAME, Thread.currentThread().getStackTrace()[2].getMethodName().toString(),
+//					e1.getMessage());
+//		}
 
 		return event;
 	}
 
-	private static ArrayList<Invited> createInvitedListFromJSONArray(
-			JSONArray jsonArray) throws JSONException {
+	private static ArrayList<Invited> createInvitedListFromJSONArrayString(
+			String jsonArrayString) throws JSONException  {
+		JSONArray jsonArray= new JSONArray(jsonArrayString); 
 		ArrayList<Invited> list = new ArrayList<Invited>();
 		int count = jsonArray.length();
-		for (int i = 0; i < count; i++) {
-			JSONObject e = jsonArray.getJSONObject(i);
-			list.add(createInvitedFromJSONObject(e));
+		if (count > 0) {
+			for (int i = 0; i < count; i++) {
+				JSONObject e = jsonArray.getJSONObject(i);
+				list.add(createInvitedFromJSONObject(e));
+			}
 		}
+		
 		return list;
 		}
 	
@@ -1301,14 +1470,14 @@ private static ArrayList<Invited> getInvitesForEvent(Context context, Event even
 		}
 		return item;
 	}
-	private static Invited createInvitedFromCursor(Cursor result) {
-		Invited invited = new Invited();
-		invited.setGcid(result.getInt(result.getColumnIndexOrThrow(EventsProvider.EMetaData.InvitedMetaData.GCID)));
-		invited.setGuid(result.getInt(result.getColumnIndexOrThrow(EventsProvider.EMetaData.InvitedMetaData.GUID)));
-		invited.setMy_contact_id(result.getInt(result.getColumnIndexOrThrow(EventsProvider.EMetaData.InvitedMetaData.MY_CONTACT_ID)));
-		invited.setName(result.getString(result.getColumnIndexOrThrow(EventsProvider.EMetaData.InvitedMetaData.NAME)));
-		invited.setStatus(result.getInt(result.getColumnIndexOrThrow(EventsProvider.EMetaData.InvitedMetaData.STATUS)));
-		return invited;
-	}
+//	private static Invited createInvitedFromCursor(Cursor result) {
+//		Invited invited = new Invited();
+//		invited.setGcid(result.getInt(result.getColumnIndexOrThrow(EventsProvider.EMetaData.InvitedMetaData.GCID)));
+//		invited.setGuid(result.getInt(result.getColumnIndexOrThrow(EventsProvider.EMetaData.InvitedMetaData.GUID)));
+//		invited.setMy_contact_id(result.getInt(result.getColumnIndexOrThrow(EventsProvider.EMetaData.InvitedMetaData.MY_CONTACT_ID)));
+//		invited.setName(result.getString(result.getColumnIndexOrThrow(EventsProvider.EMetaData.InvitedMetaData.NAME)));
+//		invited.setStatus(result.getInt(result.getColumnIndexOrThrow(EventsProvider.EMetaData.InvitedMetaData.STATUS)));
+//		return invited;
+//	}
 	
 }

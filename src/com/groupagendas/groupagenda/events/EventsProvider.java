@@ -26,7 +26,7 @@ public class EventsProvider extends ContentProvider{
 
 		public static final String EVENTS_TABLE = "events";
 		public static final String EVENT_DAY_INDEX_TABLE = "events_days";
-		public static final String INVITED_TABLE = "invited";
+//		public static final String INVITED_TABLE = "invited";
 		
 		private static final String events_on_date = "events_on_date";
 		
@@ -47,10 +47,10 @@ public class EventsProvider extends ContentProvider{
 		}
 		
 		public static final class InvitedMetaData{
-			public static final Uri CONTENT_URI = Uri.parse("content://" + AUTHORITY + "/" + INVITED_TABLE);	
-			public static final String CONTENT_TYPE = "vnd.android.cursor.dir/vnd.groupagendas.invited_item";
-			
-			public static final String EVENT_ID = "event_internal_id";
+//			public static final Uri CONTENT_URI = Uri.parse("content://" + AUTHORITY + "/" + INVITED_TABLE);	
+//			public static final String CONTENT_TYPE = "vnd.android.cursor.dir/vnd.groupagendas.invited_item";
+//			
+//			public static final String EVENT_ID = "event_internal_id";
 			
 			public static final String STATUS = "status";
 			public static final String MY_CONTACT_ID = "my_contact_id";
@@ -124,6 +124,7 @@ public class EventsProvider extends ContentProvider{
 			public static final String IS_BIRTHDAY = "is_birthday";
 			public static final String IS_ALL_DAY = "is_all_day";
 			public static final String MESSAGES_COUNT = "messages_count";
+			public static final String INVITED = "invited";
 			
 		}
 	}
@@ -185,7 +186,7 @@ public class EventsProvider extends ContentProvider{
 		EM.put(EMetaData.EventsMetaData.ATTENDANT_0_COUNT, EMetaData.EventsMetaData.ATTENDANT_0_COUNT);
 		EM.put(EMetaData.EventsMetaData.ATTENDANT_4_COUNT, EMetaData.EventsMetaData.ATTENDANT_4_COUNT);
 		
-		
+		EM.put(EMetaData.EventsMetaData.INVITED, EMetaData.EventsMetaData.INVITED);
 //		EM.put(EMetaData.EventsMetaData.ASSIGNED_CONTACTS, EMetaData.EventsMetaData.ASSIGNED_CONTACTS);
 //		EM.put(EMetaData.EventsMetaData.ASSIGNED_GROUPS, EMetaData.EventsMetaData.ASSIGNED_GROUPS);
 		EM.put(EMetaData.EventsMetaData.MESSAGES_COUNT, EMetaData.EventsMetaData.MESSAGES_COUNT);
@@ -208,15 +209,15 @@ public class EventsProvider extends ContentProvider{
 	// Events day indexes table projection map
 		private static HashMap<String, String> IM;
 		
-		static{
-			IM = new HashMap<String, String>();
-			IM.put(EMetaData.InvitedMetaData.EVENT_ID, EMetaData.InvitedMetaData.EVENT_ID);
-			IM.put(EMetaData.InvitedMetaData.GCID, EMetaData.InvitedMetaData.GCID);
-			IM.put(EMetaData.InvitedMetaData.GUID, EMetaData.InvitedMetaData.GUID);
-			IM.put(EMetaData.InvitedMetaData.MY_CONTACT_ID, EMetaData.InvitedMetaData.MY_CONTACT_ID);
-			IM.put(EMetaData.InvitedMetaData.STATUS, EMetaData.InvitedMetaData.STATUS);
-			IM.put(EMetaData.InvitedMetaData.NAME, EMetaData.InvitedMetaData.NAME);
-		}
+//		static{
+//			IM = new HashMap<String, String>();
+//			IM.put(EMetaData.InvitedMetaData.EVENT_ID, EMetaData.InvitedMetaData.EVENT_ID);
+//			IM.put(EMetaData.InvitedMetaData.GCID, EMetaData.InvitedMetaData.GCID);
+//			IM.put(EMetaData.InvitedMetaData.GUID, EMetaData.InvitedMetaData.GUID);
+//			IM.put(EMetaData.InvitedMetaData.MY_CONTACT_ID, EMetaData.InvitedMetaData.MY_CONTACT_ID);
+//			IM.put(EMetaData.InvitedMetaData.STATUS, EMetaData.InvitedMetaData.STATUS);
+//			IM.put(EMetaData.InvitedMetaData.NAME, EMetaData.InvitedMetaData.NAME);
+//		}
 	
 	
 	
@@ -227,7 +228,7 @@ public class EventsProvider extends ContentProvider{
 	private static final int ONE_EVENTS = 1;
 	private static final int DAY_INDEX = 2;
 	private static final int EVENTS_ON_DATE = 3;
-	private static final int INVITED = 4;
+//	private static final int INVITED = 4;
 
 	static {
 		mUriMatcher = new UriMatcher(UriMatcher.NO_MATCH);
@@ -235,7 +236,7 @@ public class EventsProvider extends ContentProvider{
 		mUriMatcher.addURI(EMetaData.AUTHORITY, EMetaData.EVENTS_TABLE+"/#", ONE_EVENTS);
 		mUriMatcher.addURI(EMetaData.AUTHORITY, EMetaData.EVENT_DAY_INDEX_TABLE, DAY_INDEX);
 		mUriMatcher.addURI(EMetaData.AUTHORITY, EMetaData.events_on_date, EVENTS_ON_DATE);
-		mUriMatcher.addURI(EMetaData.AUTHORITY, EMetaData.INVITED_TABLE, INVITED);
+//		mUriMatcher.addURI(EMetaData.AUTHORITY, EMetaData.INVITED_TABLE, INVITED);
 	}
 	// END UriMatcher
 	
@@ -283,11 +284,11 @@ public class EventsProvider extends ContentProvider{
 					+EMetaData.EventsIndexesMetaData.EVENT_ID);
 			orderBy = (TextUtils.isEmpty(sortOrder)) ? null : sortOrder; 
 			break;
-		case INVITED:
-			qb.setTables(EMetaData.INVITED_TABLE);
-			qb.setProjectionMap(IM);
-			orderBy = (TextUtils.isEmpty(sortOrder)) ? null : sortOrder;
-			break;
+//		case INVITED:
+//			qb.setTables(EMetaData.INVITED_TABLE);
+//			qb.setProjectionMap(IM);
+//			orderBy = (TextUtils.isEmpty(sortOrder)) ? null : sortOrder;
+//			break;
 		default:
 			throw new IllegalArgumentException("Unknow URI " + uri);
 		}
@@ -314,9 +315,9 @@ public class EventsProvider extends ContentProvider{
 			case DAY_INDEX:
 				count = db.delete(EMetaData.EVENT_DAY_INDEX_TABLE, where, whereArgs);
 				break;
-			case INVITED:
-				count = db.delete(EMetaData.INVITED_TABLE, where, whereArgs);
-				break;
+//			case INVITED:
+//				count = db.delete(EMetaData.INVITED_TABLE, where, whereArgs);
+//				break;
 			default:
 				
 				throw new IllegalArgumentException("Unknow URI "+uri);
@@ -339,10 +340,10 @@ public class EventsProvider extends ContentProvider{
 			rowId = db.replace(EMetaData.EVENT_DAY_INDEX_TABLE, "", values); 
 			insUri = ContentUris.withAppendedId(EMetaData.EventsIndexesMetaData.CONTENT_URI, rowId);
 			break;
-		case INVITED:
-			rowId = db.replace(EMetaData.INVITED_TABLE, "", values); 
-			insUri = ContentUris.withAppendedId(EMetaData.InvitedMetaData.CONTENT_URI, rowId);
-			break;
+//		case INVITED:
+//			rowId = db.replace(EMetaData.INVITED_TABLE, "", values); 
+//			insUri = ContentUris.withAppendedId(EMetaData.InvitedMetaData.CONTENT_URI, rowId);
+//			break;
 		default:
 			throw new IllegalArgumentException("Unknow URI " + uri);
 		}
@@ -382,7 +383,7 @@ public class EventsProvider extends ContentProvider{
 			String query =	"CREATE TABLE "
 				+EMetaData.EVENTS_TABLE+" ("
 				+EMetaData.EventsMetaData._ID+" INTEGER PRIMARY KEY AUTOINCREMENT,"
-				+EMetaData.EventsMetaData.E_ID+" INTEGER,"
+				+EMetaData.EventsMetaData.E_ID+" INTEGER UNIQUE ON CONFLICT IGNORE,"
 				+EMetaData.EventsMetaData.USER_ID+" INTEGER ,"
 				
 				+EMetaData.EventsMetaData.IS_SPORTS_EVENT+" TEXT ,"
@@ -433,6 +434,7 @@ public class EventsProvider extends ContentProvider{
 				+EMetaData.EventsMetaData.ATTENDANT_0_COUNT+" TEXT ,"
 				+EMetaData.EventsMetaData.ATTENDANT_4_COUNT+" TEXT ,"
 				
+				+EMetaData.EventsMetaData.INVITED+" TEXT ,"
 //				+EMetaData.EventsMetaData.ASSIGNED_CONTACTS+" TEXT ,"
 //				+EMetaData.EventsMetaData.ASSIGNED_GROUPS+" TEXT ,"
 				+EMetaData.EventsMetaData.UPLOADED_SUCCESSFULLY+" INTEGER DEFAULT 0, "
@@ -450,18 +452,18 @@ public class EventsProvider extends ContentProvider{
 					+")";
 			db.execSQL(query);
 			
-			query = "CREATE TABLE "
-					+EMetaData.INVITED_TABLE
-					+ " ("
-					+ EMetaData.InvitedMetaData.EVENT_ID + " INTEGER ,"
-					+ EMetaData.InvitedMetaData.GCID + " INTEGER ,"
-					+ EMetaData.InvitedMetaData.GUID + " INTEGER ,"
-					+ EMetaData.InvitedMetaData.MY_CONTACT_ID + " INTEGER ,"
-					+ EMetaData.InvitedMetaData.STATUS + " INTEGER, "
-					+ EMetaData.InvitedMetaData.NAME + " TEXT, "
-					+  "PRIMARY KEY (" + EMetaData.InvitedMetaData.EVENT_ID + ") ON CONFLICT REPLACE"
-					+")";
-			db.execSQL(query);
+//			query = "CREATE TABLE "
+//					+EMetaData.INVITED_TABLE
+//					+ " ("
+//					+ EMetaData.InvitedMetaData.EVENT_ID + " INTEGER ,"
+//					+ EMetaData.InvitedMetaData.GCID + " INTEGER ,"
+//					+ EMetaData.InvitedMetaData.GUID + " INTEGER ,"
+//					+ EMetaData.InvitedMetaData.MY_CONTACT_ID + " INTEGER ,"
+//					+ EMetaData.InvitedMetaData.STATUS + " INTEGER, "
+//					+ EMetaData.InvitedMetaData.NAME + " TEXT, "
+//					+  "PRIMARY KEY (" + EMetaData.InvitedMetaData.EVENT_ID + ") ON CONFLICT REPLACE"
+//					+")";
+//			db.execSQL(query);
 		}
 
 		@Override
