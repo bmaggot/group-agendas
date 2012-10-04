@@ -448,7 +448,7 @@ public class EventsProvider extends ContentProvider{
 					+ EMetaData.EventsIndexesMetaData.EVENT_ID + " TEXT ,"
 					+ EMetaData.EventsIndexesMetaData.DAY + " TEXT , "
 					+ EMetaData.EventsIndexesMetaData.MONTH + " TEXT , "
-					+ "PRIMARY KEY (" + EMetaData.EventsIndexesMetaData.EVENT_ID + ", " + EMetaData.EventsIndexesMetaData.DAY + ") ON CONFLICT REPLACE"
+					+ "PRIMARY KEY (" + EMetaData.EventsIndexesMetaData.EVENT_ID + ", " + EMetaData.EventsIndexesMetaData.DAY + ") ON CONFLICT IGNORE"
 					+")";
 			db.execSQL(query);
 			
