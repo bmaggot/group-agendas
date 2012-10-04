@@ -85,11 +85,11 @@ public class Invited {
 	public String toString() {
 		StringBuilder sb = new StringBuilder();
 		
-		sb.append("gname").append(":").append(getName()).append(",");
-		sb.append("gcid").append(":").append(getGcid()).append(",");
-		sb.append("guid").append(":").append(getGuid()).append(",");
-		sb.append("status").append(":").append(getStatus()).append(",");
-		sb.append("my_contact_id").append(":").append(getMy_contact_id());
+		sb.append("\"").append("gname").append("\"").append(":").append("\"").append(getName()).append("\"").append(",");
+		sb.append("\"").append("gcid").append("\"").append(":").append("\"").append(getGcid()).append("\"").append(",");
+		sb.append("\"").append("guid").append("\"").append(":").append("\"").append(getGuid()).append("\"").append(",");
+		sb.append("\"").append("status").append("\"").append(":").append("\"").append(getStatus()).append("\"").append(",");
+		sb.append("\"").append("my_contact_id").append("\"").append(":").append("\"").append(getMy_contact_id()).append("\"");
 		
 		return sb.toString();
 	}

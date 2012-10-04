@@ -86,16 +86,7 @@ private static final String DEFAULT_REMINDER = "null";
 	private long modified_millis_utc;
 	
 
-
-	
-	private int[] assigned_contacts = null;
-	private String assigned_contacts_DB_entry = "";
-	
-	private int[] assigned_groups = null;
-	private String assigned_groups_DB_entry = "";
-	
 	private ArrayList<Invited> invited = null;
-	private String invited_DB_entry = "";
 	
 	private int message_count = 0;
 	
@@ -536,15 +527,13 @@ private static final String DEFAULT_REMINDER = "null";
 
 
 
-public void setAssigned_contacts_DB_entry(String assigned_contacts_DB_entry) {
-	this.assigned_contacts_DB_entry = assigned_contacts_DB_entry;
-}
-public void setAssigned_groups_DB_entry(String assigned_groups_DB_entry) {
-	this.assigned_groups_DB_entry = assigned_groups_DB_entry;
-}
-public void setInvited_DB_entry(String invited_DB_entry) {
-	this.invited_DB_entry = invited_DB_entry;
-}
+//public void setAssigned_contacts_DB_entry(String assigned_contacts_DB_entry) {
+//	this.assigned_contacts_DB_entry = assigned_contacts_DB_entry;
+//}
+//public void setAssigned_groups_DB_entry(String assigned_groups_DB_entry) {
+//	this.assigned_groups_DB_entry = assigned_groups_DB_entry;
+//}
+
 
 public Calendar getAlarm1() {
 	return alarm1;
@@ -766,13 +755,5 @@ public long getInternalID() {
 public void setInternalID(long internalID) {
 	this.internalID = internalID;
 }
-
-
-	
-	
-	
-	
-	
-
 	
 }
