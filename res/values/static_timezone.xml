@@ -3,9 +3,9 @@
 
     <string-array name="timezones">
         <item></item>
-        <item>Asia\/Kabul</item>
-        <item>Europe\/Tirane</item>
-        <item>Africa\/Algiers</item>
+        <item>Asia/Kabul</item>
+        <item>Europe/Tirane</item>
+        <item>Africa/Algiers</item>
         <item>Europe/Andorra</item>
         <item>Africa/Luanda</item>
         <item>Antarctica/Casey</item>
