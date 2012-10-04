@@ -147,7 +147,7 @@ public class Account {
 
 	public String getCountry() {
 		return prefs.getString(Account.AccountMetaData.COUNTRY,
-				Data.getmContext().getResources().getStringArray(R.array.country_values)[78]);
+				Data.getmContext().getResources().getStringArray(R.array.countries)[275]);
 	}
 
 	public String getCity() {
@@ -163,7 +163,7 @@ public class Account {
 	}
 
 	public String getTimezone() {
-		return prefs.getString(Account.AccountMetaData.TIMEZONE, Data.getmContext().getResources().getStringArray(R.array.timezones)[172]);
+		return prefs.getString(Account.AccountMetaData.TIMEZONE, Data.getmContext().getResources().getStringArray(R.array.timezones)[275]);
 	}
 
 	// TODO wtfis public String local_time;
