@@ -277,6 +277,7 @@ public class EventsProvider extends ContentProvider{
 			break;
 			
 		case EVENTS_ON_DATE:
+			qb.setDistinct(true);
 			qb.setProjectionMap(EM);
 			qb.setTables(EMetaData.EVENT_DAY_INDEX_TABLE + "," +  EMetaData.EVENTS_TABLE);
 			qb.appendWhere(EMetaData.EventsMetaData._ID
