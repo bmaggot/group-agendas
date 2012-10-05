@@ -64,8 +64,6 @@ public class Data {
 	public static String localPrefix = "";
 
 	public static boolean newEventPar = false;
-	public static ArrayList<Contact> selectedContacts = new ArrayList<Contact>();
-	public static ArrayList<Group> selectedGroups = new ArrayList<Group>();
 	public static boolean showSaveButtonInContactsForm = false;
 	public static Event eventForSavingNewInvitedPersons = null;
 

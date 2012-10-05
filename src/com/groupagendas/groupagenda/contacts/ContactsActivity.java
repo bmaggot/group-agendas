@@ -52,9 +52,14 @@ import com.groupagendas.groupagenda.data.Data;
 import com.groupagendas.groupagenda.data.DataManagement;
 import com.groupagendas.groupagenda.data.OfflineData;
 import com.groupagendas.groupagenda.error.report.Reporter;
+import com.groupagendas.groupagenda.events.EventActivity;
+import com.groupagendas.groupagenda.events.Invited;
 import com.makeramen.segmented.SegmentedRadioGroup;
 
 public class ContactsActivity extends ListActivity implements OnCheckedChangeListener {
+	public ArrayList<Contact> selectedContacts = new ArrayList<Contact>();
+	public ArrayList<Group> selectedGroups = new ArrayList<Group>();
+	
 	private SegmentedRadioGroup segmentedButtons;
 	private DataManagement dm;
 	private ArrayList<Contact> contacts;
@@ -182,7 +187,7 @@ public class ContactsActivity extends ListActivity implements OnCheckedChangeLis
 
 		if (CURRENT_TASK.equals(CONTACTS_TASK)) {
 			contacts = ContactManagement.getContactsFromLocalDb(ContactsActivity.this, null);
-			cAdapter = new ContactsAdapter(contacts, this);
+			cAdapter = new ContactsAdapter(contacts, this, selectedContacts);
 			contactList.setAdapter(cAdapter);
 			cAdapter.notifyDataSetChanged();
 
@@ -214,16 +219,23 @@ public class ContactsActivity extends ListActivity implements OnCheckedChangeLis
 
 				@Override
 				public void onClick(View v) {
-					if (Data.eventForSavingNewInvitedPersons != null && !Data.eventForSavingNewInvitedPersons.is_owner()) {
-						try {
-							new AddNewPersonsToEvent().execute().get();
-							new UpdateEventByIdFromRemoteDb().execute(Data.eventForSavingNewInvitedPersons.getEvent_id()).get();
-						} catch (InterruptedException e) {
-							e.printStackTrace();
-						} catch (ExecutionException e) {
-							e.printStackTrace();
-						}
+					for (Contact temp : selectedContacts) {
+						Invited nu = new Invited();
+						nu.setMy_contact_id(temp.contact_id);
+						nu.setName(temp.name + " " + temp.lastname);
+						nu.setStatus(Invited.PENDING);
 					}
+					
+//					if (Data.eventForSavingNewInvitedPersons != null && !Data.eventForSavingNewInvitedPersons.is_owner()) {
+//						try {
+//							new AddNewPersonsToEvent().execute().get();
+//							new UpdateEventByIdFromRemoteDb().execute(Data.eventForSavingNewInvitedPersons.getEvent_id()).get();
+//						} catch (InterruptedException e) {
+//							e.printStackTrace();
+//						} catch (ExecutionException e) {
+//							e.printStackTrace();
+//						}
+//					}
 					finish();
 				}
 			});
@@ -235,7 +247,7 @@ public class ContactsActivity extends ListActivity implements OnCheckedChangeLis
 		}
 		
 		if(Data.newEventPar){
-			Data.selectedContacts.clear();
+			selectedContacts.clear();
 		}
 	}
 
@@ -364,26 +376,26 @@ public class ContactsActivity extends ListActivity implements OnCheckedChangeLis
 		v.setDrawingCacheEnabled(false);
 		if (Data.newEventPar) {
 			if (CURRENT_LIST == CONTACTS_LIST) {
-				if (Data.selectedContacts.size() > 0) {
-					for (int i = 0; i < Data.selectedContacts.size(); i++) {
-						if (Data.selectedContacts.get(i).contact_id == contacts.get(position).contact_id) {
-							Data.selectedContacts.remove(i);
+				if (selectedContacts.size() > 0) {
+					for (int i = 0; i < selectedContacts.size(); i++) {
+						if (selectedContacts.get(i).contact_id == contacts.get(position).contact_id) {
+							selectedContacts.remove(i);
 							v.setBackgroundColor(Color.WHITE);
 							break;
 						} else {
-							Data.selectedContacts.add(contacts.get(position));
+							selectedContacts.add(contacts.get(position));
 							v.setBackgroundColor(Color.LTGRAY);
 							break;
 						}
 					}
 				} else {
-					Data.selectedContacts.add(contacts.get(position));
+					selectedContacts.add(contacts.get(position));
 					v.setBackgroundColor(Color.LTGRAY);
 				}
 			} else if (CURRENT_LIST == GROUPS_LIST) {
 				Intent groupIntent = new Intent(ContactsActivity.this, GroupContactsActivity.class);
-				groupIntent.putExtra("groupName", ContactManagement.getGroupsFromLocalDb(ContactsActivity.this, null).get(position).title);
-				groupIntent.putExtra("groupId", ContactManagement.getGroupsFromLocalDb(ContactsActivity.this, null).get(position).group_id);
+				groupIntent.putExtra("groupName", groups.get(position).title);
+				groupIntent.putExtra("groupId", groups.get(position).group_id);
 				startActivity(groupIntent);
 			}
 		} else {
@@ -397,8 +409,8 @@ public class ContactsActivity extends ListActivity implements OnCheckedChangeLis
 				startActivity(contactIntent);
 			} else if (CURRENT_LIST == GROUPS_LIST) {
 				Intent groupIntent = new Intent(ContactsActivity.this, GroupContactsActivity.class);
-				groupIntent.putExtra("groupName", ContactManagement.getGroupsFromLocalDb(ContactsActivity.this, null).get(position).title);
-				groupIntent.putExtra("groupId", ContactManagement.getGroupsFromLocalDb(ContactsActivity.this, null).get(position).group_id);
+				groupIntent.putExtra("groupName", groups.get(position).title);
+				groupIntent.putExtra("groupId", groups.get(position).group_id);
 				startActivity(groupIntent);
 			}
 		}
@@ -547,14 +559,14 @@ public class ContactsActivity extends ListActivity implements OnCheckedChangeLis
 				if (Data.eventForSavingNewInvitedPersons != null) {
 					reqEntity.addPart("event_id", new StringBody(String.valueOf(Data.eventForSavingNewInvitedPersons.getEvent_id())));
 				}
-				if (Data.selectedContacts != null && !Data.selectedContacts.isEmpty()) {
-					for (int i = 0, l = Data.selectedContacts.size(); i < l; i++) {
-						reqEntity.addPart("contacts[]", new StringBody(String.valueOf(Data.selectedContacts.get(i).contact_id)));
+				if (selectedContacts != null && !selectedContacts.isEmpty()) {
+					for (int i = 0, l = selectedContacts.size(); i < l; i++) {
+						reqEntity.addPart("contacts[]", new StringBody(String.valueOf(selectedContacts.get(i).contact_id)));
 					}
 				}
-				if (Data.selectedGroups != null && !Data.selectedGroups.isEmpty()) {
-					for (int i = 0, l = Data.selectedGroups.size(); i < l; i++) {
-						reqEntity.addPart("groups[]", new StringBody(String.valueOf(Data.selectedGroups.get(i).group_id)));
+				if (selectedGroups != null && !selectedGroups.isEmpty()) {
+					for (int i = 0, l = selectedGroups.size(); i < l; i++) {
+						reqEntity.addPart("groups[]", new StringBody(String.valueOf(selectedGroups.get(i).group_id)));
 					}
 				}
 				post.setEntity(reqEntity);
@@ -592,8 +604,8 @@ public class ContactsActivity extends ListActivity implements OnCheckedChangeLis
 				Reporter.reportError(this.getClass().toString(), Thread.currentThread().getStackTrace()[2].getMethodName().toString(),
 						e.getMessage());
 			}
-			if (Data.selectedContacts != null) {
-				Data.selectedContacts.clear();
+			if (selectedContacts != null) {
+				selectedContacts.clear();
 			}
 			return null;
 		}

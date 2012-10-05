@@ -1,5 +1,6 @@
 package com.groupagendas.groupagenda.events;
 
+import java.util.ArrayList;
 import java.util.Calendar;
 
 import android.app.Activity;
@@ -11,31 +12,30 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
-import android.widget.Spinner;
 import android.widget.TextView;
 
 import com.groupagendas.groupagenda.R;
 import com.groupagendas.groupagenda.data.DataManagement;
+import com.groupagendas.groupagenda.timezone.StringArrayListAdapter;
 import com.groupagendas.groupagenda.utils.DateTimeUtils;
 import com.groupagendas.groupagenda.utils.Prefs;
-import com.groupagendas.groupagenda.utils.Utils;
 
 public class EventActivity extends Activity {
 	public static final int DEFAULT_EVENT_DURATION_IN_MINS = 30;
 	public static final String EXTRA_STRING_FOR_START_CALENDAR = "strTime";
+	
+	public static ArrayList<Invited> newlyInvitedContacts;
 
 	protected DataManagement dm;
 	protected DateTimeUtils dtUtils;
 	protected EditText descView;
 
-	protected Spinner countrySpinner;
-	protected String[] countryArray;
+	protected EditText countryView;
 	protected EditText cityView;
 	protected EditText streetView;
 	protected EditText zipView;
-	protected Spinner timezoneSpinner;
-	protected String[] timezoneArray;
-
+	protected EditText timezoneView;
+	
 	protected EditText locationView;
 	protected EditText gobyView;
 	protected EditText takewithyouView;
@@ -108,11 +108,19 @@ public class EventActivity extends Activity {
 	protected String selectedColor = Event.DEFAULT_COLOR;
 	
 	protected Event event;
+	protected ArrayList<String> countriesList = null;
+	protected StringArrayListAdapter countriesAdapter = null;
+	protected ArrayList<String> timezonesList = null;
+	protected StringArrayListAdapter timezonesAdapter = null;
+	protected InvitedAdapter invitedAdapter = null;
+	protected LinearLayout invitedPersonList;
+	protected int timezoneInUse = 0;
 
 	protected Event setEventData(Event event) {
 
-		if (timezoneArray != null) {
-			event.setTimezone(timezoneArray[timezoneSpinner.getSelectedItemPosition()]);
+		if (timezoneView != null) {
+			
+			event.setTimezone(timezoneView.getText().toString());
 		}
 		if (setUid) {
 			// user_id
@@ -127,7 +135,7 @@ public class EventActivity extends Activity {
 		event.setEndCalendar(endCalendar);
 		event.setModifiedMillisUtc(Calendar.getInstance().getTimeInMillis());
 
-		event.setCountry(countryArray[countrySpinner.getSelectedItemPosition()]);
+		event.setCountry(countryView.getText().toString());
 		event.setZip(zipView.getText().toString());
 		event.setCity(cityView.getText().toString());
 		event.setStreet(streetView.getText().toString());

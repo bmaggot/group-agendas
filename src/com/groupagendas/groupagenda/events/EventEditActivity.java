@@ -1,5 +1,6 @@
 package com.groupagendas.groupagenda.events;
 
+import java.util.ArrayList;
 import java.util.Calendar;
 
 import android.app.AlertDialog;
@@ -17,16 +18,14 @@ import android.view.View.OnClickListener;
 import android.view.Window;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
-import android.widget.AdapterView.OnItemSelectedListener;
-import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.GridView;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
-import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -38,8 +37,7 @@ import com.groupagendas.groupagenda.data.CalendarSettings;
 import com.groupagendas.groupagenda.data.Data;
 import com.groupagendas.groupagenda.data.DataManagement;
 import com.groupagendas.groupagenda.data.EventManagement;
-import com.groupagendas.groupagenda.timezone.TimezoneManager;
-import com.groupagendas.groupagenda.utils.CountryManager;
+import com.groupagendas.groupagenda.timezone.StringArrayListAdapter;
 import com.groupagendas.groupagenda.utils.SearchDialog;
 import com.groupagendas.groupagenda.utils.Utils;
 import com.ptashek.widgets.datetimepicker.DateTimePicker;
@@ -88,12 +86,31 @@ public class EventEditActivity extends EventActivity {
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.event_edit);
+		newlyInvitedContacts = null;
 
 	}
 
 	@Override
 	public void onResume() {
 		super.onResume();
+		String[] array;
+		countriesList = new ArrayList<String>();
+		timezonesList = new ArrayList<String>();
+		
+		array = getResources().getStringArray(R.array.countries);
+		for (String temp : array) {
+			countriesList.add(temp);
+		}
+		if (countriesList != null)
+			countriesAdapter = new StringArrayListAdapter(EventEditActivity.this, R.layout.search_dialog_item, countriesList);
+		
+		array = getResources().getStringArray(R.array.timezones);
+		for (String temp : array) {
+			timezonesList.add(temp);
+		}
+		if (timezonesList != null)
+			timezonesAdapter = new StringArrayListAdapter(EventEditActivity.this, R.layout.search_dialog_item, timezonesList);
+		
 		initViewItems();
 		hideAddressPanel();
 		hideDetailsPanel();
@@ -189,22 +206,40 @@ public class EventEditActivity extends EventActivity {
 		});
 
 		countrySpinnerBlock = (LinearLayout) findViewById(R.id.countrySpinnerBlock);
-		countrySpinner = (Spinner) findViewById(R.id.countrySpinner);
-		final ArrayAdapter<String> adapterCountry = new ArrayAdapter<String>(EventEditActivity.this, R.layout.search_dialog_item,
-				CountryManager.getCountries(EventEditActivity.this));
-		adapterCountry.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-		countrySpinner.setAdapter(adapterCountry);
-		countryArray = CountryManager.getCountryValues(EventEditActivity.this);
-		countrySpinnerBlock = (LinearLayout) findViewById(R.id.countrySpinnerBlock);
-
+		countryView = (EditText) findViewById(R.id.countryView);
 		countrySpinnerBlock.setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View arg0) {
-				Dialog dia = new SearchDialog(EventEditActivity.this, R.style.yearview_eventlist_title, adapterCountry, countrySpinner);
+				Dialog dia = new SearchDialog(EventEditActivity.this, android.R.drawable.dialog_frame, countriesAdapter, timezoneInUse);
+				ListView diaList = (ListView) dia.findViewById(R.id.dialog_list);
+				diaList.setOnItemClickListener(new OnItemClickListener() {
+
+					@Override
+					public void onItemClick(AdapterView<?> arg0, View arg1, int arg2, long arg3) {
+						if (arg1.getTag().toString() != null) {
+							int position = Integer.parseInt(arg1.getTag().toString());
+							if (position > 0) {
+								timezoneInUse = position;
+								countryView.setText(countriesList.get(timezoneInUse));
+								timezoneView.setText(timezonesList.get(timezoneInUse));
+							}
+						}
+					}
+				});
 				dia.show();
 			}
 		});
+		
+//		final ArrayAdapter<String> adapterCountry = new ArrayAdapter<String>(EventEditActivity.this, R.layout.search_dialog_item,
+//				CountryManager.getCountries(EventEditActivity.this));
+//		adapterCountry.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+//		countrySpinner.setAdapter(adapterCountry);
+//		countryArray = CountryManager.getCountryValues(EventEditActivity.this);
+//		countrySpinnerBlock = (LinearLayout) findViewById(R.id.countrySpinnerBlock);
 
+
+		
+		
 		cityViewBlock = (LinearLayout) findViewById(R.id.cityViewBlock);
 		cityView = (EditText) findViewById(R.id.cityView);
 		streetViewBlock = (LinearLayout) findViewById(R.id.streetViewBlock);
@@ -212,7 +247,29 @@ public class EventEditActivity extends EventActivity {
 		zipViewBlock = (LinearLayout) findViewById(R.id.zipViewBlock);
 		zipView = (EditText) findViewById(R.id.zipView);
 		timezoneSpinnerBlock = (LinearLayout) findViewById(R.id.timezoneSpinnerBlock);
-		timezoneSpinner = (Spinner) findViewById(R.id.timezoneSpinner);
+		timezoneView = (EditText) findViewById(R.id.timezoneView);
+		timezoneSpinnerBlock.setOnClickListener(new OnClickListener() {
+			@Override
+			public void onClick(View arg0) {
+				Dialog dia = new SearchDialog(EventEditActivity.this, android.R.drawable.dialog_frame, timezonesAdapter, timezoneInUse);
+				ListView diaList = (ListView) dia.findViewById(R.id.dialog_list);
+				diaList.setOnItemClickListener(new OnItemClickListener() {
+
+					@Override
+					public void onItemClick(AdapterView<?> arg0, View arg1, int arg2, long arg3) {
+						if (arg1.getTag().toString() != null) {
+							int position = Integer.parseInt(arg1.getTag().toString());
+							if (position > 0) {
+								timezoneInUse = position;
+								countryView.setText(countriesList.get(timezoneInUse));
+								timezoneView.setText(timezonesList.get(timezoneInUse));
+							}
+						}
+					}
+				});
+				dia.show();
+			}
+		});
 
 		// DETAILS PANEL
 		detailsPanel = (LinearLayout) findViewById(R.id.detailsLine);
@@ -391,6 +448,7 @@ public class EventEditActivity extends EventActivity {
 
 		// INVITES SECTION
 		invitesColumn = (LinearLayout) findViewById(R.id.invitesLine);
+		invitedPersonList = (LinearLayout) findViewById(R.id.invited_person_list);
 		inviteButton = (Button) findViewById(R.id.invite_button);
 		inviteButton.setOnClickListener(new OnClickListener() {
 
@@ -546,51 +604,8 @@ public class EventEditActivity extends EventActivity {
 					}
 				});
 
-				showView(timezoneSpinner, addressLine);
-				countrySpinner.setOnItemSelectedListener(new OnItemSelectedListener() {
-					@Override
-					public void onItemSelected(AdapterView<?> arg0, View arg1, int pos, long arg3) {
-
-						if (pos == 0) {
-							ArrayAdapter<String> adapterTimezone = new ArrayAdapter<String>(EventEditActivity.this,
-									R.layout.search_dialog_item, new String[0]);
-							adapterTimezone.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-							timezoneSpinner.setAdapter(adapterTimezone);
-							timezoneSpinner.setEnabled(false);
-							timezoneArray = null;
-						} else {
-							timezoneSpinner.setEnabled(true);
-							// timezone
-							String[] timezoneLabels = TimezoneManager.getTimezones(EventEditActivity.this, countryArray[pos]);
-							ArrayAdapter<String> adapterTimezone = new ArrayAdapter<String>(EventEditActivity.this,
-									R.layout.search_dialog_item, timezoneLabels);
-							adapterTimezone.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-							timezoneSpinner.setAdapter(adapterTimezone);
-							timezoneArray = TimezoneManager.getTimezonesValues(EventEditActivity.this, countryArray[pos]);
-
-							if (result.getTimezone() != null && !result.getTimezone().equals("null")) {
-								pos = Utils.getArrayIndex(timezoneArray, result.getTimezone());
-								timezoneSpinner.setSelection(pos);
-								showView(timezoneSpinner, addressLine);
-
-							}
-						}
-					}
-
-					@Override
-					public void onNothingSelected(AdapterView<?> arg0) {
-					}
-				});
-
-				if (result.getCountry() != null && !result.getCountry().equals("null")) {
-					int pos = Utils.getArrayIndex(countryArray, result.getCountry());
-					countrySpinner.setSelection(pos);
-					showView(countrySpinner, addressLine);
-					if (!result.is_owner())
-						countrySpinner.setEnabled(false);
-				}
-
-				showView(countrySpinner, addressLine);
+				showView(timezoneView, addressLine);
+				showView(countryView, addressLine);
 				showView(cityView, addressLine);
 				showView(streetView, addressLine);
 				showView(zipView, addressLine);
@@ -604,7 +619,7 @@ public class EventEditActivity extends EventActivity {
 				titleView.setEnabled(false);
 				endView.setEnabled(false);
 				endButton.setEnabled(false);
-				timezoneSpinner.setEnabled(false);
+				timezoneView.setEnabled(false);
 				startView.setEnabled(false);
 				startButton.setEnabled(false);
 				cityView.setEnabled(false);
@@ -620,19 +635,12 @@ public class EventEditActivity extends EventActivity {
 			}
 
 			// START AND END TIME
-			String timeFormat;
-			Account account = new Account();
-			if(account.getSetting_ampm() == 1){
-				timeFormat = getResources().getString(R.string.hour_event_view_time_format_AMPM);
-			} else {
-				timeFormat = getResources().getString(R.string.hour_event_view_time_format);
-			}
 			if (result.getStartCalendar() != null) {
-				startView.setText(Utils.formatCalendar(result.getStartCalendar()) + " " + Utils.formatCalendar(result.getStartCalendar(), timeFormat));
+				startView.setText(Utils.formatCalendar(result.getStartCalendar()));
 				startCalendar = (Calendar) result.getStartCalendar().clone();
 			}
 			if (result.getEndCalendar() != null) {
-				endView.setText(Utils.formatCalendar(result.getEndCalendar()) + " " + Utils.formatCalendar(result.getEndCalendar(), timeFormat));
+				endView.setText(Utils.formatCalendar(result.getEndCalendar()));
 				endCalendar = (Calendar) result.getEndCalendar().clone();
 			}
 
@@ -692,6 +700,7 @@ public class EventEditActivity extends EventActivity {
 					}
 				}
 			});
+			Account account = new Account();
 			if (result.getReminder1() != null) {
 				reminder1.setText(Utils.formatCalendar(result.getReminder1(), account.getSetting_date_format()));
 			} else {
@@ -723,106 +732,28 @@ public class EventEditActivity extends EventActivity {
 				alarm3.setText("");
 			}
 
-			// int invitedListSize = result.getInvitedCount();//TODOimplement
-			//
-			//
-			// if (invitedListSize == 0) {
-			// inviteButton.setBackgroundResource(R.drawable.event_invite_people_button_standalone);
-			// }
+			// TODO optimizacija panasios jebalos gula ant meskos sazines. Zajabys.
+			if (newlyInvitedContacts != null) {
+				event.getInvited().addAll(newlyInvitedContacts);
+				newlyInvitedContacts = null;
+			}
 
-			// type TODO DEAD-CODE
-			// typeSpinner = (Spinner) findViewById(R.id.typeSpinner);
-			// ArrayAdapter<CharSequence> adapterType =
-			// ArrayAdapter.createFromResource(EventActivity.this,
-			// R.array.type_labels,
-			// android.R.layout.simple_spinner_item);
-			// adapterType.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-			// typeSpinner.setAdapter(adapterType);
-			// typeArray = getResources().getStringArray(R.array.type_values);
-			//
-			// if (result.type != null && !result.type.equals("null")) {
-			// int pos = Utils.getArrayIndex(typeArray, result.type);
-			// typeSpinner.setSelection(pos);
-			// if (!result.is_owner)
-			// typeSpinner.setEnabled(false);
-			// }
-
-			// Time
-
-			// Address
-			// TODO DEAD-CODE
-			// addressLine = (LinearLayout) findViewById(R.id.addressLine);
-			// addressLine.setOnClickListener(new OnClickListener() {
-			//
-			// @Override
-			// public void onClick(View v) {
-			// if(addressPanelVisible){
-			// hideAddressPanel(ad);
-			// } else {
-			// showAddressPanel();
-			// }
-			// }
-			// });
-
-			// // Details
-			// detailsLine = (LinearLayout) findViewById(R.id.detailsLine);
-			// detailsLine.setOnClickListener(new OnClickListener() {
-			//
-			// @Override
-			// public void onClick(View v) {
-			// if(detailsPanelVisible){
-			// hideDetailsPanel();
-			// } else {
-			// showDetailsPanel();
-			// }
-			// }
-			// });
-
-			//
-			//
-			// final ViewHolder holder = new ViewHolder();
-			// holder.status = (TextView) findViewById(R.id.status);
-			// holder.button_yes = (TextView) findViewById(R.id.button_yes);
-			// holder.button_maybe = (TextView) findViewById(R.id.button_maybe);
-			// holder.button_no = (TextView) findViewById(R.id.button_no);
-			//
-			// responsePanel.setVisibility(View.VISIBLE);
-			//
-			// switch (result.getStatus()) {
-			// case Event.REJECTED:
-			// holder.status.setText(mContext.getString(R.string.status_0));
-			// holder.button_yes.setVisibility(View.VISIBLE);
-			// holder.button_maybe.setVisibility(View.VISIBLE);
-			// holder.button_no.setVisibility(View.INVISIBLE);
-			// break;
-			// case Event.ACCEPTED:
-			// holder.status.setText(mContext.getString(R.string.status_1));
-			// holder.button_yes.setVisibility(View.INVISIBLE);
-			// holder.button_maybe.setVisibility(View.VISIBLE);
-			// holder.button_no.setVisibility(View.VISIBLE);
-			// break;
-			// case Event.MAYBE:
-			// holder.status.setText(mContext.getString(R.string.status_2));
-			// holder.button_yes.setVisibility(View.VISIBLE);
-			// holder.button_maybe.setVisibility(View.INVISIBLE);
-			// holder.button_no.setVisibility(View.VISIBLE);
-			// break;
-			// case Event.NEW_INVITATION:
-			// holder.status.setText(mContext.getString(R.string.new_invite));
-			// holder.button_yes.setVisibility(View.VISIBLE);
-			// holder.button_maybe.setVisibility(View.VISIBLE);
-			// holder.button_no.setVisibility(View.VISIBLE);
-			// break;
-			// }
+			int invitedListSize = event.getInvited().size();
+			invitedPersonList.removeAllViews();
+			if (invitedListSize == 0) {
+				inviteButton.setBackgroundResource(R.drawable.event_invite_people_button_standalone);
+			} else {
+				inviteButton.setBackgroundResource(R.drawable.event_invite_people_button_notalone);
+				invitedAdapter = new InvitedAdapter(EventEditActivity.this, event.getInvited());
+				for (int i = 0; i < invitedListSize; i++) {
+					View view = invitedAdapter.getView(i, null, null);
+					invitedPersonList.addView(view);
+				}
+			}
 
 			pb.setVisibility(View.INVISIBLE);
 		}
 	}
-
-	// private void editDb(int event_id, int status, boolean success) {
-	// Object[] array = { event_id, status, success, dm };
-	// new EventStatusUpdater().execute(array);
-	// }
 
 	class UpdateEventTask extends AsyncTask<Event, Void, Boolean> {
 
@@ -954,9 +885,9 @@ public class EventEditActivity extends EventActivity {
 		mDateTimePicker.updateDate(c.get(Calendar.YEAR), c.get(Calendar.MONTH), c.get(Calendar.DAY_OF_MONTH));
 		mDateTimePicker.updateTime(c.get(Calendar.HOUR_OF_DAY), c.get(Calendar.MINUTE));
 
-//		final boolean is24h = !CalendarSettings.isUsing_AM_PM();
+		final boolean is24h = !CalendarSettings.isUsing_AM_PM();
 		// Setup TimePicker
-//		mDateTimePicker.setIs24HourView(is24h);
+		mDateTimePicker.setIs24HourView(is24h);
 
 		// Update demo TextViews when the "OK" button is clicked
 		((Button) mDateTimeDialogView.findViewById(R.id.SetDateTime)).setOnClickListener(new OnClickListener() {
@@ -964,52 +895,44 @@ public class EventEditActivity extends EventActivity {
 			@Override
 			public void onClick(View v) {
 				mDateTimePicker.clearFocus();
-				String timeFormat;
-				Account account = new Account();
-				if(account.getSetting_ampm() == 1){
-					timeFormat = getResources().getString(R.string.hour_event_view_time_format_AMPM);
-				} else {
-					timeFormat = getResources().getString(R.string.hour_event_view_time_format);
-				}
+				boolean timeSet = false;
 				switch (id) {
 				case DIALOG_START:
 					startCalendar = mDateTimePicker.getCalendar();
-					startView.setText(Utils.formatCalendar(startCalendar) + " " + Utils.formatCalendar(startCalendar, timeFormat));
+					startView.setText(dtUtils.formatDateTime(startCalendar.getTime()));
 					if (!startCalendar.before(endCalendar)) {
 						endCalendar = Calendar.getInstance();
 						endCalendar.setTime(mDateTimePicker.getCalendar().getTime());
 						endCalendar.add(Calendar.MINUTE, NewEventActivity.DEFAULT_EVENT_DURATION_IN_MINS);
-						endView.setText(Utils.formatCalendar(endCalendar) + " " + Utils.formatCalendar(endCalendar, timeFormat));
+						endView.setText(dtUtils.formatDateTime(endCalendar.getTime()));
 					}
+					timeSet = true;
 					break;
 				case DIALOG_END:
 					endCalendar = mDateTimePicker.getCalendar();
-					endView.setText(Utils.formatCalendar(endCalendar) + " " + Utils.formatCalendar(endCalendar, timeFormat));
 					break;
 				case ALARM1:
 					alarm1time = mDateTimePicker.getCalendar();
-					view.setText(Utils.formatCalendar(alarm1time) + " " + Utils.formatCalendar(alarm1time, timeFormat));
 					break;
 				case ALARM2:
 					alarm2time = mDateTimePicker.getCalendar();
-					view.setText(Utils.formatCalendar(alarm2time) + " " + Utils.formatCalendar(alarm2time, timeFormat));
 					break;
 				case ALARM3:
 					alarm3time = mDateTimePicker.getCalendar();
-					view.setText(Utils.formatCalendar(alarm3time) + " " + Utils.formatCalendar(alarm3time, timeFormat));
 					break;
 				case REMINDER1:
 					reminder1time = mDateTimePicker.getCalendar();
-					view.setText(Utils.formatCalendar(reminder1time) + " " + Utils.formatCalendar(reminder1time, timeFormat));
 					break;
 				case REMINDER2:
 					reminder2time = mDateTimePicker.getCalendar();
-					view.setText(Utils.formatCalendar(reminder2time) + " " + Utils.formatCalendar(reminder2time, timeFormat));
 					break;
 				case REMINDER3:
 					reminder3time = mDateTimePicker.getCalendar();
-					view.setText(Utils.formatCalendar(reminder3time) + " " + Utils.formatCalendar(reminder3time, timeFormat));
 					break;
+				}
+				if (timeSet) {
+					Account account = new Account();
+					view.setText(Utils.formatCalendar(mDateTimePicker.getCalendar(), account.getSetting_date_format()));
 				}
 				mDateTimeDialog.dismiss();
 			}

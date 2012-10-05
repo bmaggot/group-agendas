@@ -26,8 +26,6 @@ import android.os.Environment;
 import android.provider.MediaStore;
 import android.view.View;
 import android.view.View.OnClickListener;
-import android.widget.AdapterView;
-import android.widget.AdapterView.OnItemSelectedListener;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.CheckBox;
@@ -37,14 +35,13 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.Spinner;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.groupagendas.groupagenda.R;
-import com.groupagendas.groupagenda.data.Data;
 import com.groupagendas.groupagenda.data.DataManagement;
 import com.groupagendas.groupagenda.error.report.Reporter;
-import com.groupagendas.groupagenda.timezone.TimezoneManager;
-import com.groupagendas.groupagenda.utils.CountryManager;
+import com.groupagendas.groupagenda.timezone.StringArrayListAdapter;
 import com.groupagendas.groupagenda.utils.SearchDialog;
 import com.groupagendas.groupagenda.utils.Utils;
 
@@ -81,11 +78,11 @@ public class AccountActivity extends Activity implements OnClickListener{
 	private String[] sexArray;
 	
 	// Country
-	private Spinner countrySpinner;
+	private EditText countryView;
 	private String[] countryArray;
 	
 	// timezone
-	private Spinner timezoneSpinner;
+	private EditText timezoneView;
 	private String[] timezoneArray;
 	
 	private EditText cityView;
@@ -99,6 +96,12 @@ public class AccountActivity extends Activity implements OnClickListener{
 	private final int DIALOG_ERROR   = 5;
 	private String errorStr;
 	
+	private StringArrayListAdapter countriesAdapter = null;
+	private ArrayList<String> countriesList = new ArrayList<String>();
+	private StringArrayListAdapter timezonesAdapter = null;
+	private ArrayList<String> timezonesList = new ArrayList<String>();
+	private int timezoneInUse = 0;
+
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -133,48 +136,48 @@ public class AccountActivity extends Activity implements OnClickListener{
 		sexArray = getResources().getStringArray(R.array.sex_values);
 		
 		// Timezone
-		timezoneSpinner = (Spinner) findViewById(R.id.timezoneSpinner);
+		timezoneView = (EditText) findViewById(R.id.timezoneSpinner);
 
 		// Country
-		countrySpinner = (Spinner) findViewById(R.id.countrySpinner);
-		final ArrayAdapter<String> adapterCountry =  new ArrayAdapter<String>(this,  R.layout.search_dialog_item, CountryManager.getCountries(this)) ;
-		adapterCountry.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-		countrySpinner.setAdapter(adapterCountry);
+		countryView = (EditText) findViewById(R.id.countrySpinner);
+//		final ArrayAdapter<String> adapterCountry =  new ArrayAdapter<String>(this,  R.layout.search_dialog_item, CountryManager.getCountries(this)) ;
+//		adapterCountry.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+//		countrySpinner.setAdapter(adapterCountry);
 		
 		LinearLayout countrySpinnerBlock = (LinearLayout) findViewById(R.id.countrySpinnerBlock); 
 		countrySpinnerBlock.setOnClickListener(new OnClickListener() {
 			
 			@Override
 			public void onClick(View arg0) {
-				Dialog dia = new SearchDialog(AccountActivity.this, R.style.yearview_eventlist_title, adapterCountry, countrySpinner);
+				Dialog dia = new SearchDialog(AccountActivity.this, R.style.yearview_eventlist_title, countriesAdapter, timezoneInUse);
 				dia.show();				
 			}
 		});
 		
-		countryArray = CountryManager.getCountryValues(this);
-		countrySpinner.setOnItemSelectedListener(new OnItemSelectedListener() {
-
-			@Override
-			public void onItemSelected(AdapterView<?> arg0, View arg1, int pos, long arg3) {
-				if(pos == 0){
-					ArrayAdapter<String> adapterTimezone =  new ArrayAdapter<String>(AccountActivity.this,  R.layout.search_dialog_item, new String[0]) ;
-					adapterTimezone.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-					timezoneSpinner.setAdapter(adapterTimezone);
-					timezoneSpinner.setEnabled(false);
-					timezoneArray = null;
-				}else{
-					timezoneSpinner.setEnabled(true);
-					String[] timezoneLabels = TimezoneManager.getTimezones(AccountActivity.this, countryArray[pos]);
-					ArrayAdapter<String> adapterTimezone =  new ArrayAdapter<String>(AccountActivity.this,  R.layout.search_dialog_item, timezoneLabels) ;
-					adapterTimezone.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-					timezoneSpinner.setAdapter(adapterTimezone);
-					
-					timezoneArray = TimezoneManager.getTimezonesValues(AccountActivity.this, countryArray[pos]);
-				}
-			}
-			@Override
-			public void onNothingSelected(AdapterView<?> arg0) {}
-		});
+//		countryArray = CountryManager.getCountryValues(this);
+//		countrySpinner.setOnItemSelectedListener(new OnItemSelectedListener() {
+//
+//			@Override
+//			public void onItemSelected(AdapterView<?> arg0, View arg1, int pos, long arg3) {
+//				if(pos == 0){
+//					ArrayAdapter<String> adapterTimezone =  new ArrayAdapter<String>(AccountActivity.this,  R.layout.search_dialog_item, new String[0]) ;
+//					adapterTimezone.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+//					timezoneSpinner.setAdapter(adapterTimezone);
+//					timezoneSpinner.setEnabled(false);
+//					timezoneArray = null;
+//				}else{
+//					timezoneSpinner.setEnabled(true);
+//					String[] timezoneLabels = TimezoneManager.getTimezones(AccountActivity.this, countryArray[pos]);
+//					ArrayAdapter<String> adapterTimezone =  new ArrayAdapter<String>(AccountActivity.this,  R.layout.search_dialog_item, timezoneLabels) ;
+//					adapterTimezone.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+//					timezoneSpinner.setAdapter(adapterTimezone);
+//					
+//					timezoneArray = TimezoneManager.getTimezonesValues(AccountActivity.this, countryArray[pos]);
+//				}
+//			}
+//			@Override
+//			public void onNothingSelected(AdapterView<?> arg0) {}
+//		});
 		
 		cityView = (EditText) findViewById(R.id.cityView);
 		streetView = (EditText) findViewById(R.id.streetView);
@@ -189,6 +192,21 @@ public class AccountActivity extends Activity implements OnClickListener{
 	@Override
 	public void onResume() {
 		super.onResume();
+		String[] array;
+		
+		array = getResources().getStringArray(R.array.countries);
+		for (String temp : array) {
+			countriesList.add(temp);
+		}
+		if (countriesList != null)
+			countriesAdapter = new StringArrayListAdapter(AccountActivity.this, R.layout.search_dialog_item, countriesList);
+		
+		array = getResources().getStringArray(R.array.timezones);
+		for (String temp : array) {
+			timezonesList.add(temp);
+		}
+		if (timezonesList != null)
+			timezonesAdapter = new StringArrayListAdapter(AccountActivity.this, R.layout.search_dialog_item, timezonesList);
 
 		Account account = new Account();
 		
@@ -235,13 +253,13 @@ public class AccountActivity extends Activity implements OnClickListener{
 		// country
 		if (!account.getCountry().equals("null")){
 			int pos = Utils.getArrayIndex(countryArray, account.getCountry());
-			countrySpinner.setSelection(pos);
+			((TextView) countryView).setText(countryArray[pos]);
 		}
 		
 		// timezone
 		if (!account.getTimezone().equals("null") && timezoneArray != null){
 			int pos = Utils.getArrayIndex(timezoneArray, account.getTimezone());
-			timezoneSpinner.setSelection(pos);
+			((TextView) timezoneView).setText(timezoneArray[pos]);
 		}
 		
 		if (!account.getCity().equals("null"))
@@ -297,12 +315,10 @@ public class AccountActivity extends Activity implements OnClickListener{
 		mAccount.setSex(sexArray[pos]);
 		
 		// Country 
-		pos = (int) countrySpinner.getSelectedItemId();
-		mAccount.setCountry(countryArray[pos]);
+		mAccount.setCountry(countryView.getText().toString());
 		
 		// Timezone
-		pos = (int)timezoneSpinner.getSelectedItemId();
-		mAccount.setTimezone(timezoneArray[pos]);
+		mAccount.setTimezone(timezoneView.getText().toString());
 		
 		// City, Street, Zip
 		temp = cityView.getText().toString();

@@ -5,7 +5,7 @@ public class Invited {
 	public static final int REJECTED = 0;
 	public static final int ACCEPTED = 1;
 	public static final int MAYBE = 2;
-	public static final int NEW_INVITATION = 4;
+	public static final int PENDING = 4;
 	public static final int OWN_INVITATION_ENTRY = 99999;
 
 	/** Invited person's fullname */
@@ -47,7 +47,7 @@ public class Invited {
 		if (status >= 0 && status < 5 && status != 3)
 			return status;
 		else
-			return 4;			
+			return 2;			
 	}
 	
 	public void setName(String name) {

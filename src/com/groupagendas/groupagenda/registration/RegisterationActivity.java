@@ -39,9 +39,9 @@ public class RegisterationActivity extends Activity {
 
 	private Spinner languageSpinner;
 	private String[] languageArray;
-	private Spinner countrySpinner;
+	private EditText countryView;
 	private String[] countryArray;
-	private Spinner timezoneSpinner;
+	private EditText timezoneView;
 	private String[] timezoneArray;
 	private Spinner sexSpinner;
 	private String[] sexArray;
@@ -105,65 +105,64 @@ public class RegisterationActivity extends Activity {
 		languageArray = getResources().getStringArray(R.array.language_values);
 		languageSpinner.setSelection(getMyCountry(languageArray, localLanguage));
 
-		timezoneSpinner = (Spinner) findViewById(R.id.timezoneSpinner);
+		timezoneView = (EditText) findViewById(R.id.timezoneSpinner);
+		countryView = (EditText) findViewById(R.id.countrySpinner);
+//		final ArrayAdapter<String> adapterCountry = new ArrayAdapter<String>(this, R.layout.search_dialog_item, CountryManager.getCountries(this));
+//		adapterCountry.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+//		countrySpinner.setAdapter(adapterCountry);
+//		countryArray = CountryManager.getCountryValues(this);
+//		
+//		int myCountryPos = getMyCountry(countryArray, localCountry);
+//		countrySpinner.setSelection(myCountryPos);
+//		
+//		LinearLayout countrySpinnerBlock = (LinearLayout) findViewById(R.id.countrySpinnerBlock); 
+//		countrySpinnerBlock.setOnClickListener(new OnClickListener() {
+//			
+//			@Override
+//			public void onClick(View arg0) {
+//				Dialog dia = new SearchDialog(RegisterationActivity.this, R.style.yearview_eventlist_title, adapterCountry, countrySpinner);
+//				dia.show();				
+//			}
+//		});
 		
-		countrySpinner = (Spinner) findViewById(R.id.countrySpinner);
-		final ArrayAdapter<String> adapterCountry = new ArrayAdapter<String>(this, R.layout.search_dialog_item, CountryManager.getCountries(this));
-		adapterCountry.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-		countrySpinner.setAdapter(adapterCountry);
-		countryArray = CountryManager.getCountryValues(this);
-		
-		int myCountryPos = getMyCountry(countryArray, localCountry);
-		countrySpinner.setSelection(myCountryPos);
-		
-		LinearLayout countrySpinnerBlock = (LinearLayout) findViewById(R.id.countrySpinnerBlock); 
-		countrySpinnerBlock.setOnClickListener(new OnClickListener() {
-			
-			@Override
-			public void onClick(View arg0) {
-				Dialog dia = new SearchDialog(RegisterationActivity.this, R.style.yearview_eventlist_title, adapterCountry, countrySpinner);
-				dia.show();				
-			}
-		});
-		
-		countrySpinner.setOnItemSelectedListener(new OnItemSelectedListener() {
-
-			@Override
-			public void onItemSelected(AdapterView<?> arg0, View arg1, int pos, long arg3) {
-				if (pos == 0) {
-					ArrayAdapter<String> adapterTimezone = new ArrayAdapter<String>(RegisterationActivity.this,  R.layout.search_dialog_item, new String[0]);
-					adapterTimezone.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-					timezoneSpinner.setAdapter(adapterTimezone);
-					timezoneSpinner.setEnabled(false);
-					timezoneArray = null;
-				} else {
-					timezoneSpinner.setEnabled(true);
-					String[] timezoneLabels = TimezoneManager.getTimezones(RegisterationActivity.this, countryArray[pos]);
-					ArrayAdapter<String> adapterTimezone = new ArrayAdapter<String>(RegisterationActivity.this,  R.layout.search_dialog_item, timezoneLabels);
-					adapterTimezone.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-					timezoneSpinner.setAdapter(adapterTimezone);
-
-					timezoneArray = TimezoneManager.getTimezonesValues(RegisterationActivity.this, countryArray[pos]);
-
-					try {
-						Data.localPrefix = new PrefixReceiver().execute(countryArray[pos]).get();
-					} catch (InterruptedException e) {
-						Reporter.reportError(this.getClass().toString(), Thread.currentThread().getStackTrace()[2].getMethodName().toString(), e.getMessage());
-					} catch (ExecutionException e) {
-						Reporter.reportError(this.getClass().toString(), Thread.currentThread().getStackTrace()[2].getMethodName().toString(), e.getMessage());
-					}
-					
-					if (Data.localPrefix != null) {
-						phonecodeView.setText("+" + Data.localPrefix);
-					}
-
-				}
-			}
-
-			@Override
-			public void onNothingSelected(AdapterView<?> arg0) {
-			}
-		});
+//		countrySpinner.setOnItemSelectedListener(new OnItemSelectedListener() {
+//
+//			@Override
+//			public void onItemSelected(AdapterView<?> arg0, View arg1, int pos, long arg3) {
+//				if (pos == 0) {
+//					ArrayAdapter<String> adapterTimezone = new ArrayAdapter<String>(RegisterationActivity.this,  R.layout.search_dialog_item, new String[0]);
+//					adapterTimezone.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+//					timezoneSpinner.setAdapter(adapterTimezone);
+//					timezoneSpinner.setEnabled(false);
+//					timezoneArray = null;
+//				} else {
+//					timezoneSpinner.setEnabled(true);
+//					String[] timezoneLabels = TimezoneManager.getTimezones(RegisterationActivity.this, countryArray[pos]);
+//					ArrayAdapter<String> adapterTimezone = new ArrayAdapter<String>(RegisterationActivity.this,  R.layout.search_dialog_item, timezoneLabels);
+//					adapterTimezone.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+//					timezoneSpinner.setAdapter(adapterTimezone);
+//
+//					timezoneArray = TimezoneManager.getTimezonesValues(RegisterationActivity.this, countryArray[pos]);
+//
+//					try {
+//						Data.localPrefix = new PrefixReceiver().execute(countryArray[pos]).get();
+//					} catch (InterruptedException e) {
+//						Reporter.reportError(this.getClass().toString(), Thread.currentThread().getStackTrace()[2].getMethodName().toString(), e.getMessage());
+//					} catch (ExecutionException e) {
+//						Reporter.reportError(this.getClass().toString(), Thread.currentThread().getStackTrace()[2].getMethodName().toString(), e.getMessage());
+//					}
+//					
+//					if (Data.localPrefix != null) {
+//						phonecodeView.setText("+" + Data.localPrefix);
+//					}
+//
+//				}
+//			}
+//
+//			@Override
+//			public void onNothingSelected(AdapterView<?> arg0) {
+//			}
+//		});
 
 		sexSpinner = (Spinner) findViewById(R.id.sexSpinner);
 		ArrayAdapter<CharSequence> adapterSex = ArrayAdapter.createFromResource(this, R.array.sex_labels,
@@ -329,12 +328,12 @@ public class RegisterationActivity extends Activity {
 					}
 
 					// Country
-					selectedItem = countrySpinner.getSelectedItemPosition();
-					if (selectedItem == 0) {
-						check = false;
-						errorStr = getString(R.string.field_is_required, getString(R.string.country));
-					}
-
+//					selectedItem = countrySpinner.getSelectedItemPosition();
+//					if (selectedItem == 0) {
+//						check = false;
+//						errorStr = getString(R.string.field_is_required, getString(R.string.country));
+//					}
+//
 					if (check) {
 						new RegistrationTask().execute();
 					} else {
@@ -378,8 +377,8 @@ public class RegisterationActivity extends Activity {
 		protected Boolean doInBackground(Void... params) {
 
 			String language = languageArray[languageSpinner.getSelectedItemPosition()];
-			String country = countryArray[countrySpinner.getSelectedItemPosition()];
-			String timezone = timezoneArray[timezoneSpinner.getSelectedItemPosition()];
+			String country = countryView.getText().toString();
+			String timezone = timezoneView.getText().toString();
 			String sex = sexArray[sexSpinner.getSelectedItemPosition()];
 			String name = nameView.getText().toString();
 			String lastname = lastnameView.getText().toString();

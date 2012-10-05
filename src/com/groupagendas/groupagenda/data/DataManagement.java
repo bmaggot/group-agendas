@@ -1444,10 +1444,6 @@ public class DataManagement {
 			Reporter.reportError(this.getClass().toString(), Thread.currentThread().getStackTrace()[2].getMethodName().toString(),
 					e.getMessage());
 		}
-//TODO remove asap JUSTUI V
-		if (Data.selectedContacts != null) {
-			Data.selectedContacts.clear();
-		}
 		return event;
 	}
 
