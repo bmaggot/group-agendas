@@ -41,7 +41,7 @@ public class HourEventsTimetable {
 			this.add(e);
 		}
 		
-//	method called for debugging	printTimetable();
+
 	}
 	
 //	private void printTimetable() {
@@ -107,6 +107,7 @@ public class HourEventsTimetable {
 	 * @return java hashcode of left neighbour of this event in timetable. If this is first event in that table row, method returns 0;
 	 */
 	public int getLeftNeighbourId(Event event){
+		System.out.println(event.getTitle() + " " + event.getActualTitle());
 		int eventStartIndex = getStartTimetableIndex(event);  // we get number of row, where starts our event
 		ArrayList<Event> hourEvents = eventsTimetable[eventStartIndex]; // we get all events of that hour
 
@@ -141,6 +142,7 @@ public class HourEventsTimetable {
 		long durationInMins = durationInMilis / milisInMinute;
 		int durationInTimeUnits = (int) (durationInMins / accuracyInMinutes);
 		if (durationInMins % accuracyInMinutes > accuracyInMinutes / 2) durationInTimeUnits++; 
+		if (durationInTimeUnits == 0) return 1;
 		return durationInTimeUnits;
 	}
 }
