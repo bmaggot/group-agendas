@@ -26,12 +26,15 @@ import android.content.Context;
 import android.database.Cursor;
 import android.net.Uri;
 import android.provider.BaseColumns;
+import android.text.TextUtils;
 import android.util.Log;
 
 import com.groupagendas.groupagenda.error.report.Reporter;
 import com.groupagendas.groupagenda.events.Event;
+import com.groupagendas.groupagenda.events.EventsAdapter;
 import com.groupagendas.groupagenda.events.EventsProvider;
 import com.groupagendas.groupagenda.events.Invited;
+import com.groupagendas.groupagenda.events.EventsProvider.EMetaData;
 import com.groupagendas.groupagenda.utils.Utils;
 
 
@@ -99,8 +102,23 @@ public class EventManagement {
 		deleteEventFromLocalDb(context, event.getInternalID());	
 	}
 	
+	public static void respondToInvitation(Context context, Event event){
+		if (!Invited.validateResponse(event.getStatus())){
+			Log.e(CLASS_NAME + " ERROR RESPONDING TO INVITE", "Unknown state: " + event.getStatus());
+			return;
+		}
+		if (networkAvailable) {
+			event.setUploadedToServer(updateEventStatusInServer(event));
+		} else {
+			event.setUploadedToServer(false);
+		}	
+		updateEventStatusInLocalDb(context, event); //TODO OFFLINE MODE
+		
+	}
 	
-	
+
+
+
 	/**
 	 * @author justinas.marcinka@gmail.com Updates event in both local and
 	 *         remote db with given info
@@ -526,8 +544,15 @@ public class EventManagement {
 			result.close();
 			return item;
 		}	
-
-		
+//TODO javadoc
+		private static void updateEventStatusInLocalDb(Context context, Event event) {
+			ContentValues cv = new ContentValues();
+			cv.put(EventsProvider.EMetaData.EventsMetaData.STATUS, event.getStatus());
+			Uri uri = EventsProvider.EMetaData.EventsMetaData.CONTENT_URI;
+			String where = EventsProvider.EMetaData.EventsMetaData._ID+"=" + event.getInternalID();
+			context.getContentResolver().update(uri, cv, where, null);	
+		}
+	
 //private static ArrayList<Invited> getInvitesForEvent(Context context, Event event) {
 //		ArrayList<Invited> invites = new ArrayList<Invited>();
 //		long id = event.getInternalID();
@@ -546,6 +571,51 @@ public class EventManagement {
 
 
 /////////////////////////////////////////////////////METHODS THAT WORK WITH RMOTE DB//////////////////////////////////////////////////////	
+		
+		
+		private static boolean updateEventStatusInServer(Event event) {
+			if (event.getEvent_id() == 0) return false;
+			boolean success = false;
+
+			try {
+				HttpClient hc = new DefaultHttpClient();
+				HttpPost post = new HttpPost(Data.getServerUrl() + "mobile/set_event_status");
+
+				MultipartEntity reqEntity = new MultipartEntity(HttpMultipartMode.BROWSER_COMPATIBLE);
+				reqEntity.addPart(TOKEN, new StringBody(Data.getToken()));
+				reqEntity.addPart("event_id", new StringBody("" + event.getEvent_id()));
+				reqEntity.addPart("status", new StringBody("" + event.getStatus()));
+				
+				post.setEntity(reqEntity);
+				
+				if (networkAvailable) {
+					HttpResponse rp = hc.execute(post);
+
+					if (rp.getStatusLine().getStatusCode() == HttpStatus.SC_OK) {
+						String resp = EntityUtils.toString(rp.getEntity());
+						if (resp != null) {
+							JSONObject object = new JSONObject(resp);
+							success = object.getBoolean("success");
+							if (!success) {
+								Log.e("Response to event error", object.getJSONObject("error").getString("reason"));
+								return false;
+							} else {
+								return true;
+							}
+
+					
+						}
+					} else {
+						Log.e("createEvent - status", rp.getStatusLine().getStatusCode() + "");
+					}
+				}
+			} catch (Exception ex) {
+				Reporter.reportError(DataManagement.class.toString(), Thread.currentThread().getStackTrace()[2].getMethodName().toString(),
+						ex.getMessage());
+			}
+		
+			return false;
+		}
 		
 		/**
 		 * Creates event in remote DB and returns event ID if success.
@@ -1423,6 +1493,74 @@ private static String parseInvitedListToJSONArray(ArrayList<Invited> invited) {
 
 		return item;
 	}
+	//TODO document
+	public static ArrayList<Event> getEventsFromLocalDb(Context context, boolean filterActual) {
+		Event item;
+		String where = null;
+		
+		Calendar today = Calendar.getInstance();
+		today.set(Calendar.HOUR_OF_DAY, 0);
+		today.set(Calendar.MINUTE, 0);
+		today.set(Calendar.SECOND, 0);
+		today.set(Calendar.MILLISECOND, 0);
+		if (filterActual) where = EventsProvider.EMetaData.EventsMetaData.TIME_END_UTC_MILLISECONDS + " > " + today.getTimeInMillis();
+				
+		ArrayList<Event> items = new ArrayList<Event>();
+	
+			Cursor result = context.getContentResolver()
+					.query(EventsProvider.EMetaData.EventsMetaData.CONTENT_URI, null, where, null, null);
+
+		if (result.moveToFirst()) {
+			while (!result.isAfterLast()) {
+				item = EventManagement.createEventFromCursor(result);
+				items.add(item);
+				result.moveToNext();
+			}
+		}
+		result.close();
+	
+		return (items);
+	}
+	
+	/**
+	 * Loads all actual events from local db to given adapter.
+	 * 
+	 * @param instance
+	 * @param eAdapter
+	 * @return
+	 * @deprecated
+	 */
+	public static int loadEvents(Context context, EventsAdapter eAdapter) {
+		int eventsSize = 0;
+		ArrayList<Event> events;
+	
+		events = EventManagement.getEventsFromLocalDb(context, true);
+		if (eAdapter != null) {
+			eAdapter.setItems(events);
+			eAdapter.notifyDataSetChanged();
+		}
+//		TODO Justas M: rewrite
+//		events = getEventsFromLocalDb(today, null);
+//
+//		ArrayList<Event> onlyInvites = null;
+//		if (NavbarActivity.showInvites) {
+//			onlyInvites = filterInvites(events);
+//			eventsSize = onlyInvites.size();
+//		} else {
+//			eventsSize = events.size();
+//		}
+//		if (onlyInvites != null && onlyInvites.size() > 0) {
+//			updateEventsAdapter(onlyInvites, eAdapter);
+//		} else {
+//			updateEventsAdapter(events, eAdapter);
+//		}
+
+		return eventsSize;
+	}
+	
+
+	
+
 //	private static Invited createInvitedFromCursor(Cursor result) {
 //		Invited invited = new Invited();
 //		invited.setGcid(result.getInt(result.getColumnIndexOrThrow(EventsProvider.EMetaData.InvitedMetaData.GCID)));

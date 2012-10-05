@@ -7,6 +7,13 @@ public class Invited {
 	public static final int MAYBE = 2;
 	public static final int PENDING = 4;
 	public static final int OWN_INVITATION_ENTRY = 99999;
+	
+	public static boolean validateResponse(int response) {
+		if (response == REJECTED) return true;
+		if (response == ACCEPTED) return true;
+		if (response == MAYBE) return true;
+		return false;
+	}
 
 	/** Invited person's fullname */
 	private String name;
@@ -93,4 +100,6 @@ public class Invited {
 		
 		return sb.toString();
 	}
+
+
 }

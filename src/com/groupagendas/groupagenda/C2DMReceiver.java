@@ -118,8 +118,7 @@ public class C2DMReceiver extends C2DMBaseReceiver {
 	}
 
 	public static com.groupagendas.groupagenda.events.Event getEventById(String rel_id, Context context) {
-		ArrayList<com.groupagendas.groupagenda.events.Event> allEvents = AgendaUtils.getActualEvents(context,
-				DataManagement.getInstance(context).getEventsFromLocalDb());
+		ArrayList<com.groupagendas.groupagenda.events.Event> allEvents = EventManagement.getEventsFromLocalDb(context, true);
 		for (com.groupagendas.groupagenda.events.Event event : allEvents) {
 			if (event.getEvent_id() == Integer.parseInt(rel_id)) {
 				return event;

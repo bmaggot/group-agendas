@@ -190,8 +190,6 @@ public class NavbarActivity extends Activity {
 					case 5: // Load events
 						if (DataManagement.networkAvailable)
 							EventManagement.getEventsFromRemoteDb(NavbarActivity.this, "");
-						else
-							dm.getEventsFromLocalDb();
 						loadPhase++;
 						total = 80;
 						publishProgress(total);
@@ -643,8 +641,7 @@ public class NavbarActivity extends Activity {
 		@Override
 		protected ArrayList<Item> doInBackground(Void... arg0) {
 			ArrayList<Item> items = new ArrayList<Item>();
-			ArrayList<Event> events = AgendaUtils.getActualEvents(
-					NavbarActivity.this, dm.getEventsFromLocalDb());
+			ArrayList<Event> events = EventManagement.getEventsFromLocalDb(NavbarActivity.this, true);
 
 			String time = "1970-01-01";
 

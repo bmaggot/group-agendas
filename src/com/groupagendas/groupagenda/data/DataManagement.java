@@ -30,6 +30,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import android.R.bool;
 import android.app.Activity;
 import android.content.ContentResolver;
 import android.content.ContentValues;
@@ -1103,42 +1104,7 @@ public class DataManagement {
 
 
 
-	/**
-	 * Loads all actual events from local db to given adapter.
-	 * 
-	 * @param instance
-	 * @param eAdapter
-	 * @return
-	 * @deprecated
-	 */
-	public int loadEvents(Activity instance, EventsAdapter eAdapter) {
-		int eventsSize = 0;
-		ArrayList<Event> events;
-		Calendar today = Calendar.getInstance();
-		today.set(Calendar.HOUR_OF_DAY, 0);
-		today.set(Calendar.MINUTE, 0);
-		today.set(Calendar.SECOND, 0);
-		today.set(Calendar.MILLISECOND, 0);
-		
-		updateEventsAdapter(new ArrayList<Event>(), eAdapter);
-//		TODO Justas M: rewrite
-//		events = getEventsFromLocalDb(today, null);
-//
-//		ArrayList<Event> onlyInvites = null;
-//		if (NavbarActivity.showInvites) {
-//			onlyInvites = filterInvites(events);
-//			eventsSize = onlyInvites.size();
-//		} else {
-//			eventsSize = events.size();
-//		}
-//		if (onlyInvites != null && onlyInvites.size() > 0) {
-//			updateEventsAdapter(onlyInvites, eAdapter);
-//		} else {
-//			updateEventsAdapter(events, eAdapter);
-//		}
 
-		return eventsSize;
-	}
 
 	public ArrayList<Event> filterInvites(ArrayList<Event> events) {
 		ArrayList<Event> newEventList = new ArrayList<Event>();
@@ -1153,25 +1119,7 @@ public class DataManagement {
 	
 
 
-	public ArrayList<Event> getEventsFromLocalDb() {
-		Event item;
-		ArrayList<Event> items = new ArrayList<Event>();
-		if (Data.get_prefs().getBoolean("isAgenda", true)) {
-			Cursor result = Data.getmContext().getContentResolver()
-					.query(EventsProvider.EMetaData.EventsMetaData.CONTENT_URI, null, null, null, null);
 
-			result.moveToFirst();
-
-			while (!result.isAfterLast()) {
-				item = EventManagement.createEventFromCursor(result);
-				items.add(item);
-				result.moveToNext();
-			}
-			result.close();
-		}
-		// return getNaviveCalendarEvents(items);
-		return (items);
-	}
 
 	public Event getNativeCalendarEvent(long id) {
 		Event item = new Event();
@@ -1277,7 +1225,7 @@ public class DataManagement {
 		ArrayList<CEvent> citems = new ArrayList<CEvent>();
 		ArrayList<Event> items = new ArrayList<Event>();
 
-		items = getEventsFromLocalDb();
+		items = EventManagement.getEventsFromLocalDb(getContext(), false);
 
 		for (int i = 0, l = items.size(); i < l; i++) {
 			final Event item = items.get(i);
@@ -1739,12 +1687,9 @@ public class DataManagement {
 	}
 
 	// TODO write a javadoc && MAYBE AN INTERFACE?
-	public void updateEventsAdapter(ArrayList<Event> events, EventsAdapter eAdapter) {
-		if (eAdapter != null) {
-			eAdapter.setItems(events);
-			eAdapter.notifyDataSetChanged();
-		}
-	}
+//	public void updateEventsAdapter(ArrayList<Event> events, EventsAdapter eAdapter) {
+//	
+//	}
 
 	public Context getContext() {
 		return Data.getmContext();
