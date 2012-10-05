@@ -2,7 +2,7 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="fill_parent"
     android:background="@drawable/event_invited_entry_notalone_background"
-    android:layout_height="50dp"
+    android:layout_height="wrap_content"
     android:orientation="vertical" >
     
     <TextView android:id="@+id/invited_fullname"

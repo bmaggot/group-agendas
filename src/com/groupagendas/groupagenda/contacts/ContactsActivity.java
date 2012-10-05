@@ -219,11 +219,13 @@ public class ContactsActivity extends ListActivity implements OnCheckedChangeLis
 
 				@Override
 				public void onClick(View v) {
+					EventActivity.newInvites = new ArrayList<Invited>();
 					for (Contact temp : selectedContacts) {
 						Invited nu = new Invited();
 						nu.setMy_contact_id(temp.contact_id);
 						nu.setName(temp.name + " " + temp.lastname);
 						nu.setStatus(Invited.PENDING);
+						EventActivity.newInvites.add(nu);
 					}
 					
 					finish();
