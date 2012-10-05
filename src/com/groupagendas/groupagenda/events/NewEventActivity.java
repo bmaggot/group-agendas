@@ -1020,43 +1020,52 @@ public class NewEventActivity extends EventActivity {
 			@Override
 			public void onClick(View v) {
 				mDateTimePicker.clearFocus();
-				boolean timeSet = false;
+				String timeFormat;
+				Account account = new Account();
+				if(account.getSetting_ampm() == 1){
+					timeFormat = getResources().getString(R.string.hour_event_view_time_format_AMPM);
+				} else {
+					timeFormat = getResources().getString(R.string.hour_event_view_time_format);
+				}
 				switch (id) {
 				case DIALOG_START:
 					startCalendar = mDateTimePicker.getCalendar();
-					startView.setText(dtUtils.formatDateTime(startCalendar.getTime()));
+					startView.setText(Utils.formatCalendar(startCalendar) + " " + Utils.formatCalendar(startCalendar, timeFormat));
 					if (!startCalendar.before(endCalendar)) {
 						endCalendar = Calendar.getInstance();
 						endCalendar.setTime(mDateTimePicker.getCalendar().getTime());
 						endCalendar.add(Calendar.MINUTE, DEFAULT_EVENT_DURATION_IN_MINS);
-						endView.setText(dtUtils.formatDateTime(endCalendar.getTime()));
+						endView.setText(Utils.formatCalendar(endCalendar) + " " + Utils.formatCalendar(endCalendar, timeFormat));
 					}
-					timeSet = true;
 					break;
 				case DIALOG_END:
 					endCalendar = mDateTimePicker.getCalendar();
+					endView.setText(Utils.formatCalendar(endCalendar) + " " + Utils.formatCalendar(endCalendar, timeFormat));
 					break;
 				case ALARM1:
 					alarm1time = mDateTimePicker.getCalendar();
+					view.setText(Utils.formatCalendar(alarm1time) + " " + Utils.formatCalendar(alarm1time, timeFormat));
 					break;
 				case ALARM2:
 					alarm2time = mDateTimePicker.getCalendar();
+					view.setText(Utils.formatCalendar(alarm2time) + " " + Utils.formatCalendar(alarm2time, timeFormat));
 					break;
 				case ALARM3:
 					alarm3time = mDateTimePicker.getCalendar();
+					view.setText(Utils.formatCalendar(alarm3time) + " " + Utils.formatCalendar(alarm3time, timeFormat));
 					break;
 				case EventActivity.REMINDER1:
 					reminder1time = mDateTimePicker.getCalendar();
+					view.setText(Utils.formatCalendar(reminder1time) + " " + Utils.formatCalendar(reminder1time, timeFormat));
 					break;
 				case EventActivity.REMINDER2:
 					reminder2time = mDateTimePicker.getCalendar();
+					view.setText(Utils.formatCalendar(reminder2time) + " " + Utils.formatCalendar(reminder2time, timeFormat));
 					break;
 				case EventActivity.REMINDER3:
 					reminder3time = mDateTimePicker.getCalendar();
+					view.setText(Utils.formatCalendar(reminder3time) + " " + Utils.formatCalendar(reminder3time, timeFormat));
 					break;
-				}
-				if (!timeSet) {
-					view.setText(dtUtils.formatDateTime(mDateTimePicker.getCalendar().getTime()));
 				}
 				mDateTimeDialog.dismiss();
 			}
