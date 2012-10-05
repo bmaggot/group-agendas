@@ -612,13 +612,13 @@ public class EventManagement {
 //						i++;
 //					}
 //				}
-//				if (e.assigned_contacts != null) {
-//					for (int i = 0, l = e.assigned_contacts.length; i < l; i++) {
-//						reqEntity.addPart("contacts[]", new StringBody(String.valueOf(e.assigned_contacts[i])));
-//					}
-//				} else {
-//					reqEntity.addPart("contacts[]", new StringBody(""));
-//				}
+				if (e.getAssigned_contacts() != null) {
+					for (int i = 0, l = e.getAssigned_groups().length; i < l; i++) {
+						reqEntity.addPart("contacts[]", new StringBody(String.valueOf(e.getAssigned_contacts()[i])));
+					}
+				} else {
+					reqEntity.addPart("contacts[]", new StringBody(""));
+				}
 //				if (e.assigned_groups != null) {
 //					for (int i = 0, l = e.assigned_groups.length; i < l; i++) {
 //						reqEntity.addPart("groups[]", new StringBody(String.valueOf(e.assigned_groups[i])));

@@ -87,7 +87,7 @@ private static final String DEFAULT_REMINDER = "null";
 	
 
 	private ArrayList<Invited> invited = null;
-	private long[] assigned_contacts = null;
+	private long[] assigned_contacts = new long[0];
 	private long[] assigned_groups = null;
 	
 	private int message_count = 0;
