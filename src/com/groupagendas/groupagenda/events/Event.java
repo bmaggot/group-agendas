@@ -519,12 +519,6 @@ private static final String DEFAULT_REMINDER = "null";
 	
 	public void setInvited(ArrayList<Invited> invited) {
 		this.invited = invited;
-		assigned_contacts = new long[invited.size()];
-		int i = 0;
-		for (Invited invite : invited) {
-			assigned_contacts[i] = invite.getMy_contact_id();
-			i++;
-		}
 	}
 	public ArrayList<Invited> getInvited() {
 		if (invited == null) invited = new ArrayList<Invited>();
@@ -764,6 +758,12 @@ public void setInternalID(long internalID) {
 	this.internalID = internalID;
 }
 public long[] getAssigned_contacts() {
+	assigned_contacts = new long[invited.size()];
+	int i = 0;
+	for (Invited invite : invited) {
+		assigned_contacts[i] = invite.getMy_contact_id();
+		i++;
+	}
 	return assigned_contacts;
 }
 //public void setAssigned_contacts(long[] assigned_contacts) {
