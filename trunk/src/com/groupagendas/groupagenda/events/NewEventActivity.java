@@ -92,7 +92,8 @@ public class NewEventActivity extends EventActivity {
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		Account account = new Account();
-		newlyInvitedContacts = null;
+		newInvites = null;
+		newContacts = null;
 
 		// these fields indicate that we will save this user as owner of event
 		// and save his uid
@@ -601,9 +602,9 @@ public class NewEventActivity extends EventActivity {
 			LinearLayout invitedPersonList = (LinearLayout) findViewById(R.id.invited_person_list);
 			invitedPersonList.removeAllViews();
 //		}
-		if (newlyInvitedContacts != null) {
-			event.getInvited().addAll(newlyInvitedContacts);
-			newlyInvitedContacts = null;
+		if (newInvites != null) {
+			event.getInvited().addAll(newInvites);
+			newInvites = null;
 		}
 
 		
