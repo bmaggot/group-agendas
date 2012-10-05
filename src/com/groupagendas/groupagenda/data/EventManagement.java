@@ -1180,20 +1180,6 @@ private static String parseInvitedListToJSONArray(ArrayList<Invited> invited) {
 //			event.setInvited(new ArrayList<Invited>());
 //		}
 //		
-		
-//		TODO set reminders
-//		private Calendar reminder1 = null;
-//		private Calendar reminder2 = null;
-//		private Calendar reminder3 = null;
-//		private Calendar alarm1 = null;
-//		private boolean alarm1fired = false;
-//		private Calendar alarm2 = null;
-//		private boolean alarm2fired = false;
-//		private Calendar alarm3 = null;
-//		private boolean alarm3fired = false;
-		
-
-		
 
 
 //		day_index_formatter = new SimpleDateFormat(EventsProvider.EMetaData.EventsIndexesMetaData.DAY_COLUMN_FORMAT);
@@ -1207,42 +1193,27 @@ private static String parseInvitedListToJSONArray(ArrayList<Invited> invited) {
 					e1.getMessage());
 		}
 			// EVENT TIME START
-			try {
-			unixTimestamp = e.getLong(JSON_TAG_TIME_START_UTC);
+
+			unixTimestamp = e.optLong(JSON_TAG_TIME_START_UTC);
+			if (unixTimestamp == 0) return null;
 			event.setStartCalendar(Utils.createCalendar(Utils.unixTimestampToMilis(unixTimestamp), user_timezone));
-			} catch (JSONException e1) {
-				Reporter.reportError(CLASS_NAME, Thread.currentThread().getStackTrace()[2].getMethodName().toString(),
-						e1.getMessage());
-			}
-			try {
+		
 			// EVENT TIME END
-			unixTimestamp = e.getLong(JSON_TAG_TIME_END_UTC);
+				unixTimestamp = e.optLong(JSON_TAG_TIME_END_UTC);
+				if (unixTimestamp == 0) return null;
 			event.setEndCalendar(Utils.createCalendar(Utils.unixTimestampToMilis(unixTimestamp), user_timezone));
-		}  catch (JSONException e1) {
-			Reporter.reportError(CLASS_NAME, Thread.currentThread().getStackTrace()[2].getMethodName().toString(),
-					e1.getMessage());
-		}
+		
 		
 		
 
-		try {
-			event.setUser_id(e.getInt(JSON_TAG_USER_ID));
-		} catch (JSONException e1) {
-			Reporter.reportError(CLASS_NAME, Thread.currentThread().getStackTrace()[2].getMethodName().toString(),
-					e1.getMessage());
-		}
-		try {
-			event.setStatus(e.getInt(JSON_TAG_STATUS));
-		} catch (JSONException e1) {
-			Reporter.reportError(CLASS_NAME, Thread.currentThread().getStackTrace()[2].getMethodName().toString(),
-					e1.getMessage());
-		}
-		try {
-			event.setIs_owner(e.getInt(JSON_TAG_IS_OWNER) == 1);
-		} catch (JSONException e1) {
-			Reporter.reportError(CLASS_NAME, Thread.currentThread().getStackTrace()[2].getMethodName().toString(),
-					e1.getMessage());
-		}
+
+			event.setUser_id(e.optInt(JSON_TAG_USER_ID));
+		
+			event.setStatus(e.optInt(JSON_TAG_STATUS));
+
+
+			event.setIs_owner(e.optInt(JSON_TAG_IS_OWNER) == 1);
+
 		try {
 			event.setType(e.getString(JSON_TAG_TYPE));
 		} catch (JSONException e1) {
@@ -1331,35 +1302,20 @@ private static String parseInvitedListToJSONArray(ArrayList<Invited> invited) {
 		}
 
 		// reminders
-		try {
-			event.setReminder1(Utils.createCalendar(e.getLong(JSON_TAG_ABSOLUTE_REMINDER_1), user_timezone));
-		} catch (JSONException e1) {
-//			Reporter.reportError(CLASS_NAME, Thread.currentThread().getStackTrace()[2].getMethodName().toString(),
-//					e1.getMessage());
-		}
-		try {
-			event.setReminder2(Utils.createCalendar(e.getLong(JSON_TAG_ABSOLUTE_REMINDER_2), user_timezone));
-		} catch (JSONException e1) {
-//			System.out.println("LONG PARSE FAILED");
-//			Reporter.reportError(CLASS_NAME, Thread.currentThread().getStackTrace()[2].getMethodName().toString(),
-//					e1.getMessage());
-		}
-		try {
-			event.setReminder3(Utils.createCalendar(e.getLong(JSON_TAG_ABSOLUTE_REMINDER_3), user_timezone));
-		} catch (JSONException e1) {
-//			System.out.println("LONG PARSE FAILED");
-//			Reporter.reportError(CLASS_NAME, Thread.currentThread().getStackTrace()[2].getMethodName().toString(),
-//					e1.getMessage());
-		}
+		unixTimestamp = e.optLong(JSON_TAG_ABSOLUTE_REMINDER_1);
+		if (unixTimestamp != 0) event.setReminder1(Utils.createCalendar(Utils.unixTimestampToMilis(unixTimestamp), user_timezone));
+		unixTimestamp = e.optLong(JSON_TAG_ABSOLUTE_REMINDER_2);
+		if (unixTimestamp != 0) event.setReminder2(Utils.createCalendar(Utils.unixTimestampToMilis(unixTimestamp), user_timezone));
+		unixTimestamp = e.optLong(JSON_TAG_ABSOLUTE_REMINDER_3);
+		if (unixTimestamp != 0) event.setReminder3(Utils.createCalendar(Utils.unixTimestampToMilis(unixTimestamp), user_timezone));
+		//alarms
+		unixTimestamp = e.optLong(JSON_TAG_ABSOLUTE_ALARM_1);
+		if (unixTimestamp != 0) event.setAlarm1(Utils.createCalendar(Utils.unixTimestampToMilis(unixTimestamp), user_timezone));
+		unixTimestamp = e.optLong(JSON_TAG_ABSOLUTE_ALARM_2);
+		if (unixTimestamp != 0) event.setAlarm2(Utils.createCalendar(Utils.unixTimestampToMilis(unixTimestamp), user_timezone));
+		unixTimestamp = e.optLong(JSON_TAG_ABSOLUTE_ALARM_3);
+		if (unixTimestamp != 0) event.setAlarm3(Utils.createCalendar(Utils.unixTimestampToMilis(unixTimestamp), user_timezone));
 
-		// alarms
-		try {
-			event.setAlarm1(Utils.createCalendar(e.getLong(JSON_TAG_ABSOLUTE_ALARM_1), user_timezone));
-		} catch (JSONException e1) {
-//			System.out.println("LONG PARSE FAILED");
-//			Reporter.reportError(CLASS_NAME, Thread.currentThread().getStackTrace()[2].getMethodName().toString(),
-//					e1.getMessage());
-		}
 		try {
 			event.setAlarm1fired(e.getString(JSON_TAG_ALARM_1_FIRED));
 		} catch (JSONException e1) {
@@ -1368,26 +1324,12 @@ private static String parseInvitedListToJSONArray(ArrayList<Invited> invited) {
 					e1.getMessage());
 		}
 		try {
-			event.setAlarm2(Utils.createCalendar(e.getLong(JSON_TAG_ABSOLUTE_ALARM_2), user_timezone));
-		} catch (JSONException e1) {
-//			System.out.println("LONG PARSE FAILED");
-//			Reporter.reportError(CLASS_NAME, Thread.currentThread().getStackTrace()[2].getMethodName().toString(),
-//					e1.getMessage());
-		}
-		try {
 			event.setAlarm2fired(e.getString(JSON_TAG_ALARM_2_FIRED));
 		} catch (JSONException e1) {
-//			System.out.println("LONG PARSE FAILED");
 			Reporter.reportError(CLASS_NAME, Thread.currentThread().getStackTrace()[2].getMethodName().toString(),
 					e1.getMessage());
 		}
-		try {
-			event.setAlarm3(Utils.createCalendar(e.getLong(JSON_TAG_ABSOLUTE_ALARM_3), user_timezone));
-		} catch (JSONException e1) {
-//			System.out.println("LONG PARSE FAILED");
-//			Reporter.reportError(CLASS_NAME, Thread.currentThread().getStackTrace()[2].getMethodName().toString(),
-//					e1.getMessage());
-		}
+	
 		try {
 			event.setAlarm3fired(e.getString(JSON_TAG_ALARM_3_FIRED));
 		} catch (JSONException e1) {
@@ -1395,39 +1337,18 @@ private static String parseInvitedListToJSONArray(ArrayList<Invited> invited) {
 					e1.getMessage());
 		}
 
-		try {
-			unixTimestamp = e.getLong(JSON_TAG_TIMESTAMP_CREATED);
-			event.setCreatedMillisUtc(unixTimestamp);
-		} catch (JSONException e1) {
-			Reporter.reportError(CLASS_NAME, Thread.currentThread().getStackTrace()[2].getMethodName().toString(),
-					e1.getMessage());
-		}
-		try {
-			event.setModifiedMillisUtc(e.getLong(JSON_TAG_TIMESTAMP_MODIFIED));
-		} catch (JSONException e1) {
-			Reporter.reportError(CLASS_NAME, Thread.currentThread().getStackTrace()[2].getMethodName().toString(),
-					e1.getMessage());
-		}
 
-		try {
-			event.setAttendant_0_count(e.getInt(JSON_TAG_ATTENDANT_0_COUNT));
-		} catch (JSONException e1) {
-			Reporter.reportError(CLASS_NAME, Thread.currentThread().getStackTrace()[2].getMethodName().toString(),
-					e1.getMessage());
-		}
-		try {
-			event.setAttendant_1_count(e.getInt(JSON_TAG_ATTENDANT_1_COUNT));
-		} catch (JSONException e1) {
-			Reporter.reportError(CLASS_NAME, Thread.currentThread().getStackTrace()[2].getMethodName().toString(),
-					e1.getMessage());
-		}
+			
+			event.setCreatedMillisUtc(Utils.unixTimestampToMilis(e.optLong(JSON_TAG_TIMESTAMP_CREATED)));
+			event.setModifiedMillisUtc(Utils.unixTimestampToMilis(e.optLong(JSON_TAG_TIMESTAMP_MODIFIED)));
 
 
+			event.setAttendant_0_count(e.optInt(JSON_TAG_ATTENDANT_0_COUNT));
+			event.setAttendant_1_count(e.optInt(JSON_TAG_ATTENDANT_1_COUNT));
 			event.setAttendant_2_count(e.optInt(JSON_TAG_ATTENDANT_2_COUNT));
 			event.setAttendant_4_count(e.optInt(JSON_TAG_ATTENDANT_4_COUNT));
 	
 			event.setSports_event(e.optInt(JSON_TAG_IS_SPORTS_EVENT) == 1);
-		
 			event.setIs_all_day(e.optInt(JSON_TAG_ALL_DAY) == 1);
 
 		try {
@@ -1461,7 +1382,6 @@ private static String parseInvitedListToJSONArray(ArrayList<Invited> invited) {
 			ArrayList<Invited> invites = new ArrayList<Invited>();
 			createInvitedListFromJSONArrayString(jsonstring, invites);
 			event.setInvited(invites);
-			System.out.println("EVENT: " + event.getTitle() + " invites: " + event.getInvited().size());
 		} catch (JSONException e1) {
 			event.setInvited(new ArrayList<Invited>());
 		}
