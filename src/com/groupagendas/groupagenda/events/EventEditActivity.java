@@ -4,17 +4,11 @@ import java.util.Calendar;
 
 import android.app.AlertDialog;
 import android.app.Dialog;
-import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.graphics.Color;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.text.Editable;
-import android.text.TextWatcher;
-import android.view.KeyEvent;
-import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -44,10 +38,8 @@ import com.groupagendas.groupagenda.data.CalendarSettings;
 import com.groupagendas.groupagenda.data.Data;
 import com.groupagendas.groupagenda.data.DataManagement;
 import com.groupagendas.groupagenda.data.EventManagement;
-import com.groupagendas.groupagenda.events.EventsAdapter.ViewHolder;
 import com.groupagendas.groupagenda.timezone.TimezoneManager;
 import com.groupagendas.groupagenda.utils.CountryManager;
-import com.groupagendas.groupagenda.utils.EventStatusUpdater;
 import com.groupagendas.groupagenda.utils.SearchDialog;
 import com.groupagendas.groupagenda.utils.Utils;
 import com.ptashek.widgets.datetimepicker.DateTimePicker;
@@ -628,12 +620,19 @@ public class EventEditActivity extends EventActivity {
 			}
 
 			// START AND END TIME
+			String timeFormat;
+			Account account = new Account();
+			if(account.getSetting_ampm() == 1){
+				timeFormat = getResources().getString(R.string.hour_event_view_time_format_AMPM);
+			} else {
+				timeFormat = getResources().getString(R.string.hour_event_view_time_format);
+			}
 			if (result.getStartCalendar() != null) {
-				startView.setText(Utils.formatCalendar(result.getStartCalendar()));
+				startView.setText(Utils.formatCalendar(result.getStartCalendar()) + " " + Utils.formatCalendar(result.getStartCalendar(), timeFormat));
 				startCalendar = (Calendar) result.getStartCalendar().clone();
 			}
 			if (result.getEndCalendar() != null) {
-				endView.setText(Utils.formatCalendar(result.getEndCalendar()));
+				endView.setText(Utils.formatCalendar(result.getEndCalendar()) + " " + Utils.formatCalendar(result.getEndCalendar(), timeFormat));
 				endCalendar = (Calendar) result.getEndCalendar().clone();
 			}
 
@@ -693,7 +692,6 @@ public class EventEditActivity extends EventActivity {
 					}
 				}
 			});
-			Account account = new Account();
 			if (result.getReminder1() != null) {
 				reminder1.setText(Utils.formatCalendar(result.getReminder1(), account.getSetting_date_format()));
 			} else {
@@ -956,9 +954,9 @@ public class EventEditActivity extends EventActivity {
 		mDateTimePicker.updateDate(c.get(Calendar.YEAR), c.get(Calendar.MONTH), c.get(Calendar.DAY_OF_MONTH));
 		mDateTimePicker.updateTime(c.get(Calendar.HOUR_OF_DAY), c.get(Calendar.MINUTE));
 
-		final boolean is24h = !CalendarSettings.isUsing_AM_PM();
+//		final boolean is24h = !CalendarSettings.isUsing_AM_PM();
 		// Setup TimePicker
-		mDateTimePicker.setIs24HourView(is24h);
+//		mDateTimePicker.setIs24HourView(is24h);
 
 		// Update demo TextViews when the "OK" button is clicked
 		((Button) mDateTimeDialogView.findViewById(R.id.SetDateTime)).setOnClickListener(new OnClickListener() {
@@ -966,18 +964,23 @@ public class EventEditActivity extends EventActivity {
 			@Override
 			public void onClick(View v) {
 				mDateTimePicker.clearFocus();
-				boolean timeSet = false;
+				String timeFormat;
+				Account account = new Account();
+				if(account.getSetting_ampm() == 1){
+					timeFormat = getResources().getString(R.string.hour_event_view_time_format_AMPM);
+				} else {
+					timeFormat = getResources().getString(R.string.hour_event_view_time_format);
+				}
 				switch (id) {
 				case DIALOG_START:
 					startCalendar = mDateTimePicker.getCalendar();
-					startView.setText(dtUtils.formatDateTime(startCalendar.getTime()));
+					startView.setText(Utils.formatCalendar(startCalendar) + " " + Utils.formatCalendar(startCalendar, timeFormat));
 					if (!startCalendar.before(endCalendar)) {
 						endCalendar = Calendar.getInstance();
 						endCalendar.setTime(mDateTimePicker.getCalendar().getTime());
 						endCalendar.add(Calendar.MINUTE, NewEventActivity.DEFAULT_EVENT_DURATION_IN_MINS);
-						endView.setText(dtUtils.formatDateTime(endCalendar.getTime()));
+						endView.setText(Utils.formatCalendar(endCalendar) + " " + Utils.formatCalendar(endCalendar, timeFormat));
 					}
-					timeSet = true;
 					break;
 				case DIALOG_END:
 					endCalendar = mDateTimePicker.getCalendar();
@@ -1000,10 +1003,6 @@ public class EventEditActivity extends EventActivity {
 				case REMINDER3:
 					reminder3time = mDateTimePicker.getCalendar();
 					break;
-				}
-				if (timeSet) {
-					Account account = new Account();
-					view.setText(Utils.formatCalendar(mDateTimePicker.getCalendar(), account.getSetting_date_format()));
 				}
 				mDateTimeDialog.dismiss();
 			}
