@@ -17,6 +17,7 @@ import az.mecid.android.QuickAction;
 import com.groupagendas.groupagenda.NavbarActivity;
 import com.groupagendas.groupagenda.R;
 import com.groupagendas.groupagenda.data.DataManagement;
+import com.groupagendas.groupagenda.data.EventManagement;
 import com.groupagendas.groupagenda.settings.SettingsActivity;
 import com.groupagendas.groupagenda.utils.AgendaUtils;
 
@@ -59,7 +60,7 @@ public class EventsActivity extends ListActivity {
 		radioButton.setOnCheckedChangeListener(btnNavBarOnCheckedChangeListener);
 
 		setListAdapter(eventsAdapter);
-		dm.loadEvents(this, eventsAdapter);
+		EventManagement.loadEvents(this, eventsAdapter);
 		if(NavbarActivity.showInvites && AgendaUtils.newInvites != 0){
 			NavbarActivity.showInvites = false;
 			changeTitle(getString(R.string.status_new_invite, AgendaUtils.newInvites));
@@ -104,7 +105,7 @@ public class EventsActivity extends ListActivity {
 
 						@Override
 						public void onClick(View v) {
-							dm.loadEvents(getParent(), eventsAdapter);
+							EventManagement.loadEvents(getParent(), eventsAdapter);
 							changeTitle(getString(R.string.status_new_invite, AgendaUtils.newInvites));
 							qa.dismiss();
 							eventsAdapter.getFilter().filter("4");
@@ -118,7 +119,7 @@ public class EventsActivity extends ListActivity {
 
 						@Override
 						public void onClick(View v) {
-							dm.loadEvents(getParent(), eventsAdapter);
+							EventManagement.loadEvents(getParent(), eventsAdapter);
 							changeTitle(getString(R.string.status_not_attending));
 							qa.dismiss();
 							eventsAdapter.getFilter().filter("0");
@@ -132,7 +133,7 @@ public class EventsActivity extends ListActivity {
 
 						@Override
 						public void onClick(View v) {
-							dm.loadEvents(getParent(), eventsAdapter);
+							EventManagement.loadEvents(getParent(), eventsAdapter);
 							changeTitle(getString(R.string.status_attending));
 							qa.dismiss();
 							eventsAdapter.getFilter().filter("1");
@@ -146,7 +147,7 @@ public class EventsActivity extends ListActivity {
 
 						@Override
 						public void onClick(View v) {
-							dm.loadEvents(getParent(), eventsAdapter);
+							EventManagement.loadEvents(getParent(), eventsAdapter);
 							changeTitle(getString(R.string.status_pending));
 							qa.dismiss();
 							eventsAdapter.getFilter().filter("2");

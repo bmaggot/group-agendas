@@ -586,7 +586,7 @@ public class EventEditActivity extends EventActivity {
 				});
 
 				// COLOR SELECTION
-				colorView.setImageResource(result.getColorBubbleId(EventEditActivity.this));
+				
 				selectedColor = result.getColor();
 				final String[] colorsValues = getResources().getStringArray(R.array.colors_values);
 				colorView.setOnClickListener(new OnClickListener() {
@@ -641,6 +641,9 @@ public class EventEditActivity extends EventActivity {
 				saveButton.setVisibility(View.GONE);
 
 			}
+			colorView.setImageResource(result.getColorBubbleId(EventEditActivity.this));
+			iconView.setImageResource(result.getIconId(EventEditActivity.this));
+			
 
 			// START AND END TIME
 			if (result.getStartCalendar() != null) {
@@ -656,11 +659,6 @@ public class EventEditActivity extends EventActivity {
 				LinearLayout parent = (LinearLayout) descView.getParent();
 				parent.setVisibility(View.VISIBLE);
 				descView.setText(result.getDescription());
-			}
-
-			if (!result.getIcon().equals("null")) {
-				selectedIcon = result.getIcon();
-				iconView.setImageResource(result.getIconId(EventEditActivity.this));
 			}
 
 			if (result.getCity().length() > 0) {

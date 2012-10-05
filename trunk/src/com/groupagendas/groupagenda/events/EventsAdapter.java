@@ -16,6 +16,8 @@ import android.widget.TextView;
 
 import com.groupagendas.groupagenda.R;
 import com.groupagendas.groupagenda.data.DataManagement;
+import com.groupagendas.groupagenda.data.EventManagement;
+import com.groupagendas.groupagenda.events.NewEventActivity.GetContactsTask;
 import com.groupagendas.groupagenda.utils.EventStatusUpdater;
 import com.groupagendas.groupagenda.utils.Utils;
 
@@ -115,51 +117,47 @@ public class EventsAdapter extends BaseAdapter implements Filterable{
 		holder.button_yes.setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View arg0) {
-				boolean success = dm.changeEventStatus(event.getEvent_id(), "1");
+//				boolean success = dm.changeEventStatus(event.getEvent_id(), "1");
 				holder.button_yes.setVisibility(View.INVISIBLE);
 				holder.button_maybe.setVisibility(View.VISIBLE);
 				holder.button_no.setVisibility(View.VISIBLE);
 				holder.status.setText(mContext.getString(R.string.status_attending));
-				editDb(event.getEvent_id(), 1, success);
-				event.setStatus(1);
-				notifyDataSetChanged();
+				event.setStatus(Invited.ACCEPTED);
+				respondToInvite(event);
 			}
 		});
 		
 		holder.button_maybe.setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View arg0) {
-				boolean success = dm.changeEventStatus(event.getEvent_id(), "2");
+//				boolean success = dm.changeEventStatus(event.getEvent_id(), "2");
 				holder.button_yes.setVisibility(View.VISIBLE);
 				holder.button_maybe.setVisibility(View.INVISIBLE);
 				holder.button_no.setVisibility(View.VISIBLE);
 				holder.status.setText(mContext.getString(R.string.status_pending));
-				editDb(event.getEvent_id(), 2, success);
-				event.setStatus(2);
-				notifyDataSetChanged();
+				event.setStatus(Invited.MAYBE);
+				respondToInvite(event);
 			}
 		});
 		
 		holder.button_no.setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View arg0) {
-				boolean success = dm.changeEventStatus(event.getEvent_id(), "0");
 				holder.button_yes.setVisibility(View.VISIBLE);
 				holder.button_maybe.setVisibility(View.VISIBLE);
 				holder.button_no.setVisibility(View.INVISIBLE);
 				holder.status.setText(mContext.getString(R.string.status_not_attending));
-				editDb(event.getEvent_id(), 0, success);
-				event.setStatus(0);
-				notifyDataSetChanged();
+				event.setStatus(Invited.REJECTED);
+				respondToInvite(event);
 			}
 		});
 		
 		return convertView;
 	}
 	
-	private void editDb(int event_id, int status, boolean success){
-		Object[] array = {event_id, status, success, dm};
-		new EventStatusUpdater().execute(array);
+	private void respondToInvite(Event event){
+		EventManagement.respondToInvitation(mContext, event);
+		notifyDataSetChanged();
 //		ContentValues values = new ContentValues();
 //		values.put(EventsProvider.EMetaData.EventsMetaData.STATUS, status);
 //		if(!success){

@@ -115,8 +115,8 @@ public class EventsProvider extends ContentProvider{
 			public static final String ATTENDANT_0_COUNT = "attendant_0_count";
 			public static final String ATTENDANT_4_COUNT = "attendant_4_count";
 			
-//			public static final String ASSIGNED_CONTACTS = "assigned_contacts";
-//			public static final String ASSIGNED_GROUPS = "assigned_groups";
+			public static final String ASSIGNED_CONTACTS = "assigned_contacts";
+			public static final String ASSIGNED_GROUPS = "assigned_groups";
 			
 			public static final String UPLOADED_SUCCESSFULLY = "uploaded";
 			
