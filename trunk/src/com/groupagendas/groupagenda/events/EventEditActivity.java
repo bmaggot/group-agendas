@@ -984,24 +984,31 @@ public class EventEditActivity extends EventActivity {
 					break;
 				case DIALOG_END:
 					endCalendar = mDateTimePicker.getCalendar();
+					endView.setText(Utils.formatCalendar(endCalendar) + " " + Utils.formatCalendar(endCalendar, timeFormat));
 					break;
 				case ALARM1:
 					alarm1time = mDateTimePicker.getCalendar();
+					view.setText(Utils.formatCalendar(alarm1time) + " " + Utils.formatCalendar(alarm1time, timeFormat));
 					break;
 				case ALARM2:
 					alarm2time = mDateTimePicker.getCalendar();
+					view.setText(Utils.formatCalendar(alarm2time) + " " + Utils.formatCalendar(alarm2time, timeFormat));
 					break;
 				case ALARM3:
 					alarm3time = mDateTimePicker.getCalendar();
+					view.setText(Utils.formatCalendar(alarm3time) + " " + Utils.formatCalendar(alarm3time, timeFormat));
 					break;
 				case REMINDER1:
 					reminder1time = mDateTimePicker.getCalendar();
+					view.setText(Utils.formatCalendar(reminder1time) + " " + Utils.formatCalendar(reminder1time, timeFormat));
 					break;
 				case REMINDER2:
 					reminder2time = mDateTimePicker.getCalendar();
+					view.setText(Utils.formatCalendar(reminder2time) + " " + Utils.formatCalendar(reminder2time, timeFormat));
 					break;
 				case REMINDER3:
 					reminder3time = mDateTimePicker.getCalendar();
+					view.setText(Utils.formatCalendar(reminder3time) + " " + Utils.formatCalendar(reminder3time, timeFormat));
 					break;
 				}
 				mDateTimeDialog.dismiss();
