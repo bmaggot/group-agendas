@@ -24,7 +24,8 @@ public class EventActivity extends Activity {
 	public static final int DEFAULT_EVENT_DURATION_IN_MINS = 30;
 	public static final String EXTRA_STRING_FOR_START_CALENDAR = "strTime";
 	
-	public static ArrayList<Invited> newlyInvitedContacts;
+	public static ArrayList<Invited> newInvites;
+	public static int[] newContacts;
 
 	protected DataManagement dm;
 	protected DateTimeUtils dtUtils;

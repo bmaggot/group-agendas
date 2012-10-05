@@ -87,6 +87,8 @@ private static final String DEFAULT_REMINDER = "null";
 	
 
 	private ArrayList<Invited> invited = null;
+	private long[] assigned_contacts = null;
+	private long[] assigned_groups = null;
 	
 	private int message_count = 0;
 	
@@ -754,6 +756,18 @@ public long getInternalID() {
 }
 public void setInternalID(long internalID) {
 	this.internalID = internalID;
+}
+public long[] getAssigned_contacts() {
+	return assigned_contacts;
+}
+public void setAssigned_contacts(long[] assigned_contacts) {
+	this.assigned_contacts = assigned_contacts;
+}
+public long[] getAssigned_groups() {
+	return assigned_groups;
+}
+public void setAssigned_groups(long[] assigned_groups) {
+	this.assigned_groups = assigned_groups;
 }
 	
 }

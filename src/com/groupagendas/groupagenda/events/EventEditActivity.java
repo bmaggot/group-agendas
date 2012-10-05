@@ -86,7 +86,8 @@ public class EventEditActivity extends EventActivity {
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.event_edit);
-		newlyInvitedContacts = null;
+		newInvites = null;
+		newContacts = null;
 
 	}
 
@@ -96,21 +97,21 @@ public class EventEditActivity extends EventActivity {
 		String[] array;
 		countriesList = new ArrayList<String>();
 		timezonesList = new ArrayList<String>();
-		
+
 		array = getResources().getStringArray(R.array.countries);
 		for (String temp : array) {
 			countriesList.add(temp);
 		}
 		if (countriesList != null)
 			countriesAdapter = new StringArrayListAdapter(EventEditActivity.this, R.layout.search_dialog_item, countriesList);
-		
+
 		array = getResources().getStringArray(R.array.timezones);
 		for (String temp : array) {
 			timezonesList.add(temp);
 		}
 		if (timezonesList != null)
 			timezonesAdapter = new StringArrayListAdapter(EventEditActivity.this, R.layout.search_dialog_item, timezonesList);
-		
+
 		initViewItems();
 		hideAddressPanel();
 		hideDetailsPanel();
@@ -118,8 +119,10 @@ public class EventEditActivity extends EventActivity {
 		detailsPanel.setVisibility(View.GONE);
 		addressDetailsPanel.setVisibility(View.VISIBLE);
 
-		event_internal_id = intent.getLongExtra("event_id", 0); // TODO implement offline
-														// mode event Edit
+		event_internal_id = intent.getLongExtra("event_id", 0); // TODO
+																// implement
+																// offline
+		// mode event Edit
 		if (event_internal_id > 0) {
 			new GetEventTask().execute(event_internal_id);
 		}
@@ -229,17 +232,18 @@ public class EventEditActivity extends EventActivity {
 				dia.show();
 			}
 		});
-		
-//		final ArrayAdapter<String> adapterCountry = new ArrayAdapter<String>(EventEditActivity.this, R.layout.search_dialog_item,
-//				CountryManager.getCountries(EventEditActivity.this));
-//		adapterCountry.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-//		countrySpinner.setAdapter(adapterCountry);
-//		countryArray = CountryManager.getCountryValues(EventEditActivity.this);
-//		countrySpinnerBlock = (LinearLayout) findViewById(R.id.countrySpinnerBlock);
 
+		// final ArrayAdapter<String> adapterCountry = new
+		// ArrayAdapter<String>(EventEditActivity.this,
+		// R.layout.search_dialog_item,
+		// CountryManager.getCountries(EventEditActivity.this));
+		// adapterCountry.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+		// countrySpinner.setAdapter(adapterCountry);
+		// countryArray =
+		// CountryManager.getCountryValues(EventEditActivity.this);
+		// countrySpinnerBlock = (LinearLayout)
+		// findViewById(R.id.countrySpinnerBlock);
 
-		
-		
 		cityViewBlock = (LinearLayout) findViewById(R.id.cityViewBlock);
 		cityView = (EditText) findViewById(R.id.cityView);
 		streetViewBlock = (LinearLayout) findViewById(R.id.streetViewBlock);
@@ -471,40 +475,44 @@ public class EventEditActivity extends EventActivity {
 		});
 	}
 
-//	public View getInvitedView(Invited invited, LayoutInflater inflater, View view, Context mContext, boolean setEmailRed) {
-//		final TextView nameView = (TextView) view.findViewById(R.id.invited_fullname);
-//		nameView.setText(invited.name);
-//
-//		final TextView emailView = (TextView) view.findViewById(R.id.invited_available_email);
-//		emailView.setText(invited.email);
-//		if (setEmailRed) {
-//			emailView.setTextColor(Color.GREEN);
-//		}
-//
-//		final TextView statusView = (TextView) view.findViewById(R.id.invited_status);
-//
-//		switch (invited.status_id) {
-//		case 0:
-//			statusView.setText(mContext.getString(R.string.status_0));
-//			break;
-//		case 1:
-//			statusView.setText(mContext.getString(R.string.status_1));
-//			break;
-//		case 2:
-//			statusView.setText(mContext.getString(R.string.status_2));
-//			break;
-//		case 4:
-//			statusView.setText(mContext.getString(R.string.new_invite));
-//			break;
-//		}
-//
-//		if (invited.me) {
-//			view.setTag("my_event_status");
-//			view.setId(MY_INVITED_ENTRY_ID);
-//		}
-//
-//		return view;
-//	}
+	// public View getInvitedView(Invited invited, LayoutInflater inflater, View
+	// view, Context mContext, boolean setEmailRed) {
+	// final TextView nameView = (TextView)
+	// view.findViewById(R.id.invited_fullname);
+	// nameView.setText(invited.name);
+	//
+	// final TextView emailView = (TextView)
+	// view.findViewById(R.id.invited_available_email);
+	// emailView.setText(invited.email);
+	// if (setEmailRed) {
+	// emailView.setTextColor(Color.GREEN);
+	// }
+	//
+	// final TextView statusView = (TextView)
+	// view.findViewById(R.id.invited_status);
+	//
+	// switch (invited.status_id) {
+	// case 0:
+	// statusView.setText(mContext.getString(R.string.status_0));
+	// break;
+	// case 1:
+	// statusView.setText(mContext.getString(R.string.status_1));
+	// break;
+	// case 2:
+	// statusView.setText(mContext.getString(R.string.status_2));
+	// break;
+	// case 4:
+	// statusView.setText(mContext.getString(R.string.new_invite));
+	// break;
+	// }
+	//
+	// if (invited.me) {
+	// view.setTag("my_event_status");
+	// view.setId(MY_INVITED_ENTRY_ID);
+	// }
+	//
+	// return view;
+	// }
 
 	class GetEventTask extends AsyncTask<Long, Event, Event> {
 		final DataManagement dm = DataManagement.getInstance(getParent());
@@ -532,10 +540,10 @@ public class EventEditActivity extends EventActivity {
 		@Override
 		protected void onPostExecute(final Event result) {
 			super.onPostExecute(result);
-			if (result == null){
+			if (result == null) {
 				throw new IllegalStateException("EVENT NOT FOUND IN LOCAL DB!!!!!!");
 			}
-		
+
 			event = result;
 			// title
 
@@ -732,10 +740,19 @@ public class EventEditActivity extends EventActivity {
 				alarm3.setText("");
 			}
 
-			// TODO optimizacija panasios jebalos gula ant meskos sazines. Zajabys.
-			if (newlyInvitedContacts != null) {
-				event.getInvited().addAll(newlyInvitedContacts);
-				newlyInvitedContacts = null;
+			// TODO optimizacija panasios jebalos gula ant meskos sazines.
+			// Zajabys.
+			if (newInvites != null) {
+				// event.getInvited().addAll(newInvites);
+
+				long[] newAssignedContacs = new long[newInvites.size()];
+				for (int i = 0; i < newInvites.size(); i++) {
+					newAssignedContacs[i] = newInvites.get(i).getMy_contact_id();
+				}
+				long[] nuAssignedContacts = new long[event.getAssigned_contacts().length + newAssignedContacs.length];
+				System.arraycopy(event.getAssigned_contacts(), 0, nuAssignedContacts, 0, event.getAssigned_contacts().length);
+				System.arraycopy(newAssignedContacs, 0, nuAssignedContacts, event.getAssigned_contacts().length, newAssignedContacs.length);
+				newInvites = null;
 			}
 
 			int invitedListSize = event.getInvited().size();

@@ -226,16 +226,6 @@ public class ContactsActivity extends ListActivity implements OnCheckedChangeLis
 						nu.setStatus(Invited.PENDING);
 					}
 					
-//					if (Data.eventForSavingNewInvitedPersons != null && !Data.eventForSavingNewInvitedPersons.is_owner()) {
-//						try {
-//							new AddNewPersonsToEvent().execute().get();
-//							new UpdateEventByIdFromRemoteDb().execute(Data.eventForSavingNewInvitedPersons.getEvent_id()).get();
-//						} catch (InterruptedException e) {
-//							e.printStackTrace();
-//						} catch (ExecutionException e) {
-//							e.printStackTrace();
-//						}
-//					}
 					finish();
 				}
 			});
