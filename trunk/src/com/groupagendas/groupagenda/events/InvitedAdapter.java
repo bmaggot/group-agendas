@@ -64,22 +64,22 @@ public class InvitedAdapter extends AbstractAdapter<Invited> {
 			}
 			statusView.setText(temp);
 
-			if (invited.getGuid() > 0) {
-				if (invited.getGuid() == account.getUser_id())
-					emailView.setText(account.getEmail());
-			} else if (invited.getMy_contact_id() > 0) {
-				String[] projection = { ContactsProvider.CMetaData.ContactsMetaData.EMAIL };
-				temp = EventsProvider.EMetaData.InvitedMetaData.MY_CONTACT_ID + "=" + invited.getMy_contact_id();
-				cur = context.getContentResolver().query(ContactsProvider.CMetaData.ContactsMetaData.CONTENT_URI, projection, temp, null,
-						null);
-				if (cur.moveToFirst()) {
-					temp = cur.getString(cur.getColumnIndex(ContactsProvider.CMetaData.ContactsMetaData.EMAIL));
-					emailView.setText(temp);
-				} else {
-					emailView.setText("");
-					Log.e("InvitedAdapter.getView()", "Failed getting own contact's email.");
-				}
-			}
+//			if (invited.getGuid() > 0) {
+//				if (invited.getGuid() == account.getUser_id())
+//					emailView.setText(account.getEmail());
+//			} else if (invited.getMy_contact_id() > 0) {
+//				String[] projection = { ContactsProvider.CMetaData.ContactsMetaData.EMAIL };
+//				temp = ContactsProvider.CMetaData.ContactsMetaData.C_ID + "=" + invited.getMy_contact_id();
+//				cur = context.getContentResolver().query(ContactsProvider.CMetaData.ContactsMetaData.CONTENT_URI, projection, temp, null,
+//						null);
+//				if (cur.moveToFirst()) {
+//					temp = cur.getString(cur.getColumnIndex(ContactsProvider.CMetaData.ContactsMetaData.EMAIL));
+//					emailView.setText(temp);
+//				} else {
+//					emailView.setText("");
+//					Log.e("InvitedAdapter.getView()", "Failed getting own contact's email.");
+//				}
+//			}
 		}
 		
 		if (i == listSize - 1)
