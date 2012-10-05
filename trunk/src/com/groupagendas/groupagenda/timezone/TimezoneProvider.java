@@ -16,7 +16,7 @@ import android.text.TextUtils;
 
 import com.groupagendas.groupagenda.utils.DBUtils;
 
-public class TimezoneProvider extends ContentProvider{
+public class TimezoneProvider extends ContentProvider {
 	private DatabaseHelper mOpenHelper;
 	
 	public static class TMetaData {

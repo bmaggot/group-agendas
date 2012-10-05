@@ -62,7 +62,7 @@ public class EventsActivity extends ListActivity {
 		dm.loadEvents(this, eventsAdapter);
 		if(NavbarActivity.showInvites && AgendaUtils.newInvites != 0){
 			NavbarActivity.showInvites = false;
-			changeTitle(getString(R.string.status_4, AgendaUtils.newInvites));
+			changeTitle(getString(R.string.status_new_invite, AgendaUtils.newInvites));
 		}
 	}
 
@@ -99,13 +99,13 @@ public class EventsActivity extends ListActivity {
 
 					// status
 					new_invites = new ActionItem();
-					new_invites.setTitle(getString(R.string.status_4, AgendaUtils.newInvites));
+					new_invites.setTitle(getString(R.string.status_new_invite, AgendaUtils.newInvites));
 					new_invites.setOnClickListener(new OnClickListener() {
 
 						@Override
 						public void onClick(View v) {
 							dm.loadEvents(getParent(), eventsAdapter);
-							changeTitle(getString(R.string.status_4, AgendaUtils.newInvites));
+							changeTitle(getString(R.string.status_new_invite, AgendaUtils.newInvites));
 							qa.dismiss();
 							eventsAdapter.getFilter().filter("4");
 							eventsAdapter.setFilter("4");
@@ -113,13 +113,13 @@ public class EventsActivity extends ListActivity {
 					});
 
 					rejected = new ActionItem();
-					rejected.setTitle(getString(R.string.status_0));
+					rejected.setTitle(getString(R.string.status_not_attending));
 					rejected.setOnClickListener(new OnClickListener() {
 
 						@Override
 						public void onClick(View v) {
 							dm.loadEvents(getParent(), eventsAdapter);
-							changeTitle(getString(R.string.status_0));
+							changeTitle(getString(R.string.status_not_attending));
 							qa.dismiss();
 							eventsAdapter.getFilter().filter("0");
 							eventsAdapter.setFilter("0");
@@ -127,13 +127,13 @@ public class EventsActivity extends ListActivity {
 					});
 
 					attending = new ActionItem();
-					attending.setTitle(getString(R.string.status_1));
+					attending.setTitle(getString(R.string.status_attending));
 					attending.setOnClickListener(new OnClickListener() {
 
 						@Override
 						public void onClick(View v) {
 							dm.loadEvents(getParent(), eventsAdapter);
-							changeTitle(getString(R.string.status_1));
+							changeTitle(getString(R.string.status_attending));
 							qa.dismiss();
 							eventsAdapter.getFilter().filter("1");
 							eventsAdapter.setFilter("1");
@@ -141,13 +141,13 @@ public class EventsActivity extends ListActivity {
 					});
 
 					pending = new ActionItem();
-					pending.setTitle(getString(R.string.status_2));
+					pending.setTitle(getString(R.string.status_pending));
 					pending.setOnClickListener(new OnClickListener() {
 
 						@Override
 						public void onClick(View v) {
 							dm.loadEvents(getParent(), eventsAdapter);
-							changeTitle(getString(R.string.status_2));
+							changeTitle(getString(R.string.status_pending));
 							qa.dismiss();
 							eventsAdapter.getFilter().filter("2");
 							eventsAdapter.setFilter("2");

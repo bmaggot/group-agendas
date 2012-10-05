@@ -82,25 +82,25 @@ public class EventsAdapter extends BaseAdapter implements Filterable{
 		//if(event.type.equals("t") || event.type.equals("r") || event.type.equals("o")){
 			switch (event.getStatus()) {
 			case 0:
-				holder.status.setText(mContext.getString(R.string.status_0));
+				holder.status.setText(mContext.getString(R.string.status_not_attending));
 				holder.button_yes.setVisibility(View.VISIBLE);
 				holder.button_maybe.setVisibility(View.VISIBLE);
 				holder.button_no.setVisibility(View.INVISIBLE);
 				break;
 			case 1:
-				holder.status.setText(mContext.getString(R.string.status_1));
+				holder.status.setText(mContext.getString(R.string.status_attending));
 				holder.button_yes.setVisibility(View.INVISIBLE);
 				holder.button_maybe.setVisibility(View.VISIBLE);
 				holder.button_no.setVisibility(View.VISIBLE);
 				break;
 			case 2:
-				holder.status.setText(mContext.getString(R.string.status_2));
+				holder.status.setText(mContext.getString(R.string.status_pending));
 				holder.button_yes.setVisibility(View.VISIBLE);
 				holder.button_maybe.setVisibility(View.INVISIBLE);
 				holder.button_no.setVisibility(View.VISIBLE);
 				break;
 			case 4:
-				holder.status.setText(mContext.getString(R.string.new_invite));
+				holder.status.setText(mContext.getString(R.string.status_new_invite));
 				holder.button_yes.setVisibility(View.VISIBLE);
 				holder.button_maybe.setVisibility(View.VISIBLE);
 				holder.button_no.setVisibility(View.VISIBLE);
@@ -119,7 +119,7 @@ public class EventsAdapter extends BaseAdapter implements Filterable{
 				holder.button_yes.setVisibility(View.INVISIBLE);
 				holder.button_maybe.setVisibility(View.VISIBLE);
 				holder.button_no.setVisibility(View.VISIBLE);
-				holder.status.setText(mContext.getString(R.string.status_1));
+				holder.status.setText(mContext.getString(R.string.status_attending));
 				editDb(event.getEvent_id(), 1, success);
 				event.setStatus(1);
 				notifyDataSetChanged();
@@ -133,7 +133,7 @@ public class EventsAdapter extends BaseAdapter implements Filterable{
 				holder.button_yes.setVisibility(View.VISIBLE);
 				holder.button_maybe.setVisibility(View.INVISIBLE);
 				holder.button_no.setVisibility(View.VISIBLE);
-				holder.status.setText(mContext.getString(R.string.status_2));
+				holder.status.setText(mContext.getString(R.string.status_pending));
 				editDb(event.getEvent_id(), 2, success);
 				event.setStatus(2);
 				notifyDataSetChanged();
@@ -147,7 +147,7 @@ public class EventsAdapter extends BaseAdapter implements Filterable{
 				holder.button_yes.setVisibility(View.VISIBLE);
 				holder.button_maybe.setVisibility(View.VISIBLE);
 				holder.button_no.setVisibility(View.INVISIBLE);
-				holder.status.setText(mContext.getString(R.string.status_0));
+				holder.status.setText(mContext.getString(R.string.status_not_attending));
 				editDb(event.getEvent_id(), 0, success);
 				event.setStatus(0);
 				notifyDataSetChanged();

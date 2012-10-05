@@ -15,9 +15,11 @@ import com.groupagendas.groupagenda.calendar.adapters.AbstractAdapter;
 import com.groupagendas.groupagenda.contacts.ContactsProvider;
 
 public class InvitedAdapter extends AbstractAdapter<Invited> {
+	int listSize;
 
 	public InvitedAdapter(Context context, List<Invited> list) {
 		super(context, list);
+		listSize = list.size();
 	}
 
 	@Override
@@ -26,11 +28,11 @@ public class InvitedAdapter extends AbstractAdapter<Invited> {
 		Cursor cur;
 		Account account = new Account();
 		String temp = "";
-		
+
 		if (view == null) {
-			view = mInflater.inflate(R.layout.invited_item, null);
+			view = mInflater.inflate(R.layout.event_invited_person_entry, null);
 		}
-		
+
 		TextView nameView = (TextView) view.findViewById(R.id.invited_fullname);
 		TextView statusView = (TextView) view.findViewById(R.id.invited_status);
 		TextView emailView = (TextView) view.findViewById(R.id.invited_available_email);
@@ -39,19 +41,37 @@ public class InvitedAdapter extends AbstractAdapter<Invited> {
 		if (invited != null) {
 			temp = invited.getName();
 			nameView.setText(temp);
-			
+
 			if (temp.equals("You"))
 				nameView.setTag(Invited.OWN_INVITATION_ENTRY);
-			
-			statusView.setText(invited.getStatus());
-			
+
+			switch (invited.getStatus()) {
+				case Invited.REJECTED:
+					temp = getContext().getResources().getString(R.string.status_not_attending);
+					break;
+				case Invited.ACCEPTED:
+					temp = getContext().getResources().getString(R.string.status_attending);
+					break;
+				case Invited.MAYBE:
+					temp = getContext().getResources().getString(R.string.status_maybe);
+					break;
+				case Invited.PENDING:
+					temp = getContext().getResources().getString(R.string.status_pending);
+					break;
+				default:
+					temp = "";
+					break;
+			}
+			statusView.setText(temp);
+
 			if (invited.getGuid() > 0) {
 				if (invited.getGuid() == account.getUser_id())
 					emailView.setText(account.getEmail());
 			} else if (invited.getMy_contact_id() > 0) {
-				String[] projection = {ContactsProvider.CMetaData.ContactsMetaData.EMAIL};
+				String[] projection = { ContactsProvider.CMetaData.ContactsMetaData.EMAIL };
 				temp = EventsProvider.EMetaData.InvitedMetaData.MY_CONTACT_ID + "=" + invited.getMy_contact_id();
-				cur = context.getContentResolver().query(ContactsProvider.CMetaData.ContactsMetaData.CONTENT_URI, projection, temp, null, null);
+				cur = context.getContentResolver().query(ContactsProvider.CMetaData.ContactsMetaData.CONTENT_URI, projection, temp, null,
+						null);
 				if (cur.moveToFirst()) {
 					temp = cur.getString(cur.getColumnIndex(ContactsProvider.CMetaData.ContactsMetaData.EMAIL));
 					emailView.setText(temp);
@@ -62,6 +82,9 @@ public class InvitedAdapter extends AbstractAdapter<Invited> {
 			}
 		}
 		
+		if (i == listSize - 1)
+			view.setBackgroundResource(R.drawable.event_invited_entry_last_background);
+
 		return view;
 	}
 }

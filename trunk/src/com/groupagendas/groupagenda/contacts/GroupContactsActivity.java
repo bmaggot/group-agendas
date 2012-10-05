@@ -82,7 +82,7 @@ public class GroupContactsActivity extends ListActivity {
 		@Override
 		protected void onPostExecute(ArrayList<Contact> contacts) {
 			if (contacts != null) {
-				cAdapter = new ContactsAdapter(contacts, GroupContactsActivity.this);
+				cAdapter = new ContactsAdapter(contacts, GroupContactsActivity.this, null);
 				cAdapter.notifyDataSetChanged();
 			}
 			

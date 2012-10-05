@@ -16,17 +16,18 @@ import android.widget.TextView;
 
 import com.groupagendas.groupagenda.R;
 import com.groupagendas.groupagenda.calendar.adapters.AbstractAdapter;
-import com.groupagendas.groupagenda.data.Data;
 import com.groupagendas.groupagenda.utils.DrawingUtils;
 import com.groupagendas.groupagenda.utils.Utils;
 
 public class ContactsAdapter extends AbstractAdapter<Contact> implements Filterable {
 	private int bubbleHeightDP = 15;
 	List<Contact> allContacts;
+	List<Contact> selectedContacts;
 
-	public ContactsAdapter(List<Contact> objects, Activity context) {
+	public ContactsAdapter(List<Contact> objects, Activity context, List<Contact> selectedContacts) {
 		super(context, objects);
 		allContacts = objects;
+		this.selectedContacts = selectedContacts;
 	}
 
 	@Override
@@ -42,7 +43,7 @@ public class ContactsAdapter extends AbstractAdapter<Contact> implements Filtera
 		holder.image = (ImageView) convertView.findViewById(R.id.contact_icon);
 		holder.color = (ImageView) convertView.findViewById(R.id.contact_color);
 
-//		int contact_id = Integer.parseInt(convertView.getTag().toString());
+		// int contact_id = Integer.parseInt(convertView.getTag().toString());
 		Contact contact = list.get(position);
 
 		StringBuilder sb = new StringBuilder();
@@ -66,28 +67,29 @@ public class ContactsAdapter extends AbstractAdapter<Contact> implements Filtera
 		// if(contact.email != null && !contact.email.equals("null"))
 		// holder.email.setText(contact.email);
 		convertView.setTag("" + contact.contact_id);
-		
+
 		if (contact.contact_id == 0)
 			holder.email.setText("" + contact.created);
 
 		if (contact.image && contact.image_bytes != null) {
-			Bitmap bitmap = Utils.getResizedBitmap(BitmapFactory.decodeByteArray(contact.image_bytes, 0, contact.image_bytes.length), 72, 72);
+			Bitmap bitmap = Utils.getResizedBitmap(BitmapFactory.decodeByteArray(contact.image_bytes, 0, contact.image_bytes.length), 72,
+					72);
 			if (bitmap != null)
 				holder.image.setImageBitmap(bitmap);
 		} else {
 			holder.image.setImageResource(R.drawable.group_icon);
 		}
 
-		if (Data.newEventPar) {
-			if (Data.selectedContacts.size() > 0) {
-				for (int i = 0; i < Data.selectedContacts.size(); i++) {
-					if (Data.selectedContacts.get(i).contact_id == contact.contact_id) {
-						convertView.setBackgroundColor(-14565157);
-						convertView.setDrawingCacheBackgroundColor(0);
-						break;
-					} else {
-						convertView.setBackgroundColor(-1);
-					}
+		// TODO investigate performance improve if replaced to sum shit Justas explained.
+		// LOW STACK
+		if (selectedContacts != null && selectedContacts.size() > 0) {
+			for (int i = 0; i < selectedContacts.size(); i++) {
+				if (selectedContacts.get(i).contact_id == contact.contact_id) {
+					convertView.setBackgroundColor(-14565157);
+					convertView.setDrawingCacheBackgroundColor(0);
+					break;
+				} else {
+					convertView.setBackgroundColor(-1);
 				}
 			}
 		}
