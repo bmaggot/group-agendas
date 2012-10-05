@@ -1,12 +1,10 @@
 package com.groupagendas.groupagenda.data;
 
-import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
-import java.util.HashMap;
-import java.util.Iterator;
 
 import org.apache.http.HttpResponse;
 import org.apache.http.HttpStatus;
@@ -35,7 +33,6 @@ import com.groupagendas.groupagenda.events.Event;
 import com.groupagendas.groupagenda.events.EventsProvider;
 import com.groupagendas.groupagenda.events.Invited;
 import com.groupagendas.groupagenda.utils.Utils;
-import com.pass_retrieve.login2_set;
 
 
 public class EventManagement {
@@ -166,6 +163,7 @@ public class EventManagement {
 	private static final String JSON_TAG_CREATOR_CONTACT_ID = "is_sports_event";
 	private static final String JSON_TAG_INVITED = "invited";
 	private static final String JSON_TAG_MESSAGE_COUNT = "message_count";
+	private static final String JSON_TAG_ASSIGNED_CONTACTS = "assigned_contacts";
 
 	/**
 	 * @author justinas.marcinka@gmail.com Gets events projections from local
@@ -754,14 +752,14 @@ public class EventManagement {
 //						i++;
 //					}
 //				}
-//				if (e.assigned_contacts != null) {
-//					for (int i = 0, l = e.assigned_contacts.length; i < l; i++) {
-//						reqEntity.addPart("contacts[]", new StringBody(String.valueOf(e.assigned_contacts[i])));
-//					}
-//				} else {
-//					reqEntity.addPart("contacts[]", new StringBody(""));
-//				}
-//
+				if (e.getAssigned_contacts() != null) {
+					for (int i = 0, l = e.getAssigned_contacts().length; i < l; i++) {
+						reqEntity.addPart("contacts[]", new StringBody(String.valueOf(e.getAssigned_contacts()[i])));
+					}
+				} else {
+					reqEntity.addPart("contacts[]", new StringBody(""));
+				}
+
 //				if (e.assigned_groups != null) {
 //					for (int i = 0, l = e.assigned_groups.length; i < l; i++) {
 //						reqEntity.addPart("groups[]", new StringBody(String.valueOf(e.assigned_groups[i])));
@@ -1004,6 +1002,7 @@ private static String parseInvitedListToJSONArray(ArrayList<Invited> invited) {
 		} catch (JSONException e) {
 			Log.e("Error parsing invited array from local db", "Event ID: " + item.getEvent_id() + " event local ID: " + item.getInternalID());
 		}
+		
 
 //		item.setAssigned_contacts_DB_entry(result.getString(result
 //				.getColumnIndex(EventsProvider.EMetaData.EventsMetaData.ASSIGNED_CONTACTS)));
@@ -1345,32 +1344,13 @@ private static String parseInvitedListToJSONArray(ArrayList<Invited> invited) {
 					e1.getMessage());
 		}
 
-		try {
-			event.setAttendant_2_count(e.getInt(JSON_TAG_ATTENDANT_2_COUNT));
-		} catch (JSONException e1) {
-			Reporter.reportError(CLASS_NAME, Thread.currentThread().getStackTrace()[2].getMethodName().toString(),
-					e1.getMessage());
-		}
 
-		try {
-			event.setAttendant_4_count(e.getInt(JSON_TAG_ATTENDANT_4_COUNT));
-		} catch (JSONException e1) {
-			Reporter.reportError(CLASS_NAME, Thread.currentThread().getStackTrace()[2].getMethodName().toString(),
-					e1.getMessage());
-		}
-
-		try {
-			event.setSports_event(e.getInt(JSON_TAG_IS_SPORTS_EVENT) == 1);
-		} catch (JSONException e1) {
-			Reporter.reportError(CLASS_NAME, Thread.currentThread().getStackTrace()[2].getMethodName().toString(),
-					e1.getMessage());
-		}
-		try {
-			event.setIs_all_day(e.getInt(JSON_TAG_ALL_DAY) == 1);
-		} catch (JSONException e1) {
-			Reporter.reportError(CLASS_NAME, Thread.currentThread().getStackTrace()[2].getMethodName().toString(),
-					e1.getMessage());
-		}
+			event.setAttendant_2_count(e.optInt(JSON_TAG_ATTENDANT_2_COUNT));
+			event.setAttendant_4_count(e.optInt(JSON_TAG_ATTENDANT_4_COUNT));
+	
+			event.setSports_event(e.optInt(JSON_TAG_IS_SPORTS_EVENT) == 1);
+		
+			event.setIs_all_day(e.optInt(JSON_TAG_ALL_DAY) == 1);
 
 		try {
 			event.setCreator_fullname(e.getString(JSON_TAG_CREATOR_FULLNAME));
@@ -1378,20 +1358,15 @@ private static String parseInvitedListToJSONArray(ArrayList<Invited> invited) {
 			Reporter.reportError(CLASS_NAME, Thread.currentThread().getStackTrace()[2].getMethodName().toString(),
 					e1.getMessage());
 		}
-		try {
-			event.setCreator_contact_id(e.getInt(JSON_TAG_CREATOR_CONTACT_ID));
-		} catch (JSONException e1) {
-			event.setCreator_contact_id(0);
-			Reporter.reportError(CLASS_NAME, Thread.currentThread().getStackTrace()[2].getMethodName().toString(),
-					e1.getMessage());
-		}
-//		
-//// TODO or NOT TODO, thats the question... to Deividas (www.askdavid.com)
-//		
+
+			event.setCreator_contact_id(e.optInt(JSON_TAG_CREATOR_CONTACT_ID));
+		
 //		try {
-//			event.setAssigned_contacts_DB_entry(e.getString("assigned_contacts"));
+//			JSONArray arrayString = e.getJSONArray(JSON_TAG_ASSIGNED_CONTACTS);
+////			event.setAssigned_contacts(parseJSONArrayToLongArray(arrayString));
 //		} catch (JSONException e1) {
-//			event.setAssigned_contacts_DB_entry("");
+//			
+////			event.setAssigned_contacts_DB_entry("");
 //			Reporter.reportError(CLASS_NAME, Thread.currentThread().getStackTrace()[2].getMethodName().toString(),
 //					e1.getMessage());
 //		}
@@ -1407,18 +1382,14 @@ private static String parseInvitedListToJSONArray(ArrayList<Invited> invited) {
 			event.setInvited(createInvitedListFromJSONArrayString(jsonstring));
 		} catch (JSONException e1) {
 			event.setInvited(new ArrayList<Invited>());
-
 		}
-//		try {
-//			event.setMessage_count(e.getInt(JSON_TAG_MESSAGE_COUNT));
-//		} catch (JSONException e1) {
-//			event.setMessage_count(0);
-//			Reporter.reportError(CLASS_NAME, Thread.currentThread().getStackTrace()[2].getMethodName().toString(),
-//					e1.getMessage());
-//		}
+
+			event.setMessage_count(e.optInt(JSON_TAG_MESSAGE_COUNT));
 
 		return event;
 	}
+
+	
 
 	private static ArrayList<Invited> createInvitedListFromJSONArrayString(
 			String jsonArrayString) throws JSONException  {
@@ -1442,32 +1413,14 @@ private static String parseInvitedListToJSONArray(ArrayList<Invited> invited) {
 		try {
 			item.setName(input.getString(EventsProvider.EMetaData.InvitedMetaData.NAME));
 		} catch (JSONException e) {
-			Log.e("Invited(JSONObject input)", "Failed getting gname");
+//			Log.e("Invited(JSONObject input)", "Failed getting gname");
 		}
 		
-		try {
-			item.setGcid(input.getInt(EventsProvider.EMetaData.InvitedMetaData.GCID));
-		} catch (JSONException e) {
-			Log.e("Invited(JSONObject input)", "Failed getting gcid");
-		}
-		
-		try {
-			item.setGuid(input.getInt(EventsProvider.EMetaData.InvitedMetaData.GUID));
-		} catch (JSONException e) {
-			Log.e("Invited(JSONObject input)", "Failed getting guid");
-		}
-		
-		try {
-			item.setStatus(input.getInt(EventsProvider.EMetaData.InvitedMetaData.STATUS));
-		} catch (JSONException e) {
-			Log.e("Invited(JSONObject input)", "Failed getting status");
-		}
-		
-		try {
-			item.setMy_contact_id(input.getInt(EventsProvider.EMetaData.InvitedMetaData.MY_CONTACT_ID));
-		} catch (JSONException e) {
-			Log.e("Invited(JSONObject input)", "Failed getting my_contact_id");
-		}
+			item.setGcid(input.optInt(EventsProvider.EMetaData.InvitedMetaData.GCID));
+			item.setGuid(input.optInt(EventsProvider.EMetaData.InvitedMetaData.GUID));
+			item.setStatus(input.optInt(EventsProvider.EMetaData.InvitedMetaData.STATUS));
+			item.setMy_contact_id(input.optInt(EventsProvider.EMetaData.InvitedMetaData.MY_CONTACT_ID));
+
 		return item;
 	}
 //	private static Invited createInvitedFromCursor(Cursor result) {
