@@ -29,6 +29,7 @@ import android.provider.BaseColumns;
 import android.text.TextUtils;
 import android.util.Log;
 
+import com.groupagendas.groupagenda.account.Account;
 import com.groupagendas.groupagenda.error.report.Reporter;
 import com.groupagendas.groupagenda.events.Event;
 import com.groupagendas.groupagenda.events.EventsAdapter;
@@ -546,8 +547,12 @@ public class EventManagement {
 		}	
 //TODO javadoc
 		private static void updateEventStatusInLocalDb(Context context, Event event) {
+			if (event.getMyInvite() != null){
+				event.getMyInvite().setStatus(event.getStatus());                            //TODO solve this
+			}
 			ContentValues cv = new ContentValues();
-			cv.put(EventsProvider.EMetaData.EventsMetaData.STATUS, event.getStatus());
+			cv.put(EventsProvider.EMetaData.EventsMetaData.STATUS, event.getStatus());	
+			cv.put(EventsProvider.EMetaData.EventsMetaData.INVITED, parseInvitedListToJSONArray(event.getInvited()));
 			Uri uri = EventsProvider.EMetaData.EventsMetaData.CONTENT_URI;
 			String where = EventsProvider.EMetaData.EventsMetaData._ID+"=" + event.getInternalID();
 			context.getContentResolver().update(uri, cv, where, null);	
@@ -1068,7 +1073,10 @@ private static String parseInvitedListToJSONArray(ArrayList<Invited> invited) {
 		item.setCreatedMillisUtc(result.getLong(result.getColumnIndex(EventsProvider.EMetaData.EventsMetaData.CREATED_UTC_MILLISECONDS)));
 		item.setModifiedMillisUtc(result.getLong(result.getColumnIndex(EventsProvider.EMetaData.EventsMetaData.MODIFIED_UTC_MILLISECONDS)));
 		try {
-			item.setInvited(createInvitedListFromJSONArrayString(result.getString(result.getColumnIndex(EventsProvider.EMetaData.EventsMetaData.INVITED))));
+			ArrayList<Invited> invites = new ArrayList<Invited>();
+			
+			item.setMyInvite(createInvitedListFromJSONArrayString(result.getString(result.getColumnIndex(EventsProvider.EMetaData.EventsMetaData.INVITED)), invites));
+			item.setInvited(invites);
 		} catch (JSONException e) {
 			Log.e("Error parsing invited array from local db", "Event ID: " + item.getEvent_id() + " event local ID: " + item.getInternalID());
 		}
@@ -1449,7 +1457,11 @@ private static String parseInvitedListToJSONArray(ArrayList<Invited> invited) {
 //		}
 		try {
 			String jsonstring = e.getString(JSON_TAG_INVITED);
-			event.setInvited(createInvitedListFromJSONArrayString(jsonstring));
+		
+			ArrayList<Invited> invites = new ArrayList<Invited>();
+			createInvitedListFromJSONArrayString(jsonstring, invites);
+			event.setInvited(invites);
+			System.out.println("EVENT: " + event.getTitle() + " invites: " + event.getInvited().size());
 		} catch (JSONException e1) {
 			event.setInvited(new ArrayList<Invited>());
 		}
@@ -1461,19 +1473,24 @@ private static String parseInvitedListToJSONArray(ArrayList<Invited> invited) {
 
 	
 
-	private static ArrayList<Invited> createInvitedListFromJSONArrayString(
-			String jsonArrayString) throws JSONException  {
-		JSONArray jsonArray= new JSONArray(jsonArrayString); 
-		ArrayList<Invited> list = new ArrayList<Invited>();
+	private static Invited createInvitedListFromJSONArrayString(
+		String jsonArrayString, ArrayList<Invited> invites) throws JSONException  {
+		JSONArray jsonArray= new JSONArray(jsonArrayString);
+		if (invites == null) invites = new ArrayList<Invited>();
+		Account acc = new Account();
+		int id = acc.getUser_id();
+		Invited myInvite = null;
 		int count = jsonArray.length();
 		if (count > 0) {
 			for (int i = 0; i < count; i++) {
 				JSONObject e = jsonArray.getJSONObject(i);
-				list.add(createInvitedFromJSONObject(e));
+				Invited o = createInvitedFromJSONObject(e);
+				invites.add(o);
+				if (id == o.getGuid()) myInvite = o;
 			}
 		}
 		
-		return list;
+		return myInvite;
 		}
 	
 	private static Invited createInvitedFromJSONObject(JSONObject input) {

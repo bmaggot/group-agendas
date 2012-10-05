@@ -363,12 +363,13 @@ public class EventsProvider extends ContentProvider{
 			count = db.update(EMetaData.EVENTS_TABLE, values, where, whereArgs);
 			break;
 		case ONE_EVENTS:
-			String whereStr = EMetaData.EventsMetaData.E_ID+"="+uri.getPathSegments().get(1)+(!TextUtils.isEmpty(where)?"AND("+where+")":"");
+			String whereStr = EMetaData.EventsMetaData._ID+"="+uri.getPathSegments().get(1)+(!TextUtils.isEmpty(where)?"AND("+where+")":"");
 			count = db.update(EMetaData.EVENTS_TABLE, values, whereStr, whereArgs);
 			break;
 		default:
 			throw new IllegalArgumentException("Unknow URI " + uri);
 		}
+		getContext().getContentResolver().notifyChange(uri, null);
 
 		return count;
 	}
