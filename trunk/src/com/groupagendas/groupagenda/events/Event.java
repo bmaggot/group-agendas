@@ -91,6 +91,7 @@ private static final String DEFAULT_REMINDER = "null";
 	private long[] assigned_groups = null;
 	
 	private int message_count = 0;
+	private Invited myInvite;
 	
 	//TODO implement event missing attributes 
 	/* public String confirmed;
@@ -775,5 +776,10 @@ public long[] getAssigned_groups() {
 public void setAssigned_groups(long[] assigned_groups) {
 	this.assigned_groups = assigned_groups;
 }
-	
+public void setMyInvite(Invited myInvite) {
+	this.myInvite = myInvite;
+}
+public Invited getMyInvite() {
+	return this.myInvite;
+}	
 }
