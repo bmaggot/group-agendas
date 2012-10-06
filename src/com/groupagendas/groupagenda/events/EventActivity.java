@@ -16,8 +16,9 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.groupagendas.groupagenda.R;
+import com.groupagendas.groupagenda.timezone.CountriesAdapter;
+import com.groupagendas.groupagenda.timezone.TimezonesAdapter;
 import com.groupagendas.groupagenda.account.Account;
-import com.groupagendas.groupagenda.timezone.StringArrayListAdapter;
 import com.groupagendas.groupagenda.utils.DateTimeUtils;
 import com.groupagendas.groupagenda.utils.Prefs;
 
@@ -107,10 +108,9 @@ public class EventActivity extends Activity {
 	protected String selectedColor = Event.DEFAULT_COLOR;
 	
 	protected Event event;
-	protected ArrayList<String> countriesList = null;
-	protected StringArrayListAdapter countriesAdapter = null;
-	protected ArrayList<String> timezonesList = null;
-	protected StringArrayListAdapter timezonesAdapter = null;
+	protected ArrayList<StaticTimezones> countriesList = null;
+	protected CountriesAdapter countriesAdapter = null;
+	protected TimezonesAdapter timezonesAdapter = null;
 	protected InvitedAdapter invitedAdapter = null;
 	protected LinearLayout invitedPersonList;
 	protected int timezoneInUse = 0;
@@ -132,9 +132,8 @@ public class EventActivity extends Activity {
 
 	protected Event setEventData(Event event) {
 
-		if (timezoneView != null) {
-			
-			event.setTimezone(timezoneView.getText().toString());
+		if (timezoneInUse > 0) {
+			event.setTimezone(countriesList.get(timezoneInUse).timezone);
 		}
 		
 		event.setDescription(descView.getText().toString());
@@ -146,7 +145,8 @@ public class EventActivity extends Activity {
 		event.setEndCalendar(endCalendar);
 		event.setModifiedMillisUtc(Calendar.getInstance().getTimeInMillis());
 
-		event.setCountry(countryView.getText().toString());
+		if (timezoneInUse > 0)
+		event.setCountry(countriesList.get(timezoneInUse).country_code);
 		event.setZip(zipView.getText().toString());
 		event.setCity(cityView.getText().toString());
 		event.setStreet(streetView.getText().toString());
@@ -246,6 +246,16 @@ public class EventActivity extends Activity {
 		accomodationViewBlock.setVisibility(View.GONE);
 	}
 	
+	public class StaticTimezones {
+		public String id;
+		public String city;
+		public String country;
+		public String country2;
+		public String country_code;
+		public String timezone;
+		public String altname;
+	}
+
 	protected void showInvitesView() {
 		// TODO optimizacija panasios jebalos gula ant meskos sazines.
 		// Zajabys.
