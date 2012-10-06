@@ -27,9 +27,13 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.view.Window;
 import android.widget.AdapterView;
+import android.widget.AdapterView.OnItemClickListener;
 import android.widget.AdapterView.OnItemSelectedListener;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
@@ -38,6 +42,7 @@ import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.ListView;
 import android.widget.Spinner;
 import android.widget.Toast;
 
@@ -45,7 +50,9 @@ import com.groupagendas.groupagenda.R;
 import com.groupagendas.groupagenda.data.ContactManagement;
 import com.groupagendas.groupagenda.data.DataManagement;
 import com.groupagendas.groupagenda.error.report.Reporter;
-import com.groupagendas.groupagenda.utils.CountryManager;
+import com.groupagendas.groupagenda.events.EventActivity;
+import com.groupagendas.groupagenda.events.EventActivity.StaticTimezones;
+import com.groupagendas.groupagenda.timezone.CountriesAdapter;
 import com.groupagendas.groupagenda.utils.DateTimeUtils;
 import com.groupagendas.groupagenda.utils.MapUtils;
 import com.groupagendas.groupagenda.utils.Utils;
@@ -81,8 +88,7 @@ public class ContactEditActivity extends Activity implements OnClickListener, On
 	private Button birthdateButton;
 	private Calendar birthdateCalendar = Calendar.getInstance();
 	
-	private Spinner countrySpinner;
-	private String[] countryArray;
+	private EditText countryView;
 	
 	private EditText cityView;
 	private EditText streetView;
@@ -98,6 +104,10 @@ public class ContactEditActivity extends Activity implements OnClickListener, On
 	private String[] visibilityArray;
 	
 	private DateTimeUtils dtUtils;
+	private ArrayList<StaticTimezones> countriesList;
+	private CountriesAdapter countriesAdapter;
+	private LinearLayout countrySpinnerBlock;
+	private int timezoneInUse;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -121,11 +131,6 @@ public class ContactEditActivity extends Activity implements OnClickListener, On
 
 		removeImage = (CheckBox) findViewById(R.id.remove_image);
 		
-		countryArray = CountryManager.getCountryValues(this);
-		countrySpinner = (Spinner) findViewById(R.id.country);
-		countrySpinner.setOnItemSelectedListener(this);
-		
-
 		visibilityArray = getResources().getStringArray(R.array.visibility_labels);
 		visibilitySpinner = (Spinner) findViewById(R.id.visibility);
 		visibilitySpinner.setOnItemSelectedListener(this);
@@ -143,10 +148,6 @@ public class ContactEditActivity extends Activity implements OnClickListener, On
 			editedContact = new Contact();
 
 			new GetGroupsTask().execute();
-			
-			ArrayAdapter<String> adapterCountry =  new ArrayAdapter<String>(this, android.R.layout.simple_spinner_item, CountryManager.getCountries(this)) ;
-			adapterCountry.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-			countrySpinner.setAdapter(adapterCountry);
 			
 			ArrayAdapter<CharSequence> adapterVis = ArrayAdapter.createFromResource(ContactEditActivity.this, R.array.visibility_labels, android.R.layout.simple_spinner_item);
 			adapterVis.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
@@ -169,6 +170,92 @@ public class ContactEditActivity extends Activity implements OnClickListener, On
 		cityView = (EditText) findViewById(R.id.city);
 		streetView = (EditText) findViewById(R.id.street);
 		zipView = (EditText) findViewById(R.id.zip);
+	}
+	
+	@Override
+	public void onResume() {
+		super.onResume();
+		setContentView(R.layout.contact_edit);
+
+		String[] cities;
+		String[] countries;
+		String[] countries2;
+		String[] country_codes;
+		String[] timezones;
+		String[] altnames;
+		countriesList = new ArrayList<StaticTimezones>();
+
+		cities = getResources().getStringArray(R.array.city);
+		countries = getResources().getStringArray(R.array.countries);
+		countries2 = getResources().getStringArray(R.array.countries2);
+		country_codes = getResources().getStringArray(R.array.country_codes);
+		timezones = getResources().getStringArray(R.array.timezones);
+		altnames = getResources().getStringArray(R.array.timezone_altnames);
+		for (int i = 0; i < cities.length; i++) {
+			// TODO OMG WHAT HAVE I DONE AGAIN?! :|
+			StaticTimezones temp = new EventActivity().new StaticTimezones();
+			
+			temp.id = "" + i;
+			temp.city = cities[i];
+			temp.country = countries[i];
+			temp.country2 = countries2[i];
+			temp.country_code = country_codes[i];
+			temp.timezone = timezones[i];
+			temp.altname = altnames[i];
+			
+			countriesList.add(temp);
+		}
+		if (countriesList != null) {
+			countriesAdapter = new CountriesAdapter(ContactEditActivity.this, R.layout.search_dialog_item, countriesList);
+		}
+
+		countrySpinnerBlock = (LinearLayout) findViewById(R.id.countrySpinnerBlock);
+		countryView = (EditText) findViewById(R.id.countryView);
+		countrySpinnerBlock.setOnClickListener(new OnClickListener() {
+			@Override
+			public void onClick(View arg0) {
+				final Dialog dia1 = new Dialog(ContactEditActivity.this);
+				dia1.requestWindowFeature(Window.FEATURE_NO_TITLE);
+				dia1.setContentView(R.layout.search_dialog);
+				
+				ListView diaList = (ListView) dia1.findViewById(R.id.dialog_list);
+				diaList.setAdapter(countriesAdapter);
+				countriesAdapter.notifyDataSetChanged();
+				
+				EditText searchView = (EditText) dia1.findViewById(R.id.dialog_search);
+
+				TextWatcher filterTextWatcher = new TextWatcher() {					
+					@Override
+					public void afterTextChanged(Editable s) {
+					}
+
+					@Override
+					public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+					}
+
+					@Override
+					public void onTextChanged(CharSequence s, int start, int before, int count) {
+						if (s != null) {
+							if (countriesAdapter != null)
+								countriesAdapter.getFilter().filter(s);
+						}
+					}
+				};
+				
+				searchView.addTextChangedListener(filterTextWatcher);
+				
+				diaList.setOnItemClickListener(new OnItemClickListener() {
+
+					@Override
+					public void onItemClick(AdapterView<?> parent, View view, int pos, long arg3) {
+						timezoneInUse = Integer.parseInt(view.getTag().toString());
+						countryView.setText(countriesList.get(timezoneInUse).country);
+						dia1.dismiss();
+					}
+				});
+				dia1.show();
+			}
+		});
 	}
 	
 	@Override
@@ -289,13 +376,15 @@ public class ContactEditActivity extends Activity implements OnClickListener, On
 				birthdateCalendar = Utils.stringToCalendar(result.birthdate, DataManagement.SERVER_TIMESTAMP_FORMAT);
 			}
 			
-			
-			ArrayAdapter<String> adapterCountry =  new ArrayAdapter<String>(ContactEditActivity.this, android.R.layout.simple_spinner_item, CountryManager.getCountries(ContactEditActivity.this)) ;
-			adapterCountry.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-			countrySpinner.setAdapter(adapterCountry);
-			
-			int pos = Utils.getArrayIndex(countryArray, result.country);
-			countrySpinner.setSelection(pos);
+			if (result.country.length() > 0) {
+				for (StaticTimezones entry : countriesList) {
+					if (entry.timezone.equalsIgnoreCase(result.country))
+						timezoneInUse = Integer.parseInt(entry.id);
+				}
+				if (timezoneInUse > 0) {
+					countryView.setText(countriesList.get(timezoneInUse).country);
+				}
+			}
 
 			if (!result.city.equals("null"))
 				cityView.setText(result.city);
@@ -308,7 +397,7 @@ public class ContactEditActivity extends Activity implements OnClickListener, On
 			adapterVis.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
 			visibilitySpinner.setAdapter(adapterVis);
 			if (!result.visibility.equals("null")) {
-				pos = Utils.getArrayIndex(visibilityArray, result.visibility);
+				int pos = Utils.getArrayIndex(visibilityArray, result.visibility);
 				visibilitySpinner.setSelection(pos);
 			}
 
@@ -349,7 +438,7 @@ public class ContactEditActivity extends Activity implements OnClickListener, On
 			editedContact.birthdate = dtUtils.formatDateToDefault(birthdateCalendar.getTime());
 			cv.put(ContactsProvider.CMetaData.ContactsMetaData.BIRTHDATE, temp);
 			
-			editedContact.country = countryArray[countrySpinner.getSelectedItemPosition()];
+			editedContact.country = countriesList.get(timezoneInUse).country;
 			cv.put(ContactsProvider.CMetaData.ContactsMetaData.COUNTRY, editedContact.country);
 			
 			temp = cityView.getText().toString();
@@ -443,7 +532,7 @@ public class ContactEditActivity extends Activity implements OnClickListener, On
 			editedContact.birthdate = temp;
 			cv.put(ContactsProvider.CMetaData.ContactsMetaData.BIRTHDATE, temp);
 			
-			editedContact.country = countryArray[countrySpinner.getSelectedItemPosition()];
+			editedContact.country = countriesList.get(timezoneInUse).country;
 			cv.put(ContactsProvider.CMetaData.ContactsMetaData.COUNTRY, editedContact.country);
 			
 			temp = cityView.getText().toString();
@@ -667,9 +756,6 @@ public class ContactEditActivity extends Activity implements OnClickListener, On
 	@Override
 	public void onItemSelected(AdapterView<?> parent, View view, int pos, long id) {
 		switch (parent.getId()) {
-		case R.id.country:
-			editedContact.country = countryArray[pos];
-			break;
 		case R.id.visibility:
 			editedContact.visibility = visibilityArray[pos];
 			break;
