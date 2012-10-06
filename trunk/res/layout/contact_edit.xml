@@ -14,6 +14,7 @@
         android:padding="10dp" >
 
         <ImageView
+            android:contentDescription="@string/contact_icon_placeholder"
             android:id="@+id/contact_image"
             android:layout_width="120dp"
             android:layout_height="120dp"
@@ -140,26 +141,49 @@
                     android:id="@+id/birthdate"
                     android:layout_width="fill_parent"
                     android:layout_height="wrap_content"
-                    android:editable="false"
+                    android:focusableInTouchMode="false"
                     android:enabled="false"
                     android:inputType="date" />
             </LinearLayout>
 
             <LinearLayout
+                android:id="@+id/countrySpinnerBlock"
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal" >
+                android:layout_marginLeft="10dp"
+                android:layout_marginRight="10dp"
+                android:background="@drawable/event_invite_people_button_notalone_i"
+                android:orientation="horizontal"
+                android:paddingBottom="5dp"
+                android:paddingLeft="10dp"
+                android:paddingRight="10dp"
+                android:paddingTop="5dp" >
 
                 <TextView
                     android:layout_width="80dp"
                     android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical"
+                    android:paddingBottom="5dp"
+                    android:paddingTop="4dp"
+                    android:singleLine="true"
                     android:text="@string/country"
-                    android:textColor="@android:color/black" />
+                    android:textColor="@color/black"
+                    android:textSize="15dp"
+                    android:textStyle="bold" />
 
-                <Spinner
-                    android:id="@+id/country"
-                    android:layout_width="fill_parent"
-                    android:layout_height="wrap_content" />
+				<EditText
+                    android:id="@+id/countryView"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:background="#00000000"
+                    android:inputType="text"
+                    android:paddingBottom="5dp"
+                    android:focusableInTouchMode="false"
+                    android:paddingTop="4dp"
+                    android:singleLine="true"
+                    android:textColor="@color/black"
+                    android:textSize="15dp" />
+
             </LinearLayout>
 
             <LinearLayout
