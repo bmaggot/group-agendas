@@ -17,8 +17,6 @@ import android.widget.TextView;
 import com.bog.calendar.app.ui.EventGroupView;
 import com.bog.calendar.app.ui.EventView;
 import com.groupagendas.groupagenda.R;
-import com.groupagendas.groupagenda.data.DataManagement;
-import com.groupagendas.groupagenda.events.Event;
 import com.groupagendas.groupagenda.utils.DateTimeUtils;
 
 public class CalendarDay implements OnClickListener {
@@ -35,7 +33,7 @@ public class CalendarDay implements OnClickListener {
     private Button prevDay;
     private Button nextDay;
     
-    private DataManagement dm;
+//    private DataManagement dm;
     private DateTimeUtils dtUtils;
 
     public CalendarDay(Activity parentActivity) {
@@ -51,7 +49,7 @@ public class CalendarDay implements OnClickListener {
         
         currentDay = Calendar.getInstance();
         
-        dm = DataManagement.getInstance(activity);
+//        dm = DataManagement.getInstance(activity);
         dtUtils = new DateTimeUtils(activity);
         
         new GetDayEventsTask().execute();
@@ -103,7 +101,6 @@ public class CalendarDay implements OnClickListener {
 		@Override
 		protected List<CEvent> doInBackground(Void... params) {
 			return new ArrayList<CEvent>();
-//			return getActualEvents(dm.getEventsFromLocalDb());
 		}
 		
 		@Override
@@ -115,60 +112,5 @@ public class CalendarDay implements OnClickListener {
 	        refresh();
 		}
 		
-	}
-	private List<CEvent> getActualEvents(ArrayList<Event> events){
-//		List<CEvent> eventsList = new ArrayList<CEvent>();
-//		String date_format = DataManagement.SERVER_TIMESTAMP_FORMAT;
-//		String dayStr = new SimpleDateFormat("yyyy-MM-dd").format(currentDay.getTime());
-//		Calendar day_start = Utils.stringToCalendar(dayStr+" 00:00:00", date_format);
-//		Calendar day_end   = Utils.stringToCalendar(dayStr+" 23:59:59", date_format);
-//		
-//		Calendar calendar_start = null;
-//		Calendar calendar_end = null;
-//		
-//		String startTime;
-//		String endTime;
-//		boolean allDay;
-//		
-//		for (int i = 0, l = events.size(); i < l; i++) {
-//			final Event event = events.get(i);
-//			if (!event.my_time_end.equals("null") && !event.my_time_start.equals("null")) {
-//				calendar_start = Utils.stringToCalendar(event.my_time_start, event.timezone, date_format);
-//				calendar_end = Utils.stringToCalendar(event.my_time_end, event.timezone, date_format);
-//				
-//				if(!calendar_end.before(day_start) && !calendar_start.after(day_end)){
-//					
-//					startTime = event.my_time_start.substring(11,16);
-//					endTime   = event.my_time_end.substring(11,16);
-//					allDay   = false;
-//					
-//					if(calendar_start.before(day_start)){
-//						startTime = "00:00";
-//					}
-//					
-//					if(calendar_end.after(day_end)){
-//						endTime = "23:59";
-//					}
-//					
-//					if (calendar_end.after(day_end) && calendar_start.before(day_start)) {
-//						startTime = "00:00";
-//						endTime = "01:00";
-//						allDay = true;
-//					}
-////					
-//					final CEvent cevent = EventsHelper.generateDayEvent(event.event_id, event.type, event.title, event.title, startTime, endTime);
-//					
-////					if(event.color != null && !event.color.equals("null")){
-//						cevent.setColor(Integer.parseInt(event.getColor(), 16)+0xFF000000);
-////					}
-//					
-//					eventsList.add(cevent);
-////					cevent.setAllDay(allDay);
-//				}				
-//			}
-//		}
-
-//		return eventsList;
-		return new ArrayList<CEvent>(); //TODO remove this class
 	}
 }
