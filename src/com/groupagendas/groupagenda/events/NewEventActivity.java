@@ -92,13 +92,8 @@ public class NewEventActivity extends EventActivity {
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		
-		newInvites = null;
-		newContacts = null;
 
-		// these fields indicate that we will save this user as owner of event
-		// and save his uid
-		setUid = true;
+	
 
 		setContentView(R.layout.new_event);
 		event = new Event();

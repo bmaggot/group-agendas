@@ -5,6 +5,7 @@ import java.util.Calendar;
 
 import android.app.Activity;
 import android.content.ContentValues;
+import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -16,7 +17,6 @@ import android.widget.TextView;
 
 import com.groupagendas.groupagenda.R;
 import com.groupagendas.groupagenda.account.Account;
-import com.groupagendas.groupagenda.data.DataManagement;
 import com.groupagendas.groupagenda.timezone.StringArrayListAdapter;
 import com.groupagendas.groupagenda.utils.DateTimeUtils;
 import com.groupagendas.groupagenda.utils.Prefs;
@@ -26,7 +26,6 @@ public class EventActivity extends Activity {
 	public static final String EXTRA_STRING_FOR_START_CALENDAR = "strTime";
 	
 	public static ArrayList<Invited> newInvites;
-	public static int[] newContacts;
 
 	protected DateTimeUtils dtUtils;
 	protected EditText descView;
@@ -104,7 +103,6 @@ public class EventActivity extends Activity {
 	protected TextView addressTrigger;
 	protected TextView detailsTrigger;
 	protected ProgressBar pb;
-	protected boolean setUid = false;
 	protected String selectedIcon = Event.DEFAULT_ICON;
 	protected String selectedColor = Event.DEFAULT_COLOR;
 	
@@ -119,6 +117,13 @@ public class EventActivity extends Activity {
 	protected Button inviteButton;
 	
 	protected Account account;
+	
+	@Override
+	protected void onCreate(Bundle savedInstanceState) {
+		super.onCreate(savedInstanceState);
+		newInvites = null;
+		
+	}
 
 	protected Event setEventData(Event event) {
 
@@ -126,10 +131,7 @@ public class EventActivity extends Activity {
 			
 			event.setTimezone(timezoneView.getText().toString());
 		}
-		if (setUid) {
-			// user_id
-			event.setUser_id(prefs.getUserId());
-		}
+		
 		event.setDescription(descView.getText().toString());
 		// title
 		event.setTitle(titleView.getText().toString());
