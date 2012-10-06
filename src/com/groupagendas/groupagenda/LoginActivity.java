@@ -27,7 +27,7 @@ import android.widget.TextView;
 
 import com.groupagendas.groupagenda.data.Data;
 import com.groupagendas.groupagenda.data.DataManagement;
-import com.groupagendas.groupagenda.registration.RegisterationActivity;
+import com.groupagendas.groupagenda.registration.RegistrationActivity;
 import com.pass_retrieve.forgot_pass1;
 
 public class LoginActivity extends Activity {
@@ -88,7 +88,7 @@ public class LoginActivity extends Activity {
 		regButton.setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View v) {
-				startActivity(new Intent(LoginActivity.this, RegisterationActivity.class));
+				startActivity(new Intent(LoginActivity.this, RegistrationActivity.class));
 			}
 		});
 
