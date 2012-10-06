@@ -1,18 +1,13 @@
 package com.groupagendas.groupagenda.data;
 
 import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.TreeMap;
 
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
 
-import com.groupagendas.groupagenda.account.Account;
 import com.groupagendas.groupagenda.chat.ChatMessageObject;
 import com.groupagendas.groupagenda.chat.ChatThreadObject;
-import com.groupagendas.groupagenda.contacts.Contact;
-import com.groupagendas.groupagenda.contacts.Group;
 import com.groupagendas.groupagenda.events.Event;
 import com.groupagendas.groupagenda.utils.Prefs;
 
@@ -55,7 +50,7 @@ public class Data {
 	private static String colorMyEvent, colorAttending, colorPending, colorInvitation, colorNotes;
 
 
-	private static TreeMap<Calendar, ArrayList<Event>> sortedEvents;
+//	private static TreeMap<Calendar, ArrayList<Event>> sortedEvents;
 	private static ArrayList<ChatMessageObject> chatMessages = new ArrayList<ChatMessageObject>();
 	private static ArrayList<ChatThreadObject> chatThreads = new ArrayList<ChatThreadObject>();
 
