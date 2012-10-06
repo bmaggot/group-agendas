@@ -51,7 +51,7 @@ public class ContactManagement {
 		boolean success = false;
 		String error = null;
 		@SuppressWarnings("unused")
-		Account account = new Account();
+		Account account = new Account(context);
 		HttpClient hc = new DefaultHttpClient();
 		HttpPost post = new HttpPost(Data.getServerUrl() + "mobile/contact_list");
 		MultipartEntity reqEntity = new MultipartEntity(HttpMultipartMode.BROWSER_COMPATIBLE);
@@ -1163,7 +1163,7 @@ public class ContactManagement {
 		boolean success = false;
 		String error = null;
 		@SuppressWarnings("unused")
-		Account account = new Account();
+		Account account = new Account(context);
 		HttpClient hc = new DefaultHttpClient();
 		HttpPost post = new HttpPost(Data.getServerUrl() + "mobile/groups_list");
 		MultipartEntity reqEntity = new MultipartEntity(HttpMultipartMode.BROWSER_COMPATIBLE);
