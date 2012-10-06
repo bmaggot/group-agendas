@@ -70,7 +70,7 @@ public class EventEditActivity extends EventActivity {
 	private long event_internal_id;
 
 	private View responsePanel;
-	private LinearLayout invitesColumn;
+	
 	protected final static int DELETE_DIALOG = 1;
 	protected final static int MY_INVITED_ENTRY_ID = 99999;
 	private boolean remindersShown = false;
@@ -737,34 +737,7 @@ public class EventEditActivity extends EventActivity {
 				alarm3.setText("");
 			}
 
-			// TODO optimizacija panasios jebalos gula ant meskos sazines.
-			// Zajabys.
-			if (newInvites != null) {
-				event.getInvited().addAll(newInvites);
-
-//				long[] newAssignedContacs = new long[newInvites.size()];
-//				for (int i = 0; i < newInvites.size(); i++) {
-//					newAssignedContacs[i] = newInvites.get(i).getMy_contact_id();
-//				}
-//				long[] nuAssignedContacts = new long[event.getAssigned_contacts().length + newAssignedContacs.length];
-//				System.arraycopy(event.getAssigned_contacts(), 0, nuAssignedContacts, 0, event.getAssigned_contacts().length);
-//				System.arraycopy(newAssignedContacs, 0, nuAssignedContacts, event.getAssigned_contacts().length, newAssignedContacs.length);
-//				event.assigned_contacts = nuAssignedContacts;
-				newInvites = null;
-			}
-
-			int invitedListSize = event.getInvited().size();
-			invitedPersonList.removeAllViews();
-			if (invitedListSize == 0) {
-				inviteButton.setBackgroundResource(R.drawable.event_invite_people_button_standalone);
-			} else {
-				inviteButton.setBackgroundResource(R.drawable.event_invite_people_button_notalone);
-				invitedAdapter = new InvitedAdapter(EventEditActivity.this, event.getInvited());
-				for (int i = 0; i < invitedListSize; i++) {
-					View view = invitedAdapter.getView(i, null, null);
-					invitedPersonList.addView(view);
-				}
-			}
+		showInvitesView();
 
 			pb.setVisibility(View.INVISIBLE);
 		}
