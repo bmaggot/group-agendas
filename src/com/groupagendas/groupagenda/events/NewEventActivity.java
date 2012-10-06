@@ -2,13 +2,10 @@ package com.groupagendas.groupagenda.events;
 
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Locale;
 import java.util.concurrent.ExecutionException;
 
 import android.app.AlertDialog;
 import android.app.Dialog;
-import android.content.ContentValues;
-import android.content.Context;
 import android.content.DialogInterface;
 import android.content.DialogInterface.OnDismissListener;
 import android.content.Intent;
@@ -18,28 +15,23 @@ import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
-import android.view.KeyEvent;
-import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.Window;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
-import android.widget.AdapterView.OnItemSelectedListener;
-import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.GridView;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
-import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.groupagendas.groupagenda.NavbarActivity;
 import com.groupagendas.groupagenda.R;
 import com.groupagendas.groupagenda.account.Account;
 import com.groupagendas.groupagenda.contacts.Contact;
@@ -49,23 +41,18 @@ import com.groupagendas.groupagenda.data.ContactManagement;
 import com.groupagendas.groupagenda.data.Data;
 import com.groupagendas.groupagenda.data.DataManagement;
 import com.groupagendas.groupagenda.data.EventManagement;
-import com.groupagendas.groupagenda.settings.AutoColorItem;
-import com.groupagendas.groupagenda.settings.AutoIconItem;
 import com.groupagendas.groupagenda.templates.TemplatesAdapter;
 import com.groupagendas.groupagenda.templates.TemplatesDialog;
 import com.groupagendas.groupagenda.templates.TemplatesDialogData;
 import com.groupagendas.groupagenda.templates.TemplatesProvider.TMetaData.TemplatesMetaData;
-import com.groupagendas.groupagenda.timezone.StringArrayListAdapter;
-import com.groupagendas.groupagenda.timezone.TimezoneManager;
-import com.groupagendas.groupagenda.utils.CountryManager;
+import com.groupagendas.groupagenda.timezone.CountriesAdapter;
+import com.groupagendas.groupagenda.timezone.TimezonesAdapter;
 import com.groupagendas.groupagenda.utils.DateTimeUtils;
 import com.groupagendas.groupagenda.utils.Prefs;
-import com.groupagendas.groupagenda.utils.SearchDialog;
 import com.groupagendas.groupagenda.utils.Utils;
 import com.ptashek.widgets.datetimepicker.DateTimePicker;
 
 public class NewEventActivity extends EventActivity {
-	private final int CHOOSE_CONTACTS_DIALOG = 1;
 
 	@SuppressWarnings("unused")
 	private Button templatesButton;
@@ -74,7 +61,6 @@ public class NewEventActivity extends EventActivity {
 	private int[] ids;
 	private boolean[] selections;
 
-	@SuppressWarnings("unused")
 //	private ArrayList<AutoColorItem> autoColors = null;
 //	private ArrayList<AutoIconItem> autoIcons = null;
 
@@ -84,7 +70,6 @@ public class NewEventActivity extends EventActivity {
 
 	private boolean remindersShown = false;
 	private boolean alarmsShown = false;
-	private boolean countrySelected = false;
 	private CheckBox templateTrigger;
 
 	@Override
@@ -239,77 +224,108 @@ public class NewEventActivity extends EventActivity {
 		// Address
 		final LinearLayout addressPanel = (LinearLayout) findViewById(R.id.addressLine);
 		// timezone
+		timezoneSpinnerBlock = (LinearLayout) findViewById(R.id.timezoneSpinnerBlock);
 		timezoneView = (EditText) findViewById(R.id.timezoneView);
-		
-		// country
-		countryView = (EditText) findViewById(R.id.countryView);
-		
-		final ArrayAdapter<String> adapterCountry = new ArrayAdapter<String>(this, R.layout.search_dialog_item,
-				CountryManager.getCountries(this));
-		adapterCountry.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-//		countrySpinner.setAdapter(adapterCountry);
-//		countryArray = CountryManager.getCountryValues(this);
-
-		// String curentCountry =
-		// dm.getmContext().getResources().getConfiguration().locale.getISO3Country();
-//		Locale newLocale = new Locale(account.getLanguage(), account.getCountry());
-//		String curentCountry = newLocale.getISO3Country();
-//		int i = 0;
-//		for (String tmpCountry : countryArray) {
-//			if (tmpCountry.equals(curentCountry)) {
-//				countrySpinner.setSelection(i);
-//				countrySelected = true;
-//				timezoneSpinner.setEnabled(true);
-//				String[] timezoneLabels = TimezoneManager.getTimezones(NewEventActivity.this, countryArray[i]);
-//				ArrayAdapter<String> adapterTimezone = new ArrayAdapter<String>(NewEventActivity.this, R.layout.search_dialog_item,
-//						timezoneLabels);
-//				adapterTimezone.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-//				timezoneSpinner.setAdapter(adapterTimezone);
-//
-//				timezoneArray = TimezoneManager.getTimezonesValues(NewEventActivity.this, countryArray[i]);
-//			}
-//			i++;
-//		}
-
-		LinearLayout countrySpinnerBlock = (LinearLayout) findViewById(R.id.countrySpinnerBlock);
-		countrySpinnerBlock.setOnClickListener(new OnClickListener() {
-
+		timezoneSpinnerBlock.setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View arg0) {
-				Dialog dia = new SearchDialog(NewEventActivity.this, android.R.drawable.dialog_frame, timezonesAdapter, timezoneInUse);
-				dia.show();
+				final Dialog dia1 = new Dialog(NewEventActivity.this);
+				dia1.requestWindowFeature(Window.FEATURE_NO_TITLE);
+				dia1.setContentView(R.layout.search_dialog);
+				
+				ListView diaList = (ListView) dia1.findViewById(R.id.dialog_list);
+				diaList.setAdapter(timezonesAdapter);
+				timezonesAdapter.notifyDataSetChanged();
+		
+				EditText searchView = (EditText) dia1.findViewById(R.id.dialog_search);
+
+				TextWatcher filterTextWatcher = new TextWatcher() {
+					@Override
+					public void afterTextChanged(Editable s) {
+					}
+
+					@Override
+					public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+					}
+
+					@Override
+					public void onTextChanged(CharSequence s, int start, int before, int count) {
+						if (s != null) {
+							if (timezonesAdapter != null)
+								timezonesAdapter.getFilter().filter(s);
+						}
+					}
+				};
+
+				searchView.addTextChangedListener(filterTextWatcher);
+				
+				diaList.setOnItemClickListener(new OnItemClickListener() {
+
+					@Override
+					public void onItemClick(AdapterView<?> arg0, View view, int pos, long arg3) {
+						timezoneInUse = Integer.parseInt(view.getTag().toString());
+						countryView.setText(countriesList.get(timezoneInUse).country);
+						event.setCountry(countriesList.get(timezoneInUse).country_code);
+						timezoneView.setText(countriesList.get(timezoneInUse).timezone);
+						event.setTimezone(countriesList.get(timezoneInUse).timezone);
+						dia1.dismiss();
+					}
+				});
+				dia1.show();
 			}
 		});
 
-//		countrySpinner.setOnItemSelectedListener(new OnItemSelectedListener() {
-//
-//			@Override
-//			public void onItemSelected(AdapterView<?> arg0, View arg1, int pos, long arg3) {
-//				if (pos == 0) {
-//					if (!countrySelected) {
-//						ArrayAdapter<String> adapterTimezone = new ArrayAdapter<String>(NewEventActivity.this, R.layout.search_dialog_item,
-//								new String[0]);
-//						adapterTimezone.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-//						timezoneSpinner.setAdapter(adapterTimezone);
-//						timezoneSpinner.setEnabled(false);
-//						timezoneArray = null;
-//					}
-//				} else {
-//					timezoneSpinner.setEnabled(true);
-//					String[] timezoneLabels = TimezoneManager.getTimezones(NewEventActivity.this, countryArray[pos]);
-//					ArrayAdapter<String> adapterTimezone = new ArrayAdapter<String>(NewEventActivity.this, R.layout.search_dialog_item,
-//							timezoneLabels);
-//					adapterTimezone.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-//					timezoneSpinner.setAdapter(adapterTimezone);
-//
-//					timezoneArray = TimezoneManager.getTimezonesValues(NewEventActivity.this, countryArray[pos]);
-//				}
-//			}
-//
-//			@Override
-//			public void onNothingSelected(AdapterView<?> arg0) {
-//			}
-//		});
+		// country
+		countrySpinnerBlock = (LinearLayout) findViewById(R.id.countrySpinnerBlock);
+		countryView = (EditText) findViewById(R.id.countryView);
+		countrySpinnerBlock.setOnClickListener(new OnClickListener() {
+			@Override
+			public void onClick(View arg0) {
+				final Dialog dia1 = new Dialog(NewEventActivity.this);
+				dia1.requestWindowFeature(Window.FEATURE_NO_TITLE);
+				dia1.setContentView(R.layout.search_dialog);
+				
+				ListView diaList = (ListView) dia1.findViewById(R.id.dialog_list);
+				diaList.setAdapter(countriesAdapter);
+				countriesAdapter.notifyDataSetChanged();
+
+				EditText searchView = (EditText) dia1.findViewById(R.id.dialog_search);
+
+				TextWatcher filterTextWatcher = new TextWatcher() {
+					@Override
+					public void afterTextChanged(Editable s) {
+					}
+
+					@Override
+					public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+					}
+
+					@Override
+					public void onTextChanged(CharSequence s, int start, int before, int count) {
+						if (s != null) {
+							if (countriesAdapter != null)
+								countriesAdapter.getFilter().filter(s);
+						}
+					}
+				};
+
+				searchView.addTextChangedListener(filterTextWatcher);
+				
+				diaList.setOnItemClickListener(new OnItemClickListener() {
+
+					@Override
+					public void onItemClick(AdapterView<?> arg0, View view, int pos, long arg3) {
+						timezoneInUse = Integer.parseInt(view.getTag().toString());
+						countryView.setText(countriesList.get(timezoneInUse).country);
+						event.setCountry(countriesList.get(timezoneInUse).country_code);
+						timezoneView.setText(countriesList.get(timezoneInUse).timezone);
+						event.setTimezone(countriesList.get(timezoneInUse).timezone);
+						dia1.dismiss();
+					}
+				});
+				dia1.show();
+			}
+		});
 
 		// city
 		cityView = (EditText) findViewById(R.id.cityView);
@@ -584,23 +600,37 @@ public class NewEventActivity extends EventActivity {
 		timezoneView.setText(account.getTimezone());
 		countryView.setText(account.getCountry());
 		
-		String[] array;
-		countriesList = new ArrayList<String>();
-		timezonesList = new ArrayList<String>();
-		
-		array = getResources().getStringArray(R.array.countries);
-		for (String temp : array) {
+		String[] cities;
+		String[] countries;
+		String[] countries2;
+		String[] country_codes;
+		String[] timezones;
+		String[] altnames;
+		countriesList = new ArrayList<StaticTimezones>();
+
+		cities = getResources().getStringArray(R.array.city);
+		countries = getResources().getStringArray(R.array.countries);
+		countries2 = getResources().getStringArray(R.array.countries2);
+		country_codes = getResources().getStringArray(R.array.country_codes);
+		timezones = getResources().getStringArray(R.array.timezones);
+		altnames = getResources().getStringArray(R.array.timezone_altnames);
+		for (int i = 0; i < cities.length; i++) {
+			StaticTimezones temp = new StaticTimezones();
+			
+			temp.id = "" + i;
+			temp.city = cities[i];
+			temp.country = countries[i];
+			temp.country2 = countries2[i];
+			temp.country_code = country_codes[i];
+			temp.timezone = timezones[i];
+			temp.altname = altnames[i];
+			
 			countriesList.add(temp);
 		}
-		if (countriesList != null)
-			countriesAdapter = new StringArrayListAdapter(NewEventActivity.this, R.layout.search_dialog_item, countriesList);
-		
-		array = getResources().getStringArray(R.array.timezones);
-		for (String temp : array) {
-			timezonesList.add(temp);
+		if (countriesList != null) {
+			countriesAdapter = new CountriesAdapter(NewEventActivity.this, R.layout.search_dialog_item, countriesList);
+			timezonesAdapter = new TimezonesAdapter(NewEventActivity.this, R.layout.search_dialog, countriesList);
 		}
-		if (timezonesList != null)
-			timezonesAdapter = new StringArrayListAdapter(NewEventActivity.this, R.layout.search_dialog_item, timezonesList);
 
 
 		LinearLayout invitedPersonList = (LinearLayout) findViewById(R.id.invited_person_list);
@@ -1033,7 +1063,7 @@ public class NewEventActivity extends EventActivity {
 			public void onClick(View v) {
 				mDateTimePicker.clearFocus();
 				String timeFormat;
-				Account account = new Account();
+				Account account = new Account(NewEventActivity.this);
 				if(account.getSetting_ampm() == 1){
 					timeFormat = getResources().getString(R.string.hour_event_view_time_format_AMPM);
 				} else {
@@ -1182,10 +1212,10 @@ public class NewEventActivity extends EventActivity {
 	 * Update user interface input fields.
 	 * 
 	 * Update user interface input fields with submitted values. Currently event timezone and
-	 * country, start�end time, reminder and alarm field values aren't updated.
+	 * country, start-end time, reminder and alarm field values aren't updated.
 	 * 
 	 * @author meska.lt@gmail.com
-	 * @param data � Event object with values set.
+	 * @param data - Event object with values set.
 	 * @version 1.0
 	 * @since 2012-09-24
 	 */
