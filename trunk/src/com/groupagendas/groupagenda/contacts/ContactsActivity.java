@@ -2,7 +2,6 @@ package com.groupagendas.groupagenda.contacts;
 
 import java.util.ArrayList;
 import java.util.TreeMap;
-import java.util.concurrent.ExecutionException;
 
 import org.apache.http.HttpResponse;
 import org.apache.http.HttpStatus;
