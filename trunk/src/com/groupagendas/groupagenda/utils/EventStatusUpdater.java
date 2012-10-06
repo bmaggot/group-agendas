@@ -1,13 +1,13 @@
 package com.groupagendas.groupagenda.utils;
+//TODO Overview this class
+//import java.util.concurrent.ExecutionException;
 
-import java.util.concurrent.ExecutionException;
-
-import android.content.ContentValues;
+//import android.content.ContentValues;
 import android.os.AsyncTask;
 
-import com.groupagendas.groupagenda.data.DataManagement;
-import com.groupagendas.groupagenda.error.report.Reporter;
-import com.groupagendas.groupagenda.events.EventsProvider;
+//import com.groupagendas.groupagenda.data.DataManagement;
+//import com.groupagendas.groupagenda.error.report.Reporter;
+//import com.groupagendas.groupagenda.events.EventsProvider;
 
 public class EventStatusUpdater extends AsyncTask<Object, Void, Void>{
 
@@ -27,7 +27,7 @@ public class EventStatusUpdater extends AsyncTask<Object, Void, Void>{
 //		String where = EventsProvider.EMetaData.EventsMetaData.E_ID+"="+event_id;
 //		dm.getContext().getContentResolver().update(EventsProvider.EMetaData.EventsMetaData.CONTENT_URI, values, where, null);
 //		try {
-//			dm.updateEventByIdFromRemoteDb(event_id, dm.getContext()); //TODO solve this problem
+//			dm.updateEventByIdFromRemoteDb(event_id, dm.getContext()); 
 //		} catch (ExecutionException e) {
 //			Reporter.reportError(this.getClass().toString(), Thread.currentThread().getStackTrace()[2].getMethodName()
 //					.toString(), e.getMessage());
