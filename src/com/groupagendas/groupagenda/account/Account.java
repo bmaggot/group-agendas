@@ -2,6 +2,7 @@ package com.groupagendas.groupagenda.account;
 
 import java.util.Calendar;
 
+import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
 
@@ -14,9 +15,16 @@ import com.groupagendas.groupagenda.utils.Utils;
 public class Account {
 	SharedPreferences prefs;
 	Editor prefsEditor;
-
+/**
+ * @deprecated soon to be removed.
+ */
 	public Account() {
 		prefs = Data.getmContext().getSharedPreferences("ACCOUNT_DATA", 0);
+		prefsEditor = prefs.edit();
+	}
+	
+	public Account(Context context) {
+		prefs = context.getSharedPreferences("ACCOUNT_DATA", 0);
 		prefsEditor = prefs.edit();
 	}
 
