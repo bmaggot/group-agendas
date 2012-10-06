@@ -27,7 +27,6 @@ public class EventActivity extends Activity {
 	public static ArrayList<Invited> newInvites;
 	public static int[] newContacts;
 
-	protected DataManagement dm;
 	protected DateTimeUtils dtUtils;
 	protected EditText descView;
 

@@ -40,10 +40,12 @@ import com.groupagendas.groupagenda.utils.Utils;
 
 
 public class EventManagement {
+	static String error = "";
 	private static final String CLASS_NAME = "EventManagement.class";
 	private static SimpleDateFormat day_index_formatter = new SimpleDateFormat(EventsProvider.EMetaData.EventsIndexesMetaData.DAY_COLUMN_FORMAT);
 	private static SimpleDateFormat month_index_formatter = new SimpleDateFormat(EventsProvider.EMetaData.EventsIndexesMetaData.MONTH_COLUMN_FORMAT);
 	private static String user_timezone = CalendarSettings.getTimeZone();
+	
 	
 	
 	private static final String GET_EVENTS_FROM_REMOTE_DB_URL = "mobile/events_list";
@@ -905,7 +907,7 @@ public class EventManagement {
 							if (success == false) {
 								// array of errors!!!
 								JSONObject errObj = object.getJSONObject("error");
-								Data.setERROR(errObj.getString("reason"));
+								EventManagement.error = (errObj.getString("reason"));
 								Log.e("removeEvent - error: ", Data.getERROR());
 							} else {
 //								Data.getEvents().remove(getEventFromLocalDb(id));
@@ -1494,9 +1496,10 @@ private static String parseInvitedListToJSONArray(ArrayList<Invited> invited) {
 
 		return eventsSize;
 	}
-	
 
-	
+	public static CharSequence getError() {
+		return error;
+	}
 
 //	private static Invited createInvitedFromCursor(Cursor result) {
 //		Invited invited = new Invited();

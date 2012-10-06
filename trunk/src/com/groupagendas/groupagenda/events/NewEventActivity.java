@@ -105,12 +105,10 @@ public class NewEventActivity extends EventActivity {
 		startCalendar.clear(Calendar.SECOND);
 		endCalendar.clear(Calendar.SECOND);
 		endCalendar.add(Calendar.MINUTE, DEFAULT_EVENT_DURATION_IN_MINS);
-
-		dm = DataManagement.getInstance(this);
 		dtUtils = new DateTimeUtils(this);
 
 //		new GetAutoTask().execute();
-		new GetContactsTask().execute(); //TODO investigate
+//		new GetContactsTask().execute(); //TODO investigate
 
 		cv = new ContentValues();
 		prefs = new Prefs(this);
@@ -754,7 +752,7 @@ public class NewEventActivity extends EventActivity {
 			@Override
 			public void onDismiss(DialogInterface dialog) {
 				if (Data.templateInUse > 0) {
-					event = dm.getTemplateFromLocalDb(Data.templateInUse);
+					event = DataManagement.getInstance(NewEventActivity.this).getTemplateFromLocalDb(Data.templateInUse);
 					setUIValues(event);
 					Data.templateInUse = 0;
 				}
@@ -1121,7 +1119,7 @@ public class NewEventActivity extends EventActivity {
 			int testEvent = event.isValid();
 
 			if (testEvent == 0) {
-				dm.createTemplate(event);
+				DataManagement.getInstance(NewEventActivity.this).createTemplate(event);
 			} else {
 				switch (testEvent) {
 				case 1: // no title set

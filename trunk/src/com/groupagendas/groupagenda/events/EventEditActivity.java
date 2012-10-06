@@ -38,6 +38,7 @@ import com.groupagendas.groupagenda.data.Data;
 import com.groupagendas.groupagenda.data.DataManagement;
 import com.groupagendas.groupagenda.data.EventManagement;
 import com.groupagendas.groupagenda.timezone.StringArrayListAdapter;
+import com.groupagendas.groupagenda.utils.DateTimeUtils;
 import com.groupagendas.groupagenda.utils.SearchDialog;
 import com.groupagendas.groupagenda.utils.Utils;
 import com.ptashek.widgets.datetimepicker.DateTimePicker;
@@ -94,6 +95,7 @@ public class EventEditActivity extends EventActivity {
 	@Override
 	public void onResume() {
 		super.onResume();
+		dtUtils = new DateTimeUtils(this);
 		String[] array;
 		countriesList = new ArrayList<String>();
 		timezonesList = new ArrayList<String>();
@@ -844,6 +846,7 @@ public class EventEditActivity extends EventActivity {
 		protected Boolean doInBackground(Void... type) {
 			if (event_internal_id > 0) {
 				EventManagement.deleteEvent(EventEditActivity.this, event);
+				return true;
 			}
 			return false;
 		}
@@ -854,7 +857,7 @@ public class EventEditActivity extends EventActivity {
 			if (result) {
 				toast.setText(getString(R.string.event_deleted));
 			} else {
-				toast.setText(dm.getError());
+				toast.setText(EventManagement.getError());
 			}
 			toast.show();
 
