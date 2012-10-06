@@ -32,7 +32,7 @@ private static final String DEFAULT_REMINDER = "null";
 	
 	private long internalID;
 	private int event_id; //TODO solve ids over 32k
-	private int user_id;
+	private int user_id;// TODO JUSTAS M: is it creator GA user id or what???
 	private int status;
 	private int creator_contact_id;
 	
@@ -759,7 +759,7 @@ public void setInternalID(long internalID) {
 	this.internalID = internalID;
 }
 public long[] getAssigned_contacts() {
-	assigned_contacts = new long[invited.size()];
+	assigned_contacts = new long[getInvited().size()];
 	int i = 0;
 	for (Invited invite : invited) {
 		assigned_contacts[i] = invite.getMy_contact_id();
@@ -770,12 +770,12 @@ public long[] getAssigned_contacts() {
 //public void setAssigned_contacts(long[] assigned_contacts) {
 //	this.assigned_contacts = assigned_contacts;
 //}
-public long[] getAssigned_groups() {
-	return assigned_groups;
-}
-public void setAssigned_groups(long[] assigned_groups) {
-	this.assigned_groups = assigned_groups;
-}
+//public long[] getAssigned_groups() { TODO
+//	return assigned_groups;
+//}
+//public void setAssigned_groups(long[] assigned_groups) {
+//	this.assigned_groups = assigned_groups;
+//}
 public void setMyInvite(Invited myInvite) {
 	this.myInvite = myInvite;
 }

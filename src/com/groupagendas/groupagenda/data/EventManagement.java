@@ -68,7 +68,7 @@ public class EventManagement {
 	 */
 	public static void createNewEvent(Context context, Event event) {
 
-		if (networkAvailable) {//TODO TEST
+		if (networkAvailable) {
 			int id = createEventInRemoteDb(event);
 
 			if (id > 0) {
@@ -690,7 +690,7 @@ public class EventManagement {
 //					}
 //				}
 				if (e.getAssigned_contacts() != null) {
-					for (int i = 0, l = e.getAssigned_groups().length; i < l; i++) {
+					for (int i = 0, l = e.getAssigned_contacts().length; i < l; i++) {
 						reqEntity.addPart("contacts[]", new StringBody(String.valueOf(e.getAssigned_contacts()[i])));
 					}
 				} else {
@@ -745,7 +745,7 @@ public class EventManagement {
 								Log.e("Create event error", object.getJSONObject("error").getString("reason"));
 								return 0;
 							} else {
-								return object.getInt("event_id");
+								return object.optInt("event_id");
 							}
 						}
 					} else {

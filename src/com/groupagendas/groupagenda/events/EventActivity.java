@@ -15,6 +15,7 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.groupagendas.groupagenda.R;
+import com.groupagendas.groupagenda.account.Account;
 import com.groupagendas.groupagenda.data.DataManagement;
 import com.groupagendas.groupagenda.timezone.StringArrayListAdapter;
 import com.groupagendas.groupagenda.utils.DateTimeUtils;
@@ -116,6 +117,8 @@ public class EventActivity extends Activity {
 	protected LinearLayout invitedPersonList;
 	protected int timezoneInUse = 0;
 	protected Button inviteButton;
+	
+	protected Account account;
 
 	protected Event setEventData(Event event) {
 
