@@ -69,7 +69,7 @@ public class AutoColorActivity extends ListActivity {
 		protected void onPostExecute(Boolean success) {
 			super.onPostExecute(success);
 			if(!success){
-				Account account = new Account();
+				Account account = new Account(AutoColorActivity.this);
 				account.setNeed_update(1);
 			}
 		}
