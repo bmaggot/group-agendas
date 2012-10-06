@@ -1,5 +1,7 @@
 package com.groupagendas.groupagenda;
 
+import java.util.Calendar;
+
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
@@ -124,6 +126,8 @@ public class LoginActivity extends Activity {
 				editor.putString("password", password);
 				editor.putBoolean("stay_logged_in", stay);
 				editor.putBoolean("logged", true);
+				// TODO overview if instance should be retrieved with locale attribute.
+				editor.putLong("latest_update", Calendar.getInstance().getTimeInMillis());
 				success = editor.commit();
 			}
 
