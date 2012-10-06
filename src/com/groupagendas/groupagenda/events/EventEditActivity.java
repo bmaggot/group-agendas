@@ -10,6 +10,8 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -37,9 +39,9 @@ import com.groupagendas.groupagenda.data.CalendarSettings;
 import com.groupagendas.groupagenda.data.Data;
 import com.groupagendas.groupagenda.data.DataManagement;
 import com.groupagendas.groupagenda.data.EventManagement;
-import com.groupagendas.groupagenda.timezone.StringArrayListAdapter;
+import com.groupagendas.groupagenda.timezone.CountriesAdapter;
+import com.groupagendas.groupagenda.timezone.TimezonesAdapter;
 import com.groupagendas.groupagenda.utils.DateTimeUtils;
-import com.groupagendas.groupagenda.utils.SearchDialog;
 import com.groupagendas.groupagenda.utils.Utils;
 import com.ptashek.widgets.datetimepicker.DateTimePicker;
 
@@ -69,8 +71,7 @@ public class EventEditActivity extends EventActivity {
 
 	private long event_internal_id;
 
-	private View responsePanel;
-	
+	private RelativeLayout invitationResponseLine;
 	protected final static int DELETE_DIALOG = 1;
 	protected final static int MY_INVITED_ENTRY_ID = 99999;
 	private boolean remindersShown = false;
@@ -88,28 +89,43 @@ public class EventEditActivity extends EventActivity {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.event_edit);
 	}
-
+	
 	@Override
 	public void onResume() {
 		super.onResume();
 		dtUtils = new DateTimeUtils(this);
-		String[] array;
-		countriesList = new ArrayList<String>();
-		timezonesList = new ArrayList<String>();
+		String[] cities;
+		String[] countries;
+		String[] countries2;
+		String[] country_codes;
+		String[] timezones;
+		String[] altnames;
+		countriesList = new ArrayList<StaticTimezones>();
 
-		array = getResources().getStringArray(R.array.countries);
-		for (String temp : array) {
+		cities = getResources().getStringArray(R.array.city);
+		countries = getResources().getStringArray(R.array.countries);
+		countries2 = getResources().getStringArray(R.array.countries2);
+		country_codes = getResources().getStringArray(R.array.country_codes);
+		timezones = getResources().getStringArray(R.array.timezones);
+		altnames = getResources().getStringArray(R.array.timezone_altnames);
+		for (int i = 0; i < cities.length; i++) {
+			StaticTimezones temp = new StaticTimezones();
+			
+			temp.id = "" + i;
+			temp.city = cities[i];
+			temp.country = countries[i];
+			temp.country2 = countries2[i];
+			temp.country_code = country_codes[i];
+			temp.timezone = timezones[i];
+			temp.altname = altnames[i];
+			
 			countriesList.add(temp);
 		}
-		if (countriesList != null)
-			countriesAdapter = new StringArrayListAdapter(EventEditActivity.this, R.layout.search_dialog_item, countriesList);
-
-		array = getResources().getStringArray(R.array.timezones);
-		for (String temp : array) {
-			timezonesList.add(temp);
+		if (countriesList != null) {
+			countriesAdapter = new CountriesAdapter(EventEditActivity.this, R.layout.search_dialog_item, countriesList);
+			timezonesAdapter = new TimezonesAdapter(EventEditActivity.this, R.layout.search_dialog_item, countriesList);
 		}
-		if (timezonesList != null)
-			timezonesAdapter = new StringArrayListAdapter(EventEditActivity.this, R.layout.search_dialog_item, timezonesList);
+
 
 		initViewItems();
 		hideAddressPanel();
@@ -118,9 +134,8 @@ public class EventEditActivity extends EventActivity {
 		detailsPanel.setVisibility(View.GONE);
 		addressDetailsPanel.setVisibility(View.VISIBLE);
 
-		event_internal_id = intent.getLongExtra("event_id", 0); // TODO
-																// implement
-																// offline
+		// TODO implement offline
+		event_internal_id = intent.getLongExtra("event_id", 0);
 		// mode event Edit
 		if (event_internal_id > 0) {
 			new GetEventTask().execute(event_internal_id);
@@ -212,23 +227,49 @@ public class EventEditActivity extends EventActivity {
 		countrySpinnerBlock.setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View arg0) {
-				Dialog dia = new SearchDialog(EventEditActivity.this, android.R.drawable.dialog_frame, countriesAdapter, timezoneInUse);
-				ListView diaList = (ListView) dia.findViewById(R.id.dialog_list);
+				final Dialog dia1 = new Dialog(EventEditActivity.this);
+				dia1.requestWindowFeature(Window.FEATURE_NO_TITLE);
+				dia1.setContentView(R.layout.search_dialog);
+				
+				ListView diaList = (ListView) dia1.findViewById(R.id.dialog_list);
+				diaList.setAdapter(countriesAdapter);
+				countriesAdapter.notifyDataSetChanged();
+				
+				EditText searchView = (EditText) dia1.findViewById(R.id.dialog_search);
+
+				TextWatcher filterTextWatcher = new TextWatcher() {					
+					@Override
+					public void afterTextChanged(Editable s) {
+					}
+
+					@Override
+					public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+					}
+
+					@Override
+					public void onTextChanged(CharSequence s, int start, int before, int count) {
+						if (s != null) {
+							if (countriesAdapter != null)
+								countriesAdapter.getFilter().filter(s);
+						}
+					}
+				};
+				
+				searchView.addTextChangedListener(filterTextWatcher);
+				
 				diaList.setOnItemClickListener(new OnItemClickListener() {
 
 					@Override
-					public void onItemClick(AdapterView<?> arg0, View arg1, int arg2, long arg3) {
-						if (arg1.getTag().toString() != null) {
-							int position = Integer.parseInt(arg1.getTag().toString());
-							if (position > 0) {
-								timezoneInUse = position;
-								countryView.setText(countriesList.get(timezoneInUse));
-								timezoneView.setText(timezonesList.get(timezoneInUse));
-							}
-						}
+					public void onItemClick(AdapterView<?> parent, View view, int pos, long arg3) {
+						timezoneInUse = Integer.parseInt(view.getTag().toString());
+						countryView.setText(countriesList.get(timezoneInUse).country);
+						event.setCountry(countriesList.get(timezoneInUse).country_code);
+						timezoneView.setText(countriesList.get(timezoneInUse).timezone);
+						event.setTimezone(countriesList.get(timezoneInUse).timezone);
+						dia1.dismiss();
 					}
 				});
-				dia.show();
+				dia1.show();
 			}
 		});
 
@@ -254,23 +295,49 @@ public class EventEditActivity extends EventActivity {
 		timezoneSpinnerBlock.setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View arg0) {
-				Dialog dia = new SearchDialog(EventEditActivity.this, android.R.drawable.dialog_frame, timezonesAdapter, timezoneInUse);
-				ListView diaList = (ListView) dia.findViewById(R.id.dialog_list);
+				final Dialog dia1 = new Dialog(EventEditActivity.this);
+				dia1.requestWindowFeature(Window.FEATURE_NO_TITLE);
+				dia1.setContentView(R.layout.search_dialog);
+				
+				ListView diaList = (ListView) dia1.findViewById(R.id.dialog_list);
+				diaList.setAdapter(timezonesAdapter);
+				timezonesAdapter.notifyDataSetChanged();
+
+				EditText searchView = (EditText) dia1.findViewById(R.id.dialog_search);
+
+				TextWatcher filterTextWatcher = new TextWatcher() {
+					@Override
+					public void afterTextChanged(Editable s) {
+					}
+
+					@Override
+					public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+					}
+
+					@Override
+					public void onTextChanged(CharSequence s, int start, int before, int count) {
+						if (s != null) {
+							if (timezonesAdapter != null)
+								timezonesAdapter.getFilter().filter(s);
+						}
+					}
+				};
+
+				searchView.addTextChangedListener(filterTextWatcher);
+				
 				diaList.setOnItemClickListener(new OnItemClickListener() {
 
 					@Override
-					public void onItemClick(AdapterView<?> arg0, View arg1, int arg2, long arg3) {
-						if (arg1.getTag().toString() != null) {
-							int position = Integer.parseInt(arg1.getTag().toString());
-							if (position > 0) {
-								timezoneInUse = position;
-								countryView.setText(countriesList.get(timezoneInUse));
-								timezoneView.setText(timezonesList.get(timezoneInUse));
-							}
-						}
+					public void onItemClick(AdapterView<?> arg0, View view, int pos, long arg3) {
+						timezoneInUse = Integer.parseInt(view.getTag().toString());
+						countryView.setText(countriesList.get(timezoneInUse).country);
+						event.setCountry(countriesList.get(timezoneInUse).country_code);
+						timezoneView.setText(countriesList.get(timezoneInUse).timezone);
+						event.setTimezone(countriesList.get(timezoneInUse).timezone);
+						dia1.dismiss();
 					}
 				});
-				dia.show();
+				dia1.show();
 			}
 		});
 
@@ -450,7 +517,7 @@ public class EventEditActivity extends EventActivity {
 		});
 
 		// INVITES SECTION
-		invitesColumn = (LinearLayout) findViewById(R.id.invitesLine);
+//		invitesColumn = (LinearLayout) findViewById(R.id.invitesLine);
 		invitedPersonList = (LinearLayout) findViewById(R.id.invited_person_list);
 		super.inviteButton = (Button) findViewById(R.id.invite_button);
 		super.inviteButton.setOnClickListener(new OnClickListener() {
@@ -464,7 +531,8 @@ public class EventEditActivity extends EventActivity {
 			}
 		});
 
-		responsePanel = findViewById(R.id.response_to_invitation);
+		invitationResponseLine = (RelativeLayout) findViewById(R.id.response_to_invitation);
+		invitationResponseLine.setVisibility(View.VISIBLE);
 		deleteButton = (Button) findViewById(R.id.event_delete);
 		deleteButton.setOnClickListener(new OnClickListener() {
 			@Override
@@ -660,6 +728,19 @@ public class EventEditActivity extends EventActivity {
 				descView.setText(result.getDescription());
 			}
 
+			if (result.getTimezone().length() > 0) {
+				for (StaticTimezones entry : countriesList) {
+					if (entry.timezone.equalsIgnoreCase(result.getTimezone()))
+						timezoneInUse = Integer.parseInt(entry.id);
+				}
+				if (timezoneInUse > 0) {
+					timezoneView.setText(result.getTimezone());
+					countryView.setText(countriesList.get(timezoneInUse).country);
+					
+					showView(timezoneView, addressLine);
+					showView(countryView, addressLine);
+				}
+			}
 			if (result.getCity().length() > 0) {
 				cityView.setText(result.getCity());
 				showView(cityView, addressLine);
@@ -705,7 +786,7 @@ public class EventEditActivity extends EventActivity {
 					}
 				}
 			});
-			Account account = new Account();
+			Account account = new Account(EventEditActivity.this);
 			if (result.getReminder1() != null) {
 				reminder1.setText(Utils.formatCalendar(result.getReminder1(), account.getSetting_date_format()));
 			} else {
@@ -920,7 +1001,7 @@ public class EventEditActivity extends EventActivity {
 					break;
 				}
 				if (timeSet) {
-					Account account = new Account();
+					Account account = new Account(EventEditActivity.this);
 					view.setText(Utils.formatCalendar(mDateTimePicker.getCalendar(), account.getSetting_date_format()));
 				}
 				mDateTimeDialog.dismiss();
