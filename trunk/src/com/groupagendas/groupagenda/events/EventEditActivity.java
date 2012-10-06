@@ -87,9 +87,6 @@ public class EventEditActivity extends EventActivity {
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.event_edit);
-		newInvites = null;
-		newContacts = null;
-
 	}
 
 	@Override
