@@ -252,11 +252,12 @@
 
 				<EditText
                     android:id="@+id/countryView"
-                    android:layout_width="fill_parent"
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:background="#00000000"
                     android:inputType="text"
                     android:paddingBottom="5dp"
+                    android:focusableInTouchMode="false"
                     android:paddingTop="4dp"
                     android:singleLine="true"
                     android:textColor="@color/black"
@@ -401,7 +402,8 @@
 
 				<EditText
                     android:id="@+id/timezoneView"
-                    android:layout_width="fill_parent"
+                    android:layout_width="wrap_content"
+	                android:focusableInTouchMode="false"
                     android:layout_height="wrap_content"
                     android:background="#00000000"
                     android:inputType="text"

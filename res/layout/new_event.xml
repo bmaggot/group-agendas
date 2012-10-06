@@ -273,18 +273,19 @@
                     android:textSize="15dp"
                     android:textStyle="bold" />
 
-                <Spinner
-                    android:id="@+id/countrySpinner"
+				<EditText
+                    android:id="@+id/countryView"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_gravity="center_vertical"
                     android:background="#00000000"
-                    android:clickable="false"
+                    android:inputType="text"
                     android:paddingBottom="5dp"
+                    android:focusableInTouchMode="false"
                     android:paddingTop="4dp"
                     android:singleLine="true"
                     android:textColor="@color/black"
                     android:textSize="15dp" />
+
             </LinearLayout>
 
             <LinearLayout
@@ -414,17 +415,28 @@
                 <TextView
                     android:layout_width="80dp"
                     android:layout_height="wrap_content"
+                    android:paddingBottom="5dp"
+                    android:paddingTop="4dp"
+                    android:singleLine="true"
                     android:text="@string/timezone"
-                    android:textColor="@android:color/black"
+                    android:textColor="@color/black"
+                    android:textSize="15dp"
                     android:textStyle="bold" />
 
-                <Spinner
-                    android:id="@+id/timezoneSpinner"
-                    android:layout_width="fill_parent"
+				<EditText
+                    android:id="@+id/timezoneView"
+                    android:layout_width="wrap_content"
+	                android:focusableInTouchMode="false"
                     android:layout_height="wrap_content"
                     android:background="#00000000"
-                    android:textColor="@color/black" />
+                    android:inputType="text"
+                    android:paddingBottom="5dp"
+                    android:paddingTop="4dp"
+                    android:singleLine="true"
+                    android:textColor="@color/black"
+                    android:textSize="15dp" />
             </LinearLayout>
+
 
             <LinearLayout
                 android:id="@+id/detailsLine"
