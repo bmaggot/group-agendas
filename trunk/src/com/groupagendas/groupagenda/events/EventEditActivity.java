@@ -81,7 +81,7 @@ public class EventEditActivity extends EventActivity {
 	private Intent intent;
 
 	private Button chatMessengerButton;
-	private Button inviteButton;
+	
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -455,8 +455,8 @@ public class EventEditActivity extends EventActivity {
 		// INVITES SECTION
 		invitesColumn = (LinearLayout) findViewById(R.id.invitesLine);
 		invitedPersonList = (LinearLayout) findViewById(R.id.invited_person_list);
-		inviteButton = (Button) findViewById(R.id.invite_button);
-		inviteButton.setOnClickListener(new OnClickListener() {
+		super.inviteButton = (Button) findViewById(R.id.invite_button);
+		super.inviteButton.setOnClickListener(new OnClickListener() {
 
 			@Override
 			public void onClick(View v) {
