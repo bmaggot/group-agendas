@@ -70,7 +70,6 @@ public class NewEventActivity extends EventActivity {
 	@SuppressWarnings("unused")
 	private Button templatesButton;
 
-	private Button contactsButton;
 	private CharSequence[] titles;
 	private int[] ids;
 	private boolean[] selections;
@@ -86,7 +85,6 @@ public class NewEventActivity extends EventActivity {
 	private boolean remindersShown = false;
 	private boolean alarmsShown = false;
 	private boolean countrySelected = false;
-	protected Event event;
 	private CheckBox templateTrigger;
 
 	@Override
@@ -96,7 +94,7 @@ public class NewEventActivity extends EventActivity {
 	
 
 		setContentView(R.layout.new_event);
-		event = new Event();
+		
 
 		startCalendar.clear(Calendar.SECOND);
 		endCalendar.clear(Calendar.SECOND);
@@ -355,17 +353,6 @@ public class NewEventActivity extends EventActivity {
 		// Accomodation
 		accomodationView = (EditText) findViewById(R.id.accomodationView);
 
-		// contacts
-		contactsButton = (Button) findViewById(R.id.contactsButton);
-		contactsButton.setOnClickListener(new OnClickListener() {
-			@Override
-			public void onClick(View arg0) {
-				Data.newEventPar = true;
-				Data.showSaveButtonInContactsForm = true;
-				startActivity(new Intent(NewEventActivity.this, ContactsActivity.class));
-			}
-		});
-
 		hideAddressPanel(addressPanel, detailsPanel);
 		hideDetailsPanel(addressPanel, detailsPanel);
 		addressDetailsPanel = (RelativeLayout) findViewById(R.id.addressDetailsLine);
@@ -546,6 +533,22 @@ public class NewEventActivity extends EventActivity {
 						showDateTimeDialog(alarm3, ALARM3);
 					}
 				});
+				
+				// INVITES SECTION
+				invitesColumn = (LinearLayout) findViewById(R.id.invitesLine);
+				invitedPersonList = (LinearLayout) findViewById(R.id.invited_person_list);
+				super.inviteButton = (Button) findViewById(R.id.invite_button);
+				super.inviteButton.setOnClickListener(new OnClickListener() {
+
+					@Override
+					public void onClick(View v) {
+						Data.newEventPar = true;
+						Data.showSaveButtonInContactsForm = true;
+						// TODO Data.eventForSavingNewInvitedPersons = event;
+						startActivity(new Intent(NewEventActivity.this, ContactsActivity.class));
+					}
+				});
+				super.event = new Event();
 	}
 
 	@Override
@@ -575,7 +578,8 @@ public class NewEventActivity extends EventActivity {
 //				invitedPersonList.addView(getInvitedView(invited, inflater, view, dm.getContext()));
 //			}
 //		} else {
-		
+		super.onResume();
+
 		account = new Account(this);
 		timezoneView.setText(account.getTimezone());
 		countryView.setText(account.getCountry());
@@ -598,17 +602,17 @@ public class NewEventActivity extends EventActivity {
 		if (timezonesList != null)
 			timezonesAdapter = new StringArrayListAdapter(NewEventActivity.this, R.layout.search_dialog_item, timezonesList);
 
-		contactsButton.setBackgroundResource(R.drawable.event_invite_people_button_standalone);
-			LinearLayout invitedPersonList = (LinearLayout) findViewById(R.id.invited_person_list);
-			invitedPersonList.removeAllViews();
+
+		LinearLayout invitedPersonList = (LinearLayout) findViewById(R.id.invited_person_list);
+		invitedPersonList.removeAllViews();
 
 		if (newInvites != null) {
 			event.getInvited().addAll(newInvites);
 			newInvites = null;
 		}
 
+		showInvitesView();
 		
-		super.onResume();
 	}
 
 //	public View getInvitedView(Invited invited, LayoutInflater inflater, View view, Context mContext) {
@@ -684,6 +688,8 @@ public class NewEventActivity extends EventActivity {
 //		}
 //
 //	};
+
+	
 
 	public void saveEvent(View v) {
 		if (!templateTrigger.isChecked()) {

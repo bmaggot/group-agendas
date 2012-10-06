@@ -855,18 +855,20 @@
                 android:visibility="visible" >
 
                 <Button
-                    android:id="@+id/contactsButton"
+                    android:id="@+id/invite_button"
                     android:layout_width="fill_parent"
                     android:layout_height="40dp"
                     android:background="@drawable/event_invite_people_button_standalone"
                     android:text="@string/invite_people"
                     android:textSize="16dp"
                     android:textStyle="bold" />
-
+              
                 <include
                     android:id="@+id/invited_person_list"
                     layout="@layout/event_invitation_section" />
             </LinearLayout>
+            
+           
 
             <CheckBox
                 android:id="@+id/templateTrigger"

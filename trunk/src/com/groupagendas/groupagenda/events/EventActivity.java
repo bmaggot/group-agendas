@@ -115,6 +115,7 @@ public class EventActivity extends Activity {
 	protected LinearLayout invitedPersonList;
 	protected int timezoneInUse = 0;
 	protected Button inviteButton;
+	protected LinearLayout invitesColumn;
 	
 	protected Account account;
 	
@@ -123,6 +124,10 @@ public class EventActivity extends Activity {
 		super.onCreate(savedInstanceState);
 		newInvites = null;
 		
+	}
+	@Override
+	protected void onResume() {
+		super.onResume();		
 	}
 
 	protected Event setEventData(Event event) {
@@ -241,4 +246,35 @@ public class EventActivity extends Activity {
 		accomodationViewBlock.setVisibility(View.GONE);
 	}
 	
+	protected void showInvitesView() {
+		// TODO optimizacija panasios jebalos gula ant meskos sazines.
+		// Zajabys.
+		if (newInvites != null) {
+			event.getInvited().addAll(newInvites);
+
+//			long[] newAssignedContacs = new long[newInvites.size()];
+//			for (int i = 0; i < newInvites.size(); i++) {
+//				newAssignedContacs[i] = newInvites.get(i).getMy_contact_id();
+//			}
+//			long[] nuAssignedContacts = new long[event.getAssigned_contacts().length + newAssignedContacs.length];
+//			System.arraycopy(event.getAssigned_contacts(), 0, nuAssignedContacts, 0, event.getAssigned_contacts().length);
+//			System.arraycopy(newAssignedContacs, 0, nuAssignedContacts, event.getAssigned_contacts().length, newAssignedContacs.length);
+//			event.assigned_contacts = nuAssignedContacts;
+			newInvites = null;
+		}
+
+		int invitedListSize = event.getInvited().size();
+		invitedPersonList.removeAllViews();
+		if (invitedListSize == 0) {
+			inviteButton.setBackgroundResource(R.drawable.event_invite_people_button_standalone);
+		} else {
+			inviteButton.setBackgroundResource(R.drawable.event_invite_people_button_notalone);
+			invitedAdapter = new InvitedAdapter(this, event.getInvited());
+			for (int i = 0; i < invitedListSize; i++) {
+				View view = invitedAdapter.getView(i, null, null);
+				invitedPersonList.addView(view);
+			}
+		}
+		
+	}
 }
