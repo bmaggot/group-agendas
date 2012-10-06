@@ -110,7 +110,7 @@ public class NewEventActivity extends EventActivity {
 //		new GetAutoTask().execute();
 //		new GetContactsTask().execute(); //TODO investigate
 
-		cv = new ContentValues();
+	
 		prefs = new Prefs(this);
 
 		pb = (ProgressBar) findViewById(R.id.progress);

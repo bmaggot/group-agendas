@@ -115,6 +115,7 @@ public class EventActivity extends Activity {
 	protected InvitedAdapter invitedAdapter = null;
 	protected LinearLayout invitedPersonList;
 	protected int timezoneInUse = 0;
+	protected Button inviteButton;
 
 	protected Event setEventData(Event event) {
 
