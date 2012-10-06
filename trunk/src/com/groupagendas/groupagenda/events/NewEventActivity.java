@@ -39,6 +39,7 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.groupagendas.groupagenda.NavbarActivity;
 import com.groupagendas.groupagenda.R;
 import com.groupagendas.groupagenda.account.Account;
 import com.groupagendas.groupagenda.contacts.Contact;
@@ -91,7 +92,7 @@ public class NewEventActivity extends EventActivity {
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		Account account = new Account();
+		
 		newInvites = null;
 		newContacts = null;
 
@@ -246,9 +247,10 @@ public class NewEventActivity extends EventActivity {
 		final LinearLayout addressPanel = (LinearLayout) findViewById(R.id.addressLine);
 		// timezone
 		timezoneView = (EditText) findViewById(R.id.timezoneView);
-
+		
 		// country
 		countryView = (EditText) findViewById(R.id.countryView);
+		
 		final ArrayAdapter<String> adapterCountry = new ArrayAdapter<String>(this, R.layout.search_dialog_item,
 				CountryManager.getCountries(this));
 		adapterCountry.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
@@ -578,6 +580,11 @@ public class NewEventActivity extends EventActivity {
 //				invitedPersonList.addView(getInvitedView(invited, inflater, view, dm.getContext()));
 //			}
 //		} else {
+		
+		account = new Account(this);
+		timezoneView.setText(account.getTimezone());
+		countryView.setText(account.getCountry());
+		
 		String[] array;
 		countriesList = new ArrayList<String>();
 		timezonesList = new ArrayList<String>();
@@ -599,7 +606,7 @@ public class NewEventActivity extends EventActivity {
 		contactsButton.setBackgroundResource(R.drawable.event_invite_people_button_standalone);
 			LinearLayout invitedPersonList = (LinearLayout) findViewById(R.id.invited_person_list);
 			invitedPersonList.removeAllViews();
-//		}
+
 		if (newInvites != null) {
 			event.getInvited().addAll(newInvites);
 			newInvites = null;
@@ -685,19 +692,12 @@ public class NewEventActivity extends EventActivity {
 
 	public void saveEvent(View v) {
 		if (!templateTrigger.isChecked()) {
-			Toast.makeText(this, R.string.saving_new_event, Toast.LENGTH_LONG).show();
-			try {
-				new NewEventTask().execute().get();
-			} catch (InterruptedException e) {
-				e.printStackTrace();
-			} catch (ExecutionException e) {
-				e.printStackTrace();
-			}
+				new NewEventTask().execute();	
 		} else {
-			Toast.makeText(this, R.string.saving_new_template, Toast.LENGTH_LONG).show();
+			Toast.makeText(this, R.string.saving_new_template, Toast.LENGTH_SHORT).show();
 			try {
 				new NewTemplateTask().execute().get();
-				Toast.makeText(this, R.string.new_event_saved, Toast.LENGTH_LONG).show();
+				Toast.makeText(this, R.string.new_event_saved, Toast.LENGTH_SHORT).show();
 			} catch (InterruptedException e) {
 				e.printStackTrace();
 			} catch (ExecutionException e) {
@@ -759,6 +759,17 @@ public class NewEventActivity extends EventActivity {
 			}
 		});
 		templateListDialog.show();
+	}
+	
+	protected Event setEventData(Event event) {
+		event = super.setEventData(event);
+		event.setCreatedMillisUtc(Calendar.getInstance().getTimeInMillis()); // set create time
+		event.setModifiedMillisUtc(event.getCreatedUtc());
+		event.setCreator_fullname(getString(R.string.you));
+		event.setIs_owner(true);
+		event.setStatus(Invited.ACCEPTED);
+		event.setUser_id(account.getUser_id());
+		return event;
 	}
 
 	public void showAddressPanel() {
@@ -855,8 +866,8 @@ public class NewEventActivity extends EventActivity {
 
 		@Override
 		protected Boolean doInBackground(Event... events) {
-			setEventData(event);
-			event.setCreatedMillisUtc(Calendar.getInstance().getTimeInMillis()); // set create time
+			event = NewEventActivity.this.setEventData(event);
+
 
 			int testEvent = event.isValid();
 			if (testEvent == 0) {
@@ -868,11 +879,13 @@ public class NewEventActivity extends EventActivity {
 			}
 		}
 
+
+
 		@Override
 		protected void onPostExecute(Boolean result) {
 			if (result) {
-				finish();
-				Toast.makeText(NewEventActivity.this, R.string.new_event_saved, Toast.LENGTH_LONG).show();
+				Toast.makeText(NewEventActivity.this, R.string.new_event_saved, Toast.LENGTH_SHORT).show();
+				finish();			
 			} else {
 				showDialog(DIALOG_ERROR);
 				pb.setVisibility(View.GONE);
