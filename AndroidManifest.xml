@@ -179,7 +179,7 @@
             android:theme="@android:style/Theme.NoTitleBar" >
         </activity>
         <activity
-            android:name=".registration.RegisterationActivity"
+            android:name=".registration.RegistrationActivity"
             android:configChanges="keyboardHidden|orientation"
             android:theme="@android:style/Theme.NoTitleBar" >
         </activity>
@@ -211,6 +211,7 @@
         <activity
             android:name=".settings.AutoColorActivity"
             android:configChanges="keyboardHidden|orientation"
+            android:exported="false"
             android:theme="@android:style/Theme.NoTitleBar" >
         </activity>
         <activity
