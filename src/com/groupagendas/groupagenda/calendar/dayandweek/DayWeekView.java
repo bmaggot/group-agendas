@@ -22,7 +22,6 @@ import com.groupagendas.groupagenda.EventActivityOnClickListener;
 import com.groupagendas.groupagenda.R;
 import com.groupagendas.groupagenda.calendar.AbstractCalendarView;
 import com.groupagendas.groupagenda.data.CalendarSettings;
-import com.groupagendas.groupagenda.data.DataManagement;
 import com.groupagendas.groupagenda.data.EventManagement;
 import com.groupagendas.groupagenda.events.Event;
 import com.groupagendas.groupagenda.events.EventsProvider;
@@ -485,7 +484,6 @@ public class DayWeekView extends AbstractCalendarView {
 	
 		private class UpdateEventsInfoTask extends AsyncTask<Void, Integer, Void> {
 			private Context context = DayWeekView.this.getContext();
-			private DataManagement dm = DataManagement.getInstance(context);
 			
 			/**
 			 * @author justinas.marcinka@gmail.com
