@@ -32,7 +32,7 @@
             android:text="@string/logout" />
     </RelativeLayout>
 
-    <ImageView
+    <ImageView android:contentDescription="@string/login_ga_logo_placeholder"
         android:id="@+id/logo"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
