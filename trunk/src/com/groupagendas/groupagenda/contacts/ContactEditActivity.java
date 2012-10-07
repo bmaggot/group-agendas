@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
+import java.util.concurrent.ExecutionException;
 
 import net.londatiga.android.CropOption;
 import net.londatiga.android.CropOptionAdapter;
@@ -29,6 +30,7 @@ import android.os.Environment;
 import android.provider.MediaStore;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.Window;
@@ -58,7 +60,7 @@ import com.groupagendas.groupagenda.utils.MapUtils;
 import com.groupagendas.groupagenda.utils.Utils;
 
 public class ContactEditActivity extends Activity implements OnClickListener, OnItemSelectedListener {
-	
+
 	private String ERROR_STRING = "";
 	private final int ERROR_DIALOG = 0;
 	private final int CROP_IMAGE_DIALOG = 1;
@@ -74,7 +76,6 @@ public class ContactEditActivity extends Activity implements OnClickListener, On
 
 	private Contact editedContact;
 
-	private Button sendButton;
 	private Button groupsButton;
 	private ImageView imageView;
 	private CheckBox removeImage;
@@ -83,13 +84,13 @@ public class ContactEditActivity extends Activity implements OnClickListener, On
 	private EditText lastnameView;
 	private EditText emailView;
 	private EditText phoneView;
-	
+
 	private EditText birthdateView;
 	private Button birthdateButton;
 	private Calendar birthdateCalendar = Calendar.getInstance();
-	
+
 	private EditText countryView;
-	
+
 	private EditText cityView;
 	private EditText streetView;
 	private EditText zipView;
@@ -102,7 +103,7 @@ public class ContactEditActivity extends Activity implements OnClickListener, On
 	private boolean ACTION_EDIT = true;
 
 	private String[] visibilityArray;
-	
+
 	private DateTimeUtils dtUtils;
 	private ArrayList<StaticTimezones> countriesList;
 	private CountriesAdapter countriesAdapter;
@@ -115,52 +116,49 @@ public class ContactEditActivity extends Activity implements OnClickListener, On
 		this.setContentView(R.layout.contact_edit);
 
 		dm = DataManagement.getInstance(this);
-		
+
 		dtUtils = new DateTimeUtils(this);
 
+	}
+
+	@Override
+	public void onResume() {
+		super.onResume();
+
+		setContentView(R.layout.contact_edit);
 		Intent intent = getIntent();
+		editedContact = new Contact();
 
-		groupsButton = (Button) findViewById(R.id.groupsButton);
-		groupsButton.setOnClickListener(this);
-
-		sendButton = (Button) findViewById(R.id.sendbutton);
-		sendButton.setOnClickListener(this);
-
-		imageView = (ImageView) findViewById(R.id.contact_image);
-		imageView.setOnClickListener(this);
-
-		removeImage = (CheckBox) findViewById(R.id.remove_image);
-		
-		visibilityArray = getResources().getStringArray(R.array.visibility_labels);
-		visibilitySpinner = (Spinner) findViewById(R.id.visibility);
-		visibilitySpinner.setOnItemSelectedListener(this);
-		
-		
 		// GET ACTION
 		ACTION_EDIT = intent.getBooleanExtra("action", true);
-
 		if (ACTION_EDIT) {
-			new GetContactTask().execute(intent.getIntExtra("contact_id", 0));
+			try {
+				editedContact = new GetContactTask().execute(intent.getIntExtra("contact_id", 0)).get();
+			} catch (InterruptedException e) {
+				Log.e("onResume()", "Failed getting contact's data." + e.getMessage());
+			} catch (ExecutionException e) {
+				Log.e("onResume()", "Failed getting contact's data. " + e.getMessage());
+			}
 		} else {
 			LinearLayout ll = (LinearLayout) findViewById(R.id.remove_image_ll);
 			ll.setVisibility(View.GONE);
-
-			editedContact = new Contact();
-
-			new GetGroupsTask().execute();
-			
-			ArrayAdapter<CharSequence> adapterVis = ArrayAdapter.createFromResource(ContactEditActivity.this, R.array.visibility_labels, android.R.layout.simple_spinner_item);
-			adapterVis.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-			visibilitySpinner.setAdapter(adapterVis);
 		}
 
 		nameView = (EditText) findViewById(R.id.name);
 		lastnameView = (EditText) findViewById(R.id.lastname);
 		emailView = (EditText) findViewById(R.id.email);
 		phoneView = (EditText) findViewById(R.id.phone);
+		visibilityArray = getResources().getStringArray(R.array.visibility_labels);
+		visibilitySpinner = (Spinner) findViewById(R.id.visibility);
+		visibilitySpinner.setOnItemSelectedListener(this);
+		groupsButton = (Button) findViewById(R.id.groupsButton);
+		imageView = (ImageView) findViewById(R.id.contact_image);
+		removeImage = (CheckBox) findViewById(R.id.remove_image);
+
 		birthdateView = (EditText) findViewById(R.id.birthdate);
 		birthdateButton = (Button) findViewById(R.id.birthdateButton);
 		birthdateButton.setOnClickListener(new OnClickListener() {
+
 			@Override
 			public void onClick(View arg0) {
 				showDialog(BIRTHDATE_DIALOG);
@@ -170,12 +168,6 @@ public class ContactEditActivity extends Activity implements OnClickListener, On
 		cityView = (EditText) findViewById(R.id.city);
 		streetView = (EditText) findViewById(R.id.street);
 		zipView = (EditText) findViewById(R.id.zip);
-	}
-	
-	@Override
-	public void onResume() {
-		super.onResume();
-		setContentView(R.layout.contact_edit);
 
 		String[] cities;
 		String[] countries;
@@ -194,7 +186,7 @@ public class ContactEditActivity extends Activity implements OnClickListener, On
 		for (int i = 0; i < cities.length; i++) {
 			// TODO OMG WHAT HAVE I DONE AGAIN?! :|
 			StaticTimezones temp = new EventActivity().new StaticTimezones();
-			
+
 			temp.id = "" + i;
 			temp.city = cities[i];
 			temp.country = countries[i];
@@ -202,7 +194,7 @@ public class ContactEditActivity extends Activity implements OnClickListener, On
 			temp.country_code = country_codes[i];
 			temp.timezone = timezones[i];
 			temp.altname = altnames[i];
-			
+
 			countriesList.add(temp);
 		}
 		if (countriesList != null) {
@@ -217,14 +209,14 @@ public class ContactEditActivity extends Activity implements OnClickListener, On
 				final Dialog dia1 = new Dialog(ContactEditActivity.this);
 				dia1.requestWindowFeature(Window.FEATURE_NO_TITLE);
 				dia1.setContentView(R.layout.search_dialog);
-				
+
 				ListView diaList = (ListView) dia1.findViewById(R.id.dialog_list);
 				diaList.setAdapter(countriesAdapter);
 				countriesAdapter.notifyDataSetChanged();
-				
+
 				EditText searchView = (EditText) dia1.findViewById(R.id.dialog_search);
 
-				TextWatcher filterTextWatcher = new TextWatcher() {					
+				TextWatcher filterTextWatcher = new TextWatcher() {
 					@Override
 					public void afterTextChanged(Editable s) {
 					}
@@ -241,9 +233,9 @@ public class ContactEditActivity extends Activity implements OnClickListener, On
 						}
 					}
 				};
-				
+
 				searchView.addTextChangedListener(filterTextWatcher);
-				
+
 				diaList.setOnItemClickListener(new OnItemClickListener() {
 
 					@Override
@@ -257,15 +249,28 @@ public class ContactEditActivity extends Activity implements OnClickListener, On
 			}
 		});
 	}
-	
-	@Override
+
 	public void onClick(View v) {
 		switch (v.getId()) {
 		case R.id.sendbutton:
 			if (ACTION_EDIT) {
-				new EditContactTask().execute(editedContact);
+				try {
+					if (new EditContactTask().execute(editedContact).get())
+						finish();
+				} catch (InterruptedException e) {
+					Log.e("edit contact", "failed executing edit contact" + e.getMessage());
+				} catch (ExecutionException e) {
+					Log.e("edit contact", "failed executing edit contact" + e.getMessage());
+				}
 			} else {
-				new CreateContactTask().execute(editedContact);
+				try {
+					if (new CreateContactTask().execute(editedContact).get())
+						finish();
+				} catch (InterruptedException e) {
+					Log.e("create contact", "failed executing create contact" + e.getMessage());
+				} catch (ExecutionException e) {
+					Log.e("create contact", "failed executing create contact" + e.getMessage());
+				}
 			}
 			break;
 		case R.id.contact_image:
@@ -276,36 +281,38 @@ public class ContactEditActivity extends Activity implements OnClickListener, On
 			break;
 		}
 	}
-	
-	private DatePickerDialog.OnDateSetListener mDateSetListener =
-        new DatePickerDialog.OnDateSetListener() {
 
-            @Override
-			public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
-                birthdateCalendar.set(Calendar.YEAR, year);
-                birthdateCalendar.set(Calendar.MONTH, monthOfYear);
-                birthdateCalendar.set(Calendar.DAY_OF_MONTH, dayOfMonth);
-                
-                birthdateView.setText(dtUtils.formatDate(birthdateCalendar.getTime()));
-            }
-        };
-	
+	private DatePickerDialog.OnDateSetListener mDateSetListener = new DatePickerDialog.OnDateSetListener() {
+
+		@Override
+		public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
+			birthdateCalendar.set(Calendar.YEAR, year);
+			birthdateCalendar.set(Calendar.MONTH, monthOfYear);
+			birthdateCalendar.set(Calendar.DAY_OF_MONTH, dayOfMonth);
+
+			birthdateView.setText(dtUtils.formatDate(birthdateCalendar.getTime()));
+		}
+	};
+
 	@Override
 	protected Dialog onCreateDialog(int id) {
 		AlertDialog.Builder builder = new AlertDialog.Builder(this);
 		switch (id) {
 		case BIRTHDATE_DIALOG:
-			return new DatePickerDialog(this, mDateSetListener, birthdateCalendar.get(Calendar.YEAR), birthdateCalendar.get(Calendar.MONTH), birthdateCalendar.get(Calendar.DAY_OF_MONTH));
+			return new DatePickerDialog(this, mDateSetListener, birthdateCalendar.get(Calendar.YEAR),
+					birthdateCalendar.get(Calendar.MONTH), birthdateCalendar.get(Calendar.DAY_OF_MONTH));
 		case ERROR_DIALOG:
-			builder.setMessage(ERROR_STRING).setCancelable(false).setPositiveButton(getString(R.string.ok), new DialogInterface.OnClickListener() {
-				@Override
-				public void onClick(DialogInterface dialog, int id) {
-					dialog.cancel();
-				}
-			});
+			builder.setMessage(ERROR_STRING).setCancelable(false)
+					.setPositiveButton(getString(R.string.ok), new DialogInterface.OnClickListener() {
+						@Override
+						public void onClick(DialogInterface dialog, int id) {
+							dialog.cancel();
+						}
+					});
 			break;
 		case CHOOSE_GROUPS_DIALOG:
-			builder.setTitle(getString(R.string.choose_contacts)).setMultiChoiceItems(titles, selections, new DialogSelectionClickHandler())
+			builder.setTitle(getString(R.string.choose_contacts))
+					.setMultiChoiceItems(titles, selections, new DialogSelectionClickHandler())
 					.setPositiveButton(getString(R.string.ok), new DialogButtonClickHandler());
 			break;
 		case CROP_IMAGE_DIALOG:
@@ -328,7 +335,8 @@ public class ContactEditActivity extends Activity implements OnClickListener, On
 
 							startActivityForResult(intent, PICK_FROM_CAMERA);
 						} catch (ActivityNotFoundException e) {
-							Reporter.reportError(this.getClass().toString(), Thread.currentThread().getStackTrace()[2].getMethodName().toString(), e.getMessage());
+							Reporter.reportError(this.getClass().toString(), Thread.currentThread().getStackTrace()[2].getMethodName()
+									.toString(), e.getMessage());
 						}
 					} else { // pick from file
 						Intent intent = new Intent();
@@ -359,31 +367,35 @@ public class ContactEditActivity extends Activity implements OnClickListener, On
 
 		@Override
 		protected void onPostExecute(Contact result) {
-			if (result.image) {
-				Bitmap bitmap = Utils.getResizedBitmap(BitmapFactory.decodeByteArray(result.image_bytes, 0, result.image_bytes.length), 120, 120);
-				imageView.setImageBitmap(bitmap);
+			if (result.image && (result.image_bytes != null)) {
+				Bitmap bitmap = Utils.getResizedBitmap(BitmapFactory.decodeByteArray(result.image_bytes, 0, result.image_bytes.length),
+						120, 120);
+				if (bitmap != null)
+					imageView.setImageBitmap(bitmap);
 			} else {
 				imageView.setImageResource(R.drawable.group_icon);
 			}
 
 			nameView.setText(result.name);
-			if(result.lastname != null && !result.lastname.equals("null"))	lastnameView.setText(result.lastname);
-			if(result.email != null && !result.email.equals("null"))	emailView.setText(result.email);
-			if (!result.phone1.equals("null"))	phoneView.setText(result.phone1);
-			
-			if (!result.birthdate.equals("null")){
+			if (result.lastname != null && !result.lastname.equals("null"))
+				lastnameView.setText(result.lastname);
+			if (result.email != null && !result.email.equals("null"))
+				emailView.setText(result.email);
+			if (!result.phone1.equals("null"))
+				phoneView.setText(result.phone1);
+
+			if (!result.birthdate.equals("null")) {
 				birthdateView.setText(dtUtils.formatDate(result.birthdate));
 				birthdateCalendar = Utils.stringToCalendar(result.birthdate, DataManagement.SERVER_TIMESTAMP_FORMAT);
 			}
-			
+
 			if (result.country.length() > 0) {
 				for (StaticTimezones entry : countriesList) {
-					if (entry.timezone.equalsIgnoreCase(result.country))
+					if (entry.country_code.equalsIgnoreCase(result.country))
 						timezoneInUse = Integer.parseInt(entry.id);
 				}
-				if (timezoneInUse > 0) {
-					countryView.setText(countriesList.get(timezoneInUse).country);
-				}
+
+				countryView.setText(countriesList.get(timezoneInUse).country);
 			}
 
 			if (!result.city.equals("null"))
@@ -392,15 +404,28 @@ public class ContactEditActivity extends Activity implements OnClickListener, On
 				streetView.setText(result.street);
 			if (!result.zip.equals("null"))
 				zipView.setText(result.zip);
-			
-			ArrayAdapter<CharSequence> adapterVis = ArrayAdapter.createFromResource(ContactEditActivity.this, R.array.visibility_labels, android.R.layout.simple_spinner_item);
-			adapterVis.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-			visibilitySpinner.setAdapter(adapterVis);
+
+			// TODO set visibility
 			if (!result.visibility.equals("null")) {
-				int pos = Utils.getArrayIndex(visibilityArray, result.visibility);
-				visibilitySpinner.setSelection(pos);
+				if (result.visibility.equals("n"))
+					visibilitySpinner.setSelection(0, true);
+				else if (result.visibility.equals("f"))
+					visibilitySpinner.setSelection(1, true);
+				else if (result.visibility.equals("l"))
+					visibilitySpinner.setSelection(2, true);
 			}
 
+			// ArrayAdapter<CharSequence> adapterVis =
+			// ArrayAdapter.createFromResource(ContactEditActivity.this,
+			// R.array.visibility_labels, android.R.layout.simple_spinner_item);
+			// adapterVis.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+			// visibilitySpinner.setAdapter(adapterVis);
+			// if (!result.visibility.equals("null")) {
+			// int pos = Utils.getArrayIndex(visibilityArray,
+			// result.visibility);
+			// visibilitySpinner.setSelection(pos);
+			// }
+			// WTF1?!
 			super.onPostExecute(result);
 		}
 
@@ -413,34 +438,34 @@ public class ContactEditActivity extends Activity implements OnClickListener, On
 			boolean check = true;
 			String temp = "";
 			ContentValues cv = new ContentValues();
-			
+
 			// name
 			temp = nameView.getText().toString();
-			if(temp.length() <= 0){
+			if (temp.length() <= 0) {
 				check = false;
 				ERROR_STRING = getString(R.string.name_is_required);
 			}
 			cv.put(ContactsProvider.CMetaData.ContactsMetaData.NAME, temp);
 			editedContact.name = temp;
-			
+
 			temp = lastnameView.getText().toString();
 			editedContact.lastname = temp;
 			cv.put(ContactsProvider.CMetaData.ContactsMetaData.LASTNAME, temp);
-			
+
 			temp = emailView.getText().toString();
 			editedContact.email = temp;
 			cv.put(ContactsProvider.CMetaData.ContactsMetaData.EMAIL, temp);
-			
+
 			temp = phoneView.getText().toString();
 			editedContact.phone1 = temp;
 			cv.put(ContactsProvider.CMetaData.ContactsMetaData.PHONE, temp);
-			
+
 			editedContact.birthdate = dtUtils.formatDateToDefault(birthdateCalendar.getTime());
 			cv.put(ContactsProvider.CMetaData.ContactsMetaData.BIRTHDATE, temp);
-			
+
 			editedContact.country = countriesList.get(timezoneInUse).country;
 			cv.put(ContactsProvider.CMetaData.ContactsMetaData.COUNTRY, editedContact.country);
-			
+
 			temp = cityView.getText().toString();
 			editedContact.city = temp;
 			cv.put(ContactsProvider.CMetaData.ContactsMetaData.CITY, temp);
@@ -448,57 +473,58 @@ public class ContactEditActivity extends Activity implements OnClickListener, On
 			temp = streetView.getText().toString();
 			editedContact.street = temp;
 			cv.put(ContactsProvider.CMetaData.ContactsMetaData.STREET, temp);
-			
+
 			temp = zipView.getText().toString();
 			editedContact.zip = temp;
 			cv.put(ContactsProvider.CMetaData.ContactsMetaData.ZIP, temp);
-			
+
 			temp = visibilityArray[visibilitySpinner.getSelectedItemPosition()];
 			editedContact.visibility = temp;
 			cv.put(ContactsProvider.CMetaData.ContactsMetaData.VISIBILITY, temp);
-			
+
 			// groups
 			cv.put(ContactsProvider.CMetaData.ContactsMetaData.GROUPS, MapUtils.mapToString(editedContact.groups));
-			
+
 			// image
 			editedContact.remove_image = removeImage.isChecked();
-			if(removeImage.isChecked()){
+			if (removeImage.isChecked()) {
 				cv.put(ContactsProvider.CMetaData.ContactsMetaData.IMAGE, false);
 				cv.put(ContactsProvider.CMetaData.ContactsMetaData.IMAGE_URL, "");
 				cv.put(ContactsProvider.CMetaData.ContactsMetaData.IMAGE_THUMB_URL, "");
 				cv.put(ContactsProvider.CMetaData.ContactsMetaData.IMAGE_BYTES, "");
 				cv.put(ContactsProvider.CMetaData.ContactsMetaData.REMOVE_IMAGE, removeImage.isChecked());
-			}else{
+			} else {
 				cv.put(ContactsProvider.CMetaData.ContactsMetaData.IMAGE_BYTES, editedContact.image_bytes);
 			}
-			
-			if(check){
-				Uri uri = Uri.parse(ContactsProvider.CMetaData.ContactsMetaData.CONTENT_URI+"/"+editedContact.contact_id);
+
+			if (check) {
+				Uri uri = Uri.parse(ContactsProvider.CMetaData.ContactsMetaData.CONTENT_URI + "/" + editedContact.contact_id);
 				getContentResolver().update(uri, cv, null, null);
+				editedContact.modified = Calendar.getInstance().getTimeInMillis();
+
 				check = ContactManagement.editContactOnRemoteDb(editedContact);
-				
-//				if(!success){
-//					cv = new ContentValues();
-//					cv.put(ContactsProvider.CMetaData.ContactsMetaData.NEED_UPDATE, 1);
-//					getContentResolver().update(uri, cv, null, null);
-//				}
+
+				if (check) {
+					check = ContactManagement.updateContactOnLocalDb(ContactEditActivity.this, editedContact);
+				}
 			}
-			
+
 			return check;
 		}
 
 		@Override
-		protected void onPostExecute(Boolean result) {
-			if (result) {
-				onBackPressed();
+		protected void onPostExecute(Boolean results) {
+			if (results) {
+				ContactEditActivity.this.finish();
 			} else {
 				ERROR_STRING = dm.getError();
 				showDialog(ERROR_DIALOG);
 			}
-			super.onPostExecute(result);
+			super.onPostExecute(results);
 		}
 
 	}
+
 	class CreateContactTask extends AsyncTask<Contact, Boolean, Boolean> {
 
 		@Override
@@ -506,35 +532,35 @@ public class ContactEditActivity extends Activity implements OnClickListener, On
 			boolean check = true;
 			String temp = "";
 			ContentValues cv = new ContentValues();
-			
+
 			// name
 			temp = nameView.getText().toString();
-			if(temp.length() <= 0){
+			if (temp.length() <= 0) {
 				check = false;
 				ERROR_STRING = getString(R.string.name_is_required);
 			}
 			cv.put(ContactsProvider.CMetaData.ContactsMetaData.NAME, temp);
 			editedContact.name = temp;
-			
+
 			temp = lastnameView.getText().toString();
 			editedContact.lastname = temp;
 			cv.put(ContactsProvider.CMetaData.ContactsMetaData.LASTNAME, temp);
-			
+
 			temp = emailView.getText().toString();
 			editedContact.email = temp;
 			cv.put(ContactsProvider.CMetaData.ContactsMetaData.EMAIL, temp);
-			
+
 			temp = phoneView.getText().toString();
 			editedContact.phone1 = temp;
 			cv.put(ContactsProvider.CMetaData.ContactsMetaData.PHONE, temp);
-			
+
 			temp = birthdateView.getText().toString();
 			editedContact.birthdate = temp;
 			cv.put(ContactsProvider.CMetaData.ContactsMetaData.BIRTHDATE, temp);
-			
+
 			editedContact.country = countriesList.get(timezoneInUse).country;
 			cv.put(ContactsProvider.CMetaData.ContactsMetaData.COUNTRY, editedContact.country);
-			
+
 			temp = cityView.getText().toString();
 			editedContact.city = temp;
 			cv.put(ContactsProvider.CMetaData.ContactsMetaData.CITY, temp);
@@ -542,45 +568,42 @@ public class ContactEditActivity extends Activity implements OnClickListener, On
 			temp = streetView.getText().toString();
 			editedContact.street = temp;
 			cv.put(ContactsProvider.CMetaData.ContactsMetaData.STREET, temp);
-			
+
 			temp = zipView.getText().toString();
 			editedContact.zip = temp;
 			cv.put(ContactsProvider.CMetaData.ContactsMetaData.ZIP, temp);
-			
+
 			temp = visibilityArray[visibilitySpinner.getSelectedItemPosition()];
 			editedContact.visibility = temp;
 			cv.put(ContactsProvider.CMetaData.ContactsMetaData.VISIBILITY, temp);
-			
+
 			// groups
 			cv.put(ContactsProvider.CMetaData.ContactsMetaData.GROUPS, MapUtils.mapToString(editedContact.groups));
-			
-			if(editedContact.image_bytes != null){
+
+			if (editedContact.image_bytes != null) {
 				cv.put(ContactsProvider.CMetaData.ContactsMetaData.IMAGE_BYTES, editedContact.image_bytes);
-				cv.put(ContactsProvider.CMetaData.ContactsMetaData.IMAGE , true);
+				cv.put(ContactsProvider.CMetaData.ContactsMetaData.IMAGE, true);
 			}
-			
-			if(check){
+
+			if (check) {
 				check = ContactManagement.insertContact(ContactEditActivity.this, editedContact);
-//				if(!success){
-//					cv.put(ContactsProvider.CMetaData.ContactsMetaData.NEED_UPDATE, 2);
-//				}
-//				getContentResolver().insert(ContactsProvider.CMetaData.ContactsMetaData.CONTENT_URI, cv);
 			}
-			
+
 			return check;
 		}
-		
+
 		@Override
 		protected void onPostExecute(Boolean result) {
 			if (result) {
 				onBackPressed();
 			} else {
-				ERROR_STRING = dm.getError();
+				ContactEditActivity.this.finish();
 				showDialog(ERROR_DIALOG);
 			}
 			super.onPostExecute(result);
 		}
 	}
+
 	class GetGroupsTask extends AsyncTask<Void, Void, Void> {
 		@Override
 		protected void onPreExecute() {
@@ -751,7 +774,6 @@ public class ContactEditActivity extends Activity implements OnClickListener, On
 			}
 		}
 	}
-
 
 	@Override
 	public void onItemSelected(AdapterView<?> parent, View view, int pos, long id) {
