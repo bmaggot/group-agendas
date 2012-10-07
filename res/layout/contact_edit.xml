@@ -16,6 +16,7 @@
         <ImageView
             android:contentDescription="@string/contact_icon_placeholder"
             android:id="@+id/contact_image"
+            android:onClick="onClick"
             android:layout_width="120dp"
             android:layout_height="120dp"
             android:layout_marginRight="20dp"
@@ -248,11 +249,14 @@
                 <TextView
                     android:layout_width="80dp"
                     android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical"
                     android:text="@string/visibility"
                     android:textColor="@android:color/black" />
 
                 <Spinner
+                    android:layout_gravity="center_vertical"
                     android:id="@+id/visibility"
+                    android:entries="@array/visibility_labels"
                     android:layout_width="fill_parent"
                     android:layout_height="wrap_content" />
             </LinearLayout>
@@ -270,6 +274,7 @@
 
                 <Button
                     android:id="@+id/groupsButton"
+                    android:onClick="onClick"
                     android:layout_width="100dp"
                     android:layout_height="wrap_content"
                     android:text="@string/choose" />
@@ -285,6 +290,7 @@
 
                 <Button
                     android:id="@+id/sendbutton"
+                    android:onClick="onClick"
                     android:layout_width="100dp"
                     android:layout_height="wrap_content"
                     android:text="@string/save" />
