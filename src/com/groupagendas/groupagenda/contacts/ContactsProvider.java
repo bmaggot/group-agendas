@@ -267,9 +267,9 @@ public class ContactsProvider extends ContentProvider{
 	
 	@Override
 	public int update(Uri uri, ContentValues values, String where, String[] whereArgs) {
-		SQLiteDatabase db = mOpenHelper.getReadableDatabase();
 		int count;
 		String rowId;
+		SQLiteDatabase db = mOpenHelper.getReadableDatabase();
 
 		switch (mUriMatcher.match(uri)) {
 		case CONTACTS_ALL:
