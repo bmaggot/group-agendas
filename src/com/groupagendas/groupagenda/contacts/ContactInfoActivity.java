@@ -84,10 +84,11 @@ public class ContactInfoActivity extends Activity {
 				table.removeAllViews();
 				
 				// Image
-				if (contact.image) {
+				if (contact.image && contact.image_bytes != null) {
 					ImageView imageView = (ImageView) findViewById(R.id.image);
 					Bitmap bitmap = Utils.getResizedBitmap(BitmapFactory.decodeByteArray(contact.image_bytes, 0, contact.image_bytes.length), 120, 120);
-					imageView.setImageBitmap(bitmap);
+					if (bitmap != null)
+						imageView.setImageBitmap(bitmap);
 				}
 				// Name
 				TextView nameView = (TextView) findViewById(R.id.name);
@@ -128,8 +129,6 @@ public class ContactInfoActivity extends Activity {
 					setTableRow(getString(R.string.zip), contact.zip);
 				}
 			}
-
-			super.onPostExecute(contact);
 		}
 
 	}
