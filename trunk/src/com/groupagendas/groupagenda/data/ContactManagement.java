@@ -667,7 +667,7 @@ public class ContactManagement {
 	 *            - Contact object containing validated contact data.
 	 * @param id
 	 *            - ID corresponding integer.
-	 * @since 2012-09-½28
+	 * @since 2012-09-28
 	 * @version 0.1
 	 */
 	public static void insertContactToLocalDb(Context context, Contact contact, int id) {
@@ -1523,9 +1523,74 @@ public class ContactManagement {
 		return success;
 	}
 
-	// TODO editContactOnLocalDb(Contact c) documentation
-	public static boolean editContactOnLocalDb(Contact c) {
-		boolean success = false;
-		return success;
+	/**
+	 * Update a contact on local database.
+	 * 
+	 * Executes a call to SQLite database that updates a contact entry from data
+	 * submitted. Currently image_bytes[] isn't stored in the database.
+	 * 
+	 * @author meska.lt@gmail.com
+	 * @param contact
+	 *            - Contact object containing validated contact data.
+	 * @param id
+	 *            - ID corresponding integer.
+	 * @since 2012-10-07
+	 * @version 0.1
+	 */
+	public static boolean updateContactOnLocalDb(Context context, Contact contact) {
+		ContentValues cv = new ContentValues();
+		
+		if (contact.contact_id > 0)
+			cv.put(ContactsProvider.CMetaData.ContactsMetaData.C_ID, contact.contact_id);
+
+		cv.put(ContactsProvider.CMetaData.ContactsMetaData.NAME, contact.name);
+		cv.put(ContactsProvider.CMetaData.ContactsMetaData.LASTNAME, contact.lastname);
+
+		cv.put(ContactsProvider.CMetaData.ContactsMetaData.EMAIL, contact.email);
+		cv.put(ContactsProvider.CMetaData.ContactsMetaData.PHONE, contact.phone1);
+
+		cv.put(ContactsProvider.CMetaData.ContactsMetaData.BIRTHDATE, contact.birthdate);
+
+		cv.put(ContactsProvider.CMetaData.ContactsMetaData.COUNTRY, contact.country);
+		cv.put(ContactsProvider.CMetaData.ContactsMetaData.CITY, contact.city);
+		cv.put(ContactsProvider.CMetaData.ContactsMetaData.STREET, contact.street);
+		cv.put(ContactsProvider.CMetaData.ContactsMetaData.ZIP, contact.zip);
+
+		cv.put(ContactsProvider.CMetaData.ContactsMetaData.VISIBILITY, contact.visibility);
+
+		if (contact.image) {
+			cv.put(ContactsProvider.CMetaData.ContactsMetaData.IMAGE, "1");
+		} else {
+			cv.put(ContactsProvider.CMetaData.ContactsMetaData.IMAGE, "0");
+		}
+
+		cv.put(ContactsProvider.CMetaData.ContactsMetaData.IMAGE_URL, contact.image_url);
+		cv.put(ContactsProvider.CMetaData.ContactsMetaData.IMAGE_THUMB_URL, contact.image_thumb_url);
+		cv.put(ContactsProvider.CMetaData.ContactsMetaData.IMAGE_BYTES, contact.image_bytes);
+		if (contact.remove_image) {
+			cv.put(ContactsProvider.CMetaData.ContactsMetaData.REMOVE_IMAGE, "1");
+		} else {
+			cv.put(ContactsProvider.CMetaData.ContactsMetaData.REMOVE_IMAGE, "0");
+		}
+
+		cv.put(ContactsProvider.CMetaData.ContactsMetaData.AGENDA_VIEW, contact.agenda_view);
+		cv.put(ContactsProvider.CMetaData.ContactsMetaData.REGISTERED, contact.registered);
+
+		cv.put(ContactsProvider.CMetaData.ContactsMetaData.CREATED, contact.created);
+		cv.put(ContactsProvider.CMetaData.ContactsMetaData.MODIFIED, contact.modified);
+
+		cv.put(ContactsProvider.CMetaData.ContactsMetaData.GROUPS, MapUtils.mapToString(contact.groups));
+
+		cv.put(ContactsProvider.CMetaData.ContactsMetaData.COLOR, contact.getColor());
+
+		String where = ContactsProvider.CMetaData.ContactsMetaData.C_ID + "=" + contact.contact_id;
+		try {
+			context.getContentResolver().update(ContactsProvider.CMetaData.ContactsMetaData.CONTENT_URI, cv, where, null);
+			return true;
+		} catch (SQLiteException e) {
+			Log.e("insertContactToLocalDb(contact, " + contact.contact_id + ")", e.getMessage());
+			return false;
+		}
 	}
+
 }
