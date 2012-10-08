@@ -100,7 +100,7 @@ public class CalendarSettingsActivity extends Activity {
 		protected Boolean doInBackground(Void... params) {
 			boolean success = true;
 			
-			Account account = new Account();
+			Account account = new Account(CalendarSettingsActivity.this);
 
 			int am_pm = am_pmToggle.isChecked() ? 1 : 0;
 			String am_pmStr = am_pmToggle.isChecked() ? "true" : "false";
@@ -175,12 +175,12 @@ public class CalendarSettingsActivity extends Activity {
 
 		@Override
 		protected Account doInBackground(Void... args) {
-			return (new Account());
+			return (new Account(CalendarSettingsActivity.this));
 		}
 
 		@Override
 		protected void onPostExecute(Account account) {
-			feelFields(new Account());
+			feelFields(new Account(CalendarSettingsActivity.this));
 			new GetAccountTask().execute();
 			super.onPostExecute(account);
 		}
@@ -197,7 +197,7 @@ public class CalendarSettingsActivity extends Activity {
 
 		@Override
 		protected Account doInBackground(Void... args) {
-			return dm.getAccountFromRemoteDb();
+			return dm.getAccountFromRemoteDb(CalendarSettingsActivity.this);
 		}
 
 		@Override
