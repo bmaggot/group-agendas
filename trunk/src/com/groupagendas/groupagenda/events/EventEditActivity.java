@@ -606,19 +606,17 @@ public class EventEditActivity extends EventActivity {
 			//toptext
 			String tmpTopText = event.getType();
 			if(tmpTopText.equalsIgnoreCase("t")){
-				topText.setText(getResources().getString(R.string.event_type_t));
+				topText.setText(getResources().getStringArray(R.array.type_labels)[4]);
 			} else if(tmpTopText.equalsIgnoreCase("n")){
-				topText.setText(getResources().getString(R.string.event_type_n));
+				topText.setText(getResources().getStringArray(R.array.type_labels)[1]);
 			} else if(tmpTopText.equalsIgnoreCase("p")){
-				topText.setText(getResources().getString(R.string.event_type_p));
+				topText.setText(getResources().getStringArray(R.array.type_labels)[0]);
 			} else if(tmpTopText.equalsIgnoreCase("r")){
-				topText.setText(getResources().getString(R.string.event_type_r));
+				topText.setText(getResources().getStringArray(R.array.type_labels)[2]);
 			} else if(tmpTopText.equalsIgnoreCase("o")){
-				topText.setText(getResources().getString(R.string.event_type_o));
+				topText.setText(getResources().getStringArray(R.array.type_labels)[4]);
 			} else if(tmpTopText.equalsIgnoreCase("v")){
-				topText.setText(getResources().getString(R.string.event_type_v));
-			} else if(tmpTopText.equalsIgnoreCase("f")){
-				topText.setText(getResources().getString(R.string.event_type_f));
+				topText.setText(getResources().getStringArray(R.array.type_labels)[5]);
 			}
 			// title
 
