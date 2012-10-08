@@ -10,6 +10,7 @@ import android.content.Intent;
 import android.util.Log;
 
 import com.google.android.c2dm.C2DMBaseReceiver;
+import com.groupagendas.groupagenda.account.Account;
 import com.groupagendas.groupagenda.chat.ChatMessageActivity;
 import com.groupagendas.groupagenda.data.DataManagement;
 import com.groupagendas.groupagenda.data.EventManagement;
@@ -30,6 +31,8 @@ public class C2DMReceiver extends C2DMBaseReceiver {
 
 		System.out.println("onRegistered: " + registration);
 
+		Account accout = new Account(context);
+		accout.setPushId(registration);
 		DataManagement.sendPushIdToServer(this, registration);
 	}
 

@@ -721,12 +721,19 @@ public class EventEditActivity extends EventActivity {
 			
 
 			// START AND END TIME
+			String timeFormat;
+			Account account = new Account(EventEditActivity.this);
+			if(account.getSetting_ampm() == 1){
+				timeFormat = getResources().getString(R.string.hour_event_view_time_format_AMPM);
+			} else {
+				timeFormat = getResources().getString(R.string.hour_event_view_time_format);
+			}
 			if (result.getStartCalendar() != null) {
-				startView.setText(Utils.formatCalendar(result.getStartCalendar()));
+				startView.setText(Utils.formatCalendar(result.getStartCalendar()) + " " + Utils.formatCalendar(result.getStartCalendar(), timeFormat));
 				startCalendar = (Calendar) result.getStartCalendar().clone();
 			}
 			if (result.getEndCalendar() != null) {
-				endView.setText(Utils.formatCalendar(result.getEndCalendar()));
+				endView.setText(Utils.formatCalendar(result.getEndCalendar()) + " " + Utils.formatCalendar(result.getEndCalendar(), timeFormat));
 				endCalendar = (Calendar) result.getEndCalendar().clone();
 			}
 
@@ -794,7 +801,6 @@ public class EventEditActivity extends EventActivity {
 					}
 				}
 			});
-			Account account = new Account(EventEditActivity.this);
 			if (result.getReminder1() != null) {
 				reminder1.setText(Utils.formatCalendar(result.getReminder1(), account.getSetting_date_format()));
 			} else {

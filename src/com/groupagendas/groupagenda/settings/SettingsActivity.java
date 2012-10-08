@@ -13,6 +13,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.ListView;
@@ -85,7 +86,7 @@ public class SettingsActivity extends ListActivity{
 	}
 	
 	public void logout(View v){
-		this.unsubscribeFromPush();
+		new UnsubscribeFromPush().execute();
 		SharedPreferences prefs = getSharedPreferences("LATEST_CREDENTIALS", MODE_PRIVATE);
 		Editor prefEditor = prefs.edit();
 		
@@ -100,26 +101,31 @@ public class SettingsActivity extends ListActivity{
 		startActivity(intent);
 	}
 	
-	public void unsubscribeFromPush(){
-		try {
+	private class UnsubscribeFromPush extends AsyncTask<Void, Void, Void>{
 
-			HttpClient hc = new DefaultHttpClient();
-			HttpPost post = new HttpPost(Data.getServerUrl() + "mobile/push/unsubscribe");
+		@Override
+		protected Void doInBackground(Void... params) {
+			try {
 
-			MultipartEntity reqEntity = new MultipartEntity(HttpMultipartMode.BROWSER_COMPATIBLE);
+				HttpClient hc = new DefaultHttpClient();
+				HttpPost post = new HttpPost(Data.getServerUrl() + "mobile/push/unsubscribe");
 
-			Account account = new Account(this);
-			reqEntity.addPart("device_uuid", new StringBody(account.getPushId()));
+				MultipartEntity reqEntity = new MultipartEntity(HttpMultipartMode.BROWSER_COMPATIBLE);
 
-			post.setEntity(reqEntity);
+				Account account = new Account(SettingsActivity.this);
+				reqEntity.addPart("device_uuid", new StringBody(account.getPushId()));
 
-			@SuppressWarnings("unused")
-			HttpResponse rp = hc.execute(post);
+				post.setEntity(reqEntity);
 
-		} catch (Exception ex) {
-			Reporter.reportError(DataManagement.class.toString(), Thread.currentThread().getStackTrace()[2].getMethodName().toString(),
-					ex.getMessage());
+				@SuppressWarnings("unused")
+				HttpResponse rp = hc.execute(post);
+			} catch (Exception ex) {
+				Reporter.reportError(DataManagement.class.toString(), Thread.currentThread().getStackTrace()[2].getMethodName().toString(),
+						ex.getMessage());
+			}
+			return null;
 		}
+		
 	}
 	
 }
