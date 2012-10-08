@@ -1065,9 +1065,9 @@ public class NewEventActivity extends EventActivity {
 				String timeFormat;
 				Account account = new Account(NewEventActivity.this);
 				if(account.getSetting_ampm() == 1){
-					timeFormat = getResources().getString(R.string.hour_event_view_time_format_AMPM);
+					timeFormat = getResources().getString(R.string.time_format_AMPM);
 				} else {
-					timeFormat = getResources().getString(R.string.hour_event_view_time_format);
+					timeFormat = getResources().getString(R.string.time_format);
 				}
 				switch (id) {
 				case DIALOG_START:

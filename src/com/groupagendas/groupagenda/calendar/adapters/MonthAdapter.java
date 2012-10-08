@@ -31,10 +31,10 @@ public class MonthAdapter extends AbstractAdapter<Event> {
 
 		if (usesAMPM) {
 			timeFormat = new SimpleDateFormat(getContext().getString(
-					R.string.hour_event_view_time_format_AMPM));
+					R.string.time_format_AMPM));
 		} else {
 			timeFormat = new SimpleDateFormat(getContext().getString(
-					R.string.hour_event_view_time_format));
+					R.string.time_format));
 		}
 	}
 

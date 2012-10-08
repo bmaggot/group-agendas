@@ -127,9 +127,9 @@ private SectionListItem[] filterEvents (String filterString, SectionListItem[] e
 			super(context, textViewResourceId, items);
 			this.items = items;
 			if (CalendarSettings.isUsing_AM_PM()){
-				df = new SimpleDateFormat(getContext().getString(R.string.hour_event_view_time_format_AMPM));
+				df = new SimpleDateFormat(getContext().getString(R.string.time_format_AMPM));
 			}else{
-				df = new SimpleDateFormat(getContext().getString(R.string.hour_event_view_time_format));
+				df = new SimpleDateFormat(getContext().getString(R.string.time_format));
 			}
 		}		
 
