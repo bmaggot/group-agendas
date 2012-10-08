@@ -7,7 +7,8 @@ import java.util.Date;
 
 import android.content.Context;
 
-import com.groupagendas.groupagenda.account.AccountProvider;
+import com.groupagendas.groupagenda.R;
+import com.groupagendas.groupagenda.account.Account;
 import com.groupagendas.groupagenda.error.report.Reporter;
 
 public class DateTimeUtils {
@@ -15,13 +16,11 @@ public class DateTimeUtils {
 	public static final String DEFAULT_DATE = "yyyy-MM-dd";
 	public static final String DEFAULT_TIME = "HH:mm";
 
-	private Prefs prefs;
-
 	private String dateFormat;
 	private SimpleDateFormat mDateFormater;
-	private SimpleDateFormat dDateFormater;
 
-	private String am_pm;
+
+	private boolean am_pm;
 	private String dateTimeFormat;
 	private SimpleDateFormat mDateTimeFormater;
 	private SimpleDateFormat dDateTimeFormater;
@@ -29,42 +28,60 @@ public class DateTimeUtils {
 	private String timeFormat;
 	private SimpleDateFormat mTimeFormater;
 	private SimpleDateFormat dTimeFormater;
+	private Account account;
+	private SimpleDateFormat dDateFormater;
 
 	public DateTimeUtils(Context context) {
-		prefs = new Prefs(context);
+		account = new Account(context);
 
-		dateFormat = prefs.getValue(AccountProvider.AMetaData.AccountMetaData.SETTING_DATE_FORMAT, DEFAULT_DATE).replace("mm", "MM");
+		dateFormat = account.getSetting_date_format().replace("mm", "MM");
 		mDateFormater = new SimpleDateFormat(dateFormat);
 		dDateFormater = new SimpleDateFormat(DEFAULT_DATE);
 
-		am_pm = prefs.getValue(AccountProvider.AMetaData.AccountMetaData.SETTING_AMPM, "false");
+		am_pm = account.getSetting_ampm() == 1;
 
-		if (am_pm.equals("true")) {
-			dateTimeFormat = dateFormat + " hh:mm aaa";
-			timeFormat = "hh:mm aaa";
+		if (am_pm) {
+			timeFormat = context.getString(R.string.time_format_AMPM);
+			
 		} else {
-			dateTimeFormat = dateFormat + " HH:mm";
-			timeFormat = DEFAULT_TIME;
+			timeFormat = context.getString(R.string.time_format);		
 		}
+		
+		dateTimeFormat = dateFormat + timeFormat;		
 		mDateTimeFormater = new SimpleDateFormat(dateTimeFormat);
-		dDateTimeFormater = new SimpleDateFormat(DEFAULT_DATETIME);
 
 		mTimeFormater = new SimpleDateFormat(timeFormat);
-		dTimeFormater = new SimpleDateFormat(DEFAULT_TIME);
 
 	}
 
-	// Date
-	public String formatDate(String date) {
-		String formatedDate = "";
-		try {
-			Date dateObj = dDateFormater.parse(date);
-			formatedDate = mDateFormater.format(dateObj);
-		} catch (ParseException e) {
-			Reporter.reportError(this.getClass().toString(), Thread.currentThread().getStackTrace()[2].getMethodName().toString(), e.getMessage());
-		}
-
-		return formatedDate;
+	/**
+	 * Formats given calendar to String, using user selected date format
+	 * @author justinas.marcinka@gmail.com
+	 * @param calendar calendar to format
+	 * @return
+	 */
+	public String formatDate(Calendar calendar){
+		return mDateFormater.format(calendar.getTime());
+	}
+	
+	/**
+	 * Formats given calendar to String, using user selected time format
+	 * @author justinas.marcinka@gmail.com
+	 * @param calendar calendar to format
+	 * @return
+	 */
+	public String formatTime(Calendar calendar){
+		return mTimeFormater.format(calendar.getTime());
+	}
+	
+	/**
+	 * Formats given calendar to String, using user selected time and date formats
+	 * @author justinas.marcinka@gmail.com
+	 * @param calendar calendar to format
+	 * @return
+	 */
+	public String formatDateTime(Calendar calendar){
+		return mDateTimeFormater.format(calendar.getTime());
 	}
 
 	public String formatDate(Date date) {
@@ -75,10 +92,12 @@ public class DateTimeUtils {
 		return mDateFormater.format(milis);
 	}
 
-	public String formatDateToDefault(Date date) {
-		return dDateFormater.format(date);
-	}
-	
+
+	/**
+	 * @deprecated not reliable
+	 * @param date
+	 * @return
+	 */
 	public Calendar stringDateToCalendar(String date){
 		Calendar c = Calendar.getInstance();
 		try {
@@ -90,6 +109,11 @@ public class DateTimeUtils {
 		return c;
 	}
 	// Date and time
+	/**
+	 * @deprecated not reliable
+	 * @param date
+	 * @return
+	 */
 	public String formatDateTime(String date) {
 		String formatedDate = "";
 		try {
@@ -105,7 +129,21 @@ public class DateTimeUtils {
 	public String formatDateTime(Date date) {
 		return mDateTimeFormater.format(date);
 	}
-
+	
+	
+	/**
+	 * @deprecated not reliable
+	 * @param date
+	 * @return
+	 */
+	public String formatDateToDefault(Date date) {
+		return dDateFormater.format(date);
+	}
+	/**
+	 * @deprecated not reliable
+	 * @param date
+	 * @return
+	 */
 	public String formatDateTimeToDefault(Date date) {
 		return dDateTimeFormater.format(date);
 	}
@@ -115,6 +153,11 @@ public class DateTimeUtils {
 		return mTimeFormater.format(milis);
 	}
 
+	/**
+	 * @deprecated not reliable
+	 * @param date
+	 * @return
+	 */
 	public String formatTimeToDefault(Date date) {
 		return dTimeFormater.format(date);
 	}
