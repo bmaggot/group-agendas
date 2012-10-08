@@ -560,7 +560,7 @@ public class RegistrationActivity extends Activity {
 		protected Boolean doInBackground(Void... params) {
 
 			String language = languageArray[languageSpinner.getSelectedItemPosition()];
-			String country = countryView.getText().toString();
+			String country = countriesList.get(timezoneInUse).country_code;
 			String timezone = timezoneView.getText().toString();
 			String sex = sexArray[sexSpinner.getSelectedItemPosition()];
 			String name = nameView.getText().toString();
