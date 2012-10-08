@@ -149,15 +149,6 @@ public class EventEditActivity extends EventActivity {
 		// Top text and SAVE Button
 		topText = (TextView) findViewById(R.id.topText);
 
-		String typeStr = "";
-		if (intent.getStringExtra("type") != null) {
-			typeStr = new StringBuilder(intent.getStringExtra("type")).append("_type").toString();
-		}
-		int typeId = getResources().getIdentifier(typeStr, "string", "com.groupagendas.groupagenda");
-
-		if (topText != null && typeId != 0) {
-			topText.setText(getString(typeId));
-		}
 		saveButton = (Button) findViewById(R.id.save_button);
 		saveButton.setOnClickListener(new OnClickListener() {
 			@Override
@@ -610,8 +601,25 @@ public class EventEditActivity extends EventActivity {
 			if (result == null) {
 				throw new IllegalStateException("EVENT NOT FOUND IN LOCAL DB!!!!!!");
 			}
-
+			
 			event = result;
+			//toptext
+			String tmpTopText = event.getType();
+			if(tmpTopText.equalsIgnoreCase("t")){
+				topText.setText(getResources().getString(R.string.event_type_t));
+			} else if(tmpTopText.equalsIgnoreCase("n")){
+				topText.setText(getResources().getString(R.string.event_type_n));
+			} else if(tmpTopText.equalsIgnoreCase("p")){
+				topText.setText(getResources().getString(R.string.event_type_p));
+			} else if(tmpTopText.equalsIgnoreCase("r")){
+				topText.setText(getResources().getString(R.string.event_type_r));
+			} else if(tmpTopText.equalsIgnoreCase("o")){
+				topText.setText(getResources().getString(R.string.event_type_o));
+			} else if(tmpTopText.equalsIgnoreCase("v")){
+				topText.setText(getResources().getString(R.string.event_type_v));
+			} else if(tmpTopText.equalsIgnoreCase("f")){
+				topText.setText(getResources().getString(R.string.event_type_f));
+			}
 			// title
 
 			titleView.setText(result.getTitle());

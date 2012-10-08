@@ -628,9 +628,11 @@ public void setIs_owner(boolean is_owner) {
 	this.is_owner = is_owner;
 }
 public void setType(String type) {
-	this.type = DEFAULT_TYPE;
-	if (type != null && !type.equalsIgnoreCase("null"))
-			this.type = type;
+	if (type != null && !type.equalsIgnoreCase("null")){
+		this.type = type;
+	} else {
+		this.type = DEFAULT_TYPE;
+	}
 }
 public void setCreator_fullname(String creator_fullname) {
 
