@@ -56,7 +56,6 @@ import com.groupagendas.groupagenda.events.EventsActivity;
 import com.groupagendas.groupagenda.events.EventsProvider;
 import com.groupagendas.groupagenda.events.NewEventActivity;
 import com.groupagendas.groupagenda.templates.TemplatesProvider;
-import com.groupagendas.groupagenda.utils.AgendaUtils;
 import com.groupagendas.groupagenda.utils.Utils;
 import com.ptashek.widgets.datetimepicker.DateTimePicker;
 
@@ -154,9 +153,9 @@ public class NavbarActivity extends Activity {
 						publishProgress(total);
 					case 1: // Load account
 						if (DataManagement.networkAvailable) 
-							dm.getAccountFromRemoteDb();
+							dm.getAccountFromRemoteDb(NavbarActivity.this);
 						else
-							new Account();
+							new Account(NavbarActivity.this);
 //						NativeCalendarImporter.readCalendar(dm.getmContext());
 						loadPhase++;
 						total = 20;
