@@ -74,7 +74,7 @@ public class MoreEmailsActivity extends Activity {
 		@Override
 		protected Boolean doInBackground(Void... params) {
 			boolean check = true;
-			Account mAccount = new Account();
+			Account mAccount = new Account(MoreEmailsActivity.this);
 			String email = "";
 
 			// 2
@@ -161,7 +161,7 @@ public class MoreEmailsActivity extends Activity {
 
 		@Override
 		protected Account doInBackground(Void... args) {
-			return dm.getAccountFromRemoteDb();
+			return dm.getAccountFromRemoteDb(MoreEmailsActivity.this);
 		}
 
 		@Override
