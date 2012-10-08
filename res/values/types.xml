@@ -1,25 +1,29 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <string name="r_type">Shared event</string>
-    <string name="t_type">Telephone call</string>
-    <string name="o_type">Open event</string>
-    <string name="n_type">Shared note</string>
     <string name="p_type">Private note</string>
+    <string name="n_type">Shared note</string>
+    <string name="r_type">Shared event</string>
+    <string name="t_type">Shared event</string>
+    <string name="o_type">Open event</string>
+    <string name="v_type">Poll</string>
 
     <string-array name="type_labels">
         <item>Private note</item>
         <item>Shared note</item>
         <item>Shared event</item>
-        <item>Telephone call</item>
+        <item>Shared event</item>
         <item>Open event</item>
+        <item>Poll</item>
     </string-array>
+    
     <string-array name="type_values">
         <item>p</item>
         <item>n</item>
         <item>r</item>
         <item>t</item>
         <item>o</item>
+        <item>f</item>
     </string-array>
 
 </resources>
