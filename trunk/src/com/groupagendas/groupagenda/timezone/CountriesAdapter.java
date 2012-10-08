@@ -46,14 +46,12 @@ public class CountriesAdapter extends AbstractAdapter<StaticTimezones> implement
 		}
 
 		temp = list.get(position).country;
-		if (position >= 0) {
-			((TextView) convertView).setText(temp);
-			convertView.setTag(list.get(position).id);
+		((TextView) convertView).setText(temp);
+		convertView.setTag(list.get(position).id);
 			
 //			if (position > 0 && list.get(position - 1).country.equals(temp)) {
 //				convertView.setVisibility(View.GONE);
 //			}
-		}
 
 		return convertView;
 	}
