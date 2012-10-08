@@ -13,6 +13,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
+import android.widget.RelativeLayout.LayoutParams;
 import android.widget.TextView;
 
 import com.groupagendas.groupagenda.EventActivityOnClickListener;
@@ -35,15 +36,13 @@ public class HourEventView extends RelativeLayout {
 		super(context);
 		
 		this.usesAMPM = usesAMPM;
-
-		RelativeLayout.LayoutParams lp = (LayoutParams) this.getLayoutParams();
 		
 		View titleHolder = LayoutInflater.from(context).inflate(R.layout.calendar_dayview_hour_event_icontitle_holder, null);
 		GradientDrawable sd = (GradientDrawable)context.getResources().getDrawable(R.drawable.calendar_dayview_secondcolumn_entrybackground);
 		this.event = e;
 		setId(e.hashCode());
 		
-		 lp = new RelativeLayout.LayoutParams(android.view.ViewGroup.LayoutParams.WRAP_CONTENT, android.view.ViewGroup.LayoutParams.WRAP_CONTENT);
+		 LayoutParams lp;
 		
 		
 		Calendar startTime  = (Calendar) e.getStartCalendar().clone();
@@ -53,9 +52,9 @@ public class HourEventView extends RelativeLayout {
 //		Set Event start time textView
 		timeText = new TextView(getContext());
 		if (usesAMPM){
-			df = new SimpleDateFormat(getContext().getString(R.string.hour_event_view_time_format_AMPM));
+			df = new SimpleDateFormat(getContext().getString(R.string.time_format_AMPM));
 		}else{
-			df = new SimpleDateFormat(getContext().getString(R.string.hour_event_view_time_format));
+			df = new SimpleDateFormat(getContext().getString(R.string.time_format));
 		}
 		
 		timeText.setText(df.format(startTime.getTime()));
@@ -68,6 +67,7 @@ public class HourEventView extends RelativeLayout {
 		title = (TextView) titleHolder.findViewById(R.id.hour_event_title);
 		title.setText(e.getTitle());
 		title.setSingleLine(showSingleLine);
+//		title.setLayoutParams(lp);
 	
 		
 		
@@ -83,7 +83,7 @@ public class HourEventView extends RelativeLayout {
 				icon.setImageResource(e.getIconId(getContext()));
 			}
 		
-		
+		lp = new RelativeLayout.LayoutParams(android.view.ViewGroup.LayoutParams.WRAP_CONTENT, android.view.ViewGroup.LayoutParams.WRAP_CONTENT);
 //		CHANGE LAYOUT TO ONE LINE IF THERE IS half-hour event
 //		WARNING: START TIME NOW LOSES ITS CORRECT VALUE ;)
 		int layoutPadding;
@@ -137,7 +137,7 @@ public class HourEventView extends RelativeLayout {
         return px;
 }
 	public void setStartTime (Calendar startTime){
-		SimpleDateFormat df = new SimpleDateFormat(getContext().getString(R.string.hour_event_view_time_format));
+		SimpleDateFormat df = new SimpleDateFormat(getContext().getString(R.string.time_format));
 		timeText.setText(df.format(startTime.getTime()));
 	}
 
