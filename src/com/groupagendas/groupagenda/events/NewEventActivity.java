@@ -629,7 +629,7 @@ public class NewEventActivity extends EventActivity {
 		}
 		if (countriesList != null) {
 			countriesAdapter = new CountriesAdapter(NewEventActivity.this, R.layout.search_dialog_item, countriesList);
-			timezonesAdapter = new TimezonesAdapter(NewEventActivity.this, R.layout.search_dialog, countriesList);
+			timezonesAdapter = new TimezonesAdapter(NewEventActivity.this, R.layout.search_dialog_item, countriesList);
 		}
 
 
