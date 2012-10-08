@@ -6,7 +6,6 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ExecutionException;
@@ -30,7 +29,6 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import android.R.bool;
 import android.app.Activity;
 import android.content.ContentResolver;
 import android.content.ContentValues;
@@ -56,8 +54,6 @@ import com.groupagendas.groupagenda.address.AddressProvider.AMetaData.AddressesM
 import com.groupagendas.groupagenda.contacts.Group;
 import com.groupagendas.groupagenda.error.report.Reporter;
 import com.groupagendas.groupagenda.events.Event;
-import com.groupagendas.groupagenda.events.EventsAdapter;
-import com.groupagendas.groupagenda.events.EventsProvider;
 import com.groupagendas.groupagenda.settings.AutoColorItem;
 import com.groupagendas.groupagenda.settings.AutoIconItem;
 import com.groupagendas.groupagenda.templates.TemplatesProvider.TMetaData.TemplatesMetaData;
@@ -101,8 +97,8 @@ public class DataManagement {
 		return Data.get_instance();
 	}
 
-	public boolean updateAccount(boolean removeImage) {
-		Account account = new Account();
+	public boolean updateAccount(Context context, boolean removeImage) {
+		Account account = new Account(context);
 		boolean success = false;
 
 		try {
@@ -114,8 +110,8 @@ public class DataManagement {
 
 			reqEntity.addPart(Account.AccountMetaData.LASTNAME, new StringBody(account.getLastname()));
 			reqEntity.addPart(Account.AccountMetaData.NAME, new StringBody(account.getName()));
-
-			reqEntity.addPart(Account.AccountMetaData.BIRTHDATE, new StringBody(account.getBirthdate().toString()));
+//	TODO disabled sending account's birthdate.
+//			reqEntity.addPart(Account.AccountMetaData.BIRTHDATE, new StringBody(account.getBirthdate().toString()));
 			reqEntity.addPart(Account.AccountMetaData.SEX, new StringBody(account.getSex()));
 
 			reqEntity.addPart(Account.AccountMetaData.COUNTRY, new StringBody(account.getCountry()));
@@ -146,6 +142,7 @@ public class DataManagement {
 					}
 				}
 			} else {
+				// TODO overview account update on remote.
 				OfflineData uplooad = new OfflineData("mobile/account_edit", reqEntity);
 				Data.getUnuploadedData().add(uplooad);
 			}
@@ -201,7 +198,7 @@ public class DataManagement {
 		return success;
 	}
 
-	public Account getAccountFromRemoteDb() {
+	public Account getAccountFromRemoteDb(Context context) {
 		boolean success = false;
 		Account u = null;
 
@@ -224,7 +221,7 @@ public class DataManagement {
 
 					if (success == true) {
 						JSONObject profile = object.getJSONObject("profile");
-						u = new Account();
+						u = new Account(context);
 
 						try {
 							u.setUser_id(profile.getInt(Account.AccountMetaData.U_ID));
