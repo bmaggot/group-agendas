@@ -220,6 +220,7 @@ public class Utils {
 
 	
 	/**
+	 * @deprecated Use DateTimeUtils.formatDate(Calendar), formatTime(Calendar) or formatDateTime(Calendar) instead
 	 * Formats given calendar to String, using user selected format, defined in CalendarSettings
 	 * @author justinas.marcinka@gmail.com
 	 * @param calendar calendar to format
@@ -232,6 +233,7 @@ public class Utils {
 	
 	/**
 	 * Formats given calendar to String, using given pattern
+	 *
 	 * @author justinas.marcinka@gmail.com
 	 * @param calendar calendar to format
 	 * @param pattern date format pattern
