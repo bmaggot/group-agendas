@@ -47,12 +47,9 @@ public class TimezonesAdapter extends AbstractAdapter<StaticTimezones> implement
 
 		temp = list.get(position).timezone;
 		if (position >= 0) {
-			((TextView) convertView).setText(temp);
+			TextView view = (TextView) convertView;
+			view.setText(temp);
 			convertView.setTag(list.get(position).id);
-// TODO filter duplicates.			
-//			if (position > 0 && list.get(position - 1).country.equals(temp)) {
-//				convertView.setVisibility(View.GONE);
-//			}
 		}
 
 		return convertView;
