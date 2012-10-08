@@ -107,7 +107,7 @@ public class ContactInfoActivity extends Activity {
 				}
 				// Birth date
 				if (!contact.birthdate.equals("null")) {
-					setTableRow(getString(R.string.birthday), dtUtils.formatDate(contact.birthdate));
+					setTableRow(getString(R.string.birthday), contact.birthdate); //TODO format using dtUtils
 				}
 				// Country
 				if (!contact.country.equals("null")) {
