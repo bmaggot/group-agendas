@@ -250,13 +250,6 @@
     <string name="status_maybe">Maybe</string>
     <string name="status_not_attending">Not attending</string>
     <string name="status_new_invite">New invite…</string>
-    <string name="event_type_t">Telephone call</string>
-    <string name="event_type_n">Shared to all</string>
-    <string name="event_type_p">Private note</string>
-    <string name="event_type_r">Shared event</string>
-    <string name="event_type_o">Open event</string>
-    <string name="event_type_v">Shared to work</string>
-    <string name="event_type_f">Shared to private</string>
     <string name="platform">Android</string>
     
     
