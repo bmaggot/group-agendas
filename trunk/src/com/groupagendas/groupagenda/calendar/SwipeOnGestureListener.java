@@ -6,7 +6,7 @@ import android.view.MotionEvent;
 
 public class SwipeOnGestureListener extends SimpleOnGestureListener {
 
-	  private static final int SWIPE_MIN_DISTANCE = 10;
+	  private static final int SWIPE_MIN_DISTANCE = 50;
 	  private static final int SWIPE_MAX_OFF_PATH = 100;
 	  private static final int SWIPE_THRESHOLD_VELOCITY = 20;
 	  
