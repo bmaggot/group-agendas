@@ -257,5 +257,7 @@
     <string name="event_type_o">Open event</string>
     <string name="event_type_v">Shared to work</string>
     <string name="event_type_f">Shared to private</string>
+    <string name="platform">Android</string>
+    
     
 </resources>
