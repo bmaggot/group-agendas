@@ -398,7 +398,7 @@ public class AccountActivity extends Activity implements OnClickListener{
 		
 		// Date
 		temp = birthdateView.getText().toString();
-		Calendar birthdate = Utils.createCalendar(Long.parseLong(temp), mAccount.getTimezone());
+		Calendar birthdate = Utils.stringToCalendar(temp, mAccount.getTimezone(), mAccount.getSetting_date_format());
 		mAccount.setBirthdate(birthdate);
 		
 		// Sex
@@ -406,10 +406,10 @@ public class AccountActivity extends Activity implements OnClickListener{
 		mAccount.setSex(sexArray[pos]);
 		
 		// Country 
-		mAccount.setCountry(countryView.getText().toString());
+		mAccount.setCountry(countriesList.get(timezoneInUse).country_code);
 		
 		// Timezone
-		mAccount.setTimezone(timezoneView.getText().toString());
+		mAccount.setTimezone(countriesList.get(timezoneInUse).timezone);
 		
 		// City, Street, Zip
 		temp = cityView.getText().toString();
@@ -435,6 +435,10 @@ public class AccountActivity extends Activity implements OnClickListener{
 			mAccount.setImage(true);
 			mAccount.setRemove_image(0);
 		}
+		
+		new EditAccountTask().execute();
+		
+		finish();
 	}
 	
 	@Override
@@ -518,23 +522,13 @@ public class AccountActivity extends Activity implements OnClickListener{
 
 		@Override
 		protected Boolean doInBackground(Void... args) {
-			return dm.updateAccount(removeImage.isChecked());
+			return dm.updateAccount(AccountActivity.this, removeImage.isChecked());
 		}
 
 		@Override
 		protected void onPostExecute(Boolean result) {
-			
-			if(!result){
-				// TODO sumthing
-//				ContentValues values = new ContentValues();
-//				values.put(AccountProvider.AMetaData.AccountMetaData.NEED_UPDATE, 1);
-//				
-//				StringBuilder where = new StringBuilder(AccountProvider.AMetaData.AccountMetaData.A_ID).append(" = ").append(dm.getAccount().getUser_id());
-//				getContentResolver().update(AccountProvider.AMetaData.AccountMetaData.CONTENT_URI, values, where.toString(), null);
-			}
-			
-			finish();
 			pb.setVisibility(View.GONE);
+			finish();
 		}
 	}
 	
