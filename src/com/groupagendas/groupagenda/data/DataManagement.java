@@ -48,6 +48,7 @@ import com.bog.calendar.app.model.CEvent;
 import com.bog.calendar.app.model.EventsHelper;
 import com.google.android.c2dm.C2DMessaging;
 import com.google.android.gcm.GCMRegistrar;
+import com.groupagendas.groupagenda.R;
 import com.groupagendas.groupagenda.account.Account;
 import com.groupagendas.groupagenda.account.AccountProvider;
 import com.groupagendas.groupagenda.address.Address;
@@ -710,12 +711,13 @@ public class DataManagement {
 			getImei(Data.getmContext());
 			GCMRegistrar.checkDevice(this.getContext());
 			GCMRegistrar.checkManifest(this.getContext());
-			Data.setPushId(GCMRegistrar.getRegistrationId(this.getContext()));
-			if (Data.getPushId().equals("")) {
+			Account account = new Account(this.getContext());
+			account.setPushId(GCMRegistrar.getRegistrationId(this.getContext()));
+			if (account.getPushId().equals("")) {
 
 				C2DMessaging.register(Data.getmContext(), PROJECT_ID);
 			} else {
-				sendPushIdToServer(Data.getmContext(), Data.getPushId());
+				sendPushIdToServer(Data.getmContext(), account.getPushId());
 			}
 		} catch (Exception e) {
 			Reporter.reportError(DataManagement.class.toString(), "registerPhone", e.getMessage().toString());
@@ -819,12 +821,13 @@ public class DataManagement {
 		try {
 
 			HttpClient hc = new DefaultHttpClient();
-			HttpPost post = new HttpPost(Data.getServerUrl() + "mobile/register_android");
+			HttpPost post = new HttpPost(Data.getServerUrl() + "mobile/push/subscribe");
 
 			MultipartEntity reqEntity = new MultipartEntity(HttpMultipartMode.BROWSER_COMPATIBLE);
 
 			reqEntity.addPart(TOKEN, new StringBody(Data.getToken()));
-			reqEntity.addPart("android_id", new StringBody(pushId));
+			reqEntity.addPart("device_uuid", new StringBody(pushId));
+			reqEntity.addPart("platform", new StringBody(context.getResources().getString(R.string.platform)));
 
 			post.setEntity(reqEntity);
 

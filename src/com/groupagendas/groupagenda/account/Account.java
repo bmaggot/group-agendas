@@ -78,6 +78,7 @@ public class Account {
 		public static final String CREATED = "created";
 		public static final String MODIFIED = "modified";
 		public static final String NEED_UPDATE = "need_update";
+		public static final String PUSH_ID = "push_id";
 	}
 
 	public int getUser_id() {
@@ -133,6 +134,10 @@ public class Account {
 
 	public String getPhone3() {
 		return prefs.getString(Account.AccountMetaData.PHONE3, "");
+	}
+	
+	public String getPushId() {
+		return prefs.getString(Account.AccountMetaData.PUSH_ID, "");
 	}
 
 	public boolean getImage() {
@@ -295,6 +300,11 @@ public class Account {
 		prefsEditor.commit();
 	}
 
+	public void setPushId(String pushId) {
+		prefsEditor.putString(Account.AccountMetaData.PUSH_ID, pushId);
+		prefsEditor.commit();
+	}
+	
 	public void setImage(Boolean image) {
 		prefsEditor.putBoolean(Account.AccountMetaData.IMAGE, image);
 		prefsEditor.commit();
