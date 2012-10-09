@@ -22,7 +22,7 @@ public class ChatProvider extends ContentProvider {
 	private DatabaseHelper mOpenHelper;
 
 	public static class CMMetaData {
-		public static final String AUTHORITY = "com.groupagendas.groupagenda.contacts.ChatProvider";
+		public static final String AUTHORITY = "com.groupagendas.groupagenda.chat.ChatProvider";
 		public static final String DATABASE_NAME = "chat.sqlite";
 		public static final String CHAT_TABLE = "chat";
 
@@ -68,8 +68,8 @@ public class ChatProvider extends ContentProvider {
 	
 	static {
 		mUriMatcher = new UriMatcher(UriMatcher.NO_MATCH);
-		mUriMatcher.addURI(CMetaData.AUTHORITY, CMMetaData.CHAT_TABLE, CHAT_ALL);
-		mUriMatcher.addURI(CMetaData.AUTHORITY, CMMetaData.CHAT_TABLE + "/#", CHAT_ONE);
+		mUriMatcher.addURI(CMMetaData.AUTHORITY, CMMetaData.CHAT_TABLE, CHAT_ALL);
+		mUriMatcher.addURI(CMMetaData.AUTHORITY, CMMetaData.CHAT_TABLE + "/#", CHAT_ONE);
 	}
 
 	@Override
@@ -189,15 +189,15 @@ public class ChatProvider extends ContentProvider {
 		@Override
 		public void onCreate(SQLiteDatabase db) {
 			String query = "CREATE TABLE " + CMMetaData.CHAT_TABLE + " (" 
-					+ CMMetaData.ChatMetaData.M_ID + " INTEGER"
-					+ CMMetaData.ChatMetaData.E_ID + "INTEGER"
-					+ CMMetaData.ChatMetaData.USER_ID + "INTEGER" 
-					+ CMMetaData.ChatMetaData.MESSAGE + "TEXT"
-					+ CMMetaData.ChatMetaData.DELETED + "TEXT"
-					+ CMMetaData.ChatMetaData.UPDATED + "TEXT"
-					+ CMMetaData.ChatMetaData.SUCCESSFULLY_UPLOADED + "INTEGER DEFAULT 0"
-					+ CMMetaData.ChatMetaData.CREATED + "INTEGER"
-					+ CMMetaData.ChatMetaData.MODIFIED + "INTEGER"
+					+ CMMetaData.ChatMetaData.M_ID + " INTEGER ,"
+					+ CMMetaData.ChatMetaData.E_ID + " INTEGER ,"
+					+ CMMetaData.ChatMetaData.USER_ID + " INTEGER ," 
+					+ CMMetaData.ChatMetaData.MESSAGE + " TEXT ,"
+					+ CMMetaData.ChatMetaData.DELETED + " TEXT ,"
+					+ CMMetaData.ChatMetaData.UPDATED + " TEXT ,"
+					+ CMMetaData.ChatMetaData.SUCCESSFULLY_UPLOADED + " INTEGER DEFAULT 0 ,"
+					+ CMMetaData.ChatMetaData.CREATED + " INTEGER ,"
+					+ CMMetaData.ChatMetaData.MODIFIED + " INTEGER "
 					+ ")";
 
 			db.execSQL(query);

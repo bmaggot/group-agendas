@@ -84,7 +84,7 @@ public class ChatManagement {
 			cv.put(CMMetaData.ChatMetaData.DELETED, !deleted.equals("null"));
 			cv.put(CMMetaData.ChatMetaData.UPDATED, json.getString(CMMetaData.ChatMetaData.UPDATED));
 		} catch (Exception e) {
-			Log.e("makeChatMessageObjectContentValuesFromJSON(JSONObject json)", e.getMessage());
+			Log.e("makeChatMessageObjectContentValueFromJSON(JSONObject json)", e.getMessage());
 		}
 		return cv;
 	}
@@ -153,7 +153,7 @@ public class ChatManagement {
 			context.getContentResolver().insert(ChatProvider.CMMetaData.ChatMetaData.CONTENT_URI, cv);
 			return true;
 		} catch (SQLiteException e) {
-			Log.e("getChatMessagesFromRemoteDB(chat, " + cv.get("message_id") + ")", e.getMessage());
+			Log.e("insertChatMessageContentValueToLocalDb(chat, " + cv.get("message_id") + ")", e.getMessage());
 			return false;
 		}
 	}
@@ -257,32 +257,5 @@ public class ChatManagement {
 			succcess = removeChatMessageFromLocalDb(context, messageId);
 		}
 		return succcess;
-	}
-
-	public static ArrayList<ChatThreadObject> getConverstionsFromLocalDb(Context context, int eventId) {
-		Cursor cur;
-		String[] projection = { EventsProvider.EMetaData.EventsMetaData.E_ID, EventsProvider.EMetaData.EventsMetaData.TITLE,
-				EventsProvider.EMetaData.EventsMetaData.TIME_START_UTC_MILLISECONDS };
-		String selection = EventsProvider.EMetaData.EventsMetaData.MESSAGES_COUNT + ">0";
-		String[] selectionArgs = { "GROUP BY " + ChatProvider.CMMetaData.ChatMetaData.E_ID };
-		String sortOrder = EventsProvider.EMetaData.EventsMetaData.TIME_START_UTC_MILLISECONDS;
-		ArrayList<ChatThreadObject> conversations = new ArrayList<ChatThreadObject>();
-
-		cur = context.getContentResolver().query(EventsProvider.EMetaData.EventsMetaData.CONTENT_URI, projection, selection, selectionArgs,
-				sortOrder);
-
-		if (cur.moveToFirst()) {
-			while (!cur.isAfterLast()) {
-				ChatThreadObject conversation = new ChatThreadObject();
-				conversation.setEvent_id(cur.getInt(cur.getColumnIndex(EventsProvider.EMetaData.EventsMetaData.E_ID)));
-				conversation.setTitle(cur.getString(cur.getColumnIndex(EventsProvider.EMetaData.EventsMetaData.TITLE)));
-				conversation.setTimeStart(cur.getLong(cur
-						.getColumnIndex(EventsProvider.EMetaData.EventsMetaData.TIME_START_UTC_MILLISECONDS)));
-				conversation.setMessage_count(cur.getInt(cur.getColumnIndex(EventsProvider.EMetaData.EventsMetaData.MESSAGES_COUNT)));
-				conversations.add(conversation);
-			}
-		}
-
-		return conversations;
 	}
 }
