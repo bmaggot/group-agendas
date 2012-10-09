@@ -47,7 +47,7 @@ public class DateTimeUtils {
 			timeFormat = context.getString(R.string.time_format);		
 		}
 		
-		dateTimeFormat = dateFormat + timeFormat;		
+		dateTimeFormat = dateFormat + " " + timeFormat;		
 		mDateTimeFormater = new SimpleDateFormat(dateTimeFormat);
 
 		mTimeFormater = new SimpleDateFormat(timeFormat);
