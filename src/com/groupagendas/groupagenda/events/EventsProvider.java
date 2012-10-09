@@ -124,6 +124,8 @@ public class EventsProvider extends ContentProvider{
 			public static final String IS_BIRTHDAY = "is_birthday";
 			public static final String IS_ALL_DAY = "is_all_day";
 			public static final String MESSAGES_COUNT = "messages_count";
+			public static final String NEW_MESSAGES_COUNT = "new_messages_count";
+			public static final String LAST_MESSAGE_DATE_TIME_UTC_MILISECONDS = "last_message_date_time";
 			public static final String INVITED = "invited";
 			
 		}
@@ -190,6 +192,8 @@ public class EventsProvider extends ContentProvider{
 //		EM.put(EMetaData.EventsMetaData.ASSIGNED_CONTACTS, EMetaData.EventsMetaData.ASSIGNED_CONTACTS);
 //		EM.put(EMetaData.EventsMetaData.ASSIGNED_GROUPS, EMetaData.EventsMetaData.ASSIGNED_GROUPS);
 		EM.put(EMetaData.EventsMetaData.MESSAGES_COUNT, EMetaData.EventsMetaData.MESSAGES_COUNT);
+		EM.put(EMetaData.EventsMetaData.NEW_MESSAGES_COUNT, EMetaData.EventsMetaData.NEW_MESSAGES_COUNT);
+		EM.put(EMetaData.EventsMetaData.LAST_MESSAGE_DATE_TIME_UTC_MILISECONDS, EMetaData.EventsMetaData.LAST_MESSAGE_DATE_TIME_UTC_MILISECONDS);
 		
 		EM.put(EMetaData.EventsMetaData.UPLOADED_SUCCESSFULLY, EMetaData.EventsMetaData.UPLOADED_SUCCESSFULLY);
 		
@@ -440,7 +444,9 @@ public class EventsProvider extends ContentProvider{
 //				+EMetaData.EventsMetaData.ASSIGNED_CONTACTS+" TEXT ,"
 //				+EMetaData.EventsMetaData.ASSIGNED_GROUPS+" TEXT ,"
 				+EMetaData.EventsMetaData.UPLOADED_SUCCESSFULLY+" INTEGER DEFAULT 0, "
-				+EMetaData.EventsMetaData.MESSAGES_COUNT+" INTEGER DEFAULT 0 "
+				+EMetaData.EventsMetaData.MESSAGES_COUNT+" INTEGER DEFAULT 0,"
+				+EMetaData.EventsMetaData.NEW_MESSAGES_COUNT+" INTEGER DEFAULT 0,"
+				+EMetaData.EventsMetaData.LAST_MESSAGE_DATE_TIME_UTC_MILISECONDS+" INTEGER "
 				+")";
 			db.execSQL(query);
 			
