@@ -937,27 +937,27 @@ public class NewEventActivity extends EventActivity {
 
 	}
 
-//	@Override
-//	protected Dialog onCreateDialog(int id) {
-//		AlertDialog.Builder builder = new AlertDialog.Builder(this);
-//		switch (id) {
-//		case DIALOG_ERROR:
-//			builder.setMessage(errorStr).setCancelable(false)
-//					.setPositiveButton(getString(R.string.ok), new DialogInterface.OnClickListener() {
-//						@Override
-//						public void onClick(DialogInterface dialog, int id) {
-//							dialog.dismiss();
-//						}
-//					});
-//			break;
-//		case CHOOSE_CONTACTS_DIALOG:
+	@Override
+	protected Dialog onCreateDialog(int id) {
+		AlertDialog.Builder builder = new AlertDialog.Builder(this);
+		switch (id) {
+		case DIALOG_ERROR:
+			builder.setMessage(errorStr).setCancelable(false)
+					.setPositiveButton(getString(R.string.ok), new DialogInterface.OnClickListener() {
+						@Override
+						public void onClick(DialogInterface dialog, int id) {
+							dialog.dismiss();
+						}
+					});
+			break;
+//		TODO is it used ? case CHOOSE_CONTACTS_DIALOG:
 //			builder.setTitle(getString(R.string.choose_contacts))
 //					.setMultiChoiceItems(titles, selections, new DialogSelectionClickHandler())
 //					.setPositiveButton(getString(R.string.ok), new DialogButtonClickHandler());
 //			break;
-//		}
-//		return builder.create();
-//	}
+		}
+		return builder.create();
+	}
 
 	public class DialogSelectionClickHandler implements DialogInterface.OnMultiChoiceClickListener {
 		@Override
@@ -1062,51 +1062,44 @@ public class NewEventActivity extends EventActivity {
 			@Override
 			public void onClick(View v) {
 				mDateTimePicker.clearFocus();
-				String timeFormat;
-				Account account = new Account(NewEventActivity.this);
-				if(account.getSetting_ampm() == 1){
-					timeFormat = getResources().getString(R.string.time_format_AMPM);
-				} else {
-					timeFormat = getResources().getString(R.string.time_format);
-				}
 				switch (id) {
 				case DIALOG_START:
 					startCalendar = mDateTimePicker.getCalendar();
-					startView.setText(Utils.formatCalendar(startCalendar) + " " + Utils.formatCalendar(startCalendar, timeFormat));
+					startView.setText(dtUtils.formatDateTime(startCalendar));
 					if (!startCalendar.before(endCalendar)) {
 						endCalendar = Calendar.getInstance();
 						endCalendar.setTime(mDateTimePicker.getCalendar().getTime());
 						endCalendar.add(Calendar.MINUTE, DEFAULT_EVENT_DURATION_IN_MINS);
-						endView.setText(Utils.formatCalendar(endCalendar) + " " + Utils.formatCalendar(endCalendar, timeFormat));
+						endView.setText(dtUtils.formatDateTime(endCalendar));
 					}
 					break;
 				case DIALOG_END:
 					endCalendar = mDateTimePicker.getCalendar();
-					endView.setText(Utils.formatCalendar(endCalendar) + " " + Utils.formatCalendar(endCalendar, timeFormat));
+					endView.setText(dtUtils.formatDateTime(endCalendar));
 					break;
 				case ALARM1:
 					alarm1time = mDateTimePicker.getCalendar();
-					view.setText(Utils.formatCalendar(alarm1time) + " " + Utils.formatCalendar(alarm1time, timeFormat));
+					view.setText(dtUtils.formatDateTime(alarm1time));
 					break;
 				case ALARM2:
 					alarm2time = mDateTimePicker.getCalendar();
-					view.setText(Utils.formatCalendar(alarm2time) + " " + Utils.formatCalendar(alarm2time, timeFormat));
+					view.setText(dtUtils.formatDateTime(alarm2time));
 					break;
 				case ALARM3:
 					alarm3time = mDateTimePicker.getCalendar();
-					view.setText(Utils.formatCalendar(alarm3time) + " " + Utils.formatCalendar(alarm3time, timeFormat));
+					view.setText(dtUtils.formatDateTime(alarm3time));
 					break;
 				case EventActivity.REMINDER1:
 					reminder1time = mDateTimePicker.getCalendar();
-					view.setText(Utils.formatCalendar(reminder1time) + " " + Utils.formatCalendar(reminder1time, timeFormat));
+					view.setText(dtUtils.formatDateTime(reminder1time));
 					break;
 				case EventActivity.REMINDER2:
 					reminder2time = mDateTimePicker.getCalendar();
-					view.setText(Utils.formatCalendar(reminder2time) + " " + Utils.formatCalendar(reminder2time, timeFormat));
+					view.setText(dtUtils.formatDateTime(reminder2time));
 					break;
 				case EventActivity.REMINDER3:
 					reminder3time = mDateTimePicker.getCalendar();
-					view.setText(Utils.formatCalendar(reminder3time) + " " + Utils.formatCalendar(reminder3time, timeFormat));
+					view.setText(dtUtils.formatDateTime(reminder3time));
 					break;
 				}
 				mDateTimeDialog.dismiss();
@@ -1164,6 +1157,7 @@ public class NewEventActivity extends EventActivity {
 
 			if (testEvent == 0) {
 				DataManagement.getInstance(NewEventActivity.this).createTemplate(event);
+				return true;
 			} else {
 				switch (testEvent) {
 				case 1: // no title set
@@ -1246,11 +1240,11 @@ public class NewEventActivity extends EventActivity {
 		/* Set event's start & end time */
 		 view = (EditText) findViewById(R.id.startView);
 		 if (view != null)
-		 view.setText(Utils.formatCalendar(data.getStartCalendar()));
+		 view.setText(dtUtils.formatDateTime(data.getStartCalendar()));
 
 		 view = (EditText) findViewById(R.id.endView);
 		 if (view != null)
-		 view.setText(Utils.formatCalendar(data.getEndCalendar()));
+		 view.setText(dtUtils.formatDateTime(data.getEndCalendar()));
 
 		/* Set event's description */
 		view = (EditText) findViewById(R.id.descView);
