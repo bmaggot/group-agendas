@@ -722,9 +722,9 @@ public class EventEditActivity extends EventActivity {
 			String timeFormat;
 			Account account = new Account(EventEditActivity.this);
 			if(account.getSetting_ampm() == 1){
-				timeFormat = getResources().getString(R.string.hour_event_view_time_format_AMPM);
+				timeFormat = getResources().getString(R.string.time_format_AMPM);
 			} else {
-				timeFormat = getResources().getString(R.string.hour_event_view_time_format);
+				timeFormat = getResources().getString(R.string.time_format);
 			}
 			if (result.getStartCalendar() != null) {
 				startView.setText(Utils.formatCalendar(result.getStartCalendar()) + " " + Utils.formatCalendar(result.getStartCalendar(), timeFormat));
