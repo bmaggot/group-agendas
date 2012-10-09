@@ -1,5 +1,9 @@
 package com.groupagendas.groupagenda.data;
-
+/**
+ * Class is responsible for communicating with remote and local databases. 
+ * @author justinas.marcinka@gmail.com
+ * @version 1.0
+ */
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -51,8 +55,7 @@ public class EventManagement {
 	private static final String GET_EVENTS_FROM_REMOTE_DB_URL = "mobile/events_list";
 	
 	
-	private static final String TOKEN = "token";
-	private static final String CATEGORY = "category";
+
 	
 	
 	public static boolean networkAvailable = true; //TODO remove hardcode
@@ -61,10 +64,12 @@ public class EventManagement {
 	
 	/**
 	 * @author justinas.marcinka@gmail.com Method creates event in both remote
-	 *         and local databases. If there is no connectivity to remote DB,
+	 *         and local databases. NOT YET IMPLEMENTED: If there is no connectivity to remote DB,
 	 *         event should be created only in local DB and saved task to upload
 	 *         data when available.
 	 * @param event
+	 * @since 2012-10-09
+	 * @version 1.0
 	 */
 	public static void createNewEvent(Context context, Event event) {
 
@@ -87,10 +92,15 @@ public class EventManagement {
 
 	/**
 	 * @author justinas.marcinka@gmail.com Method deletes event from both remote
-	 *         and local databases. If there is no connectivity to remote DB,
+	 *         and local databases. NOT YET IMPLEMENTED: If there is no connectivity to remote DB,
 	 *         event should be deleted only in local DB and saved task to delete
 	 *         data from remote db when available.
 	 * @param event
+	 * Fields that MUST BE SET:<br>
+	 *  Event.internalID <br>
+	 *  Event.event_ID <br>
+	 * @since 2012-10-09
+	 * @version 1.0
 	 */
 	public static void deleteEvent(Context context, Event event) {
 		Boolean deletedFromRemote = false;
@@ -104,6 +114,18 @@ public class EventManagement {
 		
 		deleteEventFromLocalDb(context, event.getInternalID());	
 	}
+	
+	/**
+	 * @author justinas.marcinka@gmail.com
+	 * @param context - method call context
+	 * @param event - event which invitation should be responded to. <br>
+	 * Fields that MUST BE SET:<br>
+	 *  Event.internalID <br>
+	 *  Event.event_ID <br>
+	 *  Event.status<br>
+	 * @since 2012-10-09
+	 * @version 1.0
+	 */
 	
 	public static void respondToInvitation(Context context, Event event){
 		if (!Invited.validateResponse(event.getStatus())){
@@ -124,8 +146,14 @@ public class EventManagement {
 
 	/**
 	 * @author justinas.marcinka@gmail.com Updates event in both local and
-	 *         remote db with given info
-	 * @param event
+	 * remote db with given info. Offline mode NOT YET IMPLEMENTED.
+	 * @param event<br>
+	 * Fields that MUST BE SET:<br>
+	 *  Event.internalID <br>
+	 *  Event.event_ID <br>
+	 *  all other fields that contain data to be updated
+	 * @since 2012-10-09
+	 * @version 1.0
 	 */
 	public static void updateEvent(Context context, Event event) {
 		if (networkAvailable) {
@@ -141,50 +169,61 @@ public class EventManagement {
 	public static final int TM_EVENTS_ON_GIVEN_DAY = 1;
 	public static final int TM_EVENTS_ON_GIVEN_MONTH = 2;
 	public static final int TM_EVENTS_ON_GIVEN_YEAR = 3;
+	/**
+	 * @author justinas.marcinka@gmail.com
+	 * categories for exchange event data with remote server
+	 */
 	
-	private static final String JSON_TAG_EVENT_ID = "event_id";
-	private static final String JSON_TAG_TIMEZONE = "timezone";
-	private static final String JSON_TAG_TIME_START_UTC = "timestamp_start_utc";
-	private static final String JSON_TAG_TIME_END_UTC = "timestamp_end_utc";
-	private static final String JSON_TAG_USER_ID = "user_id";
-	private static final String JSON_TAG_STATUS = "status";
-	private static final String JSON_TAG_IS_OWNER = "is_owner";
-	private static final String JSON_TAG_TYPE = "type";
-	private static final String JSON_TAG_TITLE = "title";
-	private static final String JSON_TAG_ICON = "icon";
-	private static final String JSON_TAG_COLOR = "color";
-	private static final String JSON_TAG_DESCRIPTION = "description";
-	private static final String JSON_TAG_LOCATION = "location";
-	private static final String JSON_TAG_ACCOMODATION = "accomodation";
-	private static final String JSON_TAG_COST = "cost";
-	private static final String JSON_TAG_TAKE_WITH_YOU = "take_with_you";
-	private static final String JSON_TAG_GO_BY = "go_by";
-	private static final String JSON_TAG_COUNTRY = "country";
-	private static final String JSON_TAG_CITY = "city";
-	private static final String JSON_TAG_STREET = "street";
-	private static final String JSON_TAG_ZIP = "zip";
-	private static final String JSON_TAG_ABSOLUTE_REMINDER_1 = "r1";
-	private static final String JSON_TAG_ABSOLUTE_REMINDER_2 = "r2";
-	private static final String JSON_TAG_ABSOLUTE_REMINDER_3 = "r3";
-	private static final String JSON_TAG_ABSOLUTE_ALARM_1 = "a1";
-	private static final String JSON_TAG_ALARM_1_FIRED = "alarm1_fired";
-	private static final String JSON_TAG_ABSOLUTE_ALARM_2 = "a2";
-	private static final String JSON_TAG_ALARM_2_FIRED = "alarm2_fired";
-	private static final String JSON_TAG_ABSOLUTE_ALARM_3 = "a3";
-	private static final String JSON_TAG_ALARM_3_FIRED = "alarm3_fired";
-	private static final String JSON_TAG_TIMESTAMP_CREATED = "timestamp_created";
-	private static final String JSON_TAG_TIMESTAMP_MODIFIED = "timestamp_modified";
-	private static final String JSON_TAG_ATTENDANT_0_COUNT = "attendant_0_count";
-	private static final String JSON_TAG_ATTENDANT_2_COUNT = "attendant_2_count";
-	private static final String JSON_TAG_ATTENDANT_1_COUNT = "attendant_1_count";
-	private static final String JSON_TAG_ATTENDANT_4_COUNT = "attendant_4_count";
-	private static final String JSON_TAG_IS_SPORTS_EVENT = "is_sports_event";
-	private static final String JSON_TAG_ALL_DAY = "all_day";
-	private static final String JSON_TAG_CREATOR_FULLNAME = "creator_fullname";
-	private static final String JSON_TAG_CREATOR_CONTACT_ID = "is_sports_event";
-	private static final String JSON_TAG_INVITED = "invited";
-	private static final String JSON_TAG_MESSAGE_COUNT = "message_count";
-	private static final String JSON_TAG_ASSIGNED_CONTACTS = "assigned_contacts";
+	private static final String TOKEN = "token";
+	private static final String CATEGORY = "category";
+	private static final String SUCCESS = "success";
+	private static final String REASON = "reason";
+	
+	private static final String EVENT_ID = "event_id";
+	private static final String TIMEZONE = "timezone";
+	private static final String TIME_START_UTC = "timestamp_start_utc";
+	private static final String TIME_END_UTC = "timestamp_end_utc";
+	private static final String USER_ID = "user_id";
+	private static final String STATUS = "status";
+	private static final String IS_OWNER = "is_owner";
+	private static final String TYPE = "type";
+	private static final String TITLE = "title";
+	private static final String ICON = "icon";
+	private static final String COLOR = "color";
+	private static final String DESCRIPTION = "description";
+	private static final String LOCATION = "location";
+	private static final String ACCOMODATION = "accomodation";
+	private static final String COST = "cost";
+	private static final String TAKE_WITH_YOU = "take_with_you";
+	private static final String GO_BY = "go_by";
+	private static final String COUNTRY = "country";
+	private static final String CITY = "city";
+	private static final String STREET = "street";
+	private static final String ZIP = "zip";
+	private static final String ABSOLUTE_REMINDER_1 = "r1";
+	private static final String ABSOLUTE_REMINDER_2 = "r2";
+	private static final String ABSOLUTE_REMINDER_3 = "r3";
+	private static final String ABSOLUTE_ALARM_1 = "a1";
+	private static final String ALARM_1_FIRED = "alarm1_fired";
+	private static final String ABSOLUTE_ALARM_2 = "a2";
+	private static final String ALARM_2_FIRED = "alarm2_fired";
+	private static final String ABSOLUTE_ALARM_3 = "a3";
+	private static final String ALARM_3_FIRED = "alarm3_fired";
+	private static final String TIMESTAMP_CREATED = "timestamp_created";
+	private static final String TIMESTAMP_MODIFIED = "timestamp_modified";
+	private static final String ATTENDANT_0_COUNT = "attendant_0_count";
+	private static final String ATTENDANT_2_COUNT = "attendant_2_count";
+	private static final String ATTENDANT_1_COUNT = "attendant_1_count";
+	private static final String ATTENDANT_4_COUNT = "attendant_4_count";
+	private static final String IS_SPORTS_EVENT = "is_sports_event";
+	private static final String IS_ALL_DAY = "all_day";
+	private static final String CREATOR_FULLNAME = "creator_fullname";
+	private static final String CREATOR_CONTACT_ID = "is_sports_event";
+	private static final String INVITED = "invited";
+	private static final String MESSAGE_COUNT = "message_count";
+	private static final String ASSIGNED_CONTACTS = "assigned_contacts";
+	private static final String EVENTS = "events";
+	
 
 	/**
 	 * @author justinas.marcinka@gmail.com Gets events projections from local
@@ -208,6 +247,8 @@ public class EventManagement {
 	 * @param context 
 	 * @return cursor holding projections that met selection criteria. Caller
 	 *         has to set Event objects after return
+	 * @since 2012-10-09
+	 * @version 1.0
 	 */
 	public static Cursor createEventProjectionByDateFromLocalDb(Context context, String[] projection, Calendar date, int daysToSelect, int eventTimeMode,
 			String sortOrder, boolean filterRejected) {
@@ -302,9 +343,9 @@ public class EventManagement {
 	 * Gets events from remote Database and writes them to local DB.
 	 * 
 	 * @author justinas.marcinka@gmail.com
-	 * @param eventCategory
-	 *            API category. if empty, gets all events
-	 * @return
+	 * @param eventCategory API category. if empty, gets all events
+	 * @since 2012-10-09
+	 * @version 1.0
 	 */
 	public static void getEventsFromRemoteDb(Context context, String eventCategory) {
 		boolean success = false;
@@ -325,19 +366,18 @@ public class EventManagement {
 				String resp = EntityUtils.toString(rp.getEntity());
 				if (resp != null) {
 					JSONObject object = new JSONObject(resp);
-					success = object.getBoolean("success");
+					success = object.getBoolean(SUCCESS);
 
 					if (success == false) {
 						// // error = object.getString("error");
 					} else {
 
-						JSONArray es = object.getJSONArray("events");
+						JSONArray es = object.getJSONArray(EVENTS);
 						for (int i = 0; i < es.length(); i++) {
 							try{
 							JSONObject e = es.getJSONObject(i);
-//TODO add to local db only if not native
 							event = createEventFromJSON(e);
-							if (event != null) {
+							if (event != null && !event.isNative()) {
 								event.setUploadedToServer(true);
 								insertEventToLocalDB(context, event);
 							}
@@ -354,10 +394,6 @@ public class EventManagement {
 			Reporter.reportError(CLASS_NAME, Thread.currentThread().getStackTrace()[2].getMethodName().toString(),
 					ex.getMessage());
 		}
-
-//		TODO handle birthdays if (contactsBirthdays != null && !contactsBirthdays.isEmpty()) {
-//			events.addAll(contactsBirthdays);
-//		}
 	}
 	
 	/////////////////////////////////////////////////////METHODS THAT WORK WITH LOCAL DB//////////////////////////////////////////////////////
@@ -367,6 +403,8 @@ public class EventManagement {
 	 * Inserts given event to local DB. Rows that correspond to given ID are overwritten.
 	 * @param context
 	 * @param event
+	 * @since 2012-10-09
+	 * @version 1.0
 	 */
 	protected static void insertEventToLocalDB(Context context, Event event) {
 
@@ -385,7 +423,7 @@ public class EventManagement {
 	}
 	
 	
-//	TODO javadoc
+
 //	private static void insertEventToInvitesTable(Context context, Event event) {
 //		long event_id = event.getInternalID();
 //		ContentValues cv;
@@ -404,21 +442,35 @@ public class EventManagement {
 //	}
 
 	/**
+	 * Updates event in local DB.
 	 * @author justinas.marcinka@gmail.com
 	 * @param context 
 	 * @param event
 	 */
-//TODO javadoc	
+
 	public static void updateEventInLocalDb(Context context, Event event) {
-		ContentValues cv = createCVforEventsTable(event);
-		cv.put(BaseColumns._ID, event.getInternalID()); //this is VERY important
 		
-		ContentResolver resolver = context.getContentResolver();
-		long internalID = event.getInternalID();
-		
-	
 		Uri uri;
 		String where = null;
+		ContentResolver resolver = context.getContentResolver();
+		long internalID = event.getInternalID();
+	
+//		query for old this event times data to find out if days_index update is needed
+		boolean eventTimeChanged = false;
+		String[] projection = {EventsProvider.EMetaData.EventsMetaData.TIME_START_UTC_MILLISECONDS, EventsProvider.EMetaData.EventsMetaData.TIME_END_UTC_MILLISECONDS};
+		uri = Uri.parse(EventsProvider.EMetaData.EventsMetaData.CONTENT_URI+ "/" + internalID);
+		
+		Cursor result = resolver.query(uri, projection, where, null, null);
+		long oldStart = 0;
+		long oldEnd = 0;
+		if(result.moveToFirst()){
+			oldStart = result.getLong(result.getColumnIndex(EventsProvider.EMetaData.EventsMetaData.TIME_START_UTC_MILLISECONDS));
+			oldEnd = result.getLong(result.getColumnIndex(EventsProvider.EMetaData.EventsMetaData.TIME_END_UTC_MILLISECONDS));
+			result.close();
+		}
+	
+		ContentValues cv = createCVforEventsTable(event);
+		cv.put(BaseColumns._ID, event.getInternalID()); //this is VERY important
 			// 1 update event in events table
 				uri = Uri
 						.parse(EventsProvider.EMetaData.EventsMetaData.CONTENT_URI
@@ -427,20 +479,9 @@ public class EventManagement {
 			
 			resolver.update(uri, cv, null, null);
 
-			// 2 implement offline mode
-	
-			boolean eventTimeChanged = false;
-			String[] projection = {EventsProvider.EMetaData.EventsMetaData.TIME_START_UTC_MILLISECONDS, EventsProvider.EMetaData.EventsMetaData.TIME_END_UTC_MILLISECONDS};
-			uri = Uri.parse(EventsProvider.EMetaData.EventsMetaData.CONTENT_URI+ "/" + internalID);
+		if (event.getStartCalendar() != null && event.getEndCalendar() != null){ // to prevent null pointer exception: that hurts if happens :)
 			
-			Cursor result = resolver.query(uri, projection, where, null, null);
-			long oldStart = 0;
-			long oldEnd = 0;
-			if(result.moveToFirst()){
-				oldStart = result.getLong(result.getColumnIndex(EventsProvider.EMetaData.EventsMetaData.TIME_START_UTC_MILLISECONDS));
-				oldEnd = result.getLong(result.getColumnIndex(EventsProvider.EMetaData.EventsMetaData.TIME_END_UTC_MILLISECONDS));
-				result.close();
-			}
+
 			
 			eventTimeChanged = oldStart != event.getStartCalendar().getTimeInMillis() || oldEnd != event.getEndCalendar().getTimeInMillis();
 			
@@ -451,12 +492,19 @@ public class EventManagement {
 				resolver.delete(EventsProvider.EMetaData.EventsIndexesMetaData.CONTENT_URI, where, null);
 				insertEventToDayIndexTable(context, event);
 			}
-		
+		}
 
 	}
 
 	
-	//TODO javadoc
+	/**
+	 * deletes event from local DB
+	 * @author justinas.marcinka@gmail.com
+	 * @param context
+	 * @param internalID event local DB id
+	 * @since 2012-10-09
+	 * @version 1.0
+	 */
 	private static void deleteEventFromLocalDb(Context context, long internalID) {
 		String where;
 
@@ -469,8 +517,13 @@ public class EventManagement {
 		context.getContentResolver().delete(EventsProvider.EMetaData.EventsIndexesMetaData.CONTENT_URI, where, null);
 
 	}
-		
-	//TODO javadoc
+	/**
+	 * @author justinas.marcinka@gmail.com	
+	 * @param context
+	 * @param event
+	 * @since 2012-10-09
+	 * @version 1.0
+	 */
 	private static void insertEventToDayIndexTable(Context context, Event event) {
 		Calendar eventDayStart = (Calendar) event.getStartCalendar().clone();
 		eventDayStart.set(Calendar.HOUR_OF_DAY, 0);
@@ -590,8 +643,8 @@ public class EventManagement {
 
 				MultipartEntity reqEntity = new MultipartEntity(HttpMultipartMode.BROWSER_COMPATIBLE);
 				reqEntity.addPart(TOKEN, new StringBody(Data.getToken()));
-				reqEntity.addPart("event_id", new StringBody("" + event.getEvent_id()));
-				reqEntity.addPart("status", new StringBody("" + event.getStatus()));
+				reqEntity.addPart(EVENT_ID, new StringBody("" + event.getEvent_id()));
+				reqEntity.addPart(STATUS, new StringBody("" + event.getStatus()));
 				
 				post.setEntity(reqEntity);
 				
@@ -665,7 +718,7 @@ public class EventManagement {
 					reqEntity.addPart("street", new StringBody(e.getStreet()));
 				if (e.getZip().length() > 0)
 					reqEntity.addPart("zip", new StringBody(e.getZip()));
-				reqEntity.addPart(JSON_TAG_TIMEZONE, new StringBody(e.getTimezone()));
+				reqEntity.addPart(TIMEZONE, new StringBody(e.getTimezone()));
 
 				
 				if (e.getLocation().length() > 0)
@@ -1188,20 +1241,20 @@ private static String parseInvitedListToJSONArray(ArrayList<Invited> invited) {
 //		month_index_formatter = new SimpleDateFormat(EventsProvider.EMetaData.EventsIndexesMetaData.MONTH_COLUMN_FORMAT);
 		// critical event info. If fetch fails, return null
 		try {
-			event.setEvent_id(e.getInt(JSON_TAG_EVENT_ID));
-			event.setTimezone(e.getString(JSON_TAG_TIMEZONE));
+			event.setEvent_id(e.getInt(EVENT_ID));
+			event.setTimezone(e.getString(TIMEZONE));
 		} catch (JSONException e1) {
 			Reporter.reportError(CLASS_NAME, Thread.currentThread().getStackTrace()[2].getMethodName().toString(),
 					e1.getMessage());
 		}
 			// EVENT TIME START
 
-			unixTimestamp = e.optLong(JSON_TAG_TIME_START_UTC);
+			unixTimestamp = e.optLong(TIME_START_UTC);
 			if (unixTimestamp == 0) return null;
 			event.setStartCalendar(Utils.createCalendar(Utils.unixTimestampToMilis(unixTimestamp), user_timezone));
 		
 			// EVENT TIME END
-				unixTimestamp = e.optLong(JSON_TAG_TIME_END_UTC);
+				unixTimestamp = e.optLong(TIME_END_UTC);
 				if (unixTimestamp == 0) return null;
 			event.setEndCalendar(Utils.createCalendar(Utils.unixTimestampToMilis(unixTimestamp), user_timezone));
 		
@@ -1209,131 +1262,131 @@ private static String parseInvitedListToJSONArray(ArrayList<Invited> invited) {
 		
 
 
-			event.setUser_id(e.optInt(JSON_TAG_USER_ID));
+			event.setUser_id(e.optInt(USER_ID));
 		
-			event.setStatus(e.optInt(JSON_TAG_STATUS));
+			event.setStatus(e.optInt(STATUS));
 
 
-			event.setIs_owner(e.optInt(JSON_TAG_IS_OWNER) == 1);
+			event.setIs_owner(e.optInt(IS_OWNER) == 1);
 
 		try {
-			event.setType(e.getString(JSON_TAG_TYPE));
-		} catch (JSONException e1) {
-			Reporter.reportError(CLASS_NAME, Thread.currentThread().getStackTrace()[2].getMethodName().toString(),
-					e1.getMessage());
-		}
-
-		try {
-			event.setTitle(e.getString(JSON_TAG_TITLE));
-		} catch (JSONException e1) {
-			Reporter.reportError(CLASS_NAME, Thread.currentThread().getStackTrace()[2].getMethodName().toString(),
-					e1.getMessage());
-		}
-		try {
-			event.setIcon(e.getString(JSON_TAG_ICON));
-		} catch (JSONException e1) {
-			Reporter.reportError(CLASS_NAME, Thread.currentThread().getStackTrace()[2].getMethodName().toString(),
-					e1.getMessage());
-		}
-		try {
-			event.setColor(e.getString(JSON_TAG_COLOR));
+			event.setType(e.getString(TYPE));
 		} catch (JSONException e1) {
 			Reporter.reportError(CLASS_NAME, Thread.currentThread().getStackTrace()[2].getMethodName().toString(),
 					e1.getMessage());
 		}
 
 		try {
-			event.setDescription(e.getString(JSON_TAG_DESCRIPTION));
+			event.setTitle(e.getString(TITLE));
 		} catch (JSONException e1) {
 			Reporter.reportError(CLASS_NAME, Thread.currentThread().getStackTrace()[2].getMethodName().toString(),
 					e1.getMessage());
 		}
 		try {
-			event.setLocation(e.getString(JSON_TAG_LOCATION));
+			event.setIcon(e.getString(ICON));
 		} catch (JSONException e1) {
 			Reporter.reportError(CLASS_NAME, Thread.currentThread().getStackTrace()[2].getMethodName().toString(),
 					e1.getMessage());
 		}
 		try {
-			event.setAccomodation(e.getString(JSON_TAG_ACCOMODATION));
+			event.setColor(e.getString(COLOR));
+		} catch (JSONException e1) {
+			Reporter.reportError(CLASS_NAME, Thread.currentThread().getStackTrace()[2].getMethodName().toString(),
+					e1.getMessage());
+		}
+
+		try {
+			event.setDescription(e.getString(DESCRIPTION));
 		} catch (JSONException e1) {
 			Reporter.reportError(CLASS_NAME, Thread.currentThread().getStackTrace()[2].getMethodName().toString(),
 					e1.getMessage());
 		}
 		try {
-			event.setCost(e.getString(JSON_TAG_COST));
+			event.setLocation(e.getString(LOCATION));
 		} catch (JSONException e1) {
 			Reporter.reportError(CLASS_NAME, Thread.currentThread().getStackTrace()[2].getMethodName().toString(),
 					e1.getMessage());
 		}
 		try {
-			event.setTake_with_you(e.getString(JSON_TAG_TAKE_WITH_YOU));
+			event.setAccomodation(e.getString(ACCOMODATION));
 		} catch (JSONException e1) {
 			Reporter.reportError(CLASS_NAME, Thread.currentThread().getStackTrace()[2].getMethodName().toString(),
 					e1.getMessage());
 		}
 		try {
-			event.setGo_by(e.getString(JSON_TAG_GO_BY));
+			event.setCost(e.getString(COST));
 		} catch (JSONException e1) {
 			Reporter.reportError(CLASS_NAME, Thread.currentThread().getStackTrace()[2].getMethodName().toString(),
 					e1.getMessage());
 		}
 		try {
-			event.setCountry(e.getString(JSON_TAG_COUNTRY));
+			event.setTake_with_you(e.getString(TAKE_WITH_YOU));
 		} catch (JSONException e1) {
 			Reporter.reportError(CLASS_NAME, Thread.currentThread().getStackTrace()[2].getMethodName().toString(),
 					e1.getMessage());
 		}
 		try {
-			event.setCity(e.getString(JSON_TAG_CITY));
+			event.setGo_by(e.getString(GO_BY));
 		} catch (JSONException e1) {
 			Reporter.reportError(CLASS_NAME, Thread.currentThread().getStackTrace()[2].getMethodName().toString(),
 					e1.getMessage());
 		}
 		try {
-			event.setStreet(e.getString(JSON_TAG_STREET));
+			event.setCountry(e.getString(COUNTRY));
 		} catch (JSONException e1) {
 			Reporter.reportError(CLASS_NAME, Thread.currentThread().getStackTrace()[2].getMethodName().toString(),
 					e1.getMessage());
 		}
 		try {
-			event.setZip(e.getString(JSON_TAG_ZIP));
+			event.setCity(e.getString(CITY));
+		} catch (JSONException e1) {
+			Reporter.reportError(CLASS_NAME, Thread.currentThread().getStackTrace()[2].getMethodName().toString(),
+					e1.getMessage());
+		}
+		try {
+			event.setStreet(e.getString(STREET));
+		} catch (JSONException e1) {
+			Reporter.reportError(CLASS_NAME, Thread.currentThread().getStackTrace()[2].getMethodName().toString(),
+					e1.getMessage());
+		}
+		try {
+			event.setZip(e.getString(ZIP));
 		} catch (JSONException e1) {
 			Reporter.reportError(CLASS_NAME, Thread.currentThread().getStackTrace()[2].getMethodName().toString(),
 					e1.getMessage());
 		}
 
 		// reminders
-		unixTimestamp = e.optLong(JSON_TAG_ABSOLUTE_REMINDER_1);
+		unixTimestamp = e.optLong(ABSOLUTE_REMINDER_1);
 		if (unixTimestamp != 0) event.setReminder1(Utils.createCalendar(Utils.unixTimestampToMilis(unixTimestamp), user_timezone));
-		unixTimestamp = e.optLong(JSON_TAG_ABSOLUTE_REMINDER_2);
+		unixTimestamp = e.optLong(ABSOLUTE_REMINDER_2);
 		if (unixTimestamp != 0) event.setReminder2(Utils.createCalendar(Utils.unixTimestampToMilis(unixTimestamp), user_timezone));
-		unixTimestamp = e.optLong(JSON_TAG_ABSOLUTE_REMINDER_3);
+		unixTimestamp = e.optLong(ABSOLUTE_REMINDER_3);
 		if (unixTimestamp != 0) event.setReminder3(Utils.createCalendar(Utils.unixTimestampToMilis(unixTimestamp), user_timezone));
 		//alarms
-		unixTimestamp = e.optLong(JSON_TAG_ABSOLUTE_ALARM_1);
+		unixTimestamp = e.optLong(ABSOLUTE_ALARM_1);
 		if (unixTimestamp != 0) event.setAlarm1(Utils.createCalendar(Utils.unixTimestampToMilis(unixTimestamp), user_timezone));
-		unixTimestamp = e.optLong(JSON_TAG_ABSOLUTE_ALARM_2);
+		unixTimestamp = e.optLong(ABSOLUTE_ALARM_2);
 		if (unixTimestamp != 0) event.setAlarm2(Utils.createCalendar(Utils.unixTimestampToMilis(unixTimestamp), user_timezone));
-		unixTimestamp = e.optLong(JSON_TAG_ABSOLUTE_ALARM_3);
+		unixTimestamp = e.optLong(ABSOLUTE_ALARM_3);
 		if (unixTimestamp != 0) event.setAlarm3(Utils.createCalendar(Utils.unixTimestampToMilis(unixTimestamp), user_timezone));
 
 		try {
-			event.setAlarm1fired(e.getString(JSON_TAG_ALARM_1_FIRED));
+			event.setAlarm1fired(e.getString(ALARM_1_FIRED));
 		} catch (JSONException e1) {
 //			System.out.println("LONG PARSE FAILED");
 			Reporter.reportError(CLASS_NAME, Thread.currentThread().getStackTrace()[2].getMethodName().toString(),
 					e1.getMessage());
 		}
 		try {
-			event.setAlarm2fired(e.getString(JSON_TAG_ALARM_2_FIRED));
+			event.setAlarm2fired(e.getString(ALARM_2_FIRED));
 		} catch (JSONException e1) {
 			Reporter.reportError(CLASS_NAME, Thread.currentThread().getStackTrace()[2].getMethodName().toString(),
 					e1.getMessage());
 		}
 	
 		try {
-			event.setAlarm3fired(e.getString(JSON_TAG_ALARM_3_FIRED));
+			event.setAlarm3fired(e.getString(ALARM_3_FIRED));
 		} catch (JSONException e1) {
 			Reporter.reportError(CLASS_NAME, Thread.currentThread().getStackTrace()[2].getMethodName().toString(),
 					e1.getMessage());
@@ -1341,26 +1394,26 @@ private static String parseInvitedListToJSONArray(ArrayList<Invited> invited) {
 
 
 			
-			event.setCreatedMillisUtc(Utils.unixTimestampToMilis(e.optLong(JSON_TAG_TIMESTAMP_CREATED)));
-			event.setModifiedMillisUtc(Utils.unixTimestampToMilis(e.optLong(JSON_TAG_TIMESTAMP_MODIFIED)));
+			event.setCreatedMillisUtc(Utils.unixTimestampToMilis(e.optLong(TIMESTAMP_CREATED)));
+			event.setModifiedMillisUtc(Utils.unixTimestampToMilis(e.optLong(TIMESTAMP_MODIFIED)));
 
 
-			event.setAttendant_0_count(e.optInt(JSON_TAG_ATTENDANT_0_COUNT));
-			event.setAttendant_1_count(e.optInt(JSON_TAG_ATTENDANT_1_COUNT));
-			event.setAttendant_2_count(e.optInt(JSON_TAG_ATTENDANT_2_COUNT));
-			event.setAttendant_4_count(e.optInt(JSON_TAG_ATTENDANT_4_COUNT));
+			event.setAttendant_0_count(e.optInt(ATTENDANT_0_COUNT));
+			event.setAttendant_1_count(e.optInt(ATTENDANT_1_COUNT));
+			event.setAttendant_2_count(e.optInt(ATTENDANT_2_COUNT));
+			event.setAttendant_4_count(e.optInt(ATTENDANT_4_COUNT));
 	
-			event.setSports_event(e.optInt(JSON_TAG_IS_SPORTS_EVENT) == 1);
-			event.setIs_all_day(e.optInt(JSON_TAG_ALL_DAY) == 1);
+			event.setSports_event(e.optInt(IS_SPORTS_EVENT) == 1);
+			event.setIs_all_day(e.optInt(IS_ALL_DAY) == 1);
 
 		try {
-			event.setCreator_fullname(e.getString(JSON_TAG_CREATOR_FULLNAME));
+			event.setCreator_fullname(e.getString(CREATOR_FULLNAME));
 		} catch (JSONException e1) {
 			Reporter.reportError(CLASS_NAME, Thread.currentThread().getStackTrace()[2].getMethodName().toString(),
 					e1.getMessage());
 		}
 
-			event.setCreator_contact_id(e.optInt(JSON_TAG_CREATOR_CONTACT_ID));
+			event.setCreator_contact_id(e.optInt(CREATOR_CONTACT_ID));
 		
 //		try {
 //			JSONArray arrayString = e.getJSONArray(JSON_TAG_ASSIGNED_CONTACTS);
@@ -1379,7 +1432,7 @@ private static String parseInvitedListToJSONArray(ArrayList<Invited> invited) {
 //					e1.getMessage());
 //		}
 		try {
-			String jsonstring = e.getString(JSON_TAG_INVITED);
+			String jsonstring = e.getString(INVITED);
 		
 			ArrayList<Invited> invites = new ArrayList<Invited>();
 			createInvitedListFromJSONArrayString(jsonstring, invites);
@@ -1388,7 +1441,7 @@ private static String parseInvitedListToJSONArray(ArrayList<Invited> invited) {
 			event.setInvited(new ArrayList<Invited>());
 		}
 
-			event.setMessage_count(e.optInt(JSON_TAG_MESSAGE_COUNT));
+			event.setMessage_count(e.optInt(MESSAGE_COUNT));
 
 		return event;
 	}
