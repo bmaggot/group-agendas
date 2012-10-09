@@ -141,6 +141,32 @@ public class EventManagement {
 		
 	}
 	
+	/**
+	 * returns all existing chat threads
+	 * @author justinas.marcinka@gmail.com
+	 * @author interfectos@gmail.com
+	 * @since 2012-10-09
+	 * @version 1.0
+	 */
+	public ArrayList<Event> getExistingChatThreads (Context context){
+		
+		Uri uri = EventsProvider.EMetaData.EventsMetaData.CONTENT_URI;
+		String where = null;
+		String sortOrder = null;
+		String [] projection = null;
+		//TODO pasidaryk where, sort order ir projekcija
+		Cursor result = context.getContentResolver().query(uri, projection, where, null, sortOrder);
+		ArrayList<Event> resultList = new ArrayList<Event>();
+		if (result.moveToFirst()){
+			while (result.moveToNext()){
+			//TODO JUSTUI V susikrauk rezultatus i lista
+			}
+		}
+		result.close();
+
+		
+		return resultList;
+	}
 
 
 
@@ -225,6 +251,9 @@ public class EventManagement {
 	private static final String EVENTS = "events";
 	
 
+	
+
+	
 	/**
 	 * @author justinas.marcinka@gmail.com Gets events projections from local
 	 *         database, according to given date and time mode.
