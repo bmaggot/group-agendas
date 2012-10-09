@@ -85,7 +85,7 @@ public class EventsActivity extends ListActivity {
 		super.onListItemClick(l, v, pos, id);
 		Intent intent = new Intent(EventsActivity.this, EventEditActivity.class);
 		Event event = (Event) getListAdapter().getItem(pos);
-		intent.putExtra("event_id", event.getEvent_id());
+		intent.putExtra("event_id", event.getInternalID());
 		intent.putExtra("type", event.getType());
 		intent.putExtra("isNative", event.isNative());
 		startActivity(intent);
