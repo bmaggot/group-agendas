@@ -18,6 +18,7 @@ import com.groupagendas.groupagenda.R;
 import com.groupagendas.groupagenda.data.DataManagement;
 import com.groupagendas.groupagenda.data.EventManagement;
 import com.groupagendas.groupagenda.events.NewEventActivity.GetContactsTask;
+import com.groupagendas.groupagenda.utils.DateTimeUtils;
 import com.groupagendas.groupagenda.utils.EventStatusUpdater;
 import com.groupagendas.groupagenda.utils.Utils;
 
@@ -26,14 +27,14 @@ public class EventsAdapter extends BaseAdapter implements Filterable{
 	private List<Event> eventsAll;
 	private LayoutInflater mInflater;
 	private Context mContext;
-	private DataManagement dm;
+	private DateTimeUtils dtUtils;
 	private String mFilter = null;
 	public EventsAdapter(List<Event> objects, Activity activity){
 		events = objects;
 		eventsAll = objects;
 		mInflater = LayoutInflater.from(activity);
 		mContext = activity;
-		dm = DataManagement.getInstance(activity);
+		dtUtils = new DateTimeUtils(activity);
 	}
 	
 	@Override
@@ -64,7 +65,7 @@ public class EventsAdapter extends BaseAdapter implements Filterable{
 		holder.title.setText(event.getActualTitle());
 
 		if (event.getStartCalendar()!= null) {
-			String temp = Utils.formatCalendar(event.getStartCalendar());
+			String temp = dtUtils.formatDateTime(event.getStartCalendar());
 			holder.date.setText(temp);
 		}
 		// type

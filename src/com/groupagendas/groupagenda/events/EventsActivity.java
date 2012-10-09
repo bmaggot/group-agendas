@@ -105,7 +105,7 @@ public class EventsActivity extends ListActivity {
 
 						@Override
 						public void onClick(View v) {
-							EventManagement.loadEvents(getParent(), eventsAdapter);
+							EventManagement.loadEvents(EventsActivity.this, eventsAdapter);
 							changeTitle(getString(R.string.status_new_invite, AgendaUtils.newInvites));
 							qa.dismiss();
 							eventsAdapter.getFilter().filter("4");
@@ -119,7 +119,7 @@ public class EventsActivity extends ListActivity {
 
 						@Override
 						public void onClick(View v) {
-							EventManagement.loadEvents(getParent(), eventsAdapter);
+							EventManagement.loadEvents(EventsActivity.this, eventsAdapter);
 							changeTitle(getString(R.string.status_not_attending));
 							qa.dismiss();
 							eventsAdapter.getFilter().filter("0");
@@ -133,7 +133,7 @@ public class EventsActivity extends ListActivity {
 
 						@Override
 						public void onClick(View v) {
-							EventManagement.loadEvents(getParent(), eventsAdapter);
+							EventManagement.loadEvents(EventsActivity.this, eventsAdapter);
 							changeTitle(getString(R.string.status_attending));
 							qa.dismiss();
 							eventsAdapter.getFilter().filter("1");
@@ -147,7 +147,7 @@ public class EventsActivity extends ListActivity {
 
 						@Override
 						public void onClick(View v) {
-							EventManagement.loadEvents(getParent(), eventsAdapter);
+							EventManagement.loadEvents(EventsActivity.this, eventsAdapter);
 							changeTitle(getString(R.string.status_pending));
 							qa.dismiss();
 							eventsAdapter.getFilter().filter("2");
