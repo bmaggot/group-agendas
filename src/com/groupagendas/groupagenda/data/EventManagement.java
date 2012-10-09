@@ -34,6 +34,7 @@ import android.text.TextUtils;
 import android.util.Log;
 
 import com.groupagendas.groupagenda.account.Account;
+import com.groupagendas.groupagenda.chat.ChatThreadObject;
 import com.groupagendas.groupagenda.error.report.Reporter;
 import com.groupagendas.groupagenda.events.Event;
 import com.groupagendas.groupagenda.events.EventsAdapter;
@@ -148,7 +149,7 @@ public class EventManagement {
 	 * @since 2012-10-09
 	 * @version 1.0
 	 */
-	public static ArrayList<Event> getExistingChatThreads (Context context){
+	public static ArrayList<ChatThreadObject> getExistingChatThreads (Context context){
 		
 		Uri uri = EMetaData.EventsMetaData.CONTENT_URI;
 		String[] projection = { EMetaData.EventsMetaData.TITLE, EMetaData.EventsMetaData.TIME_START_UTC_MILLISECONDS,
@@ -156,16 +157,19 @@ public class EventManagement {
 		String selection = EMetaData.EventsMetaData.MESSAGES_COUNT + ">0";
 		String sortOrder = EMetaData.EventsMetaData.LAST_MESSAGE_DATE_TIME_UTC_MILISECONDS;
 		Cursor result = context.getContentResolver().query(uri, projection, selection, null, sortOrder);
-		ArrayList<Event> resultList = new ArrayList<Event>();
+		ArrayList<ChatThreadObject> resultList = new ArrayList<ChatThreadObject>();
 		if (result.moveToFirst()){
 			while (result.moveToNext()){
-				System.out.println(" ");
-				System.out.println(result.getString(result.getColumnIndex(EMetaData.EventsMetaData.E_ID)));
+				ChatThreadObject cto = new ChatThreadObject();
+				cto.setTitle(result.getString(result.getColumnIndex(EMetaData.EventsMetaData.TITLE)));
+				cto.setTimeStart(result.getLong(result.getColumnIndex(EMetaData.EventsMetaData.TIME_START_UTC_MILLISECONDS)));
+				cto.setNew_messages(result.getInt(result.getColumnIndex(EMetaData.EventsMetaData.NEW_MESSAGES_COUNT)));
+				cto.setMessage_count(result.getInt(result.getColumnIndex(EMetaData.EventsMetaData.MESSAGES_COUNT)));
+				cto.setEvent_id(result.getInt(result.getColumnIndex(EMetaData.EventsMetaData.E_ID)));
+				resultList.add(cto);
 			}
 		}
 		result.close();
-
-		
 		return resultList;
 	}
 
