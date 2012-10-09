@@ -95,26 +95,14 @@ public class DayWeekView extends AbstractCalendarView {
 	protected final void drawHourEvent(final Event event, int divider, int neighbourId, RelativeLayout container, int containerWidth, DayInstance day) {
 		final float scale = getContext().getResources().getDisplayMetrics().density;
 		int lineHeight = (int) (hourLineHeightDP * scale + 0.5f);
- 
-	// if there is more than one day shown, save space and fit event title to one line
-		boolean showSingleLine = daysToShow != 1;
-		
-		HourEventView eventFrame = new HourEventView(getContext(), event, this.am_pmEnabled, this.showHourEventsIcon, showSingleLine);
-		
+ 			
 		int startTimeMinutes = 0; 
-		
+		String startTimeToShow;
 		if (day.getSelectedDate().before(event.getStartCalendar())) {
 			startTimeMinutes = event.getStartCalendar().get(Calendar.HOUR_OF_DAY) * 60;
 			startTimeMinutes += event.getStartCalendar().get(Calendar.MINUTE);
-		} else eventFrame.setStartTime(day.getSelectedDate()); //set event start hour 0:00 to show
-		
-//		if (day.getSelectedDate().get(Calendar.DAY_OF_MONTH) == event.getEndCalendar().get(Calendar.DAY_OF_MONTH)){
-//			if (day.getSelectedDate().get(Calendar.MONTH) == event.getEndCalendar().get(Calendar.MONTH)){
-//				endTimeMinutes = event.getEndCalendar().get(Calendar.HOUR_OF_DAY) * 60;
-//				endTimeMinutes += event.getEndCalendar().get(Calendar.MINUTE);
-//									
-//				}			
-//		}
+			startTimeToShow = dtUtils.formatTime(event.getStartCalendar());
+		} else startTimeToShow = dtUtils.formatTime(day.getSelectedDate());
 		
 		int durationTimeUnits = day.getEventDuration(event);
 		float timeUnitHeight = WeekInstance.TIMETABLE_ACCURACY / 60f * lineHeight;
@@ -134,6 +122,8 @@ public class DayWeekView extends AbstractCalendarView {
 		if (neighbourId != 0) {
 			params.addRule(RelativeLayout.RIGHT_OF, neighbourId);
 		}
+		HourEventRectangle eventFrame = new HourEventRectangle(getContext(), startTimeToShow, event.getTitle(), event.getColor(), event.getIconId(getContext()));
+		eventFrame.setOnClickListener(new EventActivityOnClickListener(getContext(), event));
 		container.addView(eventFrame, params);	
 	}
 	
