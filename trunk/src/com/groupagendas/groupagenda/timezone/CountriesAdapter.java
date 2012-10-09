@@ -23,19 +23,33 @@ public class CountriesAdapter extends AbstractAdapter<StaticTimezones> implement
 
 	/**
 	 * 
-	 * Custom adapter for ArrayList of String objects.
+	 * Custom adapter for ArrayList of StaticTimezones objects.
 	 * 
 	 * @author meska.lt@gmail.com
+	 * @author justinas.marcinka@gmail.com
 	 * @param context
 	 * @param textViewResourceId
 	 * @param countries
-	 * @since 2012-10-04
-	 * @version 1.0
+	 * @since 2012-10-09
+	 * @version 1.1
 	 */
 	public CountriesAdapter(Context context, int textViewResourceId, List<StaticTimezones> countries) {
-		super(context, countries);
-		this.allItems = countries;
+		super(context, filterDuplicateEntries(countries));
+		this.allItems = list;
 		this.textViewResourceId = textViewResourceId;
+	}
+
+	private static List<StaticTimezones> filterDuplicateEntries(
+			List<StaticTimezones> countries) {		
+		ArrayList<StaticTimezones> filteredList =  new ArrayList<StaticTimezones>();
+		
+		if (!countries.isEmpty()) {
+			for (int i = 1; i < countries.size(); i++) {
+				StaticTimezones entry = countries.get(i);
+				if (!entry.country.equalsIgnoreCase(countries.get(i - 1).country)) filteredList.add(entry); 
+			}
+		}
+		return filteredList ;
 	}
 
 	@Override
