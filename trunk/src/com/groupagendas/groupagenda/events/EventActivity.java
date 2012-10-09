@@ -122,6 +122,7 @@ public class EventActivity extends Activity {
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+		dtUtils = new DateTimeUtils(this);
 		newInvites = null;
 		
 	}
