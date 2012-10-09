@@ -25,6 +25,7 @@ import com.groupagendas.groupagenda.R;
 import com.groupagendas.groupagenda.data.CalendarSettings;
 import com.groupagendas.groupagenda.events.Event;
 import com.groupagendas.groupagenda.events.EventsProvider;
+import com.groupagendas.groupagenda.utils.DateTimeUtils;
 
 public abstract class AbstractCalendarView extends LinearLayout {
 	protected TreeMap<Calendar, ArrayList<Event>> sortedEvents;
@@ -65,6 +66,8 @@ public abstract class AbstractCalendarView extends LinearLayout {
 	protected String[] WeekDayNames;
 	protected String[] MonthNames;
 	
+	protected DateTimeUtils dtUtils;
+	
 	
 	protected abstract void setTopPanel(); 	//Sets up top panel title text in every view differently
 
@@ -87,6 +90,7 @@ public abstract class AbstractCalendarView extends LinearLayout {
 	
 	public AbstractCalendarView(Context context, AttributeSet attrs) {
 		super(context, attrs);
+		dtUtils = new DateTimeUtils(context);
 		mInflater = (LayoutInflater)((Activity)context).getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 		am_pmEnabled = CalendarSettings.isUsing_AM_PM();
 		if(am_pmEnabled){

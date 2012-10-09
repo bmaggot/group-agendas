@@ -107,7 +107,6 @@ public class HourEventsTimetable {
 	 * @return java hashcode of left neighbour of this event in timetable. If this is first event in that table row, method returns 0;
 	 */
 	public int getLeftNeighbourId(Event event){
-		System.out.println(event.getTitle() + " " + event.getActualTitle());
 		int eventStartIndex = getStartTimetableIndex(event);  // we get number of row, where starts our event
 		ArrayList<Event> hourEvents = eventsTimetable[eventStartIndex]; // we get all events of that hour
 
