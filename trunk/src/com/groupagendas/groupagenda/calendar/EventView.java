@@ -30,7 +30,7 @@ public class EventView extends View{
 		this.title = title;
 		
 		this.color = Color.parseColor("#" + color);
-		
+		if (iconId != 0)
 		iconDrawable = context.getResources().getDrawable(iconId);
 		paint = new Paint();
 	}
