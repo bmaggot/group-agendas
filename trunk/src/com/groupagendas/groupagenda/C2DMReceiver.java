@@ -111,7 +111,12 @@ public class C2DMReceiver extends C2DMBaseReceiver {
 
 					mNotificationManager.notify(1, notification);
 				} else {
-					System.out.println("Bad rel_id!");
+					notificationIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+					PendingIntent contentIntent = PendingIntent.getActivity(context, 0, notificationIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+
+					notification.setLatestEventInfo(context, title, text, contentIntent);
+
+					mNotificationManager.notify(1, notification);
 				}
 			}
 

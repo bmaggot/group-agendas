@@ -148,18 +148,19 @@ public class EventManagement {
 	 * @since 2012-10-09
 	 * @version 1.0
 	 */
-	public ArrayList<Event> getExistingChatThreads (Context context){
+	public static ArrayList<Event> getExistingChatThreads (Context context){
 		
-		Uri uri = EventsProvider.EMetaData.EventsMetaData.CONTENT_URI;
-		String where = null;
-		String sortOrder = null;
-		String [] projection = null;
-		//TODO pasidaryk where, sort order ir projekcija
-		Cursor result = context.getContentResolver().query(uri, projection, where, null, sortOrder);
+		Uri uri = EMetaData.EventsMetaData.CONTENT_URI;
+		String[] projection = { EMetaData.EventsMetaData.TITLE, EMetaData.EventsMetaData.TIME_START_UTC_MILLISECONDS,
+				EMetaData.EventsMetaData.NEW_MESSAGES_COUNT, EMetaData.EventsMetaData.MESSAGES_COUNT, EMetaData.EventsMetaData.E_ID };
+		String selection = EMetaData.EventsMetaData.MESSAGES_COUNT + ">0";
+		String sortOrder = EMetaData.EventsMetaData.LAST_MESSAGE_DATE_TIME_UTC_MILISECONDS;
+		Cursor result = context.getContentResolver().query(uri, projection, selection, null, sortOrder);
 		ArrayList<Event> resultList = new ArrayList<Event>();
 		if (result.moveToFirst()){
 			while (result.moveToNext()){
-			//TODO JUSTUI V susikrauk rezultatus i lista
+				System.out.println(" ");
+				System.out.println(result.getString(result.getColumnIndex(EMetaData.EventsMetaData.E_ID)));
 			}
 		}
 		result.close();
@@ -247,9 +248,10 @@ public class EventManagement {
 	private static final String CREATOR_CONTACT_ID = "is_sports_event";
 	private static final String INVITED = "invited";
 	private static final String MESSAGE_COUNT = "message_count";
+	private static final String NEW_MESSAGE_COUNT = "nmc";
+	private static final String MESSAGE_LAST_TIMESTAMP = "message_last_timestamp";
 	private static final String ASSIGNED_CONTACTS = "assigned_contacts";
 	private static final String EVENTS = "events";
-	
 
 	
 

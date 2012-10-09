@@ -91,6 +91,8 @@ private static final String DEFAULT_REMINDER = "null";
 	private long[] assigned_groups = null;
 	
 	private int message_count = 0;
+	private int new_message_count = 0;
+	private long last_message_date_time = 0;
 	private Invited myInvite;
 	
 	//TODO implement event missing attributes 
@@ -751,8 +753,20 @@ public void setUploadedToServer(boolean bool) {
 public int getMessage_count() {
 	return message_count;
 }
-public void setMessage_count(int message_count) {
-	this.message_count = message_count;
+public void setMessage_count(int new_message_count) {
+	this.message_count = new_message_count;
+}
+public int getNew_message_count() {
+	return new_message_count;
+}
+public void setNew_message_count(int new_message_count) {
+	this.new_message_count = new_message_count;
+}
+public long getLast_message_date_time() {
+	return last_message_date_time;
+}
+public void setLast_message_date_time(long last_message_date_time) {
+	this.last_message_date_time = last_message_date_time;
 }
 public long getInternalID() {
 	return internalID;
