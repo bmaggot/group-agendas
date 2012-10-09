@@ -158,7 +158,7 @@ private static final String DEFAULT_REMINDER = "null";
 	 * @return resource id of icon image for this event. If event has no icon, 0 will be returned
 	 */
 	public int getIconId(Context context) {
-		if (getIcon() == DEFAULT_ICON) return context.getResources().getIdentifier(DEFAULT_ICON_IMG, "drawable", context.getPackageName());
+		if (getIcon() == DEFAULT_ICON) return 0;
 		return context.getResources().getIdentifier(this.icon, "drawable", context.getPackageName());
 	}
 
