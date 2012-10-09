@@ -760,17 +760,6 @@ public class EventManagement {
 					reqEntity.addPart("cost", new StringBody(e.getCost()));
 				if (e.getAccomodation().length() > 0)
 					reqEntity.addPart("accomodation", new StringBody(e.getAccomodation()));
-				
-//				TODO assigned contacts, groups and INVITED
-
-//				if (Data.selectedContacts != null && !Data.selectedContacts.isEmpty()) {
-//					e.assigned_contacts = new int[Data.selectedContacts.size()];
-//					int i = 0;
-//					for (Contact contact : Data.selectedContacts) {
-//						e.assigned_contacts[i] = contact.contact_id;
-//						i++;
-//					}
-//				}
 				if (e.getAssigned_contacts() != null) {
 					for (int i = 0, l = e.getAssigned_contacts().length; i < l; i++) {
 						reqEntity.addPart("contacts[]", new StringBody(String.valueOf(e.getAssigned_contacts()[i])));
