@@ -719,19 +719,12 @@ public class EventEditActivity extends EventActivity {
 			
 
 			// START AND END TIME
-			String timeFormat;
-			Account account = new Account(EventEditActivity.this);
-			if(account.getSetting_ampm() == 1){
-				timeFormat = getResources().getString(R.string.time_format_AMPM);
-			} else {
-				timeFormat = getResources().getString(R.string.time_format);
-			}
 			if (result.getStartCalendar() != null) {
-				startView.setText(Utils.formatCalendar(result.getStartCalendar()) + " " + Utils.formatCalendar(result.getStartCalendar(), timeFormat));
+				startView.setText(dtUtils.formatDateTime(result.getStartCalendar()));
 				startCalendar = (Calendar) result.getStartCalendar().clone();
 			}
 			if (result.getEndCalendar() != null) {
-				endView.setText(Utils.formatCalendar(result.getEndCalendar()) + " " + Utils.formatCalendar(result.getEndCalendar(), timeFormat));
+				endView.setText(dtUtils.formatDateTime(result.getEndCalendar()));
 				endCalendar = (Calendar) result.getEndCalendar().clone();
 			}
 
