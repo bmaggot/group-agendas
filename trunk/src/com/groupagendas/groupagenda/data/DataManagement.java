@@ -68,7 +68,7 @@ public class DataManagement {
 
 	SimpleDateFormat day_index_formatter;
 	SimpleDateFormat month_index_formatter;
-	private String user_timezone;
+//	private String user_timezone; TODO investigate if it's in use.
 
 	public static final String SERVER_TIMESTAMP_FORMAT = "yyyy-MM-dd HH:mm:ss";
 	public static final String ACCOUNT_BIRTHDATE_TIMESTAMP_FORMAT = "yyyy-MM-dd";
@@ -123,6 +123,7 @@ public class DataManagement {
 			reqEntity.addPart(Account.AccountMetaData.PHONE1, new StringBody(account.getPhone1()));
 			reqEntity.addPart(Account.AccountMetaData.PHONE2, new StringBody(account.getPhone2()));
 			reqEntity.addPart(Account.AccountMetaData.PHONE3, new StringBody(account.getPhone3()));
+			reqEntity.addPart(Account.AccountMetaData.EMAIL, new StringBody(account.getEmail()));
 
 			reqEntity.addPart("language", new StringBody("en"));
 
@@ -458,16 +459,16 @@ public class DataManagement {
 		return u;
 	}
 
-	public boolean registerAccount(String language, String country, String timezone, String sex, String name, String lastname,
+	public static boolean registerAccount(String language, String country, String timezone, String sex, String name, String lastname,
 			String email, String phonecode, String phone, String password, String city, String street, String streetNo, String zip) {
 		boolean success = false;
 
+		HttpClient hc = new DefaultHttpClient();
+		HttpPost post = new HttpPost(Data.getServerUrl() + "mobile/account_register");
+
+		MultipartEntity reqEntity = new MultipartEntity(HttpMultipartMode.BROWSER_COMPATIBLE);
+
 		try {
-			HttpClient hc = new DefaultHttpClient();
-			HttpPost post = new HttpPost(Data.getServerUrl() + "mobile/account_register");
-
-			MultipartEntity reqEntity = new MultipartEntity(HttpMultipartMode.BROWSER_COMPATIBLE);
-
 			reqEntity.addPart("language", new StringBody(language));
 			reqEntity.addPart("country", new StringBody(country));
 			reqEntity.addPart("timezone", new StringBody(timezone));
@@ -498,10 +499,8 @@ public class DataManagement {
 					}
 				}
 			}
-
 		} catch (Exception ex) {
-			Reporter.reportError(this.getClass().toString(), Thread.currentThread().getStackTrace()[2].getMethodName().toString(),
-					ex.getMessage());
+			Log.e("registerAccount()", "'sum shit failed.");
 		}
 
 		return success;
