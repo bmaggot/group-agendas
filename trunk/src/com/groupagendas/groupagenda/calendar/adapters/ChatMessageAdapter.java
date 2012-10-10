@@ -34,10 +34,15 @@ public class ChatMessageAdapter extends AbstractAdapter<ChatMessageObject> {
 		}
 
 		final ChatMessageObject chatMessage = (ChatMessageObject) this.getItem(i);
-		if (!chatMessage.isDeleted()) {
 			Account account = new Account(context);
 			TextView messageBody = (TextView) view.findViewById(R.id.chat_message_body);
-			messageBody.setText(chatMessage.getMessage());
+			if (!chatMessage.isDeleted()) {
+				messageBody.setText(chatMessage.getMessage());
+				messageBody.setTextAppearance(context, R.style.chat_message_body);
+			} else {
+				messageBody.setText(context.getResources().getString(R.string.chat_deleted_message));
+				messageBody.setTextAppearance(context, R.style.chat_deleted_message_style);
+			}
 			TextView chatTime = (TextView) view.findViewById(R.id.chat_message_time);
 			Calendar calendar = Calendar.getInstance();
 			calendar.setTimeInMillis(Utils.unixTimestampToMilis(chatMessage.getCreated()));
@@ -63,7 +68,6 @@ public class ChatMessageAdapter extends AbstractAdapter<ChatMessageObject> {
 				iksiuks.setVisibility(View.GONE);
 				view.setTag(false);
 			}
-		}
 
 		return view;
 	}
