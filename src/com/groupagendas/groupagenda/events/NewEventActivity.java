@@ -153,7 +153,6 @@ public class NewEventActivity extends EventActivity {
 						dialog.dismiss();
 					}
 				});
-
 				dialog.show();
 			}
 		});
@@ -163,32 +162,6 @@ public class NewEventActivity extends EventActivity {
 		titleView.setEnabled(true);
 //		titleView.addTextChangedListener(filterTextWatcher);
 
-		// type
-		// typeSpinner = (Spinner) findViewById(R.id.typeSpinner);
-		// ArrayAdapter<CharSequence> adapterType =
-		// ArrayAdapter.createFromResource(NewEventActivity.this,
-		// R.array.type_labels,
-		// android.R.layout.simple_spinner_item);
-		// adapterType.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-		// typeSpinner.setAdapter(adapterType);
-		// typeArray = getResources().getStringArray(R.array.type_values);
-		// typeSpinner.setOnItemSelectedListener(new OnItemSelectedListener() {
-		// @Override
-		// public void onItemSelected(AdapterView<?> arg0, View arg1, int pos,
-		// long arg3) {
-		// if (pos > 1) {
-		// contactsBlock.setVisibility(View.VISIBLE);
-		// } else {
-		// contactsBlock.setVisibility(View.GONE);
-		// }
-		// }
-		//
-		// @Override
-		// public void onNothingSelected(AdapterView<?> arg0) {
-		// }
-		// });
-
-		// Time
 		String strTime = getIntent().getStringExtra(EXTRA_STRING_FOR_START_CALENDAR);
 		if (strTime != null) {
 			startCalendar = Utils.stringToCalendar(strTime, DataManagement.SERVER_TIMESTAMP_FORMAT);
@@ -597,8 +570,7 @@ public class NewEventActivity extends EventActivity {
 		super.onResume();
 
 		account = new Account(this);
-		timezoneView.setText(account.getTimezone());
-		countryView.setText(account.getCountry());
+		
 		
 		String[] cities;
 		String[] countries;
@@ -630,6 +602,17 @@ public class NewEventActivity extends EventActivity {
 		if (countriesList != null) {
 			countriesAdapter = new CountriesAdapter(NewEventActivity.this, R.layout.search_dialog_item, countriesList);
 			timezonesAdapter = new TimezonesAdapter(NewEventActivity.this, R.layout.search_dialog_item, countriesList);
+		}
+		
+		
+		timezoneView.setText(account.getTimezone());
+		
+		String countryCode = account.getCountry();
+		for (StaticTimezones item : countriesList){
+			if (item.country_code.equalsIgnoreCase(countryCode)) {
+				countryView.setText(item.country);
+				continue;
+			}
 		}
 
 
