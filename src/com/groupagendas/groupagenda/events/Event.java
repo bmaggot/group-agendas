@@ -13,26 +13,22 @@ public class Event extends Object implements Colored {
 private static final String DEFAULT_TITLE = "";
 private static final String TIMESTAMP_FORMAT = DataManagement.SERVER_TIMESTAMP_FORMAT;
 
-private static final String DEFAULT_REMINDER = "null";
-
-
-//private static final int REMINDER_1 = 1;
-//private static final int REMINDER_2 = 2;
-//private static final int REMINDER_3 = 3;
-
-//	TODO set all default fields and getters
 	public static final String DEFAULT_COLOR = "21C0DB";
 	public static final String DEFAULT_ICON = "";
-	private static final String DEFAULT_ICON_IMG = "no_icon";
 	private static final String DEFAULT_TYPE = "p";
 	private static final String DEFAULT_DESCRIPTION = "";
 	
 	private static final String EMPTY_ENTRY = "";
-	public static final String PRIVATE = "p";
+	
+	public static final String NOTE = "p";
+	public static final String SHARED_EVENT = "r";
+	public static final String TELEPHONE_CALL = "t";
+	public static final String SHARED_NOTE = "n";
+	public static final String OPEN_EVENT = "o";
 	
 	private long internalID;
 	private int event_id; //TODO solve ids over 32k
-	private int user_id;// TODO JUSTAS M: is it creator GA user id or what???
+	private int user_id;
 	private int status;
 	private int creator_contact_id;
 	
@@ -88,7 +84,7 @@ private static final String DEFAULT_REMINDER = "null";
 
 	private ArrayList<Invited> invited = null;
 	private long[] assigned_contacts = null;
-	private long[] assigned_groups = null;
+//	private long[] assigned_groups = null;
 	
 	private int message_count = 0;
 	private int new_message_count = 0;
