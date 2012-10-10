@@ -50,7 +50,6 @@ import com.groupagendas.groupagenda.data.ContactManagement;
 import com.groupagendas.groupagenda.data.Data;
 import com.groupagendas.groupagenda.data.DataManagement;
 import com.groupagendas.groupagenda.data.OfflineData;
-import com.groupagendas.groupagenda.error.report.Reporter;
 import com.groupagendas.groupagenda.events.EventActivity;
 import com.groupagendas.groupagenda.events.Invited;
 import com.makeramen.segmented.SegmentedRadioGroup;
@@ -60,7 +59,6 @@ public class ContactsActivity extends ListActivity implements OnCheckedChangeLis
 	public ArrayList<Group> selectedGroups = new ArrayList<Group>();
 	
 	private SegmentedRadioGroup segmentedButtons;
-	private DataManagement dm;
 	private ArrayList<Contact> contacts;
 	private ArrayList<Group> groups;
 
@@ -264,8 +262,6 @@ public class ContactsActivity extends ListActivity implements OnCheckedChangeLis
 		editor.remove("ContactsActivityTask");
 		editor.remove("ContactsActivityList");
 		editor.commit();
-
-		dm = DataManagement.getInstance(this);
 
 		segmentedButtons = (SegmentedRadioGroup) findViewById(R.id.segmentedButtons);
 		segmentedButtons.setOnCheckedChangeListener(this);
@@ -579,24 +575,6 @@ public class ContactsActivity extends ListActivity implements OnCheckedChangeLis
 				}
 			} catch (Exception e) {
 
-			}
-			return null;
-		}
-
-	}
-
-
-	public class UpdateEventByIdFromRemoteDb extends AsyncTask<Integer, Void, Void> {
-		@Override
-		protected Void doInBackground(Integer... params) {
-			try {
-				dm.updateEventByIdFromRemoteDb(params[0], ContactsActivity.this); //TODO solve this shit.
-			} catch (Exception e) {
-				Reporter.reportError(this.getClass().toString(), Thread.currentThread().getStackTrace()[2].getMethodName().toString(),
-						e.getMessage());
-			}
-			if (selectedContacts != null) {
-				selectedContacts.clear();
 			}
 			return null;
 		}
