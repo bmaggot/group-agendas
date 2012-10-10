@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="registration_msgs">
+        <item>• You haven\'t agreed on Privacy Statement.\n</item>        
+        <item>• Name field value is too short.\n</item>        
+        <item>• Lastname field value is too short.\n</item>
+        <item>• You haven\'t selected country or timezone.\n</item>
+		<item>• Please check email field.\n</item>
+		<item>• Phone submitted is too short.\n</item>
+		<item>• Phonecode submitted is invalid.\n</item>
+		<item>• Password should contain from 4 to 20 symbols.\n</item>
+		<item>• Passwords do not match.\n</item>
+	</string-array>
+    
+</resources>
