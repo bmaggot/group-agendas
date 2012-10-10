@@ -180,18 +180,18 @@ public class EventsActivity extends ListActivity {
 						}
 					});
 
-					telephone = new ActionItem();
-					telephone.setTitle(getString(R.string.t_type));
-					telephone.setOnClickListener(new OnClickListener() {
-
-						@Override
-						public void onClick(View v) {
-							changeTitle(getString(R.string.t_type));
-							qa.dismiss();
-							eventsAdapter.getFilter().filter(getString(R.string.t_type));
-							eventsAdapter.setFilter(getString(R.string.t_type));
-						}
-					});
+//					telephone = new ActionItem();
+//					telephone.setTitle(getString(R.string.t_type));
+//					telephone.setOnClickListener(new OnClickListener() {
+//
+//						@Override
+//						public void onClick(View v) {
+//							changeTitle(getString(R.string.t_type));
+//							qa.dismiss();
+//							eventsAdapter.getFilter().filter(getString(R.string.t_type));
+//							eventsAdapter.setFilter(getString(R.string.t_type));
+//						}
+//					});
 
 					open_event = new ActionItem();
 					open_event.setTitle(getString(R.string.o_type));

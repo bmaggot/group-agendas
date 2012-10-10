@@ -232,31 +232,32 @@ public class EventsAdapter extends BaseAdapter implements Filterable{
                 
                 if(c.equals(mContext.getString(R.string.r_type))){
                 	for(int i=0, l=items.size(); i<l; i++){
-                		if(items.get(i).getType().equals("r")){
+                		String itemType = items.get(i).getType();
+                		if(itemType.equals(Event.SHARED_EVENT) || itemType.equals(Event.TELEPHONE_CALL)){
                 			filtereItems.add(items.get(i));
                 		}
                 	}
-                }else if(c.equals(mContext.getString(R.string.t_type))){
-                	for(int i=0, l=items.size(); i<l; i++){
-                		if(items.get(i).getType().equals("t")){
-                			filtereItems.add(items.get(i));
-                		}
-                	}
+//                }else if(c.equals(mContext.getString(R.string.t_type))){ telephone calls are now shown with shared events
+//                	for(int i=0, l=items.size(); i<l; i++){
+//                		if(items.get(i).getType().equals("t")){
+//                			filtereItems.add(items.get(i));
+//                		}
+//                	}
                 }else if(c.equals(mContext.getString(R.string.o_type))){
                 	for(int i=0, l=items.size(); i<l; i++){
-                		if(items.get(i).getType().equals("o")){
+                		if(items.get(i).getType().equals(Event.OPEN_EVENT)){
                 			filtereItems.add(items.get(i));
                 		}
                 	}
                 }else if(c.equals(mContext.getString(R.string.n_type))){
                 	for(int i=0, l=items.size(); i<l; i++){
-                		if(items.get(i).getType().equals("n")){
+                		if(items.get(i).getType().equals(Event.SHARED_NOTE)){
                 			filtereItems.add(items.get(i));
                 		}
                 	}
                 }else if(c.equals(mContext.getString(R.string.p_type))){
                 	for(int i=0, l=items.size(); i<l; i++){
-                		if(items.get(i).getType().equals(Event.PRIVATE)){
+                		if(items.get(i).getType().equals(Event.NOTE)){
                 			filtereItems.add(items.get(i));
                 		}
                 	}
