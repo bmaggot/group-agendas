@@ -494,7 +494,6 @@ private static final String TIMESTAMP_FORMAT = DataManagement.SERVER_TIMESTAMP_F
 //		return assigned_contacts;
 //	}
 //	private int[] parseAssignedContacts(String assigned_contacts_DB_entry) {
-//		// TODO Auto-generated method stub
 //		return new int[0];
 //	}
 //	
@@ -510,7 +509,6 @@ private static final String TIMESTAMP_FORMAT = DataManagement.SERVER_TIMESTAMP_F
 //		return assigned_groups;
 //	}
 //	private int[] parseAssignedGroups(String assigned_groups_DB_entry) {
-//		// TODO Auto-generated method stub
 //		return new int[0];
 //	}
 	
@@ -782,7 +780,7 @@ public long[] getAssigned_contacts() {
 //public void setAssigned_contacts(long[] assigned_contacts) {
 //	this.assigned_contacts = assigned_contacts;
 //}
-//public long[] getAssigned_groups() { TODO
+//public long[] getAssigned_groups() {
 //	return assigned_groups;
 //}
 //public void setAssigned_groups(long[] assigned_groups) {
