@@ -1540,11 +1540,9 @@ private static String parseInvitedListToJSONArray(ArrayList<Invited> invited) {
 	
 	/**
 	 * Loads all actual events from local db to given adapter.
-	 * 
 	 * @param instance
 	 * @param eAdapter
 	 * @return
-	 * @deprecated
 	 */
 	public static int loadEvents(Context context, EventsAdapter eAdapter) {
 		int eventsSize = 0;
@@ -1555,22 +1553,6 @@ private static String parseInvitedListToJSONArray(ArrayList<Invited> invited) {
 			eAdapter.setItems(events);
 			eAdapter.notifyDataSetChanged();
 		}
-//		TODO Justas M: rewrite
-//		events = getEventsFromLocalDb(today, null);
-//
-//		ArrayList<Event> onlyInvites = null;
-//		if (NavbarActivity.showInvites) {
-//			onlyInvites = filterInvites(events);
-//			eventsSize = onlyInvites.size();
-//		} else {
-//			eventsSize = events.size();
-//		}
-//		if (onlyInvites != null && onlyInvites.size() > 0) {
-//			updateEventsAdapter(onlyInvites, eAdapter);
-//		} else {
-//			updateEventsAdapter(events, eAdapter);
-//		}
-
 		return eventsSize;
 	}
 
