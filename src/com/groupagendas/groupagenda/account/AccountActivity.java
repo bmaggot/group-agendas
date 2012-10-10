@@ -68,6 +68,8 @@ public class AccountActivity extends Activity implements OnClickListener{
 	private EditText nameView;
 	private EditText lastnameView;
 
+// TODO implement ability tu change primary email.
+//	private EditText emailView;
 	private EditText phone1View;
 	private EditText phone2View;
 	private EditText phone3View;
@@ -157,6 +159,7 @@ public class AccountActivity extends Activity implements OnClickListener{
 		nameView = (EditText) findViewById(R.id.nameView);
 		lastnameView = (EditText) findViewById(R.id.lastnameView);
 
+//		emailView = (EditText) findViewById(R.id.emailView);
 		phone1View = (EditText) findViewById(R.id.phone1View);
 		phone2View = (EditText) findViewById(R.id.phone2View);
 		phone3View = (EditText) findViewById(R.id.phone3View);
@@ -387,6 +390,10 @@ public class AccountActivity extends Activity implements OnClickListener{
 		StringBuilder fullname = new StringBuilder(name).append(" ").append(lastnameView.getText().toString());
 		mAccount.setFullname(fullname.toString());
 		mAccount.setLastname(lastnameView.getText().toString());
+		
+		// Email
+//		temp = emailView.getText().toString();
+//		mAccount.setEmail(temp, 0);
 		
 		// Phones
 		temp = phone1View.getText().toString();
