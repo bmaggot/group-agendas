@@ -127,7 +127,6 @@ public class LoginActivity extends Activity {
 				editor.putBoolean("stay_logged_in", stay);
 				editor.putBoolean("logged", true);
 				// TODO overview if instance should be retrieved with locale attribute.
-				editor.putLong("latest_update", Calendar.getInstance().getTimeInMillis());
 				success = editor.commit();
 			}
 

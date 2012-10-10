@@ -77,9 +77,20 @@ public class Account {
 
 		public static final String CREATED = "created";
 		public static final String MODIFIED = "modified";
+		public static final String DATA_UPDATE_TIMESTAMP = "latest_update";
 		public static final String NEED_UPDATE = "need_update";
 		public static final String PUSH_ID = "push_id";
 	}
+	
+	public long getLatestUpdateUnixTimestamp(){
+		return prefs.getLong(Account.AccountMetaData.DATA_UPDATE_TIMESTAMP, 0);
+	}
+	
+	public void setLatestUpdateTime(Calendar updateTime){
+		prefsEditor.putLong(Account.AccountMetaData.DATA_UPDATE_TIMESTAMP, updateTime.getTimeInMillis() / 1000);
+		prefsEditor.commit();
+	}
+
 
 	public int getUser_id() {
 		return prefs.getInt(Account.AccountMetaData.U_ID, 0);

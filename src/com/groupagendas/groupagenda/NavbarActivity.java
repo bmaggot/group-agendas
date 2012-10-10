@@ -63,6 +63,8 @@ import com.ptashek.widgets.datetimepicker.DateTimePicker;
 @SuppressLint("ParserError")
 public class NavbarActivity extends Activity {
 
+
+
 	private DataManagement dm;
 
 	private ProgressDialog progressDialog;
@@ -98,158 +100,11 @@ public class NavbarActivity extends Activity {
 
 	private int dayWeekViewShowDays;
 
+	private Account acc;
+
 	public static boolean showInvites = false;
 
-	private class LoadViewTask extends AsyncTask<Void, Integer, Void> {
-
-		@Override
-		protected void onPreExecute() {
-			setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_NOSENSOR);
-
-			// Create a new progress dialog
-			progressDialog = new ProgressDialog(NavbarActivity.this);
-			// Set the progress dialog to display a horizontal progress bar
-			progressDialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
-			// Set the dialog message to 'Loading application View, please
-			// wait...'
-			progressDialog.setMessage(getString(R.string.loading_data));
-			// This dialog can't be canceled by pressing the back key
-			progressDialog.setCancelable(false);
-			// This dialog isn't indeterminate
-			progressDialog.setIndeterminate(false);
-			// The maximum number of items is 100
-			progressDialog.setMax(100);
-			// Set the current progress to zero
-			progressDialog.setProgress(0);
-			// Display the progress dialog
-			progressDialog.show();
-
-		}
-
-		// The code to be executed in a background thread.
-		@Override
-		protected Void doInBackground(Void... params) {
-
-			synchronized (this) {
-
-				int total = 0;
-
-				if (!Data.needToClearData)
-					loadPhase++;
-				
-				switch (loadPhase) {
-					case 0:
-						// Delete old data
-						getContentResolver().delete(AccountProvider.AMetaData.AccountMetaData.CONTENT_URI, "", null);
-						getContentResolver().delete(ContactsProvider.CMetaData.ContactsMetaData.CONTENT_URI, "", null);
-						getContentResolver().delete(ContactsProvider.CMetaData.GroupsMetaData.CONTENT_URI,"", null);
-						getContentResolver().delete(TemplatesProvider.TMetaData.TemplatesMetaData.CONTENT_URI, "", null);
-						getContentResolver().delete(EventsProvider.EMetaData.EventsMetaData.CONTENT_URI, "", null);
-						getContentResolver().delete(EventsProvider.EMetaData.EventsIndexesMetaData.CONTENT_URI, "", null);
-//						getContentResolver().delete(EventsProvider.EMetaData.InvitedMetaData.CONTENT_URI, "", null);
-						getContentResolver().getType(EventsProvider.EMetaData.EventsMetaData.CONTENT_URI);
-
-						loadPhase++;
-						total = 10;
-						publishProgress(total);
-					case 1: // Load account
-						if (DataManagement.networkAvailable) 
-							dm.getAccountFromRemoteDb(NavbarActivity.this);
-						else
-							new Account(NavbarActivity.this);
-//						NativeCalendarImporter.readCalendar(dm.getmContext());
-						loadPhase++;
-						total = 20;
-						publishProgress(total);
-					case 2:// Load contacts
-						if (DataManagement.networkAvailable) 
-							ContactManagement.getContactsFromRemoteDb(NavbarActivity.this, null);
-						else
-							ContactManagement.getContactsFromLocalDb(NavbarActivity.this, null);
-						loadPhase++;
-						total = 40;
-						publishProgress(total);
-					case 3:// Load groups
-						if (DataManagement.networkAvailable) 
-							ContactManagement.getGroupsFromRemoteDb(NavbarActivity.this, null);
-						else
-							ContactManagement.getGroupsFromLocalDb(NavbarActivity.this, null);
-						loadPhase++;
-						total = 50;
-						publishProgress(total);
-
-					case 4: // Load event templates TODO load ALL templates while offline.
-						if (DataManagement.networkAvailable) 
-							dm.getTemplates();
-						else
-							dm.getTemplateFromLocalDb(0);
-						loadPhase++;
-						total = 60;
-						publishProgress(total);
-						
-					case 5: // Load events
-						if (DataManagement.networkAvailable)
-							EventManagement.getEventsFromRemoteDb(NavbarActivity.this, "");
-						loadPhase++;
-						total = 80;
-						publishProgress(total);
-
-					case 6: // Load chat threads if network available TODO load offline
-						if (DataManagement.networkAvailable)
-//							dm.getChatThreads();
-						dm.getAddressesFromRemoteDb();
-						loadPhase++;
-						total = 100;
-						publishProgress(total);
-					}
-			}
-			return null;
-		}
-
-		// Update the progress
-		@Override
-		protected void onProgressUpdate(Integer... values) {
-			// set the current progress of the progress dialog
-			progressDialog.setProgress(values[0]);
-			switch (values[0]) {
-			case 0:
-				progressDialog.setMessage(getString(R.string.loading_data));
-				break;
-			case 10:
-				progressDialog.setMessage(getString(R.string.loading_account));
-				break;
-			case 20:
-				progressDialog.setMessage(getString(R.string.loading_contacts));
-				break;
-			case 40:
-				progressDialog.setMessage(getString(R.string.loading_groups));
-				break;
-			case 50:
-//				progressDialog.setMessage(getString(R.string.loading_templates));
-				break;
-			case 60:
-				progressDialog.setMessage(getString(R.string.loading_events));
-				break;
-			case 80:
-				progressDialog.setMessage(getString(R.string.loading_chat));
-				break;
-			case 100:
-				progressDialog.setMessage(getString(R.string.loading_complete));
-				break;
-			}
-		}
-
-		// after executing the code in the thread
-		@Override
-		protected void onPostExecute(Void result) {
-
-			progressDialog.dismiss();
-			dataLoaded = true;
-			switchToView();
-			setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_SENSOR);
-//			setAlarmsToAllEvents(); TODO Justui V.
-		}
-	}
+	
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -272,10 +127,14 @@ public class NavbarActivity extends Activity {
 		}
 
 		restoreMe(savedInstanceState);
+		acc = new Account(this);
 
+//		TODO if (acc.getLatestUpdateUnixTimestamp() > 0){
+//			new DataSyncTask().execute();
+//		}	else {
 		if (!dataLoaded && (progressDialog == null))
-				new LoadViewTask().execute();
-
+				new DownLoadAllDataTask().execute();
+//		}
 		mInflater = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 
 		//
@@ -791,6 +650,180 @@ public class NavbarActivity extends Activity {
 //				alarm.SetAlarm(getApplicationContext(), Utils.stringToCalendar(event.alarm3, DataManagement.SERVER_TIMESTAMP_FORMAT).getTimeInMillis(), event, 3);
 //			}
 //		}
+	}
+	
+	private class DownLoadAllDataTask extends AsyncTask<Void, Integer, Void> {
+
+		@Override
+		protected void onPreExecute() {
+			setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_NOSENSOR);
+
+			// Create a new progress dialog
+			progressDialog = new ProgressDialog(NavbarActivity.this);
+			// Set the progress dialog to display a horizontal progress bar
+			progressDialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
+			// Set the dialog message to 'Loading application View, please
+			// wait...'
+			progressDialog.setMessage(getString(R.string.loading_data));
+			// This dialog can't be canceled by pressing the back key
+			progressDialog.setCancelable(false);
+			// This dialog isn't indeterminate
+			progressDialog.setIndeterminate(false);
+			// The maximum number of items is 100
+			progressDialog.setMax(100);
+			// Set the current progress to zero
+			progressDialog.setProgress(0);
+			// Display the progress dialog
+			progressDialog.show();
+
+		}
+
+		// The code to be executed in a background thread.
+		@Override
+		protected Void doInBackground(Void... params) {
+
+			synchronized (this) {
+
+				int total = 0;
+
+				if (!Data.needToClearData)
+					loadPhase++;
+				
+				switch (loadPhase) {
+					case 0:
+						// Delete old data
+						getContentResolver().delete(AccountProvider.AMetaData.AccountMetaData.CONTENT_URI, "", null);
+						getContentResolver().delete(ContactsProvider.CMetaData.ContactsMetaData.CONTENT_URI, "", null);
+						getContentResolver().delete(ContactsProvider.CMetaData.GroupsMetaData.CONTENT_URI,"", null);
+						getContentResolver().delete(TemplatesProvider.TMetaData.TemplatesMetaData.CONTENT_URI, "", null);
+						getContentResolver().delete(EventsProvider.EMetaData.EventsMetaData.CONTENT_URI, "", null);
+						getContentResolver().delete(EventsProvider.EMetaData.EventsIndexesMetaData.CONTENT_URI, "", null);
+//						getContentResolver().delete(EventsProvider.EMetaData.InvitedMetaData.CONTENT_URI, "", null);
+						getContentResolver().getType(EventsProvider.EMetaData.EventsMetaData.CONTENT_URI);
+
+						loadPhase++;
+						total = 10;
+						publishProgress(total);
+					case 1: // Load account
+						if (DataManagement.networkAvailable) 
+							dm.getAccountFromRemoteDb(NavbarActivity.this);
+						else
+							new Account(NavbarActivity.this);
+//						NativeCalendarImporter.readCalendar(dm.getmContext());
+						loadPhase++;
+						total = 20;
+						publishProgress(total);
+					case 2:// Load contacts
+						if (DataManagement.networkAvailable) 
+							ContactManagement.getContactsFromRemoteDb(NavbarActivity.this, null);
+						else
+							ContactManagement.getContactsFromLocalDb(NavbarActivity.this, null);
+						loadPhase++;
+						total = 40;
+						publishProgress(total);
+					case 3:// Load groups
+						if (DataManagement.networkAvailable) 
+							ContactManagement.getGroupsFromRemoteDb(NavbarActivity.this, null);
+						else
+							ContactManagement.getGroupsFromLocalDb(NavbarActivity.this, null);
+						loadPhase++;
+						total = 50;
+						publishProgress(total);
+
+					case 4: // Load event templates TODO load ALL templates while offline.
+						if (DataManagement.networkAvailable) 
+							dm.getTemplates();
+						else
+							dm.getTemplateFromLocalDb(0);
+						loadPhase++;
+						total = 60;
+						publishProgress(total);
+						
+					case 5: // Load events
+						if (DataManagement.networkAvailable)
+							EventManagement.getEventsFromRemoteDb(NavbarActivity.this, "");
+						loadPhase++;
+						total = 80;
+						publishProgress(total);
+
+					case 6: // Load chat threads if network available TODO load offline
+						if (DataManagement.networkAvailable)
+//							dm.getChatThreads();
+						dm.getAddressesFromRemoteDb();
+						loadPhase++;
+						total = 100;
+						publishProgress(total);
+					}
+			}
+			return null;
+		}
+
+		// Update the progress
+		@Override
+		protected void onProgressUpdate(Integer... values) {
+			// set the current progress of the progress dialog
+			progressDialog.setProgress(values[0]);
+			switch (values[0]) {
+			case 0:
+				progressDialog.setMessage(getString(R.string.loading_data));
+				break;
+			case 10:
+				progressDialog.setMessage(getString(R.string.loading_account));
+				break;
+			case 20:
+				progressDialog.setMessage(getString(R.string.loading_contacts));
+				break;
+			case 40:
+				progressDialog.setMessage(getString(R.string.loading_groups));
+				break;
+			case 50:
+//				progressDialog.setMessage(getString(R.string.loading_templates));
+				break;
+			case 60:
+				progressDialog.setMessage(getString(R.string.loading_events));
+				break;
+			case 80:
+				progressDialog.setMessage(getString(R.string.loading_chat));
+				break;
+			case 100:
+				progressDialog.setMessage(getString(R.string.loading_complete));
+				break;
+			}
+		}
+
+		// after executing the code in the thread
+		@Override
+		protected void onPostExecute(Void result) {
+			
+			acc.setLatestUpdateTime(Calendar.getInstance());
+			progressDialog.dismiss();
+			dataLoaded = true;
+			switchToView();
+			setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_SENSOR);
+			
+//			setAlarmsToAllEvents(); TODO Justui V.
+		}
+	}
+	
+	private class DataSyncTask extends AsyncTask<Void, Void, Void> {
+
+		@Override
+		protected Void doInBackground(Void... params) {
+			// TODO Auto-generated method stub
+			return null;
+		}
+		@Override
+		protected void onPostExecute(Void result) {
+			
+			acc.setLatestUpdateTime(Calendar.getInstance());
+//			progressDialog.dismiss();
+//			dataLoaded = true;
+			switchToView();
+//			setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_SENSOR);
+			
+//			setAlarmsToAllEvents(); TODO Justui V.
+		}
+
 	}
 
 }
