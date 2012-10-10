@@ -15,12 +15,8 @@ import android.widget.Filterable;
 import android.widget.TextView;
 
 import com.groupagendas.groupagenda.R;
-import com.groupagendas.groupagenda.data.DataManagement;
 import com.groupagendas.groupagenda.data.EventManagement;
-import com.groupagendas.groupagenda.events.NewEventActivity.GetContactsTask;
 import com.groupagendas.groupagenda.utils.DateTimeUtils;
-import com.groupagendas.groupagenda.utils.EventStatusUpdater;
-import com.groupagendas.groupagenda.utils.Utils;
 
 public class EventsAdapter extends BaseAdapter implements Filterable{
 	private List<Event> events;
