@@ -256,6 +256,7 @@ public class EventActivity extends Activity {
 		public String country_code;
 		public String timezone;
 		public String altname;
+		public String call_code;
 	}
 
 	protected void showInvitesView() {
