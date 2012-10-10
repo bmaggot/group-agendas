@@ -1,5 +1,6 @@
 package com.groupagendas.groupagenda.data;
 
+import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 
 import org.apache.http.HttpResponse;
@@ -11,6 +12,7 @@ import org.apache.http.entity.mime.MultipartEntity;
 import org.apache.http.entity.mime.content.StringBody;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.util.EntityUtils;
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -21,12 +23,9 @@ import android.database.sqlite.SQLiteException;
 import android.util.Log;
 import android.widget.Toast;
 
-import com.groupagendas.groupagenda.R;
 import com.groupagendas.groupagenda.chat.ChatMessageObject;
 import com.groupagendas.groupagenda.chat.ChatProvider;
 import com.groupagendas.groupagenda.chat.ChatProvider.CMMetaData;
-import com.groupagendas.groupagenda.chat.ChatThreadObject;
-import com.groupagendas.groupagenda.events.EventsProvider;
 
 public class ChatManagement {
 
@@ -205,9 +204,9 @@ public class ChatManagement {
 						JSONObject object = new JSONObject(resp);
 						success = object.getBoolean("success");
 						if (success) {
-							Toast.makeText(context, context.getResources().getString(R.string.delete_chat_message), Toast.LENGTH_LONG);
+//							Toast.makeText(context, context.getResources().getString(R.string.delete_chat_message), Toast.LENGTH_LONG);
 						} else {
-							Toast.makeText(context, object.getString("error"), Toast.LENGTH_LONG);
+//							Toast.makeText(context, object.getString("error"), Toast.LENGTH_LONG);
 						}
 					}
 				}
@@ -257,5 +256,89 @@ public class ChatManagement {
 			succcess = removeChatMessageFromLocalDb(context, messageId);
 		}
 		return succcess;
+	}
+	
+	public static ChatMessageObject postChatMessage(int eventId, String message, Context context){
+		ChatMessageObject chatMessageObject = new ChatMessageObject();
+		try {
+			HttpClient hc = new DefaultHttpClient();
+			HttpPost post = new HttpPost(Data.getServerUrl() + "mobile/chat_post");
+
+			MultipartEntity reqEntity = new MultipartEntity(HttpMultipartMode.BROWSER_COMPATIBLE);
+
+			reqEntity.addPart(ChatManagement.TOKEN, new StringBody(Data.getToken()));
+			reqEntity.addPart("event_id", new StringBody(String.valueOf(eventId)));
+			if (message == null) {
+				reqEntity.addPart("message", new StringBody(String.valueOf("")));
+			} else {
+				reqEntity.addPart("message", new StringBody(String.valueOf(message)));
+			}
+
+			post.setEntity(reqEntity);
+			HttpResponse rp = null;
+			if (DataManagement.networkAvailable) {
+				rp = hc.execute(post);
+				if (rp.getStatusLine().getStatusCode() == HttpStatus.SC_OK) {
+					String resp = EntityUtils.toString(rp.getEntity());
+					if (resp != null) {
+						JSONObject object = new JSONObject(resp);
+						boolean success = object.getBoolean("success");
+						if (success) {
+							ChatManagement.insertChatMessageContentValueToLocalDb(context,
+									ChatManagement.makeChatMessageObjectContentValueFromJSON(object.getJSONObject("message")));
+							chatMessageObject = ChatManagement.makeChatMessageObjectFromJSON(object.getJSONObject("message"));
+						} else {
+							Toast.makeText(context, object.getString("error"), Toast.LENGTH_LONG);
+						}
+					}
+				}
+			} else {
+				OfflineData uplooad = new OfflineData("mobile/chat_post", reqEntity);
+				Data.getUnuploadedData().add(uplooad);
+			}
+		} catch (Exception e) {
+			Log.e("postChatMessage(Context context, message " + message + ", event id " + eventId + ")", e.getMessage());
+		}
+		return chatMessageObject;
+	}
+	
+	public static ArrayList<ChatMessageObject> getChatMessagesForEventFromRemoteDb(int eventId, ArrayList<ChatMessageObject>chatMessages, Context context){
+		boolean success = false;
+		HttpClient hc = new DefaultHttpClient();
+		HttpPost post = new HttpPost(Data.getServerUrl() + "mobile/chat_get");
+		MultipartEntity reqEntity = new MultipartEntity(HttpMultipartMode.BROWSER_COMPATIBLE);
+
+		try {
+			reqEntity.addPart(ChatManagement.TOKEN, new StringBody(Data.getToken()));
+			reqEntity.addPart("event_id", new StringBody(String.valueOf(eventId)));
+		} catch (UnsupportedEncodingException e1) {
+			e1.printStackTrace();
+		}
+
+		post.setEntity(reqEntity);
+		try {
+			HttpResponse rp = hc.execute(post);
+			if (rp.getStatusLine().getStatusCode() == HttpStatus.SC_OK) {
+				String resp = EntityUtils.toString(rp.getEntity());
+				if (resp != null) {
+					JSONObject object = new JSONObject(resp);
+					success = object.getBoolean("success");
+					if (success) {
+						JSONArray JSONchatMessages = object.getJSONArray("items");
+						chatMessages = new ArrayList<ChatMessageObject>();
+						for (int i = 0, l = JSONchatMessages.length(); i < l; i++) {
+							ChatManagement.insertChatMessageContentValueToLocalDb(context,
+									ChatManagement.makeChatMessageObjectContentValueFromJSON(JSONchatMessages.getJSONObject(i)));
+							chatMessages.add(ChatManagement.makeChatMessageObjectFromJSON(JSONchatMessages.getJSONObject(i)));
+						}
+					} else {
+						Toast.makeText(context, object.getString("error"), Toast.LENGTH_LONG);
+					}
+				}
+			}
+		} catch (Exception e) {
+			Log.e("getChatMessagesForEventFromRemoteDb(Context context, int eventId " + eventId + ")", e.getMessage());
+		}
+		return chatMessages;
 	}
 }
