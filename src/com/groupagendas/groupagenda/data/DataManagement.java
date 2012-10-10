@@ -1136,7 +1136,7 @@ public class DataManagement {
 			if (cursor.moveToFirst()) {
 				item.setNative(true);
 				item.setIs_owner(false);
-				item.setType(Event.PRIVATE);
+				item.setType(Event.NOTE);
 				item.setStatus(1);
 
 				item.setEvent_id(cursor.getInt(0));
@@ -1191,7 +1191,7 @@ public class DataManagement {
 
 						item.setNative(true);
 						item.setIs_owner(false);
-						item.setType(Event.PRIVATE);
+						item.setType(Event.NOTE);
 						item.setStatus(1);
 
 						item.setEvent_id(cursor.getInt(0));
