@@ -1808,6 +1808,7 @@
         <item>Zimbabwe</item>
     </string-array>
     <string-array name="call_codes">
+        <item> </item>
         <item>93</item>
 		<item>355</item>
 		<item>213</item>

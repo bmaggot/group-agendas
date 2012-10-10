@@ -9,7 +9,7 @@
     <string name="v_type">Poll</string>
 
     <string-array name="type_labels">
-        <item>Private note</item>
+        <item>Note</item>
         <item>Shared note</item>
         <item>Shared event</item>
         <item>Shared event</item>
