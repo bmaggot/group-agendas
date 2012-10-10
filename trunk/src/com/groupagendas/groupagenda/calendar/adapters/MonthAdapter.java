@@ -12,6 +12,7 @@ import android.widget.TextView;
 import com.groupagendas.groupagenda.EventActivityOnClickListener;
 import com.groupagendas.groupagenda.R;
 import com.groupagendas.groupagenda.events.Event;
+import com.groupagendas.groupagenda.utils.DrawingUtils;
 
 public class MonthAdapter extends AbstractAdapter<Event> {
 	
@@ -48,7 +49,7 @@ public class MonthAdapter extends AbstractAdapter<Event> {
 			Event event = (Event) item;
 			
 			ImageView colourBubble = (ImageView) view.findViewById(R.id.month_entry_color_placeholder);
-			colourBubble.setImageResource(event.getColorBubbleId(getContext()));
+			colourBubble.setImageBitmap(DrawingUtils.getColoredRoundRectangle(context, 20, event, true));
 			
 			TextView startTime = (TextView) view.findViewById(R.id.month_entry_start);
 			startTime.setText(timeFormat.format(event.getStartCalendar().getTime()));

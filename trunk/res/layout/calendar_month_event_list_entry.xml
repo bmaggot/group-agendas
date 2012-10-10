@@ -7,8 +7,8 @@
     android:background="@drawable/calendar_agenda_entry" >
     
     <ImageView android:id="@+id/month_entry_color_placeholder"
-        android:layout_width="10dp"
-        android:layout_height="10dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         android:layout_gravity="center_vertical|left"
         android:contentDescription="@string/event_color_placeholder"
         android:layout_marginLeft="5dp"

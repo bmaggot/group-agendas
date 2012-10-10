@@ -1,5 +1,7 @@
 package com.groupagendas.groupagenda.events;
 
+import com.groupagendas.groupagenda.utils.DrawingUtils;
+
 import android.content.Context;
 import android.view.View;
 import android.view.ViewGroup;
@@ -22,7 +24,7 @@ public class ColorsAdapter extends BaseAdapter{
 		ImageView imageView;
         if (convertView == null) {  // if it's not recycled, initialize some attributes
             imageView = new ImageView(mContext);
-            imageView.setLayoutParams(new GridView.LayoutParams(26, 54));
+            imageView.setLayoutParams(new GridView.LayoutParams(30, 54));
             imageView.setScaleType(ImageView.ScaleType.CENTER_CROP);
             imageView.setPadding(8, 8, 8, 8);
         } else {
@@ -32,7 +34,7 @@ public class ColorsAdapter extends BaseAdapter{
         String nameColor = "calendarbubble_"+mColors[position]+"_";
 		int image = mContext.getResources().getIdentifier(nameColor, "drawable", "com.groupagendas.groupagenda");
         
-        imageView.setImageResource(image);
+        imageView.setImageBitmap(DrawingUtils.getColoredRoundRectangle(mContext, 20, mColors[position], false));
         return imageView;
 	}
 	

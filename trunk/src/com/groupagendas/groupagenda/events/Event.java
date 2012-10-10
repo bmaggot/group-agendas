@@ -179,7 +179,7 @@ private static final String TIMESTAMP_FORMAT = DataManagement.SERVER_TIMESTAMP_F
  */
 	public boolean hasIcon() {
 		
-		if (getIcon().equalsIgnoreCase("null")) return false;
+		if (getIcon().length() < 1) return false;
 		return true;
 	}
 
@@ -199,7 +199,6 @@ private static final String TIMESTAMP_FORMAT = DataManagement.SERVER_TIMESTAMP_F
 	}
 
 	public Calendar getEndCalendar() {
-
 		return endCalendar;
 	}
 

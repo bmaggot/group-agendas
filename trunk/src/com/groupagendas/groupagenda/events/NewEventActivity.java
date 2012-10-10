@@ -48,6 +48,7 @@ import com.groupagendas.groupagenda.templates.TemplatesProvider.TMetaData.Templa
 import com.groupagendas.groupagenda.timezone.CountriesAdapter;
 import com.groupagendas.groupagenda.timezone.TimezonesAdapter;
 import com.groupagendas.groupagenda.utils.DateTimeUtils;
+import com.groupagendas.groupagenda.utils.DrawingUtils;
 import com.groupagendas.groupagenda.utils.Prefs;
 import com.groupagendas.groupagenda.utils.Utils;
 import com.ptashek.widgets.datetimepicker.DateTimePicker;
@@ -131,6 +132,7 @@ public class NewEventActivity extends EventActivity {
 		// color
 		final String[] colorsValues = getResources().getStringArray(R.array.colors_values);
 		colorView = (ImageView) findViewById(R.id.colorView);
+		colorView.setImageBitmap(DrawingUtils.getColoredRoundRectangle(this, COLOURED_BUBBLE_SIZE, selectedColor, true));
 
 		colorView.setOnClickListener(new OnClickListener() {
 			@Override
@@ -143,12 +145,12 @@ public class NewEventActivity extends EventActivity {
 				gridview.setAdapter(new ColorsAdapter(NewEventActivity.this, colorsValues));
 
 				gridview.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+					
+
 					@Override
 					public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
 						selectedColor = (colorsValues[position]);
-						String nameColor = "calendarbubble_" + selectedColor + "_";
-						int image = getResources().getIdentifier(nameColor, "drawable", "com.groupagendas.groupagenda");
-						colorView.setImageResource(image);
+						colorView.setImageBitmap(DrawingUtils.getColoredRoundRectangle(NewEventActivity.this, COLOURED_BUBBLE_SIZE , selectedColor, true));
 
 						dialog.dismiss();
 					}
@@ -542,31 +544,6 @@ public class NewEventActivity extends EventActivity {
 
 	@Override
 	public void onResume() {
-//		if (Data.selectedContacts != null && !Data.selectedContacts.isEmpty()) {
-//			LinearLayout invitedPersonList = (LinearLayout) findViewById(R.id.invited_person_list);
-//			invitedPersonList.removeAllViews();
-//			final LayoutInflater inflater = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-//
-//			contactsButton.setBackgroundResource(R.drawable.event_invite_people_button_notalone);
-//
-//			for (int i = 0, l = Data.selectedContacts.size(); i < l; i++) {
-//				Contact contact = Data.selectedContacts.get(i);
-//				final View view = inflater.inflate(R.layout.event_invited_person_entry, invitedPersonList, false);
-//				if (l == 1) {
-//					view.setBackgroundResource(R.drawable.event_invited_entry_last_background);
-//				} else {
-//					if (i == l - 1)
-//						view.setBackgroundResource(R.drawable.event_invited_entry_last_background);
-//					else
-//						view.setBackgroundResource(R.drawable.event_invited_entry_notalone_background);
-//				}
-//				Invited invited = new Invited();
-//				invited.name = contact.name;
-//				invited.email = contact.email;
-//				invited.status_id = 4;
-//				invitedPersonList.addView(getInvitedView(invited, inflater, view, dm.getContext()));
-//			}
-//		} else {
 		super.onResume();
 
 		account = new Account(this);
@@ -604,8 +581,7 @@ public class NewEventActivity extends EventActivity {
 			timezonesAdapter = new TimezonesAdapter(NewEventActivity.this, R.layout.search_dialog_item, countriesList);
 		}
 		
-		
-		timezoneView.setText(account.getTimezone());
+		String timezone = account.getTimezone();
 		
 		String countryCode = account.getCountry();
 		for (StaticTimezones item : countriesList){
@@ -614,6 +590,16 @@ public class NewEventActivity extends EventActivity {
 				continue;
 			}
 		}
+		
+		for (StaticTimezones item : countriesList){
+			if (item.timezone.equalsIgnoreCase(timezone)) {
+				timezoneView.setText(item.country);
+				timezoneInUse = countriesList.indexOf(item);
+				continue;
+			}
+		}
+		
+		
 
 
 		LinearLayout invitedPersonList = (LinearLayout) findViewById(R.id.invited_person_list);
