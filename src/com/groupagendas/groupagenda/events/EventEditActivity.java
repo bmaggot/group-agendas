@@ -42,6 +42,7 @@ import com.groupagendas.groupagenda.data.EventManagement;
 import com.groupagendas.groupagenda.timezone.CountriesAdapter;
 import com.groupagendas.groupagenda.timezone.TimezonesAdapter;
 import com.groupagendas.groupagenda.utils.DateTimeUtils;
+import com.groupagendas.groupagenda.utils.DrawingUtils;
 import com.groupagendas.groupagenda.utils.Utils;
 import com.ptashek.widgets.datetimepicker.DateTimePicker;
 
@@ -676,8 +677,7 @@ public class EventEditActivity extends EventActivity {
 							@Override
 							public void onItemClick(AdapterView<?> parent, View v, int position, long id) {
 								result.setColor(colorsValues[position]);
-								int image = result.getColorBubbleId(getBaseContext());
-								colorView.setImageResource(image);
+								colorView.setImageBitmap(DrawingUtils.getColoredRoundRectangle(EventEditActivity.this, COLOURED_BUBBLE_SIZE , colorsValues[position], true));
 								dialog.dismiss();
 							}
 						});
@@ -714,7 +714,7 @@ public class EventEditActivity extends EventActivity {
 				saveButton.setVisibility(View.GONE);
 
 			}
-			colorView.setImageResource(result.getColorBubbleId(EventEditActivity.this));
+			colorView.setImageBitmap(DrawingUtils.getColoredRoundRectangle(EventEditActivity.this, COLOURED_BUBBLE_SIZE , result, true));
 			iconView.setImageResource(result.getIconId(EventEditActivity.this));
 			
 

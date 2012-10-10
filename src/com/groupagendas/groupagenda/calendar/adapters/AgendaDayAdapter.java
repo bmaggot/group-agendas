@@ -65,7 +65,7 @@ public class AgendaDayAdapter extends AbstractAdapter<Event> {
 		
 		bubble.setBackgroundDrawable(new BitmapDrawable(DrawingUtils.getColoredRoundRectangle(getContext(), bubbleHeightDP, event, true)));
 		LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
-		int margins = DrawingUtils.convertDPtoPX(getContext(), colouredRectangleMarginsDP );
+		int margins = DrawingUtils.convertDPtoPX(colouredRectangleMarginsDP );
 		params.setMargins(margins, margins, 0, 0);
 		bubble.setLayoutParams(params);
 		

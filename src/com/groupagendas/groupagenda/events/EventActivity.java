@@ -24,8 +24,9 @@ import com.groupagendas.groupagenda.utils.Prefs;
 
 public class EventActivity extends Activity {
 	public static final int DEFAULT_EVENT_DURATION_IN_MINS = 30;
+	protected static final int COLOURED_BUBBLE_SIZE = 50;
 	public static final String EXTRA_STRING_FOR_START_CALENDAR = "strTime";
-	
+
 	public static ArrayList<Invited> newInvites;
 
 	protected DateTimeUtils dtUtils;
@@ -180,7 +181,7 @@ public class EventActivity extends Activity {
 			return getString(R.string.title_is_required);
 		case 2: // no timezone set
 			return getString(R.string.timezone_required);
-		case 3: // calendar fields are null TODO add proper error texts.
+		case 3: // calendar fields are null 
 			return getString(R.string.invalid_start_end_time);
 		case 4: // event start is set after end
 			return getString(R.string.invalid_start_end_time);
@@ -258,19 +259,8 @@ public class EventActivity extends Activity {
 	}
 
 	protected void showInvitesView() {
-		// TODO optimizacija panasios jebalos gula ant meskos sazines.
-		// Zajabys.
 		if (newInvites != null) {
 			event.getInvited().addAll(newInvites);
-
-//			long[] newAssignedContacs = new long[newInvites.size()];
-//			for (int i = 0; i < newInvites.size(); i++) {
-//				newAssignedContacs[i] = newInvites.get(i).getMy_contact_id();
-//			}
-//			long[] nuAssignedContacts = new long[event.getAssigned_contacts().length + newAssignedContacs.length];
-//			System.arraycopy(event.getAssigned_contacts(), 0, nuAssignedContacts, 0, event.getAssigned_contacts().length);
-//			System.arraycopy(newAssignedContacs, 0, nuAssignedContacts, event.getAssigned_contacts().length, newAssignedContacs.length);
-//			event.assigned_contacts = nuAssignedContacts;
 			newInvites = null;
 		}
 
