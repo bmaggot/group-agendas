@@ -10,6 +10,7 @@
 		<item>• Phonecode submitted is invalid.\n</item>
 		<item>• Password should contain from 4 to 20 symbols.\n</item>
 		<item>• Passwords do not match.\n</item>
+		<item>Server response\:\n</item>
 	</string-array>
     
 </resources>
