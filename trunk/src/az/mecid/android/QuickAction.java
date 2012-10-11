@@ -163,17 +163,23 @@ public class QuickAction extends CustomPopupWindow {
 		Drawable icon;
 		OnClickListener listener;
 
+		if (actionList == null)
+			actionList = new ArrayList<ActionItem>();
+
 		for (int i = 0; i < actionList.size(); i++) {
-			title = actionList.get(i).getTitle();
-			icon = actionList.get(i).getIcon();
-			listener = actionList.get(i).getListener();
+			ActionItem ai = actionList.get(i);
+			if (ai != null) {
+				title = actionList.get(i).getTitle();
+				icon = actionList.get(i).getIcon();
+				listener = actionList.get(i).getListener();
 
-			view = getActionItem(title, icon, listener);
+				view = getActionItem(title, icon, listener);
 
-			view.setFocusable(true);
-			view.setClickable(true);
+				view.setFocusable(true);
+				view.setClickable(true);
 
-			mTrack.addView(view);
+				mTrack.addView(view);
+			}
 		}
 	}
 
