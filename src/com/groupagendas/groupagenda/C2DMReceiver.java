@@ -15,6 +15,7 @@ import com.groupagendas.groupagenda.chat.ChatMessageActivity;
 import com.groupagendas.groupagenda.data.DataManagement;
 import com.groupagendas.groupagenda.data.EventManagement;
 import com.groupagendas.groupagenda.error.report.Reporter;
+import com.groupagendas.groupagenda.events.Event;
 import com.groupagendas.groupagenda.events.EventsActivity;
 import com.groupagendas.groupagenda.utils.AgendaUtils;
 import com.groupagendas.groupagenda.utils.Utils;
@@ -51,6 +52,7 @@ public class C2DMReceiver extends C2DMBaseReceiver {
 		String data = "";
 		if (receiveIntent.getStringExtra("message") != null) {
 			data = receiveIntent.getStringExtra("message");
+			Log.i("c2dm message: ", data);
 		}
 		String rel_id = null;
 		String type = null;;
@@ -83,8 +85,8 @@ public class C2DMReceiver extends C2DMBaseReceiver {
 			notification.flags = Notification.FLAG_AUTO_CANCEL;
 
 			Intent notificationIntent;
-			com.groupagendas.groupagenda.events.Event event = EventManagement.getEventFromLocalDb(context, Integer.parseInt(rel_id), EventManagement.ID_INTERNAL);
-			if(isChatMessage){
+			Event event = EventManagement.getEventFromLocalDb(context, Integer.parseInt(rel_id), EventManagement.ID_EXTERNAL);
+			if(isChatMessage && event != null){
 				notificationIntent = new Intent(context, ChatMessageActivity.class);
 				notificationIntent.putExtra("event_id", event.getEvent_id());
 				notificationIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
@@ -125,9 +127,9 @@ public class C2DMReceiver extends C2DMBaseReceiver {
 		}
 	}
 
-	public static com.groupagendas.groupagenda.events.Event getEventById(String rel_id, Context context) {
-		ArrayList<com.groupagendas.groupagenda.events.Event> allEvents = EventManagement.getEventsFromLocalDb(context, true);
-		for (com.groupagendas.groupagenda.events.Event event : allEvents) {
+	public static Event getEventById(String rel_id, Context context) {
+		ArrayList<Event> allEvents = EventManagement.getEventsFromLocalDb(context, true);
+		for (Event event : allEvents) {
 			if (event.getEvent_id() == Integer.parseInt(rel_id)) {
 				return event;
 			}
