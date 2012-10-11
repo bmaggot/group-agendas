@@ -152,17 +152,17 @@ public class EventManagement {
 	public static ArrayList<ChatThreadObject> getExistingChatThreads (Context context){
 		
 		Uri uri = EMetaData.EventsMetaData.CONTENT_URI;
-		String[] projection = { EMetaData.EventsMetaData.TITLE, EMetaData.EventsMetaData.TIME_START_UTC_MILLISECONDS,
+		String[] projection = { EMetaData.EventsMetaData.TITLE, EMetaData.EventsMetaData.LAST_MESSAGE_DATE_TIME_UTC_MILISECONDS,
 				EMetaData.EventsMetaData.NEW_MESSAGES_COUNT, EMetaData.EventsMetaData.MESSAGES_COUNT, EMetaData.EventsMetaData.E_ID };
 		String selection = EMetaData.EventsMetaData.MESSAGES_COUNT + ">0";
-		String sortOrder = EMetaData.EventsMetaData.LAST_MESSAGE_DATE_TIME_UTC_MILISECONDS;
+		String sortOrder = EMetaData.EventsMetaData.LAST_MESSAGE_DATE_TIME_UTC_MILISECONDS + " DESC ";
 		Cursor result = context.getContentResolver().query(uri, projection, selection, null, sortOrder);
 		ArrayList<ChatThreadObject> resultList = new ArrayList<ChatThreadObject>();
 		if (result.moveToFirst()){
 			while (result.moveToNext()){
 				ChatThreadObject cto = new ChatThreadObject();
 				cto.setTitle(result.getString(result.getColumnIndex(EMetaData.EventsMetaData.TITLE)));
-				cto.setTimeStart(result.getLong(result.getColumnIndex(EMetaData.EventsMetaData.TIME_START_UTC_MILLISECONDS)));
+				cto.setTimeStart(result.getLong(result.getColumnIndex(EMetaData.EventsMetaData.LAST_MESSAGE_DATE_TIME_UTC_MILISECONDS)));
 				cto.setNew_messages(result.getInt(result.getColumnIndex(EMetaData.EventsMetaData.NEW_MESSAGES_COUNT)));
 				cto.setMessage_count(result.getInt(result.getColumnIndex(EMetaData.EventsMetaData.MESSAGES_COUNT)));
 				cto.setEvent_id(result.getInt(result.getColumnIndex(EMetaData.EventsMetaData.E_ID)));
@@ -1072,6 +1072,8 @@ public class EventManagement {
 //		cv.put(EventsProvider.EMetaData.EventsMetaData.ASSIGNED_CONTACTS, event.getAssigned_contacts_DB_entry());
 //		cv.put(EventsProvider.EMetaData.EventsMetaData.ASSIGNED_GROUPS, event.getAssigned_groups_DB_entry());
 		cv.put(EventsProvider.EMetaData.EventsMetaData.MESSAGES_COUNT, event.getMessage_count());
+		cv.put(EventsProvider.EMetaData.EventsMetaData.NEW_MESSAGES_COUNT, event.getNew_message_count());
+		cv.put(EventsProvider.EMetaData.EventsMetaData.LAST_MESSAGE_DATE_TIME_UTC_MILISECONDS, event.getLast_message_date_time());
 		return cv;
 	}
 
@@ -1166,6 +1168,8 @@ private static String parseInvitedListToJSONArray(ArrayList<Invited> invited) {
 //		item.setAssigned_groups_DB_entry(result.getString(result.getColumnIndex(EventsProvider.EMetaData.EventsMetaData.ASSIGNED_GROUPS)));
 
 		item.setMessage_count(result.getInt(result.getColumnIndex(EventsProvider.EMetaData.EventsMetaData.MESSAGES_COUNT)));
+		item.setNew_message_count(result.getInt(result.getColumnIndex(EventsProvider.EMetaData.EventsMetaData.NEW_MESSAGES_COUNT)));
+		item.setLast_message_date_time(result.getLong(result.getColumnIndex(EventsProvider.EMetaData.EventsMetaData.LAST_MESSAGE_DATE_TIME_UTC_MILISECONDS)));
 		return item;
 	}	
 
@@ -1466,6 +1470,8 @@ private static String parseInvitedListToJSONArray(ArrayList<Invited> invited) {
 		}
 
 			event.setMessage_count(e.optInt(MESSAGE_COUNT));
+			event.setNew_message_count(e.optInt(NEW_MESSAGE_COUNT));
+			event.setLast_message_date_time(e.optLong(MESSAGE_LAST_TIMESTAMP));
 
 		return event;
 	}

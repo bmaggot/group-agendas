@@ -48,7 +48,7 @@ public class ChatMessageAdapter extends AbstractAdapter<ChatMessageObject> {
 			calendar.setTimeInMillis(Utils.unixTimestampToMilis(chatMessage.getCreated()));
 			DateTimeUtils dtUtils = new DateTimeUtils(getContext());
 			chatTime.setText(dtUtils.formatDateTime(calendar));
-			if (chatMessage.getUserId() == account.getUser_id()) {
+			if (chatMessage.getUserId() == account.getUser_id() && !chatMessage.isDeleted()) {
 				view.findViewById(R.id.kubiks).setVisibility(View.VISIBLE);
 				TextView iksiuks = (TextView) view.findViewById(R.id.chat_message_delete);
 				iksiuks.setClickable(true);
