@@ -261,29 +261,33 @@
                     android:inputType="textPassword" />
             </LinearLayout>
 
-            <RelativeLayout
+            <LinearLayout
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
+                android:gravity="center_vertical"
                 android:layout_marginTop="10dp"
                 android:orientation="horizontal" >
 
                 <Button
                     android:id="@+id/statementButton"
-                    android:layout_width="150dp"
+                    android:layout_width="0dp"
+                    android:layout_weight="0.5"
+                    android:layout_gravity="left"
                     android:layout_height="wrap_content"
                     android:text="@string/privacy_statement" />
                 
                 <CheckBox
                     android:id="@+id/chk_statement"
-                    android:layout_width="wrap_content"
+                    android:layout_width="0dp"
+                    android:layout_weight="0.5"
                     android:layout_height="wrap_content"
+                    android:layout_gravity="right"
                     android:checked="false"
                     android:clickable="false"
-                    android:layout_alignParentRight="true"
                     android:text="@string/chk_statement"
                     android:textColor="@android:color/black" />
 
-                </RelativeLayout>
+            </LinearLayout>
 
             <LinearLayout
                 android:layout_marginTop="5dp"
