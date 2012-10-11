@@ -19,7 +19,10 @@ public class ActionItem {
 	}
 	
 	public String getTitle() {
-		return this.title;
+		if (title != null)
+			return title;
+		else
+			return "";
 	}
 	
 	public void setIcon(Drawable icon) {
@@ -27,7 +30,7 @@ public class ActionItem {
 	}
 	
 	public Drawable getIcon() {
-		return this.icon;
+		return icon;
 	}
 	
 
