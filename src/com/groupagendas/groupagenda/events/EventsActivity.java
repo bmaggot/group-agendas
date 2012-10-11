@@ -16,14 +16,11 @@ import az.mecid.android.QuickAction;
 
 import com.groupagendas.groupagenda.NavbarActivity;
 import com.groupagendas.groupagenda.R;
-import com.groupagendas.groupagenda.data.DataManagement;
 import com.groupagendas.groupagenda.data.EventManagement;
 import com.groupagendas.groupagenda.settings.SettingsActivity;
 import com.groupagendas.groupagenda.utils.AgendaUtils;
 
 public class EventsActivity extends ListActivity {
-
-	private DataManagement dm;
 
 	private QuickAction qa;
 	// types
@@ -71,9 +68,6 @@ public class EventsActivity extends ListActivity {
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		this.setContentView(R.layout.events);
-
-
-		dm = DataManagement.getInstance(this);
 
 		topView = (TextView) findViewById(R.id.topText);
 		
@@ -206,18 +200,18 @@ public class EventsActivity extends ListActivity {
 						}
 					});
 
-					shared_note = new ActionItem();
-					shared_note.setTitle(getString(R.string.n_type));
-					shared_note.setOnClickListener(new OnClickListener() {
-
-						@Override
-						public void onClick(View v) {
-							changeTitle(getString(R.string.n_type));
-							qa.dismiss();
-							eventsAdapter.getFilter().filter(getString(R.string.n_type));
-							eventsAdapter.setFilter(getString(R.string.n_type));
-						}
-					});
+//					shared_note = new ActionItem();
+//					shared_note.setTitle(getString(R.string.n_type));
+//					shared_note.setOnClickListener(new OnClickListener() {
+//
+//						@Override
+//						public void onClick(View v) {
+//							changeTitle(getString(R.string.n_type));
+//							qa.dismiss();
+//							eventsAdapter.getFilter().filter(getString(R.string.n_type));
+//							eventsAdapter.setFilter(getString(R.string.n_type));
+//						}
+//					});
 
 					private_note = new ActionItem();
 					private_note.setTitle(getString(R.string.p_type));
