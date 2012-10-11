@@ -9,12 +9,17 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.groupagendas.groupagenda.R;
+import com.groupagendas.groupagenda.account.Account;
 import com.groupagendas.groupagenda.chat.ChatThreadObject;
+import com.groupagendas.groupagenda.utils.Utils;
 
 public class ChatThreadAdapter extends AbstractAdapter<ChatThreadObject> {
 
+	private Account account;
+	
 	public ChatThreadAdapter(Context context, List<ChatThreadObject> list) {
 		super(context, list);
+		account = new Account(context);
 	}
 
 	@Override
@@ -27,8 +32,8 @@ public class ChatThreadAdapter extends AbstractAdapter<ChatThreadObject> {
 		title.setText(chatThread.getTitle());
 		TextView chatTime = (TextView) view.findViewById(R.id.chat_message_time);
 		Calendar timeStart = Calendar.getInstance();
-		timeStart.setTimeInMillis(chatThread.getTimeStart());
-		chatTime.setText(timeStart.getTime().toString());
+		timeStart.setTimeInMillis(Utils.unixTimestampToMilis(chatThread.getTimeStart()));
+		chatTime.setText(Utils.formatCalendar(timeStart, account.getSetting_date_format()));
 		return view;
 	}
 
