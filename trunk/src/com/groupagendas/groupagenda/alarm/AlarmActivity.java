@@ -48,7 +48,7 @@ public class AlarmActivity extends Activity {
 		super.onCreate(savedInstanceState);
 		final int eventId = getIntent().getIntExtra("event_id", 0);
 		final int alarmNR = getIntent().getIntExtra("alarmNr", 0);
-		this.event = EventManagement.getEventFromLocalDb(this, eventId);
+		this.event = EventManagement.getEventFromLocalDb(this, eventId, EventManagement.ID_INTERNAL);
 		this.setContentView(R.layout.alarm_dialog);
 		alarmTitle = (TextView) findViewById(R.id.alarm_title);
 		alarmTitle.setText(event.getTitle());

@@ -83,7 +83,7 @@ public class C2DMReceiver extends C2DMBaseReceiver {
 			notification.flags = Notification.FLAG_AUTO_CANCEL;
 
 			Intent notificationIntent;
-			com.groupagendas.groupagenda.events.Event event = EventManagement.getEventFromLocalDb(context, Integer.parseInt(rel_id));
+			com.groupagendas.groupagenda.events.Event event = EventManagement.getEventFromLocalDb(context, Integer.parseInt(rel_id), EventManagement.ID_INTERNAL);
 			if(isChatMessage){
 				notificationIntent = new Intent(context, ChatMessageActivity.class);
 				notificationIntent.putExtra("event_id", event.getEvent_id());

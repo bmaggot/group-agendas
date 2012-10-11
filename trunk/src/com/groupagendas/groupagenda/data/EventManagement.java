@@ -596,41 +596,39 @@ public class EventManagement {
 
 	}
 
-	//TODO javadoc
-		public static Event getEventFromLocalDb(Context context, long internal_ID) {
+	
+
+	public static final int ID_INTERNAL = 0;
+	public static final int ID_EXTERNAL = 1;
+	/**
+	 * @author justinas.marcinka@gmail.com
+	 * Gets event object with full info about event from local db by internal or external evetn ID
+	 * @param context
+	 * @param ID 
+	 * @param id_mode Indicates whether given param is internal or external id. Available id modes:<br>
+	 * EventManagement.ID_INTERNAL<br>
+	 * EventManagement.ID_EXTERNAL<br>
+	 * @return
+	 */
+		public static Event getEventFromLocalDb(Context context, long ID, int id_mode) {
 			Event item = null;
-			Uri uri = Uri.parse(EventsProvider.EMetaData.EventsMetaData.CONTENT_URI + "/" + internal_ID);
+			Uri uri;
+			
+			switch (id_mode){
+			case(ID_INTERNAL):
+				uri = EventsProvider.EMetaData.EventsMetaData.CONTENT_URI;
+				break;
+			case (ID_EXTERNAL):
+				uri = EventsProvider.EMetaData.EventsMetaData.CONTENT_URI_EXTERNAL_ID;
+				break;
+			default: throw new IllegalStateException("method getEventFromLocalDB: Unknown id mode");
+			}
+				
+			
+			uri = Uri.parse(uri + "/" + ID);
 			Cursor result = context.getContentResolver().query(uri, null, null, null, null);
 			if (result.moveToFirst()) {
 				item = createEventFromCursor(result);
-			
-//			item.setInvited(getInvitesForEvent(context, item));
-				
-//
-//				String assigned_contacts = result.getString(result.getColumnIndex(EventsProvider.EMetaData.EventsMetaData.ASSIGNED_CONTACTS));
-//				if (assigned_contacts != null && !assigned_contacts.equals("null")) {
-//					if (assigned_contacts.length() == 0) item.setAssigned_contacts(new int[0]);
-//					else try {
-//						item.setAssigned_contacts(Utils.jsonStringToArray(assigned_contacts));
-//					} catch (JSONException e) {
-//						Reporter.reportError(CLASS_NAME, Thread.currentThread().getStackTrace()[2].getMethodName().toString(),
-//								e.getMessage());
-//						item.setAssigned_contacts(new int[0]);
-//					}
-//				}
-//
-//				String assigned_groups = item.getAssigned_groups_DB_entry();
-//				if (assigned_groups != null && !assigned_groups.equals("null")) {
-//					if (assigned_groups.length() == 0) item.setAssigned_groups(new int[0]);
-//					else try {
-//						item.setAssigned_groups(Utils.jsonStringToArray(assigned_groups));
-//					} catch (JSONException e) {
-//						Reporter.reportError(CLASS_NAME, Thread.currentThread().getStackTrace()[2].getMethodName().toString(),
-//								e.getMessage());
-//						item.setAssigned_groups(new int[0]);
-//					}
-//				}
-//				}
 			}
 			result.close();
 			return item;

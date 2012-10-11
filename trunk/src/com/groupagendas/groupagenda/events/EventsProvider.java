@@ -62,6 +62,7 @@ public class EventsProvider extends ContentProvider{
 		
 		public static final class EventsMetaData implements BaseColumns{
 			public static final Uri CONTENT_URI = Uri.parse("content://" + AUTHORITY + "/" + EVENTS_TABLE);
+			public static final Uri CONTENT_URI_EXTERNAL_ID = Uri.parse("content://" + AUTHORITY + "/" + EVENTS_TABLE + "/external");
 			public static final String CONTENT_TYPE = "vnd.android.cursor.dir/vnd.formula.events_item";
 			public static final String CONTENT_ITEM_TYPE = "vnd.android.cursor.item/vnd.formula.events_item";
 			
@@ -232,6 +233,7 @@ public class EventsProvider extends ContentProvider{
 	private static final int ONE_EVENTS = 1;
 	private static final int DAY_INDEX = 2;
 	private static final int EVENTS_ON_DATE = 3;
+	private static final int EVENT_BY_EXTERNAL_ID = 4;
 //	private static final int INVITED = 4;
 
 	static {
@@ -240,6 +242,7 @@ public class EventsProvider extends ContentProvider{
 		mUriMatcher.addURI(EMetaData.AUTHORITY, EMetaData.EVENTS_TABLE+"/#", ONE_EVENTS);
 		mUriMatcher.addURI(EMetaData.AUTHORITY, EMetaData.EVENT_DAY_INDEX_TABLE, DAY_INDEX);
 		mUriMatcher.addURI(EMetaData.AUTHORITY, EMetaData.events_on_date, EVENTS_ON_DATE);
+		mUriMatcher.addURI(EMetaData.AUTHORITY, EMetaData.EVENTS_TABLE + "/external/#", EVENT_BY_EXTERNAL_ID);
 //		mUriMatcher.addURI(EMetaData.AUTHORITY, EMetaData.INVITED_TABLE, INVITED);
 	}
 	// END UriMatcher
@@ -288,6 +291,12 @@ public class EventsProvider extends ContentProvider{
 					+"="
 					+EMetaData.EventsIndexesMetaData.EVENT_ID);
 			orderBy = (TextUtils.isEmpty(sortOrder)) ? null : sortOrder; 
+			break;
+		case EVENT_BY_EXTERNAL_ID:
+			qb.setTables(EMetaData.EVENTS_TABLE);
+			qb.setProjectionMap(EM);
+			qb.appendWhere(EMetaData.EventsMetaData.E_ID + "=" + uri.getPathSegments().get(2));
+			orderBy = (TextUtils.isEmpty(sortOrder)) ? EMetaData.EventsMetaData.DEFAULT_SORT_ORDER : sortOrder;
 			break;
 //		case INVITED:
 //			qb.setTables(EMetaData.INVITED_TABLE);
