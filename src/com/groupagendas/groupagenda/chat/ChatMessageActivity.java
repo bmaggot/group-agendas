@@ -112,7 +112,7 @@ public class ChatMessageActivity extends Activity {
 
 		@Override
 		protected void onPostExecute(ChatMessageObject result) {
-			chatMessages.remove(result);
+			result.setDeleted(true);
 			adapter.notifyDataSetChanged();
 		}
 
