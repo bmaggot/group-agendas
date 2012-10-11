@@ -604,6 +604,7 @@ public class EventEditActivity extends EventActivity {
 			}
 			
 			event = result;
+			selectedIcon = event.getIcon();
 			//toptext
 			String tmpTopText = event.getType();
 			if(tmpTopText.equalsIgnoreCase("t")){
