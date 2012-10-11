@@ -20,7 +20,7 @@ public class Data {
 
 	private static Context mContext;
 
-	private static String ERROR = null;
+	public static String ERROR = null;
 	public final static String CONNECTION_ERROR = "Connection refused";
 
 	private static boolean loadAccountData = false;

@@ -1616,12 +1616,16 @@ public class DataManagement {
 		return null;
 	}
 
-	public String getError() {
-		return Data.getERROR();
+	public static String getError() {
+		String temp = Data.ERROR;
+		if (temp != null)
+			return Data.ERROR;
+		else
+			return "Failed getting error message.";
 	}
 
-	public void setError(String error) {
-		Data.setERROR(error);
+	public static void setError(String error) {
+		Data.ERROR = error;
 	}
 
 	public static String getCONNECTION_ERROR() {
