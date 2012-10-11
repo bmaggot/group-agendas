@@ -61,8 +61,6 @@ public class RegistrationActivity extends Activity {
 
 	private String errorStr;
 
-	private DataManagement dm;
-
 	private Boolean statement = false;
 	private ProgressBar pb;
 	private CheckBox chkStatement;
@@ -70,8 +68,8 @@ public class RegistrationActivity extends Activity {
 	private String localCountry;
 	private String defaultEmailAddress;
 
-	private final int DIALOG_SUCCESS = 0;
-	private final int DIALOG_ERROR = 1;
+	private static final int DIALOG_SUCCESS = 0;
+	private static final int DIALOG_ERROR = 1;
 	private ArrayList<StaticTimezones> countriesList;
 	private CountriesAdapter countriesAdapter;
 	private TimezonesAdapter timezonesAdapter;
@@ -149,7 +147,7 @@ public class RegistrationActivity extends Activity {
 				timezoneInUse = Integer.parseInt(temp.id);
 				countryView.setText(countriesList.get(timezoneInUse).country);
 				timezoneView.setText(countriesList.get(timezoneInUse).timezone);
-				phonecodeView.setText(countriesList.get(timezoneInUse).call_code);
+				phonecodeView.setText("+" + countriesList.get(timezoneInUse).call_code);
 			}
 		}
 
@@ -450,7 +448,10 @@ public class RegistrationActivity extends Activity {
 			if (result) {
 				showDialog(DIALOG_SUCCESS);
 			} else {
-				errorStr = dm.getError();
+				if (errorStr == null)
+					errorStr = new String();
+				
+				errorStr = getResources().getStringArray(R.array.registration_msgs)[9] + DataManagement.getError();
 				showDialog(DIALOG_ERROR);
 			}
 			// super.onPostExecute(result);
