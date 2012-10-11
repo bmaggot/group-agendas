@@ -48,6 +48,7 @@ import com.ptashek.widgets.datetimepicker.DateTimePicker;
 
 public class EventEditActivity extends EventActivity {
 
+	private Account account;
 	private TextView topText;
 	private Button deleteButton;
 
@@ -95,6 +96,7 @@ public class EventEditActivity extends EventActivity {
 	public void onResume() {
 		super.onResume();
 		dtUtils = new DateTimeUtils(this);
+		account  = new Account(EventEditActivity.this);
 		String[] cities;
 		String[] countries;
 		String[] countries2;
@@ -1007,7 +1009,6 @@ public class EventEditActivity extends EventActivity {
 					break;
 				}
 				if (timeSet) {
-					Account account = new Account(EventEditActivity.this);
 					view.setText(Utils.formatCalendar(mDateTimePicker.getCalendar(), account.getSetting_date_format()));
 				}
 				mDateTimeDialog.dismiss();
