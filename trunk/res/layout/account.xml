@@ -113,13 +113,6 @@
                     android:text="@string/phone1"
                     android:textColor="@android:color/black" />
 
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:paddingRight="5dp"
-                    android:text="@string/plus"
-                    android:textColor="@android:color/black" />
-
                 <EditText
                     android:id="@+id/phone1View"
                     android:layout_width="fill_parent"
@@ -138,13 +131,6 @@
                     android:text="@string/phone2"
                     android:textColor="@android:color/black" />
 
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:paddingRight="5dp"
-                    android:text="@string/plus"
-                    android:textColor="@android:color/black" />
-
                 <EditText
                     android:id="@+id/phone2View"
                     android:layout_width="fill_parent"
@@ -161,13 +147,6 @@
                     android:layout_width="100dp"
                     android:layout_height="wrap_content"
                     android:text="@string/phone3"
-                    android:textColor="@android:color/black" />
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:paddingRight="5dp"
-                    android:text="@string/plus"
                     android:textColor="@android:color/black" />
 
                 <EditText
