@@ -232,8 +232,9 @@ public class ChatManagement {
 	public static boolean removeChatMessageFromLocalDb(Context context, int messageId) {
 		boolean success = false;
 		try {
-			context.getContentResolver().delete(ChatProvider.CMMetaData.ChatMetaData.CONTENT_URI,
-					ChatProvider.CMMetaData.ChatMetaData.M_ID + "=" + messageId, null);
+			ContentValues cv = new ContentValues();
+			cv.put(ChatProvider.CMMetaData.ChatMetaData.DELETED, true);
+			context.getContentResolver().update(ChatProvider.CMMetaData.ChatMetaData.CONTENT_URI, cv, ChatProvider.CMMetaData.ChatMetaData.M_ID + "=" + messageId, null);
 			success = true;
 		} catch (Exception e) {
 			Log.e("removeChatMessageFromLoacalDB(Context context, int " + messageId + ")", e.getMessage());
