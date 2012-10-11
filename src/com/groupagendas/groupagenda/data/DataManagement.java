@@ -377,13 +377,13 @@ public class DataManagement {
 									.toString(), e.getMessage());
 						}
 						try {
-							u.setSetting_date_format(profile.getString(Account.AccountMetaData.SETTING_DATE_FORMAT));
+							u.setSetting_ampm(profile.getInt(Account.AccountMetaData.SETTING_AMPM));
 						} catch (JSONException e) {
 							Reporter.reportError(this.getClass().toString(), Thread.currentThread().getStackTrace()[2].getMethodName()
 									.toString(), e.getMessage());
 						}
 						try {
-							u.setSetting_ampm(profile.getInt(Account.AccountMetaData.SETTING_AMPM));
+							u.setSetting_date_format(profile.getString(Account.AccountMetaData.SETTING_DATE_FORMAT));
 						} catch (JSONException e) {
 							Reporter.reportError(this.getClass().toString(), Thread.currentThread().getStackTrace()[2].getMethodName()
 									.toString(), e.getMessage());

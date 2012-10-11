@@ -378,6 +378,12 @@ public class Account {
 
 	public void setSetting_date_format(String setting_date_format) {
 		if (!setting_date_format.equals("null")) {
+			setting_date_format = setting_date_format.replace("mm", "MM");
+			if(getSetting_ampm() == 1){
+				setting_date_format += " hh:mm";
+			} else {
+				setting_date_format += " HH:mm";
+			}
 			prefsEditor.putString(Account.AccountMetaData.SETTING_DATE_FORMAT, setting_date_format);
 		} else {
 			prefsEditor.putString(Account.AccountMetaData.SETTING_DATE_FORMAT, DataManagement.SERVER_TIMESTAMP_FORMAT);
