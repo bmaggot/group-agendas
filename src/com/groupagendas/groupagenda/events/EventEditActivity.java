@@ -592,7 +592,7 @@ public class EventEditActivity extends EventActivity {
 			if (intent.getBooleanExtra("isNative", false)) {
 				return dm.getNativeCalendarEvent(ids[0]);
 			} else {
-				return EventManagement.getEventFromLocalDb(EventEditActivity.this, ids[0]);
+				return EventManagement.getEventFromLocalDb(EventEditActivity.this, ids[0], EventManagement.ID_INTERNAL);
 			}
 		}
 
