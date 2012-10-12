@@ -41,8 +41,6 @@ public class HourEventRectangle extends EventView {
 	
 	@Override
 	protected void onDraw(Canvas canvas) {
-		
-		System.out.println("ON DRAW");
 		float roundRadius = dpToPx(roundRadiusDP);
 		float topPadding = dpToPx(topPaddingDP);
 		float bottomPadding = dpToPx(bottomPaddingDP);

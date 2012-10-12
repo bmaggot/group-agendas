@@ -32,7 +32,9 @@ import com.groupagendas.groupagenda.account.Account;
 import com.groupagendas.groupagenda.contacts.Contact;
 import com.groupagendas.groupagenda.contacts.ContactsProvider;
 import com.groupagendas.groupagenda.contacts.Group;
+import com.groupagendas.groupagenda.events.EventsProvider;
 import com.groupagendas.groupagenda.utils.MapUtils;
+import com.groupagendas.groupagenda.utils.Utils;
 
 public class ContactManagement {
 
@@ -47,6 +49,7 @@ public class ContactManagement {
 	 * @since 2012-09-28
 	 * @version 0.1
 	 */
+	//TODO MESKAI: naudoti metoda JSONUtils'uose kurti kontakta is JSON'o
 	public static void getContactsFromRemoteDb(Context context, HashSet<Integer> groupIds) {
 		boolean success = false;
 		String error = null;
@@ -222,7 +225,7 @@ public class ContactManagement {
 									if (temp != null && !temp.equals("null")) {
 										contact.image_url = temp;
 										try {
-											contact.image_bytes = DataManagement.imageToBytes(contact.image_url);
+											contact.image_bytes = Utils.imageToBytes(contact.image_url);
 										} catch(Exception e) {
 											Log.e("getContactsFromRemoteDb(contactIds)", "Failed getting image_bytes.");
 										}
@@ -1266,7 +1269,7 @@ public class ContactManagement {
 									if (temp != null && !temp.equals("null")) {
 										group.image_url = temp;
 										try {
-											group.image_bytes = DataManagement.imageToBytes(group.image_url);
+											group.image_bytes = Utils.imageToBytes(group.image_url);
 										} catch (Exception e) {
 											Log.e("getContactsFromRemoteDb(contactIds)", "Failed getting image_bytes.");
 										}
@@ -1592,5 +1595,91 @@ public class ContactManagement {
 			return false;
 		}
 	}
+/**
+ * Method works with local db: rewrites changed events data and deletes events that have been removed from remote db.
+ * @author justinas.marcinka@gmail.com
+ * @param context
+ * @param contactChanges ArrayList that contains contacts that have been changed
+ * @param deletedContactsIDs Array that contains ids for contacts that were deleted in remote db
+ */
+	public static void syncContacts(Context context,
+			ArrayList<Contact> contactChanges, long[] deletedContactsIDs) {
+		
+		StringBuilder sb;
+		
+		if (!contactChanges.isEmpty()) {
+			sb = new StringBuilder();
+			for (Contact e : contactChanges) {
+				sb.append(e.contact_id);
+				sb.append(',');
+			}
+			sb.deleteCharAt(sb.length() - 1);		
+//			bulkDeleteContacts(context, sb.toString());
+//			bulkInsertContacts(context, contactChanges);		
+//		
+		
+		}
+		
+		if (deletedContactsIDs.length > 0) {
+			sb = new StringBuilder();
+			for (int i = 0; i < deletedContactsIDs.length; i++) {
+				sb.append(deletedContactsIDs[i]);
+				sb.append(',');
+			}
+			sb.deleteCharAt(sb.length() - 1);
+			bulkDeleteContacts(context, sb.toString());
+		}
+
+			
+		}
+			
+	private static void bulkInsertContacts(Context context,
+		ArrayList<Contact> contactChanges) {
+//		db = ContactsProvider.getContactsWritableDb();
+//		try{
+//			  db.beginTransaction();
+//			  for each record in the list {
+//			     do_some_processing();
+//			     if (line represent a valid  entry) {
+//			        db.insert(SOME_TABLE, null, SOME_VALUE);
+//			     }
+//			     some_other_processing();
+//			  }
+//			  db.setTransactionSuccessful();
+//			} catch (SQLException e) {
+//			} finally {
+//			  db.endTranscation();
+//			}
+	
+}
+	private static void bulkInsertGroups(Context context,
+			ArrayList<Group> contactChanges) {
+		// TODO Auto-generated method stub
+		
+	}
+
+		private static void bulkDeleteContacts(Context context, String IDs) {
+			String where;
+			StringBuilder sb = new StringBuilder(ContactsProvider.CMetaData.ContactsMetaData.C_ID);
+			sb.append(" IN (");
+			sb.append(IDs);
+			sb.append(')');
+			where = sb.toString();
+			context.getContentResolver().delete(ContactsProvider.CMetaData.ContactsMetaData.CONTENT_URI, where, null);
+}
+		private static void bulkDeleteGroups(Context context, String IDs) {
+			String where;
+			StringBuilder sb = new StringBuilder(ContactsProvider.CMetaData.GroupsMetaData.G_ID);
+			sb.append(" IN (");
+			sb.append(IDs);
+			sb.append(')');
+			where = sb.toString();
+			context.getContentResolver().delete(ContactsProvider.CMetaData.GroupsMetaData.CONTENT_URI, where, null);
+}
+
+		
+
+		
+
 
 }
