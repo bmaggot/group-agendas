@@ -2853,8 +2853,9 @@ public class DataManagement {
 			ContactManagement.syncContacts (context, JSONUtils.JSONArrayToContactsArray(contactChanges), JSONUtils.JSONArrayToLongArray(deletedContacts));
 			
 			
-			JSONArray contacts = response.optJSONArray(CONTACTS);
-			JSONArray groups = response.optJSONArray(GROUPS);
+			JSONArray groupChanges = response.optJSONArray(GROUPS);
+			JSONArray deletedGroups = response.optJSONArray(GROUPS_REMOVED);
+			ContactManagement.syncGroups(context, JSONUtils.JSONArrayToGroupsArray(groupChanges), JSONUtils.JSONArrayToLongArray(deletedGroups));
 			
 		}
 		

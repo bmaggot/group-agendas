@@ -13,6 +13,7 @@ import android.util.Log;
 import com.groupagendas.groupagenda.account.Account;
 import com.groupagendas.groupagenda.contacts.Contact;
 import com.groupagendas.groupagenda.contacts.ContactsProvider;
+import com.groupagendas.groupagenda.contacts.Group;
 import com.groupagendas.groupagenda.data.EventManagement;
 import com.groupagendas.groupagenda.error.report.Reporter;
 import com.groupagendas.groupagenda.events.Event;
@@ -471,13 +472,126 @@ public class JSONUtils {
 						contact.groups = set;
 					}
 				} catch (JSONException e) {
-					Log.e("getContactsFromRemoteDb(contactIds)", "Groups were null.");
+//					Log.e("getContactsFromRemoteDb(contactIds)", "Groups were null.");
 				}
 			}
 		} catch (JSONException e) {
-			Log.e("getContactsFromRemoteDb(contactIds)", "Failed getting groups.");
+//			Log.e("getContactsFromRemoteDb(contactIds)", "Failed getting groups.");
 		}
 		return contact;
+	}
+
+	public static ArrayList<Group> JSONArrayToGroupsArray(JSONArray groupChanges) {
+		ArrayList<Group> result =  new ArrayList<Group>();
+		if (groupChanges != null){
+			for (int i = 0; i < groupChanges.length(); i++){
+				JSONObject o = groupChanges.optJSONObject(i);
+				if (o != null) result.add(createGroupFromJSONObject(o));
+			}
+		}
+		return result ;
+	}
+
+	private static Group createGroupFromJSONObject(JSONObject g) {
+		Group group = new Group();
+		String temp;
+
+		try {
+			group.group_id = g.getInt(ContactsProvider.CMetaData.GroupsMetaData.G_ID);
+		} catch (JSONException e) {
+			Log.e("getContactsFromRemoteDb(contactIds)", "Failed getting id.");
+		}
+
+		try {
+			temp = g.getString(ContactsProvider.CMetaData.GroupsMetaData.TITLE);
+			if (temp != null && !temp.equals("null"))
+				group.title = temp;
+			else
+				group.title = "";
+		} catch (JSONException e) {
+			Log.e("getContactsFromRemoteDb(contactIds)", "Failed getting title.");
+		}
+
+		try {
+			group.created = g.getLong(ContactsProvider.CMetaData.GroupsMetaData.CREATED);
+		} catch (JSONException e) {
+			Log.e("getGroupsFromRemoteDb(contactIds)", "Failed getting created.");
+		}
+
+		try {
+			group.modified = g.getLong(ContactsProvider.CMetaData.GroupsMetaData.MODIFIED);
+		} catch (JSONException e) {
+			Log.e("getGroupsFromRemoteDb(contactIds)", "Failed getting modified.");
+		}
+
+		try {
+			temp = g.getString(ContactsProvider.CMetaData.GroupsMetaData.DELETED);
+			if (temp != null && !temp.equals("null"))
+				group.deleted = temp;
+			else
+				group.deleted = "";
+		} catch (JSONException e) {
+			Log.e("getGroupsFromRemoteDb(contactIds)", "Failed getting phone deleted.");
+		}
+
+		try {
+			group.image = g.getBoolean(ContactsProvider.CMetaData.GroupsMetaData.IMAGE);
+		} catch (JSONException e) {
+			Log.e("getGroupsFromRemoteDb(contactIds)", "Failed getting image.");
+		}
+
+		try {
+			temp = g.getString(ContactsProvider.CMetaData.GroupsMetaData.IMAGE_THUMB_URL);
+			if (temp != null && !temp.equals("null"))
+				group.image_thumb_url = temp;
+			else
+				group.image_thumb_url = "";
+		} catch (JSONException e) {
+			Log.e("getGroupsFromRemoteDb(contactIds)", "Failed getting image_thumb_url.");
+		}
+
+		try {
+			temp = g.getString(ContactsProvider.CMetaData.GroupsMetaData.IMAGE_URL);
+			if (temp != null && !temp.equals("null")) {
+				group.image_url = temp;
+				try {
+					group.image_bytes = Utils.imageToBytes(group.image_url);
+				} catch (Exception e) {
+					Log.e("getContactsFromRemoteDb(contactIds)", "Failed getting image_bytes.");
+				}
+			} else
+				group.image_url = "";
+		} catch (JSONException e) {
+			group.image = false;
+			Log.e("getGroupsFromRemoteDb(contactIds)", "Failed getting image_url & image_bytes.");
+		}
+
+		try {
+			group.contact_count = g.getInt(ContactsProvider.CMetaData.GroupsMetaData.CONTACT_COUNT);
+		} catch (JSONException e) {
+			Log.e("getGroupsFromRemoteDb(contactIds)", "Failed getting contact_count.");
+		}
+
+		try {
+			if (!g.getString("contacts").equals("null") && g.getString("contacts") != null) {
+				try {
+					JSONArray contacts = g.getJSONArray("contacts");
+					if (contacts != null) {
+						Map<String, String> set = new HashMap<String, String>();
+						for (int j = 0, l = contacts.length(); j < l; j++) {
+							set.put(String.valueOf(j), contacts.getString(j));
+						}
+						group.contacts = set;
+					}
+				} catch (JSONException e) {
+//			TODO		Log.e("getGroupsFromRemoteDb(conta)", "Contacts were null.");
+				}
+			}
+		} catch (JSONException e) {
+//			TODO Log.e("getGroupsFromRemoteDb(contactIds)", "Failed getting contacts.");
+		}
+		return group;
+
 	}
 
 }
