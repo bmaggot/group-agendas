@@ -129,12 +129,12 @@ public class NavbarActivity extends Activity {
 		restoreMe(savedInstanceState);
 		acc = new Account(this);
 
-//		TODO if (acc.getLatestUpdateUnixTimestamp() > 0){
-//			new DataSyncTask().execute();
-//		}	else {
+	 if (acc.getLatestUpdateUnixTimestamp() > 0){
+			new DataSyncTask().execute();
+		}	else {
 		if (!dataLoaded && (progressDialog == null))
 				new DownLoadAllDataTask().execute();
-//		}
+		}
 		mInflater = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 
 		//
@@ -805,11 +805,11 @@ public class NavbarActivity extends Activity {
 		}
 	}
 	
-	private class DataSyncTask extends AsyncTask<Void, Void, Void> {
+	private class DataSyncTask extends AsyncTask<Void, Integer, Void> {
 
 		@Override
 		protected Void doInBackground(Void... params) {
-			// TODO Auto-generated method stub
+			DataManagement.synchronizeWithServer(NavbarActivity.this, this, acc.getLatestUpdateUnixTimestamp());
 			return null;
 		}
 		@Override
@@ -819,7 +819,7 @@ public class NavbarActivity extends Activity {
 //			progressDialog.dismiss();
 //			dataLoaded = true;
 			switchToView();
-//			setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_SENSOR);
+			setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_SENSOR);
 			
 //			setAlarmsToAllEvents(); TODO Justui V.
 		}

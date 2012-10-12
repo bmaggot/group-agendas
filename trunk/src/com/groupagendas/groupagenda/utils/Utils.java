@@ -1,5 +1,6 @@
 package com.groupagendas.groupagenda.utils;
 
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.text.ParseException;
@@ -9,11 +10,19 @@ import java.util.Date;
 import java.util.TimeZone;
 import java.util.regex.Pattern;
 
+import org.apache.http.HttpEntity;
+import org.apache.http.HttpResponse;
+import org.apache.http.HttpStatus;
+import org.apache.http.client.ClientProtocolException;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.util.EntityUtils;
 import org.json.JSONArray;
 import org.json.JSONException;
 
 import android.graphics.Bitmap;
 import android.text.format.DateFormat;
+import android.util.Log;
 
 import com.groupagendas.groupagenda.data.CalendarSettings;
 import com.groupagendas.groupagenda.data.DataManagement;
@@ -306,6 +315,32 @@ public static Calendar createCalendar(long timeInMilis, String timezone) {
 	Calendar cal = Calendar.getInstance(TimeZone.getTimeZone(timezone));
 	cal.setTimeInMillis(timeInMilis);
 	return cal;
+}
+
+
+
+public static byte[] imageToBytes(String image_url) {
+	if (image_url != null && !image_url.equals("null")) {
+		DefaultHttpClient mHttpClient = new DefaultHttpClient();
+		HttpGet mHttpGet = new HttpGet(image_url);
+		HttpResponse mHttpResponse;
+
+		try {
+			mHttpResponse = mHttpClient.execute(mHttpGet);
+			if (mHttpResponse.getStatusLine().getStatusCode() == HttpStatus.SC_OK) {
+				HttpEntity entity = mHttpResponse.getEntity();
+				if (entity != null) {
+					return EntityUtils.toByteArray(entity);
+				}
+			}
+		} catch (ClientProtocolException e) {
+			Log.e("imageToBytes(" + image_url + ")", e.getMessage());
+		} catch (IOException e) {
+			Log.e("imageToBytes(" + image_url + ")", e.getMessage());
+		}
+		return null;
+	}
+	return null;
 }
 	
 

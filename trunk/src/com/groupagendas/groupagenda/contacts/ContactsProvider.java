@@ -265,6 +265,7 @@ public class ContactsProvider extends ContentProvider{
 		return insUri;
 	}
 	
+		
 	@Override
 	public int update(Uri uri, ContentValues values, String where, String[] whereArgs) {
 		int count;

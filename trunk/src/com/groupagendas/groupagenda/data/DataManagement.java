@@ -1,7 +1,6 @@
 package com.groupagendas.groupagenda.data;
 
 import java.io.DataOutputStream;
-import java.io.IOException;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.text.SimpleDateFormat;
@@ -10,13 +9,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ExecutionException;
 
-import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.HttpStatus;
 import org.apache.http.NameValuePair;
-import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.HttpClient;
-import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.utils.URLEncodedUtils;
 import org.apache.http.entity.mime.HttpMultipartMode;
@@ -325,7 +321,7 @@ public class DataManagement {
 						}
 						try {
 							u.setImage_url(profile.getString(Account.AccountMetaData.IMAGE_URL));
-							u.image_bytes = imageToBytes(u.getImage_url());
+							u.image_bytes = Utils.imageToBytes(u.getImage_url());
 						} catch (JSONException e) {
 							Reporter.reportError(this.getClass().toString(), Thread.currentThread().getStackTrace()[2].getMethodName()
 									.toString(), e.getMessage());
@@ -1600,30 +1596,6 @@ public class DataManagement {
 			return null;
 		}
 
-	}
-
-	protected static byte[] imageToBytes(String image_url) {
-		if (image_url != null && !image_url.equals("null")) {
-			DefaultHttpClient mHttpClient = new DefaultHttpClient();
-			HttpGet mHttpGet = new HttpGet(image_url);
-			HttpResponse mHttpResponse;
-
-			try {
-				mHttpResponse = mHttpClient.execute(mHttpGet);
-				if (mHttpResponse.getStatusLine().getStatusCode() == HttpStatus.SC_OK) {
-					HttpEntity entity = mHttpResponse.getEntity();
-					if (entity != null) {
-						return EntityUtils.toByteArray(entity);
-					}
-				}
-			} catch (ClientProtocolException e) {
-				Log.e("imageToBytes(" + image_url + ")", e.getMessage());
-			} catch (IOException e) {
-				Log.e("imageToBytes(" + image_url + ")", e.getMessage());
-			}
-			return null;
-		}
-		return null;
 	}
 
 	public static String getError() {
