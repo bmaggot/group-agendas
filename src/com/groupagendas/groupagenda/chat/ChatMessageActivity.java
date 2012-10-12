@@ -16,6 +16,7 @@ import android.widget.ListView;
 import com.groupagendas.groupagenda.R;
 import com.groupagendas.groupagenda.calendar.adapters.ChatMessageAdapter;
 import com.groupagendas.groupagenda.data.ChatManagement;
+import com.groupagendas.groupagenda.data.DataManagement;
 
 public class ChatMessageActivity extends Activity {
 	private int event_id;
@@ -39,7 +40,11 @@ public class ChatMessageActivity extends Activity {
 		event_id = getIntent().getIntExtra("event_id", 0);
 
 		Object[] params = { this, event_id };
-		new GetChatMessagesForEventFromRemoteDb().execute(params);
+		if(DataManagement.networkAvailable){
+			new GetChatMessagesForEventFromRemoteDb().execute(params);
+		}else{
+			new GetChatMessagesForEventFromLocalDb().execute(params);
+		}
 
 		adapter = new ChatMessageAdapter(ChatMessageActivity.this, chatMessages);
 		chat_message_list = (ListView) findViewById(R.id.chat_message_list);
@@ -69,7 +74,25 @@ public class ChatMessageActivity extends Activity {
 		protected Void doInBackground(Object... params) {
 			Context context = (Context) params[0];
 			int eventId = (Integer) params[1];
-			chatMessages = ChatManagement.getChatMessagesForEventFromRemoteDb(eventId, chatMessages, context);
+			chatMessages = ChatManagement.getChatMessagesForEventFromRemoteDb(eventId, context);
+			return null;
+		}
+
+		@Override
+		protected void onPostExecute(Void result) {
+			adapter.setList(chatMessages);
+			adapter.notifyDataSetChanged();
+		}
+
+	}
+	
+	private class GetChatMessagesForEventFromLocalDb extends AsyncTask<Object, Void, Void> {
+
+		@Override
+		protected Void doInBackground(Object... params) {
+			Context context = (Context) params[0];
+			int eventId = (Integer) params[1];
+			chatMessages = ChatManagement.getChatMessagesForEventFromLocalDb(context, eventId);
 			return null;
 		}
 

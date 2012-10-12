@@ -303,9 +303,10 @@ public class ChatManagement {
 		return chatMessageObject;
 	}
 	
-	public static ArrayList<ChatMessageObject> getChatMessagesForEventFromRemoteDb(int eventId, ArrayList<ChatMessageObject>chatMessages, Context context){
+	public static ArrayList<ChatMessageObject> getChatMessagesForEventFromRemoteDb(int eventId, Context context){
 		boolean success = false;
 		HttpClient hc = new DefaultHttpClient();
+		ArrayList<ChatMessageObject>chatMessages = new ArrayList<ChatMessageObject>();
 		HttpPost post = new HttpPost(Data.getServerUrl() + "mobile/chat_get");
 		MultipartEntity reqEntity = new MultipartEntity(HttpMultipartMode.BROWSER_COMPATIBLE);
 
@@ -326,7 +327,6 @@ public class ChatManagement {
 					success = object.getBoolean("success");
 					if (success) {
 						JSONArray JSONchatMessages = object.getJSONArray("items");
-						chatMessages = new ArrayList<ChatMessageObject>();
 						for (int i = 0, l = JSONchatMessages.length(); i < l; i++) {
 							ChatManagement.insertChatMessageContentValueToLocalDb(context,
 									ChatManagement.makeChatMessageObjectContentValueFromJSON(JSONchatMessages.getJSONObject(i)));
