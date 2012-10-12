@@ -21,11 +21,15 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import android.content.ContentProviderOperation;
+import android.content.ContentProviderOperation.Builder;
 import android.content.ContentValues;
 import android.content.Context;
+import android.content.OperationApplicationException;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteException;
 import android.net.Uri;
+import android.os.RemoteException;
 import android.util.Log;
 
 import com.groupagendas.groupagenda.account.Account;
@@ -1596,7 +1600,7 @@ public class ContactManagement {
 		}
 	}
 /**
- * Method works with local db: rewrites changed events data and deletes events that have been removed from remote db.
+ * Method works with local db: rewrites changed contacts data and deletes contacts that have been removed from remote db.
  * @author justinas.marcinka@gmail.com
  * @param context
  * @param contactChanges ArrayList that contains contacts that have been changed
@@ -1614,9 +1618,9 @@ public class ContactManagement {
 				sb.append(',');
 			}
 			sb.deleteCharAt(sb.length() - 1);		
-//			bulkDeleteContacts(context, sb.toString());
-//			bulkInsertContacts(context, contactChanges);		
-//		
+			bulkDeleteContacts(context, sb.toString());
+			bulkInsertContacts(context, contactChanges);		
+		
 		
 		}
 		
@@ -1635,26 +1639,121 @@ public class ContactManagement {
 			
 	private static void bulkInsertContacts(Context context,
 		ArrayList<Contact> contactChanges) {
-//		db = ContactsProvider.getContactsWritableDb();
-//		try{
-//			  db.beginTransaction();
-//			  for each record in the list {
-//			     do_some_processing();
-//			     if (line represent a valid  entry) {
-//			        db.insert(SOME_TABLE, null, SOME_VALUE);
-//			     }
-//			     some_other_processing();
-//			  }
-//			  db.setTransactionSuccessful();
-//			} catch (SQLException e) {
-//			} finally {
-//			  db.endTranscation();
-//			}
-	
+		
+		for (Contact c : contactChanges){
+			insertContactToLocalDb(context, c, 0);
+		}
+//		TODO implement batch
+//		ArrayList<ContentProviderOperation> operations =  new ArrayList<ContentProviderOperation>();
+//		for (Contact c : contactChanges){
+//		Builder op = ContentProviderOperation.newInsert(ContactsProvider.CMetaData.ContactsMetaData.CONTENT_URI).withValues(createCVFromContact(c));
+//		operations.add(op.build());
+//		}
+//		try {
+//			context.getContentResolver().applyBatch(ContactsProvider.CMetaData.ContactsMetaData.CONTENT_URI.toString(), operations);
+//		} catch (RemoteException e) {
+//			// TODO Auto-generated catch block
+//			e.printStackTrace();
+//		} catch (OperationApplicationException e) {
+//			// TODO Auto-generated catch block
+//			e.printStackTrace();
+//		}
 }
+	private static ContentValues createCVFromContact(Contact contact) {
+		ContentValues cv = new ContentValues();
+
+		
+		cv.put(ContactsProvider.CMetaData.ContactsMetaData.C_ID, contact.contact_id);
+
+		cv.put(ContactsProvider.CMetaData.ContactsMetaData.NAME, contact.name);
+		cv.put(ContactsProvider.CMetaData.ContactsMetaData.LASTNAME, contact.lastname);
+
+		cv.put(ContactsProvider.CMetaData.ContactsMetaData.EMAIL, contact.email);
+		cv.put(ContactsProvider.CMetaData.ContactsMetaData.PHONE, contact.phone1);
+
+		cv.put(ContactsProvider.CMetaData.ContactsMetaData.BIRTHDATE, contact.birthdate);
+
+		cv.put(ContactsProvider.CMetaData.ContactsMetaData.COUNTRY, contact.country);
+		cv.put(ContactsProvider.CMetaData.ContactsMetaData.CITY, contact.city);
+		cv.put(ContactsProvider.CMetaData.ContactsMetaData.STREET, contact.street);
+		cv.put(ContactsProvider.CMetaData.ContactsMetaData.ZIP, contact.zip);
+
+		cv.put(ContactsProvider.CMetaData.ContactsMetaData.VISIBILITY, contact.visibility);
+
+		if (contact.image) {
+			cv.put(ContactsProvider.CMetaData.ContactsMetaData.IMAGE, "1");
+		} else {
+			cv.put(ContactsProvider.CMetaData.ContactsMetaData.IMAGE, "0");
+		}
+
+		cv.put(ContactsProvider.CMetaData.ContactsMetaData.IMAGE_URL, contact.image_url);
+		cv.put(ContactsProvider.CMetaData.ContactsMetaData.IMAGE_THUMB_URL, contact.image_thumb_url);
+		cv.put(ContactsProvider.CMetaData.ContactsMetaData.IMAGE_BYTES, contact.image_bytes);
+		if (contact.remove_image) {
+			cv.put(ContactsProvider.CMetaData.ContactsMetaData.REMOVE_IMAGE, "1");
+		} else {
+			cv.put(ContactsProvider.CMetaData.ContactsMetaData.REMOVE_IMAGE, "0");
+		}
+
+		cv.put(ContactsProvider.CMetaData.ContactsMetaData.AGENDA_VIEW, contact.agenda_view);
+		cv.put(ContactsProvider.CMetaData.ContactsMetaData.REGISTERED, contact.registered);
+
+		cv.put(ContactsProvider.CMetaData.ContactsMetaData.CREATED, contact.created);
+		cv.put(ContactsProvider.CMetaData.ContactsMetaData.MODIFIED, contact.modified);
+
+		cv.put(ContactsProvider.CMetaData.ContactsMetaData.GROUPS, MapUtils.mapToString(contact.groups));
+
+		cv.put(ContactsProvider.CMetaData.ContactsMetaData.COLOR, contact.getColor());
+		return cv;
+	}
+	
+	
+	/**
+	 * Method works with local db: rewrites changed groups data and deletes groups that have been removed from remote db.
+	 * @author justinas.marcinka@gmail.com
+	 * @param context
+	 * @param groupChanges ArrayList that contains groups that have been changed
+	 * @param deletedGroupIDs Array that contains ids for groups that were deleted in remote db
+	 */
+		public static void syncGroups(Context context,
+				ArrayList<Group> groupChanges, long[] deletedGroupsIDs) {
+			
+			StringBuilder sb;
+			
+			if (!groupChanges.isEmpty()) {
+				sb = new StringBuilder();
+				for (Group e : groupChanges) {
+					sb.append(e.group_id);
+					sb.append(',');
+				}
+				sb.deleteCharAt(sb.length() - 1);		
+				bulkDeleteGroups(context, sb.toString());
+				bulkInsertGroups(context, groupChanges);		
+			
+			
+			}
+			
+			if (deletedGroupsIDs.length > 0) {
+				sb = new StringBuilder();
+				for (int i = 0; i < deletedGroupsIDs.length; i++) {
+					sb.append(deletedGroupsIDs[i]);
+					sb.append(',');
+				}
+				sb.deleteCharAt(sb.length() - 1);
+				bulkDeleteGroups(context, sb.toString());
+			}
+
+				
+			}
+
 	private static void bulkInsertGroups(Context context,
-			ArrayList<Group> contactChanges) {
-		// TODO Auto-generated method stub
+			ArrayList<Group> groupChanges) {
+
+		for (Group g : groupChanges){
+			insertGroupToLocalDb(context, g, 0);
+					}
+		
+		//TODO implement batch operation for better performance
 		
 	}
 

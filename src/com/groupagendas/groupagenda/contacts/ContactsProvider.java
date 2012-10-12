@@ -11,6 +11,7 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.database.sqlite.SQLiteQueryBuilder;
+import android.database.sqlite.SQLiteStatement;
 import android.net.Uri;
 import android.provider.BaseColumns;
 import android.text.TextUtils;
@@ -265,6 +266,37 @@ public class ContactsProvider extends ContentProvider{
 		return insUri;
 	}
 	
+//	@Override
+//	public int bulkInsert(Uri uri, ContentValues[] values) {
+//		  final SQLiteDatabase db = mOpenHelper.getWritableDatabase();
+//		  
+//		  int count = 0;
+//		  
+//		  switch (mUriMatcher.match(uri)) {
+//			case CONTACTS_ALL:
+//			db.beginTransaction();
+//				try {
+//					SQLiteStatement insert = db.compileStatement("insert into " + CMetaData.CONTACTS_TABLE
+//				    + "(" 
+//					+ ")"		
+//					+" values " + "(?,?,?)");
+//					
+//					for (ContentValues entry : values){
+//						insert.
+//						insert.executeInsert();
+//					}
+//	
+//				} finally {
+//					db.endTransaction();
+//				}
+//				break;
+////			case GROUPS_ALL:
+////				break;
+//			default:
+//				throw new IllegalArgumentException("Unknow URI " + uri);
+//			}
+//		return count;
+//	}
 		
 	@Override
 	public int update(Uri uri, ContentValues values, String where, String[] whereArgs) {
@@ -361,6 +393,7 @@ private static class DatabaseHelper extends SQLiteOpenHelper {
 			db.execSQL(query);
 		}
 
+		
 		@Override
 		public void onUpgrade(SQLiteDatabase db, int arg1, int arg2) {
 		}
