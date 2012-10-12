@@ -33,7 +33,6 @@ import android.provider.BaseColumns;
 import android.text.TextUtils;
 import android.util.Log;
 
-import com.groupagendas.groupagenda.account.Account;
 import com.groupagendas.groupagenda.chat.ChatThreadObject;
 import com.groupagendas.groupagenda.error.report.Reporter;
 import com.groupagendas.groupagenda.events.Event;
@@ -41,15 +40,16 @@ import com.groupagendas.groupagenda.events.EventsAdapter;
 import com.groupagendas.groupagenda.events.EventsProvider;
 import com.groupagendas.groupagenda.events.Invited;
 import com.groupagendas.groupagenda.events.EventsProvider.EMetaData;
+import com.groupagendas.groupagenda.utils.JSONUtils;
 import com.groupagendas.groupagenda.utils.Utils;
 
 
 public class EventManagement {
 	static String error = "";
-	private static final String CLASS_NAME = "EventManagement.class";
+	public static final String CLASS_NAME = "EventManagement.class";
 	private static SimpleDateFormat day_index_formatter = new SimpleDateFormat(EventsProvider.EMetaData.EventsIndexesMetaData.DAY_COLUMN_FORMAT);
 	private static SimpleDateFormat month_index_formatter = new SimpleDateFormat(EventsProvider.EMetaData.EventsIndexesMetaData.MONTH_COLUMN_FORMAT);
-	private static String user_timezone = CalendarSettings.getTimeZone();
+	public static String user_timezone = CalendarSettings.getTimeZone();
 	
 	
 	
@@ -210,50 +210,50 @@ public class EventManagement {
 	private static final String SUCCESS = "success";
 	private static final String REASON = "reason";
 	
-	private static final String EVENT_ID = "event_id";
-	private static final String TIMEZONE = "timezone";
-	private static final String TIME_START_UTC = "timestamp_start_utc";
-	private static final String TIME_END_UTC = "timestamp_end_utc";
-	private static final String USER_ID = "user_id";
-	private static final String STATUS = "status";
-	private static final String IS_OWNER = "is_owner";
-	private static final String TYPE = "type";
-	private static final String TITLE = "title";
-	private static final String ICON = "icon";
-	private static final String COLOR = "color";
-	private static final String DESCRIPTION = "description";
-	private static final String LOCATION = "location";
-	private static final String ACCOMODATION = "accomodation";
-	private static final String COST = "cost";
-	private static final String TAKE_WITH_YOU = "take_with_you";
-	private static final String GO_BY = "go_by";
-	private static final String COUNTRY = "country";
-	private static final String CITY = "city";
-	private static final String STREET = "street";
-	private static final String ZIP = "zip";
-	private static final String ABSOLUTE_REMINDER_1 = "r1";
-	private static final String ABSOLUTE_REMINDER_2 = "r2";
-	private static final String ABSOLUTE_REMINDER_3 = "r3";
-	private static final String ABSOLUTE_ALARM_1 = "a1";
-	private static final String ALARM_1_FIRED = "alarm1_fired";
-	private static final String ABSOLUTE_ALARM_2 = "a2";
-	private static final String ALARM_2_FIRED = "alarm2_fired";
-	private static final String ABSOLUTE_ALARM_3 = "a3";
-	private static final String ALARM_3_FIRED = "alarm3_fired";
-	private static final String TIMESTAMP_CREATED = "timestamp_created";
-	private static final String TIMESTAMP_MODIFIED = "timestamp_modified";
-	private static final String ATTENDANT_0_COUNT = "attendant_0_count";
-	private static final String ATTENDANT_2_COUNT = "attendant_2_count";
-	private static final String ATTENDANT_1_COUNT = "attendant_1_count";
-	private static final String ATTENDANT_4_COUNT = "attendant_4_count";
-	private static final String IS_SPORTS_EVENT = "is_sports_event";
-	private static final String IS_ALL_DAY = "all_day";
-	private static final String CREATOR_FULLNAME = "creator_fullname";
-	private static final String CREATOR_CONTACT_ID = "is_sports_event";
-	private static final String INVITED = "invited";
-	private static final String MESSAGE_COUNT = "message_count";
-	private static final String NEW_MESSAGE_COUNT = "nmc";
-	private static final String MESSAGE_LAST_TIMESTAMP = "message_last_timestamp";
+	public static final String EVENT_ID = "event_id";
+	public static final String TIMEZONE = "timezone";
+	public static final String TIME_START_UTC = "timestamp_start_utc";
+	public static final String TIME_END_UTC = "timestamp_end_utc";
+	public static final String USER_ID = "user_id";
+	public static final String STATUS = "status";
+	public static final String IS_OWNER = "is_owner";
+	public static final String TYPE = "type";
+	public static final String TITLE = "title";
+	public static final String ICON = "icon";
+	public static final String COLOR = "color";
+	public static final String DESCRIPTION = "description";
+	public static final String LOCATION = "location";
+	public static final String ACCOMODATION = "accomodation";
+	public static final String COST = "cost";
+	public static final String TAKE_WITH_YOU = "take_with_you";
+	public static final String GO_BY = "go_by";
+	public static final String COUNTRY = "country";
+	public static final String CITY = "city";
+	public static final String STREET = "street";
+	public static final String ZIP = "zip";
+	public static final String ABSOLUTE_REMINDER_1 = "r1";
+	public static final String ABSOLUTE_REMINDER_2 = "r2";
+	public static final String ABSOLUTE_REMINDER_3 = "r3";
+	public static final String ABSOLUTE_ALARM_1 = "a1";
+	public static final String ALARM_1_FIRED = "alarm1_fired";
+	public static final String ABSOLUTE_ALARM_2 = "a2";
+	public static final String ALARM_2_FIRED = "alarm2_fired";
+	public static final String ABSOLUTE_ALARM_3 = "a3";
+	public static final String ALARM_3_FIRED = "alarm3_fired";
+	public static final String TIMESTAMP_CREATED = "timestamp_created";
+	public static final String TIMESTAMP_MODIFIED = "timestamp_modified";
+	public static final String ATTENDANT_0_COUNT = "attendant_0_count";
+	public static final String ATTENDANT_2_COUNT = "attendant_2_count";
+	public static final String ATTENDANT_1_COUNT = "attendant_1_count";
+	public static final String ATTENDANT_4_COUNT = "attendant_4_count";
+	public static final String IS_SPORTS_EVENT = "is_sports_event";
+	public static final String IS_ALL_DAY = "all_day";
+	public static final String CREATOR_FULLNAME = "creator_fullname";
+	public static final String CREATOR_CONTACT_ID = "is_sports_event";
+	public static final String INVITED = "invited";
+	public static final String MESSAGE_COUNT = "message_count";
+	public static final String NEW_MESSAGE_COUNT = "nmc";
+	public static final String MESSAGE_LAST_TIMESTAMP = "message_last_timestamp";
 	private static final String ASSIGNED_CONTACTS = "assigned_contacts";
 	private static final String EVENTS = "events";
 
@@ -411,7 +411,7 @@ public class EventManagement {
 						for (int i = 0; i < es.length(); i++) {
 							try{
 							JSONObject e = es.getJSONObject(i);
-							event = createEventFromJSON(e);
+							event = JSONUtils.createEventFromJSON(e);
 							if (event != null && !event.isNative()) {
 								event.setUploadedToServer(true);
 								insertEventToLocalDB(context, event);
@@ -523,7 +523,7 @@ public class EventManagement {
 			// 3 Renew event data in time indexes
 
 			if (eventTimeChanged) {
-				where = EventsProvider.EMetaData.EventsIndexesMetaData.EVENT_ID + "=" + internalID;
+				where = EventsProvider.EMetaData.EventsIndexesMetaData.EVENT_INTERNAL_ID + "=" + internalID;
 				resolver.delete(EventsProvider.EMetaData.EventsIndexesMetaData.CONTENT_URI, where, null);
 				insertEventToDayIndexTable(context, event);
 			}
@@ -548,7 +548,7 @@ public class EventManagement {
 		context.getContentResolver().delete(EventsProvider.EMetaData.EventsMetaData.CONTENT_URI, where, null);
 
 		// 2. Deleting event from events day indexes table
-		where = EventsProvider.EMetaData.EventsIndexesMetaData.EVENT_ID + "=" + internalID;
+		where = EventsProvider.EMetaData.EventsIndexesMetaData.EVENT_INTERNAL_ID + "=" + internalID;
 		context.getContentResolver().delete(EventsProvider.EMetaData.EventsIndexesMetaData.CONTENT_URI, where, null);
 
 	}
@@ -566,10 +566,13 @@ public class EventManagement {
 		eventDayStart.set(Calendar.SECOND, 0);
 		eventDayStart.set(Calendar.MILLISECOND, 0);
 
-		long event_id = event.getInternalID();
+		long event_internal_id = event.getInternalID();
+		long event_external_id = event.getEvent_id();
+		String ext_id = null;
+		if (event_external_id > 0) ext_id = "" + event_external_id;
 
 		if (event.is_all_day()) { // only one row is inserted
-			insertEventDayIndexRow(context, event_id, eventDayStart);
+			insertEventDayIndexRow(context, event_internal_id, ext_id, eventDayStart);
 		} else
 			while (eventDayStart.before(event.getEndCalendar())) { // rows are
 																	// inserted
@@ -577,16 +580,17 @@ public class EventManagement {
 																	// day that
 																	// event
 																	// lasts
-				insertEventDayIndexRow(context, event_id, eventDayStart);
+				insertEventDayIndexRow(context, event_internal_id, ext_id, eventDayStart);
 				eventDayStart.add(Calendar.DATE, 1);
 
 			}
 	}
 
 	//TODO javadoc
-	private static void insertEventDayIndexRow(Context context, long event_id, Calendar eventDayStart) {
+	private static void insertEventDayIndexRow(Context context, long event_id,  String event_external_id, Calendar eventDayStart) {
 		ContentValues cv = new ContentValues();
-		cv.put(EventsProvider.EMetaData.EventsIndexesMetaData.EVENT_ID, event_id);
+		cv.put(EventsProvider.EMetaData.EventsIndexesMetaData.EVENT_INTERNAL_ID, event_id);
+		cv.put(EventsProvider.EMetaData.EventsIndexesMetaData.EVENT_EXTERNAL_ID, event_external_id);
 		Date time = eventDayStart.getTime();
 
 		cv.put(EventsProvider.EMetaData.EventsIndexesMetaData.DAY, day_index_formatter.format(time));
@@ -636,7 +640,7 @@ public class EventManagement {
 //TODO javadoc
 		private static void updateEventStatusInLocalDb(Context context, Event event) {
 			if (event.getMyInvite() != null){
-				event.getMyInvite().setStatus(event.getStatus());                            //TODO solve this
+				event.getMyInvite().setStatus(event.getStatus());                           
 			}
 			ContentValues cv = new ContentValues();
 			cv.put(EventsProvider.EMetaData.EventsMetaData.STATUS, event.getStatus());	
@@ -1154,7 +1158,7 @@ private static String parseInvitedListToJSONArray(ArrayList<Invited> invited) {
 		try {
 			ArrayList<Invited> invites = new ArrayList<Invited>();
 			
-			item.setMyInvite(createInvitedListFromJSONArrayString(result.getString(result.getColumnIndex(EventsProvider.EMetaData.EventsMetaData.INVITED)), invites));
+			item.setMyInvite(JSONUtils.createInvitedListFromJSONArrayString(result.getString(result.getColumnIndex(EventsProvider.EMetaData.EventsMetaData.INVITED)), invites));
 			item.setInvited(invites);
 		} catch (JSONException e) {
 			Log.e("Error parsing invited array from local db", "Event ID: " + item.getEvent_id() + " event local ID: " + item.getInternalID());
@@ -1171,348 +1175,6 @@ private static String parseInvitedListToJSONArray(ArrayList<Invited> invited) {
 		return item;
 	}	
 
-	/**
-	 * Creates Event object from JSON object
-	 * 
-	 * @param e
-	 *            JSON object
-	 * @return new event object with all info set. WARNING: if not all required
-	 *         fields are set, returns null <br>
-	 *         Needed fields: event_id<br>
-	 *         user_id<br>
-	 *         status<br>
-	 *         is_owner<br>
-	 *         title<br>
-	 *         timezone<br>
-	 *         time_start_utc<br>
-	 *         time_end_utc<br>
-	 */
-	protected static Event createEventFromJSON(JSONObject e) {
-		Event event = new Event();
-		long unixTimestamp;
-//		
-//		
-//		HashMap<String, String> filterMap = new HashMap<String, String>();
-//		 Iterator keys = e.keys();
-//		
-//		while (keys.hasNext()){
-//			String key = (String)keys.next();
-//			try {
-//				filterMap.put(key, e.getString(key));
-//			} catch (JSONException e1) {
-//				Reporter.reportError(CLASS_NAME, Thread.currentThread().getStackTrace()[2].getMethodName().toString(),
-//						e1.getMessage()); 
-//				e1.printStackTrace();
-//			}
-//
-//		}
-//		
-//		try{
-//			event.setEvent_id(Integer.parseInt(filterMap.get(JSON_TAG_EVENT_ID)));
-//			event.setTimezone(filterMap.get(JSON_TAG_TIMEZONE));
-//			unixTimestamp = Long.parseLong(filterMap.get(JSON_TAG_TIME_START_UTC));
-//			event.setStartCalendar(Utils.createCalendar(Utils.unixTimestampToMilis(unixTimestamp), user_timezone));
-//			unixTimestamp = Long.parseLong(filterMap.get(JSON_TAG_TIME_END_UTC));
-//			event.setEndCalendar(Utils.createCalendar(Utils.unixTimestampToMilis(unixTimestamp), user_timezone));
-//			unixTimestamp = Long.parseLong(filterMap.get(JSON_TAG_TIMESTAMP_CREATED));
-//			event.setCreatedMillisUtc(Utils.unixTimestampToMilis(unixTimestamp));
-//			unixTimestamp = Long.parseLong(filterMap.get(JSON_TAG_TIMESTAMP_MODIFIED));
-//			event.setModifiedMillisUtc(Utils.unixTimestampToMilis(unixTimestamp));
-//		}catch (NumberFormatException ex){
-//			Log.e(CLASS_NAME, "FAILED TO PARSE ESSENTIAL EVENT DATA", ex);
-//			return null;
-//		}
-//		event.setUser_id(Integer.parseInt(filterMap.get(JSON_TAG_USER_ID)));
-//		event.setStatus(Integer.parseInt(filterMap.get(JSON_TAG_STATUS)));
-//		event.setCreator_contact_id(Integer.parseInt(filterMap.get(JSON_TAG_CREATOR_CONTACT_ID)));
-//		
-//		event.setAttendant_0_count(Integer.parseInt(filterMap.get(JSON_TAG_ATTENDANT_0_COUNT)));
-//		event.setAttendant_1_count(Integer.parseInt(filterMap.get(JSON_TAG_ATTENDANT_1_COUNT)));
-//		event.setAttendant_2_count(Integer.parseInt(filterMap.get(JSON_TAG_ATTENDANT_2_COUNT)));
-//		event.setAttendant_4_count(Integer.parseInt(filterMap.get(JSON_TAG_ATTENDANT_4_COUNT)));
-//		
-//		event.setSports_event(Integer.parseInt(filterMap.get(JSON_TAG_IS_SPORTS_EVENT)) == 1);
-//		event.setIs_owner(Integer.parseInt(filterMap.get(JSON_TAG_IS_OWNER)) == 1);
-//		event.setIs_all_day(Integer.parseInt(filterMap.get(JSON_TAG_ALL_DAY)) == 1);
-//		//TODO birthdays????
-//		event.setBirthday(false);
-//		
-//		event.setType(filterMap.get(JSON_TAG_TYPE));
-//		event.setCreator_fullname(filterMap.get(JSON_TAG_CREATOR_FULLNAME));
-//		event.setTitle(filterMap.get(JSON_TAG_TITLE));
-//		event.setIcon(filterMap.get(JSON_TAG_ICON));
-//		event.setColor(filterMap.get(JSON_TAG_COLOR));
-//		event.setDescription(filterMap.get(JSON_TAG_DESCRIPTION));
-//		event.setLocation(filterMap.get(JSON_TAG_LOCATION));
-//		event.setAccomodation(filterMap.get(JSON_TAG_ACCOMODATION));
-//		event.setCost(filterMap.get(JSON_TAG_COST));
-//		event.setTake_with_you(filterMap.get(JSON_TAG_TAKE_WITH_YOU));
-//		event.setGo_by(filterMap.get(JSON_TAG_GO_BY));
-//		
-//		event.setCountry(filterMap.get(JSON_TAG_COUNTRY));
-//		event.setCity(filterMap.get(JSON_TAG_CITY));
-//		event.setStreet(filterMap.get(JSON_TAG_STREET));
-//		event.setZip(filterMap.get(JSON_TAG_ZIP));
-//		event.setMessage_count(Integer.parseInt(filterMap.get(JSON_TAG_MESSAGE_COUNT)));
-//		
-//		try {
-//			event.setInvited(createInvitedListFromJSONArrayString(filterMap.get(JSON_TAG_INVITED)));
-//		} catch (JSONException e1) {
-//			event.setInvited(new ArrayList<Invited>());
-//		}
-//		
-
-
-//		day_index_formatter = new SimpleDateFormat(EventsProvider.EMetaData.EventsIndexesMetaData.DAY_COLUMN_FORMAT);
-//		month_index_formatter = new SimpleDateFormat(EventsProvider.EMetaData.EventsIndexesMetaData.MONTH_COLUMN_FORMAT);
-		// critical event info. If fetch fails, return null
-		try {
-			event.setEvent_id(e.getInt(EVENT_ID));
-			event.setTimezone(e.getString(TIMEZONE));
-		} catch (JSONException e1) {
-			Reporter.reportError(CLASS_NAME, Thread.currentThread().getStackTrace()[2].getMethodName().toString(),
-					e1.getMessage());
-		}
-			// EVENT TIME START
-
-			unixTimestamp = e.optLong(TIME_START_UTC);
-			if (unixTimestamp == 0) return null;
-			event.setStartCalendar(Utils.createCalendar(Utils.unixTimestampToMilis(unixTimestamp), user_timezone));
-		
-			// EVENT TIME END
-				unixTimestamp = e.optLong(TIME_END_UTC);
-				if (unixTimestamp == 0) return null;
-			event.setEndCalendar(Utils.createCalendar(Utils.unixTimestampToMilis(unixTimestamp), user_timezone));
-		
-		
-		
-
-
-			event.setUser_id(e.optInt(USER_ID));
-		
-			event.setStatus(e.optInt(STATUS));
-
-
-			event.setIs_owner(e.optInt(IS_OWNER) == 1);
-
-		try {
-			event.setType(e.getString(TYPE));
-		} catch (JSONException e1) {
-			Reporter.reportError(CLASS_NAME, Thread.currentThread().getStackTrace()[2].getMethodName().toString(),
-					e1.getMessage());
-		}
-
-		try {
-			event.setTitle(e.getString(TITLE));
-		} catch (JSONException e1) {
-			Reporter.reportError(CLASS_NAME, Thread.currentThread().getStackTrace()[2].getMethodName().toString(),
-					e1.getMessage());
-		}
-		try {
-			event.setIcon(e.getString(ICON));
-		} catch (JSONException e1) {
-			Reporter.reportError(CLASS_NAME, Thread.currentThread().getStackTrace()[2].getMethodName().toString(),
-					e1.getMessage());
-		}
-		try {
-			event.setColor(e.getString(COLOR));
-		} catch (JSONException e1) {
-			Reporter.reportError(CLASS_NAME, Thread.currentThread().getStackTrace()[2].getMethodName().toString(),
-					e1.getMessage());
-		}
-
-		try {
-			event.setDescription(e.getString(DESCRIPTION));
-		} catch (JSONException e1) {
-			Reporter.reportError(CLASS_NAME, Thread.currentThread().getStackTrace()[2].getMethodName().toString(),
-					e1.getMessage());
-		}
-		try {
-			event.setLocation(e.getString(LOCATION));
-		} catch (JSONException e1) {
-			Reporter.reportError(CLASS_NAME, Thread.currentThread().getStackTrace()[2].getMethodName().toString(),
-					e1.getMessage());
-		}
-		try {
-			event.setAccomodation(e.getString(ACCOMODATION));
-		} catch (JSONException e1) {
-			Reporter.reportError(CLASS_NAME, Thread.currentThread().getStackTrace()[2].getMethodName().toString(),
-					e1.getMessage());
-		}
-		try {
-			event.setCost(e.getString(COST));
-		} catch (JSONException e1) {
-			Reporter.reportError(CLASS_NAME, Thread.currentThread().getStackTrace()[2].getMethodName().toString(),
-					e1.getMessage());
-		}
-		try {
-			event.setTake_with_you(e.getString(TAKE_WITH_YOU));
-		} catch (JSONException e1) {
-			Reporter.reportError(CLASS_NAME, Thread.currentThread().getStackTrace()[2].getMethodName().toString(),
-					e1.getMessage());
-		}
-		try {
-			event.setGo_by(e.getString(GO_BY));
-		} catch (JSONException e1) {
-			Reporter.reportError(CLASS_NAME, Thread.currentThread().getStackTrace()[2].getMethodName().toString(),
-					e1.getMessage());
-		}
-		try {
-			event.setCountry(e.getString(COUNTRY));
-		} catch (JSONException e1) {
-			Reporter.reportError(CLASS_NAME, Thread.currentThread().getStackTrace()[2].getMethodName().toString(),
-					e1.getMessage());
-		}
-		try {
-			event.setCity(e.getString(CITY));
-		} catch (JSONException e1) {
-			Reporter.reportError(CLASS_NAME, Thread.currentThread().getStackTrace()[2].getMethodName().toString(),
-					e1.getMessage());
-		}
-		try {
-			event.setStreet(e.getString(STREET));
-		} catch (JSONException e1) {
-			Reporter.reportError(CLASS_NAME, Thread.currentThread().getStackTrace()[2].getMethodName().toString(),
-					e1.getMessage());
-		}
-		try {
-			event.setZip(e.getString(ZIP));
-		} catch (JSONException e1) {
-			Reporter.reportError(CLASS_NAME, Thread.currentThread().getStackTrace()[2].getMethodName().toString(),
-					e1.getMessage());
-		}
-
-		// reminders
-		unixTimestamp = e.optLong(ABSOLUTE_REMINDER_1);
-		if (unixTimestamp != 0) event.setReminder1(Utils.createCalendar(Utils.unixTimestampToMilis(unixTimestamp), user_timezone));
-		unixTimestamp = e.optLong(ABSOLUTE_REMINDER_2);
-		if (unixTimestamp != 0) event.setReminder2(Utils.createCalendar(Utils.unixTimestampToMilis(unixTimestamp), user_timezone));
-		unixTimestamp = e.optLong(ABSOLUTE_REMINDER_3);
-		if (unixTimestamp != 0) event.setReminder3(Utils.createCalendar(Utils.unixTimestampToMilis(unixTimestamp), user_timezone));
-		//alarms
-		unixTimestamp = e.optLong(ABSOLUTE_ALARM_1);
-		if (unixTimestamp != 0) event.setAlarm1(Utils.createCalendar(Utils.unixTimestampToMilis(unixTimestamp), user_timezone));
-		unixTimestamp = e.optLong(ABSOLUTE_ALARM_2);
-		if (unixTimestamp != 0) event.setAlarm2(Utils.createCalendar(Utils.unixTimestampToMilis(unixTimestamp), user_timezone));
-		unixTimestamp = e.optLong(ABSOLUTE_ALARM_3);
-		if (unixTimestamp != 0) event.setAlarm3(Utils.createCalendar(Utils.unixTimestampToMilis(unixTimestamp), user_timezone));
-
-		try {
-			event.setAlarm1fired(e.getString(ALARM_1_FIRED));
-		} catch (JSONException e1) {
-//			System.out.println("LONG PARSE FAILED");
-			Reporter.reportError(CLASS_NAME, Thread.currentThread().getStackTrace()[2].getMethodName().toString(),
-					e1.getMessage());
-		}
-		try {
-			event.setAlarm2fired(e.getString(ALARM_2_FIRED));
-		} catch (JSONException e1) {
-			Reporter.reportError(CLASS_NAME, Thread.currentThread().getStackTrace()[2].getMethodName().toString(),
-					e1.getMessage());
-		}
-	
-		try {
-			event.setAlarm3fired(e.getString(ALARM_3_FIRED));
-		} catch (JSONException e1) {
-			Reporter.reportError(CLASS_NAME, Thread.currentThread().getStackTrace()[2].getMethodName().toString(),
-					e1.getMessage());
-		}
-
-
-			
-			event.setCreatedMillisUtc(Utils.unixTimestampToMilis(e.optLong(TIMESTAMP_CREATED)));
-			event.setModifiedMillisUtc(Utils.unixTimestampToMilis(e.optLong(TIMESTAMP_MODIFIED)));
-
-
-			event.setAttendant_0_count(e.optInt(ATTENDANT_0_COUNT));
-			event.setAttendant_1_count(e.optInt(ATTENDANT_1_COUNT));
-			event.setAttendant_2_count(e.optInt(ATTENDANT_2_COUNT));
-			event.setAttendant_4_count(e.optInt(ATTENDANT_4_COUNT));
-	
-			event.setSports_event(e.optInt(IS_SPORTS_EVENT) == 1);
-			event.setIs_all_day(e.optInt(IS_ALL_DAY) == 1);
-
-		try {
-			event.setCreator_fullname(e.getString(CREATOR_FULLNAME));
-		} catch (JSONException e1) {
-			Reporter.reportError(CLASS_NAME, Thread.currentThread().getStackTrace()[2].getMethodName().toString(),
-					e1.getMessage());
-		}
-
-			event.setCreator_contact_id(e.optInt(CREATOR_CONTACT_ID));
-		
-//		try {
-//			JSONArray arrayString = e.getJSONArray(JSON_TAG_ASSIGNED_CONTACTS);
-////			event.setAssigned_contacts(parseJSONArrayToLongArray(arrayString));
-//		} catch (JSONException e1) {
-//			
-////			event.setAssigned_contacts_DB_entry("");
-//			Reporter.reportError(CLASS_NAME, Thread.currentThread().getStackTrace()[2].getMethodName().toString(),
-//					e1.getMessage());
-//		}
-//		try {
-//			event.setAssigned_groups_DB_entry(e.getString("assigned_groups"));
-//		} catch (JSONException e1) {
-//			event.setAssigned_contacts_DB_entry("");
-//			Reporter.reportError(CLASS_NAME, Thread.currentThread().getStackTrace()[2].getMethodName().toString(),
-//					e1.getMessage());
-//		}
-		try {
-			String jsonstring = e.getString(INVITED);
-		
-			ArrayList<Invited> invites = new ArrayList<Invited>();
-			createInvitedListFromJSONArrayString(jsonstring, invites);
-			event.setInvited(invites);
-		} catch (JSONException e1) {
-			event.setInvited(new ArrayList<Invited>());
-		}
-
-			event.setMessage_count(e.optInt(MESSAGE_COUNT));
-			event.setNew_message_count(e.optInt(NEW_MESSAGE_COUNT));
-			event.setLast_message_date_time(e.optLong(MESSAGE_LAST_TIMESTAMP));
-
-		return event;
-	}
-
-	
-
-	private static Invited createInvitedListFromJSONArrayString(
-		String jsonArrayString, ArrayList<Invited> invites) throws JSONException  {
-		JSONArray jsonArray= new JSONArray(jsonArrayString);
-		if (invites == null) invites = new ArrayList<Invited>();
-		Account acc = new Account();
-		int id = acc.getUser_id();
-		Invited myInvite = null;
-		int count = jsonArray.length();
-		if (count > 0) {
-			for (int i = 0; i < count; i++) {
-				JSONObject e = jsonArray.getJSONObject(i);
-				Invited o = createInvitedFromJSONObject(e);
-				invites.add(o);
-				if (id == o.getGuid()) myInvite = o;
-			}
-		}
-		
-		return myInvite;
-		}
-	
-	private static Invited createInvitedFromJSONObject(JSONObject input) {
-		Invited item = new Invited();
-		
-
-		try {
-			item.setName(input.getString(EventsProvider.EMetaData.InvitedMetaData.NAME));
-		} catch (JSONException e) {
-//			Log.e("Invited(JSONObject input)", "Failed getting gname");
-		}
-		
-			item.setGcid(input.optInt(EventsProvider.EMetaData.InvitedMetaData.GCID));
-			item.setGuid(input.optInt(EventsProvider.EMetaData.InvitedMetaData.GUID));
-			item.setStatus(input.optInt(EventsProvider.EMetaData.InvitedMetaData.STATUS));
-			item.setMy_contact_id(input.optInt(EventsProvider.EMetaData.InvitedMetaData.MY_CONTACT_ID));
-
-		return item;
-	}
 	//TODO document
 	public static ArrayList<Event> getEventsFromLocalDb(Context context, boolean filterActual) {
 		Event item;
@@ -1562,6 +1224,61 @@ private static String parseInvitedListToJSONArray(ArrayList<Invited> invited) {
 
 	public static CharSequence getError() {
 		return error;
+	}
+	
+	protected static void bulkDeleteEvents(Context context, String IDs, int id_mode){
+		String where;
+		switch (id_mode){
+		case(ID_INTERNAL):
+			where = EventsProvider.EMetaData.EventsMetaData._ID;
+			break;
+		case (ID_EXTERNAL):
+			where = EventsProvider.EMetaData.EventsMetaData.E_ID;
+			break;
+		default: throw new IllegalStateException("method getEventFromLocalDB: Unknown id mode");
+		}
+		StringBuilder sb = new StringBuilder(where);
+		sb.append(" IN (");
+		sb.append(IDs);
+		sb.append(')');
+		where = sb.toString();
+		context.getContentResolver().delete(EventsProvider.EMetaData.EventsMetaData.CONTENT_URI, where, null);
+		context.getContentResolver().delete(EventsProvider.EMetaData.EventsIndexesMetaData.CONTENT_URI, where, null);
+	}
+	
+	protected static void syncEvents(Context context, ArrayList<Event> eventChanges, long[] deletedEventsIDs) {
+		for (Event e : eventChanges)
+			System.out.println(e);
+		
+	
+		for (int i = 0; i < deletedEventsIDs.length; i++)
+			System.out.println(deletedEventsIDs[i]);
+		StringBuilder sb;
+		
+		if (!eventChanges.isEmpty()) {
+			sb = new StringBuilder();
+			for (Event e : eventChanges) {
+				sb.append(e.getEvent_id());
+				sb.append(',');
+			}
+			sb.deleteCharAt(sb.length() - 1);		
+			EventManagement.bulkDeleteEvents(context, sb.toString(), EventManagement.ID_EXTERNAL);
+			for (Event e : eventChanges){
+				insertEventToLocalDB(context, e);
+			}
+		}
+		
+		if (deletedEventsIDs.length > 0) {
+			sb = new StringBuilder();
+			for (int i = 0; i < deletedEventsIDs.length; i++) {
+				sb.append(deletedEventsIDs[i]);
+				sb.append(',');
+			}
+			sb.deleteCharAt(sb.length() - 1);
+			EventManagement.bulkDeleteEvents(context, sb.toString(), EventManagement.ID_EXTERNAL);
+			
+			
+		}
 	}
 
 //	private static Invited createInvitedFromCursor(Cursor result) {
