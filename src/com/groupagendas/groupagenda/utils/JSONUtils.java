@@ -7,12 +7,11 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import com.groupagendas.groupagenda.account.Account;
+import com.groupagendas.groupagenda.contacts.Contact;
 import com.groupagendas.groupagenda.data.EventManagement;
 import com.groupagendas.groupagenda.error.report.Reporter;
 import com.groupagendas.groupagenda.events.Event;
 import com.groupagendas.groupagenda.events.EventsProvider;
-import com.groupagendas.groupagenda.events.EventsProvider.EMetaData;
-import com.groupagendas.groupagenda.events.EventsProvider.EMetaData.InvitedMetaData;
 import com.groupagendas.groupagenda.events.Invited;
 
 public class JSONUtils {
@@ -257,9 +256,10 @@ public class JSONUtils {
 			return item;
 		}
 
-	public static Object JSONArrayToContactsArray(JSONArray contactChanges) {
+	public static ArrayList<Contact> JSONArrayToContactsArray(JSONArray contactChanges) {
+		ArrayList<Contact> result =  new ArrayList<Contact>();
 		// TODO Auto-generated method stub
-		return null;
+		return result ;
 	}
 
 }

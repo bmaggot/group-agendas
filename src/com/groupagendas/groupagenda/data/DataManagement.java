@@ -57,6 +57,7 @@ import com.groupagendas.groupagenda.events.Event;
 import com.groupagendas.groupagenda.settings.AutoColorItem;
 import com.groupagendas.groupagenda.settings.AutoIconItem;
 import com.groupagendas.groupagenda.templates.TemplatesProvider.TMetaData.TemplatesMetaData;
+import com.groupagendas.groupagenda.utils.JSONUtils;
 import com.groupagendas.groupagenda.utils.Prefs;
 import com.groupagendas.groupagenda.utils.Utils;
 
@@ -77,6 +78,15 @@ public class DataManagement {
 	private static final String TOKEN = "token";
 
 	public static final String PROJECT_ID = "102163820835";
+	private static final String LATEST_UPDATE_UNIX_TIMESTAMP = "from_unix_timestamp";
+	private static final String DATA_DELTA_URL = "/mobile/data_delta";
+	private static final String SUCCESS = "success";
+	private static final String EVENTS = "events";
+	private static final String CONTACTS = "contacts";
+	private static final String GROUPS = "groups";
+	private static final String EVENTS_REMOVED = "removed_events";
+	private static final String CONTACTS_REMOVED = "removed_contacts";
+	private static final String GROUPS_REMOVED = "removed_groups";
 
 	private DataManagement(Context c) {
 		Data.setPrefs(new Prefs(c));
@@ -377,13 +387,13 @@ public class DataManagement {
 									.toString(), e.getMessage());
 						}
 						try {
-							u.setSetting_ampm(profile.getInt(Account.AccountMetaData.SETTING_AMPM));
+							u.setSetting_date_format(profile.getString(Account.AccountMetaData.SETTING_DATE_FORMAT));
 						} catch (JSONException e) {
 							Reporter.reportError(this.getClass().toString(), Thread.currentThread().getStackTrace()[2].getMethodName()
 									.toString(), e.getMessage());
 						}
 						try {
-							u.setSetting_date_format(profile.getString(Account.AccountMetaData.SETTING_DATE_FORMAT));
+							u.setSetting_ampm(profile.getInt(Account.AccountMetaData.SETTING_AMPM));
 						} catch (JSONException e) {
 							Reporter.reportError(this.getClass().toString(), Thread.currentThread().getStackTrace()[2].getMethodName()
 									.toString(), e.getMessage());
@@ -1382,7 +1392,7 @@ public class DataManagement {
 						Log.e("Edit event status ERROR", e1.getJSONObject("error").getString("reason"));
 					} else {
 						JSONObject e = e1.getJSONObject("event");
-						event = EventManagement.createEventFromJSON(e);
+						event = JSONUtils.createEventFromJSON(e);
 						EventManagement.insertEventToLocalDB(context, event);
 					}
 				}
@@ -2854,7 +2864,67 @@ public class DataManagement {
 
 	}
 
+	public static void synchronizeWithServer(Context context, AsyncTask<Void, Integer, Void> dataSyncTask,	long latestUpdateUnixTimestamp) {
+		System.out.println("sync timestamp " + latestUpdateUnixTimestamp);
+		JSONObject response = getDataChangesJSON(latestUpdateUnixTimestamp);
+		if (response == null || !response.optBoolean(SUCCESS)){
+			System.out.println("RESPONSE success: " + response.optString(SUCCESS));
+			//TODO error handling
+		}else{
+			JSONArray eventChanges = response.optJSONArray(EVENTS);
+			JSONArray deletedEvents = response.optJSONArray(EVENTS_REMOVED);
+			EventManagement.syncEvents (context, JSONUtils.JSONArrayToEventArray(eventChanges), JSONUtils.JSONArrayToLongArray(deletedEvents));
+			
+			
+			JSONArray contactChanges = response.optJSONArray(CONTACTS);
+			JSONArray deletedContacts = response.optJSONArray(CONTACTS_REMOVED);
+			ContactManagement.syncContacts (context, JSONUtils.JSONArrayToContactsArray(contactChanges), JSONUtils.JSONArrayToLongArray(deletedContacts));
+			
+			
+			JSONArray contacts = response.optJSONArray(CONTACTS);
+			JSONArray groups = response.optJSONArray(GROUPS);
+			
+		}
+		
+
+	}
+
 	
+
+	private static JSONObject getDataChangesJSON(long latestUpdateUnixTimestamp) {
+		try {
+			HttpClient hc = new DefaultHttpClient();
+			HttpPost post = new HttpPost(Data.getServerUrl() + DATA_DELTA_URL);
+
+			MultipartEntity reqEntity = new MultipartEntity(HttpMultipartMode.BROWSER_COMPATIBLE);
+
+			reqEntity.addPart(TOKEN, new StringBody(Data.getToken()));
+			reqEntity.addPart(LATEST_UPDATE_UNIX_TIMESTAMP, new StringBody("" + latestUpdateUnixTimestamp));
+
+			
+			post.setEntity(reqEntity);
+			HttpResponse rp = hc.execute(post);
+			if (rp.getStatusLine().getStatusCode() == HttpStatus.SC_OK) {
+					String resp = EntityUtils.toString(rp.getEntity());
+					if (resp != null) {
+						return new JSONObject(resp);
+					}
+				} else {
+					//TODO set error code
+					Log.e("Data synchronize - status", rp.getStatusLine().getStatusCode() + "");
+				}
+			
+		} catch (Exception e) {
+
+		}
+		return null;
+	}
+		
+	
+	
+	
+
+
 
 	
 
