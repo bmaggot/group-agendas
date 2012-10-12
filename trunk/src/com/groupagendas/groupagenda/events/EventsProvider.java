@@ -40,7 +40,8 @@ public class EventsProvider extends ContentProvider{
 			public static final String DAY_COLUMN_FORMAT = "yyyy-MM-dd";
 			public static final String MONTH_COLUMN_FORMAT = "yyyy-MM";
 			
-			public static final String EVENT_ID = "event_internal_id";
+			public static final String EVENT_INTERNAL_ID = EventsMetaData._ID;
+			public static final String EVENT_EXTERNAL_ID = EventsMetaData.E_ID;
 			public static final String DAY = "day";
 			public static final String MONTH = "month";
 			
@@ -137,7 +138,7 @@ public class EventsProvider extends ContentProvider{
 	
 	static {
 		EM = new HashMap<String, String>();
-		EM.put(EMetaData.EventsMetaData._ID, EMetaData.EventsMetaData._ID);
+		EM.put(EMetaData.EventsMetaData._ID, EMetaData.EVENTS_TABLE+ "." + EMetaData.EventsMetaData._ID);
 		EM.put(EMetaData.EventsMetaData.E_ID, EMetaData.EVENTS_TABLE+ "." + EMetaData.EventsMetaData.E_ID);
 		EM.put(EMetaData.EventsMetaData.USER_ID, EMetaData.EventsMetaData.USER_ID);
 		
@@ -206,7 +207,7 @@ public class EventsProvider extends ContentProvider{
 	
 	static{
 		DEM = new HashMap<String, String>();
-		DEM.put(EMetaData.EventsIndexesMetaData.EVENT_ID, EMetaData.EventsIndexesMetaData.EVENT_ID);
+		DEM.put(EMetaData.EventsIndexesMetaData.EVENT_INTERNAL_ID, EMetaData.EventsIndexesMetaData.EVENT_INTERNAL_ID);
 		DEM.put(EMetaData.EventsIndexesMetaData.DAY, EMetaData.EventsIndexesMetaData.DAY);
 		DEM.put(EMetaData.EventsIndexesMetaData.MONTH, EMetaData.EventsIndexesMetaData.MONTH);
 	}
@@ -287,9 +288,9 @@ public class EventsProvider extends ContentProvider{
 			qb.setDistinct(true);
 			qb.setProjectionMap(EM);
 			qb.setTables(EMetaData.EVENT_DAY_INDEX_TABLE + "," +  EMetaData.EVENTS_TABLE);
-			qb.appendWhere(EMetaData.EventsMetaData._ID
+			qb.appendWhere(EMetaData.EVENTS_TABLE + "." + EMetaData.EventsMetaData._ID
 					+"="
-					+EMetaData.EventsIndexesMetaData.EVENT_ID);
+					+EMetaData.EVENT_DAY_INDEX_TABLE+ "." +EMetaData.EventsIndexesMetaData.EVENT_INTERNAL_ID);
 			orderBy = (TextUtils.isEmpty(sortOrder)) ? null : sortOrder; 
 			break;
 		case EVENT_BY_EXTERNAL_ID:
@@ -462,10 +463,11 @@ public class EventsProvider extends ContentProvider{
 			query = "CREATE TABLE "
 					+EMetaData.EVENT_DAY_INDEX_TABLE
 					+ " ("
-					+ EMetaData.EventsIndexesMetaData.EVENT_ID + " TEXT ,"
+					+ EMetaData.EventsIndexesMetaData.EVENT_INTERNAL_ID + " TEXT ,"
+					+ EMetaData.EventsIndexesMetaData.EVENT_EXTERNAL_ID + " TEXT ,"
 					+ EMetaData.EventsIndexesMetaData.DAY + " TEXT , "
 					+ EMetaData.EventsIndexesMetaData.MONTH + " TEXT , "
-					+ "PRIMARY KEY (" + EMetaData.EventsIndexesMetaData.EVENT_ID + ", " + EMetaData.EventsIndexesMetaData.DAY + ") ON CONFLICT IGNORE"
+					+ "PRIMARY KEY (" + EMetaData.EventsIndexesMetaData.EVENT_INTERNAL_ID + ", " + EMetaData.EventsIndexesMetaData.DAY + ") ON CONFLICT IGNORE"
 					+")";
 			db.execSQL(query);
 			
