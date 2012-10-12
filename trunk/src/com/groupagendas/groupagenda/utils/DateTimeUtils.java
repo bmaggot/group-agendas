@@ -34,7 +34,7 @@ public class DateTimeUtils {
 	public DateTimeUtils(Context context) {
 		account = new Account(context);
 
-		dateFormat = account.getSetting_date_format().replace("mm", "MM");
+		dateFormat = account.getSetting_date_format();
 		mDateFormater = new SimpleDateFormat(dateFormat);
 		dDateFormater = new SimpleDateFormat(DEFAULT_DATE);
 
