@@ -11,6 +11,7 @@ import android.widget.TextView;
 import com.groupagendas.groupagenda.R;
 import com.groupagendas.groupagenda.account.Account;
 import com.groupagendas.groupagenda.chat.ChatThreadObject;
+import com.groupagendas.groupagenda.utils.DateTimeUtils;
 import com.groupagendas.groupagenda.utils.Utils;
 
 public class ChatThreadAdapter extends AbstractAdapter<ChatThreadObject> {
@@ -33,7 +34,8 @@ public class ChatThreadAdapter extends AbstractAdapter<ChatThreadObject> {
 		TextView chatTime = (TextView) view.findViewById(R.id.chat_message_time);
 		Calendar timeStart = Calendar.getInstance();
 		timeStart.setTimeInMillis(Utils.unixTimestampToMilis(chatThread.getTimeStart()));
-		chatTime.setText(Utils.formatCalendar(timeStart, account.getSetting_date_format()));
+		DateTimeUtils dtUtils = new DateTimeUtils(getContext());
+		chatTime.setText(dtUtils.formatDateTime(timeStart));
 		return view;
 	}
 

@@ -30,6 +30,7 @@ import com.groupagendas.groupagenda.chat.ChatProvider.CMMetaData;
 public class ChatManagement {
 
 	public static String TOKEN = "token";
+	public static String deleted = "true";
 
 	/**
 	 * Make ChatMessageObject from JSON.
@@ -130,11 +131,13 @@ public class ChatManagement {
 				message.setCreated(cur.getLong(cur.getColumnIndex(ChatProvider.CMMetaData.ChatMetaData.CREATED)));
 				message.setUserId(cur.getInt(cur.getColumnIndex(ChatProvider.CMMetaData.ChatMetaData.USER_ID)));
 				message.setMessage(cur.getString(cur.getColumnIndex(ChatProvider.CMMetaData.ChatMetaData.MESSAGE)));
-				message.setDeleted(!cur.getString(cur.getColumnIndex(ChatProvider.CMMetaData.ChatMetaData.DELETED)).equals("null"));
+				message.setDeleted(cur.getString(cur.getColumnIndex(ChatProvider.CMMetaData.ChatMetaData.DELETED)).equals(ChatManagement.deleted));
 				message.setUpdated(cur.getString(cur.getColumnIndex(ChatProvider.CMMetaData.ChatMetaData.UPDATED)));
 				chatMessages.add(message);
+				cur.moveToNext();
 			}
 		}
+		cur.close();
 		return chatMessages;
 	}
 
