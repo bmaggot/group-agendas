@@ -186,7 +186,8 @@ public class ContactsActivity extends ListActivity implements OnCheckedChangeLis
 		
 		searchView.addTextChangedListener(filterTextWatcher);
 		
-		ACTIVITY_MODE = getIntent().getExtras().getInt("ACTIVITY_MODE");
+		if (getIntent().getExtras() != null)
+			ACTIVITY_MODE = getIntent().getExtras().getInt("ACTIVITY_MODE");
 
 		switch (ACTIVITY_MODE) {
 			case SELECTION_MODE:
