@@ -6,6 +6,7 @@ import java.util.List;
 import android.app.Activity;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Color;
 import android.graphics.drawable.BitmapDrawable;
 import android.view.View;
 import android.view.ViewGroup;
@@ -23,6 +24,7 @@ public class ContactsAdapter extends AbstractAdapter<Contact> implements Filtera
 	private int bubbleHeightDP = 15;
 	List<Contact> allContacts;
 	List<Contact> selectedContacts;
+	ArrayList<Integer> selection = new ArrayList<Integer>();
 
 	public ContactsAdapter(List<Contact> objects, Activity context, List<Contact> selectedContacts) {
 		super(context, objects);
@@ -80,20 +82,21 @@ public class ContactsAdapter extends AbstractAdapter<Contact> implements Filtera
 			holder.image.setImageResource(R.drawable.group_icon);
 		}
 
-		// TODO investigate performance improve if replaced to sum shit Justas explained.
+		// TODO investigate performance improve if replaced to sum shit Justas
+		// explained.
 		// LOW STACK
-		if (selectedContacts != null && selectedContacts.size() > 0) {
-			for (int i = 0; i < selectedContacts.size(); i++) {
-				if (selectedContacts.get(i).contact_id == contact.contact_id) {
-					convertView.setBackgroundColor(-14565157);
-					convertView.setDrawingCacheBackgroundColor(0);
-					break;
-				} else {
-					convertView.setBackgroundColor(-1);
-				}
-			}
+		// if (convertView.isSelected()) {
+		// convertView.setBackgroundColor(-14565157);
+		// }
+		if (selection.contains(position)) {
+			convertView.setSelected(true);
+			convertView.setPressed(true);
+			convertView.setBackgroundColor(-14565157);
+		} else {
+			convertView.setSelected(false);
+			convertView.setPressed(false);
+			convertView.setBackgroundColor(Color.WHITE);
 		}
-
 		return convertView;
 	}
 
@@ -148,4 +151,12 @@ public class ContactsAdapter extends AbstractAdapter<Contact> implements Filtera
 		super.notifyDataSetChanged();
 	}
 
+	public void toggleSelected(Integer position) {
+		if (selection.contains(position)) {
+			selection.remove(position);
+
+		} else {
+			selection.add(position);
+		}
+	}
 }
