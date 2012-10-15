@@ -46,7 +46,7 @@ public class CountriesAdapter extends AbstractAdapter<StaticTimezones> implement
 		if (!countries.isEmpty()) {
 			for (int i = 1; i < countries.size(); i++) {
 				StaticTimezones entry = countries.get(i);
-				if (!entry.country.equalsIgnoreCase(countries.get(i - 1).country)) filteredList.add(entry); 
+				if (!entry.country2.equalsIgnoreCase(countries.get(i - 1).country2)) filteredList.add(entry); 
 			}
 		}
 		return filteredList ;
@@ -59,14 +59,10 @@ public class CountriesAdapter extends AbstractAdapter<StaticTimezones> implement
 			convertView = View.inflate(getContext(), textViewResourceId, null);
 		}
 
-		temp = list.get(position).country;
+		temp = list.get(position).country2;
 		((TextView) convertView).setText(temp);
 		convertView.setTag(list.get(position).id);
 			
-//			if (position > 0 && list.get(position - 1).country.equals(temp)) {
-//				convertView.setVisibility(View.GONE);
-//			}
-
 		return convertView;
 	}
 
@@ -96,7 +92,7 @@ public class CountriesAdapter extends AbstractAdapter<StaticTimezones> implement
 				List<StaticTimezones> filteredItems = new ArrayList<StaticTimezones>();
 
 				for (int i = 0; i < items.size() - 1; i++) {
-					if (items.get(i).country.toLowerCase().startsWith(constraint.toString().toLowerCase())) {
+					if (items.get(i).country2.toLowerCase().startsWith(constraint.toString().toLowerCase())) {
 						filteredItems.add(items.get(i));
 					}
 				}
