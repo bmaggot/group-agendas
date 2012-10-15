@@ -810,6 +810,7 @@ public class ContactManagement {
 						.query(ContactsProvider.CMetaData.ContactsMetaData.CONTENT_URI, null, where, null, null);
 				if (cur.moveToFirst())
 					temp = new Contact(cur);
+				cur.close();
 			}
 		}
 
