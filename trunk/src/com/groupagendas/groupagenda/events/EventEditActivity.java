@@ -518,10 +518,11 @@ public class EventEditActivity extends EventActivity {
 
 			@Override
 			public void onClick(View v) {
-				Data.newEventPar = true;
+				Intent i = new Intent(EventEditActivity.this, ContactsActivity.class);
+				i.putExtra("ACTIVITY_MODE", 1); // TODO HARDCODED PARAMETER! DEFUSE!
 				Data.showSaveButtonInContactsForm = true;
 				// TODO Data.eventForSavingNewInvitedPersons = event;
-				startActivity(new Intent(EventEditActivity.this, ContactsActivity.class));
+				startActivity(i);
 			}
 		});
 

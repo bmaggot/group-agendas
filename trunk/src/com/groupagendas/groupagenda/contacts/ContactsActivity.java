@@ -17,13 +17,13 @@ import org.json.JSONObject;
 import android.app.ListActivity;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.graphics.Color;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
+import android.util.SparseBooleanArray;
 import android.util.TypedValue;
 import android.view.GestureDetector;
 import android.view.Gravity;
@@ -95,6 +95,10 @@ public class ContactsActivity extends ListActivity implements OnCheckedChangeLis
 	private GroupsAdapter gAdapter;
 
 	private Button importButton;
+	
+	private int ACTIVITY_MODE = 0;
+	private static final int LISTING_MODE = 0;
+	private static final int SELECTION_MODE = 1;
 	
 	@Override
 	public void onWindowFocusChanged(boolean hasFocus) {
@@ -181,7 +185,20 @@ public class ContactsActivity extends ListActivity implements OnCheckedChangeLis
 		sideIndex.setVisibility(View.GONE);
 		
 		searchView.addTextChangedListener(filterTextWatcher);
+		
+		ACTIVITY_MODE = getIntent().getExtras().getInt("ACTIVITY_MODE");
 
+		switch (ACTIVITY_MODE) {
+			case SELECTION_MODE:
+				getListView().setChoiceMode(ListView.CHOICE_MODE_MULTIPLE);
+				getListView().setItemsCanFocus(false);
+				break;
+			case LISTING_MODE:
+				getListView().setChoiceMode(ListView.CHOICE_MODE_NONE);
+				break;
+		}
+
+		
 		if (CURRENT_TASK.equals(CONTACTS_TASK)) {
 			contacts = ContactManagement.getContactsFromLocalDb(ContactsActivity.this, null);
 			cAdapter = new ContactsAdapter(contacts, this, selectedContacts);
@@ -216,7 +233,21 @@ public class ContactsActivity extends ListActivity implements OnCheckedChangeLis
 
 				@Override
 				public void onClick(View v) {
-					EventActivity.newInvites = new ArrayList<Invited>();
+					if (EventActivity.newInvites == null)
+						EventActivity.newInvites = new ArrayList<Invited>();
+					
+					SparseBooleanArray selection = getListView().getCheckedItemPositions();
+
+					if (selection != null) {
+		                for (int i=0; i<selection.size(); i++) {
+		                	Contact c = (Contact) cAdapter.getItem(selection.keyAt(i));
+//		                	if (!selectedContacts.contains(c))
+		                		selectedContacts.add(c);
+//		                	else
+//		                		selectedContacts.remove(c);
+		                }
+		            }
+
 					for (Contact temp : selectedContacts) {
 						Invited nu = new Invited();
 						nu.setMy_contact_id(temp.contact_id);
@@ -356,36 +387,18 @@ public class ContactsActivity extends ListActivity implements OnCheckedChangeLis
 		}
 	}
 
-	@SuppressWarnings("unused")
 	@Override
 	public void onListItemClick(ListView parent, View v, int position, long id) {
-		v.setDrawingCacheBackgroundColor(Color.TRANSPARENT);
-		v.setDrawingCacheEnabled(false);
-		if (Data.newEventPar) {
-			if (CURRENT_LIST == CONTACTS_LIST) {
-				if (selectedContacts.size() > 0) {
-					for (int i = 0; i < selectedContacts.size(); i++) {
-						if (selectedContacts.get(i).contact_id == contacts.get(position).contact_id) {
-							selectedContacts.remove(i);
-							v.setBackgroundColor(Color.WHITE);
-							break;
-						} else {
-							selectedContacts.add(contacts.get(position));
-							v.setBackgroundColor(Color.LTGRAY);
-							break;
-						}
-					}
-				} else {
-					selectedContacts.add(contacts.get(position));
-					v.setBackgroundColor(Color.LTGRAY);
-				}
-			} else if (CURRENT_LIST == GROUPS_LIST) {
-				Intent groupIntent = new Intent(ContactsActivity.this, GroupContactsActivity.class);
-				groupIntent.putExtra("groupName", groups.get(position).title);
-				groupIntent.putExtra("groupId", groups.get(position).group_id);
-				startActivity(groupIntent);
-			}
-		} else {
+		switch (ACTIVITY_MODE) {
+		case SELECTION_MODE:
+			cAdapter.toggleSelected(Integer.valueOf(position));
+//			v.setSelected(!v.isSelected());
+//			if (v.isSelected())
+//				v.setBackgroundColor(-14565157);
+//			else
+//				v.setBackgroundColor(Color.WHITE);
+			break;
+		case LISTING_MODE:
 			if (CURRENT_LIST == CONTACTS_LIST) {
 				Intent contactIntent = new Intent(ContactsActivity.this, ContactInfoActivity.class);
 				StringBuilder sb = new StringBuilder(contacts.get(position).name).append(" ").append(
@@ -400,6 +413,7 @@ public class ContactsActivity extends ListActivity implements OnCheckedChangeLis
 				groupIntent.putExtra("groupId", groups.get(position).group_id);
 				startActivity(groupIntent);
 			}
+			break;
 		}
 	}
 
