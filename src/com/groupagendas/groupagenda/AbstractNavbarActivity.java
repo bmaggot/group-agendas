@@ -1,12 +1,10 @@
 package com.groupagendas.groupagenda;
 
-//import com.groupagendas.groupagenda.NavbarActivity.DownLoadAllDataTask;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 
 import android.app.Activity;
 import android.app.Dialog;
-import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
@@ -16,12 +14,10 @@ import android.view.View.OnClickListener;
 import android.view.Window;
 import android.widget.Button;
 import android.widget.CompoundButton;
-import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.RelativeLayout;
-import at.bartinger.list.item.EntryAdapter;
 import az.mecid.android.ActionItem;
 import az.mecid.android.QuickAction;
 
@@ -41,7 +37,6 @@ import com.groupagendas.groupagenda.events.EventsActivity;
 import com.groupagendas.groupagenda.events.NewEventActivity;
 import com.groupagendas.groupagenda.utils.Utils;
 import com.ptashek.widgets.datetimepicker.DateTimePicker;
-//import com.groupagendas.groupagenda.NavbarActivity.DownLoadAllDataTask;
 
 public class AbstractNavbarActivity extends Activity{
 	
