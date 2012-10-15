@@ -9,6 +9,8 @@ import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.telephony.TelephonyManager;
@@ -17,7 +19,6 @@ import android.text.TextWatcher;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.Window;
-import android.view.WindowManager;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ArrayAdapter;
@@ -37,6 +38,7 @@ import com.groupagendas.groupagenda.timezone.CountriesAdapter;
 import com.groupagendas.groupagenda.timezone.TimezonesAdapter;
 
 public class RegistrationActivity extends Activity {
+	private static String POLICY_URL = "http://www.groupagendas.com/info/privacy";
 
 	private Spinner languageSpinner;
 	private String[] languageArray;
@@ -61,10 +63,7 @@ public class RegistrationActivity extends Activity {
 
 	private String errorStr;
 
-	private Boolean statement = false;
 	private ProgressBar pb;
-	private CheckBox chkStatement;
-	private AlertDialog mDialog;
 	private String localCountry;
 	private String defaultEmailAddress;
 
@@ -77,6 +76,7 @@ public class RegistrationActivity extends Activity {
 	private View timezoneSpinnerBlock;
 	private View countrySpinnerBlock;
 	private String localLanguage;
+	private CheckBox chkStatement;
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -157,13 +157,14 @@ public class RegistrationActivity extends Activity {
 	public void onResume() {
 		super.onResume();
 
+		chkStatement = (CheckBox) findViewById(R.id.chk_statement);
 		languageSpinner = (Spinner) findViewById(R.id.languageSpinner);
 		ArrayAdapter<CharSequence> adapterLanguage = ArrayAdapter.createFromResource(this, R.array.language_labels,
 				android.R.layout.simple_spinner_item);
 		adapterLanguage.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
 		languageSpinner.setAdapter(adapterLanguage);
 		languageArray = getResources().getStringArray(R.array.language_values);
-		languageSpinner.setSelection(getMyCountry(languageArray, localLanguage));
+		languageSpinner.setSelection(getMyLanguage(languageArray, localLanguage));
 
 		phonecodeView = (EditText) findViewById(R.id.phonecodeView);
 
@@ -298,32 +299,9 @@ public class RegistrationActivity extends Activity {
 
 			@Override
 			public void onClick(View v) {
-				String displayText = "Statement";
-				String positiveButtonText = "Agree";
-				String negativeButtonText = "Disagree";
-				mDialog = new AlertDialog.Builder(RegistrationActivity.this).setTitle(getResources().getString(R.string.app_name))
-						.setMessage(displayText).setIcon(R.drawable.ga_logo)
-						.setPositiveButton(positiveButtonText, new DialogInterface.OnClickListener() {
-
-							@Override
-							public void onClick(DialogInterface dialog, int which) {
-								statement = true;
-								chkStatement.setChecked(true);
-
-							}
-						}).setNegativeButton(negativeButtonText, new DialogInterface.OnClickListener() {
-
-							@Override
-							public void onClick(DialogInterface dialog, int which) {
-								statement = false;
-								chkStatement.setChecked(false);
-							}
-						}).show();
-
-				WindowManager.LayoutParams layoutParams = mDialog.getWindow().getAttributes();
-				layoutParams.dimAmount = 0.9f;
-				mDialog.getWindow().setAttributes(layoutParams);
-				mDialog.getWindow().addFlags(WindowManager.LayoutParams.FLAG_BLUR_BEHIND);
+				Intent policy = new Intent(Intent.ACTION_VIEW);
+				policy.setData(Uri.parse(POLICY_URL));
+				startActivity(policy);
 			}
 		});
 
@@ -350,11 +328,11 @@ public class RegistrationActivity extends Activity {
 		});
 	}
 
-	private int getMyCountry(String[] countryList, String myCountryCode) {
+	private int getMyLanguage(String[] countryList, String myLanguage) {
 		int countryPosition = 0;
 
 		for (int iterator = 0; iterator < countryList.length; iterator++) {
-			if (countryList[iterator].equalsIgnoreCase(myCountryCode)) {
+			if (countryList[iterator].equalsIgnoreCase(myLanguage)) {
 				countryPosition = iterator;
 			}
 		}
@@ -367,7 +345,7 @@ public class RegistrationActivity extends Activity {
 		String validationRes = null;
 		String temp;
 
-		if (!statement) {
+		if (!chkStatement.isChecked()) {
 			sb.append(getResources().getStringArray(R.array.registration_msgs)[0]);
 		}
 
@@ -439,7 +417,8 @@ public class RegistrationActivity extends Activity {
 			String zipCode = zipCodeField.getText().toString();
 			String city = cityField.getText().toString();
 
-			return DataManagement.registerAccount(language, country, timezone, sex, name, lastname, email, phonecode, phone, password, city, street, streetNo, zipCode);
+			return DataManagement.registerAccount(language, country, timezone, sex, name, lastname, email, phonecode, phone, password,
+					city, street, streetNo, zipCode);
 		}
 
 		@Override
@@ -450,7 +429,7 @@ public class RegistrationActivity extends Activity {
 			} else {
 				if (errorStr == null)
 					errorStr = new String();
-				
+
 				errorStr = getResources().getStringArray(R.array.registration_msgs)[9] + DataManagement.getError();
 				showDialog(DIALOG_ERROR);
 			}

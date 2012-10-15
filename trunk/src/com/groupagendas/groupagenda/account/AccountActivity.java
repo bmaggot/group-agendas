@@ -41,6 +41,7 @@ import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.Spinner;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.groupagendas.groupagenda.R;
@@ -108,6 +109,9 @@ public class AccountActivity extends Activity implements OnClickListener{
 	private int timezoneInUse = 0;
 	private LinearLayout countrySpinnerBlock;
 	private LinearLayout timezoneSpinnerBlock;
+	private Spinner languageSpinner;
+	private String[] languageArray;
+	private TextView emailView;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -153,6 +157,15 @@ public class AccountActivity extends Activity implements OnClickListener{
 			countriesAdapter = new CountriesAdapter(AccountActivity.this, R.layout.search_dialog_item, countriesList);
 			timezonesAdapter = new TimezonesAdapter(AccountActivity.this, R.layout.search_dialog_item, countriesList);
 		}
+
+		emailView = (EditText) findViewById(R.id.emailView);
+		languageSpinner = (Spinner) findViewById(R.id.languageSpinner);
+		ArrayAdapter<CharSequence> adapterLanguage = ArrayAdapter.createFromResource(this, R.array.language_labels,
+				android.R.layout.simple_spinner_item);
+		adapterLanguage.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+		languageSpinner.setAdapter(adapterLanguage);
+		languageArray = getResources().getStringArray(R.array.language_values);
+		languageSpinner.setSelection(getMyLanguage(languageArray, account.getLanguage()));
 		
 		pb = (ProgressBar) findViewById(R.id.progress);
 
@@ -295,6 +308,18 @@ public class AccountActivity extends Activity implements OnClickListener{
 
 	}
 
+	// TODO code duplicate in Registration activity. 
+	private int getMyLanguage(String[] countryList, String myLanguage) {
+		int countryPosition = 0;
+
+		for (int iterator = 0; iterator < countryList.length; iterator++) {
+			if (countryList[iterator].equalsIgnoreCase(myLanguage)) {
+				countryPosition = iterator;
+			}
+		}
+		return countryPosition;
+	}
+
 	private void fillActivityFields(Account account) {
 		if (!account.getName().equals("null")) {
 			nameView.setText(account.getName());
@@ -308,6 +333,9 @@ public class AccountActivity extends Activity implements OnClickListener{
 			lastnameView.setText("");
 		}
 
+		if(!account.getEmail().equals("null"))
+			emailView.setText(account.getEmail());
+		
 		if (!account.getPhone1().equals("null"))
 			phone1View.setText(account.getPhone1());
 		

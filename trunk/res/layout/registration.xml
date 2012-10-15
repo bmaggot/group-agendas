@@ -283,7 +283,6 @@
                     android:layout_height="wrap_content"
                     android:layout_gravity="right"
                     android:checked="false"
-                    android:clickable="false"
                     android:text="@string/chk_statement"
                     android:textColor="@android:color/black" />
 
