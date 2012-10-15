@@ -13,6 +13,7 @@ import android.widget.AdapterView.OnItemClickListener;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 
+import com.groupagendas.groupagenda.AbstractNavbarActivity;
 import com.groupagendas.groupagenda.R;
 import com.groupagendas.groupagenda.calendar.adapters.ChatThreadAdapter;
 import com.groupagendas.groupagenda.data.Data;
@@ -20,17 +21,17 @@ import com.groupagendas.groupagenda.data.EventManagement;
 import com.groupagendas.groupagenda.events.EventsProvider;
 import com.groupagendas.groupagenda.events.EventsProvider.EMetaData;
 
-public class ChatThreadActivity extends Activity {
+public class ChatThreadActivity extends AbstractNavbarActivity {
 	ChatThreadAdapter adapter;
 
 	@Override
-	protected void onCreate(Bundle savedInstanceState) {
+	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.chat);
 	}
 
 	@Override
-	protected void onResume() {
+	public void onResume() {
 		super.onResume();
 		LinearLayout chatInputBlock = (LinearLayout) findViewById(R.id.chat_inputBlock);
 		chatInputBlock.setVisibility(View.INVISIBLE);
