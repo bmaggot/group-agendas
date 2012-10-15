@@ -363,6 +363,9 @@ public class NavbarActivity extends Activity {
 		case LIST_SEARCH:
 			showListSearchView();
 			break;
+		default:
+			showMonthView();
+			break;
 		}
 
 	}
