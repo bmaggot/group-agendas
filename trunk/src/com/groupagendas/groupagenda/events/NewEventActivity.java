@@ -76,9 +76,6 @@ public class NewEventActivity extends EventActivity {
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-
-	
-
 		setContentView(R.layout.new_event);
 		
 
@@ -533,12 +530,14 @@ public class NewEventActivity extends EventActivity {
 
 					@Override
 					public void onClick(View v) {
-						Data.newEventPar = true;
+						Intent i = new Intent(NewEventActivity.this, ContactsActivity.class);
+						i.putExtra("ACTIVITY_MODE", 1); // TODO HARDCODED PARAMETER! DEFUSE!
 						Data.showSaveButtonInContactsForm = true;
 						// TODO Data.eventForSavingNewInvitedPersons = event;
-						startActivity(new Intent(NewEventActivity.this, ContactsActivity.class));
+						startActivity(i);
 					}
 				});
+
 				super.event = new Event();
 	}
 
@@ -547,7 +546,6 @@ public class NewEventActivity extends EventActivity {
 		super.onResume();
 
 		account = new Account(this);
-		
 		
 		String[] cities;
 		String[] countries;
@@ -581,26 +579,16 @@ public class NewEventActivity extends EventActivity {
 			timezonesAdapter = new TimezonesAdapter(NewEventActivity.this, R.layout.search_dialog_item, countriesList);
 		}
 		
-		String timezone = account.getTimezone();
-		
-		String countryCode = account.getCountry();
+		String countryCode = account.getTimezone();
 		for (StaticTimezones item : countriesList){
-			if (item.country_code.equalsIgnoreCase(countryCode)) {
-				countryView.setText(item.country);
+			if (item.timezone.equalsIgnoreCase(countryCode)) {
+				timezoneInUse = Integer.parseInt(item.id);
+				countryView.setText(countriesList.get(timezoneInUse).country);
 				continue;
 			}
 		}
 		
-		for (StaticTimezones item : countriesList){
-			if (item.timezone.equalsIgnoreCase(timezone)) {
-				timezoneView.setText(item.country);
-				timezoneInUse = countriesList.indexOf(item);
-				continue;
-			}
-		}
-		
-		
-
+		timezoneView.setText(account.getTimezone());
 
 		LinearLayout invitedPersonList = (LinearLayout) findViewById(R.id.invited_person_list);
 		invitedPersonList.removeAllViews();
