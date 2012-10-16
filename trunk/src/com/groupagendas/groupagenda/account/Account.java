@@ -188,7 +188,7 @@ public class Account {
 	}
 
 	public String getTimezone() {
-		return prefs.getString(Account.AccountMetaData.TIMEZONE, Data.getmContext().getResources().getStringArray(R.array.timezones)[275]);
+		return prefs.getString(Account.AccountMetaData.TIMEZONE, "Europe/London");
 	}
 
 	// TODO wtfis public String local_time;
@@ -197,8 +197,7 @@ public class Account {
 	}
 
 	public String getLanguage() {
-		return prefs.getString(Account.AccountMetaData.LANGUAGE,
-				Data.getmContext().getResources().getStringArray(R.array.language_values)[0]);
+		return prefs.getString(Account.AccountMetaData.LANGUAGE, "english");
 	}
 
 	public String getSetting_default_view() {
