@@ -88,7 +88,7 @@ public class ContactsAdapter extends AbstractAdapter<Contact> implements Filtera
 		// if (convertView.isSelected()) {
 		// convertView.setBackgroundColor(-14565157);
 		// }
-		if (selection.contains(position)) {
+		if (selection.contains(contact.contact_id)) {
 			convertView.setSelected(true);
 			convertView.setPressed(true);
 			convertView.setBackgroundColor(-14565157);
@@ -138,7 +138,7 @@ public class ContactsAdapter extends AbstractAdapter<Contact> implements Filtera
 					}
 				}
 
-				if (filteredItems.size() < 1)
+				if (constraint.length() < 1)
 					filteredItems = items;
 
 				return filteredItems;
@@ -151,12 +151,13 @@ public class ContactsAdapter extends AbstractAdapter<Contact> implements Filtera
 		super.notifyDataSetChanged();
 	}
 
-	public void toggleSelected(Integer position) {
+	public boolean toggleSelected(Integer position) {
 		if (selection.contains(position)) {
 			selection.remove(position);
-
+			return false;
 		} else {
 			selection.add(position);
+			return true;
 		}
 	}
 }
