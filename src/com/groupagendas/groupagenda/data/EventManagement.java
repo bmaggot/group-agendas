@@ -40,6 +40,7 @@ import com.groupagendas.groupagenda.events.EventsAdapter;
 import com.groupagendas.groupagenda.events.EventsProvider;
 import com.groupagendas.groupagenda.events.Invited;
 import com.groupagendas.groupagenda.events.EventsProvider.EMetaData;
+import com.groupagendas.groupagenda.utils.AgendaUtils;
 import com.groupagendas.groupagenda.utils.JSONUtils;
 import com.groupagendas.groupagenda.utils.Utils;
 
