@@ -6,6 +6,7 @@ import java.util.Calendar;
 import android.content.Context;
 
 import com.groupagendas.groupagenda.events.Event;
+import com.groupagendas.groupagenda.events.Invited;
 
 public class AgendaUtils {
 	public static int newInvites = 0;
@@ -34,4 +35,5 @@ public class AgendaUtils {
 		}
 		return actual_events;
 	}
+	
 }
