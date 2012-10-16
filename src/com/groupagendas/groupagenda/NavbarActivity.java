@@ -820,7 +820,7 @@ public class NavbarActivity extends Activity {
 			
 			acc.setLatestUpdateTime(Calendar.getInstance());
 //			progressDialog.dismiss();
-//			dataLoaded = true;
+			dataLoaded = true;
 			switchToView();
 			setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_SENSOR);
 			
