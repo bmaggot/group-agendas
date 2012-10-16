@@ -241,11 +241,10 @@ public class ContactsActivity extends ListActivity implements OnCheckedChangeLis
 
 					if (selection != null) {
 		                for (int i=0; i<selection.size(); i++) {
-		                	Contact c = (Contact) cAdapter.getItem(selection.keyAt(i));
-//		                	if (!selectedContacts.contains(c))
+		                	if (selection.get(selection.keyAt(i))) {
+		                		Contact c = (Contact) cAdapter.getItem(selection.keyAt(i));
 		                		selectedContacts.add(c);
-//		                	else
-//		                		selectedContacts.remove(c);
+		                	}
 		                }
 		            }
 
@@ -392,7 +391,7 @@ public class ContactsActivity extends ListActivity implements OnCheckedChangeLis
 	public void onListItemClick(ListView parent, View v, int position, long id) {
 		switch (ACTIVITY_MODE) {
 		case SELECTION_MODE:
-			cAdapter.toggleSelected(Integer.valueOf(position));
+			cAdapter.toggleSelected(Integer.parseInt(v.getTag().toString()));
 //			v.setSelected(!v.isSelected());
 //			if (v.isSelected())
 //				v.setBackgroundColor(-14565157);
@@ -400,14 +399,18 @@ public class ContactsActivity extends ListActivity implements OnCheckedChangeLis
 //				v.setBackgroundColor(Color.WHITE);
 			break;
 		case LISTING_MODE:
+			Integer c_id = 0;
 			if (CURRENT_LIST == CONTACTS_LIST) {
 				Intent contactIntent = new Intent(ContactsActivity.this, ContactInfoActivity.class);
 				StringBuilder sb = new StringBuilder(contacts.get(position).name).append(" ").append(
 						contacts.get(position).lastname);
 				contactIntent.putExtra("contactName", sb.toString());
-				contactIntent.putExtra("contactId", contacts.get(position).contact_id);
-				contactIntent.putExtra("contactCreated", contacts.get(position).created);
-				startActivity(contactIntent);
+				if (v.getTag() != null) {
+					c_id = Integer.parseInt(v.getTag().toString());
+					contactIntent.putExtra("contactId", c_id);
+					contactIntent.putExtra("contactCreated", contacts.get(position).created);
+					startActivity(contactIntent);
+				}
 			} else if (CURRENT_LIST == GROUPS_LIST) {
 				Intent groupIntent = new Intent(ContactsActivity.this, GroupContactsActivity.class);
 				groupIntent.putExtra("groupName", groups.get(position).title);
