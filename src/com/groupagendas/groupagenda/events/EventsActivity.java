@@ -4,6 +4,7 @@ import java.util.ArrayList;
 
 import android.app.ListActivity;
 import android.content.Intent;
+import android.database.DataSetObserver;
 import android.os.Bundle;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -18,9 +19,14 @@ import com.groupagendas.groupagenda.NavbarActivity;
 import com.groupagendas.groupagenda.R;
 import com.groupagendas.groupagenda.data.EventManagement;
 import com.groupagendas.groupagenda.settings.SettingsActivity;
-import com.groupagendas.groupagenda.utils.AgendaUtils;
 
 public class EventsActivity extends ListActivity {
+
+	public enum FilterState {
+		SHARED_EVENTS, PHONE_CALLS, OPEN_EVENTS, SHARED_NOTES, PRIVATE_NOTES,
+		NEW_INVITES, ACCEPTED, REJECTED, MAYBE, ALL
+
+	}
 
 	private QuickAction qa;
 	// types
@@ -29,11 +35,15 @@ public class EventsActivity extends ListActivity {
 	private ActionItem open_event;
 	private ActionItem shared_note;
 	private ActionItem private_note;
+	// may be needed in case Rob wants ;] private ActionItem all_types;
 	// status
 	private ActionItem new_invites;
 	private ActionItem attending;
 	private ActionItem rejected;
-	private ActionItem pending;
+	private ActionItem maybe;
+	//private ActionItem all_statuses;
+	
+	protected FilterState filterState = FilterState.ALL;
 
 	private EventsAdapter eventsAdapter;
 
@@ -56,11 +66,16 @@ public class EventsActivity extends ListActivity {
 		radioButton.setChecked(false);
 		radioButton.setOnCheckedChangeListener(btnNavBarOnCheckedChangeListener);
 
+		
 		setListAdapter(eventsAdapter);
 		EventManagement.loadEvents(this, eventsAdapter);
-		if(NavbarActivity.showInvites && AgendaUtils.newInvites != 0){
+		
+		//filter events to new invites if there are such
+		if(NavbarActivity.showInvites && eventsAdapter.getNewInvitesCount() != 0){
+			filterState = FilterState.NEW_INVITES;
+			filterEventsByStatus(Invited.PENDING);
 			NavbarActivity.showInvites = false;
-			changeTitle(getString(R.string.status_new_invite, AgendaUtils.newInvites));
+			changeTitle(getString(R.string.status_new_invites_count, eventsAdapter.getNewInvitesCount()));
 		}
 	}
 
@@ -72,6 +87,65 @@ public class EventsActivity extends ListActivity {
 		topView = (TextView) findViewById(R.id.topText);
 		
 		eventsAdapter = new EventsAdapter(new ArrayList<Event>(), this);
+		eventsAdapter.registerDataSetObserver(new DataSetObserver() {
+			@Override
+			public void onChanged() {
+				
+				if (new_invites != null)
+					new_invites.setTitle(getString(R.string.status_new_invites_count, eventsAdapter.getNewInvitesCount()));
+                if (filterState != FilterState.ALL){
+                	if (filterState == FilterState.NEW_INVITES) changeTitle(getString(R.string.status_new_invites_count, eventsAdapter.getNewInvitesCount()));			
+    				
+        			switch (filterState){
+        			case ACCEPTED:
+        				filterEventsByStatus(Invited.ACCEPTED);
+        				break;
+        			case REJECTED:
+        				filterEventsByStatus(Invited.REJECTED);
+        				break;
+        			case MAYBE:
+        				filterEventsByStatus(Invited.MAYBE);
+        				break;
+        			case NEW_INVITES:
+        				filterEventsByStatus(Invited.PENDING);
+        				break;
+        			case SHARED_NOTES:
+        				filterEventsByType(getString(R.string.n_type));
+        				break;
+        			case OPEN_EVENTS:
+        				filterEventsByType(getString(R.string.o_type));
+        				break;
+        			case PHONE_CALLS:
+        				filterEventsByType(getString(R.string.t_type));
+        				break;
+        			case SHARED_EVENTS:
+        				filterEventsByType(getString(R.string.r_type));
+        				break;
+        			}
+					
+				} //else
+//    			{
+//    				changeTitle(getString(R.string.events));
+//    				eventsAdapter.getFilter().filter("all");
+//    				eventsAdapter.setFilter("all");
+//    			}
+			}
+
+		
+
+		});
+	
+	
+	}
+	private void filterEventsByType(String type) {
+		eventsAdapter.getFilter().filter(type);
+		eventsAdapter.setFilter(type);
+		
+	}
+
+	private void filterEventsByStatus(int status) {
+		eventsAdapter.getFilter().filter("" + status);
+		eventsAdapter.setFilter("" + status);
 	}
 
 	@Override
@@ -94,16 +168,17 @@ public class EventsActivity extends ListActivity {
 
 					// status
 					new_invites = new ActionItem();
-					new_invites.setTitle(getString(R.string.status_new_invite, AgendaUtils.newInvites));
+					new_invites.setTitle(getString(R.string.status_new_invites_count, eventsAdapter.getNewInvitesCount()));
 					new_invites.setOnClickListener(new OnClickListener() {
 
 						@Override
 						public void onClick(View v) {
 							EventManagement.loadEvents(EventsActivity.this, eventsAdapter);
-							changeTitle(getString(R.string.status_new_invite, AgendaUtils.newInvites));
+							changeTitle(getString(R.string.status_new_invites_count, eventsAdapter.getNewInvitesCount()));
 							qa.dismiss();
-							eventsAdapter.getFilter().filter("4");
-							eventsAdapter.setFilter("4");
+							filterEventsByStatus(Invited.PENDING);
+							filterState = FilterState.NEW_INVITES;
+							
 						}
 					});
 
@@ -116,8 +191,8 @@ public class EventsActivity extends ListActivity {
 							EventManagement.loadEvents(EventsActivity.this, eventsAdapter);
 							changeTitle(getString(R.string.status_not_attending));
 							qa.dismiss();
-							eventsAdapter.getFilter().filter("0");
-							eventsAdapter.setFilter("0");
+							filterEventsByStatus(Invited.REJECTED);
+							filterState = FilterState.REJECTED;
 						}
 					});
 
@@ -130,22 +205,23 @@ public class EventsActivity extends ListActivity {
 							EventManagement.loadEvents(EventsActivity.this, eventsAdapter);
 							changeTitle(getString(R.string.status_attending));
 							qa.dismiss();
-							eventsAdapter.getFilter().filter("1");
-							eventsAdapter.setFilter("1");
+							filterEventsByStatus(Invited.ACCEPTED);
+							filterState = FilterState.ACCEPTED;
+						
 						}
 					});
 
-					pending = new ActionItem();
-					pending.setTitle(getString(R.string.status_pending));
-					pending.setOnClickListener(new OnClickListener() {
+					maybe = new ActionItem();
+					maybe.setTitle(getString(R.string.status_maybe));
+					maybe.setOnClickListener(new OnClickListener() {
 
 						@Override
 						public void onClick(View v) {
 							EventManagement.loadEvents(EventsActivity.this, eventsAdapter);
-							changeTitle(getString(R.string.status_pending));
+							changeTitle(getString(R.string.status_maybe));
 							qa.dismiss();
-							eventsAdapter.getFilter().filter("2");
-							eventsAdapter.setFilter("2");
+							filterEventsByStatus(Invited.MAYBE);
+							filterState = FilterState.MAYBE;
 						}
 					});
 
@@ -153,7 +229,7 @@ public class EventsActivity extends ListActivity {
 					qa.addActionItem(new_invites);
 					qa.addActionItem(rejected);
 					qa.addActionItem(attending);
-					qa.addActionItem(pending);
+					qa.addActionItem(maybe);
 					qa.show();
 					buttonView.setChecked(false);
 					break;
@@ -168,12 +244,13 @@ public class EventsActivity extends ListActivity {
 						public void onClick(View v) {
 							changeTitle(getString(R.string.r_type));
 							qa.dismiss();
-							eventsAdapter.getFilter().filter(getString(R.string.r_type));
-							eventsAdapter.setFilter(getString(R.string.r_type));
+							filterEventsByType(getString(R.string.r_type));
+							filterState = FilterState.SHARED_EVENTS;
 
 						}
 					});
 
+					
 //					telephone = new ActionItem();
 //					telephone.setTitle(getString(R.string.t_type));
 //					telephone.setOnClickListener(new OnClickListener() {
@@ -195,8 +272,8 @@ public class EventsActivity extends ListActivity {
 						public void onClick(View v) {
 							changeTitle(getString(R.string.o_type));
 							qa.dismiss();
-							eventsAdapter.getFilter().filter(getString(R.string.o_type));
-							eventsAdapter.setFilter(getString(R.string.o_type));
+							filterState = FilterState.OPEN_EVENTS;
+							filterEventsByType(getString(R.string.o_type));
 						}
 					});
 
@@ -219,10 +296,10 @@ public class EventsActivity extends ListActivity {
 
 						@Override
 						public void onClick(View v) {
+							filterState = FilterState.PRIVATE_NOTES;
 							changeTitle(getString(R.string.p_type));
 							qa.dismiss();
-							eventsAdapter.getFilter().filter(getString(R.string.p_type));
-							eventsAdapter.setFilter(getString(R.string.p_type));
+							filterEventsByType(getString(R.string.p_type));
 						}
 					});
 

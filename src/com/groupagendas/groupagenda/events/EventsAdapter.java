@@ -5,6 +5,7 @@ import java.util.List;
 
 import android.app.Activity;
 import android.content.Context;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -25,12 +26,28 @@ public class EventsAdapter extends BaseAdapter implements Filterable{
 	private Context mContext;
 	private DateTimeUtils dtUtils;
 	private String mFilter = null;
+	private int newInvitesCount;
 	public EventsAdapter(List<Event> objects, Activity activity){
 		events = objects;
 		eventsAll = objects;
 		mInflater = LayoutInflater.from(activity);
 		mContext = activity;
 		dtUtils = new DateTimeUtils(activity);
+		setNewInvitesCount(events);
+		
+	}
+	
+	/**
+	 * @author justinas.marcinka@gmail.com
+	 * Method sets count of new events in given arrayList to counter in adapter.
+	 * @param events
+	 */
+	private void setNewInvitesCount(List<Event> events){
+		newInvitesCount = 0;
+		for (Event e : events)
+			if(e.getStatus() == Invited.PENDING) newInvitesCount++;
+	
+		
 	}
 	
 	@Override
@@ -78,7 +95,6 @@ public class EventsAdapter extends BaseAdapter implements Filterable{
 		}
 		
 		// status
-		//if(event.type.equals("t") || event.type.equals("r") || event.type.equals("o")){
 			switch (event.getStatus()) {
 			case 0:
 				holder.status.setText(mContext.getString(R.string.status_not_attending));
@@ -105,15 +121,14 @@ public class EventsAdapter extends BaseAdapter implements Filterable{
 				holder.button_no.setVisibility(View.VISIBLE);
 				break;
 			}
-		//}	
-		
-		//
+	
 		holder.status_1.setText(String.valueOf(event.getAttendant_1_count()));
 		holder.status_2.setText(String.valueOf(event.getAttendant_2_count()));
 		
 		holder.button_yes.setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View arg0) {
+				Log.d("RESPONSE TO EVENT " + event.getEvent_id(), mContext.getString(R.string.status_attending) );
 //				boolean success = dm.changeEventStatus(event.getEvent_id(), "1");
 				holder.button_yes.setVisibility(View.INVISIBLE);
 				holder.button_maybe.setVisibility(View.VISIBLE);
@@ -127,11 +142,11 @@ public class EventsAdapter extends BaseAdapter implements Filterable{
 		holder.button_maybe.setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View arg0) {
-//				boolean success = dm.changeEventStatus(event.getEvent_id(), "2");
+				Log.d("RESPONSE TO EVENT " + event.getEvent_id(), mContext.getString(R.string.status_maybe) );
 				holder.button_yes.setVisibility(View.VISIBLE);
 				holder.button_maybe.setVisibility(View.INVISIBLE);
 				holder.button_no.setVisibility(View.VISIBLE);
-				holder.status.setText(mContext.getString(R.string.status_pending));
+				holder.status.setText(mContext.getString(R.string.status_maybe));
 				event.setStatus(Invited.MAYBE);
 				respondToInvite(event);
 			}
@@ -140,6 +155,7 @@ public class EventsAdapter extends BaseAdapter implements Filterable{
 		holder.button_no.setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View arg0) {
+				Log.d("RESPONSE TO EVENT " + event.getEvent_id(), mContext.getString(R.string.status_not_attending) );
 				holder.button_yes.setVisibility(View.VISIBLE);
 				holder.button_maybe.setVisibility(View.VISIBLE);
 				holder.button_no.setVisibility(View.INVISIBLE);
@@ -153,15 +169,12 @@ public class EventsAdapter extends BaseAdapter implements Filterable{
 	}
 	
 	private void respondToInvite(Event event){
+		System.out.println("response " + event.getStatus() );
+		event.getMyInvite().setStatus(event.getStatus());
+		
+		if (newInvitesCount > 0) newInvitesCount--;
 		EventManagement.respondToInvitation(mContext, event);
 		notifyDataSetChanged();
-//		ContentValues values = new ContentValues();
-//		values.put(EventsProvider.EMetaData.EventsMetaData.STATUS, status);
-//		if(!success){
-//			values.put(EventsProvider.EMetaData.EventsMetaData.NEED_UPDATE, 4);
-//		}
-//		String where = EventsProvider.EMetaData.EventsMetaData.E_ID+"="+event_id;
-//		mContext.getContentResolver().update(EventsProvider.EMetaData.EventsMetaData.CONTENT_URI, values, where, null);
 	}
 	
 	static class ViewHolder {
@@ -195,13 +208,13 @@ public class EventsAdapter extends BaseAdapter implements Filterable{
 	public void setItems(List<Event> items){
 		events = items;
 		eventsAll = items;
+		setNewInvitesCount(items);
 		if(mFilter != null) getFilter().filter(mFilter);
 	}
 	
 	public void setFilter(String filter){
 		mFilter = filter;
 	}
-
 	@Override
 	public Filter getFilter() {
 		return new Filter() {
@@ -276,4 +289,9 @@ public class EventsAdapter extends BaseAdapter implements Filterable{
 	public void notifyDataSetChanged() {
 		super.notifyDataSetChanged();
 	}
+
+	public int getNewInvitesCount() {
+		return newInvitesCount;
+	}
+
 }
