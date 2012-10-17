@@ -440,4 +440,9 @@ public class Account {
 		prefsEditor.putInt(Account.AccountMetaData.NEED_UPDATE, need_update);
 		prefsEditor.commit();
 	}
+
+	public void clearLatestUpdateTime() {
+		prefsEditor.remove(AccountMetaData.DATA_UPDATE_TIMESTAMP);
+		prefsEditor.commit();
+	}
 }

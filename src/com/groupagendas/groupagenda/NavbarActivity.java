@@ -38,7 +38,6 @@ import az.mecid.android.ActionItem;
 import az.mecid.android.QuickAction;
 
 import com.groupagendas.groupagenda.account.Account;
-import com.groupagendas.groupagenda.account.AccountProvider;
 import com.groupagendas.groupagenda.calendar.AbstractCalendarView;
 import com.groupagendas.groupagenda.calendar.agenda.AgendaView;
 import com.groupagendas.groupagenda.calendar.dayandweek.DayWeekView;
@@ -48,7 +47,6 @@ import com.groupagendas.groupagenda.calendar.month.MonthView;
 import com.groupagendas.groupagenda.calendar.year.YearView;
 import com.groupagendas.groupagenda.chat.ChatThreadFragment;
 import com.groupagendas.groupagenda.contacts.ContactsActivity;
-import com.groupagendas.groupagenda.contacts.ContactsProvider;
 import com.groupagendas.groupagenda.data.CalendarSettings;
 import com.groupagendas.groupagenda.data.ContactManagement;
 import com.groupagendas.groupagenda.data.Data;
@@ -56,9 +54,7 @@ import com.groupagendas.groupagenda.data.DataManagement;
 import com.groupagendas.groupagenda.data.EventManagement;
 import com.groupagendas.groupagenda.events.Event;
 import com.groupagendas.groupagenda.events.EventsActivity;
-import com.groupagendas.groupagenda.events.EventsProvider;
 import com.groupagendas.groupagenda.events.NewEventActivity;
-import com.groupagendas.groupagenda.templates.TemplatesProvider;
 import com.groupagendas.groupagenda.utils.Utils;
 import com.ptashek.widgets.datetimepicker.DateTimePicker;
 
@@ -130,7 +126,7 @@ public class NavbarActivity extends FragmentActivity {
 
 		restoreMe(savedInstanceState);
 		acc = new Account(this);
-
+//TODO move data loading to approporiate class (Login activity maybe...)
 	 if (acc.getLatestUpdateUnixTimestamp() > 0){
 			new DataSyncTask().execute();
 		}	else {
@@ -694,20 +690,10 @@ public class NavbarActivity extends FragmentActivity {
 
 				int total = 0;
 
-				if (!Data.needToClearData)
-					loadPhase++;
 				
 				switch (loadPhase) {
 					case 0:
-						// Delete old data
-						getContentResolver().delete(AccountProvider.AMetaData.AccountMetaData.CONTENT_URI, "", null);
-						getContentResolver().delete(ContactsProvider.CMetaData.ContactsMetaData.CONTENT_URI, "", null);
-						getContentResolver().delete(ContactsProvider.CMetaData.GroupsMetaData.CONTENT_URI,"", null);
-						getContentResolver().delete(TemplatesProvider.TMetaData.TemplatesMetaData.CONTENT_URI, "", null);
-						getContentResolver().delete(EventsProvider.EMetaData.EventsMetaData.CONTENT_URI, "", null);
-						getContentResolver().delete(EventsProvider.EMetaData.EventsIndexesMetaData.CONTENT_URI, "", null);
-//						getContentResolver().delete(EventsProvider.EMetaData.InvitedMetaData.CONTENT_URI, "", null);
-						getContentResolver().getType(EventsProvider.EMetaData.EventsMetaData.CONTENT_URI);
+						//TODO remove
 
 						loadPhase++;
 						total = 10;

@@ -1,7 +1,5 @@
 package com.groupagendas.groupagenda;
 
-import java.util.Calendar;
-
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
@@ -25,13 +23,14 @@ import android.widget.EditText;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
+import com.groupagendas.groupagenda.account.Account;
 import com.groupagendas.groupagenda.data.Data;
 import com.groupagendas.groupagenda.data.DataManagement;
 import com.groupagendas.groupagenda.registration.RegistrationActivity;
 import com.pass_retrieve.forgot_pass1;
 
 public class LoginActivity extends Activity {
-
+	public static final String LATEST_CREDENTIALS = "LATEST_CREDENTIALS";
 	private DataManagement dm;
 	private EditText loginText, passwordText;
 	private CheckBox stayCheck;
@@ -92,7 +91,7 @@ public class LoginActivity extends Activity {
 			}
 		});
 
-		SharedPreferences prefs = getSharedPreferences("LATEST_CREDENTIALS", MODE_PRIVATE);
+		SharedPreferences prefs = getSharedPreferences(LATEST_CREDENTIALS, MODE_PRIVATE);
 		stayCheck = (CheckBox) findViewById(R.id.login_stayLoggedIn);
 		
 		if (prefs.getBoolean("stay_logged_in", false)) {
@@ -104,6 +103,10 @@ public class LoginActivity extends Activity {
 	}
 	
 	public class LoginTask extends AsyncTask<Void, Void, Boolean> {
+		
+
+		
+
 		@Override
 		protected void onPreExecute() {
 			pb.setVisibility(View.VISIBLE);
@@ -113,7 +116,7 @@ public class LoginActivity extends Activity {
 		@Override
 		protected Boolean doInBackground(Void... arg0) {
 			boolean success = false;
-			SharedPreferences prefs = getSharedPreferences("LATEST_CREDENTIALS", MODE_PRIVATE);
+			SharedPreferences prefs = getSharedPreferences(LATEST_CREDENTIALS, MODE_PRIVATE);
 			Editor editor = prefs.edit();
 			String login = loginText.getText().toString();
 			String password = passwordText.getText().toString();
@@ -122,6 +125,12 @@ public class LoginActivity extends Activity {
 			success = dm.login(login, password);
 
 			if (success) {
+				if (isDifferentUser(prefs, login)){
+					Account acc = new Account(LoginActivity.this);
+					acc.clearLatestUpdateTime();
+					DataManagement.clearAllData(LoginActivity.this);
+				}
+				
 				editor.putString("email", login);
 				editor.putString("password", password);
 				editor.putBoolean("stay_logged_in", stay);
@@ -133,18 +142,22 @@ public class LoginActivity extends Activity {
 			return success;
 		}
 
+		private boolean isDifferentUser(SharedPreferences prefs, String login) {
+			String oldLogin = prefs.getString("email", "");
+			return !login.equalsIgnoreCase(oldLogin);
+		}
+
 		@Override
 		protected void onPostExecute(Boolean result) {
 			pb.setVisibility(View.GONE);
-			if (result == true) {
-				getApplicationContext();
+			if (result) {
 				InputMethodManager imm = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
 				imm.hideSoftInputFromWindow(passwordText.getWindowToken(), 0);
 				Intent intent = new Intent(LoginActivity.this, NavbarActivity.class);
 				startActivity(intent);
 				finish();
 			} else {
-				error = dm.getError();
+				error = DataManagement.getError();
 				showDialog(0);
 			}
 
