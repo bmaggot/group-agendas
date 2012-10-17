@@ -8,6 +8,7 @@ import android.app.Dialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.Color;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.text.Editable;
@@ -73,18 +74,14 @@ public class EventEditActivity extends EventActivity {
 
 	private long event_internal_id;
 
-	private RelativeLayout invitationResponseLine;
 	protected final static int DELETE_DIALOG = 1;
 	protected final static int MY_INVITED_ENTRY_ID = 99999;
 	private boolean remindersShown = false;
 	private boolean alarmsShown = false;
 
-	// private ArrayList<AutoIconItem> autoIcons = null;
-
 	private Intent intent;
 
 	private Button chatMessengerButton;
-	
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -266,17 +263,6 @@ public class EventEditActivity extends EventActivity {
 				dia1.show();
 			}
 		});
-
-		// final ArrayAdapter<String> adapterCountry = new
-		// ArrayAdapter<String>(EventEditActivity.this,
-		// R.layout.search_dialog_item,
-		// CountryManager.getCountries(EventEditActivity.this));
-		// adapterCountry.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-		// countrySpinner.setAdapter(adapterCountry);
-		// countryArray =
-		// CountryManager.getCountryValues(EventEditActivity.this);
-		// countrySpinnerBlock = (LinearLayout)
-		// findViewById(R.id.countrySpinnerBlock);
 
 		cityViewBlock = (LinearLayout) findViewById(R.id.cityViewBlock);
 		cityView = (EditText) findViewById(R.id.cityView);
@@ -511,7 +497,28 @@ public class EventEditActivity extends EventActivity {
 		});
 
 		// INVITES SECTION
-//		invitesColumn = (LinearLayout) findViewById(R.id.invitesLine);
+		response_button_yes = (TextView) findViewById(R.id.button_yes);
+		response_button_yes.setOnClickListener(new OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				respondToInvitation(1);
+			}
+		});
+		response_button_no = (TextView) findViewById(R.id.button_no);
+		response_button_no.setOnClickListener(new OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				respondToInvitation(0);
+			}
+		});
+		response_button_maybe = (TextView) findViewById(R.id.button_maybe);
+		response_button_maybe.setOnClickListener(new OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				respondToInvitation(2);
+			}
+		});
+		
 		invitedPersonList = (LinearLayout) findViewById(R.id.invited_person_list);
 		super.inviteButton = (Button) findViewById(R.id.invite_button);
 		super.inviteButton.setOnClickListener(new OnClickListener() {
@@ -527,7 +534,9 @@ public class EventEditActivity extends EventActivity {
 		});
 
 		invitationResponseLine = (RelativeLayout) findViewById(R.id.response_to_invitation);
-		invitationResponseLine.setVisibility(View.VISIBLE);
+		invitationResponseLine.setVisibility(View.GONE);
+		invitationResponseStatus = (TextView) findViewById(R.id.status);
+		
 		deleteButton = (Button) findViewById(R.id.event_delete);
 		deleteButton.setOnClickListener(new OnClickListener() {
 			@Override
@@ -827,7 +836,12 @@ public class EventEditActivity extends EventActivity {
 				alarm3.setText("");
 			}
 
-		showInvitesView();
+			showInvitesView();
+			
+			if (result.getInvited().size() > 0) {
+				invitationResponseLine.setVisibility(View.VISIBLE);
+				respondToInvitation(result.getStatus());
+			}
 
 			pb.setVisibility(View.INVISIBLE);
 		}
@@ -938,6 +952,53 @@ public class EventEditActivity extends EventActivity {
 				LinearLayout parent = (LinearLayout) view.getParent();
 				parent.setVisibility(View.GONE);
 			}
+		}
+	}
+	
+	// TODO write a javadoc for respondToInvitation(int response)
+	// 		afterwawrds move it to the right place. 
+	protected void respondToInvitation(int response) {
+		invitesColumn = (LinearLayout) findViewById(R.id.invitesLine);
+		RelativeLayout myInvitation = (RelativeLayout) invitesColumn.findViewWithTag(Invited.OWN_INVITATION_ENTRY);
+		TextView myStatus = (TextView) myInvitation.findViewById(R.id.invited_status);
+		
+		switch (response) {
+		case 0:
+			event.setStatus(0);
+			invitationResponseStatus.setText(this.getString(R.string.status_not_attending));
+			myStatus.setText(this.getString(R.string.status_not_attending));
+			myStatus.setBackgroundColor(Color.parseColor("#5d5d5d")); // TODO hardcoded color-code
+			response_button_yes.setVisibility(View.VISIBLE);
+			response_button_maybe.setVisibility(View.VISIBLE);
+			response_button_no.setVisibility(View.INVISIBLE);
+			break;
+		case 1:
+			event.setStatus(1);
+			invitationResponseStatus.setText(this.getString(R.string.status_attending));
+			myStatus.setText(this.getString(R.string.status_attending));
+			myStatus.setBackgroundColor(Color.parseColor("#26b2d8")); // TODO hardcoded color-code
+			response_button_yes.setVisibility(View.INVISIBLE);
+			response_button_maybe.setVisibility(View.VISIBLE);
+			response_button_no.setVisibility(View.VISIBLE);
+			break;
+		case 2:
+			event.setStatus(2);
+			invitationResponseStatus.setText(this.getString(R.string.status_pending));
+			myStatus.setText(this.getString(R.string.status_pending));
+			myStatus.setBackgroundColor(Color.parseColor("#b5b5b5")); // TODO hardcoded color-code
+			response_button_yes.setVisibility(View.VISIBLE);
+			response_button_maybe.setVisibility(View.INVISIBLE);
+			response_button_no.setVisibility(View.VISIBLE);
+			break;
+		case 4:
+			event.setStatus(4);
+			invitationResponseStatus.setText(this.getString(R.string.status_new_invite));
+			response_button_yes.setVisibility(View.VISIBLE);
+			response_button_maybe.setVisibility(View.VISIBLE);
+			response_button_no.setVisibility(View.VISIBLE);
+			break;
+		default:
+			break;
 		}
 	}
 
