@@ -2,6 +2,7 @@ package com.groupagendas.groupagenda.data;
 
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
+import java.util.Calendar;
 
 import org.apache.http.HttpResponse;
 import org.apache.http.HttpStatus;
@@ -15,6 +16,7 @@ import org.apache.http.util.EntityUtils;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.xml.sax.DTDHandler;
 
 import android.content.ContentValues;
 import android.content.Context;
@@ -23,9 +25,11 @@ import android.database.sqlite.SQLiteException;
 import android.util.Log;
 import android.widget.Toast;
 
+import com.groupagendas.groupagenda.account.Account;
 import com.groupagendas.groupagenda.chat.ChatMessageObject;
 import com.groupagendas.groupagenda.chat.ChatProvider;
 import com.groupagendas.groupagenda.chat.ChatProvider.CMMetaData;
+import com.groupagendas.groupagenda.utils.Utils;
 
 public class ChatManagement {
 
@@ -292,6 +296,7 @@ public class ChatManagement {
 									ChatManagement.makeChatMessageObjectContentValueFromJSON(object.getJSONObject("message")));
 							chatMessageObject = ChatManagement.makeChatMessageObjectFromJSON(object.getJSONObject("message"));
 						} else {
+							chatMessageObject = null;
 							Toast.makeText(context, object.getString("error"), Toast.LENGTH_LONG);
 						}
 					}
@@ -344,5 +349,19 @@ public class ChatManagement {
 			Log.e("getChatMessagesForEventFromRemoteDb(Context context, int eventId " + eventId + ")", e.getMessage());
 		}
 		return chatMessages;
+	}
+	
+	public static ChatMessageObject makeChatMessageObjectNow(Context context, String message, int event_id){
+		ChatMessageObject chatMessageObject = new ChatMessageObject();
+		Account account = new Account(context);
+		Calendar calendar = Calendar.getInstance();
+		chatMessageObject.setMessageId((int)calendar.getTimeInMillis());
+		chatMessageObject.setEventId(event_id);
+		chatMessageObject.setCreated(Utils.millisToUnixTimestamp(calendar.getTimeInMillis()));
+		chatMessageObject.setUserId(account.getUser_id());
+		chatMessageObject.setMessage(message);
+		chatMessageObject.setDeleted(false);
+		chatMessageObject.setUpdated("null");
+		return chatMessageObject;
 	}
 }

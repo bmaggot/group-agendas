@@ -12,6 +12,7 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
+import android.widget.ProgressBar;
 
 import com.groupagendas.groupagenda.R;
 import com.groupagendas.groupagenda.calendar.adapters.ChatMessageAdapter;
@@ -26,6 +27,7 @@ public class ChatMessageActivity extends Activity {
 	ChatMessageAdapter adapter;
 	ListView chat_message_list;
 	ArrayList<ChatMessageObject> chatMessages;
+	ChatMessageObject chatMessageObject;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -54,6 +56,10 @@ public class ChatMessageActivity extends Activity {
 			@Override
 			public void onClick(View arg0) {
 				String message = chatInput.getText().toString();
+				//insert tmp msg into list
+				chatMessageObject = ChatManagement.makeChatMessageObjectNow(ChatMessageActivity.this, message, event_id); 
+				chatMessages.add(chatMessageObject);
+				adapter.notifyDataSetChanged();
 				Object[] params = { ChatMessageActivity.this, message, event_id };
 				new PostChatMessage().execute(params);
 				chatInput.setText("");
@@ -88,18 +94,33 @@ public class ChatMessageActivity extends Activity {
 
 	private class PostChatMessage extends AsyncTask<Object, Void, Void> {
 
+		ProgressBar pb;
+		
+		@Override
+		protected void onPreExecute() {
+			pb = (ProgressBar) findViewById(R.id.progress);
+			pb.setVisibility(View.VISIBLE);
+		}
+		
 		@Override
 		protected Void doInBackground(Object... params) {
 			Context context = (Context) params[0];
 			String message = (String) params[1];
-			int eventId = (Integer) params[2];
-			chatMessages.add(ChatManagement.postChatMessage(eventId, message, context));
+			int eventId = (Integer) params[2];		
+			ChatMessageObject newChatMessageObject = ChatManagement.postChatMessage(eventId, message, context);
+			if(newChatMessageObject == null){
+				chatMessages.remove(chatMessageObject);
+			} else {
+				chatMessages.remove(chatMessageObject);
+				chatMessages.add(newChatMessageObject);
+			}
 			return null;
 		}
 
 		@Override
 		protected void onPostExecute(Void result) {
 			adapter.notifyDataSetChanged();
+			pb.setVisibility(View.INVISIBLE);
 		}
 
 	}
