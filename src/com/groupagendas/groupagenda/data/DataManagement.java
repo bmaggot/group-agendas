@@ -26,7 +26,6 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import android.app.Activity;
-import android.content.ContentResolver;
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.SharedPreferences;
@@ -58,7 +57,6 @@ import com.groupagendas.groupagenda.utils.Prefs;
 import com.groupagendas.groupagenda.utils.Utils;
 
 public class DataManagement {
-	private static ContentResolver resolver;
 	public static boolean networkAvailable = true;
 	public static boolean eventStatusChanged = false;
 	public static ArrayList<Event> contactsBirthdays = new ArrayList<Event>();
@@ -88,7 +86,6 @@ public class DataManagement {
 		Data.setPrefs(new Prefs(c));
 		Data.set_prefs(c.getSharedPreferences("PREFS_PRIVATE", Context.MODE_PRIVATE));
 		Data.setmContext(c);
-		resolver = c.getContentResolver();
 	}
 
 	public static synchronized DataManagement getInstance(Activity c) {
@@ -2837,6 +2834,11 @@ public class DataManagement {
 	}
 //TODO javadoc
 	public static void synchronizeWithServer(Context context, AsyncTask<Void, Integer, Void> dataSyncTask,	long latestUpdateUnixTimestamp) {
+		if (!DataManagement.networkAvailable) {
+			Log.e("synchronizeWithServer", "reason: no network connectivity");
+			return;
+		}
+		
 		JSONObject response = getDataChangesJSON(latestUpdateUnixTimestamp);
 		if (response == null){
 			Log.e("synchronizeWithServer", "null response");
