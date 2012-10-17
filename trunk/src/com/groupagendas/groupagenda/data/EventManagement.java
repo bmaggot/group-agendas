@@ -6,7 +6,6 @@ package com.groupagendas.groupagenda.data;
  */
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
 
@@ -30,7 +29,6 @@ import android.content.Context;
 import android.database.Cursor;
 import android.net.Uri;
 import android.provider.BaseColumns;
-import android.text.TextUtils;
 import android.util.Log;
 
 import com.groupagendas.groupagenda.chat.ChatThreadObject;
@@ -38,9 +36,8 @@ import com.groupagendas.groupagenda.error.report.Reporter;
 import com.groupagendas.groupagenda.events.Event;
 import com.groupagendas.groupagenda.events.EventsAdapter;
 import com.groupagendas.groupagenda.events.EventsProvider;
-import com.groupagendas.groupagenda.events.Invited;
 import com.groupagendas.groupagenda.events.EventsProvider.EMetaData;
-import com.groupagendas.groupagenda.utils.AgendaUtils;
+import com.groupagendas.groupagenda.events.Invited;
 import com.groupagendas.groupagenda.utils.JSONUtils;
 import com.groupagendas.groupagenda.utils.Utils;
 
@@ -60,7 +57,7 @@ public class EventManagement {
 
 	
 	
-	public static boolean networkAvailable = true; //TODO remove hardcode
+
 	
 	////////////////////////////METHODS THAT ARE USED BY UI////////////////////////////////////////////////////////////////////
 	
@@ -75,7 +72,7 @@ public class EventManagement {
 	 */
 	public static void createNewEvent(Context context, Event event) {
 
-		if (networkAvailable) {
+		if (DataManagement.networkAvailable) {
 			int id = createEventInRemoteDb(event);
 
 			if (id > 0) {
@@ -106,7 +103,7 @@ public class EventManagement {
 	 */
 	public static void deleteEvent(Context context, Event event) {
 		Boolean deletedFromRemote = false;
-		if (networkAvailable) {
+		if (DataManagement.networkAvailable) {
 			 deletedFromRemote = removeEvent(event.getEvent_id());
 		}
 
@@ -134,7 +131,7 @@ public class EventManagement {
 			Log.e(CLASS_NAME + " ERROR RESPONDING TO INVITE", "Unknown state: " + event.getStatus());
 			return;
 		}
-		if (networkAvailable) {
+		if (DataManagement.networkAvailable) {
 			event.setUploadedToServer(updateEventStatusInServer(event));
 		} else {
 			event.setUploadedToServer(false);
@@ -188,7 +185,7 @@ public class EventManagement {
 	 * @version 1.0
 	 */
 	public static void updateEvent(Context context, Event event) {
-		if (networkAvailable) {
+		if (DataManagement.networkAvailable) {
 			event.setUploadedToServer(editEvent(event));
 		} else {
 			event.setUploadedToServer(false);
@@ -686,7 +683,7 @@ public class EventManagement {
 				
 				post.setEntity(reqEntity);
 				
-				if (networkAvailable) {
+				if (DataManagement.networkAvailable) {
 					HttpResponse rp = hc.execute(post);
 
 					if (rp.getStatusLine().getStatusCode() == HttpStatus.SC_OK) {
@@ -809,7 +806,7 @@ public class EventManagement {
 				}
 				post.setEntity(reqEntity);
 
-				if (networkAvailable) {
+				if (DataManagement.networkAvailable) {
 					HttpResponse rp = hc.execute(post);
 
 					if (rp.getStatusLine().getStatusCode() == HttpStatus.SC_OK) {
@@ -927,7 +924,7 @@ public class EventManagement {
 
 				post.setEntity(reqEntity);
 
-				if (networkAvailable) {
+				if (DataManagement.networkAvailable) {
 					HttpResponse rp = hc.execute(post);
 
 					if (rp.getStatusLine().getStatusCode() == HttpStatus.SC_OK) {
@@ -967,7 +964,7 @@ public class EventManagement {
 
 				post.setEntity(reqEntity);
 
-				if (networkAvailable) {
+				if (DataManagement.networkAvailable) {
 					HttpResponse rp = hc.execute(post);
 
 					if (rp.getStatusLine().getStatusCode() == HttpStatus.SC_OK) {
