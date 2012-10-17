@@ -49,8 +49,4 @@
             android:text="@string/chat_send" />
     </LinearLayout>
 
-    <include
-        android:id="@+id/radiogroup"
-        layout="@layout/navbar_radiogroup" />
-
 </LinearLayout>
