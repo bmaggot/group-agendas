@@ -117,6 +117,11 @@ public class EventActivity extends Activity {
 	protected int timezoneInUse = 0;
 	protected Button inviteButton;
 	protected LinearLayout invitesColumn;
+	protected RelativeLayout invitationResponseLine;
+	protected TextView invitationResponseStatus;
+	protected TextView response_button_yes;
+	protected TextView response_button_no;
+	protected TextView response_button_maybe;
 	
 	protected Account account;
 	
