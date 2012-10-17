@@ -800,7 +800,7 @@ public class EventEditActivity extends EventActivity {
 				public void onClick(View arg0) {
 					if (event_internal_id > 0) {
 						Intent intent = new Intent(EventEditActivity.this, ChatMessageActivity.class);
-						intent.putExtra("event_id", event_internal_id);
+						intent.putExtra("event_id", event.getEvent_id());
 						startActivity(intent);
 					}
 				}

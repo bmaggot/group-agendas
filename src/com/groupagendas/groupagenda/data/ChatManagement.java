@@ -297,7 +297,7 @@ public class ChatManagement {
 							chatMessageObject = ChatManagement.makeChatMessageObjectFromJSON(object.getJSONObject("message"));
 						} else {
 							chatMessageObject = null;
-							Toast.makeText(context, object.getString("error"), Toast.LENGTH_LONG);
+//							Toast.makeText(context, object.getString("error"), Toast.LENGTH_LONG);
 						}
 					}
 				}
@@ -341,7 +341,7 @@ public class ChatManagement {
 							chatMessages.add(ChatManagement.makeChatMessageObjectFromJSON(JSONchatMessages.getJSONObject(i)));
 						}
 					} else {
-						Toast.makeText(context, object.getString("error"), Toast.LENGTH_LONG);
+//						Toast.makeText(context, object.getString("error"), Toast.LENGTH_LONG);
 					}
 				}
 			}
