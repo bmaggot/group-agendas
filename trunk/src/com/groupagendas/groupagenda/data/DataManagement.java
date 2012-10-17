@@ -5,6 +5,7 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ExecutionException;
@@ -46,11 +47,14 @@ import com.groupagendas.groupagenda.account.Account;
 import com.groupagendas.groupagenda.account.AccountProvider;
 import com.groupagendas.groupagenda.address.Address;
 import com.groupagendas.groupagenda.address.AddressProvider.AMetaData.AddressesMetaData;
+import com.groupagendas.groupagenda.contacts.ContactsProvider;
 import com.groupagendas.groupagenda.contacts.Group;
 import com.groupagendas.groupagenda.error.report.Reporter;
 import com.groupagendas.groupagenda.events.Event;
+import com.groupagendas.groupagenda.events.EventsProvider;
 import com.groupagendas.groupagenda.settings.AutoColorItem;
 import com.groupagendas.groupagenda.settings.AutoIconItem;
+import com.groupagendas.groupagenda.templates.TemplatesProvider;
 import com.groupagendas.groupagenda.templates.TemplatesProvider.TMetaData.TemplatesMetaData;
 import com.groupagendas.groupagenda.utils.JSONUtils;
 import com.groupagendas.groupagenda.utils.Prefs;
@@ -2834,6 +2838,7 @@ public class DataManagement {
 	}
 //TODO javadoc
 	public static void synchronizeWithServer(Context context, AsyncTask<Void, Integer, Void> dataSyncTask,	long latestUpdateUnixTimestamp) {
+		Log.d("synchronizeWithServer", "synchronizing with timestamp " + new Date(Utils.unixTimestampToMilis(latestUpdateUnixTimestamp)));
 		if (!DataManagement.networkAvailable) {
 			Log.e("synchronizeWithServer", "reason: no network connectivity");
 			return;
@@ -2900,7 +2905,16 @@ public class DataManagement {
 	}
 
 	public static void clearAllData(Context context) {
-	Log.d("DataManagement","Clearing Data");
+		Log.d("DataManagement.class", "clearing data");
+	// Delete old data
+	context.getContentResolver().delete(AccountProvider.AMetaData.AccountMetaData.CONTENT_URI, "", null);
+	context.getContentResolver().delete(ContactsProvider.CMetaData.ContactsMetaData.CONTENT_URI, "", null);
+	context.getContentResolver().delete(ContactsProvider.CMetaData.GroupsMetaData.CONTENT_URI,"", null);
+	context.getContentResolver().delete(TemplatesProvider.TMetaData.TemplatesMetaData.CONTENT_URI, "", null);
+	context.getContentResolver().delete(EventsProvider.EMetaData.EventsMetaData.CONTENT_URI, "", null);
+	context.getContentResolver().delete(EventsProvider.EMetaData.EventsIndexesMetaData.CONTENT_URI, "", null);
+//	getContentResolver().delete(EventsProvider.EMetaData.InvitedMetaData.CONTENT_URI, "", null);
+	context.getContentResolver().getType(EventsProvider.EMetaData.EventsMetaData.CONTENT_URI);
 		
 	}
 		
