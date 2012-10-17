@@ -2835,14 +2835,18 @@ public class DataManagement {
 		uploadTemplateToLocalDb(event, templateId);
 
 	}
-
+//TODO javadoc
 	public static void synchronizeWithServer(Context context, AsyncTask<Void, Integer, Void> dataSyncTask,	long latestUpdateUnixTimestamp) {
-		System.out.println("sync timestamp " + latestUpdateUnixTimestamp);
 		JSONObject response = getDataChangesJSON(latestUpdateUnixTimestamp);
-		if (response == null || !response.optBoolean(SUCCESS)){
-			System.out.println("RESPONSE success: " + response.optString(SUCCESS));
-			//TODO error handling
-		}else{
+		if (response == null){
+			Log.e("synchronizeWithServer", "null response");
+			return;
+		}
+		
+		if (!response.optBoolean(SUCCESS)){
+			Log.e("synchronizeWithServer", "reason: " + response.optString("reason"));
+			return;
+		}
 			JSONArray eventChanges = response.optJSONArray(EVENTS);
 			JSONArray deletedEvents = response.optJSONArray(EVENTS_REMOVED);
 			EventManagement.syncEvents (context, JSONUtils.JSONArrayToEventArray(eventChanges), JSONUtils.JSONArrayToLongArray(deletedEvents));
@@ -2857,7 +2861,7 @@ public class DataManagement {
 			JSONArray deletedGroups = response.optJSONArray(GROUPS_REMOVED);
 			ContactManagement.syncGroups(context, JSONUtils.JSONArrayToGroupsArray(groupChanges), JSONUtils.JSONArrayToLongArray(deletedGroups));
 			
-		}
+		
 		
 
 	}
@@ -2891,6 +2895,11 @@ public class DataManagement {
 
 		}
 		return null;
+	}
+
+	public static void clearAllData(Context context) {
+	Log.d("DataManagement","Clearing Data");
+		
 	}
 		
 	
