@@ -6,9 +6,9 @@
     android:versionName="0.9.55" >
 
     <uses-sdk
-        android:maxSdkVersion="13"
-        android:minSdkVersion="8"
-        android:targetSdkVersion="8" />
+        android:maxSdkVersion="16"
+        android:minSdkVersion="7"
+        android:targetSdkVersion="14" />
 
     <permission
         android:name="com.groupagendas.groupagenda.permission.C2D_MESSAGE"
@@ -252,7 +252,7 @@
             android:theme="@android:style/Theme.NoTitleBar" >
         </activity>
         <activity
-            android:name=".chat.ChatThreadActivity"
+            android:name=".chat.ChatThreadFragment"
             android:configChanges="keyboardHidden|orientation"
             android:theme="@android:style/Theme.NoTitleBar" >
         </activity>

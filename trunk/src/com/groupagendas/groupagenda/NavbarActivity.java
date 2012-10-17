@@ -7,6 +7,9 @@ import java.util.Calendar;
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.Dialog;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentActivity;
+import android.support.v4.app.FragmentTransaction;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
@@ -45,6 +48,7 @@ import com.groupagendas.groupagenda.calendar.minimonth.MiniMonthView;
 import com.groupagendas.groupagenda.calendar.month.MonthView;
 import com.groupagendas.groupagenda.calendar.year.YearView;
 import com.groupagendas.groupagenda.chat.ChatThreadActivity;
+import com.groupagendas.groupagenda.chat.ChatThreadFragment;
 import com.groupagendas.groupagenda.contacts.ContactsActivity;
 import com.groupagendas.groupagenda.contacts.ContactsProvider;
 import com.groupagendas.groupagenda.data.CalendarSettings;
@@ -61,7 +65,7 @@ import com.groupagendas.groupagenda.utils.Utils;
 import com.ptashek.widgets.datetimepicker.DateTimePicker;
 
 @SuppressLint("ParserError")
-public class NavbarActivity extends Activity {
+public class NavbarActivity extends FragmentActivity {
 
 
 
@@ -584,7 +588,10 @@ public class NavbarActivity extends Activity {
 					buttonView.setChecked(false);
 					break;
 				case R.id.btnChatThreads:
-					startActivity(new Intent(NavbarActivity.this, ChatThreadActivity.class));
+					Fragment chatFragment = ChatThreadFragment.newInstance();
+					FragmentTransaction ft = NavbarActivity.this.getSupportFragmentManager().beginTransaction();
+					calendarContainer.removeAllViews();
+					ft.add(R.id.calendarContainer, chatFragment).setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN).commit();
 					break;
 				case R.id.btnContacts:
 					Data.newEventPar = false;
