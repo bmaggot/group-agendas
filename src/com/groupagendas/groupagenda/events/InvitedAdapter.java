@@ -3,8 +3,6 @@ package com.groupagendas.groupagenda.events;
 import java.util.List;
 
 import android.content.Context;
-import android.database.Cursor;
-import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
@@ -12,21 +10,21 @@ import android.widget.TextView;
 import com.groupagendas.groupagenda.R;
 import com.groupagendas.groupagenda.account.Account;
 import com.groupagendas.groupagenda.calendar.adapters.AbstractAdapter;
-import com.groupagendas.groupagenda.contacts.ContactsProvider;
 
 public class InvitedAdapter extends AbstractAdapter<Invited> {
 	int listSize;
+	String myFullname = "";
 
 	public InvitedAdapter(Context context, List<Invited> list) {
 		super(context, list);
 		listSize = list.size();
+		Account account = new Account(context);
+		myFullname = account.getFullname();
 	}
 
 	@Override
 	public View getView(int i, View view, ViewGroup viewGroup) {
 		Invited invited;
-		Cursor cur;
-		Account account = new Account();
 		String temp = "";
 
 		if (view == null) {
@@ -35,6 +33,7 @@ public class InvitedAdapter extends AbstractAdapter<Invited> {
 
 		TextView nameView = (TextView) view.findViewById(R.id.invited_fullname);
 		TextView statusView = (TextView) view.findViewById(R.id.invited_status);
+		@SuppressWarnings("unused")
 		TextView emailView = (TextView) view.findViewById(R.id.invited_available_email);
 
 		invited = list.get(i);
@@ -42,8 +41,8 @@ public class InvitedAdapter extends AbstractAdapter<Invited> {
 			temp = invited.getName();
 			nameView.setText(temp);
 
-			if (temp.equals("You"))
-				nameView.setTag(Invited.OWN_INVITATION_ENTRY);
+			if (temp.equals("You") || temp.equals(myFullname))
+				view.setTag(Invited.OWN_INVITATION_ENTRY);
 
 			switch (invited.getStatus()) {
 				case Invited.REJECTED:
@@ -63,23 +62,6 @@ public class InvitedAdapter extends AbstractAdapter<Invited> {
 					break;
 			}
 			statusView.setText(temp);
-
-//			if (invited.getGuid() > 0) {
-//				if (invited.getGuid() == account.getUser_id())
-//					emailView.setText(account.getEmail());
-//			} else if (invited.getMy_contact_id() > 0) {
-//				String[] projection = { ContactsProvider.CMetaData.ContactsMetaData.EMAIL };
-//				temp = ContactsProvider.CMetaData.ContactsMetaData.C_ID + "=" + invited.getMy_contact_id();
-//				cur = context.getContentResolver().query(ContactsProvider.CMetaData.ContactsMetaData.CONTENT_URI, projection, temp, null,
-//						null);
-//				if (cur.moveToFirst()) {
-//					temp = cur.getString(cur.getColumnIndex(ContactsProvider.CMetaData.ContactsMetaData.EMAIL));
-//					emailView.setText(temp);
-//				} else {
-//					emailView.setText("");
-//					Log.e("InvitedAdapter.getView()", "Failed getting own contact's email.");
-//				}
-//			}
 		}
 		
 		if (i == listSize - 1)
