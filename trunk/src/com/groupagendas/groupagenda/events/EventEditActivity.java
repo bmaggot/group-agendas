@@ -35,6 +35,7 @@ import android.widget.Toast;
 import com.groupagendas.groupagenda.R;
 import com.groupagendas.groupagenda.account.Account;
 import com.groupagendas.groupagenda.chat.ChatMessageActivity;
+import com.groupagendas.groupagenda.contacts.Contact;
 import com.groupagendas.groupagenda.contacts.ContactsActivity;
 import com.groupagendas.groupagenda.data.CalendarSettings;
 import com.groupagendas.groupagenda.data.Data;
@@ -133,7 +134,22 @@ public class EventEditActivity extends EventActivity {
 		addressPanel.setVisibility(View.GONE);
 		detailsPanel.setVisibility(View.GONE);
 		addressDetailsPanel.setVisibility(View.VISIBLE);
-
+		
+		if (selectedContacts == null)
+			selectedContacts = new ArrayList<Contact>();
+		
+		if (newInvites == null)
+			newInvites = new ArrayList<Invited>();
+		
+		for (Contact temp : EventActivity.selectedContacts) {
+			Invited nu = new Invited();
+			nu.setMy_contact_id(temp.contact_id);
+			nu.setName(temp.name + " " + temp.lastname);
+			nu.setStatus(Invited.PENDING);
+			
+			EventActivity.newInvites.add(nu);
+		}
+		
 		// TODO implement offline
 		event_internal_id = intent.getLongExtra("event_id", 0);
 		// mode event Edit
@@ -502,20 +518,25 @@ public class EventEditActivity extends EventActivity {
 			@Override
 			public void onClick(View v) {
 				respondToInvitation(1);
+				new UpdateEventStatusTask().execute();
 			}
 		});
+		
 		response_button_no = (TextView) findViewById(R.id.button_no);
 		response_button_no.setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View v) {
 				respondToInvitation(0);
+				new UpdateEventStatusTask().execute();
 			}
 		});
+		
 		response_button_maybe = (TextView) findViewById(R.id.button_maybe);
 		response_button_maybe.setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View v) {
 				respondToInvitation(2);
+				new UpdateEventStatusTask().execute();
 			}
 		});
 		
@@ -846,6 +867,37 @@ public class EventEditActivity extends EventActivity {
 			pb.setVisibility(View.INVISIBLE);
 		}
 	}
+	
+	class UpdateEventStatusTask extends AsyncTask<Void, Void, Boolean> {
+		@Override
+		protected void onPreExecute() {
+			pb.setVisibility(View.VISIBLE);
+			saveButton.setText(getString(R.string.saving));
+			super.onPreExecute();
+		}
+	
+		@Override
+		protected Boolean doInBackground(Void... voids) {
+			event = setEventData(event);
+			int testEvent = event.isValid();
+			if (testEvent == 0) {
+				EventManagement.respondToInvitation(EventEditActivity.this, event);
+				return true;
+			} else {
+				errorStr = setErrorStr(testEvent);
+				return false;
+			}
+		}
+
+		@Override
+		protected void onPostExecute(Boolean result) {
+			pb.setVisibility(View.GONE);
+			saveButton.setText(getString(R.string.save));
+			if (!result) {
+				showDialog(DIALOG_ERROR);
+			}
+		}
+	}
 
 	class UpdateEventTask extends AsyncTask<Event, Void, Boolean> {
 
@@ -1025,7 +1077,7 @@ public class EventEditActivity extends EventActivity {
 		mDateTimePicker.updateDate(c.get(Calendar.YEAR), c.get(Calendar.MONTH), c.get(Calendar.DAY_OF_MONTH));
 		mDateTimePicker.updateTime(c.get(Calendar.HOUR_OF_DAY), c.get(Calendar.MINUTE));
 
-		final boolean is24h = !CalendarSettings.isUsing_AM_PM();
+		final boolean is24h = !CalendarSettings.isUsing_AM_PM(EventEditActivity.this);
 		// Setup TimePicker
 		mDateTimePicker.setIs24HourView(is24h);
 
