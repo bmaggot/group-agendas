@@ -7,6 +7,8 @@ package com.groupagendas.groupagenda.data;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 
+import android.content.Context;
+
 import com.groupagendas.groupagenda.account.Account;
 
 public class CalendarSettings {
@@ -33,13 +35,31 @@ public class CalendarSettings {
 		return DEFAULT_WEEKENDS;
 	}
 
+	/**
+	 * @deprecated
+	 * @return user's timezone.
+	 */
 	public static String getTimeZone() {
 		Account mAccount = new Account();
 		return mAccount.getTimezone();
 	}
 
+	public static String getTimeZone(Context context) {
+		Account mAccount = new Account(context);
+		return mAccount.getTimezone();
+	}
+
+	@Deprecated
 	public static boolean isUsing_AM_PM() {
 		Account mAccount = new Account();
+		if (mAccount.getSetting_ampm() == 1)
+			return true;
+		else
+			return false;
+	}
+
+	public static boolean isUsing_AM_PM(Context context) {
+		Account mAccount = new Account(context);
 		if (mAccount.getSetting_ampm() == 1)
 			return true;
 		else
