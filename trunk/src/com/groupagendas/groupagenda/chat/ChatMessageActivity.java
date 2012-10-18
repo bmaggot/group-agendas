@@ -28,6 +28,7 @@ public class ChatMessageActivity extends Activity {
 	ListView chat_message_list;
 	ArrayList<ChatMessageObject> chatMessages;
 	ChatMessageObject chatMessageObject;
+	ProgressBar pb;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -38,6 +39,7 @@ public class ChatMessageActivity extends Activity {
 	protected void onResume() {
 		super.onResume();
 		setContentView(R.layout.chat);
+		pb = (ProgressBar) findViewById(R.id.progress);
 
 		event_id = getIntent().getIntExtra("event_id", 0);
 
@@ -56,7 +58,6 @@ public class ChatMessageActivity extends Activity {
 			@Override
 			public void onClick(View arg0) {
 				String message = chatInput.getText().toString();
-				//insert tmp msg into list
 				chatMessageObject = ChatManagement.makeChatMessageObjectNow(ChatMessageActivity.this, message, event_id); 
 				chatMessages.add(chatMessageObject);
 				adapter.notifyDataSetChanged();
@@ -74,6 +75,11 @@ public class ChatMessageActivity extends Activity {
 	private class GetChatMessagesForEventDb extends AsyncTask<Object, Void, Void> {
 
 		@Override
+		protected void onPreExecute() {
+			pb.setVisibility(View.VISIBLE);
+		}
+		
+		@Override
 		protected Void doInBackground(Object... params) {
 			Context context = (Context) params[0];
 			int eventId = (Integer) params[1];
@@ -88,17 +94,15 @@ public class ChatMessageActivity extends Activity {
 		protected void onPostExecute(Void result) {
 			adapter.setList(chatMessages);
 			adapter.notifyDataSetChanged();
+			pb.setVisibility(View.INVISIBLE);
 		}
 
 	}
 
 	private class PostChatMessage extends AsyncTask<Object, Void, Void> {
-
-		ProgressBar pb;
 		
 		@Override
 		protected void onPreExecute() {
-			pb = (ProgressBar) findViewById(R.id.progress);
 			pb.setVisibility(View.VISIBLE);
 		}
 		
@@ -128,6 +132,11 @@ public class ChatMessageActivity extends Activity {
 	public class RemoveChatMessageFromRemoteDb extends AsyncTask<Object, ChatMessageObject, ChatMessageObject> {
 
 		@Override
+		protected void onPreExecute() {
+			pb.setVisibility(View.VISIBLE);
+		}
+		
+		@Override
 		protected ChatMessageObject doInBackground(Object... params) {
 			Context context = (Context) params[0];
 			int messageId = (Integer) params[1];
@@ -140,6 +149,7 @@ public class ChatMessageActivity extends Activity {
 		protected void onPostExecute(ChatMessageObject result) {
 			result.setDeleted(true);
 			adapter.notifyDataSetChanged();
+			pb.setVisibility(View.INVISIBLE);
 		}
 
 	}
