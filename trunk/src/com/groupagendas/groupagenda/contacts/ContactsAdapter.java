@@ -30,6 +30,10 @@ public class ContactsAdapter extends AbstractAdapter<Contact> implements Filtera
 		super(context, objects);
 		allContacts = objects;
 		this.selectedContacts = selectedContacts;
+		
+		for (Contact c : selectedContacts) {
+			toggleSelected(c.contact_id);
+		}
 	}
 
 	@Override
