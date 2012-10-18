@@ -54,19 +54,21 @@ public class C2DMReceiver extends C2DMBaseReceiver {
 		Account acc = new Account(context);
 		DataManagement.synchronizeWithServer(context, null, acc.getLatestUpdateUnixTimestamp());
 		String data = "";
-		if (!receiveIntent.getStringExtra("message").equals("") && !receiveIntent.getStringExtra("message").equals("^[A-Z][a-z]*Self$")) {
+		if (receiveIntent.getStringExtra("message") != null && !receiveIntent.getStringExtra("message").equals("") && !receiveIntent.getStringExtra("message").equals("^[A-Z][a-z]*Self$")) {
 			data = receiveIntent.getStringExtra("message");
 		}
 		String rel_id = null;
 		String type = null;
 		String isNative = null;
 		if (receiveIntent.hasExtra("rel_id") && receiveIntent.getStringExtra("rel_id") != "") {
+			rel_id = receiveIntent.getStringExtra("rel_id");
 			if (receiveIntent.hasExtra("rel_obj") && receiveIntent.getStringExtra("rel_obj").equals("ch")) {
 				isChatMessage = true;
+				ChatManagement.removeChatMessagesFromLocalDbForEvent(context, Integer.parseInt(rel_id));
+				ChatManagement.getChatMessagesForEventFromRemoteDb(Integer.parseInt(rel_id), context);
 			} else {
 				isChatMessage = false;
 			}
-			rel_id = receiveIntent.getStringExtra("rel_id");
 			Log.e("C2DMReceiver", "C2DMReceiver: " + data);
 			showNotification(this, "Group Agenda", "Group Agenda", data, 17301620, "", rel_id, type, isNative);
 		}
