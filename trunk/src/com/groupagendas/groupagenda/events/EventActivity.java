@@ -19,6 +19,7 @@ import com.groupagendas.groupagenda.R;
 import com.groupagendas.groupagenda.timezone.CountriesAdapter;
 import com.groupagendas.groupagenda.timezone.TimezonesAdapter;
 import com.groupagendas.groupagenda.account.Account;
+import com.groupagendas.groupagenda.contacts.Contact;
 import com.groupagendas.groupagenda.utils.DateTimeUtils;
 import com.groupagendas.groupagenda.utils.Prefs;
 
@@ -28,6 +29,7 @@ public class EventActivity extends Activity {
 	public static final String EXTRA_STRING_FOR_START_CALENDAR = "strTime";
 
 	public static ArrayList<Invited> newInvites;
+	public static ArrayList<Contact> selectedContacts;
 
 	protected DateTimeUtils dtUtils;
 	protected EditText descView;
