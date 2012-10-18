@@ -44,7 +44,7 @@ public class ChatMessageActivity extends Activity {
 		event_id = getIntent().getIntExtra("event_id", 0);
 
 		Object[] params = { this, event_id };
-		
+
 		new GetChatMessagesForEventDb().execute(params);
 
 		adapter = new ChatMessageAdapter(ChatMessageActivity.this, chatMessages);
@@ -58,7 +58,7 @@ public class ChatMessageActivity extends Activity {
 			@Override
 			public void onClick(View arg0) {
 				String message = chatInput.getText().toString();
-				chatMessageObject = ChatManagement.makeChatMessageObjectNow(ChatMessageActivity.this, message, event_id); 
+				chatMessageObject = ChatManagement.makeChatMessageObjectNow(ChatMessageActivity.this, message, event_id);
 				chatMessages.add(chatMessageObject);
 				adapter.notifyDataSetChanged();
 				Object[] params = { ChatMessageActivity.this, message, event_id };
@@ -71,20 +71,20 @@ public class ChatMessageActivity extends Activity {
 			}
 		});
 	}
-	
+
 	private class GetChatMessagesForEventDb extends AsyncTask<Object, Void, Void> {
 
 		@Override
 		protected void onPreExecute() {
 			pb.setVisibility(View.VISIBLE);
 		}
-		
+
 		@Override
 		protected Void doInBackground(Object... params) {
 			Context context = (Context) params[0];
 			int eventId = (Integer) params[1];
 			chatMessages = ChatManagement.getChatMessagesForEventFromLocalDb(context, eventId);
-			if(chatMessages.isEmpty() && DataManagement.networkAvailable){
+			if (chatMessages.isEmpty() && DataManagement.networkAvailable) {
 				chatMessages = ChatManagement.getChatMessagesForEventFromRemoteDb(eventId, context);
 			}
 			return null;
@@ -100,19 +100,19 @@ public class ChatMessageActivity extends Activity {
 	}
 
 	private class PostChatMessage extends AsyncTask<Object, Void, Void> {
-		
+
 		@Override
 		protected void onPreExecute() {
 			pb.setVisibility(View.VISIBLE);
 		}
-		
+
 		@Override
 		protected Void doInBackground(Object... params) {
 			Context context = (Context) params[0];
 			String message = (String) params[1];
-			int eventId = (Integer) params[2];		
+			int eventId = (Integer) params[2];
 			ChatMessageObject newChatMessageObject = ChatManagement.postChatMessage(eventId, message, context);
-			if(newChatMessageObject == null){
+			if (newChatMessageObject == null) {
 				chatMessages.remove(chatMessageObject);
 			} else {
 				chatMessages.remove(chatMessageObject);
@@ -135,7 +135,7 @@ public class ChatMessageActivity extends Activity {
 		protected void onPreExecute() {
 			pb.setVisibility(View.VISIBLE);
 		}
-		
+
 		@Override
 		protected ChatMessageObject doInBackground(Object... params) {
 			Context context = (Context) params[0];
@@ -155,9 +155,9 @@ public class ChatMessageActivity extends Activity {
 	}
 
 	public void deleteMessage(int message_id, ChatMessageObject chatMessageObject) {
-		Object[] params = {ChatMessageActivity.this, message_id, chatMessageObject};
+		Object[] params = { ChatMessageActivity.this, message_id, chatMessageObject };
 		new RemoveChatMessageFromRemoteDb().execute(params);
-		
+
 	}
 
 }
