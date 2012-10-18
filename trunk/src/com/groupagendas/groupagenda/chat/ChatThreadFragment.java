@@ -48,7 +48,7 @@ public class ChatThreadFragment extends Fragment {
 		if (container != null) {
 			LinearLayout chatInputBlock = (LinearLayout) container.findViewById(R.id.chat_inputBlock);
 			if (chatInputBlock != null) {
-				chatInputBlock.setVisibility(View.INVISIBLE);
+				chatInputBlock.setVisibility(View.GONE);
 			}
 			final ArrayList<ChatThreadObject> tmpArray = EventManagement.getExistingChatThreads(getActivity());
 			adapter = new ChatThreadAdapter(getActivity(), tmpArray);
