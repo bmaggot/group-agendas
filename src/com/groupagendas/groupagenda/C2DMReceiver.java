@@ -23,6 +23,7 @@ import com.groupagendas.groupagenda.utils.Utils;
 
 public class C2DMReceiver extends C2DMBaseReceiver {
 	private static boolean isChatMessage = false;
+
 	public C2DMReceiver() {
 		super(DataManagement.PROJECT_ID);
 	}
@@ -50,19 +51,17 @@ public class C2DMReceiver extends C2DMBaseReceiver {
 
 	@Override
 	protected void onMessage(Context context, Intent receiveIntent) {
+		Account acc = new Account(context);
+		DataManagement.synchronizeWithServer(context, null, acc.getLatestUpdateUnixTimestamp());
 		String data = "";
-		if (receiveIntent.getStringExtra("message") != null) {
+		if (!receiveIntent.getStringExtra("message").equals("") && !receiveIntent.getStringExtra("message").equals("^[A-Z][a-z]*Self$")) {
 			data = receiveIntent.getStringExtra("message");
-			Log.i("c2dm message: ", data);
 		}
 		String rel_id = null;
-		String type = null;;
+		String type = null;
 		String isNative = null;
-		if (receiveIntent.hasExtra("rel_obj") && receiveIntent.getStringExtra("rel_obj").equals("update")) {
-			DataManagement.updateAppData(Integer.parseInt(data));
-			
-		}else if (receiveIntent.hasExtra("rel_id") && receiveIntent.getStringExtra("rel_id") != "") {
-			if(receiveIntent.hasExtra("rel_obj") && receiveIntent.getStringExtra("rel_obj").equals("ch")){
+		if (receiveIntent.hasExtra("rel_id") && receiveIntent.getStringExtra("rel_id") != "") {
+			if (receiveIntent.hasExtra("rel_obj") && receiveIntent.getStringExtra("rel_obj").equals("ch")) {
 				isChatMessage = true;
 			} else {
 				isChatMessage = false;
@@ -87,46 +86,43 @@ public class C2DMReceiver extends C2DMBaseReceiver {
 
 			Intent notificationIntent;
 			Event event = EventManagement.getEventFromLocalDb(context, Integer.parseInt(rel_id), EventManagement.ID_EXTERNAL);
-			if(isChatMessage && event != null){
+			if (isChatMessage && event != null) {
 				ChatManagement.removeChatMessagesFromLocalDbForEvent(context, event.getEvent_id());
 				ChatManagement.getChatMessagesForEventFromRemoteDb(event.getEvent_id(), context);
 				notificationIntent = new Intent(context, ChatMessageActivity.class);
 				notificationIntent.putExtra("event_id", event.getEvent_id());
-				notificationIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-				PendingIntent contentIntent = PendingIntent.getActivity(context, 0, notificationIntent, PendingIntent.FLAG_UPDATE_CURRENT);
-
-				notification.setLatestEventInfo(context, title, text, contentIntent);
-
-				mNotificationManager.notify(1, notification);
+				C2DMReceiver.notifyNotification(mNotificationManager, notification, notificationIntent, context, text, title);
 			} else {
 				notificationIntent = new Intent(context, EventsActivity.class);
 				NavbarActivity.showInvites = true;
 				if (getEventById(rel_id, context) == null) {
-					EventManagement.getEventsFromRemoteDb(context, "");
+					System.out.println("				event not found");
+					//TODO update event by id from remote db
 				}
 				if (event != null) {
 					notificationIntent.putExtra("event_id", event.getEvent_id());
 					notificationIntent.putExtra("type", event.getType());
 					notificationIntent.putExtra("isNative", event.isNative());
 
-					notificationIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-					PendingIntent contentIntent = PendingIntent.getActivity(context, 0, notificationIntent, PendingIntent.FLAG_UPDATE_CURRENT);
-
-					notification.setLatestEventInfo(context, title, text, contentIntent);
-
-					mNotificationManager.notify(1, notification);
-				} else {
-					notificationIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-					PendingIntent contentIntent = PendingIntent.getActivity(context, 0, notificationIntent, PendingIntent.FLAG_UPDATE_CURRENT);
-
-					notification.setLatestEventInfo(context, title, text, contentIntent);
-
-					mNotificationManager.notify(1, notification);
+					C2DMReceiver.notifyNotification(mNotificationManager, notification, notificationIntent, context, text, title);
 				}
 			}
 
 		} catch (Exception ex) {
-			Reporter.reportError(C2DMReceiver.class.toString(), Thread.currentThread().getStackTrace()[2].getMethodName().toString(), ex.getMessage());
+			Reporter.reportError(C2DMReceiver.class.toString(), Thread.currentThread().getStackTrace()[2].getMethodName().toString(),
+					ex.getMessage());
+		}
+	}
+
+	public static void notifyNotification(NotificationManager notificationManager, Notification notification, Intent notificationIntent,
+			Context context, String text, String title) {
+		if (!text.equals("")) {
+			notificationIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+			PendingIntent contentIntent = PendingIntent.getActivity(context, 0, notificationIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+
+			notification.setLatestEventInfo(context, title, text, contentIntent);
+
+			notificationManager.notify(1, notification);
 		}
 	}
 
