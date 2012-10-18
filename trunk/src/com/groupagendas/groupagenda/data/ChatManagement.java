@@ -364,4 +364,17 @@ public class ChatManagement {
 		chatMessageObject.setUpdated("null");
 		return chatMessageObject;
 	}
+	
+	public static boolean removeChatMessagesFromLocalDbForEvent(Context context, long event_id) {
+		boolean success = false;
+		try {
+			ContentValues cv = new ContentValues();
+			cv.put(ChatProvider.CMMetaData.ChatMetaData.DELETED, true);
+			context.getContentResolver().delete(ChatProvider.CMMetaData.ChatMetaData.CONTENT_URI, ChatProvider.CMMetaData.ChatMetaData.E_ID + "=" + event_id, null);
+			success = true;
+		} catch (Exception e) {
+			Log.e("removeChatMessageFromLoacalDB(Context context, int " + event_id + ")", e.getMessage());
+		}
+		return success;
+	}
 }
