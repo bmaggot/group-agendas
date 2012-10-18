@@ -12,6 +12,7 @@ import android.util.Log;
 import com.google.android.c2dm.C2DMBaseReceiver;
 import com.groupagendas.groupagenda.account.Account;
 import com.groupagendas.groupagenda.chat.ChatMessageActivity;
+import com.groupagendas.groupagenda.data.ChatManagement;
 import com.groupagendas.groupagenda.data.DataManagement;
 import com.groupagendas.groupagenda.data.EventManagement;
 import com.groupagendas.groupagenda.error.report.Reporter;
@@ -87,6 +88,8 @@ public class C2DMReceiver extends C2DMBaseReceiver {
 			Intent notificationIntent;
 			Event event = EventManagement.getEventFromLocalDb(context, Integer.parseInt(rel_id), EventManagement.ID_EXTERNAL);
 			if(isChatMessage && event != null){
+				ChatManagement.removeChatMessagesFromLocalDbForEvent(context, event.getEvent_id());
+				ChatManagement.getChatMessagesForEventFromRemoteDb(event.getEvent_id(), context);
 				notificationIntent = new Intent(context, ChatMessageActivity.class);
 				notificationIntent.putExtra("event_id", event.getEvent_id());
 				notificationIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
