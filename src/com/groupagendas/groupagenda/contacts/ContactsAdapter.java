@@ -150,6 +150,38 @@ public class ContactsAdapter extends AbstractAdapter<Contact> implements Filtera
 		};
 	}
 
+	// TODO document this bitch! getSelection()
+	/**
+	 * @since 2012-10-19
+	 * @return List of i
+	 */
+	public ArrayList<Integer> getSelection() {
+		if (selection != null) {
+			return selection;
+		} else {
+			return new ArrayList<Integer>();
+		}
+	}
+	
+	// TODO optimize this bitch! getSelected() -> contact arraylist
+	/**
+	 * @since 2012-10-19
+	 * @return List of i
+	 */
+	public ArrayList<Contact> getSelected() {
+		ArrayList<Contact> selected = new ArrayList<Contact>();
+		
+		for (Integer tmp : selection) {
+			for (Contact c : allContacts) {
+				if (tmp == c.contact_id) {
+					selected.add(c);
+				}
+			}
+		}
+		
+		return selected;
+	}
+	
 	@Override
 	public void notifyDataSetChanged() {
 		super.notifyDataSetChanged();

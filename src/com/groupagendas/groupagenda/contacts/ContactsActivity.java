@@ -203,28 +203,53 @@ public class ContactsActivity extends ListActivity implements OnCheckedChangeLis
 				importButton.setText(R.string.contact_invite_save_button);
 				importButton.setOnClickListener(new OnClickListener() {
 
+//					@Override
+//					public void onClick(View v) {
+//						SparseBooleanArray selection = getListView().getCheckedItemPositions();
+//
+//						if (selection != null) {
+//			                for (int i=0; i<selection.size(); i++) {
+//			                	if (selection.get(selection.keyAt(i))) {
+//			                		int contains = -1;
+//			                		Contact c = (Contact) cAdapter.getItem(selection.keyAt(i));
+//
+//			                		for (int j = 0; j < EventActivity.selectedContacts.size(); j++) {
+//			                			if (EventActivity.selectedContacts.get(j).contact_id == c.contact_id)
+//			                				contains = j;
+//			                		}
+//			                		
+//			                		if (contains < 0) {
+//			                			EventActivity.selectedContacts.add(c);
+//			                		} else {
+//			                			EventActivity.selectedContacts.remove(contains);
+//			                		}
+//			                	}
+//			                }
+//			            }
+//
+//						finish();
+//					}
 					@Override
 					public void onClick(View v) {
-						SparseBooleanArray selection = getListView().getCheckedItemPositions();
+						ArrayList<Contact> selected = cAdapter.getSelected();
 
-						if (selection != null) {
-			                for (int i=0; i<selection.size(); i++) {
-			                	if (selection.get(selection.keyAt(i))) {
-			                		int contains = -1;
-			                		Contact c = (Contact) cAdapter.getItem(selection.keyAt(i));
-			                		
-			                		for (int j = 0; j < EventActivity.selectedContacts.size(); j++) {
-			                			if (EventActivity.selectedContacts.get(j).contact_id == c.contact_id)
-			                				contains = j;
-			                		}
-			                		
-			                		if (contains < 0) {
-			                			EventActivity.selectedContacts.add(c);
-			                		} else {
-			                			EventActivity.selectedContacts.remove(contains);
-			                		}
-			                	}
-			                }
+						if (selected != null) {
+//			                for (int i=0; i<selected.size(); i++) {
+//		                		int contains = -1;
+//		                		Contact c = selected.get(i);
+//
+//		                		for (int j = 0; j < EventActivity.selectedContacts.size(); j++) {
+//		                			if (EventActivity.selectedContacts.get(j).contact_id == c.contact_id)
+//		                				contains = j;
+//		                		}
+//		                		
+//		                		if (contains < 0) {
+//		                			EventActivity.selectedContacts.add(c);
+//		                		} else {
+//		                			EventActivity.selectedContacts.remove(contains);
+//		                		}
+//			                }
+							EventActivity.selectedContacts = selected;
 			            }
 
 						finish();

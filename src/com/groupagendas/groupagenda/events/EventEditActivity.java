@@ -8,7 +8,6 @@ import android.app.Dialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.graphics.Color;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.text.Editable;
@@ -76,7 +75,6 @@ public class EventEditActivity extends EventActivity {
 	private long event_internal_id;
 
 	protected final static int DELETE_DIALOG = 1;
-	protected final static int MY_INVITED_ENTRY_ID = 99999;
 	private boolean remindersShown = false;
 	private boolean alarmsShown = false;
 
@@ -88,6 +86,7 @@ public class EventEditActivity extends EventActivity {
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.event_edit);
+		selectedContacts = null;
 	}
 	
 	@Override
@@ -126,7 +125,6 @@ public class EventEditActivity extends EventActivity {
 			countriesAdapter = new CountriesAdapter(EventEditActivity.this, R.layout.search_dialog_item, countriesList);
 			timezonesAdapter = new TimezonesAdapter(EventEditActivity.this, R.layout.search_dialog_item, countriesList);
 		}
-
 
 		initViewItems();
 		hideAddressPanel();
@@ -230,7 +228,7 @@ public class EventEditActivity extends EventActivity {
 		});
 
 		countrySpinnerBlock = (LinearLayout) findViewById(R.id.countrySpinnerBlock);
-		countryView = (EditText) findViewById(R.id.countryView);
+		countryView = (TextView) findViewById(R.id.countryView);
 		countrySpinnerBlock.setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View arg0) {
@@ -269,8 +267,20 @@ public class EventEditActivity extends EventActivity {
 					@Override
 					public void onItemClick(AdapterView<?> parent, View view, int pos, long arg3) {
 						timezoneInUse = Integer.parseInt(view.getTag().toString());
-						countryView.setText(countriesList.get(timezoneInUse).country);
+						countryView.setText(countriesList.get(timezoneInUse).country2);
 						event.setCountry(countriesList.get(timezoneInUse).country_code);
+						
+						filteredCountriesList = new ArrayList<StaticTimezones>();
+						
+						for (StaticTimezones tz : countriesList) {
+							if (tz.country_code.equalsIgnoreCase(event.getCountry())) {
+								filteredCountriesList.add(tz);
+							}
+						}
+						
+						timezonesAdapter = new TimezonesAdapter(EventEditActivity.this, R.layout.search_dialog_item, filteredCountriesList);
+						timezonesAdapter.notifyDataSetChanged();
+						
 						timezoneView.setText(countriesList.get(timezoneInUse).timezone);
 						event.setTimezone(countriesList.get(timezoneInUse).timezone);
 						dia1.dismiss();
@@ -287,7 +297,7 @@ public class EventEditActivity extends EventActivity {
 		zipViewBlock = (LinearLayout) findViewById(R.id.zipViewBlock);
 		zipView = (EditText) findViewById(R.id.zipView);
 		timezoneSpinnerBlock = (LinearLayout) findViewById(R.id.timezoneSpinnerBlock);
-		timezoneView = (EditText) findViewById(R.id.timezoneView);
+		timezoneView = (TextView) findViewById(R.id.timezoneView);
 		timezoneSpinnerBlock.setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View arg0) {
@@ -326,7 +336,7 @@ public class EventEditActivity extends EventActivity {
 					@Override
 					public void onItemClick(AdapterView<?> arg0, View view, int pos, long arg3) {
 						timezoneInUse = Integer.parseInt(view.getTag().toString());
-						countryView.setText(countriesList.get(timezoneInUse).country);
+						countryView.setText(countriesList.get(timezoneInUse).country2);
 						event.setCountry(countriesList.get(timezoneInUse).country_code);
 						timezoneView.setText(countriesList.get(timezoneInUse).timezone);
 						event.setTimezone(countriesList.get(timezoneInUse).timezone);
@@ -518,7 +528,7 @@ public class EventEditActivity extends EventActivity {
 			@Override
 			public void onClick(View v) {
 				respondToInvitation(1);
-				new UpdateEventStatusTask().execute();
+				new EventEditActivity.UpdateEventStatusTask().execute();
 			}
 		});
 		
@@ -527,7 +537,7 @@ public class EventEditActivity extends EventActivity {
 			@Override
 			public void onClick(View v) {
 				respondToInvitation(0);
-				new UpdateEventStatusTask().execute();
+				new EventEditActivity.UpdateEventStatusTask().execute();
 			}
 		});
 		
@@ -536,7 +546,7 @@ public class EventEditActivity extends EventActivity {
 			@Override
 			public void onClick(View v) {
 				respondToInvitation(2);
-				new UpdateEventStatusTask().execute();
+				new EventEditActivity.UpdateEventStatusTask().execute();
 			}
 		});
 		
@@ -857,7 +867,7 @@ public class EventEditActivity extends EventActivity {
 				alarm3.setText("");
 			}
 
-			showInvitesView();
+			showInvitesView(EventEditActivity.this);
 			
 			if (result.getInvited().size() > 0) {
 				invitationResponseLine.setVisibility(View.VISIBLE);
@@ -1007,57 +1017,8 @@ public class EventEditActivity extends EventActivity {
 		}
 	}
 	
-	// TODO write a javadoc for respondToInvitation(int response)
-	// 		afterwawrds move it to the right place. 
-	protected void respondToInvitation(int response) {
-		invitesColumn = (LinearLayout) findViewById(R.id.invitesLine);
-		RelativeLayout myInvitation = (RelativeLayout) invitesColumn.findViewWithTag(Invited.OWN_INVITATION_ENTRY);
-		TextView myStatus = (TextView) myInvitation.findViewById(R.id.invited_status);
-		
-		switch (response) {
-		case 0:
-			event.setStatus(0);
-			invitationResponseStatus.setText(this.getString(R.string.status_not_attending));
-			myStatus.setText(this.getString(R.string.status_not_attending));
-			myStatus.setBackgroundColor(Color.parseColor("#5d5d5d")); // TODO hardcoded color-code
-			response_button_yes.setVisibility(View.VISIBLE);
-			response_button_maybe.setVisibility(View.VISIBLE);
-			response_button_no.setVisibility(View.INVISIBLE);
-			break;
-		case 1:
-			event.setStatus(1);
-			invitationResponseStatus.setText(this.getString(R.string.status_attending));
-			myStatus.setText(this.getString(R.string.status_attending));
-			myStatus.setBackgroundColor(Color.parseColor("#26b2d8")); // TODO hardcoded color-code
-			response_button_yes.setVisibility(View.INVISIBLE);
-			response_button_maybe.setVisibility(View.VISIBLE);
-			response_button_no.setVisibility(View.VISIBLE);
-			break;
-		case 2:
-			event.setStatus(2);
-			invitationResponseStatus.setText(this.getString(R.string.status_pending));
-			myStatus.setText(this.getString(R.string.status_pending));
-			myStatus.setBackgroundColor(Color.parseColor("#b5b5b5")); // TODO hardcoded color-code
-			response_button_yes.setVisibility(View.VISIBLE);
-			response_button_maybe.setVisibility(View.INVISIBLE);
-			response_button_no.setVisibility(View.VISIBLE);
-			break;
-		case 4:
-			event.setStatus(4);
-			invitationResponseStatus.setText(this.getString(R.string.status_new_invite));
-			response_button_yes.setVisibility(View.VISIBLE);
-			response_button_maybe.setVisibility(View.VISIBLE);
-			response_button_no.setVisibility(View.VISIBLE);
-			break;
-		default:
-			break;
-		}
-	}
-
-	private void showDateTimeDialog(final EditText view, final int id) { // TODO
-																			// put
-																			// to
-																			// parent
+	private void showDateTimeDialog(final EditText view, final int id) { 
+		// TODO put to parent
 		// Create the dialog
 		final Dialog mDateTimeDialog = new Dialog(this);
 		// Inflate the root layout

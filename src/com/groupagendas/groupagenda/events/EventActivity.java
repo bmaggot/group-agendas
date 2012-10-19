@@ -5,6 +5,8 @@ import java.util.Calendar;
 
 import android.app.Activity;
 import android.content.ContentValues;
+import android.content.Context;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
@@ -34,11 +36,11 @@ public class EventActivity extends Activity {
 	protected DateTimeUtils dtUtils;
 	protected EditText descView;
 
-	protected EditText countryView;
+	protected TextView countryView;
 	protected EditText cityView;
 	protected EditText streetView;
 	protected EditText zipView;
-	protected EditText timezoneView;
+	protected TextView timezoneView;
 	
 	protected EditText locationView;
 	protected EditText gobyView;
@@ -112,6 +114,7 @@ public class EventActivity extends Activity {
 	
 	protected Event event;
 	protected ArrayList<StaticTimezones> countriesList = null;
+	protected ArrayList<StaticTimezones> filteredCountriesList = null;
 	protected CountriesAdapter countriesAdapter = null;
 	protected TimezonesAdapter timezonesAdapter = null;
 	protected InvitedAdapter invitedAdapter = null;
@@ -266,7 +269,7 @@ public class EventActivity extends Activity {
 		public String call_code;
 	}
 
-	protected void showInvitesView() {
+	protected void showInvitesView(Context context) {
 		if (newInvites != null) {
 			event.getInvited().addAll(newInvites);
 			newInvites = null;
@@ -277,6 +280,26 @@ public class EventActivity extends Activity {
 		if (invitedListSize == 0) {
 			inviteButton.setBackgroundResource(R.drawable.event_invite_people_button_standalone);
 		} else {
+			boolean contains = false;
+			account = new Account(context);
+			String fullname = account.getFullname();
+			
+			for (Invited i : event.getInvited()) {
+				if (i.getName().equals(fullname)) {
+					contains = true;
+				}
+			}
+			
+			if (!contains) {
+				Invited me = new Invited();
+				me.setGuid(account.getUser_id());
+				me.setName(fullname);
+				me.setStatus(Invited.ACCEPTED);
+				event.setStatus(Invited.ACCEPTED);
+				event.getInvited().add(me);
+				invitedListSize++;
+			}
+			
 			inviteButton.setBackgroundResource(R.drawable.event_invite_people_button_notalone);
 			invitedAdapter = new InvitedAdapter(this, event.getInvited());
 			for (int i = 0; i < invitedListSize; i++) {
@@ -285,5 +308,51 @@ public class EventActivity extends Activity {
 			}
 		}
 		
+	}
+	
+	// TODO write a javadoc for respondToInvitation(int response)
+	protected void respondToInvitation(int response) {
+		invitesColumn = (LinearLayout) findViewById(R.id.invitesLine);
+		RelativeLayout myInvitation = (RelativeLayout) invitesColumn.findViewWithTag(Invited.OWN_INVITATION_ENTRY);
+		TextView myStatus = (TextView) myInvitation.findViewById(R.id.invited_status);
+		
+		switch (response) {
+		case 0:
+			event.setStatus(0);
+			invitationResponseStatus.setText(this.getString(R.string.status_not_attending));
+			myStatus.setText(this.getString(R.string.status_not_attending));
+			myStatus.setBackgroundColor(Color.parseColor("#5d5d5d")); // TODO hardcoded color-code
+			response_button_yes.setVisibility(View.VISIBLE);
+			response_button_maybe.setVisibility(View.VISIBLE);
+			response_button_no.setVisibility(View.INVISIBLE);
+			break;
+		case 1:
+			event.setStatus(1);
+			invitationResponseStatus.setText(this.getString(R.string.status_attending));
+			myStatus.setText(this.getString(R.string.status_attending));
+			myStatus.setBackgroundColor(Color.parseColor("#26b2d8")); // TODO hardcoded color-code
+			response_button_yes.setVisibility(View.INVISIBLE);
+			response_button_maybe.setVisibility(View.VISIBLE);
+			response_button_no.setVisibility(View.VISIBLE);
+			break;
+		case 2:
+			event.setStatus(2);
+			invitationResponseStatus.setText(this.getString(R.string.status_pending));
+			myStatus.setText(this.getString(R.string.status_pending));
+			myStatus.setBackgroundColor(Color.parseColor("#b5b5b5")); // TODO hardcoded color-code
+			response_button_yes.setVisibility(View.VISIBLE);
+			response_button_maybe.setVisibility(View.INVISIBLE);
+			response_button_no.setVisibility(View.VISIBLE);
+			break;
+		case 4:
+			event.setStatus(4);
+			invitationResponseStatus.setText(this.getString(R.string.status_new_invite));
+			response_button_yes.setVisibility(View.VISIBLE);
+			response_button_maybe.setVisibility(View.VISIBLE);
+			response_button_no.setVisibility(View.VISIBLE);
+			break;
+		default:
+			break;
+		}
 	}
 }
