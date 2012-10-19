@@ -1060,7 +1060,7 @@ public class EventManagement {
 //	TODO javadoc
 		/**
 		 * Fills ContentValues instance with event data
-		 * IMPORTANT: _ID field must be set MANUALLY
+		 * IMPORTANT: _ID field must be set MANUALLY. this method does not take care of that
 		 * @param event
 		 * @return CV for event. 
 		 */
