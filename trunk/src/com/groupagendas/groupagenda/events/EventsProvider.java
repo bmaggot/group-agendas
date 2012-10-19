@@ -1,5 +1,8 @@
 package com.groupagendas.groupagenda.events;
 
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.HashMap;
 
 import android.content.ContentProvider;
@@ -8,6 +11,7 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.content.UriMatcher;
 import android.database.Cursor;
+import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.database.sqlite.SQLiteQueryBuilder;
@@ -17,6 +21,10 @@ import android.text.TextUtils;
 
 public class EventsProvider extends ContentProvider{
 	private DatabaseHelper mOpenHelper;
+
+	private SimpleDateFormat day_index_formatter = new SimpleDateFormat(EMetaData.EventsIndexesMetaData.DAY_COLUMN_FORMAT);
+
+	private SimpleDateFormat month_index_formatter = new SimpleDateFormat(EMetaData.EventsIndexesMetaData.MONTH_COLUMN_FORMAT);
 	
 	public static class EMetaData {
 		public static final String AUTHORITY = "com.groupagendas.groupagenda.events.EventsProvider";
@@ -29,8 +37,10 @@ public class EventsProvider extends ContentProvider{
 //		public static final String INVITED_TABLE = "invited";
 		
 		private static final String events_on_date = "events_on_date";
+		protected static final String indexed_events = "indexed_events";
 		
 		public static final Uri EVENTS_ON_DATE_URI = Uri.parse("content://" + AUTHORITY + "/" + events_on_date);
+		public static final Uri INDEXED_EVENTS_URI = Uri.parse("content://" + AUTHORITY + "/" + indexed_events);
 		
 		
 		public static final class EventsIndexesMetaData{
@@ -213,7 +223,7 @@ public class EventsProvider extends ContentProvider{
 	}
 	
 	// Events day indexes table projection map
-		private static HashMap<String, String> IM;
+//		private static HashMap<String, String> IM;
 		
 //		static{
 //			IM = new HashMap<String, String>();
@@ -236,6 +246,7 @@ public class EventsProvider extends ContentProvider{
 	private static final int EVENTS_ON_DATE = 3;
 	private static final int EVENT_BY_EXTERNAL_ID = 4;
 //	private static final int INVITED = 4;
+	private static final int INDEXED_EVENTS = 5;
 
 	static {
 		mUriMatcher = new UriMatcher(UriMatcher.NO_MATCH);
@@ -244,6 +255,7 @@ public class EventsProvider extends ContentProvider{
 		mUriMatcher.addURI(EMetaData.AUTHORITY, EMetaData.EVENT_DAY_INDEX_TABLE, DAY_INDEX);
 		mUriMatcher.addURI(EMetaData.AUTHORITY, EMetaData.events_on_date, EVENTS_ON_DATE);
 		mUriMatcher.addURI(EMetaData.AUTHORITY, EMetaData.EVENTS_TABLE + "/external/#", EVENT_BY_EXTERNAL_ID);
+		mUriMatcher.addURI(EMetaData.AUTHORITY, EMetaData.indexed_events, INDEXED_EVENTS);
 //		mUriMatcher.addURI(EMetaData.AUTHORITY, EMetaData.INVITED_TABLE, INVITED);
 	}
 	// END UriMatcher
@@ -355,10 +367,10 @@ public class EventsProvider extends ContentProvider{
 			rowId = db.replace(EMetaData.EVENT_DAY_INDEX_TABLE, "", values); 
 			insUri = ContentUris.withAppendedId(EMetaData.EventsIndexesMetaData.CONTENT_URI, rowId);
 			break;
-//		case INVITED:
-//			rowId = db.replace(EMetaData.INVITED_TABLE, "", values); 
-//			insUri = ContentUris.withAppendedId(EMetaData.InvitedMetaData.CONTENT_URI, rowId);
-//			break;
+		case INDEXED_EVENTS:
+			insUri = insertIndexedEvent(db, values);
+			break;
+				
 		default:
 			throw new IllegalArgumentException("Unknow URI " + uri);
 		}
@@ -367,6 +379,53 @@ public class EventsProvider extends ContentProvider{
 		return insUri;
 	}
 	
+	
+	private Uri insertIndexedEvent(SQLiteDatabase db, ContentValues values) {
+		Calendar eventDayStart = Calendar.getInstance();
+		Calendar eventTimeEnd = Calendar.getInstance();
+		
+		Long millisStart = values.getAsLong(EMetaData.EventsMetaData.TIME_START_UTC_MILLISECONDS);
+		Long millisEnd = values.getAsLong(EMetaData.EventsMetaData.TIME_END_UTC_MILLISECONDS);
+		
+		if(millisStart == null || millisEnd == null) return null; //dont insert if crucial parts are missing
+		eventTimeEnd.setTimeInMillis(millisEnd);
+		eventDayStart.setTimeInMillis(millisStart);
+		eventDayStart.set(Calendar.HOUR_OF_DAY, 0);
+		eventDayStart.set(Calendar.MINUTE, 0);
+		eventDayStart.set(Calendar.SECOND, 0);
+		eventDayStart.set(Calendar.MILLISECOND, 0);
+		
+		long rowId = db.replace(EMetaData.EVENTS_TABLE, null, values);
+		Uri insUri = ContentUris.withAppendedId(EMetaData.EventsMetaData.CONTENT_URI, rowId);
+		
+		String event_internal_id = "" + rowId;
+		String ext_id = values.getAsString(EMetaData.EventsMetaData.E_ID);
+
+		if (values.getAsString(EMetaData.EventsMetaData.IS_ALL_DAY).equalsIgnoreCase("1")) { 
+			// only one row is inserted
+			insertEventDayIndexRow(db, event_internal_id, ext_id, eventDayStart);
+		} else
+			while (eventDayStart.before(eventTimeEnd)) {
+				// rows are	inserted for each day that event lasts
+				insertEventDayIndexRow(db, event_internal_id, ext_id, eventDayStart);
+				eventDayStart.add(Calendar.DATE, 1);
+			}
+		return insUri;
+	}
+
+	private void insertEventDayIndexRow(SQLiteDatabase db,
+		String event_internal_id, String ext_id, Calendar eventDayStart) {
+		ContentValues cv = new ContentValues();
+		cv.put(EventsProvider.EMetaData.EventsIndexesMetaData.EVENT_INTERNAL_ID, event_internal_id);
+		cv.put(EventsProvider.EMetaData.EventsIndexesMetaData.EVENT_EXTERNAL_ID, ext_id);
+		Date time = eventDayStart.getTime();
+
+		cv.put(EventsProvider.EMetaData.EventsIndexesMetaData.DAY, day_index_formatter.format(time));
+		cv.put(EventsProvider.EMetaData.EventsIndexesMetaData.MONTH, month_index_formatter.format(time));
+		db.replace(EventsProvider.EMetaData.EVENT_DAY_INDEX_TABLE, null, cv);
+		
+	}
+
 	@Override
 	public int update(Uri uri, ContentValues values, String where, String[] whereArgs) {
 		SQLiteDatabase db = mOpenHelper.getReadableDatabase();
@@ -386,6 +445,38 @@ public class EventsProvider extends ContentProvider{
 		getContext().getContentResolver().notifyChange(uri, null);
 
 		return count;
+	}
+	@Override
+	public int bulkInsert(Uri uri, ContentValues[] values){
+		int numIns = 0;
+		SQLiteDatabase sqlDB = mOpenHelper.getWritableDatabase();
+		
+		switch(mUriMatcher.match(uri)){
+		case INDEXED_EVENTS:
+			sqlDB.beginTransaction();
+		    try {
+
+		        for (ContentValues cv : values) {
+		            Uri insUri = insertIndexedEvent(sqlDB, cv);
+		            if (insUri == null) {
+		                throw new SQLException("Failed to insert row into " + uri);
+		            }
+		        }
+		        sqlDB.setTransactionSuccessful();
+		        getContext().getContentResolver().notifyChange(EMetaData.EventsMetaData.CONTENT_URI, null);
+		        getContext().getContentResolver().notifyChange(EMetaData.EventsIndexesMetaData.CONTENT_URI, null);
+		        numIns = values.length;
+		    } finally {
+		        sqlDB.endTransaction();
+		    }
+			break;
+		default:
+			
+			throw new IllegalArgumentException("Unknow URI "+uri);
+	}
+	    
+	    
+		return numIns ;
 	}
 	
 	private static class DatabaseHelper extends SQLiteOpenHelper {

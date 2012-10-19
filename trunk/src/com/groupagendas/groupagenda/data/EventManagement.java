@@ -60,6 +60,50 @@ public class EventManagement {
 
 	
 	////////////////////////////METHODS THAT ARE USED BY UI////////////////////////////////////////////////////////////////////
+	/**
+	 * Method gets event from remote db and writes it to local databases
+	 * @param id Event id in remote database
+	 * @return true if success false otherwise. Also, error message is set in via getError()
+	 */
+	public static boolean getEventByIdFromRemoteDb(Context context, String id) {
+		boolean success = false;
+		try {
+			HttpClient hc = new DefaultHttpClient();
+			HttpPost post = new HttpPost(Data.getServerUrl() + "mobile/events_get");
+
+			MultipartEntity reqEntity = new MultipartEntity(HttpMultipartMode.BROWSER_COMPATIBLE);
+			reqEntity.addPart(TOKEN, new StringBody(Data.getToken()));
+			reqEntity.addPart("event_id", new StringBody(id));
+
+			post.setEntity(reqEntity);
+			HttpResponse rp = hc.execute(post);
+
+			if (rp.getStatusLine().getStatusCode() == HttpStatus.SC_OK) {
+				String resp = EntityUtils.toString(rp.getEntity());
+				if (resp != null) {
+					JSONObject object = new JSONObject(resp);
+					success = object.getBoolean("success");
+
+					if (success == false) {
+						// TODO Error msg
+					} else {
+						JSONObject e = object.optJSONObject("event");
+						if(e == null){
+							// TODO Error msg
+							return false;
+						}
+						Event event = JSONUtils.createEventFromJSON(e);
+						updateEventInLocalDb(context, event);
+
+					}
+				}
+			}
+		} catch (Exception ex) {
+			Reporter.reportError(CLASS_NAME, Thread.currentThread().getStackTrace()[2].getMethodName().toString(),
+					ex.getMessage());
+		}
+		return success;
+	}
 	
 	/**
 	 * @author justinas.marcinka@gmail.com Method creates event in both remote
@@ -256,7 +300,6 @@ public class EventManagement {
 	private static final String EVENTS = "events";
 
 	
-
 	
 	/**
 	 * @author justinas.marcinka@gmail.com Gets events projections from local
@@ -383,6 +426,7 @@ public class EventManagement {
 	public static void getEventsFromRemoteDb(Context context, String eventCategory) {
 		boolean success = false;
 		Event event = null;
+		ContentValues[] values;
 
 		try {
 			HttpClient hc = new DefaultHttpClient();
@@ -402,17 +446,22 @@ public class EventManagement {
 					success = object.getBoolean(SUCCESS);
 
 					if (success == false) {
-						// // error = object.getString("error");
+						// error = object.getString("error");
 					} else {
 
 						JSONArray es = object.getJSONArray(EVENTS);
+					Calendar start = Calendar.getInstance();
+					 values = new ContentValues[es.length()];
+					 int value = 0;
 						for (int i = 0; i < es.length(); i++) {
 							try{
 							JSONObject e = es.getJSONObject(i);
 							event = JSONUtils.createEventFromJSON(e);
 							if (event != null && !event.isNative()) {
 								event.setUploadedToServer(true);
-								insertEventToLocalDB(context, event);
+								values[value] = createCVforEventsTable(event);
+								value++;
+//								insertEventToLocalDB(context, event);
 							}
 
 							}
@@ -420,6 +469,10 @@ public class EventManagement {
 								Log.e(CLASS_NAME, "JSON");
 							}
 						}
+						if(values != null)
+							context.getContentResolver().bulkInsert(EventsProvider.EMetaData.INDEXED_EVENTS_URI, values);
+						Calendar end = Calendar.getInstance();
+						System.out.println("insert time:" + (end.getTimeInMillis() - start.getTimeInMillis()));
 					}
 				}
 			}
@@ -440,19 +493,19 @@ public class EventManagement {
 	 * @version 1.0
 	 */
 	protected static void insertEventToLocalDB(Context context, Event event) {
-
 		// 1. ADD EVENT details to events table
 		ContentValues cv = createCVforEventsTable(event);
-		Uri eventUri = context.getContentResolver().insert(EventsProvider.EMetaData.EventsMetaData.CONTENT_URI, cv);
-		long internalID = ContentUris.parseId(eventUri);
-		if (internalID >= 0){ 
-		event.setInternalID(internalID);
-		
-		// 2. INSERT EVENT day indexes into events_days table
-		insertEventToDayIndexTable(context, event);
+		Uri eventUri = context.getContentResolver().insert(EventsProvider.EMetaData.INDEXED_EVENTS_URI, cv);
+
+//		long internalID = ContentUris.parseId(eventUri);
+//		if (internalID >= 0){ 
+//		event.setInternalID(internalID);
+//		
+//		// 2. INSERT EVENT day indexes into events_days table
+//		insertEventToDayIndexTable(context, event);
 		// 3. INSERT EVENT INVITEs
 //		insertEventToInvitesTable(context, event);
-		}
+//		}
 	}
 	
 	
@@ -510,7 +563,8 @@ public class EventManagement {
 								+ "/" + internalID);
 		
 			
-			resolver.update(uri, cv, null, null);
+			if (resolver.update(uri, cv, null, null) == 0) resolver.insert(uri, cv);
+			
 
 		if (event.getStartCalendar() != null && event.getEndCalendar() != null){ // to prevent null pointer exception: that hurts if happens :)
 			
