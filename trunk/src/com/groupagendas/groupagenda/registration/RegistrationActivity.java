@@ -184,7 +184,7 @@ public class RegistrationActivity extends Activity {
 		phonecodeView = (EditText) findViewById(R.id.phonecodeView);
 
 		countrySpinnerBlock = (LinearLayout) findViewById(R.id.countrySpinnerBlock);
-		countryView = (EditText) findViewById(R.id.countryView);
+		countryView = (TextView) findViewById(R.id.countryView);
 		countrySpinnerBlock.setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View arg0) {
@@ -247,7 +247,7 @@ public class RegistrationActivity extends Activity {
 		});
 
 		timezoneSpinnerBlock = (LinearLayout) findViewById(R.id.timezoneSpinnerBlock);
-		timezoneView = (EditText) findViewById(R.id.timezoneView);
+		timezoneView = (TextView) findViewById(R.id.timezoneView);
 		timezoneSpinnerBlock.setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View arg0) {
