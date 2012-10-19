@@ -3,9 +3,14 @@ package com.groupagendas.groupagenda.chat;
 import java.util.ArrayList;
 
 import android.app.Activity;
+import android.content.BroadcastReceiver;
 import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.Handler;
+import android.support.v4.content.LocalBroadcastManager;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.inputmethod.InputMethodManager;
@@ -24,15 +29,17 @@ public class ChatMessageActivity extends Activity {
 
 	EditText chatInput;
 	Button chatSend;
-	ChatMessageAdapter adapter;
+	static ChatMessageAdapter adapter;
 	ListView chat_message_list;
 	ArrayList<ChatMessageObject> chatMessages;
 	ChatMessageObject chatMessageObject;
 	ProgressBar pb;
+	final static Handler myHandler = new Handler();
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+		LocalBroadcastManager.getInstance(this).registerReceiver(mMessageReceiver, new IntentFilter("refreshMessagesList"));
 	}
 
 	@Override
@@ -160,4 +167,25 @@ public class ChatMessageActivity extends Activity {
 
 	}
 
+//	public static boolean refreshMessagesList() {
+//		myHandler.post(myRunnable);
+//		return adapter != null;
+//	}
+//
+//	final static Runnable myRunnable = new Runnable() {
+//		public void run() {
+//			if (adapter != null) {
+//				adapter.notifyDataSetChanged();
+//			}
+//		}
+//	};
+	
+	private BroadcastReceiver mMessageReceiver = new BroadcastReceiver() {
+		  @Override
+		  public void onReceive(Context context, Intent intent) {
+			  ChatManagement.removeChatMessagesFromLocalDbForEvent(context, event_id);
+			  Object[] params = { context, event_id };
+			  new GetChatMessagesForEventDb().execute(params);
+		  }
+		};
 }
