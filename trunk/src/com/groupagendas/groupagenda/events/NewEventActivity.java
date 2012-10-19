@@ -77,7 +77,7 @@ public class NewEventActivity extends EventActivity {
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.new_event);
-		
+		selectedContacts = null;
 
 		startCalendar.clear(Calendar.SECOND);
 		endCalendar.clear(Calendar.SECOND);
@@ -197,7 +197,7 @@ public class NewEventActivity extends EventActivity {
 		final LinearLayout addressPanel = (LinearLayout) findViewById(R.id.addressLine);
 		// timezone
 		timezoneSpinnerBlock = (LinearLayout) findViewById(R.id.timezoneSpinnerBlock);
-		timezoneView = (EditText) findViewById(R.id.timezoneView);
+		timezoneView = (TextView) findViewById(R.id.timezoneView);
 		timezoneSpinnerBlock.setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View arg0) {
@@ -236,7 +236,7 @@ public class NewEventActivity extends EventActivity {
 					@Override
 					public void onItemClick(AdapterView<?> arg0, View view, int pos, long arg3) {
 						timezoneInUse = Integer.parseInt(view.getTag().toString());
-						countryView.setText(countriesList.get(timezoneInUse).country);
+						countryView.setText(countriesList.get(timezoneInUse).country2);
 						event.setCountry(countriesList.get(timezoneInUse).country_code);
 						timezoneView.setText(countriesList.get(timezoneInUse).timezone);
 						event.setTimezone(countriesList.get(timezoneInUse).timezone);
@@ -249,7 +249,7 @@ public class NewEventActivity extends EventActivity {
 
 		// country
 		countrySpinnerBlock = (LinearLayout) findViewById(R.id.countrySpinnerBlock);
-		countryView = (EditText) findViewById(R.id.countryView);
+		countryView = (TextView) findViewById(R.id.countryView);
 		countrySpinnerBlock.setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View arg0) {
@@ -288,8 +288,20 @@ public class NewEventActivity extends EventActivity {
 					@Override
 					public void onItemClick(AdapterView<?> arg0, View view, int pos, long arg3) {
 						timezoneInUse = Integer.parseInt(view.getTag().toString());
-						countryView.setText(countriesList.get(timezoneInUse).country);
+						countryView.setText(countriesList.get(timezoneInUse).country2);
 						event.setCountry(countriesList.get(timezoneInUse).country_code);
+						
+						filteredCountriesList = new ArrayList<StaticTimezones>();
+						
+						for (StaticTimezones tz : countriesList) {
+							if (tz.country_code.equalsIgnoreCase(event.getCountry())) {
+								filteredCountriesList.add(tz);
+							}
+						}
+						
+						timezonesAdapter = new TimezonesAdapter(NewEventActivity.this, R.layout.search_dialog_item, filteredCountriesList);
+						timezonesAdapter.notifyDataSetChanged();
+						
 						timezoneView.setText(countriesList.get(timezoneInUse).timezone);
 						event.setTimezone(countriesList.get(timezoneInUse).timezone);
 						dia1.dismiss();
@@ -544,8 +556,9 @@ public class NewEventActivity extends EventActivity {
 	@Override
 	public void onResume() {
 		super.onResume();
-
 		account = new Account(this);
+		invitationResponseLine = (RelativeLayout) findViewById(R.id.response_to_invitation);
+		invitationResponseStatus = (TextView) findViewById(R.id.status);
 		
 		String[] cities;
 		String[] countries;
@@ -588,18 +601,61 @@ public class NewEventActivity extends EventActivity {
 			}
 		}
 		
+		// INVITES SECTION
+		response_button_yes = (TextView) findViewById(R.id.button_yes);
+		response_button_yes.setOnClickListener(new OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				respondToInvitation(1);
+			}
+		});
+		
+		response_button_no = (TextView) findViewById(R.id.button_no);
+		response_button_no.setOnClickListener(new OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				respondToInvitation(0);
+			}
+		});
+		
+		response_button_maybe = (TextView) findViewById(R.id.button_maybe);
+		response_button_maybe.setOnClickListener(new OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				respondToInvitation(2);
+			}
+		});
+		
 		timezoneView.setText(account.getTimezone());
 
 		LinearLayout invitedPersonList = (LinearLayout) findViewById(R.id.invited_person_list);
 		invitedPersonList.removeAllViews();
 
-		if (newInvites != null) {
-			event.getInvited().addAll(newInvites);
-			newInvites = null;
-		}
-
-		showInvitesView();
+		if (selectedContacts == null)
+			selectedContacts = new ArrayList<Contact>();
 		
+		if (newInvites == null)
+			newInvites = new ArrayList<Invited>();
+		
+		for (Contact temp : EventActivity.selectedContacts) {
+			Invited nu = new Invited();
+			nu.setMy_contact_id(temp.contact_id);
+			nu.setName(temp.name + " " + temp.lastname);
+			nu.setStatus(Invited.PENDING);
+			
+			EventActivity.newInvites.add(nu);
+		}
+		
+		event.setInvited(new ArrayList<Invited>());
+		
+		showInvitesView(NewEventActivity.this);
+
+		if (event.getInvited().size() > 0) {
+			invitationResponseLine.setVisibility(View.VISIBLE);
+			respondToInvitation(event.getStatus());
+		} else {
+			invitationResponseLine.setVisibility(View.GONE);
+		}
 	}
 
 //	public View getInvitedView(Invited invited, LayoutInflater inflater, View view, Context mContext) {
@@ -762,6 +818,7 @@ public class NewEventActivity extends EventActivity {
 
 	public void showAddressPanel() {
 		addressPanelVisible = true;
+		
 		LinearLayout timezoneSpinnerBlock = (LinearLayout) findViewById(R.id.timezoneSpinnerBlock);
 		timezoneSpinnerBlock.setVisibility(View.VISIBLE);
 
@@ -1009,7 +1066,7 @@ public class NewEventActivity extends EventActivity {
 		// final String timeS =
 		// android.provider.Settings.System.getString(getContentResolver(),
 		// android.provider.Settings.System.TIME_12_24);
-		final boolean is24h = !CalendarSettings.isUsing_AM_PM();
+		final boolean is24h = !CalendarSettings.isUsing_AM_PM(NewEventActivity.this);
 		// Setup TimePicker
 		mDateTimePicker.setIs24HourView(is24h);
 
