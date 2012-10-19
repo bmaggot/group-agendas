@@ -53,27 +53,27 @@ import com.groupagendas.groupagenda.timezone.CountriesAdapter;
 import com.groupagendas.groupagenda.timezone.TimezonesAdapter;
 import com.groupagendas.groupagenda.utils.Utils;
 
-public class AccountActivity extends Activity implements OnClickListener{
-	
+public class AccountActivity extends Activity implements OnClickListener {
+
 	// image
 	private Uri mImageCaptureUri;
 	private static final int PICK_FROM_CAMERA = 1;
 	private static final int CROP_FROM_CAMERA = 2;
 	private static final int PICK_FROM_FILE = 3;
 	private final int CROP_IMAGE_DIALOG = 4;
-	
+
 	private ProgressBar pb;
-	
+
 	// Fields
 	private EditText nameView;
 	private EditText lastnameView;
 
-// TODO implement ability tu change primary email.
-//	private EditText emailView;
+	// TODO implement ability tu change primary email.
+	// private EditText emailView;
 	private EditText phone1View;
 	private EditText phone2View;
 	private EditText phone3View;
-	
+
 	// Birthdate
 	private EditText birthdateView;
 	private Button birthdateButton;
@@ -85,23 +85,23 @@ public class AccountActivity extends Activity implements OnClickListener{
 	// Sex
 	private Spinner sexSpinner;
 	private String[] sexArray;
-	
+
 	// Country
-	private EditText countryView;
-	
+	private TextView countryView;
+
 	// timezone
-	private EditText timezoneView;	
+	private TextView timezoneView;
 	private EditText cityView;
 	private EditText streetView;
 	private EditText zipView;
-	
+
 	// image
 	private ImageView accountImage;
 	private CheckBox removeImage;
-	
-	private final int DIALOG_ERROR   = 5;
+
+	private final int DIALOG_ERROR = 5;
 	private String errorStr;
-	
+
 	private ArrayList<StaticTimezones> countriesList = new ArrayList<StaticTimezones>();
 	private ArrayList<StaticTimezones> filteredCountriesList = new ArrayList<StaticTimezones>();
 	private CountriesAdapter countriesAdapter = null;
@@ -117,7 +117,7 @@ public class AccountActivity extends Activity implements OnClickListener{
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 	}
-	
+
 	@Override
 	public void onResume() {
 		super.onResume();
@@ -137,10 +137,11 @@ public class AccountActivity extends Activity implements OnClickListener{
 		country_codes = getResources().getStringArray(R.array.country_codes);
 		timezones = getResources().getStringArray(R.array.timezones);
 		altnames = getResources().getStringArray(R.array.timezone_altnames);
+
 		for (int i = 0; i < cities.length; i++) {
 			// TODO what have I done?!
 			StaticTimezones temp = new EventActivity().new StaticTimezones();
-			
+
 			temp.id = "" + i;
 			temp.city = cities[i];
 			temp.country = countries[i];
@@ -148,11 +149,12 @@ public class AccountActivity extends Activity implements OnClickListener{
 			temp.country_code = country_codes[i];
 			temp.timezone = timezones[i];
 			temp.altname = altnames[i];
-			
+
 			countriesList.add(temp);
 		}
 		if (countriesList != null) {
 			countriesAdapter = new CountriesAdapter(AccountActivity.this, R.layout.search_dialog_item, countriesList);
+			timezonesAdapter = new TimezonesAdapter(AccountActivity.this, R.layout.search_dialog_item, countriesList);
 		}
 
 		emailView = (EditText) findViewById(R.id.emailView);
@@ -163,17 +165,17 @@ public class AccountActivity extends Activity implements OnClickListener{
 		languageSpinner.setAdapter(adapterLanguage);
 		languageArray = getResources().getStringArray(R.array.language_values);
 		languageSpinner.setSelection(getMyLanguage(languageArray, account.getLanguage()));
-		
+
 		pb = (ProgressBar) findViewById(R.id.progress);
 
 		nameView = (EditText) findViewById(R.id.nameView);
 		lastnameView = (EditText) findViewById(R.id.lastnameView);
 
-//		emailView = (EditText) findViewById(R.id.emailView);
+		// emailView = (EditText) findViewById(R.id.emailView);
 		phone1View = (EditText) findViewById(R.id.phone1View);
 		phone2View = (EditText) findViewById(R.id.phone2View);
 		phone3View = (EditText) findViewById(R.id.phone3View);
-		
+
 		// Birthdate
 		birthdateView = (EditText) findViewById(R.id.birthdateView);
 		birthdateButton = (Button) findViewById(R.id.birthdateButton);
@@ -184,39 +186,40 @@ public class AccountActivity extends Activity implements OnClickListener{
 				showDialog(BIRTHDATE_DIALOG);
 			}
 		});
-		
+
 		// Sex
 		sexSpinner = (Spinner) findViewById(R.id.sexSpinner);
-		ArrayAdapter<CharSequence> adapterSex = ArrayAdapter.createFromResource(this, R.array.sex_labels, android.R.layout.simple_spinner_item);
+		ArrayAdapter<CharSequence> adapterSex = ArrayAdapter.createFromResource(this, R.array.sex_labels,
+				android.R.layout.simple_spinner_item);
 		adapterSex.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
 		sexSpinner.setAdapter(adapterSex);
 		sexArray = getResources().getStringArray(R.array.sex_values);
-		
+
 		cityView = (EditText) findViewById(R.id.cityView);
 		streetView = (EditText) findViewById(R.id.streetView);
 		zipView = (EditText) findViewById(R.id.zipView);
-		
+
 		// Image
 		accountImage = (ImageView) findViewById(R.id.accountImage);
 		accountImage.setOnClickListener(this);
 		removeImage = (CheckBox) findViewById(R.id.removeImage);
-		
+
 		countrySpinnerBlock = (LinearLayout) findViewById(R.id.countrySpinnerBlock);
-		countryView = (EditText) findViewById(R.id.countryView);
+		countryView = (TextView) findViewById(R.id.countryView);
 		countrySpinnerBlock.setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View arg0) {
 				final Dialog dia1 = new Dialog(AccountActivity.this);
 				dia1.requestWindowFeature(Window.FEATURE_NO_TITLE);
 				dia1.setContentView(R.layout.search_dialog);
-				
+
 				ListView diaList = (ListView) dia1.findViewById(R.id.dialog_list);
 				diaList.setAdapter(countriesAdapter);
 				countriesAdapter.notifyDataSetChanged();
-				
+
 				EditText searchView = (EditText) dia1.findViewById(R.id.dialog_search);
 
-				TextWatcher filterTextWatcher = new TextWatcher() {					
+				TextWatcher filterTextWatcher = new TextWatcher() {
 					@Override
 					public void afterTextChanged(Editable s) {
 					}
@@ -233,29 +236,28 @@ public class AccountActivity extends Activity implements OnClickListener{
 						}
 					}
 				};
-				
+
 				searchView.addTextChangedListener(filterTextWatcher);
-				
+
 				diaList.setOnItemClickListener(new OnItemClickListener() {
 
 					@Override
 					public void onItemClick(AdapterView<?> parent, View view, int pos, long arg3) {
 						timezoneInUse = Integer.parseInt(view.getTag().toString());
 						countryView.setText(countriesList.get(timezoneInUse).country2);
-						account.setCountry(countriesList.get(timezoneInUse).country_code);
 						String countryCode = countriesList.get(timezoneInUse).country_code;
-						
+
 						filteredCountriesList = new ArrayList<StaticTimezones>();
-						
+
 						for (StaticTimezones tz : countriesList) {
 							if (tz.country_code.equalsIgnoreCase(countryCode)) {
 								filteredCountriesList.add(tz);
 							}
 						}
-						
+
 						timezonesAdapter = new TimezonesAdapter(AccountActivity.this, R.layout.search_dialog_item, filteredCountriesList);
 						timezonesAdapter.notifyDataSetChanged();
-						
+
 						timezoneView.setText(countriesList.get(timezoneInUse).timezone);
 						account.setTimezone(countriesList.get(timezoneInUse).timezone);
 						dia1.dismiss();
@@ -266,14 +268,14 @@ public class AccountActivity extends Activity implements OnClickListener{
 		});
 
 		timezoneSpinnerBlock = (LinearLayout) findViewById(R.id.timezoneSpinnerBlock);
-		timezoneView = (EditText) findViewById(R.id.timezoneView);
+		timezoneView = (TextView) findViewById(R.id.timezoneView);
 		timezoneSpinnerBlock.setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View arg0) {
 				final Dialog dia1 = new Dialog(AccountActivity.this);
 				dia1.requestWindowFeature(Window.FEATURE_NO_TITLE);
 				dia1.setContentView(R.layout.search_dialog);
-				
+
 				ListView diaList = (ListView) dia1.findViewById(R.id.dialog_list);
 				diaList.setAdapter(timezonesAdapter);
 				timezonesAdapter.notifyDataSetChanged();
@@ -299,7 +301,7 @@ public class AccountActivity extends Activity implements OnClickListener{
 				};
 
 				searchView.addTextChangedListener(filterTextWatcher);
-				
+
 				diaList.setOnItemClickListener(new OnItemClickListener() {
 
 					@Override
@@ -317,10 +319,9 @@ public class AccountActivity extends Activity implements OnClickListener{
 		});
 
 		fillActivityFields(account);
-
 	}
 
-	// TODO code duplicate in Registration activity. 
+	// TODO code duplicate in Registration activity.
 	private int getMyLanguage(String[] countryList, String myLanguage) {
 		int countryPosition = 0;
 
@@ -338,22 +339,22 @@ public class AccountActivity extends Activity implements OnClickListener{
 		} else {
 			nameView.setText("");
 		}
-		
+
 		if (!account.getLastname().equals("null")) {
 			lastnameView.setText(account.getLastname());
 		} else {
 			lastnameView.setText("");
 		}
 
-		if(!account.getEmail().equals("null"))
+		if (!account.getEmail().equals("null"))
 			emailView.setText(account.getEmail());
-		
+
 		if (!account.getPhone1().equals("null"))
 			phone1View.setText(account.getPhone1());
-		
+
 		if (!account.getPhone2().equals("null"))
 			phone2View.setText(account.getPhone2());
-		
+
 		if (!account.getPhone3().equals("null"))
 			phone3View.setText(account.getPhone3());
 
@@ -365,64 +366,67 @@ public class AccountActivity extends Activity implements OnClickListener{
 
 			updateBirthdate();
 		}
-		
+
 		// sex
-		if (!account.getSex().equals("null")){
+		if (!account.getSex().equals("null")) {
 			int pos = Utils.getArrayIndex(sexArray, account.getSex());
 			sexSpinner.setSelection(pos);
 		}
-		
+
 		// country
-		if (account.getCountry().length() > 0) {
+		String country = account.getCountry();
+		if (country.length() > 0) {
 			for (StaticTimezones entry : countriesList) {
-				if (entry.country2.equalsIgnoreCase(account.getCountry()))
+				if (entry.country2.equalsIgnoreCase(country) || entry.country.equalsIgnoreCase(country)) {
 					timezoneInUse = Integer.parseInt(entry.id);
-			}
-			if (timezoneInUse > 0) {
-				String countryCode = countriesList.get(timezoneInUse).country_code;
-				
-				filteredCountriesList = new ArrayList<StaticTimezones>();
-				
-				for (StaticTimezones tz : countriesList) {
-					if (tz.country_code.equalsIgnoreCase(countryCode)) {
-						filteredCountriesList.add(tz);
-					}
 				}
-				
-				timezonesAdapter = new TimezonesAdapter(AccountActivity.this, R.layout.search_dialog_item, filteredCountriesList);
-				timezonesAdapter.notifyDataSetChanged();
-				
+			}
+
+			if (timezoneInUse > 0) {
 				countryView.setText(countriesList.get(timezoneInUse).country2);
 			}
 		}
-		
+
 		// timezone
 		if (account.getTimezone().length() > 0) {
 			for (StaticTimezones entry : countriesList) {
 				if (entry.timezone.equalsIgnoreCase(account.getTimezone()))
 					timezoneInUse = Integer.parseInt(entry.id);
 			}
-//			if (timezoneInUse > 0) {
-				timezoneView.setText(countriesList.get(timezoneInUse).timezone);
-				countryView.setText(countriesList.get(timezoneInUse).country2);
-//			}
+			// if (timezoneInUse > 0) {
+			String countryCode = countriesList.get(timezoneInUse).country_code;
+
+			filteredCountriesList = new ArrayList<StaticTimezones>();
+
+			for (StaticTimezones tz : countriesList) {
+				if (tz.country_code.equalsIgnoreCase(countryCode)) {
+					filteredCountriesList.add(tz);
+				}
+			}
+
+			timezonesAdapter = new TimezonesAdapter(AccountActivity.this, R.layout.search_dialog_item, filteredCountriesList);
+			timezonesAdapter.notifyDataSetChanged();
+
+			timezoneView.setText(countriesList.get(timezoneInUse).timezone);
+			countryView.setText(countriesList.get(timezoneInUse).country2);
+			// }
 		}
-		
+
 		if (!account.getCity().equals("null"))
 			cityView.setText(account.getCity());
-		
+
 		if (!account.getStreet().equals("null"))
 			streetView.setText(account.getStreet());
-		
+
 		if (!account.getZip().equals("null"))
 			zipView.setText(account.getZip());
-		
+
 		// image
-		if (account.getImage() && account.image_bytes != null){
+		if (account.getImage() && account.image_bytes != null) {
 			accountImage.setImageBitmap(BitmapFactory.decodeByteArray(account.image_bytes, 0, account.image_bytes.length));
 		}
 	}
-	
+
 	@Override
 	public void onClick(View v) {
 		switch (v.getId()) {
@@ -431,22 +435,22 @@ public class AccountActivity extends Activity implements OnClickListener{
 			break;
 		}
 	}
-	
-	public void saveAccount(View view){
+
+	public void saveAccount(View view) {
 		Account mAccount = new Account(this);
 		String temp;
-		
+
 		// name, fullname
 		String name = nameView.getText().toString();
 		mAccount.setName(name);
 		StringBuilder fullname = new StringBuilder(name).append(" ").append(lastnameView.getText().toString());
 		mAccount.setFullname(fullname.toString());
 		mAccount.setLastname(lastnameView.getText().toString());
-		
+
 		// Email
-//		temp = emailView.getText().toString();
-//		mAccount.setEmail(temp, 0);
-		
+		// temp = emailView.getText().toString();
+		// mAccount.setEmail(temp, 0);
+
 		// Phones
 		temp = phone1View.getText().toString();
 		mAccount.setPhone(temp, 1);
@@ -454,66 +458,63 @@ public class AccountActivity extends Activity implements OnClickListener{
 		mAccount.setPhone(temp, 2);
 		temp = phone3View.getText().toString();
 		mAccount.setPhone(temp, 3);
-		
+
 		// Date
 		temp = birthdateView.getText().toString();
 		Calendar birthdate = Utils.stringToCalendar(temp, mAccount.getTimezone(), mAccount.getSetting_date_format());
 		mAccount.setBirthdate(birthdate);
-		
+
 		// Sex
 		int pos = (int) sexSpinner.getSelectedItemId();
 		mAccount.setSex(sexArray[pos]);
-		
-		// Country 
+
+		// Country
 		mAccount.setCountry(countriesList.get(timezoneInUse).country_code);
-		
+
 		// Timezone
 		mAccount.setTimezone(countriesList.get(timezoneInUse).timezone);
-		
+
 		// City, Street, Zip
 		temp = cityView.getText().toString();
 		mAccount.setCity(temp);
-		
+
 		temp = streetView.getText().toString();
 		mAccount.setStreet(temp);
-		
+
 		temp = zipView.getText().toString();
 		mAccount.setZip(temp);
-		
+
 		// Image
 		boolean isRemoveImage = removeImage.isChecked();
-		
-		
-		if(isRemoveImage){
+
+		if (isRemoveImage) {
 			mAccount.setImage(false);
 			mAccount.setImage_url("");
 			mAccount.setImage_thumb_url("");
 			mAccount.image_bytes = null;
 			mAccount.setRemove_image(1);
-		}else{
+		} else {
 			mAccount.setImage(true);
 			mAccount.setRemove_image(0);
 		}
-		
+
 		new EditAccountTask().execute();
-		
+
 		finish();
 	}
-	
+
 	@Override
 	protected Dialog onCreateDialog(int id) {
 		AlertDialog.Builder builder = new AlertDialog.Builder(this);
 		switch (id) {
 		case DIALOG_ERROR:
-			builder.setMessage(errorStr)
-			   .setTitle(getString(R.string.error))
-		       .setCancelable(false)
-		       .setPositiveButton(getString(R.string.ok), new DialogInterface.OnClickListener() {
-		           @Override
-				public void onClick(DialogInterface dialog, int id) {
-		                dialog.dismiss();
-		           }
-		       });
+			builder.setMessage(errorStr).setTitle(getString(R.string.error)).setCancelable(false)
+					.setPositiveButton(getString(R.string.ok), new DialogInterface.OnClickListener() {
+						@Override
+						public void onClick(DialogInterface dialog, int id) {
+							dialog.dismiss();
+						}
+					});
 			break;
 		case BIRTHDATE_DIALOG:
 			return new DatePickerDialog(this, mDateSetListener, mYear, mMonth, mDay);
@@ -537,7 +538,8 @@ public class AccountActivity extends Activity implements OnClickListener{
 
 							startActivityForResult(intent, PICK_FROM_CAMERA);
 						} catch (ActivityNotFoundException e) {
-							Reporter.reportError(this.getClass().toString(), Thread.currentThread().getStackTrace()[2].getMethodName().toString(), e.getMessage());
+							Reporter.reportError(this.getClass().toString(), Thread.currentThread().getStackTrace()[2].getMethodName()
+									.toString(), e.getMessage());
 						}
 					} else { // pick from file
 						Intent intent = new Intent();
@@ -572,7 +574,7 @@ public class AccountActivity extends Activity implements OnClickListener{
 		birthdateView.setText(new StringBuilder().append(mYear).append("-").append(mMonth + 1).append("-").append(mDay));
 	}
 
-	class EditAccountTask extends AsyncTask<Void, Boolean, Boolean>{
+	class EditAccountTask extends AsyncTask<Void, Boolean, Boolean> {
 		@Override
 		protected void onPreExecute() {
 			pb.setVisibility(View.VISIBLE);
@@ -590,12 +592,11 @@ public class AccountActivity extends Activity implements OnClickListener{
 			finish();
 		}
 	}
-	
-	
+
 	@Override
 	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
 		Account account = new Account(this);
-		
+
 		if (resultCode != RESULT_OK)
 			return;
 
@@ -618,8 +619,8 @@ public class AccountActivity extends Activity implements OnClickListener{
 			if (extras != null) {
 				Bitmap photo = extras.getParcelable("data");
 				accountImage.setImageBitmap(photo);
-				
-				ByteArrayOutputStream baos = new ByteArrayOutputStream();  
+
+				ByteArrayOutputStream baos = new ByteArrayOutputStream();
 				photo.compress(Bitmap.CompressFormat.PNG, 100, baos);
 				account.image_bytes = baos.toByteArray();
 			}
