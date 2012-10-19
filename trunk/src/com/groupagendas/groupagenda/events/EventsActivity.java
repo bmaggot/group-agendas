@@ -6,6 +6,7 @@ import android.app.ListActivity;
 import android.content.Intent;
 import android.database.DataSetObserver;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.CompoundButton;
@@ -73,12 +74,16 @@ public class EventsActivity extends ListActivity {
 
 		
 		setListAdapter(eventsAdapter);
-		EventManagement.loadEvents(this, eventsAdapter);
+		try {
+			EventManagement.loadEvents(this, eventsAdapter);
+		} catch (Exception e) {
+			Log.e("EventsActivity", "load events failed on resume");
+		}
 		
 		//filter events to new invites if there are such
 		if(NavbarActivity.showInvites && eventsAdapter.getNewInvitesCount() != 0){
 			filterState = FilterState.NEW_INVITES;
-			filterEventsByStatus(Invited.PENDING);
+//			filterEventsByStatus(Invited.PENDING);
 			NavbarActivity.showInvites = false;
 			changeTitle(getString(R.string.status_new_invites_count, eventsAdapter.getNewInvitesCount()));
 		}
