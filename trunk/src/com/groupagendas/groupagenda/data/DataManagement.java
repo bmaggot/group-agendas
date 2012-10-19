@@ -104,7 +104,7 @@ public class DataManagement {
 		return Data.get_instance();
 	}
 
-	public boolean updateAccount(Context context, boolean removeImage) {
+	public static boolean updateAccount(Context context, boolean removeImage) {
 		Account account = new Account(context);
 		boolean success = false;
 
@@ -157,7 +157,7 @@ public class DataManagement {
 
 		} catch (Exception ex) {
 			Data.setERROR(ex.getMessage());
-			Reporter.reportError(this.getClass().toString(), Thread.currentThread().getStackTrace()[2].getMethodName().toString(),
+			Reporter.reportError("DataManagement", Thread.currentThread().getStackTrace()[2].getMethodName().toString(),
 					ex.getMessage());
 		}
 
@@ -200,7 +200,7 @@ public class DataManagement {
 
 		} catch (Exception ex) {
 			Data.setERROR(ex.getMessage());
-			Reporter.reportError(this.getClass().toString(), Thread.currentThread().getStackTrace()[2].getMethodName().toString(),
+			Reporter.reportError("DataManagement", Thread.currentThread().getStackTrace()[2].getMethodName().toString(),
 					ex.getMessage());
 		}
 		return success;
