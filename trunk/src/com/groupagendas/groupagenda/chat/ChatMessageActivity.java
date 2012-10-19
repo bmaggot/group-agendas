@@ -166,19 +166,6 @@ public class ChatMessageActivity extends Activity {
 		new RemoveChatMessageFromRemoteDb().execute(params);
 
 	}
-
-//	public static boolean refreshMessagesList() {
-//		myHandler.post(myRunnable);
-//		return adapter != null;
-//	}
-//
-//	final static Runnable myRunnable = new Runnable() {
-//		public void run() {
-//			if (adapter != null) {
-//				adapter.notifyDataSetChanged();
-//			}
-//		}
-//	};
 	
 	private BroadcastReceiver mMessageReceiver = new BroadcastReceiver() {
 		  @Override
