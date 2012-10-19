@@ -126,7 +126,7 @@ private SectionListItem[] filterEvents (String filterString, SectionListItem[] e
 		public StandardArrayAdapter(final Context context, final int textViewResourceId, final SectionListItem[] items) {
 			super(context, textViewResourceId, items);
 			this.items = items;
-			if (CalendarSettings.isUsing_AM_PM()){
+			if (CalendarSettings.isUsing_AM_PM(context)){
 				df = new SimpleDateFormat(getContext().getString(R.string.time_format_AMPM));
 			}else{
 				df = new SimpleDateFormat(getContext().getString(R.string.time_format));
@@ -225,7 +225,7 @@ private SectionListItem[] filterEvents (String filterString, SectionListItem[] e
 					eventProjection.setTitle(result.getString(result.getColumnIndexOrThrow(EventsProvider.EMetaData.EventsMetaData.TITLE)));
 					eventProjection.setIcon(result.getString(result.getColumnIndexOrThrow(EventsProvider.EMetaData.EventsMetaData.ICON)));
 					eventProjection.setColor(result.getString(result.getColumnIndexOrThrow(EventsProvider.EMetaData.EventsMetaData.COLOR)));
-					String user_timezone = CalendarSettings.getTimeZone();
+					String user_timezone = CalendarSettings.getTimeZone(context);
 					long timeinMillis = result.getLong(result.getColumnIndexOrThrow(EventsProvider.EMetaData.EventsMetaData.TIME_START_UTC_MILLISECONDS));
 					eventProjection.setStartCalendar(Utils.createCalendar(timeinMillis, user_timezone));
 					timeinMillis = result.getLong(result.getColumnIndexOrThrow(EventsProvider.EMetaData.EventsMetaData.TIME_END_UTC_MILLISECONDS));
