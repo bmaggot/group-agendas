@@ -62,7 +62,6 @@ public class AccountActivity extends Activity implements OnClickListener{
 	private static final int PICK_FROM_FILE = 3;
 	private final int CROP_IMAGE_DIALOG = 4;
 	
-	private DataManagement dm;
 	private ProgressBar pb;
 	
 	// Fields
@@ -104,6 +103,7 @@ public class AccountActivity extends Activity implements OnClickListener{
 	private String errorStr;
 	
 	private ArrayList<StaticTimezones> countriesList = new ArrayList<StaticTimezones>();
+	private ArrayList<StaticTimezones> filteredCountriesList = new ArrayList<StaticTimezones>();
 	private CountriesAdapter countriesAdapter = null;
 	private TimezonesAdapter timezonesAdapter = null;
 	private int timezoneInUse = 0;
@@ -116,8 +116,6 @@ public class AccountActivity extends Activity implements OnClickListener{
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-
-		dm = DataManagement.getInstance(this);
 	}
 	
 	@Override
@@ -155,7 +153,6 @@ public class AccountActivity extends Activity implements OnClickListener{
 		}
 		if (countriesList != null) {
 			countriesAdapter = new CountriesAdapter(AccountActivity.this, R.layout.search_dialog_item, countriesList);
-			timezonesAdapter = new TimezonesAdapter(AccountActivity.this, R.layout.search_dialog_item, countriesList);
 		}
 
 		emailView = (EditText) findViewById(R.id.emailView);
@@ -244,8 +241,23 @@ public class AccountActivity extends Activity implements OnClickListener{
 					@Override
 					public void onItemClick(AdapterView<?> parent, View view, int pos, long arg3) {
 						timezoneInUse = Integer.parseInt(view.getTag().toString());
-						countryView.setText(countriesList.get(timezoneInUse).country);
+						countryView.setText(countriesList.get(timezoneInUse).country2);
+						account.setCountry(countriesList.get(timezoneInUse).country_code);
+						String countryCode = countriesList.get(timezoneInUse).country_code;
+						
+						filteredCountriesList = new ArrayList<StaticTimezones>();
+						
+						for (StaticTimezones tz : countriesList) {
+							if (tz.country_code.equalsIgnoreCase(countryCode)) {
+								filteredCountriesList.add(tz);
+							}
+						}
+						
+						timezonesAdapter = new TimezonesAdapter(AccountActivity.this, R.layout.search_dialog_item, filteredCountriesList);
+						timezonesAdapter.notifyDataSetChanged();
+						
 						timezoneView.setText(countriesList.get(timezoneInUse).timezone);
+						account.setTimezone(countriesList.get(timezoneInUse).timezone);
 						dia1.dismiss();
 					}
 				});
@@ -293,7 +305,7 @@ public class AccountActivity extends Activity implements OnClickListener{
 					@Override
 					public void onItemClick(AdapterView<?> arg0, View view, int pos, long arg3) {
 						timezoneInUse = Integer.parseInt(view.getTag().toString());
-						countryView.setText(countriesList.get(timezoneInUse).country);
+						countryView.setText(countriesList.get(timezoneInUse).country2);
 						account.setCountry(countriesList.get(timezoneInUse).country_code);
 						timezoneView.setText(countriesList.get(timezoneInUse).timezone);
 						account.setTimezone(countriesList.get(timezoneInUse).timezone);
@@ -363,12 +375,24 @@ public class AccountActivity extends Activity implements OnClickListener{
 		// country
 		if (account.getCountry().length() > 0) {
 			for (StaticTimezones entry : countriesList) {
-				if (entry.country.equalsIgnoreCase(account.getCountry()))
+				if (entry.country2.equalsIgnoreCase(account.getCountry()))
 					timezoneInUse = Integer.parseInt(entry.id);
 			}
 			if (timezoneInUse > 0) {
-				timezoneView.setText(countriesList.get(timezoneInUse).timezone);
-				countryView.setText(countriesList.get(timezoneInUse).country);
+				String countryCode = countriesList.get(timezoneInUse).country_code;
+				
+				filteredCountriesList = new ArrayList<StaticTimezones>();
+				
+				for (StaticTimezones tz : countriesList) {
+					if (tz.country_code.equalsIgnoreCase(countryCode)) {
+						filteredCountriesList.add(tz);
+					}
+				}
+				
+				timezonesAdapter = new TimezonesAdapter(AccountActivity.this, R.layout.search_dialog_item, filteredCountriesList);
+				timezonesAdapter.notifyDataSetChanged();
+				
+				countryView.setText(countriesList.get(timezoneInUse).country2);
 			}
 		}
 		
@@ -380,7 +404,7 @@ public class AccountActivity extends Activity implements OnClickListener{
 			}
 //			if (timezoneInUse > 0) {
 				timezoneView.setText(countriesList.get(timezoneInUse).timezone);
-				countryView.setText(countriesList.get(timezoneInUse).country);
+				countryView.setText(countriesList.get(timezoneInUse).country2);
 //			}
 		}
 		
@@ -557,7 +581,7 @@ public class AccountActivity extends Activity implements OnClickListener{
 
 		@Override
 		protected Boolean doInBackground(Void... args) {
-			return dm.updateAccount(AccountActivity.this, removeImage.isChecked());
+			return DataManagement.updateAccount(AccountActivity.this, removeImage.isChecked());
 		}
 
 		@Override
