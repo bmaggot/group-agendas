@@ -77,6 +77,7 @@ public class NewEventActivity extends EventActivity {
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.new_event);
+		account = new Account(this);
 		selectedContacts = null;
 
 		startCalendar.clear(Calendar.SECOND);
@@ -589,17 +590,29 @@ public class NewEventActivity extends EventActivity {
 		}
 		if (countriesList != null) {
 			countriesAdapter = new CountriesAdapter(NewEventActivity.this, R.layout.search_dialog_item, countriesList);
-			timezonesAdapter = new TimezonesAdapter(NewEventActivity.this, R.layout.search_dialog_item, countriesList);
 		}
 		
-		String countryCode = account.getTimezone();
+		String tmz = account.getTimezone();
+		String countryCode = "";
 		for (StaticTimezones item : countriesList){
-			if (item.timezone.equalsIgnoreCase(countryCode)) {
+			if (item.timezone.equalsIgnoreCase(tmz)) {
 				timezoneInUse = Integer.parseInt(item.id);
-				countryView.setText(countriesList.get(timezoneInUse).country);
+				countryView.setText(countriesList.get(timezoneInUse).country2);
+				countryCode = countriesList.get(timezoneInUse).country_code;
 				continue;
 			}
 		}
+
+		filteredCountriesList = new ArrayList<StaticTimezones>();
+		
+		for (StaticTimezones tz : countriesList) {
+			if (tz.country_code.equalsIgnoreCase(countryCode)) {
+				filteredCountriesList.add(tz);
+			}
+		}
+		
+		timezonesAdapter = new TimezonesAdapter(NewEventActivity.this, R.layout.search_dialog_item, filteredCountriesList);
+		timezonesAdapter.notifyDataSetChanged();
 		
 		// INVITES SECTION
 		response_button_yes = (TextView) findViewById(R.id.button_yes);
