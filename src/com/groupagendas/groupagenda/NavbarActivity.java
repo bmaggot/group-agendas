@@ -1,7 +1,6 @@
 package com.groupagendas.groupagenda;
 
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Calendar;
 
 import android.annotation.SuppressLint;
@@ -15,8 +14,6 @@ import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentTransaction;
-import android.text.Editable;
-import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
@@ -24,16 +21,10 @@ import android.view.View.OnClickListener;
 import android.view.Window;
 import android.widget.Button;
 import android.widget.CompoundButton;
-import android.widget.EditText;
 import android.widget.FrameLayout;
-import android.widget.ListView;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.RelativeLayout;
-import at.bartinger.list.item.EntryAdapter;
-import at.bartinger.list.item.EntryItem;
-import at.bartinger.list.item.Item;
-import at.bartinger.list.item.SectionItem;
 import az.mecid.android.ActionItem;
 import az.mecid.android.QuickAction;
 
@@ -50,7 +41,6 @@ import com.groupagendas.groupagenda.data.CalendarSettings;
 import com.groupagendas.groupagenda.data.ContactManagement;
 import com.groupagendas.groupagenda.data.DataManagement;
 import com.groupagendas.groupagenda.data.EventManagement;
-import com.groupagendas.groupagenda.events.Event;
 import com.groupagendas.groupagenda.events.EventsActivity;
 import com.groupagendas.groupagenda.events.NewEventActivity;
 import com.groupagendas.groupagenda.utils.Utils;
@@ -85,8 +75,8 @@ public class NavbarActivity extends FragmentActivity {
 	private FrameLayout calendarContainer;
 	private LayoutInflater mInflater;
 
-	private EditText searchView;
-	private EntryAdapter entryAdapter;
+//	private EditText searchView;
+//	private EntryAdapter entryAdapter;
 	private ViewState viewState;
 
 	private boolean dataLoaded = false;
@@ -132,14 +122,6 @@ public class NavbarActivity extends FragmentActivity {
 				new DownLoadAllDataTask().execute();
 		}
 		mInflater = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-
-		//
-		// Intent intent = getIntent();
-		// if(intent.getBooleanExtra("load_data", false)){
-		// showDialog(PROGRESS_DIALOG);
-		// TODO wtf is this shit?! (onCreate issue)
-		// DataManagement.updateAppData(5);
-		// }
 
 		list_search = new ActionItem();
 		list_search.setTitle(getString(R.string.list_search));
@@ -493,70 +475,70 @@ public class NavbarActivity extends FragmentActivity {
 
 	}
 
-	class GetAllEventsTask extends
-			AsyncTask<Void, ArrayList<Item>, ArrayList<Item>> {
-
-		@Override
-		protected ArrayList<Item> doInBackground(Void... arg0) {
-			ArrayList<Item> items = new ArrayList<Item>();
-			ArrayList<Event> events = EventManagement.getEventsFromLocalDb(NavbarActivity.this, true);
-
-			String time = "1970-01-01";
-
-			for (int i = 0, l = events.size(); i < l; i++) {
-				final Event event = events.get(i);
-//TODO temprorary workaround to build. Solution: remove this unused class
-				final String newtime = "";//Utils.formatDateTime(
-//						event.my_time_start,
-//						DataManagement.SERVER_TIMESTAMP_FORMAT,
-//						"EEE, dd MMMM yyyy");
-				if (!time.equals(newtime)) {
-					time = newtime;
-					items.add(new SectionItem(time));
-				}
-
-				items.add(new EntryItem(event));
-			}
-
-			return items;
-		}
-
-		@Override
-		protected void onPostExecute(ArrayList<Item> items) {
-			calendarContainer.removeAllViews();
-			View view = mInflater.inflate(R.layout.calendar_all,
-					calendarContainer);
-			ListView listView = (ListView) view.findViewById(R.id.listView);
-			entryAdapter = new EntryAdapter(NavbarActivity.this, items);
-			listView.setAdapter(entryAdapter);
-
-			searchView = (EditText) view.findViewById(R.id.search);
-			searchView.addTextChangedListener(filterTextWatcher);
-			super.onPostExecute(items);
-		}
-
-	}
-
-	private TextWatcher filterTextWatcher = new TextWatcher() {
-
-		@Override
-		public void afterTextChanged(Editable s) {
-		}
-
-		@Override
-		public void beforeTextChanged(CharSequence s, int start, int count,
-				int after) {
-		}
-
-		@Override
-		public void onTextChanged(CharSequence s, int start, int before,
-				int count) {
-			if (s != null && entryAdapter != null) {
-				entryAdapter.getFilter().filter(s);
-			}
-		}
-
-	};
+//	class GetAllEventsTask extends
+//			AsyncTask<Void, ArrayList<Item>, ArrayList<Item>> {
+//
+//		@Override
+//		protected ArrayList<Item> doInBackground(Void... arg0) {
+//			ArrayList<Item> items = new ArrayList<Item>();
+//			ArrayList<Event> events = EventManagement.getEventsFromLocalDb(NavbarActivity.this, true);
+//
+//			String time = "1970-01-01";
+//
+//			for (int i = 0, l = events.size(); i < l; i++) {
+//				final Event event = events.get(i);
+//// temprorary workaround to build. Solution: remove this unused class
+//				final String newtime = "";//Utils.formatDateTime(
+////						event.my_time_start,
+////						DataManagement.SERVER_TIMESTAMP_FORMAT,
+////						"EEE, dd MMMM yyyy");
+//				if (!time.equals(newtime)) {
+//					time = newtime;
+//					items.add(new SectionItem(time));
+//				}
+//
+//				items.add(new EntryItem(event));
+//			}
+//
+//			return items;
+//		}
+//
+//		@Override
+//		protected void onPostExecute(ArrayList<Item> items) {
+//			calendarContainer.removeAllViews();
+//			View view = mInflater.inflate(R.layout.calendar_all,
+//					calendarContainer);
+//			ListView listView = (ListView) view.findViewById(R.id.listView);
+//			entryAdapter = new EntryAdapter(NavbarActivity.this, items);
+//			listView.setAdapter(entryAdapter);
+//
+//			searchView = (EditText) view.findViewById(R.id.search);
+//			searchView.addTextChangedListener(filterTextWatcher);
+//			super.onPostExecute(items);
+//		}
+//
+//	}
+//
+//	private TextWatcher filterTextWatcher = new TextWatcher() {
+//
+//		@Override
+//		public void afterTextChanged(Editable s) {
+//		}
+//
+//		@Override
+//		public void beforeTextChanged(CharSequence s, int start, int count,
+//				int after) {
+//		}
+//
+//		@Override
+//		public void onTextChanged(CharSequence s, int start, int before,
+//				int count) {
+//			if (s != null && entryAdapter != null) {
+//				entryAdapter.getFilter().filter(s);
+//			}
+//		}
+//
+//	};
 
 	private CompoundButton.OnCheckedChangeListener btnNavBarOnCheckedChangeListener = new CompoundButton.OnCheckedChangeListener() {
 		@Override
@@ -640,7 +622,7 @@ public class NavbarActivity extends FragmentActivity {
 	
 	public void setAlarmsToAllEvents(){
 //		AlarmReceiver alarm = new AlarmReceiver();
-		//TODO Justui V
+		//TODO Justui V. implement and remove from navbar activity
 //		for (Event event : Data.getEvents()) {
 //			if (!event.alarm1fired && !event.alarm1.equals("null")) {
 //				alarm.SetAlarm(getApplicationContext(), Utils.stringToCalendar(event.alarm1, DataManagement.SERVER_TIMESTAMP_FORMAT).getTimeInMillis(), event, 1);
@@ -722,7 +704,7 @@ public class NavbarActivity extends FragmentActivity {
 						total = 50;
 						publishProgress(total);
 
-					case 4: // Load event templates TODO load ALL templates while offline.
+					case 4: // Load event templates 
 						if (DataManagement.networkAvailable) 
 							dm.getTemplates();
 						else
@@ -738,7 +720,7 @@ public class NavbarActivity extends FragmentActivity {
 						total = 80;
 						publishProgress(total);
 
-					case 6: // Load chat threads if network available TODO load offline
+					case 6: // Load chat threads if network available 
 						if (DataManagement.networkAvailable)
 //							dm.getChatThreads();
 						dm.getAddressesFromRemoteDb();
@@ -793,7 +775,7 @@ public class NavbarActivity extends FragmentActivity {
 			switchToView();
 			setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_SENSOR);
 			
-//			setAlarmsToAllEvents(); TODO Justui V.
+			setAlarmsToAllEvents(); 
 		}
 	}
 	
@@ -808,12 +790,11 @@ public class NavbarActivity extends FragmentActivity {
 		protected void onPostExecute(Void result) {
 			
 			acc.setLatestUpdateTime(Calendar.getInstance());
-//			progressDialog.dismiss();
 			dataLoaded = true;
 			switchToView();
 			setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_SENSOR);
 			
-//			setAlarmsToAllEvents(); TODO Justui V.
+			setAlarmsToAllEvents(); 
 		}
 
 	}
