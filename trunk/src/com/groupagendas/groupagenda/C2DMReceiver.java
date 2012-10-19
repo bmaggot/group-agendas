@@ -1,12 +1,17 @@
 package com.groupagendas.groupagenda;
 
 import java.util.ArrayList;
+import java.util.List;
 
+import android.app.ActivityManager;
 import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
+import android.content.BroadcastReceiver;
+import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
+import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 
 import com.google.android.c2dm.C2DMBaseReceiver;
@@ -18,8 +23,6 @@ import com.groupagendas.groupagenda.data.EventManagement;
 import com.groupagendas.groupagenda.error.report.Reporter;
 import com.groupagendas.groupagenda.events.Event;
 import com.groupagendas.groupagenda.events.EventsActivity;
-import com.groupagendas.groupagenda.utils.AgendaUtils;
-import com.groupagendas.groupagenda.utils.Utils;
 
 public class C2DMReceiver extends C2DMBaseReceiver {
 	private static boolean isChatMessage = false;
@@ -54,23 +57,29 @@ public class C2DMReceiver extends C2DMBaseReceiver {
 		Account acc = new Account(context);
 		DataManagement.synchronizeWithServer(context, null, acc.getLatestUpdateUnixTimestamp());
 		String data = "";
-		if (receiveIntent.getStringExtra("message") != null && !receiveIntent.getStringExtra("message").equals("") && !receiveIntent.getStringExtra("message").equals("^[A-Z][a-z]*Self$")) {
+		if (receiveIntent.getStringExtra("message") != null && !receiveIntent.getStringExtra("message").equals("")
+				&& !receiveIntent.getStringExtra("message").equals("^[A-Z][a-z]*Self$")) {
 			data = receiveIntent.getStringExtra("message");
 		}
 		String rel_id = null;
 		String type = null;
 		String isNative = null;
+		boolean chatMessagesListUpdated = false;
 		if (receiveIntent.hasExtra("rel_id") && receiveIntent.getStringExtra("rel_id") != "") {
 			rel_id = receiveIntent.getStringExtra("rel_id");
 			if (receiveIntent.hasExtra("rel_obj") && receiveIntent.getStringExtra("rel_obj").equals("ch")) {
 				isChatMessage = true;
 				ChatManagement.removeChatMessagesFromLocalDbForEvent(context, Integer.parseInt(rel_id));
 				ChatManagement.getChatMessagesForEventFromRemoteDb(Integer.parseInt(rel_id), context);
+				Intent intent = new Intent("refreshMessagesList");
+				LocalBroadcastManager.getInstance(context).sendBroadcast(intent);				
 			} else {
 				isChatMessage = false;
 			}
 			Log.e("C2DMReceiver", "C2DMReceiver: " + data);
-			showNotification(this, "Group Agenda", "Group Agenda", data, 17301620, "", rel_id, type, isNative);
+			if (!chatMessagesListUpdated) {
+				showNotification(this, "Group Agenda", "Group Agenda", data, 17301620, "", rel_id, type, isNative);
+			}
 		}
 	}
 
@@ -99,7 +108,7 @@ public class C2DMReceiver extends C2DMBaseReceiver {
 				NavbarActivity.showInvites = true;
 				if (getEventById(rel_id, context) == null) {
 					System.out.println("				event not found");
-					//TODO update event by id from remote db
+					// TODO update event by id from remote db
 				}
 				if (event != null) {
 					notificationIntent.putExtra("event_id", event.getEvent_id());
