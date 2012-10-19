@@ -784,8 +784,19 @@ public class EventEditActivity extends EventActivity {
 						timezoneInUse = Integer.parseInt(entry.id);
 				}
 				if (timezoneInUse > 0) {
+					filteredCountriesList = new ArrayList<StaticTimezones>();
+					
+					for (StaticTimezones tz : countriesList) {
+						if (tz.country_code.equalsIgnoreCase(event.getCountry())) {
+							filteredCountriesList.add(tz);
+						}
+					}
+					
+					timezonesAdapter = new TimezonesAdapter(EventEditActivity.this, R.layout.search_dialog_item, filteredCountriesList);
+					timezonesAdapter.notifyDataSetChanged();
+					
 					timezoneView.setText(result.getTimezone());
-					countryView.setText(countriesList.get(timezoneInUse).country);
+					countryView.setText(countriesList.get(timezoneInUse).country2);
 					
 					showView(timezoneView, addressLine);
 					showView(countryView, addressLine);
