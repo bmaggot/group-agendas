@@ -1245,60 +1245,7 @@ public class DataManagement {
 
 	
 
-	public Event getEvent(Event event) {
-		boolean success = false;
-		try {
-			HttpClient hc = new DefaultHttpClient();
-			HttpPost post = new HttpPost(Data.getServerUrl() + "mobile/events_get");
-
-			MultipartEntity reqEntity = new MultipartEntity(HttpMultipartMode.BROWSER_COMPATIBLE);
-
-			reqEntity.addPart(TOKEN, new StringBody(Data.getToken()));
-			reqEntity.addPart("event_id", new StringBody(String.valueOf(event.getEvent_id())));
-
-			post.setEntity(reqEntity);
-			HttpResponse rp = hc.execute(post);
-
-			if (rp.getStatusLine().getStatusCode() == HttpStatus.SC_OK) {
-				String resp = EntityUtils.toString(rp.getEntity());
-				if (resp != null) {
-					JSONObject object = new JSONObject(resp);
-					success = object.getBoolean("success");
-
-					if (success == false) {
-						// TODO Error
-					} else {
-						JSONObject e = object.getJSONObject("event");
-
-						try {
-							int is_sports_event = e.getInt("is_sports_event");
-							event.setSports_event(is_sports_event == 1);
-						} catch (JSONException ex) {
-							Reporter.reportError(this.getClass().toString(), Thread.currentThread().getStackTrace()[2].getMethodName()
-									.toString(), ex.getMessage());
-						}
-						try {
-							event.setCreator_fullname(e.getString("creator_fullname"));
-						} catch (JSONException ex) {
-							Reporter.reportError(this.getClass().toString(), Thread.currentThread().getStackTrace()[2].getMethodName()
-									.toString(), ex.getMessage());
-						}
-						try {
-							event.setCreator_contact_id(e.getInt("creator_contact_id"));
-						} catch (JSONException ex) {
-							event.setCreator_contact_id(0);
-							Reporter.reportError(this.getClass().toString(), Thread.currentThread().getStackTrace()[2].getMethodName()
-									.toString(), ex.getMessage());
-						}
-					}
-				}
-			}
-		} catch (Exception ex) {
-			Reporter.reportError(this.getClass().toString(), Thread.currentThread().getStackTrace()[2].getMethodName().toString(),
-					ex.getMessage());
-		}
-		return event;
-	}
+	
 	
 	private class ChangeEventStatus extends AsyncTask<Object, Void, Void> {
 
