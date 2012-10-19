@@ -1299,13 +1299,7 @@ public class DataManagement {
 		}
 		return event;
 	}
-
 	
-
-	
-
-	
-
 	private class ChangeEventStatus extends AsyncTask<Object, Void, Void> {
 
 		private boolean success = false;
@@ -1401,85 +1395,6 @@ public class DataManagement {
 		return event;
 	}
 
-
-	public void getChatMessages(int event_id, String from) {
-		if (event_id > 0) {
-			Object[] executeArray = { event_id, from };
-			new GetChatMessages().execute(executeArray);
-		}
-	}
-
-	private class GetChatMessages extends AsyncTask<Object, Void, Void> {
-
-		@Override
-		protected Void doInBackground(Object... params) {
-			try {
-				int event_id = (Integer) params[0];
-				String from = (String) params[1];
-				HttpClient hc = new DefaultHttpClient();
-				HttpPost post = new HttpPost(Data.getServerUrl() + "mobile/chat_get");
-
-				MultipartEntity reqEntity = new MultipartEntity(HttpMultipartMode.BROWSER_COMPATIBLE);
-
-				reqEntity.addPart(TOKEN, new StringBody(Data.getToken()));
-				reqEntity.addPart("event_id", new StringBody(String.valueOf(event_id)));
-				if (from == null) {
-					reqEntity.addPart("from_datetime", new StringBody(String.valueOf("")));
-				} else {
-					reqEntity.addPart("from_datetime", new StringBody(String.valueOf(from)));
-				}
-
-				post.setEntity(reqEntity);
-				HttpResponse rp = null;
-				if (networkAvailable) {
-					rp = hc.execute(post);
-					if (rp.getStatusLine().getStatusCode() == HttpStatus.SC_OK) {
-						String resp = EntityUtils.toString(rp.getEntity());
-						if (resp != null) {
-							JSONObject object = new JSONObject(resp);
-							boolean success = object.getBoolean("success");
-							if (!success) {
-								Log.e("Change account ERROR", object.getJSONObject("error").getString("reason"));
-							} else {
-								Data.getChatMessages().clear();
-								JSONArray chatMessages = object.getJSONArray("items");
-								for (int i = 0, l = chatMessages.length(); i < l; i++) {
-//									final JSONObject chatMessage = chatMessages.getJSONObject(i);
-//									ChatMessageObject message = new ChatMessageObject();
-//									message.messageId = chatMessage.getInt("message_id");
-//									message.eventId = chatMessage.getInt("event_id");
-//									message.dateTime = chatMessage.getString("datetime");
-//									message.dateTimeCalendar = Utils.stringToCalendar(message.dateTime, SERVER_TIMESTAMP_FORMAT);
-//									message.userId = chatMessage.getInt("user_id");
-//									message.message = chatMessage.getString("message");
-//									String deleted = chatMessage.getString("deleted");
-//									message.deleted = !deleted.equals("null");
-//									message.updated = chatMessage.getString("updated");
-//									message.updatedCalendar = Utils.stringToCalendar(message.updated, SERVER_TIMESTAMP_FORMAT);
-//									message.fullname = chatMessage.getString("fullname");
-//									message.contactId = chatMessage.getString("contact_id");
-//									message.dateTimeConverted = chatMessage.getString("datetime_conv");
-//									message.dateTimeConvertedCalendar = Utils.stringToCalendar(message.dateTimeConverted,
-//											SERVER_TIMESTAMP_FORMAT);
-//									message.formatedDateTime = chatMessage.getString("formatted_datetime");
-//									Data.getChatMessages().add(message);
-								}
-							}
-						}
-					}
-				} else {
-					OfflineData uplooad = new OfflineData("mobile/chat_get", reqEntity);
-					Data.getUnuploadedData().add(uplooad);
-				}
-			} catch (Exception e) {
-				Reporter.reportError(this.getClass().toString(), Thread.currentThread().getStackTrace()[2].getMethodName().toString(),
-						e.getMessage());
-			}
-			return null;
-		}
-
-	}
-
 	public boolean changeEventStatus(int event_id, String status) {
 		Object[] array = { event_id, status };
 		try {
@@ -1492,111 +1407,6 @@ public class DataManagement {
 					e.getMessage());
 		}
 		return DataManagement.eventStatusChanged;
-	}
-	
-	public void postChatMessage(int event_id, String message) {
-		if (event_id > 0) {
-			Object[] executeArray = { event_id, message };
-			new PostChatMessage().execute(executeArray);
-		}
-	}
-
-	public class PostChatMessage extends AsyncTask<Object, Void, Void> {
-
-		@Override
-		protected Void doInBackground(Object... params) {
-			try {
-				int event_id = (Integer) params[0];
-				String message = (String) params[1];
-				HttpClient hc = new DefaultHttpClient();
-				HttpPost post = new HttpPost(Data.getServerUrl() + "mobile/chat_post");
-
-				MultipartEntity reqEntity = new MultipartEntity(HttpMultipartMode.BROWSER_COMPATIBLE);
-
-				reqEntity.addPart(TOKEN, new StringBody(Data.getToken()));
-				reqEntity.addPart("event_id", new StringBody(String.valueOf(event_id)));
-				if (message == null) {
-					reqEntity.addPart("message", new StringBody(String.valueOf("")));
-				} else {
-					reqEntity.addPart("message", new StringBody(String.valueOf(message)));
-				}
-
-				post.setEntity(reqEntity);
-				HttpResponse rp = null;
-				if (networkAvailable) {
-					rp = hc.execute(post);
-					if (rp.getStatusLine().getStatusCode() == HttpStatus.SC_OK) {
-						String resp = EntityUtils.toString(rp.getEntity());
-						if (resp != null) {
-							JSONObject object = new JSONObject(resp);
-							boolean success = object.getBoolean("success");
-							if (success) {
-								getChatMessages(event_id, null);
-								System.out.println("Meesage posted");
-							}
-						}
-					}
-				} else {
-					OfflineData uplooad = new OfflineData("mobile/chat_post", reqEntity);
-					Data.getUnuploadedData().add(uplooad);
-				}
-			} catch (Exception e) {
-				Reporter.reportError(this.getClass().toString(), Thread.currentThread().getStackTrace()[2].getMethodName().toString(),
-						e.getMessage());
-			}
-			return null;
-		}
-
-	}
-
-	public void removeChatMessage(int messageId, int event_id) {
-		if (event_id > 0) {
-			Object[] executeArray = { messageId, event_id };
-			new RemoveChatMessage().execute(executeArray);
-		}
-	}
-
-	public class RemoveChatMessage extends AsyncTask<Object, Void, Void> {
-
-		@Override
-		protected Void doInBackground(Object... params) {
-			try {
-				int message_id = (Integer) params[0];
-				int event_id = (Integer) params[1];
-				HttpClient hc = new DefaultHttpClient();
-				HttpPost post = new HttpPost(Data.getServerUrl() + "mobile/chat_remove");
-
-				MultipartEntity reqEntity = new MultipartEntity(HttpMultipartMode.BROWSER_COMPATIBLE);
-
-				reqEntity.addPart(TOKEN, new StringBody(Data.getToken()));
-				reqEntity.addPart("message_id", new StringBody(String.valueOf(message_id)));
-
-				post.setEntity(reqEntity);
-				HttpResponse rp = null;
-				if (networkAvailable) {
-					rp = hc.execute(post);
-					if (rp.getStatusLine().getStatusCode() == HttpStatus.SC_OK) {
-						String resp = EntityUtils.toString(rp.getEntity());
-						if (resp != null) {
-							JSONObject object = new JSONObject(resp);
-							boolean success = object.getBoolean("success");
-							if (success) {
-								getChatMessages(event_id, null);
-								System.out.println("Message removed");
-							}
-						}
-					}
-				} else {
-					OfflineData uplooad = new OfflineData("mobile/chat_remove", reqEntity);
-					Data.getUnuploadedData().add(uplooad);
-				}
-			} catch (Exception e) {
-				Reporter.reportError(this.getClass().toString(), Thread.currentThread().getStackTrace()[2].getMethodName().toString(),
-						e.getMessage());
-			}
-			return null;
-		}
-
 	}
 
 	public static String getError() {
