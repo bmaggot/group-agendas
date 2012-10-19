@@ -16,7 +16,6 @@ import com.groupagendas.groupagenda.R;
 import com.groupagendas.groupagenda.calendar.AbstractCalendarView;
 import com.groupagendas.groupagenda.calendar.MonthCellState;
 import com.groupagendas.groupagenda.data.CalendarSettings;
-import com.groupagendas.groupagenda.data.DataManagement;
 import com.groupagendas.groupagenda.data.EventManagement;
 import com.groupagendas.groupagenda.events.Event;
 import com.groupagendas.groupagenda.events.EventsProvider;
@@ -179,7 +178,6 @@ public class YearView extends AbstractCalendarView {
 	
 	private class UpdateEventsInfoTask extends AsyncTask<Void, Integer, Void> {
 		private Context context = YearView.this.getContext();
-		private DataManagement dm = DataManagement.getInstance(context);
 		
 		/**
 		 * @author justinas.marcinka@gmail.com
@@ -199,7 +197,7 @@ public class YearView extends AbstractCalendarView {
 				eventProjection.setTitle(result.getString(result.getColumnIndexOrThrow(EventsProvider.EMetaData.EventsMetaData.TITLE)));
 				eventProjection.setIcon(result.getString(result.getColumnIndexOrThrow(EventsProvider.EMetaData.EventsMetaData.ICON)));
 				eventProjection.setColor(result.getString(result.getColumnIndexOrThrow(EventsProvider.EMetaData.EventsMetaData.COLOR)));
-				String user_timezone = CalendarSettings.getTimeZone();
+				String user_timezone = CalendarSettings.getTimeZone(context);
 				long timeinMillis = result.getLong(result.getColumnIndexOrThrow(EventsProvider.EMetaData.EventsMetaData.TIME_START_UTC_MILLISECONDS));
 				eventProjection.setStartCalendar(Utils.createCalendar(timeinMillis, user_timezone));
 				timeinMillis = result.getLong(result.getColumnIndexOrThrow(EventsProvider.EMetaData.EventsMetaData.TIME_END_UTC_MILLISECONDS));
