@@ -23,7 +23,6 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import android.content.ContentResolver;
-import android.content.ContentUris;
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
@@ -744,9 +743,9 @@ public class EventManagement {
 						String resp = EntityUtils.toString(rp.getEntity());
 						if (resp != null) {
 							JSONObject object = new JSONObject(resp);
-							success = object.getBoolean("success");
+							success = object.getBoolean(SUCCESS);
 							if (!success) {
-								Log.e("Response to event error", object.getJSONObject("error").getString("reason"));
+								Log.e("Response to event error", object.getJSONObject("error").getString(REASON));
 								return false;
 							} else {
 								return true;
