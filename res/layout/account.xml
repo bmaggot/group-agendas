@@ -260,13 +260,11 @@
                     android:textColor="@android:color/black"
                     android:textStyle="bold" />
 
-                <EditText
+                <TextView
                     android:id="@+id/timezoneView"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:background="#00000000"
-                    android:focusableInTouchMode="false"
-                    android:inputType="text"
                     android:paddingBottom="5dp"
                     android:paddingTop="4dp"
                     android:singleLine="true"
@@ -285,11 +283,10 @@
                     android:text="@string/city"
                     android:textColor="@android:color/black" />
 
-                <EditText
+                <TextView
                     android:id="@+id/cityView"
                     android:layout_width="fill_parent"
-                    android:layout_height="wrap_content"
-                    android:inputType="text" />
+                    android:layout_height="wrap_content" />
             </LinearLayout>
 
             <LinearLayout
