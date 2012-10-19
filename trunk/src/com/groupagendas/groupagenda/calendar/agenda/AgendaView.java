@@ -209,7 +209,7 @@ public class AgendaView extends AbstractCalendarView {
 					eventProjection
 							.setColor(result.getString(result
 									.getColumnIndexOrThrow(EventsProvider.EMetaData.EventsMetaData.COLOR)));
-					String user_timezone = CalendarSettings.getTimeZone();
+					String user_timezone = CalendarSettings.getTimeZone(context);
 					long timeinMillis = result
 							.getLong(result
 									.getColumnIndexOrThrow(EventsProvider.EMetaData.EventsMetaData.TIME_START_UTC_MILLISECONDS));
