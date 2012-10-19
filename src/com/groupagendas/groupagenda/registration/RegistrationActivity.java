@@ -29,6 +29,7 @@ import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.Spinner;
+import android.widget.TextView;
 
 import com.groupagendas.groupagenda.R;
 import com.groupagendas.groupagenda.data.DataManagement;
@@ -42,8 +43,8 @@ public class RegistrationActivity extends Activity {
 
 	private Spinner languageSpinner;
 	private String[] languageArray;
-	private EditText countryView;
-	private EditText timezoneView;
+	private TextView countryView;
+	private TextView timezoneView;
 	private Spinner sexSpinner;
 	private String[] sexArray;
 	private EditText nameView;
@@ -70,6 +71,7 @@ public class RegistrationActivity extends Activity {
 	private static final int DIALOG_SUCCESS = 0;
 	private static final int DIALOG_ERROR = 1;
 	private ArrayList<StaticTimezones> countriesList;
+	private ArrayList<StaticTimezones> filteredCountriesList;
 	private CountriesAdapter countriesAdapter;
 	private TimezonesAdapter timezonesAdapter;
 	private int timezoneInUse = 0;
@@ -118,7 +120,6 @@ public class RegistrationActivity extends Activity {
 		}
 		if (countriesList != null) {
 			countriesAdapter = new CountriesAdapter(RegistrationActivity.this, R.layout.search_dialog_item, countriesList);
-			timezonesAdapter = new TimezonesAdapter(RegistrationActivity.this, R.layout.search_dialog_item, countriesList);
 		}
 
 		Locale usersLocale = getApplicationContext().getResources().getConfiguration().locale;
@@ -136,8 +137,9 @@ public class RegistrationActivity extends Activity {
 		pb = (ProgressBar) findViewById(R.id.progress);
 		phoneView = (EditText) findViewById(R.id.phoneView);
 		phonecodeView = (EditText) findViewById(R.id.phonecodeView);
-		countryView = (EditText) findViewById(R.id.countryView);
-		timezoneView = (EditText) findViewById(R.id.timezoneView);
+		countryView = (TextView) findViewById(R.id.countryView);
+		timezoneView = (TextView) findViewById(R.id.timezoneView);
+		String countryCode = "";
 
 		if (!userPhoneNo.equalsIgnoreCase(""))
 			phoneView.setText(userPhoneNo);
@@ -145,12 +147,25 @@ public class RegistrationActivity extends Activity {
 		for (StaticTimezones temp : countriesList) {
 			if (temp.country_code.equalsIgnoreCase(localCountry)) {
 				timezoneInUse = Integer.parseInt(temp.id);
-				countryView.setText(countriesList.get(timezoneInUse).country);
+				countryView.setText(countriesList.get(timezoneInUse).country2);
 				timezoneView.setText(countriesList.get(timezoneInUse).timezone);
 				phonecodeView.setText("+" + countriesList.get(timezoneInUse).call_code);
+				countryCode = countriesList.get(timezoneInUse).country_code;
+				continue;
 			}
 		}
 
+		filteredCountriesList = new ArrayList<StaticTimezones>();
+		
+		for (StaticTimezones tz : countriesList) {
+			if (tz.country_code.equalsIgnoreCase(countryCode)) {
+				filteredCountriesList.add(tz);
+			}
+		}
+		
+		timezonesAdapter = new TimezonesAdapter(RegistrationActivity.this, R.layout.search_dialog_item, filteredCountriesList);
+		timezonesAdapter.notifyDataSetChanged();
+		
 	}
 
 	@Override
@@ -208,7 +223,20 @@ public class RegistrationActivity extends Activity {
 					@Override
 					public void onItemClick(AdapterView<?> parent, View view, int pos, long arg3) {
 						timezoneInUse = Integer.parseInt(view.getTag().toString());
-						countryView.setText(countriesList.get(timezoneInUse).country);
+						countryView.setText(countriesList.get(timezoneInUse).country2);
+						String countryCode = countriesList.get(timezoneInUse).country_code;
+						
+						filteredCountriesList = new ArrayList<StaticTimezones>();
+						
+						for (StaticTimezones tz : countriesList) {
+							if (tz.country_code.equalsIgnoreCase(countryCode)) {
+								filteredCountriesList.add(tz);
+							}
+						}
+						
+						timezonesAdapter = new TimezonesAdapter(RegistrationActivity.this, R.layout.search_dialog_item, filteredCountriesList);
+						timezonesAdapter.notifyDataSetChanged();
+						
 						timezoneView.setText(countriesList.get(timezoneInUse).timezone);
 						phonecodeView.setText("+" + countriesList.get(timezoneInUse).call_code);
 						dia1.dismiss();
@@ -258,7 +286,7 @@ public class RegistrationActivity extends Activity {
 					@Override
 					public void onItemClick(AdapterView<?> arg0, View view, int pos, long arg3) {
 						timezoneInUse = Integer.parseInt(view.getTag().toString());
-						countryView.setText(countriesList.get(timezoneInUse).country);
+						countryView.setText(countriesList.get(timezoneInUse).country2);
 						timezoneView.setText(countriesList.get(timezoneInUse).timezone);
 						phonecodeView.setText("+" + countriesList.get(timezoneInUse).call_code);
 						dia1.dismiss();
