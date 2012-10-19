@@ -381,6 +381,7 @@ public class EventsProvider extends ContentProvider{
 	
 	
 	private Uri insertIndexedEvent(SQLiteDatabase db, ContentValues values) {
+//		System.out.println("TITLE " + values.get("title"));
 		Calendar eventDayStart = Calendar.getInstance();
 		Calendar eventTimeEnd = Calendar.getInstance();
 		
