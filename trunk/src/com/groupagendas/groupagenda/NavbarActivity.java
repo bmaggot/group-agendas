@@ -46,10 +46,8 @@ import com.groupagendas.groupagenda.calendar.minimonth.MiniMonthView;
 import com.groupagendas.groupagenda.calendar.month.MonthView;
 import com.groupagendas.groupagenda.calendar.year.YearView;
 import com.groupagendas.groupagenda.chat.ChatThreadFragment;
-import com.groupagendas.groupagenda.contacts.ContactsActivity;
 import com.groupagendas.groupagenda.data.CalendarSettings;
 import com.groupagendas.groupagenda.data.ContactManagement;
-import com.groupagendas.groupagenda.data.Data;
 import com.groupagendas.groupagenda.data.DataManagement;
 import com.groupagendas.groupagenda.data.EventManagement;
 import com.groupagendas.groupagenda.events.Event;
@@ -266,16 +264,16 @@ public class NavbarActivity extends FragmentActivity {
 		RadioButton radioButton;
 		radioButton = (RadioButton) findViewById(R.id.btnCalendar);
 		radioButton.setChecked(false);
-		radioButton
-				.setOnCheckedChangeListener(btnNavBarOnCheckedChangeListener);
+		radioButton.setOnCheckedChangeListener(btnNavBarOnCheckedChangeListener);
+		
 		radioButton = (RadioButton) findViewById(R.id.btnChatThreads);
 		radioButton.setChecked(false);
-		radioButton
-				.setOnCheckedChangeListener(btnNavBarOnCheckedChangeListener);
-		radioButton = (RadioButton) findViewById(R.id.btnContacts);
-		radioButton.setChecked(false);
-		radioButton
-				.setOnCheckedChangeListener(btnNavBarOnCheckedChangeListener);
+		radioButton.setOnCheckedChangeListener(btnNavBarOnCheckedChangeListener);
+		
+//		radioButton = (RadioButton) findViewById(R.id.btnContacts);
+//		radioButton.setChecked(false);
+//		radioButton.setOnCheckedChangeListener(btnNavBarOnCheckedChangeListener);
+		
 		radioButton = (RadioButton) findViewById(R.id.btnEvents);
 		radioButton.setChecked(false);
 		radioButton
@@ -587,11 +585,11 @@ public class NavbarActivity extends FragmentActivity {
 					calendarContainer.removeAllViews();
 					ft.add(R.id.calendarContainer, chatFragment).setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN).commit();
 					break;
-				case R.id.btnContacts:
-					Data.newEventPar = false;
-					startActivity(new Intent(NavbarActivity.this,
-							ContactsActivity.class));
-					break;
+//				case R.id.btnContacts:
+//					Data.newEventPar = false;
+//					startActivity(new Intent(NavbarActivity.this,
+//							ContactsActivity.class));
+//					break;
 				case R.id.btnEvents:
 					showInvites = true;
 					startActivity(new Intent(NavbarActivity.this,

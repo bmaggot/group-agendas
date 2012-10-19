@@ -17,6 +17,8 @@ import az.mecid.android.QuickAction;
 
 import com.groupagendas.groupagenda.NavbarActivity;
 import com.groupagendas.groupagenda.R;
+import com.groupagendas.groupagenda.contacts.ContactsActivity;
+import com.groupagendas.groupagenda.data.Data;
 import com.groupagendas.groupagenda.data.EventManagement;
 import com.groupagendas.groupagenda.settings.SettingsActivity;
 
@@ -63,6 +65,9 @@ public class EventsActivity extends ListActivity {
 		radioButton.setChecked(false);
 		radioButton.setOnCheckedChangeListener(btnNavBarOnCheckedChangeListener);
 		radioButton = (RadioButton) findViewById(R.id.btnNewevent);
+		radioButton.setChecked(false);
+		radioButton.setOnCheckedChangeListener(btnNavBarOnCheckedChangeListener);
+		radioButton = (RadioButton) findViewById(R.id.btnContacts);
 		radioButton.setChecked(false);
 		radioButton.setOnCheckedChangeListener(btnNavBarOnCheckedChangeListener);
 
@@ -181,6 +186,8 @@ public class EventsActivity extends ListActivity {
 							
 						}
 					});
+					
+
 
 					rejected = new ActionItem();
 					rejected.setTitle(getString(R.string.status_not_attending));
@@ -233,6 +240,13 @@ public class EventsActivity extends ListActivity {
 					qa.show();
 					buttonView.setChecked(false);
 					break;
+					
+				case R.id.btnContacts:
+					Data.newEventPar = false;
+					startActivity(new Intent(EventsActivity.this,
+							ContactsActivity.class));
+					break;
+					
 				case R.id.btnType:
 
 					// types
