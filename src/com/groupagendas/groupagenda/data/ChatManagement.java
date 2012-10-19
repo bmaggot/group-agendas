@@ -34,7 +34,7 @@ import com.groupagendas.groupagenda.utils.Utils;
 public class ChatManagement {
 
 	public static String TOKEN = "token";
-	public static String deleted = "true";
+	public static String deleted = "1";
 
 	/**
 	 * Make ChatMessageObject from JSON.
