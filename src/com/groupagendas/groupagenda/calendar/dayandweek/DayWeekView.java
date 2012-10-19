@@ -493,7 +493,7 @@ public class DayWeekView extends AbstractCalendarView {
 						eventProjection.setTitle(result.getString(result.getColumnIndexOrThrow(EventsProvider.EMetaData.EventsMetaData.TITLE)));
 						eventProjection.setIcon(result.getString(result.getColumnIndexOrThrow(EventsProvider.EMetaData.EventsMetaData.ICON)));
 						eventProjection.setColor(result.getString(result.getColumnIndexOrThrow(EventsProvider.EMetaData.EventsMetaData.COLOR)));
-						String user_timezone = CalendarSettings.getTimeZone();
+						String user_timezone = CalendarSettings.getTimeZone(context);
 						long timeinMillis = result.getLong(result.getColumnIndexOrThrow(EventsProvider.EMetaData.EventsMetaData.TIME_START_UTC_MILLISECONDS));
 						eventProjection.setStartCalendar(Utils.createCalendar(timeinMillis, user_timezone));
 						timeinMillis = result.getLong(result.getColumnIndexOrThrow(EventsProvider.EMetaData.EventsMetaData.TIME_END_UTC_MILLISECONDS));
