@@ -1,14 +1,8 @@
 package com.groupagendas.groupagenda;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import android.app.ActivityManager;
 import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
-import android.content.BroadcastReceiver;
-import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.support.v4.content.LocalBroadcastManager;
@@ -106,9 +100,10 @@ public class C2DMReceiver extends C2DMBaseReceiver {
 			} else {
 				notificationIntent = new Intent(context, EventsActivity.class);
 				NavbarActivity.showInvites = true;
-				if (getEventById(rel_id, context) == null) {
-					System.out.println("				event not found");
-					// TODO update event by id from remote db
+				if (event == null) {
+					if(EventManagement.getEventByIdFromRemoteDb(context, rel_id)){
+						event = EventManagement.getEventFromLocalDb(context, Long.parseLong(rel_id), EventManagement.ID_EXTERNAL);
+					}
 				}
 				if (event != null) {
 					notificationIntent.putExtra("event_id", event.getEvent_id());
@@ -135,15 +130,5 @@ public class C2DMReceiver extends C2DMBaseReceiver {
 
 			notificationManager.notify(1, notification);
 		}
-	}
-
-	public static Event getEventById(String rel_id, Context context) {
-		ArrayList<Event> allEvents = EventManagement.getEventsFromLocalDb(context, true);
-		for (Event event : allEvents) {
-			if (event.getEvent_id() == Integer.parseInt(rel_id)) {
-				return event;
-			}
-		}
-		return null;
 	}
 }
