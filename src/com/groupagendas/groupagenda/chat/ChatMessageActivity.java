@@ -1,6 +1,7 @@
 package com.groupagendas.groupagenda.chat;
 
 import java.util.ArrayList;
+import java.util.concurrent.ExecutionException;
 
 import android.app.Activity;
 import android.content.BroadcastReceiver;
@@ -101,6 +102,7 @@ public class ChatMessageActivity extends Activity {
 		protected void onPostExecute(Void result) {
 			adapter.setList(chatMessages);
 			adapter.notifyDataSetChanged();
+			chat_message_list.setSelection(adapter.getCount() - 1);
 			pb.setVisibility(View.INVISIBLE);
 		}
 
@@ -172,7 +174,13 @@ public class ChatMessageActivity extends Activity {
 		  public void onReceive(Context context, Intent intent) {
 			  C2DMReceiver.chatMessagesWindowUpdated = true;
 			  Object[] params = { context, event_id };
-			  new GetChatMessagesForEventDb().execute(params);
+			  try {
+				new GetChatMessagesForEventDb().execute(params).get();
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			} catch (ExecutionException e) {
+				e.printStackTrace();
+			}
 		  }
 		};
 }
