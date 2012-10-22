@@ -19,6 +19,7 @@ import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.ProgressBar;
 
+import com.groupagendas.groupagenda.C2DMReceiver;
 import com.groupagendas.groupagenda.R;
 import com.groupagendas.groupagenda.calendar.adapters.ChatMessageAdapter;
 import com.groupagendas.groupagenda.data.ChatManagement;
@@ -34,7 +35,6 @@ public class ChatMessageActivity extends Activity {
 	ArrayList<ChatMessageObject> chatMessages;
 	ChatMessageObject chatMessageObject;
 	ProgressBar pb;
-	final static Handler myHandler = new Handler();
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -170,6 +170,7 @@ public class ChatMessageActivity extends Activity {
 	private BroadcastReceiver mMessageReceiver = new BroadcastReceiver() {
 		  @Override
 		  public void onReceive(Context context, Intent intent) {
+			  C2DMReceiver.chatMessagesWindowUpdated = true;
 			  Object[] params = { context, event_id };
 			  new GetChatMessagesForEventDb().execute(params);
 		  }

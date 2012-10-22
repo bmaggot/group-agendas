@@ -20,6 +20,7 @@ import com.groupagendas.groupagenda.events.EventsActivity;
 
 public class C2DMReceiver extends C2DMBaseReceiver {
 	private static boolean isChatMessage = false;
+	public static boolean chatMessagesWindowUpdated = false;
 
 	public C2DMReceiver() {
 		super(DataManagement.PROJECT_ID);
@@ -58,7 +59,6 @@ public class C2DMReceiver extends C2DMBaseReceiver {
 		String rel_id = null;
 		String type = null;
 		String isNative = null;
-		boolean chatMessagesListUpdated = false;
 		if (receiveIntent.hasExtra("rel_id") && receiveIntent.getStringExtra("rel_id") != "") {
 			rel_id = receiveIntent.getStringExtra("rel_id");
 			if (receiveIntent.hasExtra("rel_obj") && receiveIntent.getStringExtra("rel_obj").equals("ch")) {
@@ -70,7 +70,7 @@ public class C2DMReceiver extends C2DMBaseReceiver {
 				isChatMessage = false;
 			}
 			Log.e("C2DMReceiver", "C2DMReceiver: " + data);
-			if (!chatMessagesListUpdated) {
+			if (!chatMessagesWindowUpdated) {
 				showNotification(this, "Group Agenda", "Group Agenda", data, 17301620, "", rel_id, type, isNative);
 			}
 		}
