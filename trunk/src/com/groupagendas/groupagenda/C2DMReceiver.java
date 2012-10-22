@@ -71,6 +71,7 @@ public class C2DMReceiver extends C2DMBaseReceiver {
 			}
 			Log.e("C2DMReceiver", "C2DMReceiver: " + data);
 			if (!chatMessagesWindowUpdated) {
+				chatMessagesWindowUpdated = false;
 				showNotification(this, "Group Agenda", "Group Agenda", data, 17301620, "", rel_id, type, isNative);
 			}
 		}
