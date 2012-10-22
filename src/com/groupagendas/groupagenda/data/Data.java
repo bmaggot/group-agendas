@@ -195,8 +195,14 @@ public class Data {
 		Data._editor = _editor;
 	}
 
+	@Deprecated
 	public static String getToken() {
 		SharedPreferences sPrefs = mContext.getSharedPreferences("LATEST_CREDENTIALS", 0);
+		String response = sPrefs.getString("token", "");
+		return response;
+	}
+	public static String getToken(Context context) {
+		SharedPreferences sPrefs = context.getSharedPreferences("LATEST_CREDENTIALS", 0);
 		String response = sPrefs.getString("token", "");
 		return response;
 	}

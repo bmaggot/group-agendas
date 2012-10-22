@@ -200,7 +200,7 @@ public class EventManagement {
 		Cursor result = context.getContentResolver().query(uri, projection, selection, null, sortOrder);
 		ArrayList<ChatThreadObject> resultList = new ArrayList<ChatThreadObject>();
 		if (result.moveToFirst()){
-			while (result.moveToNext()){
+			do{
 				ChatThreadObject cto = new ChatThreadObject();
 				cto.setTitle(result.getString(result.getColumnIndex(EMetaData.EventsMetaData.TITLE)));
 				cto.setTimeStart(result.getLong(result.getColumnIndex(EMetaData.EventsMetaData.LAST_MESSAGE_DATE_TIME_UTC_MILISECONDS)));
@@ -208,7 +208,7 @@ public class EventManagement {
 				cto.setMessage_count(result.getInt(result.getColumnIndex(EMetaData.EventsMetaData.MESSAGES_COUNT)));
 				cto.setEvent_id(result.getInt(result.getColumnIndex(EMetaData.EventsMetaData.E_ID)));
 				resultList.add(cto);
-			}
+			}while (result.moveToNext());
 		}
 		result.close();
 		return resultList;
