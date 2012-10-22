@@ -313,6 +313,7 @@ public class ChatManagement {
 	
 	public static ArrayList<ChatMessageObject> getChatMessagesForEventFromRemoteDb(int eventId, Context context){
 		boolean success = false;
+		ChatManagement.removeChatMessagesFromLocalDbForEvent(context, eventId);
 		HttpClient hc = new DefaultHttpClient();
 		ArrayList<ChatMessageObject>chatMessages = new ArrayList<ChatMessageObject>();
 		HttpPost post = new HttpPost(Data.getServerUrl() + "mobile/chat_get");
