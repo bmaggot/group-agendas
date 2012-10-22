@@ -170,7 +170,6 @@ public class ChatMessageActivity extends Activity {
 	private BroadcastReceiver mMessageReceiver = new BroadcastReceiver() {
 		  @Override
 		  public void onReceive(Context context, Intent intent) {
-			  ChatManagement.removeChatMessagesFromLocalDbForEvent(context, event_id);
 			  Object[] params = { context, event_id };
 			  new GetChatMessagesForEventDb().execute(params);
 		  }
