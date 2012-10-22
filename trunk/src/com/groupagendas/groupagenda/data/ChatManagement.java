@@ -320,7 +320,7 @@ public class ChatManagement {
 		MultipartEntity reqEntity = new MultipartEntity(HttpMultipartMode.BROWSER_COMPATIBLE);
 
 		try {
-			reqEntity.addPart(ChatManagement.TOKEN, new StringBody(Data.getToken()));
+			reqEntity.addPart(ChatManagement.TOKEN, new StringBody(Data.getToken(context)));
 			reqEntity.addPart("event_id", new StringBody(String.valueOf(eventId)));
 		} catch (UnsupportedEncodingException e1) {
 			e1.printStackTrace();
