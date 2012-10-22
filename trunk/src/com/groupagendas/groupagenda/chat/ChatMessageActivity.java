@@ -39,7 +39,6 @@ public class ChatMessageActivity extends Activity {
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		LocalBroadcastManager.getInstance(this).registerReceiver(mMessageReceiver, new IntentFilter("refreshMessagesList"));
 	}
 
 	@Override
@@ -49,6 +48,7 @@ public class ChatMessageActivity extends Activity {
 		pb = (ProgressBar) findViewById(R.id.progress);
 
 		event_id = getIntent().getIntExtra("event_id", 0);
+		LocalBroadcastManager.getInstance(this).registerReceiver(mMessageReceiver, new IntentFilter("refreshMessagesList"+ event_id));
 
 		Object[] params = { this, event_id };
 
