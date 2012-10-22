@@ -64,8 +64,8 @@ public class C2DMReceiver extends C2DMBaseReceiver {
 			if (receiveIntent.hasExtra("rel_obj") && receiveIntent.getStringExtra("rel_obj").equals("ch")) {
 				isChatMessage = true;
 				ChatManagement.getChatMessagesForEventFromRemoteDb(Integer.parseInt(rel_id), context);
-				Intent intent = new Intent("refreshMessagesList");
-				LocalBroadcastManager.getInstance(context).sendBroadcast(intent);				
+				Intent intent = new Intent("refreshMessagesList" + rel_id);
+				LocalBroadcastManager.getInstance(context).sendBroadcast(intent);
 			} else {
 				isChatMessage = false;
 			}
@@ -91,7 +91,6 @@ public class C2DMReceiver extends C2DMBaseReceiver {
 			Intent notificationIntent;
 			Event event = EventManagement.getEventFromLocalDb(context, Integer.parseInt(rel_id), EventManagement.ID_EXTERNAL);
 			if (isChatMessage && event != null) {
-				ChatManagement.getChatMessagesForEventFromRemoteDb(event.getEvent_id(), context);
 				notificationIntent = new Intent(context, ChatMessageActivity.class);
 				notificationIntent.putExtra("event_id", event.getEvent_id());
 				C2DMReceiver.notifyNotification(mNotificationManager, notification, notificationIntent, context, text, title);
