@@ -474,6 +474,15 @@ public class DayWeekView extends AbstractCalendarView {
 	
 		private class UpdateEventsInfoTask extends AsyncTask<Void, Integer, Void> {
 			private Context context = DayWeekView.this.getContext();
+			protected String[] EventProjectionForDisplay = {
+					EventsProvider.EMetaData.EventsMetaData.E_ID,
+					EventsProvider.EMetaData.EventsMetaData._ID,
+					EventsProvider.EMetaData.EventsMetaData.COLOR,
+					EventsProvider.EMetaData.EventsMetaData.TIME_START_UTC_MILLISECONDS,
+					EventsProvider.EMetaData.EventsMetaData.TIME_END_UTC_MILLISECONDS,
+					EventsProvider.EMetaData.EventsMetaData.ICON,
+					EventsProvider.EMetaData.EventsMetaData.TITLE,
+					};
 			
 			/**
 			 * @author justinas.marcinka@gmail.com
