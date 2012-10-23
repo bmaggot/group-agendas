@@ -1298,12 +1298,6 @@ private static String parseInvitedListToJSONArray(ArrayList<Invited> invited) {
 	}
 	
 	protected static void syncEvents(Context context, ArrayList<Event> eventChanges, long[] deletedEventsIDs) {
-		for (Event e : eventChanges)
-			System.out.println(e);
-		
-	
-		for (int i = 0; i < deletedEventsIDs.length; i++)
-			System.out.println(deletedEventsIDs[i]);
 		StringBuilder sb;
 		
 		if (!eventChanges.isEmpty()) {
