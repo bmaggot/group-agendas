@@ -50,7 +50,7 @@ public class C2DMReceiver extends C2DMBaseReceiver {
 	@Override
 	protected void onMessage(Context context, Intent receiveIntent) {
 		Account acc = new Account(context);
-		DataManagement.synchronizeWithServer(context, null, acc.getLatestUpdateUnixTimestamp());
+//		DataManagement.synchronizeWithServer(context, null, acc.getLatestUpdateUnixTimestamp());
 		String data = "";
 		if (receiveIntent.getStringExtra("message") != null && !receiveIntent.getStringExtra("message").equals("")
 				&& !receiveIntent.getStringExtra("message").equals("^[A-Z][a-z]*Self$")) {

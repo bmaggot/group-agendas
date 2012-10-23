@@ -1064,12 +1064,10 @@ public class EventEditActivity extends EventActivity {
 				case DIALOG_START:
 					startCalendar = mDateTimePicker.getCalendar();
 					startView.setText(dtUtils.formatDateTime(startCalendar.getTime()));
-					if (!startCalendar.before(endCalendar)) {
-						endCalendar = Calendar.getInstance();
-						endCalendar.setTime(mDateTimePicker.getCalendar().getTime());
-						endCalendar.add(Calendar.MINUTE, NewEventActivity.DEFAULT_EVENT_DURATION_IN_MINS);
-						endView.setText(dtUtils.formatDateTime(endCalendar.getTime()));
-					}
+					endCalendar = Calendar.getInstance();
+					endCalendar.setTime(mDateTimePicker.getCalendar().getTime());
+					endCalendar.add(Calendar.MINUTE, NewEventActivity.DEFAULT_EVENT_DURATION_IN_MINS);
+					endView.setText(dtUtils.formatDateTime(endCalendar.getTime()));
 					break;
 				case DIALOG_END:
 					endCalendar = mDateTimePicker.getCalendar();
