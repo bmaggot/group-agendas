@@ -562,7 +562,9 @@ public class EventManagement {
 								+ "/" + internalID);
 		
 			
-			if (resolver.update(uri, cv, null, null) == 0) resolver.insert(uri, cv);
+			if (resolver.update(uri, cv, null, null) == 0){
+				resolver.insert(uri, cv);
+			}
 			
 
 		if (event.getStartCalendar() != null && event.getEndCalendar() != null){ // to prevent null pointer exception: that hurts if happens :)
