@@ -88,12 +88,12 @@ public class EventEditActivity extends EventActivity {
 		setContentView(R.layout.event_edit);
 		selectedContacts = null;
 	}
-	
+
 	@Override
 	public void onResume() {
 		super.onResume();
 		dtUtils = new DateTimeUtils(this);
-		account  = new Account(EventEditActivity.this);
+		account = new Account(EventEditActivity.this);
 		String[] cities;
 		String[] countries;
 		String[] countries2;
@@ -110,7 +110,7 @@ public class EventEditActivity extends EventActivity {
 		altnames = getResources().getStringArray(R.array.timezone_altnames);
 		for (int i = 0; i < cities.length; i++) {
 			StaticTimezones temp = new StaticTimezones();
-			
+
 			temp.id = "" + i;
 			temp.city = cities[i];
 			temp.country = countries[i];
@@ -118,7 +118,7 @@ public class EventEditActivity extends EventActivity {
 			temp.country_code = country_codes[i];
 			temp.timezone = timezones[i];
 			temp.altname = altnames[i];
-			
+
 			countriesList.add(temp);
 		}
 		if (countriesList != null) {
@@ -132,22 +132,22 @@ public class EventEditActivity extends EventActivity {
 		addressPanel.setVisibility(View.GONE);
 		detailsPanel.setVisibility(View.GONE);
 		addressDetailsPanel.setVisibility(View.VISIBLE);
-		
+
 		if (selectedContacts == null)
 			selectedContacts = new ArrayList<Contact>();
-		
+
 		if (newInvites == null)
 			newInvites = new ArrayList<Invited>();
-		
+
 		for (Contact temp : EventActivity.selectedContacts) {
 			Invited nu = new Invited();
 			nu.setMy_contact_id(temp.contact_id);
 			nu.setName(temp.name + " " + temp.lastname);
 			nu.setStatus(Invited.PENDING);
-			
+
 			EventActivity.newInvites.add(nu);
 		}
-		
+
 		// TODO implement offline
 		event_internal_id = intent.getLongExtra("event_id", 0);
 		// mode event Edit
@@ -235,14 +235,14 @@ public class EventEditActivity extends EventActivity {
 				final Dialog dia1 = new Dialog(EventEditActivity.this);
 				dia1.requestWindowFeature(Window.FEATURE_NO_TITLE);
 				dia1.setContentView(R.layout.search_dialog);
-				
+
 				ListView diaList = (ListView) dia1.findViewById(R.id.dialog_list);
 				diaList.setAdapter(countriesAdapter);
 				countriesAdapter.notifyDataSetChanged();
-				
+
 				EditText searchView = (EditText) dia1.findViewById(R.id.dialog_search);
 
-				TextWatcher filterTextWatcher = new TextWatcher() {					
+				TextWatcher filterTextWatcher = new TextWatcher() {
 					@Override
 					public void afterTextChanged(Editable s) {
 					}
@@ -259,9 +259,9 @@ public class EventEditActivity extends EventActivity {
 						}
 					}
 				};
-				
+
 				searchView.addTextChangedListener(filterTextWatcher);
-				
+
 				diaList.setOnItemClickListener(new OnItemClickListener() {
 
 					@Override
@@ -269,18 +269,18 @@ public class EventEditActivity extends EventActivity {
 						timezoneInUse = Integer.parseInt(view.getTag().toString());
 						countryView.setText(countriesList.get(timezoneInUse).country2);
 						event.setCountry(countriesList.get(timezoneInUse).country_code);
-						
+
 						filteredCountriesList = new ArrayList<StaticTimezones>();
-						
+
 						for (StaticTimezones tz : countriesList) {
 							if (tz.country_code.equalsIgnoreCase(event.getCountry())) {
 								filteredCountriesList.add(tz);
 							}
 						}
-						
+
 						timezonesAdapter = new TimezonesAdapter(EventEditActivity.this, R.layout.search_dialog_item, filteredCountriesList);
 						timezonesAdapter.notifyDataSetChanged();
-						
+
 						timezoneView.setText(countriesList.get(timezoneInUse).timezone);
 						event.setTimezone(countriesList.get(timezoneInUse).timezone);
 						dia1.dismiss();
@@ -304,7 +304,7 @@ public class EventEditActivity extends EventActivity {
 				final Dialog dia1 = new Dialog(EventEditActivity.this);
 				dia1.requestWindowFeature(Window.FEATURE_NO_TITLE);
 				dia1.setContentView(R.layout.search_dialog);
-				
+
 				ListView diaList = (ListView) dia1.findViewById(R.id.dialog_list);
 				diaList.setAdapter(timezonesAdapter);
 				timezonesAdapter.notifyDataSetChanged();
@@ -330,7 +330,7 @@ public class EventEditActivity extends EventActivity {
 				};
 
 				searchView.addTextChangedListener(filterTextWatcher);
-				
+
 				diaList.setOnItemClickListener(new OnItemClickListener() {
 
 					@Override
@@ -531,7 +531,7 @@ public class EventEditActivity extends EventActivity {
 				new EventEditActivity.UpdateEventStatusTask().execute();
 			}
 		});
-		
+
 		response_button_no = (TextView) findViewById(R.id.button_no);
 		response_button_no.setOnClickListener(new OnClickListener() {
 			@Override
@@ -540,7 +540,7 @@ public class EventEditActivity extends EventActivity {
 				new EventEditActivity.UpdateEventStatusTask().execute();
 			}
 		});
-		
+
 		response_button_maybe = (TextView) findViewById(R.id.button_maybe);
 		response_button_maybe.setOnClickListener(new OnClickListener() {
 			@Override
@@ -549,7 +549,7 @@ public class EventEditActivity extends EventActivity {
 				new EventEditActivity.UpdateEventStatusTask().execute();
 			}
 		});
-		
+
 		invitedPersonList = (LinearLayout) findViewById(R.id.invited_person_list);
 		super.inviteButton = (Button) findViewById(R.id.invite_button);
 		super.inviteButton.setOnClickListener(new OnClickListener() {
@@ -557,7 +557,8 @@ public class EventEditActivity extends EventActivity {
 			@Override
 			public void onClick(View v) {
 				Intent i = new Intent(EventEditActivity.this, ContactsActivity.class);
-				i.putExtra("ACTIVITY_MODE", 1); // TODO HARDCODED PARAMETER! DEFUSE!
+				i.putExtra("ACTIVITY_MODE", 1); // TODO HARDCODED PARAMETER!
+												// DEFUSE!
 				Data.showSaveButtonInContactsForm = true;
 				// TODO Data.eventForSavingNewInvitedPersons = event;
 				startActivity(i);
@@ -567,7 +568,7 @@ public class EventEditActivity extends EventActivity {
 		invitationResponseLine = (RelativeLayout) findViewById(R.id.response_to_invitation);
 		invitationResponseLine.setVisibility(View.GONE);
 		invitationResponseStatus = (TextView) findViewById(R.id.status);
-		
+
 		deleteButton = (Button) findViewById(R.id.event_delete);
 		deleteButton.setOnClickListener(new OnClickListener() {
 			@Override
@@ -645,22 +646,22 @@ public class EventEditActivity extends EventActivity {
 			if (result == null) {
 				throw new IllegalStateException("EVENT NOT FOUND IN LOCAL DB!!!!!!");
 			}
-			
+
 			event = result;
 			selectedIcon = event.getIcon();
-			//toptext
+			// toptext
 			String tmpTopText = event.getType();
-			if(tmpTopText.equalsIgnoreCase("t")){
+			if (tmpTopText.equalsIgnoreCase("t")) {
 				topText.setText(getResources().getStringArray(R.array.type_labels)[4]);
-			} else if(tmpTopText.equalsIgnoreCase("n")){
+			} else if (tmpTopText.equalsIgnoreCase("n")) {
 				topText.setText(getResources().getStringArray(R.array.type_labels)[1]);
-			} else if(tmpTopText.equalsIgnoreCase("p")){
+			} else if (tmpTopText.equalsIgnoreCase("p")) {
 				topText.setText(getResources().getStringArray(R.array.type_labels)[0]);
-			} else if(tmpTopText.equalsIgnoreCase("r")){
+			} else if (tmpTopText.equalsIgnoreCase("r")) {
 				topText.setText(getResources().getStringArray(R.array.type_labels)[2]);
-			} else if(tmpTopText.equalsIgnoreCase("o")){
+			} else if (tmpTopText.equalsIgnoreCase("o")) {
 				topText.setText(getResources().getStringArray(R.array.type_labels)[4]);
-			} else if(tmpTopText.equalsIgnoreCase("v")){
+			} else if (tmpTopText.equalsIgnoreCase("v")) {
 				topText.setText(getResources().getStringArray(R.array.type_labels)[5]);
 			}
 			// title
@@ -704,7 +705,7 @@ public class EventEditActivity extends EventActivity {
 				});
 
 				// COLOR SELECTION
-				
+
 				selectedColor = result.getColor();
 				final String[] colorsValues = getResources().getStringArray(R.array.colors_values);
 				colorView.setOnClickListener(new OnClickListener() {
@@ -721,7 +722,8 @@ public class EventEditActivity extends EventActivity {
 							@Override
 							public void onItemClick(AdapterView<?> parent, View v, int position, long id) {
 								result.setColor(colorsValues[position]);
-								colorView.setImageBitmap(DrawingUtils.getColoredRoundRectangle(EventEditActivity.this, COLOURED_BUBBLE_SIZE , colorsValues[position], true));
+								colorView.setImageBitmap(DrawingUtils.getColoredRoundRectangle(EventEditActivity.this,
+										COLOURED_BUBBLE_SIZE, colorsValues[position], true));
 								dialog.dismiss();
 							}
 						});
@@ -758,9 +760,8 @@ public class EventEditActivity extends EventActivity {
 				saveButton.setVisibility(View.GONE);
 
 			}
-			colorView.setImageBitmap(DrawingUtils.getColoredRoundRectangle(EventEditActivity.this, COLOURED_BUBBLE_SIZE , result, true));
+			colorView.setImageBitmap(DrawingUtils.getColoredRoundRectangle(EventEditActivity.this, COLOURED_BUBBLE_SIZE, result, true));
 			iconView.setImageResource(result.getIconId(EventEditActivity.this));
-			
 
 			// START AND END TIME
 			if (result.getStartCalendar() != null) {
@@ -785,19 +786,19 @@ public class EventEditActivity extends EventActivity {
 				}
 				if (timezoneInUse > 0) {
 					filteredCountriesList = new ArrayList<StaticTimezones>();
-					
+
 					for (StaticTimezones tz : countriesList) {
 						if (tz.country_code.equalsIgnoreCase(event.getCountry())) {
 							filteredCountriesList.add(tz);
 						}
 					}
-					
+
 					timezonesAdapter = new TimezonesAdapter(EventEditActivity.this, R.layout.search_dialog_item, filteredCountriesList);
 					timezonesAdapter.notifyDataSetChanged();
-					
+
 					timezoneView.setText(result.getTimezone());
 					countryView.setText(countriesList.get(timezoneInUse).country2);
-					
+
 					showView(timezoneView, addressLine);
 					showView(countryView, addressLine);
 				}
@@ -848,38 +849,38 @@ public class EventEditActivity extends EventActivity {
 				}
 			});
 			if (result.getReminder1() != null) {
-				reminder1.setText(Utils.formatCalendar(result.getReminder1(), account.getSetting_date_format()));
+				reminder1.setText(dtUtils.formatDateTime(result.getReminder1()));
 			} else {
 				reminder1.setText("");
 			}
 			if (result.getReminder2() != null) {
-				reminder2.setText(Utils.formatCalendar(result.getReminder2(), account.getSetting_date_format()));
+				reminder2.setText(dtUtils.formatDateTime(result.getReminder2()));
 			} else {
 				reminder2.setText("");
 			}
 			if (result.getReminder3() != null) {
-				reminder3.setText(Utils.formatCalendar(result.getReminder3(), account.getSetting_date_format()));
+				reminder3.setText(dtUtils.formatDateTime(result.getReminder3()));
 			} else {
 				reminder3.setText("");
 			}
 			if (result.getAlarm1() != null) {
-				alarm1.setText(Utils.formatCalendar(result.getAlarm1(), account.getSetting_date_format()));
+				alarm1.setText(dtUtils.formatDateTime(result.getAlarm1()));
 			} else {
 				alarm1.setText("");
 			}
 			if (result.getAlarm2() != null) {
-				alarm2.setText(Utils.formatCalendar(result.getAlarm2(), account.getSetting_date_format()));
+				alarm2.setText(dtUtils.formatDateTime(result.getAlarm2()));
 			} else {
 				alarm2.setText("");
 			}
 			if (result.getAlarm3() != null) {
-				alarm3.setText(Utils.formatCalendar(result.getAlarm3(), account.getSetting_date_format()));
+				alarm3.setText(dtUtils.formatDateTime(result.getAlarm3()));
 			} else {
 				alarm3.setText("");
 			}
 
 			showInvitesView(EventEditActivity.this);
-			
+
 			if (result.getInvited().size() > 0) {
 				invitationResponseLine.setVisibility(View.VISIBLE);
 				respondToInvitation(result.getStatus());
@@ -888,7 +889,7 @@ public class EventEditActivity extends EventActivity {
 			pb.setVisibility(View.INVISIBLE);
 		}
 	}
-	
+
 	class UpdateEventStatusTask extends AsyncTask<Void, Void, Boolean> {
 		@Override
 		protected void onPreExecute() {
@@ -896,7 +897,7 @@ public class EventEditActivity extends EventActivity {
 			saveButton.setText(getString(R.string.saving));
 			super.onPreExecute();
 		}
-	
+
 		@Override
 		protected Boolean doInBackground(Void... voids) {
 			event = setEventData(event);
@@ -1027,8 +1028,8 @@ public class EventEditActivity extends EventActivity {
 			}
 		}
 	}
-	
-	private void showDateTimeDialog(final EditText view, final int id) { 
+
+	private void showDateTimeDialog(final EditText view, final int id) {
 		// TODO put to parent
 		// Create the dialog
 		final Dialog mDateTimeDialog = new Dialog(this);
@@ -1059,7 +1060,6 @@ public class EventEditActivity extends EventActivity {
 			@Override
 			public void onClick(View v) {
 				mDateTimePicker.clearFocus();
-				boolean timeSet = false;
 				switch (id) {
 				case DIALOG_START:
 					startCalendar = mDateTimePicker.getCalendar();
@@ -1070,7 +1070,6 @@ public class EventEditActivity extends EventActivity {
 						endCalendar.add(Calendar.MINUTE, NewEventActivity.DEFAULT_EVENT_DURATION_IN_MINS);
 						endView.setText(dtUtils.formatDateTime(endCalendar.getTime()));
 					}
-					timeSet = true;
 					break;
 				case DIALOG_END:
 					endCalendar = mDateTimePicker.getCalendar();
@@ -1094,9 +1093,8 @@ public class EventEditActivity extends EventActivity {
 					reminder3time = mDateTimePicker.getCalendar();
 					break;
 				}
-				if (timeSet) {
-					view.setText(Utils.formatCalendar(mDateTimePicker.getCalendar(), account.getSetting_date_format()));
-				}
+				view.setText(dtUtils.formatDateTime(mDateTimePicker.getCalendar()));
+
 				mDateTimeDialog.dismiss();
 			}
 		});
