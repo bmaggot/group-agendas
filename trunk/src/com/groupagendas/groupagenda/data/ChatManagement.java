@@ -16,14 +16,12 @@ import org.apache.http.util.EntityUtils;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-import org.xml.sax.DTDHandler;
 
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteException;
 import android.util.Log;
-import android.widget.Toast;
 
 import com.groupagendas.groupagenda.account.Account;
 import com.groupagendas.groupagenda.chat.ChatMessageObject;
@@ -311,7 +309,7 @@ public class ChatManagement {
 		return chatMessageObject;
 	}
 	
-	public static ArrayList<ChatMessageObject> getChatMessagesForEventFromRemoteDb(int eventId, Context context){
+	public static ArrayList<ChatMessageObject> getChatMessagesForEventFromRemoteDb(int eventId, Context context, boolean resetMessageCount){
 		boolean success = false;
 		ChatManagement.removeChatMessagesFromLocalDbForEvent(context, eventId);
 		HttpClient hc = new DefaultHttpClient();
@@ -322,6 +320,11 @@ public class ChatManagement {
 		try {
 			reqEntity.addPart(ChatManagement.TOKEN, new StringBody(Data.getToken(context)));
 			reqEntity.addPart("event_id", new StringBody(String.valueOf(eventId)));
+			if(resetMessageCount){
+				reqEntity.addPart("update_lastview", new StringBody("1"));
+			} else {
+				reqEntity.addPart("update_lastview", new StringBody("0"));
+			}
 		} catch (UnsupportedEncodingException e1) {
 			e1.printStackTrace();
 		}

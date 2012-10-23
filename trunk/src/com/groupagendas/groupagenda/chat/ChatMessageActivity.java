@@ -10,7 +10,6 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.os.Handler;
 import android.support.v4.content.LocalBroadcastManager;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -93,7 +92,7 @@ public class ChatMessageActivity extends Activity {
 			int eventId = (Integer) params[1];
 			chatMessages = ChatManagement.getChatMessagesForEventFromLocalDb(context, eventId);
 			if (chatMessages.isEmpty() && DataManagement.networkAvailable) {
-				chatMessages = ChatManagement.getChatMessagesForEventFromRemoteDb(eventId, context);
+				chatMessages = ChatManagement.getChatMessagesForEventFromRemoteDb(eventId, context, true);
 			}
 			return null;
 		}
