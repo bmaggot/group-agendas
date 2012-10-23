@@ -396,7 +396,8 @@ public class EventsProvider extends ContentProvider{
 		eventDayStart.set(Calendar.SECOND, 0);
 		eventDayStart.set(Calendar.MILLISECOND, 0);
 		
-		long rowId = db.replace(EMetaData.EVENTS_TABLE, null, values);
+		long rowId = db.insert(EMetaData.EVENTS_TABLE, null, values);
+		if (rowId < 0) return null;
 		Uri insUri = ContentUris.withAppendedId(EMetaData.EventsMetaData.CONTENT_URI, rowId);
 		
 		String event_internal_id = "" + rowId;
