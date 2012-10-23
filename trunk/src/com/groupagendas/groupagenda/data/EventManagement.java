@@ -61,6 +61,7 @@ public class EventManagement {
 	////////////////////////////METHODS THAT ARE USED BY UI////////////////////////////////////////////////////////////////////
 	/**
 	 * Method gets event from remote db and writes it to local databases
+	 * @author justinas.marcinka@gmail.com
 	 * @param id Event id in remote database
 	 * @return true if success false otherwise. Also, error message is set in via getError()
 	 */
@@ -92,7 +93,7 @@ public class EventManagement {
 							return false;
 						}
 						Event event = JSONUtils.createEventFromJSON(e);
-						updateEventInLocalDb(context, event);
+						insertEventToLocalDB(context, event);
 
 					}
 				}
@@ -562,10 +563,7 @@ public class EventManagement {
 								+ "/" + internalID);
 		
 			
-			if (resolver.update(uri, cv, null, null) == 0){
-				resolver.insert(uri, cv);
-			}
-			
+			resolver.update(uri, cv, null, null);
 
 		if (event.getStartCalendar() != null && event.getEndCalendar() != null){ // to prevent null pointer exception: that hurts if happens :)
 			
