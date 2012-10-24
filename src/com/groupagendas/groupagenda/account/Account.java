@@ -81,6 +81,7 @@ public class Account {
 		public static final String DATA_UPDATE_TIMESTAMP = "latest_update";
 		public static final String NEED_UPDATE = "need_update";
 		public static final String PUSH_ID = "push_id";
+		public static final String SESSION_ID = "session_id";
 	}
 	
 	public long getLatestUpdateUnixTimestamp(){
@@ -92,6 +93,15 @@ public class Account {
 		prefsEditor.commit();
 	}
 
+	public String getSessionId(){
+		return prefs.getString(Account.AccountMetaData.SESSION_ID, null);
+	}
+	
+	public void setSessionId(String id){
+		prefsEditor.putString(Account.AccountMetaData.SESSION_ID, id);
+		prefsEditor.commit();
+	}
+	
 
 	public int getUser_id() {
 		return prefs.getInt(Account.AccountMetaData.U_ID, 0);
