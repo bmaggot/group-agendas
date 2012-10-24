@@ -2,6 +2,7 @@ package com.groupagendas.groupagenda.data;
 
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -21,22 +22,18 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import android.content.ContentProviderOperation;
-import android.content.ContentProviderOperation.Builder;
 import android.content.ContentValues;
 import android.content.Context;
-import android.content.OperationApplicationException;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteException;
 import android.net.Uri;
-import android.os.RemoteException;
 import android.util.Log;
 
+import com.groupagendas.groupagenda.C2DMReceiver;
 import com.groupagendas.groupagenda.account.Account;
 import com.groupagendas.groupagenda.contacts.Contact;
 import com.groupagendas.groupagenda.contacts.ContactsProvider;
 import com.groupagendas.groupagenda.contacts.Group;
-import com.groupagendas.groupagenda.events.EventsProvider;
 import com.groupagendas.groupagenda.utils.MapUtils;
 import com.groupagendas.groupagenda.utils.Utils;
 
@@ -62,9 +59,16 @@ public class ContactManagement {
 		HttpClient hc = new DefaultHttpClient();
 		HttpPost post = new HttpPost(Data.getServerUrl() + "mobile/contact_list");
 		MultipartEntity reqEntity = new MultipartEntity(HttpMultipartMode.BROWSER_COMPATIBLE);
-
+	    C2DMReceiver.sessionToken = Calendar.getInstance().getTimeInMillis();
+	    
+	    try {
+			reqEntity.addPart("session", new StringBody(String.valueOf(C2DMReceiver.sessionToken)));
+		} catch (UnsupportedEncodingException e2) {
+			e2.printStackTrace();
+		}
+	    
 		try {
-			reqEntity.addPart("token", new StringBody(Data.getToken()));
+			reqEntity.addPart("token", new StringBody(Data.getToken(context)));
 		} catch (UnsupportedEncodingException e1) {
 			e1.printStackTrace();
 		}
@@ -410,6 +414,13 @@ public class ContactManagement {
 		HttpClient hc = new DefaultHttpClient();
 		HttpPost post = new HttpPost(Data.getServerUrl() + "mobile/contact_create");
 		MultipartEntity reqEntity = new MultipartEntity(HttpMultipartMode.BROWSER_COMPATIBLE);
+	    C2DMReceiver.sessionToken = Calendar.getInstance().getTimeInMillis();
+	    
+	    try {
+			reqEntity.addPart("session", new StringBody(String.valueOf(C2DMReceiver.sessionToken)));
+		} catch (UnsupportedEncodingException e2) {
+			e2.printStackTrace();
+		}
 
 		try {
 			reqEntity.addPart("token", new StringBody(Data.getToken()));
@@ -997,6 +1008,13 @@ public class ContactManagement {
 		HttpClient hc = new DefaultHttpClient();
 		HttpPost post = new HttpPost(Data.getServerUrl() + "mobile/group_create");
 		MultipartEntity reqEntity = new MultipartEntity(HttpMultipartMode.BROWSER_COMPATIBLE);
+	    C2DMReceiver.sessionToken = Calendar.getInstance().getTimeInMillis();
+	    
+	    try {
+			reqEntity.addPart("session", new StringBody(String.valueOf(C2DMReceiver.sessionToken)));
+		} catch (UnsupportedEncodingException e2) {
+			e2.printStackTrace();
+		}
 
 		try {
 			reqEntity.addPart("token", new StringBody(Data.getToken()));
@@ -1177,6 +1195,13 @@ public class ContactManagement {
 		HttpClient hc = new DefaultHttpClient();
 		HttpPost post = new HttpPost(Data.getServerUrl() + "mobile/groups_list");
 		MultipartEntity reqEntity = new MultipartEntity(HttpMultipartMode.BROWSER_COMPATIBLE);
+	    C2DMReceiver.sessionToken = Calendar.getInstance().getTimeInMillis();
+	    
+	    try {
+			reqEntity.addPart("session", new StringBody(String.valueOf(C2DMReceiver.sessionToken)));
+		} catch (UnsupportedEncodingException e2) {
+			e2.printStackTrace();
+		}
 
 		try {
 			reqEntity.addPart("token", new StringBody(Data.getToken()));
@@ -1333,6 +1358,13 @@ public class ContactManagement {
 		HttpClient hc = new DefaultHttpClient();
 		HttpPost post = new HttpPost(Data.getServerUrl() + "mobile/contact_remove");
 		MultipartEntity reqEntity = new MultipartEntity(HttpMultipartMode.BROWSER_COMPATIBLE);
+	    C2DMReceiver.sessionToken = Calendar.getInstance().getTimeInMillis();
+	    
+	    try {
+			reqEntity.addPart("session", new StringBody(String.valueOf(C2DMReceiver.sessionToken)));
+		} catch (UnsupportedEncodingException e2) {
+			e2.printStackTrace();
+		}
 
 		try {
 			reqEntity.addPart(ContactsProvider.CMetaData.ContactsMetaData.C_ID, new StringBody(String.valueOf(id)));
@@ -1391,6 +1423,13 @@ public class ContactManagement {
 		HttpClient hc = new DefaultHttpClient();
 		HttpPost post = new HttpPost(Data.getServerUrl() + "mobile/contact_edit");
 		MultipartEntity reqEntity = new MultipartEntity(HttpMultipartMode.BROWSER_COMPATIBLE);
+	    C2DMReceiver.sessionToken = Calendar.getInstance().getTimeInMillis();
+	    
+	    try {
+			reqEntity.addPart("session", new StringBody(String.valueOf(C2DMReceiver.sessionToken)));
+		} catch (UnsupportedEncodingException e2) {
+			e2.printStackTrace();
+		}
 
 		if (!c.remove_image) {
 			if (c.image_bytes != null) {
@@ -1768,7 +1807,8 @@ public class ContactManagement {
 			sb.append(')');
 			where = sb.toString();
 			context.getContentResolver().delete(ContactsProvider.CMetaData.ContactsMetaData.CONTENT_URI, where, null);
-}
+		}
+		
 		private static void bulkDeleteGroups(Context context, String IDs) {
 			String where;
 			StringBuilder sb = new StringBuilder(ContactsProvider.CMetaData.GroupsMetaData.G_ID);
@@ -1777,11 +1817,49 @@ public class ContactManagement {
 			sb.append(')');
 			where = sb.toString();
 			context.getContentResolver().delete(ContactsProvider.CMetaData.GroupsMetaData.CONTENT_URI, where, null);
-}
+		}
 
-		
+		/**
+		 * Copy other user's contact.
+		 * 
+		 * Executes a call to remote database and requests other user's contact entry copy.
+		 * 
+		 * @author meska.lt@gmail.com
+		 * @since 2012-10-23
+		 * @param context
+		 * @param guid - GroupAgendas user's ID
+		 * @param req - Trigger if contact's details should be requested.
+		 */
+		public static void requestContactCopy(Context context, int guid, boolean req) {
+			try {
+				HttpClient hc = new DefaultHttpClient();
+				HttpPost post = new HttpPost(Data.getServerUrl() + "mobile/contact_copy");
 
-		
+				MultipartEntity reqEntity = new MultipartEntity(HttpMultipartMode.BROWSER_COMPATIBLE);
+			    C2DMReceiver.sessionToken = Calendar.getInstance().getTimeInMillis();
+			    
+			    try {
+					reqEntity.addPart("session", new StringBody(String.valueOf(C2DMReceiver.sessionToken)));
+				} catch (UnsupportedEncodingException e2) {
+					e2.printStackTrace();
+				}
 
+			    reqEntity.addPart("token", new StringBody(Data.getToken(context)));
+				reqEntity.addPart("guid", new StringBody(""+guid));
+				if(req){
+					reqEntity.addPart("req_details", new StringBody("1"));
+				}
+				post.setEntity(reqEntity);
+				if (DataManagement.networkAvailable) {
+					@SuppressWarnings("unused")
+					HttpResponse rp = hc.execute(post);
+				} else {
+					OfflineData uplooad = new OfflineData("mobile/contact_copy", reqEntity);
+					Data.getUnuploadedData().add(uplooad);
+				}
+			} catch (Exception e) {
+
+			}			
+		}
 
 }
