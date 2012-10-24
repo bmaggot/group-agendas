@@ -249,7 +249,8 @@
         <activity
             android:name=".contacts.importer.ImportActivity"
             android:configChanges="keyboardHidden|orientation"
-            android:theme="@android:style/Theme.NoTitleBar" >
+            android:theme="@android:style/Theme.NoTitleBar" 
+            android:exported="true">
         </activity>
         <activity
             android:name=".chat.ChatThreadFragment"
@@ -264,7 +265,7 @@
         <activity
             android:name=".contacts.importer.RequestTokenActivity"
             android:launchMode="singleTask"
-            android:exported="false"
+            android:exported="true"
             android:theme="@android:style/Theme.NoTitleBar" >
             <intent-filter>
                 <action android:name="android.intent.action.VIEW" />
