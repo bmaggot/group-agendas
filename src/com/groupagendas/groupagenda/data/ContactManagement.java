@@ -644,7 +644,7 @@ public class ContactManagement {
 						success = object.getBoolean("success");
 						if (success)
 							destination_id = object.getInt("contact_id");
-						Log.e("createContact - success", "" + success);
+						Log.i("createContact - success", "" + success);
 
 						if (success == false) {
 							Data.setERROR(object.getJSONObject("error").getString("reason"));
@@ -801,8 +801,10 @@ public class ContactManagement {
 		if (id > 0) {
 			Uri uri = Uri.parse(ContactsProvider.CMetaData.ContactsMetaData.CONTENT_URI + "/" + id);
 			cur = context.getContentResolver().query(uri, null, null, null, null);
-			if (cur.moveToFirst())
+			if (cur.moveToFirst()){
 				temp = new Contact(cur);
+				cur.close();
+			}
 		} else {
 			if (created > 0) {
 				String where = ContactsProvider.CMetaData.ContactsMetaData.CREATED + "=" + created;
