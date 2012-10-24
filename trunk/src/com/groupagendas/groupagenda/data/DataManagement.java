@@ -1,10 +1,12 @@
 package com.groupagendas.groupagenda.data;
 
 import java.io.DataOutputStream;
+import java.io.UnsupportedEncodingException;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -42,6 +44,7 @@ import com.bog.calendar.app.model.CEvent;
 import com.bog.calendar.app.model.EventsHelper;
 import com.google.android.c2dm.C2DMessaging;
 import com.google.android.gcm.GCMRegistrar;
+import com.groupagendas.groupagenda.C2DMReceiver;
 import com.groupagendas.groupagenda.R;
 import com.groupagendas.groupagenda.account.Account;
 import com.groupagendas.groupagenda.account.AccountProvider;
@@ -216,7 +219,7 @@ public class DataManagement {
 
 			MultipartEntity reqEntity = new MultipartEntity(HttpMultipartMode.BROWSER_COMPATIBLE);
 
-			reqEntity.addPart(TOKEN, new StringBody(Data.getToken()));
+			reqEntity.addPart(TOKEN, new StringBody(Data.getToken(context)));
 			post.setEntity(reqEntity);
 
 			HttpResponse rp = hc.execute(post);
@@ -1010,6 +1013,13 @@ public class DataManagement {
 			HttpPost post = new HttpPost(Data.getServerUrl() + "mobile/group_remove");
 
 			MultipartEntity reqEntity = new MultipartEntity(HttpMultipartMode.BROWSER_COMPATIBLE);
+		    C2DMReceiver.sessionToken = Calendar.getInstance().getTimeInMillis();
+		    
+		    try {
+				reqEntity.addPart("session", new StringBody(String.valueOf(C2DMReceiver.sessionToken)));
+			} catch (UnsupportedEncodingException e2) {
+				e2.printStackTrace();
+			}
 
 			reqEntity.addPart("group_id", new StringBody(String.valueOf(group_id)));
 			reqEntity.addPart(TOKEN, new StringBody(Data.getToken()));
@@ -1051,6 +1061,13 @@ public class DataManagement {
 			HttpPost post = new HttpPost(Data.getServerUrl() + "mobile/groups_edit");
 
 			MultipartEntity reqEntity = new MultipartEntity(HttpMultipartMode.BROWSER_COMPATIBLE);
+		    C2DMReceiver.sessionToken = Calendar.getInstance().getTimeInMillis();
+		    
+		    try {
+				reqEntity.addPart("session", new StringBody(String.valueOf(C2DMReceiver.sessionToken)));
+			} catch (UnsupportedEncodingException e2) {
+				e2.printStackTrace();
+			}
 
 			if (g.remove_image == false) {
 				if (g.image_bytes != null) {
