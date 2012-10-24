@@ -40,10 +40,10 @@ public class EventsActivity extends ListActivity {
 	private ActionItem private_note;
 	// may be needed in case Rob wants ;] private ActionItem all_types;
 	// status
+	private ActionItem maybe;
 	private ActionItem new_invites;
 	private ActionItem attending;
 	private ActionItem rejected;
-	private ActionItem maybe;
 	//private ActionItem all_statuses;
 	
 	protected FilterState filterState = FilterState.ALL;
@@ -83,7 +83,7 @@ public class EventsActivity extends ListActivity {
 		//filter events to new invites if there are such
 		if(NavbarActivity.showInvites && eventsAdapter.getNewInvitesCount() != 0){
 			filterState = FilterState.NEW_INVITES;
-//			filterEventsByStatus(Invited.PENDING);
+			filterEventsByStatus(Invited.PENDING);
 			NavbarActivity.showInvites = false;
 			changeTitle(getString(R.string.status_new_invites_count, eventsAdapter.getNewInvitesCount()));
 		}
@@ -106,38 +106,36 @@ public class EventsActivity extends ListActivity {
                 if (filterState != FilterState.ALL){
                 	if (filterState == FilterState.NEW_INVITES) changeTitle(getString(R.string.status_new_invites_count, eventsAdapter.getNewInvitesCount()));			
     				
-        			switch (filterState){
-        			case ACCEPTED:
-        				filterEventsByStatus(Invited.ACCEPTED);
-        				break;
-        			case REJECTED:
-        				filterEventsByStatus(Invited.REJECTED);
-        				break;
-        			case MAYBE:
-        				filterEventsByStatus(Invited.MAYBE);
-        				break;
-        			case NEW_INVITES:
-        				filterEventsByStatus(Invited.PENDING);
-        				break;
-        			case SHARED_NOTES:
-        				filterEventsByType(getString(R.string.n_type));
-        				break;
-        			case OPEN_EVENTS:
-        				filterEventsByType(getString(R.string.o_type));
-        				break;
-        			case PHONE_CALLS:
-        				filterEventsByType(getString(R.string.t_type));
-        				break;
-        			case SHARED_EVENTS:
-        				filterEventsByType(getString(R.string.r_type));
-        				break;
-        			}
-					
+//        			switch (filterState){
+//        			case ACCEPTED:
+//        				filterEventsByStatus(Invited.ACCEPTED);
+//        				break;
+//        			case REJECTED:
+//        				filterEventsByStatus(Invited.REJECTED);
+//        				break;
+//        			case MAYBE:
+//        				filterEventsByStatus(Invited.MAYBE);
+//        				break;
+//        			case NEW_INVITES:
+//        				filterEventsByStatus(Invited.PENDING);
+//        				break;
+//        			case SHARED_NOTES:
+//        				filterEventsByType(getString(R.string.n_type));
+//        				break;
+//        			case OPEN_EVENTS:
+//        				filterEventsByType(getString(R.string.o_type));
+//        				break;
+//        			case PHONE_CALLS:
+//        				filterEventsByType(getString(R.string.t_type));
+//        				break;
+//        			case SHARED_EVENTS:
+//        				filterEventsByType(getString(R.string.r_type));
+//        				break;
+//        			}
+//					
 				} //else
 //    			{
 //    				changeTitle(getString(R.string.events));
-//    				eventsAdapter.getFilter().filter("all");
-//    				eventsAdapter.setFilter("all");
 //    			}
 			}
 
