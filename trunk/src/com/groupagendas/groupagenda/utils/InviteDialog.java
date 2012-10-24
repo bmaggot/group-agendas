@@ -1,39 +1,27 @@
 package com.groupagendas.groupagenda.utils;
 
-import org.apache.http.HttpResponse;
-import org.apache.http.client.HttpClient;
-import org.apache.http.client.methods.HttpPost;
-import org.apache.http.entity.mime.HttpMultipartMode;
-import org.apache.http.entity.mime.MultipartEntity;
-import org.apache.http.entity.mime.content.StringBody;
-import org.apache.http.impl.client.DefaultHttpClient;
-
-import android.app.Activity;
 import android.app.Dialog;
+import android.content.Context;
 import android.os.AsyncTask;
 import android.view.View;
 import android.widget.Button;
 
 import com.groupagendas.groupagenda.R;
-import com.groupagendas.groupagenda.data.Data;
-import com.groupagendas.groupagenda.data.DataManagement;
-import com.groupagendas.groupagenda.data.OfflineData;
+import com.groupagendas.groupagenda.data.ContactManagement;
 import com.groupagendas.groupagenda.events.Invited;
 
 public class InviteDialog extends Dialog {
 
-//	private Activity context;
+	private Invited source;
 	private Button inviteAndRequest;
 	private Button justInvite;
 	private Button dontInvite;
-	private Invited invited;
 	private boolean req = false;
 
-	public InviteDialog(Activity context, int styleResId, final Invited invited) {
+	public InviteDialog(Context context, int styleResId, Invited invited) {
 		super(context, styleResId);
-//		this.context = context;
-		this.invited = invited;
 		this.setContentView(R.layout.contacts_invite);
+		this.source = invited;
 		this.setTitle(context.getResources().getString(R.string.do_you_want_to_save_contact) + " " + invited.getName() + " "
 				+ context.getResources().getString(R.string.to_your_list));
 
@@ -43,7 +31,7 @@ public class InviteDialog extends Dialog {
 			@Override
 			public void onClick(View v) {
 				req = true;
-				new Invite().execute();
+				new Invite().execute(InviteDialog.this.source);
 				dismiss();
 			}
 		});
@@ -53,7 +41,7 @@ public class InviteDialog extends Dialog {
 			@Override
 			public void onClick(View v) {
 				req = false;
-				new Invite().execute();
+				new Invite().execute(InviteDialog.this.source);
 				dismiss();
 			}
 		});
@@ -67,31 +55,13 @@ public class InviteDialog extends Dialog {
 			}
 		});
 	}
-	public class Invite extends AsyncTask<Void, Void, Void>{
+	
+	public class Invite extends AsyncTask<Invited, Void, Void> {
 
 		@Override
-		protected Void doInBackground(Void... params) {
-			try {
-				HttpClient hc = new DefaultHttpClient();
-				HttpPost post = new HttpPost(Data.getServerUrl() + "mobile/contact_copy");
-
-				MultipartEntity reqEntity = new MultipartEntity(HttpMultipartMode.BROWSER_COMPATIBLE);
-				reqEntity.addPart("token", new StringBody(Data.getToken()));
-				reqEntity.addPart("guid", new StringBody(String.valueOf(invited.getGuid())));
-				if(req){
-					reqEntity.addPart("req_details", new StringBody("1"));
-				}
-				post.setEntity(reqEntity);
-				if (DataManagement.networkAvailable) {
-					@SuppressWarnings("unused")
-					HttpResponse rp = hc.execute(post);
-				} else {
-					OfflineData uplooad = new OfflineData("mobile/contact_copy", reqEntity);
-					Data.getUnuploadedData().add(uplooad);
-				}
-			} catch (Exception e) {
-
-			}
+		protected Void doInBackground(Invited... params) {
+			Invited i = params[0];
+			ContactManagement.requestContactCopy(getContext(), i.getGuid(), InviteDialog.this.req);
 			return null;
 		}
 		
