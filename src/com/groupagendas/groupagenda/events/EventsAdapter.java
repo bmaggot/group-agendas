@@ -26,6 +26,7 @@ public class EventsAdapter extends BaseAdapter implements Filterable{
 	private Context mContext;
 	private DateTimeUtils dtUtils;
 	private String mFilter = null;
+	private Filter filter = null;
 	private int newInvitesCount;
 	public EventsAdapter(List<Event> objects, Activity activity){
 		events = objects;
@@ -217,18 +218,19 @@ public class EventsAdapter extends BaseAdapter implements Filterable{
 	}
 	@Override
 	public Filter getFilter() {
-		return new Filter() {
+		if (filter == null)
+			filter = new Filter() {
             @SuppressWarnings("unchecked")
 			@Override
             protected void publishResults(CharSequence constraint, FilterResults results) {
                 events = (List<Event>) results.values;
-                notifyDataSetChanged();
+                EventsAdapter.this.notifyDataSetChanged();
             }
 
             @Override
             protected FilterResults performFiltering(CharSequence constraint) {
                 List<Event> filteredResults = getFilteredResults(constraint);
-
+                
                 FilterResults results = new FilterResults();
                 results.values = filteredResults;
 
@@ -237,52 +239,64 @@ public class EventsAdapter extends BaseAdapter implements Filterable{
             
             private List<Event> getFilteredResults(CharSequence c) {
                 List<Event> items = EventsAdapter.this.eventsAll;
-                List<Event> filtereItems = new ArrayList<Event>();
+              
+                
+                
+                if (c == null) return items;
+                if (c.equals("all")) return items;
+                
+                List<Event> filteredItems = new ArrayList<Event>();
                 
                 if(c.equals(mContext.getString(R.string.r_type))){
                 	for(int i=0, l=items.size(); i<l; i++){
                 		String itemType = items.get(i).getType();
                 		if(itemType.equals(Event.SHARED_EVENT) || itemType.equals(Event.TELEPHONE_CALL)){
-                			filtereItems.add(items.get(i));
+                			filteredItems.add(items.get(i));
                 		}
                 	}
-//                }else if(c.equals(mContext.getString(R.string.t_type))){ telephone calls are now shown with shared events
-//                	for(int i=0, l=items.size(); i<l; i++){
-//                		if(items.get(i).getType().equals("t")){
-//                			filtereItems.add(items.get(i));
-//                		}
-//                	}
-                }else if(c.equals(mContext.getString(R.string.o_type))){
-                	for(int i=0, l=items.size(); i<l; i++){
-                		if(items.get(i).getType().equals(Event.OPEN_EVENT)){
-                			filtereItems.add(items.get(i));
-                		}
-                	}
-                }else if(c.equals(mContext.getString(R.string.n_type))){
-                	for(int i=0, l=items.size(); i<l; i++){
-                		if(items.get(i).getType().equals(Event.SHARED_NOTE)){
-                			filtereItems.add(items.get(i));
-                		}
-                	}
-                }else if(c.equals(mContext.getString(R.string.p_type))){
-                	for(int i=0, l=items.size(); i<l; i++){
-                		if(items.get(i).getType().equals(Event.NOTE)){
-                			filtereItems.add(items.get(i));
-                		}
-                	}
-                }else if(c.equals("all")){
-                	filtereItems = items;
-                }else{
-                	for(int i=0, l=items.size(); i<l; i++){
-                		if(items.get(i).getStatus() == Integer.parseInt(c.toString())){
-                			filtereItems.add(items.get(i));
-                		}
-                	}
+                	return filteredItems;
                 }
                 
-                return filtereItems;
+                if(c.equals(mContext.getString(R.string.o_type))){
+                	for(int i=0, l=items.size(); i<l; i++){
+                		if(items.get(i).getType().equals(Event.OPEN_EVENT)){
+                			filteredItems.add(items.get(i));
+                		}
+                	}
+                	return filteredItems;
+                }
+
+                if(c.equals(mContext.getString(R.string.n_type))){
+                	for(int i=0, l=items.size(); i<l; i++){
+                		if(items.get(i).getType().equals(Event.SHARED_NOTE)){
+                			filteredItems.add(items.get(i));
+                		}
+                	}
+                	return filteredItems;
+                }
+
+                if(c.equals(mContext.getString(R.string.p_type))){
+                	for(int i=0, l=items.size(); i<l; i++){
+                		if(items.get(i).getType().equals(Event.NOTE)){
+                			filteredItems.add(items.get(i));
+                		}
+                	}
+                	return filteredItems;
+                }
+                
+//                filtering by status
+                for(int i=0, l=items.size(); i<l; i++){
+                		if(items.get(i).getStatus() == Integer.parseInt(c.toString())){
+                			filteredItems.add(items.get(i));
+                		}
+                	}
+                
+                
+                return filteredItems;
             }
         };
+        
+        return filter;
 	}
 	
 	@Override
