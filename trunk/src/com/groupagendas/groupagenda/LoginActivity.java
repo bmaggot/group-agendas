@@ -1,5 +1,7 @@
 package com.groupagendas.groupagenda;
 
+import java.util.UUID;
+
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
@@ -125,12 +127,15 @@ public class LoginActivity extends Activity {
 			success = dm.login(login, password);
 
 			if (success) {
-				if (isDifferentUser(prefs, login)){
-					Account acc = new Account(LoginActivity.this);
+				Account acc = new Account(LoginActivity.this);
+				if (isDifferentUser(prefs, login)){				
 					acc.clearLatestUpdateTime();
 					DataManagement.clearAllData(LoginActivity.this);
 				}
 				
+				String id = UUID.randomUUID().toString();
+				acc.setSessionId(id);
+
 				editor.putString("email", login);
 				editor.putString("password", password);
 				editor.putBoolean("stay_logged_in", stay);
