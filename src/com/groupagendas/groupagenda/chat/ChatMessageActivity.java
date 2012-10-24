@@ -24,6 +24,8 @@ import com.groupagendas.groupagenda.R;
 import com.groupagendas.groupagenda.calendar.adapters.ChatMessageAdapter;
 import com.groupagendas.groupagenda.data.ChatManagement;
 import com.groupagendas.groupagenda.data.DataManagement;
+import com.groupagendas.groupagenda.data.EventManagement;
+import com.groupagendas.groupagenda.events.Event;
 
 public class ChatMessageActivity extends Activity {
 	private int event_id;
@@ -48,7 +50,7 @@ public class ChatMessageActivity extends Activity {
 		pb = (ProgressBar) findViewById(R.id.progress);
 
 		event_id = getIntent().getIntExtra("event_id", 0);
-		LocalBroadcastManager.getInstance(this).registerReceiver(mMessageReceiver, new IntentFilter("refreshMessagesList"+ event_id));
+		LocalBroadcastManager.getInstance(this).registerReceiver(mMessageReceiver, new IntentFilter(C2DMReceiver.REFRESH_MESSAGES_LIST + event_id));
 
 		Object[] params = { this, event_id };
 
@@ -92,7 +94,7 @@ public class ChatMessageActivity extends Activity {
 			int eventId = (Integer) params[1];
 			chatMessages = ChatManagement.getChatMessagesForEventFromLocalDb(context, eventId);
 			if (chatMessages.isEmpty() && DataManagement.networkAvailable) {
-				chatMessages = ChatManagement.getChatMessagesForEventFromRemoteDb(eventId, context, true);
+				chatMessages = ChatManagement.getChatMessagesForEventFromRemoteDb(eventId, context, true, EventManagement.getEventFromLocalDb(context, eventId, EventManagement.ID_EXTERNAL).getLast_message_date_time());
 			}
 			return null;
 		}
@@ -123,6 +125,8 @@ public class ChatMessageActivity extends Activity {
 			if (newChatMessageObject == null) {
 				chatMessages.remove(chatMessageObject);
 			} else {
+				Event event = EventManagement.getEventFromLocalDb(context, eventId, EventManagement.ID_EXTERNAL);
+				event.setMessage_count(event.getMessage_count() + 1);
 				chatMessages.remove(chatMessageObject);
 				chatMessages.add(newChatMessageObject);
 			}

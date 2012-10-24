@@ -1,12 +1,15 @@
 package com.groupagendas.groupagenda.settings;
 
 import org.apache.http.HttpResponse;
+import org.apache.http.HttpStatus;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.entity.mime.HttpMultipartMode;
 import org.apache.http.entity.mime.MultipartEntity;
 import org.apache.http.entity.mime.content.StringBody;
 import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.util.EntityUtils;
+import org.json.JSONObject;
 
 import android.app.ListActivity;
 import android.content.Intent;
@@ -15,9 +18,11 @@ import android.content.SharedPreferences.Editor;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.ListView;
 
+import com.google.android.c2dm.C2DMessaging;
 import com.groupagendas.groupagenda.GroupAgendasActivity;
 import com.groupagendas.groupagenda.R;
 import com.groupagendas.groupagenda.account.Account;
@@ -106,7 +111,7 @@ public class SettingsActivity extends ListActivity{
 		@Override
 		protected Void doInBackground(Void... params) {
 			try {
-
+				C2DMessaging.unregister(SettingsActivity.this);
 				HttpClient hc = new DefaultHttpClient();
 				HttpPost post = new HttpPost(Data.getServerUrl() + "mobile/push/unsubscribe");
 
@@ -117,8 +122,14 @@ public class SettingsActivity extends ListActivity{
 
 				post.setEntity(reqEntity);
 
-				@SuppressWarnings("unused")
 				HttpResponse rp = hc.execute(post);
+				if (rp.getStatusLine().getStatusCode() == HttpStatus.SC_OK) {
+					String resp = EntityUtils.toString(rp.getEntity());
+					if (resp != null) {
+						JSONObject object = new JSONObject(resp);
+						object.getInt("");
+					}
+				}
 			} catch (Exception ex) {
 				Reporter.reportError(DataManagement.class.toString(), Thread.currentThread().getStackTrace()[2].getMethodName().toString(),
 						ex.getMessage());

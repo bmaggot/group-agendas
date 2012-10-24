@@ -309,9 +309,9 @@ public class ChatManagement {
 		return chatMessageObject;
 	}
 	
-	public static ArrayList<ChatMessageObject> getChatMessagesForEventFromRemoteDb(int eventId, Context context, boolean resetMessageCount){
+	public static ArrayList<ChatMessageObject> getChatMessagesForEventFromRemoteDb(int eventId, Context context, boolean resetMessageCount, long lastMessageTimeStamp){
 		boolean success = false;
-		ChatManagement.removeChatMessagesFromLocalDbForEvent(context, eventId);
+//		ChatManagement.removeChatMessagesFromLocalDbForEvent(context, eventId);
 		HttpClient hc = new DefaultHttpClient();
 		ArrayList<ChatMessageObject>chatMessages = new ArrayList<ChatMessageObject>();
 		HttpPost post = new HttpPost(Data.getServerUrl() + "mobile/chat_get");
@@ -325,6 +325,7 @@ public class ChatManagement {
 			} else {
 				reqEntity.addPart("update_lastview", new StringBody("0"));
 			}
+			
 		} catch (UnsupportedEncodingException e1) {
 			e1.printStackTrace();
 		}
@@ -380,5 +381,9 @@ public class ChatManagement {
 			Log.e("removeChatMessageFromLoacalDB(Context context, int " + event_id + ")", e.getMessage());
 		}
 		return success;
+	}
+	
+	public static long getLastMessageTimeStamp(Context context, int eventId){
+		return eventId;
 	}
 }
