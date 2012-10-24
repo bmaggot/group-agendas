@@ -98,34 +98,34 @@ public class ContactInfoActivity extends Activity {
 				if(contact.lastname != null && !contact.lastname.equals("null"))	lastnameView.setText(contact.lastname);
 				
 				// Email
-				if (!contact.email.equals("null")) {
+				if (contact.email != null && !contact.email.equals("null")) {
 					setTableRow(getString(R.string.email), contact.email);
 				}
 				// Phone
-				if (!contact.phone1.equals("null")) {
+				if (contact.phone1 != null && !contact.phone1.equals("null")) {
 					setTableRow(getString(R.string.phone), contact.phone1);
 				}
 				// Birth date
-				if (!contact.birthdate.equals("null")) {
+				if (contact.birthdate != null && !contact.birthdate.equals("null")) {
 					setTableRow(getString(R.string.birthday), contact.birthdate); //TODO format using dtUtils
 				}
 				// Country
-				if (!contact.country.equals("null")) {
+				if (contact.country != null && !contact.country.equals("null")) {
 					int resId = getResources().getIdentifier(contact.country, "string", "com.groupagendas.groupagenda");
 					if(resId > 0){
 						setTableRow(getString(R.string.country), getString(resId));
 					}
 				}
 				// City
-				if (!contact.city.equals("null")) {
+				if (contact.city != null && !contact.city.equals("null")) {
 					setTableRow(getString(R.string.city), contact.city);
 				}
 				// Street
-				if (!contact.street.equals("null")) {
+				if (contact.street !=null &&!contact.street.equals("null")) {
 					setTableRow(getString(R.string.street), contact.street);
 				}
 				// ZIP code
-				if (!contact.zip.equals("null")) {
+				if (contact.zip != null && !contact.zip.equals("null")) {
 					setTableRow(getString(R.string.zip), contact.zip);
 				}
 			}
