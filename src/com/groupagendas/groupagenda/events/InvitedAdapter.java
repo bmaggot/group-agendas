@@ -4,15 +4,18 @@ import java.util.List;
 
 import android.content.Context;
 import android.view.View;
+import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.groupagendas.groupagenda.R;
 import com.groupagendas.groupagenda.account.Account;
 import com.groupagendas.groupagenda.calendar.adapters.AbstractAdapter;
+import com.groupagendas.groupagenda.utils.InviteDialog;
 
 public class InvitedAdapter extends AbstractAdapter<Invited> {
 	int listSize;
+	int myID = 0;
 	String myFullname = "";
 
 	public InvitedAdapter(Context context, List<Invited> list) {
@@ -20,11 +23,12 @@ public class InvitedAdapter extends AbstractAdapter<Invited> {
 		listSize = list.size();
 		Account account = new Account(context);
 		myFullname = account.getFullname();
+		myID = account.getUser_id();
 	}
 
 	@Override
 	public View getView(int i, View view, ViewGroup viewGroup) {
-		Invited invited;
+		final Invited invited;
 		String temp = "";
 
 		if (view == null) {
@@ -66,6 +70,16 @@ public class InvitedAdapter extends AbstractAdapter<Invited> {
 		
 		if (i == listSize - 1)
 			view.setBackgroundResource(R.drawable.event_invited_entry_last_background);
+		
+		if ((invited.getGuid() != myID) && (invited.getMy_contact_id() < 1) && (invited.getGuid() > 0)) {
+			view.setOnClickListener(new OnClickListener() {
+				@Override
+				public void onClick(View v) {
+					InviteDialog dia = new InviteDialog(context, 0, invited);
+					dia.show();
+				}
+			});
+		}
 
 		return view;
 	}
