@@ -21,6 +21,20 @@ import com.groupagendas.groupagenda.events.EventsActivity;
 public class C2DMReceiver extends C2DMBaseReceiver {
 	private static boolean isChatMessage = false;
 	public static boolean chatMessagesWindowUpdated = false;
+	public static long sessionToken;
+	public String last_queue_token = "";
+	public static String RESUBSCRIBE = "resubscribe";
+	public static String DEFAULT_QUEUE_TOKEN = "666";
+	public static String ACTION = "action";
+	public static String SESSION = "session";
+	public static String QUEUE_TOKEN = "queue_token";
+	public static String MESSAGE = "message";
+	public static String REL_OBJ = "rel_obj";
+	public static String REL_ID = "rel_id";
+	public static String CHAT = "ch";
+	public static String EVENT = "event";
+	public static String CONTACT = "contact";
+	public static String REFRESH_MESSAGES_LIST = "refreshMessagesList";
 
 	public C2DMReceiver() {
 		super(DataManagement.PROJECT_ID);
@@ -49,36 +63,58 @@ public class C2DMReceiver extends C2DMBaseReceiver {
 
 	@Override
 	protected void onMessage(Context context, Intent receiveIntent) {
-		Account acc = new Account(context);
-//		DataManagement.synchronizeWithServer(context, null, acc.getLatestUpdateUnixTimestamp());
+		if (receiveIntent.hasExtra(ACTION) && receiveIntent.getStringExtra(ACTION).equals(RESUBSCRIBE)) {
+			DataManagement.getInstance(context).registerPhone();
+		}
+		boolean doDataDelta = true;
+		if (receiveIntent.hasExtra(SESSION) && receiveIntent.getStringExtra(SESSION).equals(String.valueOf(sessionToken))) {
+			doDataDelta = false;
+		}
+		if (receiveIntent.hasExtra(QUEUE_TOKEN) && receiveIntent.getStringExtra(QUEUE_TOKEN).equals(String.valueOf(last_queue_token))) {
+			doDataDelta = false;
+		}
+		if (receiveIntent.hasExtra(QUEUE_TOKEN)) {
+			last_queue_token = receiveIntent.getStringExtra(QUEUE_TOKEN);
+		} else {
+			last_queue_token = DEFAULT_QUEUE_TOKEN;
+		}
 		String data = "";
-		if (receiveIntent.getStringExtra("message") != null && !receiveIntent.getStringExtra("message").equals("")
-				&& !receiveIntent.getStringExtra("message").equals("^[A-Z][a-z]*Self$")) {
-			data = receiveIntent.getStringExtra("message");
+		if (receiveIntent.hasExtra(MESSAGE) && !receiveIntent.getStringExtra(MESSAGE).equals("[A-Z]*[a-z]*Self")) {
+			data = receiveIntent.getStringExtra(MESSAGE);
 		}
 		String rel_id = null;
-		String type = null;
-		String isNative = null;
-		if (receiveIntent.hasExtra("rel_id") && receiveIntent.getStringExtra("rel_id") != "") {
-			rel_id = receiveIntent.getStringExtra("rel_id");
-			if (receiveIntent.hasExtra("rel_obj") && receiveIntent.getStringExtra("rel_obj").equals("ch")) {
-				isChatMessage = true;
-				ChatManagement.getChatMessagesForEventFromRemoteDb(Integer.parseInt(rel_id), context, true);
-				Intent intent = new Intent("refreshMessagesList" + rel_id);
-				LocalBroadcastManager.getInstance(context).sendBroadcast(intent);
-			} else {
-				isChatMessage = false;
+		if (receiveIntent.hasExtra(REL_OBJ) && receiveIntent.getStringExtra(REL_OBJ).equals(CHAT)) {
+			isChatMessage = true;
+			ChatManagement.getChatMessagesForEventFromRemoteDb(Integer.parseInt(rel_id), context, true, EventManagement
+					.getEventFromLocalDb(context, Integer.parseInt(rel_id), EventManagement.ID_EXTERNAL).getLast_message_date_time());
+			Intent intent = new Intent(REFRESH_MESSAGES_LIST + rel_id);
+			LocalBroadcastManager.getInstance(context).sendBroadcast(intent);
+			if (!chatMessagesWindowUpdated && receiveIntent.hasExtra(REL_ID) && !receiveIntent.getStringExtra(REL_ID).equals("")) {
+				showNotification(context, data, rel_id);
 			}
-			Log.e("C2DMReceiver", "C2DMReceiver: " + data);
+		} else if (receiveIntent.hasExtra(REL_ID) && !receiveIntent.getStringExtra(REL_ID).equals("")) {
+			rel_id = receiveIntent.getStringExtra(REL_ID);
+			if (receiveIntent.hasExtra(REL_OBJ)
+					&& (receiveIntent.getStringExtra(REL_OBJ).equals(EVENT) || receiveIntent.getStringExtra(REL_OBJ).equals(CONTACT))) {
+				isChatMessage = false;
+				chatMessagesWindowUpdated = false;
+			}
 			if (!chatMessagesWindowUpdated) {
 				chatMessagesWindowUpdated = false;
-				showNotification(this, "Group Agenda", "Group Agenda", data, 17301620, "", rel_id, type, isNative);
+				showNotification(context, data, rel_id);
 			}
+		}
+		if (doDataDelta) {
+			Account account = new Account(context);
+			DataManagement.synchronizeWithServer(context, null, account.getLatestUpdateUnixTimestamp());
 		}
 	}
 
-	public static void showNotification(Context context, String tickerText, String title, String text, int icon, String url, String rel_id,
-			String type, String isNative) {
+	public static void showNotification(Context context, String data, String rel_id) {
+		showNotification(context, "Group Agenda", "Group Agenda", data, 17301620, "", rel_id);
+	}
+
+	public static void showNotification(Context context, String tickerText, String title, String text, int icon, String url, String rel_id) {
 
 		try {
 			String ns = Context.NOTIFICATION_SERVICE;
@@ -99,7 +135,7 @@ public class C2DMReceiver extends C2DMBaseReceiver {
 				notificationIntent = new Intent(context, EventsActivity.class);
 				NavbarActivity.showInvites = true;
 				if (event == null) {
-					if(EventManagement.getEventByIdFromRemoteDb(context, rel_id)){
+					if (EventManagement.getEventByIdFromRemoteDb(context, rel_id)) {
 						event = EventManagement.getEventFromLocalDb(context, Long.parseLong(rel_id), EventManagement.ID_EXTERNAL);
 					}
 				}
