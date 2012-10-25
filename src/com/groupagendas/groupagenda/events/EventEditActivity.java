@@ -943,7 +943,12 @@ public class EventEditActivity extends EventActivity {
 		@Override
 		protected Boolean doInBackground(Event... events) {
 			if (isInvited) {				
-				return EventManagement.inviteExtraContacts(EventEditActivity.this, ""+event.getEvent_id(), selectedContacts);
+				if (EventManagement.inviteExtraContacts(EventEditActivity.this, ""+event.getEvent_id(), selectedContacts)) {
+					return true;
+				} else {
+					errorStr = "Invite wasn't successfull.";
+					return false;
+				}
 			} else {
 				event = setEventData(event);
 				int testEvent = event.isValid();
