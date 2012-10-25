@@ -764,7 +764,7 @@ public class EventEditActivity extends EventActivity {
 			
 			int id = account.getUser_id();
 			for (Invited inv : result.getInvited()) {
-				if (inv.getGuid() == id) {
+				if ((inv.getGuid() == id) && (inv.getGuid() != result.getUser_id())) {
 					saveButton.setVisibility(View.VISIBLE);
 					isInvited = true;
 				}
