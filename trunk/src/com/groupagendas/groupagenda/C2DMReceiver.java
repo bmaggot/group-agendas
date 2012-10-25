@@ -76,6 +76,10 @@ public class C2DMReceiver extends C2DMBaseReceiver {
 			if (receiveIntent.hasExtra(QUEUE_TOKEN) && receiveIntent.getStringExtra(QUEUE_TOKEN).equals(String.valueOf(last_queue_token))) {
 				doDataDelta = false;
 			}
+			if (doDataDelta) {
+				Account account = new Account(context);
+				DataManagement.synchronizeWithServer(context, null, account.getLatestUpdateUnixTimestamp());
+			}
 			if (receiveIntent.hasExtra(QUEUE_TOKEN)) {
 				last_queue_token = receiveIntent.getStringExtra(QUEUE_TOKEN);
 			} else {
@@ -106,10 +110,6 @@ public class C2DMReceiver extends C2DMBaseReceiver {
 				if (!chatMessagesWindowUpdated) {
 					showNotification(context, data, rel_id);
 				}
-			}
-			if (doDataDelta) {
-				Account account = new Account(context);
-				DataManagement.synchronizeWithServer(context, null, account.getLatestUpdateUnixTimestamp());
 			}
 		}
 	}
