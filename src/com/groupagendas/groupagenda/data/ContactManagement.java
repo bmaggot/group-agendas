@@ -59,10 +59,9 @@ public class ContactManagement {
 		HttpClient hc = new DefaultHttpClient();
 		HttpPost post = new HttpPost(Data.getServerUrl() + "mobile/contact_list");
 		MultipartEntity reqEntity = new MultipartEntity(HttpMultipartMode.BROWSER_COMPATIBLE);
-	    C2DMReceiver.sessionToken = Calendar.getInstance().getTimeInMillis();
 	    
 	    try {
-			reqEntity.addPart("session", new StringBody(String.valueOf(C2DMReceiver.sessionToken)));
+			reqEntity.addPart("session", new StringBody(account.getSessionId()));
 		} catch (UnsupportedEncodingException e2) {
 			e2.printStackTrace();
 		}
@@ -411,13 +410,13 @@ public class ContactManagement {
 		String temp;
 		int destination_id = 0;
 		boolean success = false;
+		Account account = new Account();
 		HttpClient hc = new DefaultHttpClient();
 		HttpPost post = new HttpPost(Data.getServerUrl() + "mobile/contact_create");
 		MultipartEntity reqEntity = new MultipartEntity(HttpMultipartMode.BROWSER_COMPATIBLE);
-	    C2DMReceiver.sessionToken = Calendar.getInstance().getTimeInMillis();
 	    
 	    try {
-			reqEntity.addPart("session", new StringBody(String.valueOf(C2DMReceiver.sessionToken)));
+			reqEntity.addPart("session", new StringBody(account.getSessionId()));
 		} catch (UnsupportedEncodingException e2) {
 			e2.printStackTrace();
 		}
@@ -1005,13 +1004,13 @@ public class ContactManagement {
 		String temp;
 		int destination_id = 0;
 		boolean success = false;
+		Account account = new Account();
 		HttpClient hc = new DefaultHttpClient();
 		HttpPost post = new HttpPost(Data.getServerUrl() + "mobile/group_create");
 		MultipartEntity reqEntity = new MultipartEntity(HttpMultipartMode.BROWSER_COMPATIBLE);
-	    C2DMReceiver.sessionToken = Calendar.getInstance().getTimeInMillis();
 	    
 	    try {
-			reqEntity.addPart("session", new StringBody(String.valueOf(C2DMReceiver.sessionToken)));
+			reqEntity.addPart("session", new StringBody(account.getSessionId()));
 		} catch (UnsupportedEncodingException e2) {
 			e2.printStackTrace();
 		}
@@ -1195,10 +1194,9 @@ public class ContactManagement {
 		HttpClient hc = new DefaultHttpClient();
 		HttpPost post = new HttpPost(Data.getServerUrl() + "mobile/groups_list");
 		MultipartEntity reqEntity = new MultipartEntity(HttpMultipartMode.BROWSER_COMPATIBLE);
-	    C2DMReceiver.sessionToken = Calendar.getInstance().getTimeInMillis();
 	    
 	    try {
-			reqEntity.addPart("session", new StringBody(String.valueOf(C2DMReceiver.sessionToken)));
+			reqEntity.addPart("session", new StringBody(account.getSessionId()));
 		} catch (UnsupportedEncodingException e2) {
 			e2.printStackTrace();
 		}
@@ -1355,13 +1353,13 @@ public class ContactManagement {
 	public static boolean removeContactFromRemoteDb(int id) {
 		boolean success = false;
 		String error = null;
+		Account account = new Account();
 		HttpClient hc = new DefaultHttpClient();
 		HttpPost post = new HttpPost(Data.getServerUrl() + "mobile/contact_remove");
 		MultipartEntity reqEntity = new MultipartEntity(HttpMultipartMode.BROWSER_COMPATIBLE);
-	    C2DMReceiver.sessionToken = Calendar.getInstance().getTimeInMillis();
 	    
 	    try {
-			reqEntity.addPart("session", new StringBody(String.valueOf(C2DMReceiver.sessionToken)));
+			reqEntity.addPart("session", new StringBody(account.getSessionId()));
 		} catch (UnsupportedEncodingException e2) {
 			e2.printStackTrace();
 		}
@@ -1420,13 +1418,13 @@ public class ContactManagement {
 	// TODO editContactOnRemoteDb(Contact c) documentation
 	public static boolean editContactOnRemoteDb(Contact c) {
 		boolean success = false;
+		Account account = new Account();
 		HttpClient hc = new DefaultHttpClient();
 		HttpPost post = new HttpPost(Data.getServerUrl() + "mobile/contact_edit");
 		MultipartEntity reqEntity = new MultipartEntity(HttpMultipartMode.BROWSER_COMPATIBLE);
-	    C2DMReceiver.sessionToken = Calendar.getInstance().getTimeInMillis();
 	    
 	    try {
-			reqEntity.addPart("session", new StringBody(String.valueOf(C2DMReceiver.sessionToken)));
+			reqEntity.addPart("session", new StringBody(account.getSessionId()));
 		} catch (UnsupportedEncodingException e2) {
 			e2.printStackTrace();
 		}
@@ -1832,14 +1830,14 @@ public class ContactManagement {
 		 */
 		public static void requestContactCopy(Context context, int guid, boolean req) {
 			try {
+				Account account = new Account();
 				HttpClient hc = new DefaultHttpClient();
 				HttpPost post = new HttpPost(Data.getServerUrl() + "mobile/contact_copy");
 
 				MultipartEntity reqEntity = new MultipartEntity(HttpMultipartMode.BROWSER_COMPATIBLE);
-			    C2DMReceiver.sessionToken = Calendar.getInstance().getTimeInMillis();
 			    
 			    try {
-					reqEntity.addPart("session", new StringBody(String.valueOf(C2DMReceiver.sessionToken)));
+					reqEntity.addPart("session", new StringBody(account.getSessionId()));
 				} catch (UnsupportedEncodingException e2) {
 					e2.printStackTrace();
 				}
