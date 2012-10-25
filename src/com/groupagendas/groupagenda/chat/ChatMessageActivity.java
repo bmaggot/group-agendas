@@ -52,7 +52,7 @@ public class ChatMessageActivity extends Activity {
 		event_id = getIntent().getIntExtra("event_id", 0);
 		LocalBroadcastManager.getInstance(this).registerReceiver(mMessageReceiver, new IntentFilter(C2DMReceiver.REFRESH_MESSAGES_LIST + event_id));
 
-		Object[] params = { this, event_id };
+		Object[] params = { this, event_id, false };
 
 		new GetChatMessagesForEventDb().execute(params);
 
@@ -92,8 +92,9 @@ public class ChatMessageActivity extends Activity {
 		protected Void doInBackground(Object... params) {
 			Context context = (Context) params[0];
 			int eventId = (Integer) params[1];
+			boolean refreshMessagesList = (Boolean) params[2];
 			chatMessages = ChatManagement.getChatMessagesForEventFromLocalDb(context, eventId);
-			if (chatMessages.isEmpty() && DataManagement.networkAvailable) {
+			if ((chatMessages.isEmpty() && DataManagement.networkAvailable) || refreshMessagesList) {
 				chatMessages = ChatManagement.getChatMessagesForEventFromRemoteDb(eventId, context, true, EventManagement.getEventFromLocalDb(context, eventId, EventManagement.ID_EXTERNAL).getLast_message_date_time());
 			}
 			return null;
@@ -176,7 +177,7 @@ public class ChatMessageActivity extends Activity {
 		  @Override
 		  public void onReceive(Context context, Intent intent) {
 			  C2DMReceiver.chatMessagesWindowUpdated = true;
-			  Object[] params = { context, event_id };
+			  Object[] params = { context, event_id, true };
 			  try {
 				new GetChatMessagesForEventDb().execute(params).get();
 			} catch (InterruptedException e) {
