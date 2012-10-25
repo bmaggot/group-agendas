@@ -1009,14 +1009,14 @@ public class DataManagement {
 		String error = null;
 
 		try {
+			Account account = new Account();
 			HttpClient hc = new DefaultHttpClient();
 			HttpPost post = new HttpPost(Data.getServerUrl() + "mobile/group_remove");
 
 			MultipartEntity reqEntity = new MultipartEntity(HttpMultipartMode.BROWSER_COMPATIBLE);
-		    C2DMReceiver.sessionToken = Calendar.getInstance().getTimeInMillis();
 		    
 		    try {
-				reqEntity.addPart("session", new StringBody(String.valueOf(C2DMReceiver.sessionToken)));
+				reqEntity.addPart("session", new StringBody(account.getSessionId()));
 			} catch (UnsupportedEncodingException e2) {
 				e2.printStackTrace();
 			}
@@ -1057,14 +1057,14 @@ public class DataManagement {
 		boolean success = false;
 
 		try {
+			Account account = new Account();
 			HttpClient hc = new DefaultHttpClient();
 			HttpPost post = new HttpPost(Data.getServerUrl() + "mobile/groups_edit");
 
 			MultipartEntity reqEntity = new MultipartEntity(HttpMultipartMode.BROWSER_COMPATIBLE);
-		    C2DMReceiver.sessionToken = Calendar.getInstance().getTimeInMillis();
 		    
 		    try {
-				reqEntity.addPart("session", new StringBody(String.valueOf(C2DMReceiver.sessionToken)));
+				reqEntity.addPart("session", new StringBody(account.getSessionId()));
 			} catch (UnsupportedEncodingException e2) {
 				e2.printStackTrace();
 			}
