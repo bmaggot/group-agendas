@@ -31,7 +31,6 @@ import android.net.Uri;
 import android.provider.BaseColumns;
 import android.util.Log;
 
-import com.groupagendas.groupagenda.C2DMReceiver;
 import com.groupagendas.groupagenda.account.Account;
 import com.groupagendas.groupagenda.chat.ChatThreadObject;
 import com.groupagendas.groupagenda.contacts.Contact;
@@ -782,6 +781,7 @@ public class EventManagement {
 			boolean success = false;
 
 			try {
+				Account account = new Account();
 				HttpClient hc = new DefaultHttpClient();
 				HttpPost post = new HttpPost(Data.getServerUrl() + "mobile/set_event_status");
 
@@ -789,8 +789,7 @@ public class EventManagement {
 				reqEntity.addPart(TOKEN, new StringBody(Data.getToken()));
 				reqEntity.addPart(EVENT_ID, new StringBody("" + event.getEvent_id()));
 				reqEntity.addPart(STATUS, new StringBody("" + event.getStatus()));
-				C2DMReceiver.sessionToken = Calendar.getInstance().getTimeInMillis();
-				reqEntity.addPart("session", new StringBody(String.valueOf(C2DMReceiver.sessionToken)));
+				reqEntity.addPart("session", new StringBody(account.getSessionId()));
 				post.setEntity(reqEntity);
 				
 				if (DataManagement.networkAvailable) {
@@ -914,8 +913,8 @@ public class EventManagement {
 				if (e.isBirthday()) {
 					reqEntity.addPart("bd", new StringBody("1"));
 				}
-				C2DMReceiver.sessionToken = Calendar.getInstance().getTimeInMillis();
-				reqEntity.addPart("session", new StringBody(String.valueOf(C2DMReceiver.sessionToken)));
+				Account account = new Account();
+				reqEntity.addPart("session", new StringBody(account.getSessionId()));
 				post.setEntity(reqEntity);
 
 				if (DataManagement.networkAvailable) {
@@ -1027,15 +1026,15 @@ public class EventManagement {
 				}
 				
 
-//				if (e.assigned_groups != null) {
+				Account account = new Account();
+				//				if (e.assigned_groups != null) {
 //					for (int i = 0, l = e.assigned_groups.length; i < l; i++) {
 //						reqEntity.addPart("groups[]", new StringBody(String.valueOf(e.assigned_groups[i])));
 //					}
 //				} else {
 //					reqEntity.addPart("groups[]", new StringBody(""));
 //				}
-				C2DMReceiver.sessionToken = Calendar.getInstance().getTimeInMillis();
-				reqEntity.addPart("session", new StringBody(String.valueOf(C2DMReceiver.sessionToken)));
+				reqEntity.addPart("session", new StringBody(account.getSessionId()));
 				post.setEntity(reqEntity);
 
 				if (DataManagement.networkAvailable) {
@@ -1068,6 +1067,7 @@ public class EventManagement {
 			boolean success = false;
 
 			try {
+				Account account = new Account();
 				HttpClient hc = new DefaultHttpClient();
 				HttpPost post = new HttpPost(Data.getServerUrl() + "mobile/events_remove");
 
@@ -1075,8 +1075,7 @@ public class EventManagement {
 
 				reqEntity.addPart(TOKEN, new StringBody(Data.getToken()));
 				reqEntity.addPart("event_id", new StringBody(String.valueOf(id)));
-				C2DMReceiver.sessionToken = Calendar.getInstance().getTimeInMillis();
-				reqEntity.addPart("session", new StringBody(String.valueOf(C2DMReceiver.sessionToken)));
+				reqEntity.addPart("session", new StringBody(account.getSessionId()));
 				post.setEntity(reqEntity);
 
 				if (DataManagement.networkAvailable) {
