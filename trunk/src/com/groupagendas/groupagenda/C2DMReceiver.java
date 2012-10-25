@@ -19,8 +19,8 @@ import com.groupagendas.groupagenda.events.Event;
 import com.groupagendas.groupagenda.events.EventsActivity;
 
 public class C2DMReceiver extends C2DMBaseReceiver {
-	private static boolean isChatMessage = false;
-	public static boolean chatMessagesWindowUpdated = false;
+	private static boolean isChatMessage;
+	public static boolean chatMessagesWindowUpdated;
 	public static long sessionToken;
 	public String last_queue_token = "";
 	public static String RESUBSCRIBE = "resubscribe";
@@ -63,6 +63,9 @@ public class C2DMReceiver extends C2DMBaseReceiver {
 
 	@Override
 	protected void onMessage(Context context, Intent receiveIntent) {
+		Log.e("C2DMReceiver", "	PUSH	");
+		isChatMessage = false;
+		chatMessagesWindowUpdated = false;
 		if (receiveIntent.hasExtra(ACTION) && receiveIntent.getStringExtra(ACTION).equals(RESUBSCRIBE)) {
 			DataManagement.getInstance(context).registerPhone();
 		}
@@ -72,41 +75,42 @@ public class C2DMReceiver extends C2DMBaseReceiver {
 		}
 		if (receiveIntent.hasExtra(QUEUE_TOKEN) && receiveIntent.getStringExtra(QUEUE_TOKEN).equals(String.valueOf(last_queue_token))) {
 			doDataDelta = false;
-		}
-		if (receiveIntent.hasExtra(QUEUE_TOKEN)) {
-			last_queue_token = receiveIntent.getStringExtra(QUEUE_TOKEN);
 		} else {
-			last_queue_token = DEFAULT_QUEUE_TOKEN;
-		}
-		String data = "";
-		if (receiveIntent.hasExtra(MESSAGE) && !receiveIntent.getStringExtra(MESSAGE).equals("[A-Z]*[a-z]*Self")) {
-			data = receiveIntent.getStringExtra(MESSAGE);
-		}
-		String rel_id = null;
-		if (receiveIntent.hasExtra(REL_OBJ) && receiveIntent.getStringExtra(REL_OBJ).equals(CHAT)) {
-			isChatMessage = true;
-			ChatManagement.getChatMessagesForEventFromRemoteDb(Integer.parseInt(rel_id), context, true, EventManagement
-					.getEventFromLocalDb(context, Integer.parseInt(rel_id), EventManagement.ID_EXTERNAL).getLast_message_date_time());
-			Intent intent = new Intent(REFRESH_MESSAGES_LIST + rel_id);
-			LocalBroadcastManager.getInstance(context).sendBroadcast(intent);
-			if (!chatMessagesWindowUpdated && receiveIntent.hasExtra(REL_ID) && !receiveIntent.getStringExtra(REL_ID).equals("")) {
-				showNotification(context, data, rel_id);
+			if (receiveIntent.hasExtra(QUEUE_TOKEN)) {
+				last_queue_token = receiveIntent.getStringExtra(QUEUE_TOKEN);
+			} else {
+				last_queue_token = DEFAULT_QUEUE_TOKEN;
 			}
-		} else if (receiveIntent.hasExtra(REL_ID) && !receiveIntent.getStringExtra(REL_ID).equals("")) {
-			rel_id = receiveIntent.getStringExtra(REL_ID);
-			if (receiveIntent.hasExtra(REL_OBJ)
-					&& (receiveIntent.getStringExtra(REL_OBJ).equals(EVENT) || receiveIntent.getStringExtra(REL_OBJ).equals(CONTACT))) {
-				isChatMessage = false;
-				chatMessagesWindowUpdated = false;
+			String data = "";
+			if (receiveIntent.hasExtra(MESSAGE) && !receiveIntent.getStringExtra(MESSAGE).equals("[A-Z]*[a-z]*Self")) {
+				data = receiveIntent.getStringExtra(MESSAGE);
 			}
-			if (!chatMessagesWindowUpdated) {
-				chatMessagesWindowUpdated = false;
-				showNotification(context, data, rel_id);
+			String rel_id = null;
+			if (receiveIntent.hasExtra(REL_OBJ) && receiveIntent.getStringExtra(REL_OBJ).equals(CHAT) && receiveIntent.hasExtra(REL_ID)
+					&& !receiveIntent.getStringExtra(REL_ID).equals("")) {
+				isChatMessage = true;
+				rel_id = receiveIntent.getStringExtra(REL_ID);
+				ChatManagement.getChatMessagesForEventFromRemoteDb(Integer.parseInt(rel_id), context, true, EventManagement
+						.getEventFromLocalDb(context, Integer.parseInt(rel_id), EventManagement.ID_EXTERNAL).getLast_message_date_time());
+				Intent intent = new Intent(REFRESH_MESSAGES_LIST + rel_id);
+				LocalBroadcastManager.getInstance(context).sendBroadcast(intent);
+				if (!chatMessagesWindowUpdated && receiveIntent.hasExtra(REL_ID) && !receiveIntent.getStringExtra(REL_ID).equals("")) {
+					showNotification(context, data, rel_id);
+				}
+			} else if (receiveIntent.hasExtra(REL_ID) && !receiveIntent.getStringExtra(REL_ID).equals("")) {
+				rel_id = receiveIntent.getStringExtra(REL_ID);
+				if (receiveIntent.hasExtra(REL_OBJ)
+						&& (receiveIntent.getStringExtra(REL_OBJ).equals(EVENT) || receiveIntent.getStringExtra(REL_OBJ).equals(CONTACT))) {
+					isChatMessage = false;
+				}
+				if (!chatMessagesWindowUpdated) {
+					showNotification(context, data, rel_id);
+				}
 			}
-		}
-		if (doDataDelta) {
-			Account account = new Account(context);
-			DataManagement.synchronizeWithServer(context, null, account.getLatestUpdateUnixTimestamp());
+			if (doDataDelta) {
+				Account account = new Account(context);
+				DataManagement.synchronizeWithServer(context, null, account.getLatestUpdateUnixTimestamp());
+			}
 		}
 	}
 
