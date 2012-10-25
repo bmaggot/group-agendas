@@ -68,14 +68,14 @@ public class C2DMReceiver extends C2DMBaseReceiver {
 		chatMessagesWindowUpdated = false;
 		if (receiveIntent.hasExtra(ACTION) && receiveIntent.getStringExtra(ACTION).equals(RESUBSCRIBE)) {
 			DataManagement.getInstance(context).registerPhone();
-		}
-		boolean doDataDelta = true;
-		if (receiveIntent.hasExtra(SESSION) && receiveIntent.getStringExtra(SESSION).equals(String.valueOf(sessionToken))) {
-			doDataDelta = false;
-		}
-		if (receiveIntent.hasExtra(QUEUE_TOKEN) && receiveIntent.getStringExtra(QUEUE_TOKEN).equals(String.valueOf(last_queue_token))) {
-			doDataDelta = false;
 		} else {
+			boolean doDataDelta = true;
+			if (receiveIntent.hasExtra(SESSION) && receiveIntent.getStringExtra(SESSION).equals(String.valueOf(sessionToken))) {
+				doDataDelta = false;
+			}
+			if (receiveIntent.hasExtra(QUEUE_TOKEN) && receiveIntent.getStringExtra(QUEUE_TOKEN).equals(String.valueOf(last_queue_token))) {
+				doDataDelta = false;
+			}
 			if (receiveIntent.hasExtra(QUEUE_TOKEN)) {
 				last_queue_token = receiveIntent.getStringExtra(QUEUE_TOKEN);
 			} else {
