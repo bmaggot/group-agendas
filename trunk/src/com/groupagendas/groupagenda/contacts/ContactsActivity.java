@@ -56,7 +56,7 @@ import com.makeramen.segmented.SegmentedRadioGroup;
 public class ContactsActivity extends ListActivity implements OnCheckedChangeListener {
 	public ArrayList<Contact> selectedContacts = new ArrayList<Contact>();
 	public ArrayList<Group> selectedGroups = new ArrayList<Group>();
-	
+
 	private SegmentedRadioGroup segmentedButtons;
 	private ArrayList<Contact> contacts;
 	private ArrayList<Group> groups;
@@ -81,7 +81,8 @@ public class ContactsActivity extends ListActivity implements OnCheckedChangeLis
 	private int sideIndexHeight; // height of side index
 	private int indexListSize; // number of items in the side index
 	private int displayedIndexListSize; // number of visible items in the SI
-	private TreeMap<Integer, String> indexList = null; // list with items for side index
+	private TreeMap<Integer, String> indexList = null; // list with items for
+														// side index
 
 	private SharedPreferences.Editor editor;
 	private SharedPreferences preferences;
@@ -94,11 +95,11 @@ public class ContactsActivity extends ListActivity implements OnCheckedChangeLis
 	private GroupsAdapter gAdapter;
 
 	private Button importButton;
-	
+
 	private int ACTIVITY_MODE = 0;
 	private static final int LISTING_MODE = 0;
 	private static final int SELECTION_MODE = 1;
-	
+
 	@Override
 	public void onWindowFocusChanged(boolean hasFocus) {
 		super.onWindowFocusChanged(hasFocus);
@@ -137,7 +138,8 @@ public class ContactsActivity extends ListActivity implements OnCheckedChangeLis
 				tmpTV.setGravity(Gravity.CENTER);
 				tmpTV.setPadding(5, 0, 0, 0);
 				tmpTV.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 16);
-				LayoutParams params = new LayoutParams(android.view.ViewGroup.LayoutParams.WRAP_CONTENT, android.view.ViewGroup.LayoutParams.WRAP_CONTENT, 1);
+				LayoutParams params = new LayoutParams(android.view.ViewGroup.LayoutParams.WRAP_CONTENT,
+						android.view.ViewGroup.LayoutParams.WRAP_CONTENT, 1);
 				tmpTV.setLayoutParams(params);
 				sideIndex.addView(tmpTV);
 			}
@@ -180,98 +182,102 @@ public class ContactsActivity extends ListActivity implements OnCheckedChangeLis
 
 		CURRENT_LIST = preferences.getInt("ContactsActivityList", CURRENT_LIST);
 		CURRENT_TASK = preferences.getString("ContactsActivityTask", CURRENT_TASK);
-		
+
 		sideIndex.setVisibility(View.GONE);
-		
+
 		searchView.addTextChangedListener(filterTextWatcher);
-		
+
 		if (getIntent().getExtras() != null)
 			ACTIVITY_MODE = getIntent().getExtras().getInt("ACTIVITY_MODE");
 		else
 			ACTIVITY_MODE = LISTING_MODE;
 
 		switch (ACTIVITY_MODE) {
-			case SELECTION_MODE:
-				getListView().setChoiceMode(ListView.CHOICE_MODE_MULTIPLE);
-				getListView().setItemsCanFocus(false);
-				
-				if (EventActivity.selectedContacts == null)
-					EventActivity.selectedContacts = new ArrayList<Contact>();
-				
-				selectedContacts = EventActivity.selectedContacts;
+		case SELECTION_MODE:
+			getListView().setChoiceMode(ListView.CHOICE_MODE_MULTIPLE);
+			getListView().setItemsCanFocus(false);
 
-				importButton.setText(R.string.contact_invite_save_button);
-				importButton.setOnClickListener(new OnClickListener() {
+			if (EventActivity.selectedContacts == null)
+				EventActivity.selectedContacts = new ArrayList<Contact>();
 
-//					@Override
-//					public void onClick(View v) {
-//						SparseBooleanArray selection = getListView().getCheckedItemPositions();
-//
-//						if (selection != null) {
-//			                for (int i=0; i<selection.size(); i++) {
-//			                	if (selection.get(selection.keyAt(i))) {
-//			                		int contains = -1;
-//			                		Contact c = (Contact) cAdapter.getItem(selection.keyAt(i));
-//
-//			                		for (int j = 0; j < EventActivity.selectedContacts.size(); j++) {
-//			                			if (EventActivity.selectedContacts.get(j).contact_id == c.contact_id)
-//			                				contains = j;
-//			                		}
-//			                		
-//			                		if (contains < 0) {
-//			                			EventActivity.selectedContacts.add(c);
-//			                		} else {
-//			                			EventActivity.selectedContacts.remove(contains);
-//			                		}
-//			                	}
-//			                }
-//			            }
-//
-//						finish();
-//					}
-					@Override
-					public void onClick(View v) {
-						ArrayList<Contact> selected = cAdapter.getSelected();
+			selectedContacts = EventActivity.selectedContacts;
 
-						if (selected != null) {
-//			                for (int i=0; i<selected.size(); i++) {
-//		                		int contains = -1;
-//		                		Contact c = selected.get(i);
-//
-//		                		for (int j = 0; j < EventActivity.selectedContacts.size(); j++) {
-//		                			if (EventActivity.selectedContacts.get(j).contact_id == c.contact_id)
-//		                				contains = j;
-//		                		}
-//		                		
-//		                		if (contains < 0) {
-//		                			EventActivity.selectedContacts.add(c);
-//		                		} else {
-//		                			EventActivity.selectedContacts.remove(contains);
-//		                		}
-//			                }
-							EventActivity.selectedContacts = selected;
-			            }
+			importButton.setText(R.string.contact_invite_save_button);
+			importButton.setOnClickListener(new OnClickListener() {
 
-						finish();
+				// @Override
+				// public void onClick(View v) {
+				// SparseBooleanArray selection =
+				// getListView().getCheckedItemPositions();
+				//
+				// if (selection != null) {
+				// for (int i=0; i<selection.size(); i++) {
+				// if (selection.get(selection.keyAt(i))) {
+				// int contains = -1;
+				// Contact c = (Contact) cAdapter.getItem(selection.keyAt(i));
+				//
+				// for (int j = 0; j < EventActivity.selectedContacts.size();
+				// j++) {
+				// if (EventActivity.selectedContacts.get(j).contact_id ==
+				// c.contact_id)
+				// contains = j;
+				// }
+				//
+				// if (contains < 0) {
+				// EventActivity.selectedContacts.add(c);
+				// } else {
+				// EventActivity.selectedContacts.remove(contains);
+				// }
+				// }
+				// }
+				// }
+				//
+				// finish();
+				// }
+				@Override
+				public void onClick(View v) {
+					ArrayList<Contact> selected = cAdapter.getSelected();
+
+					if (selected != null) {
+						// for (int i=0; i<selected.size(); i++) {
+						// int contains = -1;
+						// Contact c = selected.get(i);
+						//
+						// for (int j = 0; j <
+						// EventActivity.selectedContacts.size(); j++) {
+						// if (EventActivity.selectedContacts.get(j).contact_id
+						// == c.contact_id)
+						// contains = j;
+						// }
+						//
+						// if (contains < 0) {
+						// EventActivity.selectedContacts.add(c);
+						// } else {
+						// EventActivity.selectedContacts.remove(contains);
+						// }
+						// }
+						EventActivity.selectedContacts = selected;
 					}
-				});
-				
-				break;
-			case LISTING_MODE:
-				getListView().setChoiceMode(ListView.CHOICE_MODE_NONE);
 
-				importButton.setText(R.string.contact_import_button);
-				importButton.setOnClickListener(new OnClickListener() {
+					finish();
+				}
+			});
 
-					@Override
-					public void onClick(View v) {
-						startActivity(new Intent(ContactsActivity.this, ImportActivity.class));
-					}
-				});
-				break;
+			break;
+		case LISTING_MODE:
+			getListView().setChoiceMode(ListView.CHOICE_MODE_NONE);
+
+			importButton.setText(R.string.contact_import_button);
+			importButton.setOnClickListener(new OnClickListener() {
+
+				@Override
+				public void onClick(View v) {
+					startActivity(new Intent(ContactsActivity.this, ImportActivity.class));
+				}
+			});
+			break;
 		}
 
-		
 		if (CURRENT_TASK.equals(CONTACTS_TASK)) {
 			contacts = ContactManagement.getContactsFromLocalDb(ContactsActivity.this, null);
 			cAdapter = new ContactsAdapter(contacts, this, selectedContacts);
@@ -279,7 +285,7 @@ public class ContactsActivity extends ListActivity implements OnCheckedChangeLis
 			cAdapter.notifyDataSetChanged();
 
 			showImportStats();
-			
+
 			if (contacts.size() > 10) {
 				indexList = createIndex();
 				sideIndex.setVisibility(View.VISIBLE);
@@ -295,8 +301,8 @@ public class ContactsActivity extends ListActivity implements OnCheckedChangeLis
 			Toast.makeText(this.getApplicationContext(), "Successfully cleared import credentials.", Toast.LENGTH_LONG).show();
 			Data.credentialsClear = false;
 		}
-		
-		if(Data.newEventPar){
+
+		if (Data.newEventPar) {
 			selectedContacts.clear();
 		}
 	}
@@ -377,12 +383,15 @@ public class ContactsActivity extends ListActivity implements OnCheckedChangeLis
 			String strItem = null;
 
 			for (int j = 0; j < contactList.size(); j++) {
-				strItem = contactList.get(j).name.toUpperCase();
-				if (Character.isLetter(strItem.charAt(0))) {
-					currentLetter = strItem.substring(0, 1);
+				strItem = contactList.get(j).name;
+				if (strItem != null) {
+					strItem = strItem.toUpperCase();
+					if (Character.isLetter(strItem.charAt(0))) {
+						currentLetter = strItem.substring(0, 1);
 
-					if (!tmpIndexList.containsValue(currentLetter)) {
-						tmpIndexList.put(j, currentLetter);
+						if (!tmpIndexList.containsValue(currentLetter)) {
+							tmpIndexList.put(j, currentLetter);
+						}
 					}
 				}
 			}
@@ -427,9 +436,10 @@ public class ContactsActivity extends ListActivity implements OnCheckedChangeLis
 			Integer c_id = 0;
 			if (CURRENT_LIST == CONTACTS_LIST) {
 				Intent contactIntent = new Intent(ContactsActivity.this, ContactInfoActivity.class);
-				StringBuilder sb = new StringBuilder(contacts.get(position).name).append(" ").append(
-						contacts.get(position).lastname);
-				contactIntent.putExtra("contactName", sb.toString());
+				if (contacts.get(position).name != null && contacts.get(position).lastname != null) {
+					StringBuilder sb = new StringBuilder(contacts.get(position).name).append(" ").append(contacts.get(position).lastname);
+					contactIntent.putExtra("contactName", sb.toString());
+				}
 				if (v.getTag() != null) {
 					c_id = Integer.parseInt(v.getTag().toString());
 					contactIntent.putExtra("contactId", c_id);
@@ -558,7 +568,7 @@ public class ContactsActivity extends ListActivity implements OnCheckedChangeLis
 		sideIndex = (LinearLayout) findViewById(R.id.sideIndex);
 		segmentedButtons = (SegmentedRadioGroup) findViewById(R.id.segmentedButtons);
 	}
-	
+
 	public void showImportStats() {
 		if (Data.returnedFromContactImport) {
 			if ((Data.importStats != null) && (Data.importStats[0] > 0)) {
