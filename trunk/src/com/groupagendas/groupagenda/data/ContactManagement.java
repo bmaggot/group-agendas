@@ -659,6 +659,7 @@ public class ContactManagement {
 						if (success == false) {
 							Data.setERROR(object.getJSONObject("error").getString("reason"));
 							Log.e("createContact - error: ", Data.getERROR());
+							return -1;
 						}
 					}
 				}
@@ -748,12 +749,10 @@ public class ContactManagement {
 
 		destination_id = insertContactToRemoteDb(contact, 0);
 
-		if (destination_id > 0) {
+		if (destination_id >= 0) {
 			success = true;
 			insertContactToLocalDb(context, contact, destination_id);
-		} else {
-			insertContactToLocalDb(context, contact, 0);
-		}
+		} 
 
 		return success;
 	}
