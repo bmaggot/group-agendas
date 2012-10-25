@@ -4,6 +4,7 @@ package com.groupagendas.groupagenda.data;
  * @author justinas.marcinka@gmail.com
  * @version 1.0
  */
+import java.nio.charset.Charset;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -31,7 +32,9 @@ import android.provider.BaseColumns;
 import android.util.Log;
 
 import com.groupagendas.groupagenda.C2DMReceiver;
+import com.groupagendas.groupagenda.account.Account;
 import com.groupagendas.groupagenda.chat.ChatThreadObject;
+import com.groupagendas.groupagenda.contacts.Contact;
 import com.groupagendas.groupagenda.error.report.Reporter;
 import com.groupagendas.groupagenda.events.Event;
 import com.groupagendas.groupagenda.events.EventsAdapter;
@@ -48,7 +51,7 @@ public class EventManagement {
 	private static SimpleDateFormat day_index_formatter = new SimpleDateFormat(EventsProvider.EMetaData.EventsIndexesMetaData.DAY_COLUMN_FORMAT);
 	private static SimpleDateFormat month_index_formatter = new SimpleDateFormat(EventsProvider.EMetaData.EventsIndexesMetaData.MONTH_COLUMN_FORMAT);
 	public static String user_timezone = CalendarSettings.getTimeZone();
-	
+	public static final String DATA_ENCODING = "UTF-8";
 	
 	
 	private static final String GET_EVENTS_FROM_REMOTE_DB_URL = "mobile/events_list";
@@ -237,7 +240,59 @@ public class EventManagement {
 		}	
 		updateEventInLocalDb(context, event);
 	}
-	
+
+	// TODO write a javadoc for inviteExtraContacts()
+	public static boolean inviteExtraContacts(Context context, String e_id, ArrayList<Contact> contacts) {
+		boolean success = false;
+		Account account = new Account();
+		HttpClient hc = new DefaultHttpClient();
+		HttpPost post = new HttpPost(Data.getServerUrl() + "mobile/events_invite_extra");
+		Charset charset = Charset.forName(DATA_ENCODING);
+
+//		MultipartEntity reqEntity = new MultipartEntity(HttpMultipartMode.BROWSER_COMPATIBLE, "whatever", charset);
+		MultipartEntity reqEntity = new MultipartEntity(HttpMultipartMode.BROWSER_COMPATIBLE);
+		try {
+			reqEntity.addPart(TOKEN, new StringBody(Data.getToken(context)));
+//			reqEntity.addPart(EVENT_ID, new StringBody(e_id));
+			reqEntity.addPart(EVENT_ID, new StringBody("" + Integer.parseInt(e_id)));
+			
+			if (contacts != null) {
+				for (Contact c : contacts) {
+					reqEntity.addPart("contacts[]", new StringBody("" + c.contact_id));
+				}
+			} else {
+				reqEntity.addPart("contacts[]", new StringBody(""));
+			}
+			
+			reqEntity.addPart("session", new StringBody(account.getSessionId()));
+			post.setEntity(reqEntity);
+
+			if (DataManagement.networkAvailable) {
+				HttpResponse rp = hc.execute(post);
+
+				if (rp.getStatusLine().getStatusCode() == HttpStatus.SC_OK) {
+					String resp = EntityUtils.toString(rp.getEntity());
+					if (resp != null) {
+						JSONObject object = new JSONObject(resp);
+						success = object.getBoolean("success");
+
+						if (!success) {
+							Log.e("inviteExtraContacts() CATCH!", object.getJSONObject("error").getString("reason"));
+						}
+					}
+				} else {
+					Log.e("inviteExtraContacts()", rp.getStatusLine().getStatusCode() + "");
+				}
+			} else {
+				OfflineData uplooad = new OfflineData("mobile/events_create", reqEntity);
+				Data.getUnuploadedData().add(uplooad);
+			}
+		} catch (Exception ex) {
+			Log.e("EventManagement","inviteExtraContacts() CATCH!");
+		}
+		return success;
+	}
+
 	
 	public static final int TM_EVENTS_FROM_GIVEN_DATE = 0;
 	public static final int TM_EVENTS_ON_GIVEN_DAY = 1;
