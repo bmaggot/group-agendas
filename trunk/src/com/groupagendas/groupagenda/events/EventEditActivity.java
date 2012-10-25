@@ -75,6 +75,7 @@ public class EventEditActivity extends EventActivity {
 	protected final static int DELETE_DIALOG = 1;
 	private boolean remindersShown = false;
 	private boolean alarmsShown = false;
+	private boolean isInvited = false;
 
 	private Intent intent;
 
@@ -645,6 +646,7 @@ public class EventEditActivity extends EventActivity {
 				throw new IllegalStateException("EVENT NOT FOUND IN LOCAL DB!!!!!!");
 			}
 
+			account = new Account(EventEditActivity.this);
 			event = result;
 			selectedIcon = event.getIcon();
 			// toptext
@@ -662,9 +664,10 @@ public class EventEditActivity extends EventActivity {
 			} else if (tmpTopText.equalsIgnoreCase("v")) {
 				topText.setText(getResources().getStringArray(R.array.type_labels)[5]);
 			}
+			
 			// title
-
 			titleView.setText(result.getTitle());
+
 			// if this user is owner of event, fields can be edited
 			if (result.is_owner()) {
 				saveButton.setVisibility(View.VISIBLE);
@@ -758,6 +761,15 @@ public class EventEditActivity extends EventActivity {
 				saveButton.setVisibility(View.GONE);
 
 			}
+			
+			int id = account.getUser_id();
+			for (Invited inv : result.getInvited()) {
+				if (inv.getGuid() == id) {
+					saveButton.setVisibility(View.VISIBLE);
+					isInvited = true;
+				}
+			}			
+			
 			colorView.setImageBitmap(DrawingUtils.getColoredRoundRectangle(EventEditActivity.this, COLOURED_BUBBLE_SIZE, result, true));
 			iconView.setImageResource(result.getIconId(EventEditActivity.this));
 
@@ -930,15 +942,18 @@ public class EventEditActivity extends EventActivity {
 
 		@Override
 		protected Boolean doInBackground(Event... events) {
-
-			event = setEventData(event);
-			int testEvent = event.isValid();
-			if (testEvent == 0) {
-				EventManagement.updateEvent(EventEditActivity.this, event);
-				return true;
+			if (isInvited) {				
+				return EventManagement.inviteExtraContacts(EventEditActivity.this, ""+event.getEvent_id(), selectedContacts);
 			} else {
-				errorStr = setErrorStr(testEvent);
-				return false;
+				event = setEventData(event);
+				int testEvent = event.isValid();
+				if (testEvent == 0) {
+					EventManagement.updateEvent(EventEditActivity.this, event);
+					return true;
+				} else {
+					errorStr = setErrorStr(testEvent);
+					return false;
+				}
 			}
 		}
 
