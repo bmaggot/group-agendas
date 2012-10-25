@@ -103,7 +103,7 @@ public class ImportActivity extends Activity {
 		@Override
 		protected Void doInBackground(Void... params) {
 			PhoneContactImport.importPhoneContacts(ImportActivity.this);
-//			SimContactImport.ImportSimContacts(ImportActivity.this);
+			SimContactImport.importSimContacts(ImportActivity.this);
 			return null;
 		}
 
