@@ -14,13 +14,18 @@ public class SimContactImport {
 	public static final String NUMBER = "number";
 	public static final String URI = "content://icc/adn";
 
-	public static void importSimContacts(Context context) {
+	public static int[] importSimContacts(Context context) {
 
 		String simPhoneName = "";
 		String simPhoneNo = "";
+		int[] importStats = new int[3];
+		int importedContactAmount = 0;
+		int unimportedContactAmount = 0;
+		int totalEntries = 0;
 
 		Uri simUri = Uri.parse(URI);
 		Cursor cursorSim = context.getContentResolver().query(simUri, null, null, null, null);
+		totalEntries = cursorSim.getCount();
 
 		if (cursorSim.moveToFirst()) {
 			while (!cursorSim.isAfterLast()) {
@@ -54,11 +59,21 @@ public class SimContactImport {
 				simContact.phone1 = simPhoneNo;
 				Log.i("SimContacts", simPhoneName);
 				Log.i("SimContactsNo", simPhoneNo);
-				ContactManagement.insertContact(context, simContact);
+				
+				if(ContactManagement.insertContact(context, simContact)){
+					importedContactAmount++;
+				} else {
+					unimportedContactAmount++;
+				}
 				cursorSim.moveToNext();
 			}
 		}
 		cursorSim.close();
+		importStats[0] = importedContactAmount;
+		importStats[1] = unimportedContactAmount;
+		importStats[2] = totalEntries;
+		
+		return importStats;
 	}
 
 	public static String getContactEmail(String id, Context context, Contact contact) {
