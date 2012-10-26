@@ -74,6 +74,7 @@ public class EventsProvider extends ContentProvider{
 		public static final class EventsMetaData implements BaseColumns{
 			public static final Uri CONTENT_URI = Uri.parse("content://" + AUTHORITY + "/" + EVENTS_TABLE);
 			public static final Uri CONTENT_URI_EXTERNAL_ID = Uri.parse("content://" + AUTHORITY + "/" + EVENTS_TABLE + "/external");
+			public static final Uri UPDATE_EVENT_AFTER_CHAT_POST = Uri.parse("content://" + AUTHORITY + "/" + EVENTS_TABLE + "/increment_messages_attributes");
 			public static final String CONTENT_TYPE = "vnd.android.cursor.dir/vnd.formula.events_item";
 			public static final String CONTENT_ITEM_TYPE = "vnd.android.cursor.item/vnd.formula.events_item";
 			
@@ -247,6 +248,7 @@ public class EventsProvider extends ContentProvider{
 	private static final int EVENT_BY_EXTERNAL_ID = 4;
 //	private static final int INVITED = 4;
 	private static final int INDEXED_EVENTS = 5;
+	private static final int UPDATE_EVENTS_MESSAGE_COUNT_AFTER_CHAT_POST = 6;
 
 	static {
 		mUriMatcher = new UriMatcher(UriMatcher.NO_MATCH);
@@ -257,6 +259,7 @@ public class EventsProvider extends ContentProvider{
 		mUriMatcher.addURI(EMetaData.AUTHORITY, EMetaData.EVENTS_TABLE + "/external/#", EVENT_BY_EXTERNAL_ID);
 		mUriMatcher.addURI(EMetaData.AUTHORITY, EMetaData.indexed_events, INDEXED_EVENTS);
 //		mUriMatcher.addURI(EMetaData.AUTHORITY, EMetaData.INVITED_TABLE, INVITED);
+		mUriMatcher.addURI(EMetaData.AUTHORITY, EMetaData.EVENTS_TABLE + "/increment_messages_attributes", UPDATE_EVENTS_MESSAGE_COUNT_AFTER_CHAT_POST);
 	}
 	// END UriMatcher
 	
@@ -440,6 +443,11 @@ public class EventsProvider extends ContentProvider{
 		case ONE_EVENTS:
 			String whereStr = EMetaData.EventsMetaData._ID+"="+uri.getPathSegments().get(1)+(!TextUtils.isEmpty(where)?"AND("+where+")":"");
 			count = db.update(EMetaData.EVENTS_TABLE, values, whereStr, whereArgs);
+			break;
+		case UPDATE_EVENTS_MESSAGE_COUNT_AFTER_CHAT_POST:
+			String sql = "UPDATE "+ EMetaData.EVENTS_TABLE + " SET " + EMetaData.EventsMetaData.MESSAGES_COUNT + " = " + EMetaData.EventsMetaData.MESSAGES_COUNT + "+1";
+			db.rawQuery(sql, whereArgs);
+			count = 1;
 			break;
 		default:
 			throw new IllegalArgumentException("Unknow URI " + uri);

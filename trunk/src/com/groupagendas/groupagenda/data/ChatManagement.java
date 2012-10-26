@@ -21,12 +21,16 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteException;
+import android.net.Uri;
 import android.util.Log;
 
 import com.groupagendas.groupagenda.account.Account;
 import com.groupagendas.groupagenda.chat.ChatMessageObject;
 import com.groupagendas.groupagenda.chat.ChatProvider;
 import com.groupagendas.groupagenda.chat.ChatProvider.CMMetaData;
+import com.groupagendas.groupagenda.events.EventsProvider;
+import com.groupagendas.groupagenda.events.EventsProvider.EMetaData;
+import com.groupagendas.groupagenda.events.EventsProvider.EMetaData.EventsMetaData;
 import com.groupagendas.groupagenda.utils.Utils;
 
 public class ChatManagement {
@@ -293,6 +297,13 @@ public class ChatManagement {
 							ChatManagement.insertChatMessageContentValueToLocalDb(context,
 									ChatManagement.makeChatMessageObjectContentValueFromJSON(object.getJSONObject("message")));
 							chatMessageObject = ChatManagement.makeChatMessageObjectFromJSON(object.getJSONObject("message"));
+							Uri uri = EventsProvider.EMetaData.EventsMetaData.UPDATE_EVENT_AFTER_CHAT_POST;
+//							context.getContentResolver().query(uri, null, null, null, null);
+							ContentValues cv = new ContentValues();
+							cv.put(EMetaData.EventsMetaData.LAST_MESSAGE_DATE_TIME_UTC_MILISECONDS, chatMessageObject.getCreated());
+							uri = EventsProvider.EMetaData.EventsMetaData.CONTENT_URI;
+							String where = EventsProvider.EMetaData.EventsMetaData.E_ID+"=" + eventId;
+							context.getContentResolver().update(uri, cv, where, null);
 						} else {
 							chatMessageObject = null;
 //							Toast.makeText(context, object.getString("error"), Toast.LENGTH_LONG);
@@ -320,6 +331,9 @@ public class ChatManagement {
 		try {
 			reqEntity.addPart(ChatManagement.TOKEN, new StringBody(Data.getToken(context)));
 			reqEntity.addPart("event_id", new StringBody(String.valueOf(eventId)));
+			if(lastMessageTimeStamp != 0){
+				reqEntity.addPart("from_datetime", new StringBody(String.valueOf(lastMessageTimeStamp)));
+			}
 			if(resetMessageCount){
 				reqEntity.addPart("update_lastview", new StringBody("1"));
 			} else {
@@ -353,7 +367,45 @@ public class ChatManagement {
 		} catch (Exception e) {
 			Log.e("getChatMessagesForEventFromRemoteDb(Context context, int eventId " + eventId + ")", e.getMessage());
 		}
+		//
 		return chatMessages;
+	}
+	
+	public static void getAllChatMessagesFromRemoteDb(Context context){
+		boolean success = false;
+		HttpClient hc = new DefaultHttpClient();
+		HttpPost post = new HttpPost(Data.getServerUrl() + "mobile/chat_get_all");
+		MultipartEntity reqEntity = new MultipartEntity(HttpMultipartMode.BROWSER_COMPATIBLE);
+
+		try {
+			reqEntity.addPart(ChatManagement.TOKEN, new StringBody(Data.getToken(context)));
+			
+		} catch (UnsupportedEncodingException e1) {
+			e1.printStackTrace();
+		}
+
+		post.setEntity(reqEntity);
+		try {
+			HttpResponse rp = hc.execute(post);
+			if (rp.getStatusLine().getStatusCode() == HttpStatus.SC_OK) {
+				String resp = EntityUtils.toString(rp.getEntity());
+				if (resp != null) {
+					JSONObject object = new JSONObject(resp);
+					success = object.getBoolean("success");
+					if (success) {
+						JSONArray JSONchatMessages = object.getJSONArray("items");
+						for (int i = 0, l = JSONchatMessages.length(); i < l; i++) {
+							ChatManagement.insertChatMessageContentValueToLocalDb(context,
+									ChatManagement.makeChatMessageObjectContentValueFromJSON(JSONchatMessages.getJSONObject(i)));
+						}
+					} else {
+						
+					}
+				}
+			}
+		} catch (Exception e) {
+			Log.e("getChatMessagesForEventFromRemoteDb(Context context, int eventId )", e.getMessage());
+		}
 	}
 	
 	public static ChatMessageObject makeChatMessageObjectNow(Context context, String message, int event_id){

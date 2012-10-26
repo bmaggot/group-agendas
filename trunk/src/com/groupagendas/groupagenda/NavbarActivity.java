@@ -38,6 +38,7 @@ import com.groupagendas.groupagenda.calendar.month.MonthView;
 import com.groupagendas.groupagenda.calendar.year.YearView;
 import com.groupagendas.groupagenda.chat.ChatThreadFragment;
 import com.groupagendas.groupagenda.data.CalendarSettings;
+import com.groupagendas.groupagenda.data.ChatManagement;
 import com.groupagendas.groupagenda.data.ContactManagement;
 import com.groupagendas.groupagenda.data.DataManagement;
 import com.groupagendas.groupagenda.data.EventManagement;
@@ -724,6 +725,7 @@ public class NavbarActivity extends FragmentActivity {
 						if (DataManagement.networkAvailable)
 //							dm.getChatThreads();
 						dm.getAddressesFromRemoteDb();
+						ChatManagement.getAllChatMessagesFromRemoteDb(NavbarActivity.this);
 						loadPhase++;
 						total = 100;
 						publishProgress(total);
