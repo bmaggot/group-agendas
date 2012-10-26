@@ -166,7 +166,11 @@ public class EventEditActivity extends EventActivity {
 		saveButton.setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View v) {
-				new UpdateEventTask().execute();
+				if (!saveButton.getText().toString().equalsIgnoreCase(getResources().getString(R.string.saving))) {
+					new UpdateEventTask().execute();
+				} else {
+					Toast.makeText(EventEditActivity.this, R.string.wait, Toast.LENGTH_SHORT);
+				}
 			}
 		});
 
@@ -664,7 +668,7 @@ public class EventEditActivity extends EventActivity {
 			} else if (tmpTopText.equalsIgnoreCase("v")) {
 				topText.setText(getResources().getStringArray(R.array.type_labels)[5]);
 			}
-			
+
 			// title
 			titleView.setText(result.getTitle());
 
@@ -761,15 +765,15 @@ public class EventEditActivity extends EventActivity {
 				saveButton.setVisibility(View.GONE);
 
 			}
-			
+
 			int id = account.getUser_id();
 			for (Invited inv : result.getInvited()) {
 				if ((inv.getGuid() == id) && (inv.getGuid() != result.getUser_id())) {
 					saveButton.setVisibility(View.VISIBLE);
 					isInvited = true;
 				}
-			}			
-			
+			}
+
 			colorView.setImageBitmap(DrawingUtils.getColoredRoundRectangle(EventEditActivity.this, COLOURED_BUBBLE_SIZE, result, true));
 			iconView.setImageResource(result.getIconId(EventEditActivity.this));
 
@@ -942,8 +946,8 @@ public class EventEditActivity extends EventActivity {
 
 		@Override
 		protected Boolean doInBackground(Event... events) {
-			if (isInvited) {				
-				if (EventManagement.inviteExtraContacts(EventEditActivity.this, ""+event.getEvent_id(), selectedContacts)) {
+			if (isInvited) {
+				if (EventManagement.inviteExtraContacts(EventEditActivity.this, "" + event.getEvent_id(), selectedContacts)) {
 					return true;
 				} else {
 					errorStr = "Invite wasn't successfull.";

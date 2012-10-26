@@ -252,6 +252,7 @@
     <string name="status_new_invite">New invite…</string>
     <string name="status_new_invites_count">New invites(%d)</string>
     <string name="platform">Android</string>
+    <string name="wait">Please wait!</string>
     
     
 </resources>

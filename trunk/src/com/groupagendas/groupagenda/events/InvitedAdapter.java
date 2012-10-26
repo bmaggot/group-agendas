@@ -3,6 +3,7 @@ package com.groupagendas.groupagenda.events;
 import java.util.List;
 
 import android.content.Context;
+import android.graphics.Color;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
@@ -39,6 +40,7 @@ public class InvitedAdapter extends AbstractAdapter<Invited> {
 		TextView statusView = (TextView) view.findViewById(R.id.invited_status);
 		@SuppressWarnings("unused")
 		TextView emailView = (TextView) view.findViewById(R.id.invited_available_email);
+		int statusBackground = 0; 
 
 		invited = list.get(i);
 		if (invited != null) {
@@ -51,21 +53,26 @@ public class InvitedAdapter extends AbstractAdapter<Invited> {
 			switch (invited.getStatus()) {
 				case Invited.REJECTED:
 					temp = getContext().getResources().getString(R.string.status_not_attending);
+					statusBackground = getContext().getResources().getColor(R.color.darker_gray);
 					break;
 				case Invited.ACCEPTED:
 					temp = getContext().getResources().getString(R.string.status_attending);
+					statusBackground = Color.parseColor("#26b2d8");
 					break;
 				case Invited.MAYBE:
 					temp = getContext().getResources().getString(R.string.status_maybe);
+					statusBackground = getContext().getResources().getColor(R.color.lighter_gray);
 					break;
 				case Invited.PENDING:
 					temp = getContext().getResources().getString(R.string.status_pending);
+					statusBackground = getContext().getResources().getColor(R.color.lighter_gray);
 					break;
 				default:
 					temp = "";
 					break;
 			}
 			statusView.setText(temp);
+			statusView.setBackgroundColor(statusBackground);
 		}
 		
 		if (i == listSize - 1)
