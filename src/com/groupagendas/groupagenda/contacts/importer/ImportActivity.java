@@ -2,6 +2,7 @@ package com.groupagendas.groupagenda.contacts.importer;
 
 import android.app.Activity;
 import android.app.ProgressDialog;
+import android.content.Context;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -39,7 +40,7 @@ public class ImportActivity extends Activity {
 			@Override
 			public void onClick(View arg0) {
 				disableBackButton = true;
-				new PhoneImport().execute();
+				new PhoneImport().execute(ImportActivity.this);
 				disableBackButton = false;
 			}
 		});
@@ -91,7 +92,7 @@ public class ImportActivity extends Activity {
 		super.onResume();
 	}
 
-	public class PhoneImport extends AsyncTask<Void, Void, Void> {
+	public class PhoneImport extends AsyncTask<Context, Void, Context> {
 
 		@Override
 		protected void onPreExecute() {
@@ -101,16 +102,23 @@ public class ImportActivity extends Activity {
 		}
 
 		@Override
-		protected Void doInBackground(Void... params) {
-			PhoneContactImport.importPhoneContacts(ImportActivity.this);
-			SimContactImport.importSimContacts(ImportActivity.this);
-			return null;
+		protected Context doInBackground(Context... params) {
+			int[] importStats = new int[3];
+			int mas[] = PhoneContactImport.importPhoneContacts(ImportActivity.this);
+//			int mas2[] = SimContactImport.importSimContacts(ImportActivity.this);
+			importStats[0] = mas[0];
+			importStats[1] = mas[1];
+			importStats[2] = mas[2];
+			Data.importStats = importStats;
+			return params[0];
 		}
 
 		@Override
-		protected void onPostExecute(Void params) {
+		protected void onPostExecute(Context params) {
 			pd.dismiss();
-			Toast.makeText(ImportActivity.this, getResources().getString(R.string.import_phone_contacts_done), Toast.LENGTH_LONG);
+			Toast.makeText(params, getResources().getString(R.string.import_phone_contacts_done), Toast.LENGTH_LONG);
+			Data.returnedFromContactImport = true;
+			finish();
 		}
 
 		
