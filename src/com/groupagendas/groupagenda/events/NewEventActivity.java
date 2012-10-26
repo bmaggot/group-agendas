@@ -41,6 +41,7 @@ import com.groupagendas.groupagenda.data.ContactManagement;
 import com.groupagendas.groupagenda.data.Data;
 import com.groupagendas.groupagenda.data.DataManagement;
 import com.groupagendas.groupagenda.data.EventManagement;
+import com.groupagendas.groupagenda.events.EventEditActivity.UpdateEventTask;
 import com.groupagendas.groupagenda.templates.TemplatesAdapter;
 import com.groupagendas.groupagenda.templates.TemplatesDialog;
 import com.groupagendas.groupagenda.templates.TemplatesDialogData;
@@ -753,18 +754,22 @@ public class NewEventActivity extends EventActivity {
 	// };
 
 	public void saveEvent(View v) {
-		if (!templateTrigger.isChecked()) {
-			new NewEventTask().execute();
-		} else {
-			Toast.makeText(this, R.string.saving_new_template, Toast.LENGTH_SHORT).show();
-			try {
-				new NewTemplateTask().execute().get();
-				Toast.makeText(this, R.string.new_event_saved, Toast.LENGTH_SHORT).show();
-			} catch (InterruptedException e) {
-				e.printStackTrace();
-			} catch (ExecutionException e) {
-				e.printStackTrace();
+		if (!saveButton.getText().toString().equalsIgnoreCase(getResources().getString(R.string.saving))) {
+			if (!templateTrigger.isChecked()) {
+				new NewEventTask().execute();
+			} else {
+				Toast.makeText(this, R.string.saving_new_template, Toast.LENGTH_SHORT).show();
+				try {
+					new NewTemplateTask().execute().get();
+					Toast.makeText(this, R.string.new_event_saved, Toast.LENGTH_SHORT).show();
+				} catch (InterruptedException e) {
+					e.printStackTrace();
+				} catch (ExecutionException e) {
+					e.printStackTrace();
+				}
 			}
+		} else {
+			Toast.makeText(NewEventActivity.this, R.string.wait, Toast.LENGTH_SHORT);
 		}
 	}
 

@@ -337,8 +337,8 @@ public class EventActivity extends Activity {
 			break;
 		case 2:
 			event.setStatus(2);
-			invitationResponseStatus.setText(this.getString(R.string.status_pending));
-			myStatus.setText(this.getString(R.string.status_pending));
+			invitationResponseStatus.setText(this.getString(R.string.status_maybe));
+			myStatus.setText(this.getString(R.string.status_maybe));
 			myStatus.setBackgroundColor(Color.parseColor("#b5b5b5")); // TODO hardcoded color-code
 			response_button_yes.setVisibility(View.VISIBLE);
 			response_button_maybe.setVisibility(View.INVISIBLE);
