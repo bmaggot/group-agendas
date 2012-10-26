@@ -8,6 +8,7 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.content.LocalBroadcastManager;
@@ -26,6 +27,7 @@ import com.groupagendas.groupagenda.data.ChatManagement;
 import com.groupagendas.groupagenda.data.DataManagement;
 import com.groupagendas.groupagenda.data.EventManagement;
 import com.groupagendas.groupagenda.events.Event;
+import com.groupagendas.groupagenda.events.EventsProvider;
 
 public class ChatMessageActivity extends Activity {
 	private int event_id;
@@ -50,7 +52,8 @@ public class ChatMessageActivity extends Activity {
 		pb = (ProgressBar) findViewById(R.id.progress);
 
 		event_id = getIntent().getIntExtra("event_id", 0);
-		LocalBroadcastManager.getInstance(this).registerReceiver(mMessageReceiver, new IntentFilter(C2DMReceiver.REFRESH_MESSAGES_LIST + event_id));
+		LocalBroadcastManager.getInstance(this).registerReceiver(mMessageReceiver,
+				new IntentFilter(C2DMReceiver.REFRESH_MESSAGES_LIST + event_id));
 
 		Object[] params = { this, event_id, false };
 
@@ -94,8 +97,12 @@ public class ChatMessageActivity extends Activity {
 			int eventId = (Integer) params[1];
 			boolean refreshMessagesList = (Boolean) params[2];
 			chatMessages = ChatManagement.getChatMessagesForEventFromLocalDb(context, eventId);
-			if ((chatMessages.isEmpty() && DataManagement.networkAvailable) || refreshMessagesList) {
-				chatMessages = ChatManagement.getChatMessagesForEventFromRemoteDb(eventId, context, true, EventManagement.getEventFromLocalDb(context, eventId, EventManagement.ID_EXTERNAL).getLast_message_date_time());
+			if (chatMessages.isEmpty() && DataManagement.networkAvailable && !refreshMessagesList) {
+				chatMessages = ChatManagement.getChatMessagesForEventFromRemoteDb(eventId, context, true, 0);
+			}
+			if (refreshMessagesList) {
+				chatMessages = ChatManagement.getChatMessagesForEventFromRemoteDb(eventId, context, true, EventManagement
+						.getEventFromLocalDb(context, eventId, EventManagement.ID_EXTERNAL).getLast_message_date_time());
 			}
 			return null;
 		}
@@ -126,8 +133,6 @@ public class ChatMessageActivity extends Activity {
 			if (newChatMessageObject == null) {
 				chatMessages.remove(chatMessageObject);
 			} else {
-				Event event = EventManagement.getEventFromLocalDb(context, eventId, EventManagement.ID_EXTERNAL);
-				event.setMessage_count(event.getMessage_count() + 1);
 				chatMessages.remove(chatMessageObject);
 				chatMessages.add(newChatMessageObject);
 			}
@@ -137,6 +142,7 @@ public class ChatMessageActivity extends Activity {
 		@Override
 		protected void onPostExecute(Void result) {
 			adapter.notifyDataSetChanged();
+			chat_message_list.setSelection(adapter.getCount() - 1);
 			pb.setVisibility(View.INVISIBLE);
 		}
 
@@ -162,6 +168,7 @@ public class ChatMessageActivity extends Activity {
 		protected void onPostExecute(ChatMessageObject result) {
 			result.setDeleted(true);
 			adapter.notifyDataSetChanged();
+			chat_message_list.setSelection(adapter.getCount() - 1);
 			pb.setVisibility(View.INVISIBLE);
 		}
 
@@ -172,19 +179,13 @@ public class ChatMessageActivity extends Activity {
 		new RemoveChatMessageFromRemoteDb().execute(params);
 
 	}
-	
+
 	private BroadcastReceiver mMessageReceiver = new BroadcastReceiver() {
-		  @Override
-		  public void onReceive(Context context, Intent intent) {
-			  C2DMReceiver.chatMessagesWindowUpdated = true;
-			  Object[] params = { context, event_id, true };
-			  try {
-				new GetChatMessagesForEventDb().execute(params).get();
-			} catch (InterruptedException e) {
-				e.printStackTrace();
-			} catch (ExecutionException e) {
-				e.printStackTrace();
-			}
-		  }
-		};
+		@Override
+		public void onReceive(Context context, Intent intent) {
+			C2DMReceiver.chatMessagesWindowUpdated = true;
+			Object[] params = { context, event_id, true };
+			new GetChatMessagesForEventDb().execute(params);
+		}
+	};
 }

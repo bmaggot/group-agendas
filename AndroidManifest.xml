@@ -148,8 +148,8 @@
         <provider
             android:name=".events.EventsProvider"
             label="EventsProvider"
-             android:exported="false"
-            android:authorities="com.groupagendas.groupagenda.events.EventsProvider" >
+            android:authorities="com.groupagendas.groupagenda.events.EventsProvider"
+            android:exported="false" >
         </provider>
         <provider
             android:name=".templates.TemplatesProvider"
@@ -223,8 +223,8 @@
         <provider
             android:name=".timezone.TimezoneProvider"
             label="TimezoneProvider"
-            android:exported="false"
-            android:authorities="com.groupagendas.groupagenda.timezone.TimezoneProvider" >
+            android:authorities="com.groupagendas.groupagenda.timezone.TimezoneProvider"
+            android:exported="false" >
         </provider>
 
         <activity
@@ -249,8 +249,8 @@
         <activity
             android:name=".contacts.importer.ImportActivity"
             android:configChanges="keyboardHidden|orientation"
-            android:theme="@android:style/Theme.NoTitleBar" 
-            android:exported="true">
+            android:exported="true"
+            android:theme="@android:style/Theme.NoTitleBar" >
         </activity>
         <activity
             android:name=".chat.ChatThreadFragment"
@@ -260,12 +260,13 @@
         <activity
             android:name=".chat.ChatMessageActivity"
             android:configChanges="keyboardHidden|orientation"
+            android:launchMode="singleTask"
             android:theme="@android:style/Theme.NoTitleBar" >
         </activity>
         <activity
             android:name=".contacts.importer.RequestTokenActivity"
-            android:launchMode="singleTask"
             android:exported="true"
+            android:launchMode="singleTask"
             android:theme="@android:style/Theme.NoTitleBar" >
             <intent-filter>
                 <action android:name="android.intent.action.VIEW" />

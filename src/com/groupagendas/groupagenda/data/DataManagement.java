@@ -50,6 +50,7 @@ import com.groupagendas.groupagenda.account.Account;
 import com.groupagendas.groupagenda.account.AccountProvider;
 import com.groupagendas.groupagenda.address.Address;
 import com.groupagendas.groupagenda.address.AddressProvider.AMetaData.AddressesMetaData;
+import com.groupagendas.groupagenda.alarm.AlarmReceiver;
 import com.groupagendas.groupagenda.contacts.ContactsProvider;
 import com.groupagendas.groupagenda.contacts.Group;
 import com.groupagendas.groupagenda.error.report.Reporter;
@@ -2573,7 +2574,17 @@ public class DataManagement {
 		return response;
 	}
 
-	
+	public static void setAlarmsToEvent(AlarmReceiver alarm, Event event, Context context){
+		if (!event.isAlarm1fired() && event.getAlarm1() != null) {
+			alarm.SetAlarm(context.getApplicationContext(), event.getAlarm1().getTimeInMillis(), event, 1);
+		}
+		if (!event.isAlarm2fired() && event.getAlarm2() != null) {
+			alarm.SetAlarm(context.getApplicationContext(), event.getAlarm2().getTimeInMillis(), event, 2);
+		}
+		if (!event.isAlarm3fired() && event.getAlarm3() != null) {
+			alarm.SetAlarm(context.getApplicationContext(), event.getAlarm3().getTimeInMillis(), event, 3);
+		}
+	}
 
 
 

@@ -199,7 +199,7 @@ public class EventManagement {
 		Uri uri = EMetaData.EventsMetaData.CONTENT_URI;
 		String[] projection = { EMetaData.EventsMetaData.TITLE, EMetaData.EventsMetaData.LAST_MESSAGE_DATE_TIME_UTC_MILISECONDS,
 				EMetaData.EventsMetaData.NEW_MESSAGES_COUNT, EMetaData.EventsMetaData.MESSAGES_COUNT, EMetaData.EventsMetaData.E_ID };
-		String selection = EMetaData.EventsMetaData.MESSAGES_COUNT + ">0";
+		String selection = EMetaData.EventsMetaData.MESSAGES_COUNT + ">0" + " AND " + EMetaData.EventsMetaData.STATUS + "!=" + Invited.REJECTED;
 		String sortOrder = EMetaData.EventsMetaData.LAST_MESSAGE_DATE_TIME_UTC_MILISECONDS + " DESC ";
 		Cursor result = context.getContentResolver().query(uri, projection, selection, null, sortOrder);
 		ArrayList<ChatThreadObject> resultList = new ArrayList<ChatThreadObject>();
@@ -243,7 +243,7 @@ public class EventManagement {
 	// TODO write a javadoc for inviteExtraContacts()
 	public static boolean inviteExtraContacts(Context context, String e_id, ArrayList<Contact> contacts) {
 		boolean success = false;
-		Account account = new Account();
+		Account account = new Account(context);
 		HttpClient hc = new DefaultHttpClient();
 		HttpPost post = new HttpPost(Data.getServerUrl() + "mobile/events_invite_extra");
 		Charset charset = Charset.forName(DATA_ENCODING);
