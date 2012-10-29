@@ -122,7 +122,7 @@ public class DayWeekView extends AbstractCalendarView {
 		if (neighbourId != 0) {
 			params.addRule(RelativeLayout.RIGHT_OF, neighbourId);
 		}
-		HourEventRectangle eventFrame = new HourEventRectangle(getContext(), startTimeToShow, event.getTitle(), event.getColor(), event.getIconId(getContext()));
+		HourEventRectangle eventFrame = new HourEventRectangle(getContext(), startTimeToShow, event.getTitle(), event.getTextColor(), event.getDisplayColor(), event.getIconId(getContext()));
 		eventFrame.setOnClickListener(new EventActivityOnClickListener(getContext(), event));
 		container.addView(eventFrame, params);	
 	}
@@ -478,6 +478,8 @@ public class DayWeekView extends AbstractCalendarView {
 					EventsProvider.EMetaData.EventsMetaData.E_ID,
 					EventsProvider.EMetaData.EventsMetaData._ID,
 					EventsProvider.EMetaData.EventsMetaData.COLOR,
+					EventsProvider.EMetaData.EventsMetaData.TEXT_COLOR, //2012-10-29
+					EventsProvider.EMetaData.EventsMetaData.EVENT_DISPLAY_COLOR, //2012-10-29
 					EventsProvider.EMetaData.EventsMetaData.TIME_START_UTC_MILLISECONDS,
 					EventsProvider.EMetaData.EventsMetaData.TIME_END_UTC_MILLISECONDS,
 					EventsProvider.EMetaData.EventsMetaData.ICON,
@@ -497,11 +499,16 @@ public class DayWeekView extends AbstractCalendarView {
 				if (result.moveToFirst()) {
 					while (!result.isAfterLast()) {
 						Event eventProjection = new Event();
+						
+						
+						
 						eventProjection.setInternalID(result.getLong(result.getColumnIndexOrThrow(EventsProvider.EMetaData.EventsMetaData._ID)));
 						eventProjection.setEvent_id(result.getInt(result.getColumnIndexOrThrow(EventsProvider.EMetaData.EventsMetaData.E_ID)));
 						eventProjection.setTitle(result.getString(result.getColumnIndexOrThrow(EventsProvider.EMetaData.EventsMetaData.TITLE)));
 						eventProjection.setIcon(result.getString(result.getColumnIndexOrThrow(EventsProvider.EMetaData.EventsMetaData.ICON)));
 						eventProjection.setColor(result.getString(result.getColumnIndexOrThrow(EventsProvider.EMetaData.EventsMetaData.COLOR)));
+						eventProjection.setTextColor(result.getString(result.getColumnIndexOrThrow(EventsProvider.EMetaData.EventsMetaData.TEXT_COLOR))); //2012-10-29
+						eventProjection.setDisplayColor(result.getString(result.getColumnIndexOrThrow(EventsProvider.EMetaData.EventsMetaData.EVENT_DISPLAY_COLOR)));  //2012-10-29
 						String user_timezone = CalendarSettings.getTimeZone(context);
 						long timeinMillis = result.getLong(result.getColumnIndexOrThrow(EventsProvider.EMetaData.EventsMetaData.TIME_START_UTC_MILLISECONDS));
 						eventProjection.setStartCalendar(Utils.createCalendar(timeinMillis, user_timezone));

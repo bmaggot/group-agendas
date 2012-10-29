@@ -99,8 +99,8 @@ public class JSONUtils {
 			
 		
 				event.setColor(e.optString(EventManagement.COLOR));
-			
-	
+				event.setTextColor(e.optString(EventManagement.TEXT_COLOR));
+				event.setDisplayColor(e.optString(EventManagement.DISPLAY_COLOR));
 			
 				event.setDescription(e.optString(EventManagement.DESCRIPTION));
 			

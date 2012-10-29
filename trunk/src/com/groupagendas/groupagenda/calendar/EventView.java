@@ -12,7 +12,8 @@ import android.view.View;
 public class EventView extends View{
 	protected String startTime;
 	protected String title;
-	protected int color;
+	protected int textColor;   //2012-10-24
+	protected int displayColor; //2012-10-24
 	protected Drawable iconDrawable;
 	
 	protected Paint paint;
@@ -22,12 +23,14 @@ public class EventView extends View{
 	
 	
 	
-	public EventView(Context context, String startTime, String title, String color, int iconId) {
+	public EventView(Context context, String startTime, String title, String textColor, String displayColor, int iconId) {
 		super(context);
 		this.startTime = startTime;
 		this.title = title;
 		
-		this.color = Color.parseColor("#" + color);
+		this.textColor = Color.parseColor("#" + textColor); //2012-10-24
+		this.displayColor = Color.parseColor("#" + displayColor); //2012-10-24
+		
 		if (iconId != 0)
 		iconDrawable = context.getResources().getDrawable(iconId);
 		paint = new Paint();

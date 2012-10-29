@@ -14,6 +14,7 @@ private static final String DEFAULT_TITLE = "";
 private static final String TIMESTAMP_FORMAT = DataManagement.SERVER_TIMESTAMP_FORMAT;
 
 	public static final String DEFAULT_COLOR = "21C0DB";
+	public static final String DEFAULT_TEXT_COLOR = "FFFFFF";
 	public static final String DEFAULT_ICON = "";
 	private static final String DEFAULT_TYPE = "p";
 	private static final String DEFAULT_DESCRIPTION = "";
@@ -50,6 +51,8 @@ private static final String TIMESTAMP_FORMAT = DataManagement.SERVER_TIMESTAMP_F
 	private String title;
 	private String icon;
 	private String color;
+	private String textColor;//2012-10-24
+	private String displayColor;//2012-10-24
 	private String description_;
 	private String location;
 	private String accomodation;
@@ -173,6 +176,38 @@ private static final String TIMESTAMP_FORMAT = DataManagement.SERVER_TIMESTAMP_F
 			if (!color.equalsIgnoreCase("null")) this.color = color;
 		
 	}
+		//2012-10-24
+		    public String getTextColor() {
+			if (textColor == null || textColor.equalsIgnoreCase("null")) {
+					this.textColor = DEFAULT_TEXT_COLOR;
+			}
+
+			return textColor;
+		}
+		
+		public void setTextColor(String textColor) {
+			this.textColor = DEFAULT_TEXT_COLOR;
+			if (textColor != null && (textColor.matches("[a-fA-F0-9]{6,8}")))
+				if (!textColor.equalsIgnoreCase("null")) this.textColor = textColor;
+		
+		}
+		//2012-10-24
+		public String getDisplayColor() {
+			if (displayColor == null || displayColor.equalsIgnoreCase("null")) {
+					this.displayColor = DEFAULT_COLOR;
+			}
+
+			return displayColor;
+		}
+		
+		public void setDisplayColor(String displayColor) {
+			this.displayColor = DEFAULT_COLOR;
+			if (displayColor != null && (displayColor.matches("[a-fA-F0-9]{6,8}")))
+				if (!displayColor.equalsIgnoreCase("null")) this.displayColor = displayColor;
+		
+		}
+		
+	
 /**
  * @author justinas.marcinka@gmail.com
  * @return true if this event has icon set
