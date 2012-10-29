@@ -579,8 +579,13 @@ public class NavbarActivity extends FragmentActivity {
 							EventsActivity.class));
 					break;
 				case R.id.btnNewevent:
-					startActivity(new Intent(NavbarActivity.this,
-							NewEventActivity.class));
+					Intent intent = new Intent(NavbarActivity.this, NewEventActivity.class);
+					View view = calendarContainer.getChildAt(0);
+					if (view instanceof AbstractCalendarView){
+						Calendar cal = ((AbstractCalendarView)view).getDateToResume();
+						intent.putExtra(NewEventActivity.EXTRA_STRING_FOR_START_CALENDAR, Utils.formatCalendar(cal, DataManagement.SERVER_TIMESTAMP_FORMAT));
+					}
+					startActivity(intent);
 					break;
 				}
 			}
