@@ -164,6 +164,7 @@ public class AgendaView extends AbstractCalendarView {
 
 	@Override
 	public Calendar getDateToResume() {
+		if(selectedDate.get(Calendar.WEEK_OF_YEAR) == shownDate.get(Calendar.WEEK_OF_YEAR)) return selectedDate;
 		return shownDate;
 	}
 

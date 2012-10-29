@@ -213,6 +213,12 @@ public class MiniMonthView extends AbstractCalendarView {
 	}
 	@Override
 	public Calendar getDateToResume() {
+		if (firstShownDate.get(Calendar.MONTH) != selectedDate.get(Calendar.MONTH) || firstShownDate.get(Calendar.YEAR) != selectedDate.get(Calendar.YEAR)){
+			Calendar tmp = (Calendar) firstShownDate.clone();
+			if (tmp.get(Calendar.DATE) != 1) tmp.add(Calendar.MONTH, 1);
+			tmp.set(tmp.get(Calendar.YEAR), tmp.get(Calendar.MONTH), 1);
+			return tmp;
+		}
 		return selectedDate;
 	}
 	@Override
