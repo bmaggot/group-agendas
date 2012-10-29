@@ -17,6 +17,7 @@ import android.view.View.OnClickListener;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.ProgressBar;
 
@@ -62,26 +63,31 @@ public class ChatMessageActivity extends Activity {
 		adapter = new ChatMessageAdapter(ChatMessageActivity.this, chatMessages);
 		chat_message_list = (ListView) findViewById(R.id.chat_message_list);
 		chat_message_list.setAdapter(adapter);
-		chatInput = (EditText) findViewById(R.id.chat_input);
-		chatSend = (Button) findViewById(R.id.chat_send);
+		if (DataManagement.networkAvailable) {
+			chatInput = (EditText) findViewById(R.id.chat_input);
+			chatSend = (Button) findViewById(R.id.chat_send);
 
-		chatSend.setOnClickListener(new OnClickListener() {
+			chatSend.setOnClickListener(new OnClickListener() {
 
-			@Override
-			public void onClick(View arg0) {
-				String message = chatInput.getText().toString();
-				chatMessageObject = ChatManagement.makeChatMessageObjectNow(ChatMessageActivity.this, message, event_id);
-				chatMessages.add(chatMessageObject);
-				adapter.notifyDataSetChanged();
-				Object[] params = { ChatMessageActivity.this, message, event_id };
-				new PostChatMessage().execute(params);
-				chatInput.setText("");
-				InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
-				imm.hideSoftInputFromWindow(chatInput.getWindowToken(), 0);
-				chat_message_list.setSelection(adapter.getCount() - 1);
+				@Override
+				public void onClick(View arg0) {
+					String message = chatInput.getText().toString();
+					chatMessageObject = ChatManagement.makeChatMessageObjectNow(ChatMessageActivity.this, message, event_id);
+					chatMessages.add(chatMessageObject);
+					adapter.notifyDataSetChanged();
+					Object[] params = { ChatMessageActivity.this, message, event_id };
+					new PostChatMessage().execute(params);
+					chatInput.setText("");
+					InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+					imm.hideSoftInputFromWindow(chatInput.getWindowToken(), 0);
+					chat_message_list.setSelection(adapter.getCount() - 1);
 
-			}
-		});
+				}
+			});
+		} else {
+			LinearLayout chatInputBlock = (LinearLayout) findViewById(R.id.chat_inputBlock);
+			chatInputBlock.setVisibility(View.GONE);
+		}
 	}
 
 	private class GetChatMessagesForEventDb extends AsyncTask<Object, Void, Void> {
@@ -99,7 +105,7 @@ public class ChatMessageActivity extends Activity {
 			chatMessages = new ArrayList<ChatMessageObject>();
 			if (DataManagement.networkAvailable && !refreshMessagesList) {
 				chatMessages = ChatManagement.getChatMessagesForEventFromRemoteDb(eventId, context, true, 0);
-			} else if(!DataManagement.networkAvailable){
+			} else if (!DataManagement.networkAvailable) {
 				chatMessages = ChatManagement.getChatMessagesForEventFromLocalDb(context, eventId);
 			}
 			if (refreshMessagesList) {

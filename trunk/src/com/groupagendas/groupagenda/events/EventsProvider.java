@@ -449,7 +449,19 @@ public class EventsProvider extends ContentProvider{
 			count = db.update(EMetaData.EVENTS_TABLE, values, whereStr, whereArgs);
 			break;
 		case UPDATE_EVENTS_MESSAGE_COUNT_AFTER_CHAT_POST:
-			String sql = "UPDATE "+ EMetaData.EVENTS_TABLE + " SET " + EMetaData.EventsMetaData.MESSAGES_COUNT + " = " + EMetaData.EventsMetaData.MESSAGES_COUNT + "+1";
+			String e_id = null;
+			if (values != null) {
+				e_id = values.getAsString(EMetaData.EventsMetaData.E_ID);
+				if (!e_id.matches("[0-9]*")) {
+					throw new IllegalArgumentException("Event Id not number " + uri);
+				}
+			} else {
+				throw new IllegalArgumentException("Content Values equals null " + uri);
+			}
+			String sql = "UPDATE " + EMetaData.EVENTS_TABLE + " SET " + EMetaData.EventsMetaData.MESSAGES_COUNT + " = "
+					+ EMetaData.EventsMetaData.MESSAGES_COUNT + "+1";
+			String whereString = " WHERE " + EMetaData.EventsMetaData.E_ID + "=" + e_id;
+			sql += whereString;
 			db.rawQuery(sql, whereArgs);
 			count = 1;
 			break;
