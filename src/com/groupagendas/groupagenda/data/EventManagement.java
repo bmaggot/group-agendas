@@ -318,6 +318,8 @@ public class EventManagement {
 	public static final String TITLE = "title";
 	public static final String ICON = "icon";
 	public static final String COLOR = "color";
+	public static final String TEXT_COLOR = "display_text_color"; //2012-10-24
+	public static final String DISPLAY_COLOR = "display_color"; //2012-10-24
 	public static final String DESCRIPTION = "description";
 	public static final String LOCATION = "location";
 	public static final String ACCOMODATION = "accomodation";
@@ -1152,6 +1154,8 @@ public class EventManagement {
 		cv.put(EventsProvider.EMetaData.EventsMetaData.TITLE, event.getTitle());
 		cv.put(EventsProvider.EMetaData.EventsMetaData.ICON, event.getIcon());
 		cv.put(EventsProvider.EMetaData.EventsMetaData.COLOR, event.getColor());
+		cv.put(EventsProvider.EMetaData.EventsMetaData.TEXT_COLOR, event.getTextColor());//2012-10-24
+		cv.put(EventsProvider.EMetaData.EventsMetaData.EVENT_DISPLAY_COLOR, event.getDisplayColor());//2012-10-24
 		cv.put(EventsProvider.EMetaData.EventsMetaData.DESC, event.getDescription());
 		cv.put(EventsProvider.EMetaData.EventsMetaData.LOCATION, event.getLocation());
 		cv.put(EventsProvider.EMetaData.EventsMetaData.ACCOMODATION, event.getAccomodation());

@@ -195,8 +195,8 @@ public class AgendaView extends AbstractCalendarView {
 				while (!result.isAfterLast()) {
 					Event eventProjection = new Event();
 					eventProjection
-					.setInternalID(result.getLong(result
-							.getColumnIndexOrThrow(EventsProvider.EMetaData.EventsMetaData._ID)));
+							.setInternalID(result.getLong(result
+									.getColumnIndexOrThrow(EventsProvider.EMetaData.EventsMetaData._ID)));
 					eventProjection
 							.setEvent_id(result.getInt(result
 									.getColumnIndexOrThrow(EventsProvider.EMetaData.EventsMetaData.E_ID)));
@@ -209,6 +209,12 @@ public class AgendaView extends AbstractCalendarView {
 					eventProjection
 							.setColor(result.getString(result
 									.getColumnIndexOrThrow(EventsProvider.EMetaData.EventsMetaData.COLOR)));
+					eventProjection
+					        .setTextColor(result.getString(result
+					        		.getColumnIndexOrThrow(EventsProvider.EMetaData.EventsMetaData.TEXT_COLOR)));//2012-10-24
+					eventProjection
+							.setDisplayColor(result.getString(result
+									.getColumnIndexOrThrow(EventsProvider.EMetaData.EventsMetaData.EVENT_DISPLAY_COLOR)));//2012-10-24
 					String user_timezone = CalendarSettings.getTimeZone(context);
 					long timeinMillis = result
 							.getLong(result

@@ -16,8 +16,7 @@ public class HourEventRectangle extends EventView {
 	private int roundRadiusDP = 5; //also is used as padding from left and right
 	
 	private int topPaddingDP = 1;
-	private int rightPaddingDP = 2;
-	private int bottomPaddingDP = 2;
+	//private int bottomPaddingDP = 2;
 	
 	private int defaultSpaceDP = 3;
 	
@@ -25,15 +24,15 @@ public class HourEventRectangle extends EventView {
 	private int iconSizeDP = 13;
 	
 	private static final int timeTextColor = Color.BLACK;
-	private static final int titleTextColor = Color.WHITE;
 	
 	private RectF rect;
 
 
 	
-	public HourEventRectangle(Context context, String startTime, String title, String color, int iconId) {
-		super(context, startTime, title, color, iconId);
-		this.color = Color.parseColor("#BF" + color);
+	public HourEventRectangle(Context context, String startTime, String title, String textColor, String displayColor, int iconId) {
+		super(context, startTime, title, textColor, displayColor, iconId); //2012-10-24
+		this.textColor = Color.parseColor("#" + textColor); //2012-10-24
+		this.displayColor = Color.parseColor("#BF" + displayColor); //2012-10-24
         rect = new RectF();
 	}
 	
@@ -43,16 +42,15 @@ public class HourEventRectangle extends EventView {
 	protected void onDraw(Canvas canvas) {
 		float roundRadius = dpToPx(roundRadiusDP);
 		float topPadding = dpToPx(topPaddingDP);
-		float bottomPadding = dpToPx(bottomPaddingDP);
+		//float bottomPadding = dpToPx(bottomPaddingDP);
 		
 		float defaultSpace = dpToPx(defaultSpaceDP);
 		float x = roundRadius;
 
-        paint.setColor(color);
+        paint.setColor(displayColor);
 		rect.set(0, 0, width, height);
 		canvas.drawRoundRect(rect, roundRadius, roundRadius, paint);
 		//preparing to draw text
-		
 		paint.setTextAlign(Align.LEFT);
 		paint.setTextSize(dpToPx(textSizeDP));
 		
@@ -74,16 +72,17 @@ public class HourEventRectangle extends EventView {
 			if (drawItem) {
 				iconDrawable.setBounds((int) x, (int) topPadding, iconSize + (int) x, (int) topPadding + iconSize);
 				iconDrawable.draw(canvas);
-				x += iconSize;
+				x += iconSize; //"x + iconSize <=...h - roundRadius"	 <error(s)_during_the_evaluation>	
 				x += defaultSpace;
 			}
+		}
 		
 		
 		//DRAWING Title:
 			paint.setTypeface(Typeface.DEFAULT_BOLD);
 			drawItem = x + paint.measureText(title) <= width - roundRadius;
 			if (drawItem) {
-			paint.setColor(titleTextColor);
+			paint.setColor(textColor);//2012-10-24
 			paint.setTextAlign(Align.RIGHT);
 			canvas.drawText(title, width - roundRadius,  topPadding - paint.ascent(), paint);
 			paint.setTypeface(Typeface.DEFAULT);
@@ -92,4 +91,4 @@ public class HourEventRectangle extends EventView {
 
 		}	
 	}
-}
+
