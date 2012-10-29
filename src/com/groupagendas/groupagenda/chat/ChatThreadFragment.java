@@ -32,7 +32,7 @@ public class ChatThreadFragment extends Fragment {
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 		super.onCreateView(inflater, container, savedInstanceState);
-		View view = inflater.inflate(R.layout.chat, container, false);
+		View view = inflater.inflate(R.layout.chat_threads, container, false);
 		this.container = container;
 		return view;
 	}
@@ -52,9 +52,9 @@ public class ChatThreadFragment extends Fragment {
 			}
 			final ArrayList<ChatThreadObject> tmpArray = EventManagement.getExistingChatThreads(getActivity());
 			adapter = new ChatThreadAdapter(getActivity(), tmpArray);
-			ListView chat_message_list = (ListView) container.findViewById(R.id.chat_message_list);
-			if (chat_message_list != null) {
-				chat_message_list.setOnItemClickListener(new OnItemClickListener() {
+			ListView chat_thread_list = (ListView) container.findViewById(R.id.chat_thread_list);
+			if (chat_thread_list != null) {
+				chat_thread_list.setOnItemClickListener(new OnItemClickListener() {
 
 					@Override
 					public void onItemClick(AdapterView<?> arg0, View arg1, int arg2, long arg3) {
@@ -64,7 +64,7 @@ public class ChatThreadFragment extends Fragment {
 					}
 
 				});
-				chat_message_list.setAdapter(adapter);
+				chat_thread_list.setAdapter(adapter);
 				adapter.notifyDataSetChanged();
 			}
 		}
