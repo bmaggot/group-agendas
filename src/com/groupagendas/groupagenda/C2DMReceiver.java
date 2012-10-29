@@ -92,13 +92,16 @@ public class C2DMReceiver extends C2DMBaseReceiver {
 					isChatMessage = true;
 					doDataDelta = false;
 					rel_id = receiveIntent.getStringExtra(REL_ID);
-					ChatManagement.getChatMessagesForEventFromRemoteDb(Integer.parseInt(rel_id), context, true, EventManagement
-							.getEventFromLocalDb(context, Integer.parseInt(rel_id), EventManagement.ID_EXTERNAL)
-							.getLast_message_date_time());
-					Intent intent = new Intent(REFRESH_MESSAGES_LIST + rel_id);
-					LocalBroadcastManager.getInstance(context).sendBroadcast(intent);
-					if (!chatMessagesWindowUpdated && receiveIntent.hasExtra(REL_ID) && !receiveIntent.getStringExtra(REL_ID).equals("")) {
-						showNotification(context, data, rel_id);
+					if (EventManagement.getEventFromLocalDb(context, Integer.parseInt(rel_id), EventManagement.ID_EXTERNAL) != null) {
+						ChatManagement.getChatMessagesForEventFromRemoteDb(Integer.parseInt(rel_id), context, true, EventManagement
+								.getEventFromLocalDb(context, Integer.parseInt(rel_id), EventManagement.ID_EXTERNAL)
+								.getLast_message_date_time());
+						Intent intent = new Intent(REFRESH_MESSAGES_LIST + rel_id);
+						LocalBroadcastManager.getInstance(context).sendBroadcast(intent);
+						if (!chatMessagesWindowUpdated && receiveIntent.hasExtra(REL_ID)
+								&& !receiveIntent.getStringExtra(REL_ID).equals("")) {
+							showNotification(context, data, rel_id);
+						}
 					}
 				} else if (receiveIntent.hasExtra(REL_ID) && !receiveIntent.getStringExtra(REL_ID).equals("")) {
 					rel_id = receiveIntent.getStringExtra(REL_ID);

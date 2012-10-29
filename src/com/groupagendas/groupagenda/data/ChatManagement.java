@@ -30,6 +30,7 @@ import com.groupagendas.groupagenda.chat.ChatProvider;
 import com.groupagendas.groupagenda.chat.ChatProvider.CMMetaData;
 import com.groupagendas.groupagenda.events.EventsProvider;
 import com.groupagendas.groupagenda.events.EventsProvider.EMetaData;
+import com.groupagendas.groupagenda.events.EventsProvider.EMetaData.EventsMetaData;
 import com.groupagendas.groupagenda.utils.Utils;
 
 public class ChatManagement {
@@ -300,10 +301,11 @@ public class ChatManagement {
 							ChatManagement.insertChatMessageContentValueToLocalDb(context,
 									ChatManagement.makeChatMessageObjectContentValueFromJSON(object.getJSONObject("message")));
 							chatMessageObject = ChatManagement.makeChatMessageObjectFromJSON(object.getJSONObject("message"));
-							Uri uri = EventsProvider.EMetaData.EventsMetaData.UPDATE_EVENT_AFTER_CHAT_POST;
-							// context.getContentResolver().query(uri, null,
-							// null, null, null);
 							ContentValues cv = new ContentValues();
+							Uri uri = EventsProvider.EMetaData.EventsMetaData.UPDATE_EVENT_AFTER_CHAT_POST;
+							cv.put(EMetaData.EventsMetaData.E_ID, eventId);
+							context.getContentResolver().update(uri, cv, null, null);
+							cv = new ContentValues();
 							cv.put(EMetaData.EventsMetaData.LAST_MESSAGE_DATE_TIME_UTC_MILISECONDS, chatMessageObject.getCreated());
 							uri = EventsProvider.EMetaData.EventsMetaData.CONTENT_URI;
 							String where = EventsProvider.EMetaData.EventsMetaData.E_ID + "=" + eventId;
