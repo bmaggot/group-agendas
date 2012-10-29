@@ -30,7 +30,6 @@ import com.groupagendas.groupagenda.chat.ChatProvider;
 import com.groupagendas.groupagenda.chat.ChatProvider.CMMetaData;
 import com.groupagendas.groupagenda.events.EventsProvider;
 import com.groupagendas.groupagenda.events.EventsProvider.EMetaData;
-import com.groupagendas.groupagenda.events.EventsProvider.EMetaData.EventsMetaData;
 import com.groupagendas.groupagenda.utils.Utils;
 
 public class ChatManagement {
@@ -137,7 +136,8 @@ public class ChatManagement {
 				message.setCreated(cur.getLong(cur.getColumnIndex(ChatProvider.CMMetaData.ChatMetaData.CREATED)));
 				message.setUserId(cur.getInt(cur.getColumnIndex(ChatProvider.CMMetaData.ChatMetaData.USER_ID)));
 				message.setMessage(cur.getString(cur.getColumnIndex(ChatProvider.CMMetaData.ChatMetaData.MESSAGE)));
-				message.setDeleted(cur.getString(cur.getColumnIndex(ChatProvider.CMMetaData.ChatMetaData.DELETED)).equals(ChatManagement.deleted));
+				message.setDeleted(cur.getString(cur.getColumnIndex(ChatProvider.CMMetaData.ChatMetaData.DELETED)).equals(
+						ChatManagement.deleted));
 				message.setUpdated(cur.getString(cur.getColumnIndex(ChatProvider.CMMetaData.ChatMetaData.UPDATED)));
 				chatMessages.add(message);
 				cur.moveToNext();
@@ -200,8 +200,10 @@ public class ChatManagement {
 
 			MultipartEntity reqEntity = new MultipartEntity(HttpMultipartMode.BROWSER_COMPATIBLE);
 
-			reqEntity.addPart(TOKEN, new StringBody(Data.getToken()));
+			reqEntity.addPart(TOKEN, new StringBody(Data.getToken(context)));
 			reqEntity.addPart("message_id", new StringBody(String.valueOf(messageId)));
+			Account account = new Account(context);
+			reqEntity.addPart("session", new StringBody(account.getSessionId()));
 
 			post.setEntity(reqEntity);
 			HttpResponse rp = null;
@@ -213,9 +215,7 @@ public class ChatManagement {
 						JSONObject object = new JSONObject(resp);
 						success = object.getBoolean("success");
 						if (success) {
-//							Toast.makeText(context, context.getResources().getString(R.string.delete_chat_message), Toast.LENGTH_LONG);
 						} else {
-//							Toast.makeText(context, object.getString("error"), Toast.LENGTH_LONG);
 						}
 					}
 				}
@@ -243,7 +243,8 @@ public class ChatManagement {
 		try {
 			ContentValues cv = new ContentValues();
 			cv.put(ChatProvider.CMMetaData.ChatMetaData.DELETED, true);
-			context.getContentResolver().update(ChatProvider.CMMetaData.ChatMetaData.CONTENT_URI, cv, ChatProvider.CMMetaData.ChatMetaData.M_ID + "=" + messageId, null);
+			context.getContentResolver().update(ChatProvider.CMMetaData.ChatMetaData.CONTENT_URI, cv,
+					ChatProvider.CMMetaData.ChatMetaData.M_ID + "=" + messageId, null);
 			success = true;
 		} catch (Exception e) {
 			Log.e("removeChatMessageFromLoacalDB(Context context, int " + messageId + ")", e.getMessage());
@@ -259,16 +260,16 @@ public class ChatManagement {
 	 * @since 2012-10T03
 	 * @version 0.1
 	 */
-	
-	public static boolean removeChatMessage(Context context, int messageId){
+
+	public static boolean removeChatMessage(Context context, int messageId) {
 		boolean succcess = false;
-		if(removeChatMessageFromRemoteDb(context, messageId)){
+		if (removeChatMessageFromRemoteDb(context, messageId)) {
 			succcess = removeChatMessageFromLocalDb(context, messageId);
 		}
 		return succcess;
 	}
-	
-	public static ChatMessageObject postChatMessage(int eventId, String message, Context context){
+
+	public static ChatMessageObject postChatMessage(int eventId, String message, Context context) {
 		ChatMessageObject chatMessageObject = new ChatMessageObject();
 		try {
 			HttpClient hc = new DefaultHttpClient();
@@ -276,13 +277,15 @@ public class ChatManagement {
 
 			MultipartEntity reqEntity = new MultipartEntity(HttpMultipartMode.BROWSER_COMPATIBLE);
 
-			reqEntity.addPart(ChatManagement.TOKEN, new StringBody(Data.getToken()));
+			reqEntity.addPart(ChatManagement.TOKEN, new StringBody(Data.getToken(context)));
 			reqEntity.addPart("event_id", new StringBody(String.valueOf(eventId)));
 			if (message == null) {
 				reqEntity.addPart("message", new StringBody(String.valueOf("")));
 			} else {
 				reqEntity.addPart("message", new StringBody(String.valueOf(message)));
 			}
+			Account account = new Account(context);
+			reqEntity.addPart("session", new StringBody(account.getSessionId()));
 
 			post.setEntity(reqEntity);
 			HttpResponse rp = null;
@@ -298,15 +301,15 @@ public class ChatManagement {
 									ChatManagement.makeChatMessageObjectContentValueFromJSON(object.getJSONObject("message")));
 							chatMessageObject = ChatManagement.makeChatMessageObjectFromJSON(object.getJSONObject("message"));
 							Uri uri = EventsProvider.EMetaData.EventsMetaData.UPDATE_EVENT_AFTER_CHAT_POST;
-//							context.getContentResolver().query(uri, null, null, null, null);
+							// context.getContentResolver().query(uri, null,
+							// null, null, null);
 							ContentValues cv = new ContentValues();
 							cv.put(EMetaData.EventsMetaData.LAST_MESSAGE_DATE_TIME_UTC_MILISECONDS, chatMessageObject.getCreated());
 							uri = EventsProvider.EMetaData.EventsMetaData.CONTENT_URI;
-							String where = EventsProvider.EMetaData.EventsMetaData.E_ID+"=" + eventId;
+							String where = EventsProvider.EMetaData.EventsMetaData.E_ID + "=" + eventId;
 							context.getContentResolver().update(uri, cv, where, null);
 						} else {
 							chatMessageObject = null;
-//							Toast.makeText(context, object.getString("error"), Toast.LENGTH_LONG);
 						}
 					}
 				}
@@ -319,27 +322,29 @@ public class ChatManagement {
 		}
 		return chatMessageObject;
 	}
-	
-	public static ArrayList<ChatMessageObject> getChatMessagesForEventFromRemoteDb(int eventId, Context context, boolean resetMessageCount, long lastMessageTimeStamp){
+
+	public static ArrayList<ChatMessageObject> getChatMessagesForEventFromRemoteDb(int eventId, Context context, boolean resetMessageCount,
+			long lastMessageTimeStamp) {
 		boolean success = false;
-//		ChatManagement.removeChatMessagesFromLocalDbForEvent(context, eventId);
 		HttpClient hc = new DefaultHttpClient();
-		ArrayList<ChatMessageObject>chatMessages = new ArrayList<ChatMessageObject>();
+		ArrayList<ChatMessageObject> chatMessages = new ArrayList<ChatMessageObject>();
 		HttpPost post = new HttpPost(Data.getServerUrl() + "mobile/chat_get");
 		MultipartEntity reqEntity = new MultipartEntity(HttpMultipartMode.BROWSER_COMPATIBLE);
 
 		try {
 			reqEntity.addPart(ChatManagement.TOKEN, new StringBody(Data.getToken(context)));
 			reqEntity.addPart("event_id", new StringBody(String.valueOf(eventId)));
-			if(lastMessageTimeStamp != 0){
+			if (lastMessageTimeStamp != 0) {
 				reqEntity.addPart("from_datetime", new StringBody(String.valueOf(lastMessageTimeStamp)));
 			}
-			if(resetMessageCount){
+			if (resetMessageCount) {
 				reqEntity.addPart("update_lastview", new StringBody("1"));
 			} else {
 				reqEntity.addPart("update_lastview", new StringBody("0"));
 			}
-			
+			Account account = new Account(context);
+			reqEntity.addPart("session", new StringBody(account.getSessionId()));
+
 		} catch (UnsupportedEncodingException e1) {
 			e1.printStackTrace();
 		}
@@ -360,7 +365,6 @@ public class ChatManagement {
 							chatMessages.add(ChatManagement.makeChatMessageObjectFromJSON(JSONchatMessages.getJSONObject(i)));
 						}
 					} else {
-//						Toast.makeText(context, object.getString("error"), Toast.LENGTH_LONG);
 					}
 				}
 			}
@@ -370,8 +374,8 @@ public class ChatManagement {
 		//
 		return chatMessages;
 	}
-	
-	public static void getAllChatMessagesFromRemoteDb(Context context){
+
+	public static void getAllChatMessagesFromRemoteDb(Context context) {
 		boolean success = false;
 		HttpClient hc = new DefaultHttpClient();
 		HttpPost post = new HttpPost(Data.getServerUrl() + "mobile/chat_get_all");
@@ -379,7 +383,8 @@ public class ChatManagement {
 
 		try {
 			reqEntity.addPart(ChatManagement.TOKEN, new StringBody(Data.getToken(context)));
-			
+			Account account = new Account(context);
+			reqEntity.addPart("session", new StringBody(account.getSessionId()));
 		} catch (UnsupportedEncodingException e1) {
 			e1.printStackTrace();
 		}
@@ -399,7 +404,7 @@ public class ChatManagement {
 									ChatManagement.makeChatMessageObjectContentValueFromJSON(JSONchatMessages.getJSONObject(i)));
 						}
 					} else {
-						
+
 					}
 				}
 			}
@@ -407,12 +412,12 @@ public class ChatManagement {
 			Log.e("getChatMessagesForEventFromRemoteDb(Context context, int eventId )", e.getMessage());
 		}
 	}
-	
-	public static ChatMessageObject makeChatMessageObjectNow(Context context, String message, int event_id){
+
+	public static ChatMessageObject makeChatMessageObjectNow(Context context, String message, int event_id) {
 		ChatMessageObject chatMessageObject = new ChatMessageObject();
 		Account account = new Account(context);
 		Calendar calendar = Calendar.getInstance();
-		chatMessageObject.setMessageId((int)calendar.getTimeInMillis());
+		chatMessageObject.setMessageId((int) calendar.getTimeInMillis());
 		chatMessageObject.setEventId(event_id);
 		chatMessageObject.setCreated(Utils.millisToUnixTimestamp(calendar.getTimeInMillis()));
 		chatMessageObject.setUserId(account.getUser_id());
@@ -421,21 +426,22 @@ public class ChatManagement {
 		chatMessageObject.setUpdated("null");
 		return chatMessageObject;
 	}
-	
+
 	public static boolean removeChatMessagesFromLocalDbForEvent(Context context, long event_id) {
 		boolean success = false;
 		try {
 			ContentValues cv = new ContentValues();
 			cv.put(ChatProvider.CMMetaData.ChatMetaData.DELETED, true);
-			context.getContentResolver().delete(ChatProvider.CMMetaData.ChatMetaData.CONTENT_URI, ChatProvider.CMMetaData.ChatMetaData.E_ID + "=" + event_id, null);
+			context.getContentResolver().delete(ChatProvider.CMMetaData.ChatMetaData.CONTENT_URI,
+					ChatProvider.CMMetaData.ChatMetaData.E_ID + "=" + event_id, null);
 			success = true;
 		} catch (Exception e) {
 			Log.e("removeChatMessageFromLoacalDB(Context context, int " + event_id + ")", e.getMessage());
 		}
 		return success;
 	}
-	
-	public static long getLastMessageTimeStamp(Context context, int eventId){
+
+	public static long getLastMessageTimeStamp(Context context, int eventId) {
 		return eventId;
 	}
 }
