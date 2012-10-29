@@ -25,14 +25,16 @@ public class ChatThreadAdapter extends AbstractAdapter<ChatThreadObject> {
 		if (view == null) {
 			view = mInflater.inflate(R.layout.chat_thread, null);
 		}
+		// TODO sukeisti last_msg ir time field'u id vietomis + investigate.
+		
 		ChatThreadObject chatThread = (ChatThreadObject) this.getItem(i);
 		TextView title = (TextView) view.findViewById(R.id.chat_thread_title);
 		title.setText(chatThread.getTitle());
-		TextView chatTime = (TextView) view.findViewById(R.id.chat_thread_time);
+		TextView chatTime = (TextView) view.findViewById(R.id.chat_thread_last_message);
 		Calendar timeStart = Calendar.getInstance();
 		timeStart.setTimeInMillis(Utils.unixTimestampToMilis(chatThread.getTimeStart()));
 		chatTime.setText(DateUtils.getRelativeTimeSpanString(timeStart.getTimeInMillis()));
-		TextView chatLastMsg = (TextView) view.findViewById(R.id.chat_thread_last_message);
+		TextView chatLastMsg = (TextView) view.findViewById(R.id.chat_thread_time);
 		chatLastMsg.setText(ChatManagement.getLastMessageForEventFromLocalDb(context, chatThread.getEvent_id()).getMessage());
 		return view;
 	}
