@@ -163,6 +163,7 @@ public class ChatManagement {
 					ChatManagement.deleted));
 			chatMessageObject.setUpdated(cur.getString(cur.getColumnIndex(ChatProvider.CMMetaData.ChatMetaData.UPDATED)));
 		}
+		cur.close();
 		return chatMessageObject;
 	}
 
