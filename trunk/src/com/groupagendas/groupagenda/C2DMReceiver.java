@@ -32,6 +32,7 @@ public class C2DMReceiver extends C2DMBaseReceiver {
 	public static String REL_OBJ = "rel_obj";
 	public static String REL_ID = "rel_id";
 	public static String CHAT = "ch";
+	public static String CHAT_LAST_VIEW = "ch_last_view";
 	public static String EVENT = "event";
 	public static String CONTACT = "contact";
 	public static String REFRESH_MESSAGES_LIST = "refreshMessagesList";
@@ -68,6 +69,10 @@ public class C2DMReceiver extends C2DMBaseReceiver {
 		chatMessagesWindowUpdated = false;
 		if (receiveIntent.hasExtra(ACTION) && receiveIntent.getStringExtra(ACTION).equals(RESUBSCRIBE)) {
 			DataManagement.getInstance(context).registerPhone();
+		} else if(receiveIntent.hasExtra(ACTION) && receiveIntent.getStringExtra(ACTION).equals(CHAT_LAST_VIEW)){
+			Log.e("C2DMReceiver", "NEW 	PUSH	" + CHAT_LAST_VIEW);
+			Account account = new Account(context);
+			DataManagement.synchronizeWithServer(context, null, account.getLatestUpdateUnixTimestamp());
 		} else {
 			boolean doDataDelta = true;
 			if (receiveIntent.hasExtra(SESSION) && receiveIntent.getStringExtra(SESSION).equals(String.valueOf(sessionToken))) {
@@ -76,7 +81,6 @@ public class C2DMReceiver extends C2DMBaseReceiver {
 			if (receiveIntent.hasExtra(QUEUE_TOKEN) && receiveIntent.getStringExtra(QUEUE_TOKEN).equals(String.valueOf(last_queue_token))) {
 				doDataDelta = false;
 			} else {
-				Log.e("C2DMReceiver", "NEW 	PUSH	");
 				if (receiveIntent.hasExtra(QUEUE_TOKEN)) {
 					last_queue_token = receiveIntent.getStringExtra(QUEUE_TOKEN);
 				} else {
@@ -86,14 +90,15 @@ public class C2DMReceiver extends C2DMBaseReceiver {
 				if (receiveIntent.hasExtra(MESSAGE) && !receiveIntent.getStringExtra(MESSAGE).equals("[A-Z]*[a-z]*Self")) {
 					data = receiveIntent.getStringExtra(MESSAGE);
 				}
+				Log.e("C2DMReceiver", "NEW 	PUSH	" + data);
 				String rel_id = null;
 				if (receiveIntent.hasExtra(REL_OBJ) && receiveIntent.getStringExtra(REL_OBJ).equals(CHAT) && receiveIntent.hasExtra(REL_ID)
 						&& !receiveIntent.getStringExtra(REL_ID).equals("")) {
 					isChatMessage = true;
 					doDataDelta = false;
 					rel_id = receiveIntent.getStringExtra(REL_ID);
-					if (EventManagement.getEventFromLocalDb(context, Integer.parseInt(rel_id), EventManagement.ID_EXTERNAL) != null) {
-						ChatManagement.getChatMessagesForEventFromRemoteDb(Integer.parseInt(rel_id), context, true, EventManagement
+					if (EventManagement.getEventFromLocalDb(context, Integer.parseInt(rel_id), EventManagement.ID_EXTERNAL) != null ) {
+						ChatManagement.getChatMessagesForEventFromRemoteDb(Integer.parseInt(rel_id), context, false, EventManagement
 								.getEventFromLocalDb(context, Integer.parseInt(rel_id), EventManagement.ID_EXTERNAL)
 								.getLast_message_date_time());
 						Intent intent = new Intent(REFRESH_MESSAGES_LIST + rel_id);

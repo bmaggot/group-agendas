@@ -147,6 +147,24 @@ public class ChatManagement {
 		cur.close();
 		return chatMessages;
 	}
+	
+	public static ChatMessageObject getLastMessageForEventFromLocalDb(Context context, int eventId){
+		ChatMessageObject chatMessageObject = new ChatMessageObject();
+		String selection = ChatProvider.CMMetaData.ChatMetaData.E_ID + "=" + eventId + " AND " +  ChatProvider.CMMetaData.ChatMetaData.DELETED + "=0";
+		String sortOrder = ChatProvider.CMMetaData.ChatMetaData.CREATED + " DESC ";
+		Cursor cur = context.getContentResolver().query(ChatProvider.CMMetaData.ChatMetaData.CONTENT_URI, null, selection, null, sortOrder);
+		if(cur.moveToFirst()){
+			chatMessageObject.setMessageId(cur.getInt(cur.getColumnIndex(ChatProvider.CMMetaData.ChatMetaData.M_ID)));
+			chatMessageObject.setEventId(cur.getInt(cur.getColumnIndex(ChatProvider.CMMetaData.ChatMetaData.E_ID)));
+			chatMessageObject.setCreated(cur.getLong(cur.getColumnIndex(ChatProvider.CMMetaData.ChatMetaData.CREATED)));
+			chatMessageObject.setUserId(cur.getInt(cur.getColumnIndex(ChatProvider.CMMetaData.ChatMetaData.USER_ID)));
+			chatMessageObject.setMessage(cur.getString(cur.getColumnIndex(ChatProvider.CMMetaData.ChatMetaData.MESSAGE)));
+			chatMessageObject.setDeleted(cur.getString(cur.getColumnIndex(ChatProvider.CMMetaData.ChatMetaData.DELETED)).equals(
+					ChatManagement.deleted));
+			chatMessageObject.setUpdated(cur.getString(cur.getColumnIndex(ChatProvider.CMMetaData.ChatMetaData.UPDATED)));
+		}
+		return chatMessageObject;
+	}
 
 	/**
 	 * Inserts ChatMessage ContentValue object into local DB.
@@ -331,6 +349,7 @@ public class ChatManagement {
 		HttpClient hc = new DefaultHttpClient();
 		ArrayList<ChatMessageObject> chatMessages = new ArrayList<ChatMessageObject>();
 		HttpPost post = new HttpPost(Data.getServerUrl() + "mobile/chat_get");
+		Log.e("ChatManagement", "");
 		MultipartEntity reqEntity = new MultipartEntity(HttpMultipartMode.BROWSER_COMPATIBLE);
 
 		try {
@@ -340,7 +359,7 @@ public class ChatManagement {
 				reqEntity.addPart("from_datetime", new StringBody(String.valueOf(lastMessageTimeStamp)));
 			}
 			if (resetMessageCount) {
-				reqEntity.addPart("update_lastview", new StringBody("1"));
+				reqEntity.addPart("update_lastview", new StringBody("0"));
 			} else {
 				reqEntity.addPart("update_lastview", new StringBody("0"));
 			}
