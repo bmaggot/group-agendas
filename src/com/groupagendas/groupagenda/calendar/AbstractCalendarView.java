@@ -33,6 +33,8 @@ public abstract class AbstractCalendarView extends LinearLayout {
 			EventsProvider.EMetaData.EventsMetaData.E_ID,
 			EventsProvider.EMetaData.EventsMetaData._ID,
 			EventsProvider.EMetaData.EventsMetaData.COLOR,
+			EventsProvider.EMetaData.EventsMetaData.EVENT_DISPLAY_COLOR,
+			EventsProvider.EMetaData.EventsMetaData.TEXT_COLOR,
 			EventsProvider.EMetaData.EventsMetaData.TIME_START_UTC_MILLISECONDS,
 			EventsProvider.EMetaData.EventsMetaData.TIME_END_UTC_MILLISECONDS,
 			EventsProvider.EMetaData.EventsMetaData.ICON,
