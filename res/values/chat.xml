@@ -4,7 +4,7 @@
     <string name="chat_deleted_message">Removed message</string>
 
     <style name="chat_deleted_message_style">
-        <item name="android:textColor">@color/lighter_gray</item>
+        <item name="android:textColor">@color/darker_gray</item>
         <item name="android:textStyle">italic</item>
     </style>
 
@@ -29,7 +29,7 @@
     </style>
     
     <style name="chat_thread_last_message">
-        <item name="android:textColor">@color/lighter_gray</item>
+        <item name="android:textColor">@color/darker_gray</item>
         <item name="android:textSize">16dp</item>
     </style>
 
