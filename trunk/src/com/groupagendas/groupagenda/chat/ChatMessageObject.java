@@ -8,6 +8,7 @@ public class ChatMessageObject {
 	private String message;
 	private boolean deleted;
 	private String updated;
+	private String fullname;
 
 	/**
 	 * @return the messageId
@@ -112,5 +113,13 @@ public class ChatMessageObject {
 	 */
 	public void setUpdated(String updated) {
 		this.updated = updated;
+	}
+
+	public String getFullname() {
+		return fullname;
+	}
+
+	public void setFullname(String fullname) {
+		this.fullname = fullname;
 	}
 }

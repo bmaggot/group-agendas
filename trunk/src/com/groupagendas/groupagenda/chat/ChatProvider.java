@@ -42,6 +42,7 @@ public class ChatProvider extends ContentProvider {
 			public static final String SUCCESSFULLY_UPLOADED = "successfully_uploaded";
 			public static final String CREATED = "timestamp";
 			public static final String MODIFIED = "modified";
+			public static final String FULLNAME = "fullname";
 			
 			public static final String DEFAULT_SORT_ORDER = M_ID+" COLLATE NOCASE ASC";
 		}
@@ -59,6 +60,7 @@ public class ChatProvider extends ContentProvider {
 		CTM.put(CMMetaData.ChatMetaData.SUCCESSFULLY_UPLOADED, CMMetaData.ChatMetaData.SUCCESSFULLY_UPLOADED);
 		CTM.put(CMMetaData.ChatMetaData.CREATED, CMMetaData.ChatMetaData.CREATED);
 		CTM.put(CMMetaData.ChatMetaData.MODIFIED, CMMetaData.ChatMetaData.MODIFIED);
+		CTM.put(CMMetaData.ChatMetaData.FULLNAME, CMMetaData.ChatMetaData.FULLNAME);
 	}
 	
 	private static final UriMatcher mUriMatcher;
@@ -197,7 +199,8 @@ public class ChatProvider extends ContentProvider {
 					+ CMMetaData.ChatMetaData.UPDATED + " TEXT ,"
 					+ CMMetaData.ChatMetaData.SUCCESSFULLY_UPLOADED + " INTEGER DEFAULT 0 ,"
 					+ CMMetaData.ChatMetaData.CREATED + " INTEGER ,"
-					+ CMMetaData.ChatMetaData.MODIFIED + " INTEGER "
+					+ CMMetaData.ChatMetaData.MODIFIED + " INTEGER ,"
+					+ CMMetaData.ChatMetaData.FULLNAME + " TEXT "
 					+ ")";
 
 			db.execSQL(query);

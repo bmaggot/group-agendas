@@ -61,6 +61,7 @@ public class ChatManagement {
 			String deleted = json.getString(CMMetaData.ChatMetaData.DELETED);
 			chatMessage.setDeleted(!deleted.equals("null"));
 			chatMessage.setUpdated(json.getString(CMMetaData.ChatMetaData.UPDATED));
+			chatMessage.setFullname(json.getString(CMMetaData.ChatMetaData.FULLNAME));
 		} catch (JSONException e) {
 			Log.e("makeChatMessageObjectFromJSON(JSONObject json)", e.getMessage());
 		}
@@ -90,6 +91,7 @@ public class ChatManagement {
 			String deleted = json.getString(CMMetaData.ChatMetaData.DELETED);
 			cv.put(CMMetaData.ChatMetaData.DELETED, !deleted.equals("null"));
 			cv.put(CMMetaData.ChatMetaData.UPDATED, json.getString(CMMetaData.ChatMetaData.UPDATED));
+			cv.put(CMMetaData.ChatMetaData.FULLNAME, json.getString(CMMetaData.ChatMetaData.FULLNAME));
 		} catch (Exception e) {
 			Log.e("makeChatMessageObjectContentValueFromJSON(JSONObject json)", e.getMessage());
 		}
@@ -118,6 +120,7 @@ public class ChatManagement {
 			cv.put(CMMetaData.ChatMetaData.MESSAGE, chatMessage.getMessage());
 			cv.put(CMMetaData.ChatMetaData.DELETED, chatMessage.isDeleted());
 			cv.put(CMMetaData.ChatMetaData.UPDATED, chatMessage.getUpdated());
+			cv.put(CMMetaData.ChatMetaData.FULLNAME, chatMessage.getFullname());
 		} catch (Exception e) {
 			Log.e("makeContentValuesFromChatMessageObject(ChatMessageObject " + chatMessage.getMessageId() + ")", e.getMessage());
 		}
@@ -141,6 +144,7 @@ public class ChatManagement {
 				message.setDeleted(cur.getString(cur.getColumnIndex(ChatProvider.CMMetaData.ChatMetaData.DELETED)).equals(
 						ChatManagement.deleted));
 				message.setUpdated(cur.getString(cur.getColumnIndex(ChatProvider.CMMetaData.ChatMetaData.UPDATED)));
+				message.setFullname(cur.getString(cur.getColumnIndex(ChatProvider.CMMetaData.ChatMetaData.FULLNAME)));
 				chatMessages.add(message);
 				cur.moveToNext();
 			}
@@ -163,6 +167,7 @@ public class ChatManagement {
 			chatMessageObject.setDeleted(cur.getString(cur.getColumnIndex(ChatProvider.CMMetaData.ChatMetaData.DELETED)).equals(
 					ChatManagement.deleted));
 			chatMessageObject.setUpdated(cur.getString(cur.getColumnIndex(ChatProvider.CMMetaData.ChatMetaData.UPDATED)));
+			chatMessageObject.setFullname(cur.getString(cur.getColumnIndex(ChatProvider.CMMetaData.ChatMetaData.FULLNAME)));
 		}
 		cur.close();
 		return chatMessageObject;
@@ -447,6 +452,7 @@ public class ChatManagement {
 		chatMessageObject.setMessage(message);
 		chatMessageObject.setDeleted(false);
 		chatMessageObject.setUpdated("null");
+		chatMessageObject.setFullname(account.getFullname());
 		return chatMessageObject;
 	}
 
@@ -465,15 +471,16 @@ public class ChatManagement {
 	}
 
 	public static long getLastMessageTimeStamp(Context context, int eventId) {
+		long timestamp = 0;
 		Uri uri = ChatProvider.CMMetaData.ChatMetaData.CONTENT_URI;
 		String projection[] = {"MAX("+ChatProvider.CMMetaData.ChatMetaData.CREATED+") AS "+LASTEST_UPDATED_TIMESTAMP};
 		Account account = new Account(context);
 		String selection = ChatProvider.CMMetaData.ChatMetaData.USER_ID + "!=" + account.getUser_id() + " AND " + ChatProvider.CMMetaData.ChatMetaData.E_ID + "=" + eventId;
 		Cursor cur = context.getContentResolver().query(uri, projection, selection, null, null);
 		if(cur.moveToFirst()){
-			cur.getLong(cur.getColumnIndex(LASTEST_UPDATED_TIMESTAMP));
+			timestamp = cur.getLong(cur.getColumnIndex(LASTEST_UPDATED_TIMESTAMP));
 		}
 		cur.close();
-		return eventId;
+		return timestamp;
 	}
 }

@@ -7,6 +7,7 @@ import android.content.Context;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -48,9 +49,11 @@ public class ChatMessageAdapter extends AbstractAdapter<ChatMessageObject> {
 			calendar.setTimeInMillis(Utils.unixTimestampToMilis(chatMessage.getCreated()));
 			DateTimeUtils dtUtils = new DateTimeUtils(getContext());
 			chatTime.setText(dtUtils.formatDateTime(calendar));
+			TextView fromWho = (TextView) view.findViewById(R.id.chat_message_from_who);
+			fromWho.setText(chatMessage.getFullname());
 			if (chatMessage.getUserId() == account.getUser_id() && !chatMessage.isDeleted()) {
 				view.findViewById(R.id.kubiks).setVisibility(View.VISIBLE);
-				TextView iksiuks = (TextView) view.findViewById(R.id.chat_message_delete);
+				ImageView iksiuks = (ImageView) view.findViewById(R.id.delete_button);
 				iksiuks.setClickable(true);
 				iksiuks.setVisibility(View.VISIBLE);
 				view.setTag(true);
@@ -63,7 +66,7 @@ public class ChatMessageAdapter extends AbstractAdapter<ChatMessageObject> {
 				});
 			} else {
 				view.findViewById(R.id.kubiks).setVisibility(View.GONE);
-				TextView iksiuks = (TextView) view.findViewById(R.id.chat_message_delete);
+				ImageView iksiuks = (ImageView) view.findViewById(R.id.delete_button);
 				iksiuks.setClickable(false);
 				iksiuks.setVisibility(View.GONE);
 				view.setTag(false);
