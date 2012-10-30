@@ -249,22 +249,23 @@ private SectionListItem[] filterEvents (String filterString, SectionListItem[] e
 			
 			ArrayList<SectionListItem> list = new ArrayList<SectionListItem>();
 			String section;
-		while (!date.after(sortedEvents.lastKey())){
-			
-			section = weekDayNames[date.get(Calendar.DAY_OF_WEEK) - 1];
-			section += ", ";
-			section += date.get(Calendar.DAY_OF_MONTH);
-			section += " ";
-			section += monthNames[date.get(Calendar.MONTH)];
-			section += " ";
-			section += date.get(Calendar.YEAR);
+			if (!sortedEvents.isEmpty())
+				while (!date.after(sortedEvents.lastKey())){
 					
-			for (Event e : TreeMapUtils.getEventsFromTreemap(date, sortedEvents)){
-				list.add(new SectionListItem(e, section));
-			}
-			
-			date.add(Calendar.DATE, 1);	
-		}
+					section = weekDayNames[date.get(Calendar.DAY_OF_WEEK) - 1];
+					section += ", ";
+					section += date.get(Calendar.DAY_OF_MONTH);
+					section += " ";
+					section += monthNames[date.get(Calendar.MONTH)];
+					section += " ";
+					section += date.get(Calendar.YEAR);
+							
+					for (Event e : TreeMapUtils.getEventsFromTreemap(date, sortedEvents)){
+						list.add(new SectionListItem(e, section));
+					}
+					
+					date.add(Calendar.DATE, 1);	
+				}
 		eventsArray =  list.toArray(new SectionListItem[list.size()]);
 		
 	}
