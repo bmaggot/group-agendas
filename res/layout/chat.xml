@@ -19,6 +19,8 @@
         android:layout_height="0dp"
         android:layout_gravity="top"
         android:layout_weight="1"
+        android:dividerHeight="0dp"
+        android:divider="@null"
         android:background="@color/white"
         android:cacheColorHint="#00000000"
         android:fadingEdge="none"
