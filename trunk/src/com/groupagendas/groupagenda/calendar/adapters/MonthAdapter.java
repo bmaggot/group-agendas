@@ -49,7 +49,7 @@ public class MonthAdapter extends AbstractAdapter<Event> {
 			Event event = (Event) item;
 			
 			ImageView colourBubble = (ImageView) view.findViewById(R.id.month_entry_color_placeholder);
-			colourBubble.setImageBitmap(DrawingUtils.getColoredRoundRectangle(context, 20, event, true));
+			colourBubble.setImageBitmap(DrawingUtils.getColoredRoundRectangle(context, 20, event.getDisplayColor(), true));
 			
 			TextView startTime = (TextView) view.findViewById(R.id.month_entry_start);
 			startTime.setText(timeFormat.format(event.getStartCalendar().getTime()));

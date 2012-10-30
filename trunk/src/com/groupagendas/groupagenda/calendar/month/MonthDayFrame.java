@@ -86,7 +86,7 @@ public class MonthDayFrame extends RelativeLayout {
 		Bitmap bmp = Bitmap.createBitmap(size, size, Bitmap.Config.ARGB_8888);
 		Canvas c = new Canvas(bmp);
 		Paint p = new Paint();
-		p.setColor(Color.parseColor("#" + event.getColor()));
+		p.setColor(Color.parseColor("#" + event.getDisplayColor()));
 		c.drawCircle(size/2, size/2, size/2, p);
 		
 		ImageView img = new ImageView(getContext());

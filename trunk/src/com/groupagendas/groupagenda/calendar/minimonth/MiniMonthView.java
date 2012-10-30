@@ -251,6 +251,8 @@ public class MiniMonthView extends AbstractCalendarView {
 					eventProjection.setTitle(result.getString(result.getColumnIndexOrThrow(EventsProvider.EMetaData.EventsMetaData.TITLE)));
 					eventProjection.setIcon(result.getString(result.getColumnIndexOrThrow(EventsProvider.EMetaData.EventsMetaData.ICON)));
 					eventProjection.setColor(result.getString(result.getColumnIndexOrThrow(EventsProvider.EMetaData.EventsMetaData.COLOR)));
+					eventProjection.setTextColor(result.getString(result.getColumnIndexOrThrow(EventsProvider.EMetaData.EventsMetaData.TEXT_COLOR)));
+					eventProjection.setDisplayColor(result.getString(result.getColumnIndexOrThrow(EventsProvider.EMetaData.EventsMetaData.EVENT_DISPLAY_COLOR)));
 					String user_timezone = CalendarSettings.getTimeZone(context);
 					long timeinMillis = result.getLong(result.getColumnIndexOrThrow(EventsProvider.EMetaData.EventsMetaData.TIME_START_UTC_MILLISECONDS));
 					eventProjection.setStartCalendar(Utils.createCalendar(timeinMillis, user_timezone));
