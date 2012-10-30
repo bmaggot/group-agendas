@@ -181,7 +181,7 @@ public class EventsActivity extends ListActivity {
 
 						@Override
 						public void onClick(View v) {
-							EventManagement.loadEvents(EventsActivity.this, eventsAdapter);
+//							EventManagement.loadEvents(EventsActivity.this, eventsAdapter);
 							changeTitle(getString(R.string.status_new_invites_count, eventsAdapter.getNewInvitesCount()));
 							qa.dismiss();
 							filterEventsByStatus(Invited.PENDING);
@@ -198,7 +198,7 @@ public class EventsActivity extends ListActivity {
 
 						@Override
 						public void onClick(View v) {
-							EventManagement.loadEvents(EventsActivity.this, eventsAdapter);
+//							EventManagement.loadEvents(EventsActivity.this, eventsAdapter);
 							changeTitle(getString(R.string.status_not_attending));
 							qa.dismiss();
 							filterEventsByStatus(Invited.REJECTED);
@@ -212,7 +212,7 @@ public class EventsActivity extends ListActivity {
 
 						@Override
 						public void onClick(View v) {
-							EventManagement.loadEvents(EventsActivity.this, eventsAdapter);
+//							EventManagement.loadEvents(EventsActivity.this, eventsAdapter);
 							changeTitle(getString(R.string.status_attending));
 							qa.dismiss();
 							filterEventsByStatus(Invited.ACCEPTED);
@@ -227,7 +227,7 @@ public class EventsActivity extends ListActivity {
 
 						@Override
 						public void onClick(View v) {
-							EventManagement.loadEvents(EventsActivity.this, eventsAdapter);
+//							EventManagement.loadEvents(EventsActivity.this, eventsAdapter);
 							changeTitle(getString(R.string.status_maybe));
 							qa.dismiss();
 							filterEventsByStatus(Invited.MAYBE);
