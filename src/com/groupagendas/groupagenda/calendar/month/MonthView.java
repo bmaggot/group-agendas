@@ -325,6 +325,14 @@ public class MonthView extends AbstractCalendarView {
 					eventProjection.setStartCalendar(Utils.createCalendar(timeinMillis, user_timezone));
 					timeinMillis = result.getLong(result.getColumnIndexOrThrow(EventsProvider.EMetaData.EventsMetaData.TIME_END_UTC_MILLISECONDS));
 					eventProjection.setEndCalendar(Utils.createCalendar(timeinMillis, user_timezone));
+					eventProjection.setStatus(result.getInt(result.getColumnIndexOrThrow(EventsProvider.EMetaData.EventsMetaData.STATUS)));
+					String owner = result.getString(result.getColumnIndexOrThrow(EventsProvider.EMetaData.EventsMetaData.IS_OWNER));
+					if (owner.equalsIgnoreCase("1")) {
+						eventProjection.setIs_owner(true);
+					} else {
+						eventProjection.setIs_owner(false);
+					}
+					
 					list.add(eventProjection);
 					result.moveToNext();
 				}
