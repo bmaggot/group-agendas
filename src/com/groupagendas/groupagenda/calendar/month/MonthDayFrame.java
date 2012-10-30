@@ -17,6 +17,7 @@ import android.widget.TextView;
 import com.groupagendas.groupagenda.R;
 import com.groupagendas.groupagenda.calendar.MonthCellState;
 import com.groupagendas.groupagenda.events.Event;
+import com.groupagendas.groupagenda.events.Invited;
 
 public class MonthDayFrame extends RelativeLayout {
 	
@@ -54,11 +55,13 @@ public class MonthDayFrame extends RelativeLayout {
 		
 		int maxChildren = frameWidth / (BUBBLE_WIDTH_PX + BUBBLE_MARGIN_PX); 
 		
-		for (Event event : eventColorsArray){
-			while (!addBubbleToLine(line, maxChildren, event)){
-				line = createBubbleContainerLine();
-				addBubbleToLine(line, maxChildren, event);
-				allBubblesContainer.addView(line);
+		for (Event event : eventColorsArray) {
+			if (event.getStatus() != Invited.PENDING || event.is_owner()) {
+				while (!addBubbleToLine(line, maxChildren, event)){
+					line = createBubbleContainerLine();
+					addBubbleToLine(line, maxChildren, event);
+					allBubblesContainer.addView(line);
+				}
 			}
 		}
 
