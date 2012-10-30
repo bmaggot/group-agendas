@@ -19,16 +19,17 @@
             android:layout_height="wrap_content"
             android:layout_weight="0.6"
             android:layout_gravity="left"
-            android:text="Title"
             android:textAppearance="@style/chat_thread_title" />
 
         <TextView
             android:id="@+id/chat_thread_time"
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
+            android:layout_weight="0.2"
             android:layout_gravity="right"
+            android:gravity="right"
             android:layout_marginLeft="5dp"
-            android:text="Time"
+            android:text="time"
             android:textAppearance="@style/chat_thread_time" />
     </LinearLayout>
 
@@ -39,7 +40,6 @@
         android:layout_marginRight="15dp"
         android:layout_marginLeft="30dp"
         android:layout_marginTop="5dp"
-        android:text="Last message"
         android:textAppearance="@style/chat_thread_last_message" />
 
 </LinearLayout>
