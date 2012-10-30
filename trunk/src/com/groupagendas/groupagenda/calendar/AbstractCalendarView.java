@@ -39,6 +39,8 @@ public abstract class AbstractCalendarView extends LinearLayout {
 			EventsProvider.EMetaData.EventsMetaData.TIME_END_UTC_MILLISECONDS,
 			EventsProvider.EMetaData.EventsMetaData.ICON,
 			EventsProvider.EMetaData.EventsMetaData.TITLE,
+			EventsProvider.EMetaData.EventsMetaData.STATUS,
+			EventsProvider.EMetaData.EventsMetaData.IS_OWNER,
 			};
 	protected GestureDetector swipeGestureDetector;
 	
