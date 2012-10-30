@@ -1309,7 +1309,7 @@ private static String parseInvitedListToJSONArray(ArrayList<Invited> invited) {
 		today.set(Calendar.MINUTE, 0);
 		today.set(Calendar.SECOND, 0);
 		today.set(Calendar.MILLISECOND, 0);
-		if (filterActual) where = EventsProvider.EMetaData.EventsMetaData.TIME_END_UTC_MILLISECONDS + " > " + today.getTimeInMillis();
+		if (filterActual) where = EventsProvider.EMetaData.EventsMetaData.TIME_END_UTC_MILLISECONDS + " >= " + today.getTimeInMillis();
 				
 		ArrayList<Event> items = new ArrayList<Event>();
 	
