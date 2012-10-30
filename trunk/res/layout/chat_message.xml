@@ -15,8 +15,8 @@
     <RelativeLayout
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:orientation="horizontal"
         android:layout_weight="8"
+        android:orientation="horizontal"
         android:weightSum="10" >
 
         <LinearLayout
@@ -50,15 +50,13 @@
                         android:layout_gravity="left"
                         android:layout_weight="0.6"
                         android:singleLine="true"
-                        android:text="From who"
-                        android:textSize="8dp" />
+                        android:textAppearance="@style/chat_message_time" />
 
                     <TextView
                         android:id="@+id/chat_message_time"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_gravity="right"
-                        android:text="Message time"
                         android:textAppearance="@style/chat_message_time" />
                 </LinearLayout>
 
@@ -69,27 +67,8 @@
                     android:layout_marginBottom="10dp"
                     android:layout_marginLeft="10dp"
                     android:layout_marginRight="10dp"
-                    android:text="Message body"
                     android:textAppearance="@style/chat_message_body" />
             </LinearLayout>
-
-            <TextView
-                android:id="@+id/chat_message_delete"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center_vertical"
-                android:background="@drawable/button_clear"
-                android:clickable="true"
-                android:gravity="center"
-                android:paddingBottom="2dp"
-                android:paddingLeft="5dp"
-                android:paddingRight="5dp"
-                android:paddingTop="2dp"
-                android:text="@string/cross"
-                android:textColor="@color/white"
-                android:textSize="8dp"
-                android:textStyle="bold"
-                android:visibility="gone" />
         </LinearLayout>
 
         <ImageView
@@ -97,7 +76,8 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:src="@drawable/delete_button"
-            android:visibility="gone" />
+            android:visibility="gone"
+            android:contentDescription="@string/chat_button_delete_placeholder"/>
     </RelativeLayout>
 
 </LinearLayout>
