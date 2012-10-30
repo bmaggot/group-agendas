@@ -1,14 +1,12 @@
 package com.groupagendas.groupagenda.chat;
 
 import java.util.ArrayList;
-import java.util.concurrent.ExecutionException;
 
 import android.app.Activity;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.content.LocalBroadcastManager;
@@ -26,9 +24,6 @@ import com.groupagendas.groupagenda.R;
 import com.groupagendas.groupagenda.calendar.adapters.ChatMessageAdapter;
 import com.groupagendas.groupagenda.data.ChatManagement;
 import com.groupagendas.groupagenda.data.DataManagement;
-import com.groupagendas.groupagenda.data.EventManagement;
-import com.groupagendas.groupagenda.events.Event;
-import com.groupagendas.groupagenda.events.EventsProvider;
 
 public class ChatMessageActivity extends Activity {
 	private int event_id;
@@ -108,8 +103,8 @@ public class ChatMessageActivity extends Activity {
 				chatMessages = ChatManagement.getChatMessagesForEventFromRemoteDb(eventId, context, true, 0);
 			}
 			if (refreshMessagesList) {
-				chatMessages = ChatManagement.getChatMessagesForEventFromRemoteDb(eventId, context, true, EventManagement
-						.getEventFromLocalDb(context, eventId, EventManagement.ID_EXTERNAL).getLast_message_date_time());
+				chatMessages = ChatManagement.getChatMessagesForEventFromRemoteDb(eventId, context, true,
+						ChatManagement.getLastMessageTimeStamp(context, eventId));
 			}
 			return null;
 		}
