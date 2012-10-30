@@ -22,7 +22,7 @@ import com.groupagendas.groupagenda.utils.Utils;
 public class ChatMessageAdapter extends AbstractAdapter<ChatMessageObject> {
 
 	ChatMessageActivity context;
-	
+
 	public ChatMessageAdapter(ChatMessageActivity context, List<ChatMessageObject> list) {
 		super(context, list);
 		this.context = context;
@@ -35,42 +35,44 @@ public class ChatMessageAdapter extends AbstractAdapter<ChatMessageObject> {
 		}
 
 		final ChatMessageObject chatMessage = (ChatMessageObject) this.getItem(i);
-			Account account = new Account(context);
-			TextView messageBody = (TextView) view.findViewById(R.id.chat_message_body);
+		Account account = new Account(context);
+		TextView messageBody = (TextView) view.findViewById(R.id.chat_message_body);
+		if (!chatMessage.isDeleted()) {
+			messageBody.setText(chatMessage.getMessage());
+			messageBody.setTextAppearance(context, R.style.chat_message_body);
+		} else {
+			messageBody.setText(context.getResources().getString(R.string.chat_deleted_message));
+			messageBody.setTextAppearance(context, R.style.chat_deleted_message_style);
+		}
+		TextView chatTime = (TextView) view.findViewById(R.id.chat_message_time);
+		Calendar calendar = Calendar.getInstance();
+		calendar.setTimeInMillis(Utils.unixTimestampToMilis(chatMessage.getCreated()));
+		DateTimeUtils dtUtils = new DateTimeUtils(getContext());
+		chatTime.setText(dtUtils.formatDateTime(calendar));
+		TextView fromWho = (TextView) view.findViewById(R.id.chat_message_from_who);
+		fromWho.setText(chatMessage.getFullname());
+		if (chatMessage.getUserId() == account.getUser_id()) {
+			view.findViewById(R.id.kubiks).setVisibility(View.VISIBLE);
+			ImageView iksiuks = (ImageView) view.findViewById(R.id.delete_button);
+			iksiuks.setClickable(true);
 			if (!chatMessage.isDeleted()) {
-				messageBody.setText(chatMessage.getMessage());
-				messageBody.setTextAppearance(context, R.style.chat_message_body);
-			} else {
-				messageBody.setText(context.getResources().getString(R.string.chat_deleted_message));
-				messageBody.setTextAppearance(context, R.style.chat_deleted_message_style);
-			}
-			TextView chatTime = (TextView) view.findViewById(R.id.chat_message_time);
-			Calendar calendar = Calendar.getInstance();
-			calendar.setTimeInMillis(Utils.unixTimestampToMilis(chatMessage.getCreated()));
-			DateTimeUtils dtUtils = new DateTimeUtils(getContext());
-			chatTime.setText(dtUtils.formatDateTime(calendar));
-			TextView fromWho = (TextView) view.findViewById(R.id.chat_message_from_who);
-			fromWho.setText(chatMessage.getFullname());
-			if (chatMessage.getUserId() == account.getUser_id() && !chatMessage.isDeleted()) {
-				view.findViewById(R.id.kubiks).setVisibility(View.VISIBLE);
-				ImageView iksiuks = (ImageView) view.findViewById(R.id.delete_button);
-				iksiuks.setClickable(true);
 				iksiuks.setVisibility(View.VISIBLE);
 				view.setTag(true);
 				iksiuks.setOnClickListener(new OnClickListener() {
-					
+
 					@Override
 					public void onClick(View arg0) {
 						context.deleteMessage(chatMessage.getMessageId(), chatMessage);
 					}
 				});
-			} else {
-				view.findViewById(R.id.kubiks).setVisibility(View.GONE);
-				ImageView iksiuks = (ImageView) view.findViewById(R.id.delete_button);
-				iksiuks.setClickable(false);
-				iksiuks.setVisibility(View.GONE);
-				view.setTag(false);
 			}
+		} else {
+			view.findViewById(R.id.kubiks).setVisibility(View.GONE);
+			ImageView iksiuks = (ImageView) view.findViewById(R.id.delete_button);
+			iksiuks.setClickable(false);
+			iksiuks.setVisibility(View.GONE);
+			view.setTag(false);
+		}
 
 		return view;
 	}
