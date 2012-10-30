@@ -56,8 +56,9 @@ public class HourEventRectangle extends EventView {
 		
 		
 		//DRAWING START TIME:
-		
+			paint.setAntiAlias(true);
 			paint.setColor(timeTextColor);
+//			paint.setTypeface(Typeface.SANS_SERIF);
 			canvas.drawText(startTime, x,  topPadding - paint.ascent(), paint);
 			x += paint.measureText(startTime);
 			x += defaultSpace;
