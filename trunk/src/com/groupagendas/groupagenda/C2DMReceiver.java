@@ -69,10 +69,10 @@ public class C2DMReceiver extends C2DMBaseReceiver {
 		chatMessagesWindowUpdated = false;
 		if (receiveIntent.hasExtra(ACTION) && receiveIntent.getStringExtra(ACTION).equals(RESUBSCRIBE)) {
 			DataManagement.getInstance(context).registerPhone();
-		} else if(receiveIntent.hasExtra(ACTION) && receiveIntent.getStringExtra(ACTION).equals(CHAT_LAST_VIEW)){
+		} else if (receiveIntent.hasExtra(ACTION) && receiveIntent.getStringExtra(ACTION).equals(CHAT_LAST_VIEW) && receiveIntent.hasExtra(REL_ID)
+				&& !receiveIntent.getStringExtra(REL_ID).equals("")) {
 			Log.e("C2DMReceiver", "NEW 	PUSH	" + CHAT_LAST_VIEW);
-			Account account = new Account(context);
-			DataManagement.synchronizeWithServer(context, null, account.getLatestUpdateUnixTimestamp());
+			EventManagement.resetEventsNewMessageCount(context, Integer.parseInt(receiveIntent.getStringExtra(REL_ID)));
 		} else {
 			boolean doDataDelta = true;
 			if (receiveIntent.hasExtra(SESSION) && receiveIntent.getStringExtra(SESSION).equals(String.valueOf(sessionToken))) {
@@ -97,16 +97,13 @@ public class C2DMReceiver extends C2DMBaseReceiver {
 					isChatMessage = true;
 					doDataDelta = false;
 					rel_id = receiveIntent.getStringExtra(REL_ID);
-					if (EventManagement.getEventFromLocalDb(context, Integer.parseInt(rel_id), EventManagement.ID_EXTERNAL) != null ) {
-						ChatManagement.getChatMessagesForEventFromRemoteDb(Integer.parseInt(rel_id), context, false, EventManagement
-								.getEventFromLocalDb(context, Integer.parseInt(rel_id), EventManagement.ID_EXTERNAL)
-								.getLast_message_date_time());
-						Intent intent = new Intent(REFRESH_MESSAGES_LIST + rel_id);
-						LocalBroadcastManager.getInstance(context).sendBroadcast(intent);
-						if (!chatMessagesWindowUpdated && receiveIntent.hasExtra(REL_ID)
-								&& !receiveIntent.getStringExtra(REL_ID).equals("")) {
-							showNotification(context, data, rel_id);
-						}
+					if (EventManagement.getEventFromLocalDb(context, Integer.parseInt(rel_id), EventManagement.ID_EXTERNAL) != null) {
+						refreshChatMessages(rel_id, context);
+						showNotification(context, data, rel_id);
+					} else {
+						Account account = new Account(context);
+						DataManagement.synchronizeWithServer(context, null, account.getLatestUpdateUnixTimestamp());
+						refreshChatMessages(rel_id, context);
 					}
 				} else if (receiveIntent.hasExtra(REL_ID) && !receiveIntent.getStringExtra(REL_ID).equals("")) {
 					rel_id = receiveIntent.getStringExtra(REL_ID);
@@ -115,9 +112,7 @@ public class C2DMReceiver extends C2DMBaseReceiver {
 									.equals(CONTACT))) {
 						isChatMessage = false;
 					}
-					if (!chatMessagesWindowUpdated) {
-						showNotification(context, data, rel_id);
-					}
+					showNotification(context, data, rel_id);
 				}
 				if (doDataDelta) {
 					Account account = new Account(context);
@@ -125,6 +120,14 @@ public class C2DMReceiver extends C2DMBaseReceiver {
 				}
 			}
 		}
+	}
+	
+	public static void refreshChatMessages(String rel_id, Context context){
+		ChatManagement.getChatMessagesForEventFromRemoteDb(Integer.parseInt(rel_id), context, false, EventManagement
+				.getEventFromLocalDb(context, Integer.parseInt(rel_id), EventManagement.ID_EXTERNAL)
+				.getLast_message_date_time());
+		Intent intent = new Intent(REFRESH_MESSAGES_LIST + rel_id);
+		LocalBroadcastManager.getInstance(context).sendBroadcast(intent);
 	}
 
 	public static void showNotification(Context context, String data, String rel_id) {

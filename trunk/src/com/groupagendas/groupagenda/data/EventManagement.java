@@ -757,6 +757,14 @@ public class EventManagement {
 			String where = EventsProvider.EMetaData.EventsMetaData._ID+"=" + event.getInternalID();
 			context.getContentResolver().update(uri, cv, where, null);	
 		}
+		
+		public static void resetEventsNewMessageCount(Context context, int eventId) {
+			ContentValues cv = new ContentValues();
+			cv.put(EventsProvider.EMetaData.EventsMetaData.NEW_MESSAGES_COUNT, "0");
+			Uri uri = EventsProvider.EMetaData.EventsMetaData.CONTENT_URI;
+			String where = EventsProvider.EMetaData.EventsMetaData.E_ID+"=" + eventId;
+			context.getContentResolver().update(uri, cv, where, null);	
+		}
 	
 //private static ArrayList<Invited> getInvitesForEvent(Context context, Event event) {
 //		ArrayList<Invited> invites = new ArrayList<Invited>();
