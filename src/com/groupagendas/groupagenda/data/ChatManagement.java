@@ -37,6 +37,7 @@ public class ChatManagement {
 
 	public static String TOKEN = "token";
 	public static String deleted = "1";
+	public static String LASTEST_UPDATED_TIMESTAMP = "latest_update";
 
 	/**
 	 * Make ChatMessageObject from JSON.
@@ -464,6 +465,15 @@ public class ChatManagement {
 	}
 
 	public static long getLastMessageTimeStamp(Context context, int eventId) {
+		Uri uri = ChatProvider.CMMetaData.ChatMetaData.CONTENT_URI;
+		String projection[] = {"MAX("+ChatProvider.CMMetaData.ChatMetaData.CREATED+") AS "+LASTEST_UPDATED_TIMESTAMP};
+		Account account = new Account(context);
+		String selection = ChatProvider.CMMetaData.ChatMetaData.USER_ID + "!=" + account.getUser_id() + " AND " + ChatProvider.CMMetaData.ChatMetaData.E_ID + "=" + eventId;
+		Cursor cur = context.getContentResolver().query(uri, projection, selection, null, null);
+		if(cur.moveToFirst()){
+			cur.getLong(cur.getColumnIndex(LASTEST_UPDATED_TIMESTAMP));
+		}
+		cur.close();
 		return eventId;
 	}
 }
