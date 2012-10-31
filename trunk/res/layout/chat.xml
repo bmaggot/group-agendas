@@ -3,29 +3,82 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical" >
-    
+
     <LinearLayout
         android:id="@+id/chat_thread_top_bar"
         android:layout_width="match_parent"
-        android:layout_height="50dp"
+        android:layout_height="60dp"
         android:background="@drawable/top_bar_background"
-        android:gravity="center_vertical"
+        android:gravity="center"
         android:orientation="horizontal"
-        android:paddingBottom="10dp"
-        android:paddingTop="15dp" >
-        
-        <ProgressBar
-        android:id="@+id/progress"
-        style="@android:style/Widget.ProgressBar.Small"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center_vertical|left"
-        android:layout_marginRight="20dp"
-        android:visibility="gone" />
-        
-    </LinearLayout>
+        android:paddingBottom="5dp"
+        android:paddingTop="10dp" >
 
-    
+        <Button
+            android:id="@+id/chat_message_info_chats_button"
+            android:layout_width="wrap_content"
+            android:layout_height="40dp"
+            android:layout_gravity="left"
+            android:layout_marginLeft="5dp"
+            android:layout_marginRight="10dp"
+            android:layout_weight="0.1"
+            android:background="@drawable/chat_message_event_button"
+            android:paddingBottom="4dp"
+            android:paddingTop="4dp"
+            android:text="@string/chats"
+            android:textColor="@color/white"
+            android:textAppearance="@style/chat_message_top_bar_buttons" />
+
+        <LinearLayout
+            android:id="@+id/chat_message_info"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:orientation="vertical" >
+
+            <TextView
+                android:id="@+id/chat_info_message_title"
+                android:layout_width="140dp"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:singleLine="true"
+                android:textColor="@color/white"
+                android:textSize="14dp"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/chat_info_message_people"
+                android:layout_width="140dp"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:singleLine="true"
+                android:textColor="@color/white"
+                android:textSize="10dp" />
+
+            <ProgressBar
+                android:id="@+id/progress"
+                style="@android:style/Widget.ProgressBar.Small"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:visibility="gone" />
+        </LinearLayout>
+
+        <Button
+            android:id="@+id/chat_message_info_event_button"
+            android:layout_width="wrap_content"
+            android:layout_height="40dp"
+            android:layout_gravity="right"
+            android:layout_marginLeft="10dp"
+            android:layout_marginRight="5dp"
+            android:layout_weight="0.1"
+            android:background="@drawable/chat_message_event_button"
+            android:paddingBottom="4dp"
+            android:paddingTop="4dp"
+            android:text="@string/event"
+            android:textColor="@color/white"
+            android:textAppearance="@style/chat_message_top_bar_buttons" />
+    </LinearLayout>
 
     <ListView
         android:id="@+id/chat_message_list"
@@ -33,20 +86,21 @@
         android:layout_height="0dp"
         android:layout_gravity="top"
         android:layout_weight="1"
-        android:dividerHeight="0dp"
-        android:divider="@null"
         android:background="@color/white"
         android:cacheColorHint="#00000000"
+        android:divider="@null"
+        android:dividerHeight="0dp"
         android:fadingEdge="none"
         android:fitsSystemWindows="true"
+        android:paddingBottom="10dp"
         android:paddingLeft="10dp"
-        android:paddingRight="10dp"
-        android:paddingBottom="10dp" />
-    <View 
+        android:paddingRight="10dp" />
+
+    <View
         android:id="@+id/top_line"
         android:layout_width="fill_parent"
         android:layout_height="2dp"
-        android:background="#c1e5eb"/>
+        android:background="#c1e5eb" />
 
     <LinearLayout
         android:id="@+id/chat_inputBlock"
@@ -64,34 +118,35 @@
             android:layout_width="0dp"
             android:layout_height="fill_parent"
             android:layout_gravity="left"
-            android:background="@drawable/chat_message_edit_text"
             android:layout_marginLeft="10dp"
-            android:padding="10dp"
             android:layout_weight="0.6"
+            android:background="@drawable/chat_message_edit_text"
             android:inputType="textMultiLine"
             android:maxLines="3"
-            android:minLines="2" />
+            android:minLines="2"
+            android:padding="10dp" />
 
         <Button
             android:id="@+id/chat_send"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center_vertical"
+            android:layout_marginLeft="5dp"
+            android:layout_marginRight="5dp"
             android:background="@drawable/chat_message_send_button"
-            android:paddingTop="13dp"
             android:paddingBottom="13dp"
             android:paddingLeft="20dp"
             android:paddingRight="20dp"
-            android:layout_marginLeft="5dp"
-            android:layout_marginRight="5dp"
-            android:text="@string/chat_send" 
-            android:textColor="@color/darker_blue"
-            android:textAppearance="@style/chat_message_send_button"/>
+            android:paddingTop="13dp"
+            android:text="@string/chat_send"
+            android:textAppearance="@style/chat_message_send_button"
+            android:textColor="@color/darker_blue" />
     </LinearLayout>
-    <View 
+
+    <View
         android:id="@+id/bottom_line"
         android:layout_width="fill_parent"
         android:layout_height="1dp"
-        android:background="#2ac0da"/>
+        android:background="#2ac0da" />
 
 </LinearLayout>
