@@ -56,13 +56,13 @@ public class MonthDayFrame extends RelativeLayout {
 		int maxChildren = frameWidth / (BUBBLE_WIDTH_PX + BUBBLE_MARGIN_PX); 
 		
 		for (Event event : eventColorsArray) {
-			if (event.getStatus() != Invited.PENDING || event.is_owner()) {
+//			if (event.getStatus() != Invited.PENDING || event.is_owner()) {
 				while (!addBubbleToLine(line, maxChildren, event)){
 					line = createBubbleContainerLine();
 					addBubbleToLine(line, maxChildren, event);
 					allBubblesContainer.addView(line);
 				}
-			}
+//			}
 		}
 
 	}
