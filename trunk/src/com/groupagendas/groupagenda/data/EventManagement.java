@@ -463,6 +463,7 @@ public class EventManagement {
 		}
 		
 		String rejectedFilter = " AND " + EventsProvider.EMetaData.EventsMetaData.STATUS + "!=" + Invited.REJECTED;
+		rejectedFilter += " AND " + EventsProvider.EMetaData.EventsMetaData.STATUS + "!=" + Invited.PENDING;
 		if (filterRejected) where += rejectedFilter;
 		
 		return context.getContentResolver().query(uri, projection, where, null, sortOrder);
