@@ -187,7 +187,6 @@ public class ChatMessageActivity extends Activity {
 	private BroadcastReceiver mMessageReceiver = new BroadcastReceiver() {
 		@Override
 		public void onReceive(Context context, Intent intent) {
-			C2DMReceiver.chatMessagesWindowUpdated = true;
 			Object[] params = { context, event_id, true };
 			new GetChatMessagesForEventDb().execute(params);
 		}
