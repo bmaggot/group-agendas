@@ -2,6 +2,7 @@ package com.groupagendas.groupagenda.contacts;
 
 import java.util.Map;
 
+import android.content.Context;
 import android.database.Cursor;
 
 import com.groupagendas.groupagenda.utils.MapUtils;
@@ -28,7 +29,7 @@ public class Group extends Object{
 		super();
 	}
 	
-	public Group(Cursor cur) {
+	public Group(Context context, Cursor cur) {
 		this.group_id = cur.getInt(cur.getColumnIndex(ContactsProvider.CMetaData.GroupsMetaData.G_ID));
 		this.title = cur.getString(cur.getColumnIndex(ContactsProvider.CMetaData.GroupsMetaData.TITLE));
 		this.created = cur.getLong(cur.getColumnIndex(ContactsProvider.CMetaData.GroupsMetaData.CREATED));
@@ -55,7 +56,7 @@ public class Group extends Object{
 
 		String resp = cur.getString(cur.getColumnIndex(ContactsProvider.CMetaData.GroupsMetaData.CONTACTS));
 		if (resp != null) {
-			this.contacts = MapUtils.stringToMap(cur.getString(cur.getColumnIndex(ContactsProvider.CMetaData.GroupsMetaData.CONTACTS)));
+			this.contacts = MapUtils.stringToMap(context, cur.getString(cur.getColumnIndex(ContactsProvider.CMetaData.GroupsMetaData.CONTACTS)));
 		}
 	}
 }

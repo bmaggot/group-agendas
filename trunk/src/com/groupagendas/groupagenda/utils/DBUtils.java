@@ -47,7 +47,7 @@ public class DBUtils {
 			myOutput.close();
 			myInput.close();
 		} catch (IOException e) {
-			Reporter.reportError(this.getClass().toString(), Thread.currentThread().getStackTrace()[2].getMethodName().toString(), e.getMessage());
+			Reporter.reportError(cont, this.getClass().toString(), Thread.currentThread().getStackTrace()[2].getMethodName().toString(), e.getMessage());
 		}
 	}
 }

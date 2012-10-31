@@ -157,16 +157,16 @@ public class TimezoneProvider extends ContentProvider {
 	}
 	
 	private static class DatabaseHelper extends SQLiteOpenHelper {
-		Context context;
+//		Context context;
 		
 		public DatabaseHelper(Context context) {
 			super(context, TMetaData.DATABASE_NAME, null, TMetaData.DATABASE_VERSION);
-			this.context = context;
+//			this.context = context;
 		}
 
 		@Override
 		public void onCreate(SQLiteDatabase db) {
-			ContentValues cv = new ContentValues();
+//			ContentValues cv = new ContentValues();
 			String query =	"CREATE TABLE "
 				+TMetaData.TIMEZONE_TABLE+" ("
 				+TMetaData.TimezoneMetaData._ID+ " INTEGER,"

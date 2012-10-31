@@ -32,7 +32,7 @@ public class AgendaDayAdapter extends AbstractAdapter<Event> {
 		super(context, list);
 		this.showTime = showTime;
 		
-		if (CalendarSettings.isUsing_AM_PM()){
+		if (CalendarSettings.isUsing_AM_PM(context)){
 			hoursFormatter = new SimpleDateFormat(getContext().getString(R.string.time_format_AMPM));
 		}else{
 			hoursFormatter = new SimpleDateFormat(getContext().getString(R.string.time_format));

@@ -14,12 +14,14 @@ import java.util.Stack;
 import java.util.WeakHashMap;
 
 import android.app.Activity;
+import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.widget.ImageView;
 
 import com.groupagendas.groupagenda.AgendaApplication;
 import com.groupagendas.groupagenda.R;
+import com.groupagendas.groupagenda.data.DataManagement;
 import com.groupagendas.groupagenda.error.report.Reporter;
 
 public class ImageLoader {
@@ -72,7 +74,7 @@ public class ImageLoader {
 			photoLoaderThread.start();
 	}
 
-	private Bitmap getBitmap(String url) {
+	private Bitmap getBitmap(Context context, String url) {
 		File f = fileCache.getFile(url);
 
 		// from SD cache
@@ -90,13 +92,13 @@ public class ImageLoader {
 				conn.setReadTimeout(30000);
 				InputStream is = conn.getInputStream();
 				OutputStream os = new FileOutputStream(f);
-				Utils.CopyStream(is, os);
+				Utils.CopyStream(context, is, os);
 				os.close();
 				is.close();
 				bitmap = decodeFile(f);
 				return bitmap;
 			} catch (Exception ex) {
-				Reporter.reportError(this.getClass().toString(), Thread.currentThread().getStackTrace()[2].getMethodName().toString(), ex.getMessage());
+				Reporter.reportError(context, this.getClass().toString(), Thread.currentThread().getStackTrace()[2].getMethodName().toString(), ex.getMessage());
 				return null;
 			}
 		}
@@ -129,7 +131,7 @@ public class ImageLoader {
 			o2.inSampleSize = scale;
 			return BitmapFactory.decodeStream(new FileInputStream(f), null, o2);
 		} catch (FileNotFoundException e) {
-			Reporter.reportError(this.getClass().toString(), Thread.currentThread().getStackTrace()[2].getMethodName().toString(), e.getMessage());
+			Reporter.reportError(DataManagement.getContext(), this.getClass().toString(), Thread.currentThread().getStackTrace()[2].getMethodName().toString(), e.getMessage());
 		}
 		return null;
 	}
@@ -183,7 +185,7 @@ public class ImageLoader {
 						synchronized (photosQueue.photosToLoad) {
 							photoToLoad = photosQueue.photosToLoad.pop();
 						}
-						Bitmap bmp = getBitmap(photoToLoad.url);
+						Bitmap bmp = getBitmap(DataManagement.getContext(), photoToLoad.url);
 						if(saveToMemory) memoryCache.put(photoToLoad.url, bmp);
 						String tag = imageViews.get(photoToLoad.imageView);
 						if (tag != null && tag.equals(photoToLoad.url)) {
@@ -196,7 +198,7 @@ public class ImageLoader {
 						break;
 				}
 			} catch (InterruptedException e) {
-				Reporter.reportError(this.getClass().toString(), Thread.currentThread().getStackTrace()[2].getMethodName().toString(), e.getMessage());
+//				Reporter.reportError(this.getClass().toString(), Thread.currentThread().getStackTrace()[2].getMethodName().toString(), e.getMessage());
 			}
 		}
 	}

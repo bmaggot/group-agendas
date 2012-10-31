@@ -299,7 +299,7 @@ public class NavbarActivity extends FragmentActivity {
 			loadPhase = state.getInt("loadPhase");
 			viewState = ViewState
 					.getValueByString(state.getString("viewState"));
-			selectedDate = Utils.stringToCalendar(
+			selectedDate = Utils.stringToCalendar( getApplicationContext(),
 					state.getString("selectedDate"),
 					DataManagement.SERVER_TIMESTAMP_FORMAT);
 			selectedDate
@@ -315,7 +315,7 @@ public class NavbarActivity extends FragmentActivity {
 
 		if (viewState == null)
 			viewState = ViewState.getValueByString(CalendarSettings
-					.getDefaultView());
+					.getDefaultView(this));
 
 		switch (viewState) {
 		case DAY:
@@ -367,7 +367,7 @@ public class NavbarActivity extends FragmentActivity {
 						mDateTimePicker.clearFocus();
 						String dayStr = new SimpleDateFormat("yyyy-MM-dd")
 								.format(mDateTimePicker.getCalendar().getTime());
-						selectedDate = Utils.stringToCalendar(dayStr
+						selectedDate = Utils.stringToCalendar(getApplicationContext(), dayStr
 								+ " 00:00:00",
 								DataManagement.SERVER_TIMESTAMP_FORMAT);
 						selectedDate.setFirstDayOfWeek(CalendarSettings
@@ -729,7 +729,7 @@ public class NavbarActivity extends FragmentActivity {
 					case 6: // Load chat threads if network available 
 						if (DataManagement.networkAvailable)
 //							dm.getChatThreads();
-						dm.getAddressesFromRemoteDb();
+						dm.getAddressesFromRemoteDb(getApplicationContext());
 						ChatManagement.getAllChatMessagesFromRemoteDb(NavbarActivity.this);
 						loadPhase++;
 						total = 100;

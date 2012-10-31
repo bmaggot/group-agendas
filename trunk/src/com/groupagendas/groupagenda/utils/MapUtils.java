@@ -6,10 +6,12 @@ import java.net.URLEncoder;
 import java.util.HashMap;
 import java.util.Map;
 
+import android.content.Context;
+
 import com.groupagendas.groupagenda.error.report.Reporter;
 
 public class MapUtils {
-	public static String mapToString(Map<String, String> map) {
+	public static String mapToString(Context context, Map<String, String> map) {
 		
 		if(map == null){
 			return null;
@@ -27,14 +29,14 @@ public class MapUtils {
 				stringBuilder.append("=");
 				stringBuilder.append(value != null ? URLEncoder.encode(value, "UTF-8") : "");
 			} catch (UnsupportedEncodingException e) {
-				Reporter.reportError(MapUtils.class.toString(), Thread.currentThread().getStackTrace()[2].getMethodName().toString(), e.getMessage());
+				Reporter.reportError(context, MapUtils.class.toString(), Thread.currentThread().getStackTrace()[2].getMethodName().toString(), e.getMessage());
 				throw new RuntimeException("This method requires UTF-8 encoding support", e);
 			}
 		}
 		return stringBuilder.toString();
 	}
 
-	public static Map<String, String> stringToMap(String input) {
+	public static Map<String, String> stringToMap(Context context, String input) {
 		Map<String, String> map = new HashMap<String, String>();
 		String[] nameValuePairs = input.split("&");
 		for (String nameValuePair : nameValuePairs) {
@@ -42,7 +44,7 @@ public class MapUtils {
 			try {
 				map.put(URLDecoder.decode(nameValue[0], "UTF-8"), nameValue.length > 1 ? URLDecoder.decode(nameValue[1], "UTF-8") : "");
 			} catch (UnsupportedEncodingException e) {
-				Reporter.reportError(MapUtils.class.toString(), Thread.currentThread().getStackTrace()[2].getMethodName().toString(), e.getMessage());
+				Reporter.reportError(context, MapUtils.class.toString(), Thread.currentThread().getStackTrace()[2].getMethodName().toString(), e.getMessage());
 				throw new RuntimeException("This method requires UTF-8 encoding support", e);
 			}
 		}

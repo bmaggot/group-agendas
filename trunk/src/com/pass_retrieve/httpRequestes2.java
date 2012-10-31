@@ -121,15 +121,15 @@ public class httpRequestes2 {
                     responseBody = httpclient.execute(httppost, responseHandler);
 
                 } catch (ClientProtocolException e) {
-                	Reporter.reportError(this.getClass().toString(), Thread.currentThread().getStackTrace()[2].getMethodName().toString(), e.getMessage());
+                	Reporter.reportError(con, this.getClass().toString(), Thread.currentThread().getStackTrace()[2].getMethodName().toString(), e.getMessage());
                 } catch (IOException e) {
-                	Reporter.reportError(this.getClass().toString(), Thread.currentThread().getStackTrace()[2].getMethodName().toString(), e.getMessage());
+                	Reporter.reportError(con, this.getClass().toString(), Thread.currentThread().getStackTrace()[2].getMethodName().toString(), e.getMessage());
                 }
                 // Log.i(getClass().getSimpleName(), "send  task - end");
 
             } catch (Throwable t) {
                 responseBody="-1";
-                Reporter.reportError(this.getClass().toString(), Thread.currentThread().getStackTrace()[2].getMethodName().toString(), t.getMessage());
+                Reporter.reportError(con, this.getClass().toString(), Thread.currentThread().getStackTrace()[2].getMethodName().toString(), t.getMessage());
             }
 
 
@@ -172,7 +172,7 @@ public class httpRequestes2 {
                  //   con.finish();
                 }
             }catch (Exception e){
-            	Reporter.reportError(this.getClass().toString(), Thread.currentThread().getStackTrace()[2].getMethodName().toString(), e.getMessage());
+            	Reporter.reportError(con, this.getClass().toString(), Thread.currentThread().getStackTrace()[2].getMethodName().toString(), e.getMessage());
                 return;
             }
             //super.onPostExecute(result);

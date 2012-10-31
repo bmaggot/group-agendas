@@ -41,7 +41,7 @@ public class RequestTokenActivity extends Activity {
     				C.AUTHORIZE_URL);
     	} catch (Exception e) {
     		Log.e(C.TAG, "Error creating consumer / provider",e);
-			Reporter.reportError(this.getClass().toString(), Thread.currentThread().getStackTrace()[2].getMethodName().toString(), e.getMessage());
+			Reporter.reportError(getApplicationContext(), this.getClass().toString(), Thread.currentThread().getStackTrace()[2].getMethodName().toString(), e.getMessage());
     	}
 
     	try {
@@ -141,7 +141,7 @@ public class RequestTokenActivity extends Activity {
 				rta.startActivity(intent);
 			} catch (Exception e) {
 				Log.e(C.TAG, "Error retrieving request token", e);
-				Reporter.reportError(this.getClass().toString(), Thread.currentThread().getStackTrace()[2].getMethodName().toString(), e.getMessage());
+				Reporter.reportError(getApplicationContext(), this.getClass().toString(), Thread.currentThread().getStackTrace()[2].getMethodName().toString(), e.getMessage());
 			}
 			return null;
 		}
@@ -174,7 +174,7 @@ public class RequestTokenActivity extends Activity {
 				
 			} catch (Exception e) {
 				Log.e(C.TAG, "Access Token Retrieval Error", e);
-				Reporter.reportError(this.getClass().toString(), Thread.currentThread().getStackTrace()[2].getMethodName().toString(), e.getMessage());
+				Reporter.reportError(getApplicationContext(), this.getClass().toString(), Thread.currentThread().getStackTrace()[2].getMethodName().toString(), e.getMessage());
 			}
 			return null;
 		}

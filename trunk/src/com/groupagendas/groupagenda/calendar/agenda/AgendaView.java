@@ -239,7 +239,7 @@ public class AgendaView extends AbstractCalendarView {
 		@Override
 		protected Void doInBackground(Void... params) {
 			sortedEvents = TreeMapUtils
-					.sortEvents(getEventProjectionsForDisplay(shownDate));
+					.sortEvents(context, getEventProjectionsForDisplay(shownDate));
 			return null;
 		}
 

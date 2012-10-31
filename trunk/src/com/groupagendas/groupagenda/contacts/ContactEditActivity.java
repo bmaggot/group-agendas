@@ -72,8 +72,6 @@ public class ContactEditActivity extends Activity implements OnClickListener, On
 	private static final int CROP_FROM_CAMERA = 2;
 	private static final int PICK_FROM_FILE = 3;
 
-	private DataManagement dm;
-
 	private Contact editedContact;
 
 	private Button groupsButton;
@@ -115,7 +113,7 @@ public class ContactEditActivity extends Activity implements OnClickListener, On
 		super.onCreate(savedInstanceState);
 		this.setContentView(R.layout.contact_edit);
 
-		dm = DataManagement.getInstance(this);
+		DataManagement.getInstance(this);
 
 		dtUtils = new DateTimeUtils(this);
 
@@ -335,7 +333,7 @@ public class ContactEditActivity extends Activity implements OnClickListener, On
 
 							startActivityForResult(intent, PICK_FROM_CAMERA);
 						} catch (ActivityNotFoundException e) {
-							Reporter.reportError(this.getClass().toString(), Thread.currentThread().getStackTrace()[2].getMethodName()
+							Reporter.reportError(getApplicationContext(), this.getClass().toString(), Thread.currentThread().getStackTrace()[2].getMethodName()
 									.toString(), e.getMessage());
 						}
 					} else { // pick from file
@@ -385,7 +383,7 @@ public class ContactEditActivity extends Activity implements OnClickListener, On
 				phoneView.setText(result.phone1);
 
 			if (!result.birthdate.equals("null")) {			
-				birthdateCalendar = Utils.stringToCalendar(result.birthdate, DataManagement.SERVER_TIMESTAMP_FORMAT);
+				birthdateCalendar = Utils.stringToCalendar(getApplicationContext(), result.birthdate, DataManagement.SERVER_TIMESTAMP_FORMAT);
 				birthdateView.setText(dtUtils.formatDate(birthdateCalendar));
 			}
 
@@ -460,7 +458,7 @@ public class ContactEditActivity extends Activity implements OnClickListener, On
 			editedContact.phone1 = temp;
 			cv.put(ContactsProvider.CMetaData.ContactsMetaData.PHONE, temp);
 
-			editedContact.birthdate = dtUtils.formatDateToDefault(birthdateCalendar.getTime());
+			editedContact.birthdate = dtUtils.formatDate(birthdateCalendar);
 			cv.put(ContactsProvider.CMetaData.ContactsMetaData.BIRTHDATE, temp);
 
 			editedContact.country = countriesList.get(timezoneInUse).country;
@@ -483,7 +481,7 @@ public class ContactEditActivity extends Activity implements OnClickListener, On
 			cv.put(ContactsProvider.CMetaData.ContactsMetaData.VISIBILITY, temp);
 
 			// groups
-			cv.put(ContactsProvider.CMetaData.ContactsMetaData.GROUPS, MapUtils.mapToString(editedContact.groups));
+			cv.put(ContactsProvider.CMetaData.ContactsMetaData.GROUPS, MapUtils.mapToString(getApplicationContext(), editedContact.groups));
 
 			// image
 			editedContact.remove_image = removeImage.isChecked();
@@ -502,7 +500,7 @@ public class ContactEditActivity extends Activity implements OnClickListener, On
 				getContentResolver().update(uri, cv, null, null);
 				editedContact.modified = Calendar.getInstance().getTimeInMillis();
 
-				check = ContactManagement.editContactOnRemoteDb(editedContact);
+				check = ContactManagement.editContactOnRemoteDb(getApplicationContext(), editedContact);
 
 				if (check) {
 					check = ContactManagement.updateContactOnLocalDb(ContactEditActivity.this, editedContact);
@@ -517,7 +515,7 @@ public class ContactEditActivity extends Activity implements OnClickListener, On
 			if (results) {
 				ContactEditActivity.this.finish();
 			} else {
-				ERROR_STRING = dm.getError();
+				ERROR_STRING = DataManagement.getError();
 				showDialog(ERROR_DIALOG);
 			}
 			super.onPostExecute(results);
@@ -578,7 +576,7 @@ public class ContactEditActivity extends Activity implements OnClickListener, On
 			cv.put(ContactsProvider.CMetaData.ContactsMetaData.VISIBILITY, temp);
 
 			// groups
-			cv.put(ContactsProvider.CMetaData.ContactsMetaData.GROUPS, MapUtils.mapToString(editedContact.groups));
+			cv.put(ContactsProvider.CMetaData.ContactsMetaData.GROUPS, MapUtils.mapToString(getApplicationContext(), editedContact.groups));
 
 			if (editedContact.image_bytes != null) {
 				cv.put(ContactsProvider.CMetaData.ContactsMetaData.IMAGE_BYTES, editedContact.image_bytes);

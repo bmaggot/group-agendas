@@ -8,6 +8,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import android.content.Context;
 import android.util.Log;
 
 import com.groupagendas.groupagenda.account.Account;
@@ -22,12 +23,12 @@ import com.groupagendas.groupagenda.events.Invited;
 
 public class JSONUtils {
 
-	public static ArrayList<Event> JSONArrayToEventArray(JSONArray eventChanges) {
+	public static ArrayList<Event> JSONArrayToEventArray(Context context, JSONArray eventChanges) {
 		ArrayList<Event> result =  new ArrayList<Event>();
 		if (eventChanges != null){
 			for (int i = 0; i < eventChanges.length(); i++){
 				JSONObject o = eventChanges.optJSONObject(i);
-				if (o != null) result.add(JSONUtils.createEventFromJSON(o));
+				if (o != null) result.add(JSONUtils.createEventFromJSON(context, o));
 			}
 		}
 		return result;
@@ -56,14 +57,14 @@ public class JSONUtils {
 		 *         time_start_utc<br>
 		 *         time_end_utc<br>
 		 */
-		public static Event createEventFromJSON(JSONObject e) {
+		public static Event createEventFromJSON(Context context, JSONObject e) {
 			Event event = new Event();
 			long unixTimestamp;
 			try {
 				event.setEvent_id(e.getInt(EventManagement.EVENT_ID));
 				event.setTimezone(e.getString(EventManagement.TIMEZONE));
 			} catch (JSONException e1) {
-				Reporter.reportError(EventManagement.CLASS_NAME, Thread.currentThread().getStackTrace()[2].getMethodName().toString(),
+				Reporter.reportError(context, EventManagement.CLASS_NAME, Thread.currentThread().getStackTrace()[2].getMethodName().toString(),
 						e1.getMessage());
 			}
 				// EVENT TIME START
@@ -114,37 +115,37 @@ public class JSONUtils {
 			try {
 				event.setTake_with_you(e.getString(EventManagement.TAKE_WITH_YOU));
 			} catch (JSONException e1) {
-				Reporter.reportError(EventManagement.CLASS_NAME, Thread.currentThread().getStackTrace()[2].getMethodName().toString(),
+				Reporter.reportError(context, EventManagement.CLASS_NAME, Thread.currentThread().getStackTrace()[2].getMethodName().toString(),
 						e1.getMessage());
 			}
 			try {
 				event.setGo_by(e.getString(EventManagement.GO_BY));
 			} catch (JSONException e1) {
-				Reporter.reportError(EventManagement.CLASS_NAME, Thread.currentThread().getStackTrace()[2].getMethodName().toString(),
+				Reporter.reportError(context, EventManagement.CLASS_NAME, Thread.currentThread().getStackTrace()[2].getMethodName().toString(),
 						e1.getMessage());
 			}
 			try {
 				event.setCountry(e.getString(EventManagement.COUNTRY));
 			} catch (JSONException e1) {
-				Reporter.reportError(EventManagement.CLASS_NAME, Thread.currentThread().getStackTrace()[2].getMethodName().toString(),
+				Reporter.reportError(context, EventManagement.CLASS_NAME, Thread.currentThread().getStackTrace()[2].getMethodName().toString(),
 						e1.getMessage());
 			}
 			try {
 				event.setCity(e.getString(EventManagement.CITY));
 			} catch (JSONException e1) {
-				Reporter.reportError(EventManagement.CLASS_NAME, Thread.currentThread().getStackTrace()[2].getMethodName().toString(),
+				Reporter.reportError(context, EventManagement.CLASS_NAME, Thread.currentThread().getStackTrace()[2].getMethodName().toString(),
 						e1.getMessage());
 			}
 			try {
 				event.setStreet(e.getString(EventManagement.STREET));
 			} catch (JSONException e1) {
-				Reporter.reportError(EventManagement.CLASS_NAME, Thread.currentThread().getStackTrace()[2].getMethodName().toString(),
+				Reporter.reportError(context, EventManagement.CLASS_NAME, Thread.currentThread().getStackTrace()[2].getMethodName().toString(),
 						e1.getMessage());
 			}
 			try {
 				event.setZip(e.getString(EventManagement.ZIP));
 			} catch (JSONException e1) {
-				Reporter.reportError(EventManagement.CLASS_NAME, Thread.currentThread().getStackTrace()[2].getMethodName().toString(),
+				Reporter.reportError(context, EventManagement.CLASS_NAME, Thread.currentThread().getStackTrace()[2].getMethodName().toString(),
 						e1.getMessage());
 			}
 	
@@ -167,20 +168,20 @@ public class JSONUtils {
 				event.setAlarm1fired(e.getString(EventManagement.ALARM_1_FIRED));
 			} catch (JSONException e1) {
 	//			System.out.println("LONG PARSE FAILED");
-				Reporter.reportError(EventManagement.CLASS_NAME, Thread.currentThread().getStackTrace()[2].getMethodName().toString(),
+				Reporter.reportError(context, EventManagement.CLASS_NAME, Thread.currentThread().getStackTrace()[2].getMethodName().toString(),
 						e1.getMessage());
 			}
 			try {
 				event.setAlarm2fired(e.getString(EventManagement.ALARM_2_FIRED));
 			} catch (JSONException e1) {
-				Reporter.reportError(EventManagement.CLASS_NAME, Thread.currentThread().getStackTrace()[2].getMethodName().toString(),
+				Reporter.reportError(context, EventManagement.CLASS_NAME, Thread.currentThread().getStackTrace()[2].getMethodName().toString(),
 						e1.getMessage());
 			}
 		
 			try {
 				event.setAlarm3fired(e.getString(EventManagement.ALARM_3_FIRED));
 			} catch (JSONException e1) {
-				Reporter.reportError(EventManagement.CLASS_NAME, Thread.currentThread().getStackTrace()[2].getMethodName().toString(),
+				Reporter.reportError(context, EventManagement.CLASS_NAME, Thread.currentThread().getStackTrace()[2].getMethodName().toString(),
 						e1.getMessage());
 			}
 	
@@ -201,7 +202,7 @@ public class JSONUtils {
 			try {
 				event.setCreator_fullname(e.getString(EventManagement.CREATOR_FULLNAME));
 			} catch (JSONException e1) {
-				Reporter.reportError(EventManagement.CLASS_NAME, Thread.currentThread().getStackTrace()[2].getMethodName().toString(),
+				Reporter.reportError(context, EventManagement.CLASS_NAME, Thread.currentThread().getStackTrace()[2].getMethodName().toString(),
 						e1.getMessage());
 			}
 	
@@ -211,7 +212,7 @@ public class JSONUtils {
 				String jsonstring = e.getString(EventManagement.INVITED);
 			
 				ArrayList<Invited> invites = new ArrayList<Invited>();
-				createInvitedListFromJSONArrayString(jsonstring, invites);
+				createInvitedListFromJSONArrayString(context, jsonstring, invites);
 				event.setInvited(invites);
 			} catch (JSONException e1) {
 				event.setInvited(new ArrayList<Invited>());
@@ -224,11 +225,11 @@ public class JSONUtils {
 			return event;
 		}
 
-	public static Invited createInvitedListFromJSONArrayString(
+	public static Invited createInvitedListFromJSONArrayString(Context context,
 	String jsonArrayString, ArrayList<Invited> invites) throws JSONException  {
 	JSONArray jsonArray= new JSONArray(jsonArrayString);
 	if (invites == null) invites = new ArrayList<Invited>();
-	Account acc = new Account();
+	Account acc = new Account(context);
 	int id = acc.getUser_id();
 	Invited myInvite = null;
 	int count = jsonArray.length();

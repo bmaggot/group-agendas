@@ -19,10 +19,10 @@ import android.widget.ListView;
 
 import com.groupagendas.groupagenda.R;
 import com.groupagendas.groupagenda.calendar.adapters.YearViewEventsAdapter;
-import com.groupagendas.groupagenda.data.Data;
 import com.groupagendas.groupagenda.data.DataManagement;
 import com.groupagendas.groupagenda.events.Event;
 import com.groupagendas.groupagenda.events.NewEventActivity;
+import com.groupagendas.groupagenda.utils.DateTimeUtils;
 import com.groupagendas.groupagenda.utils.TreeMapUtils;
 import com.groupagendas.groupagenda.utils.Utils;
 
@@ -62,7 +62,9 @@ public class YearViewOnClickDialog extends Dialog implements android.view.View.O
 		this.setCanceledOnTouchOutside(true);
 		this.setContentView(R.layout.calendar_year_event_list);
 		this.selectedDate = selectedDate;
-		this.setTitle(Utils.formatCalendar(selectedDate));
+//		Utils.formatCalendar(selectedDate)
+		DateTimeUtils dtu = new DateTimeUtils(context);
+		this.setTitle(dtu.formatDate(selectedDate));
 		
 		
 		eventsList = (ListView) findViewById(R.id.year_event_list);

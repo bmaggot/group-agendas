@@ -5,6 +5,8 @@ import java.util.Calendar;
 import java.util.Collections;
 import java.util.List;
 
+import android.content.Context;
+
 import com.groupagendas.groupagenda.error.report.Reporter;
 import com.groupagendas.groupagenda.events.Event;
 
@@ -202,7 +204,7 @@ public class EventsHelper {
      * @param endTime     event end time string like "yyyy-MM-dd HH:mm:ss"
      * @return event object
      */
-    public static CEvent generateEvent(Event e) {
+    public static CEvent generateEvent(Context context, Event e) {
         
         CEvent event = new CEvent();
         event.setId(e.getEvent_id());
@@ -228,12 +230,12 @@ public class EventsHelper {
         	
             return event;
         } catch (Exception ex) {
-        	Reporter.reportError(EventsHelper.class.toString(), Thread.currentThread().getStackTrace()[2].getMethodName().toString(), ex.getMessage());
+        	Reporter.reportError(context, EventsHelper.class.toString(), Thread.currentThread().getStackTrace()[2].getMethodName().toString(), ex.getMessage());
             return null;
         }
     }
     
-    public static CEvent generateDayEvent(int id, String type, String name, String description, String startTime, String endTime) {
+    public static CEvent generateDayEvent(Context context, int id, String type, String name, String description, String startTime, String endTime) {
         try {
             CEvent event = new CEvent();
             
@@ -259,7 +261,7 @@ public class EventsHelper {
             event.setEndTime(endEventTime.getTimeInMillis());
             return event;
         } catch (Exception ex) {
-        	Reporter.reportError(EventsHelper.class.toString(), Thread.currentThread().getStackTrace()[2].getMethodName().toString(), ex.getMessage());
+        	Reporter.reportError(context, EventsHelper.class.toString(), Thread.currentThread().getStackTrace()[2].getMethodName().toString(), ex.getMessage());
             return null;
         }
     }

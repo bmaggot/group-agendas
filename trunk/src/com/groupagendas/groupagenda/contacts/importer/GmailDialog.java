@@ -245,7 +245,7 @@ public class GmailDialog extends Dialog {
 					}
 				} catch (JSONException e) {
 					Log.e("Contact structured postal address import", e.getMessage());
-					Reporter.reportError(this.getClass().toString(), Thread.currentThread().getStackTrace()[2].getMethodName().toString(),
+					Reporter.reportError(context, this.getClass().toString(), Thread.currentThread().getStackTrace()[2].getMethodName().toString(),
 							e.getMessage());
 				}
 
@@ -263,7 +263,7 @@ public class GmailDialog extends Dialog {
 			importStats[2] = totalEntries;
 		} catch (Exception e) {
 			Log.e(C.TAG, "Error executing request", e);
-			Reporter.reportError(this.getClass().toString(), Thread.currentThread().getStackTrace()[2].getMethodName().toString(),
+			Reporter.reportError(context, this.getClass().toString(), Thread.currentThread().getStackTrace()[2].getMethodName().toString(),
 					e.getMessage());
 		}
 		return importStats;

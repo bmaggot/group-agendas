@@ -64,7 +64,8 @@ public class EventView extends View{
 	     * @param measureSpec A measureSpec packed into an int
 	     * @return The width of the view, honoring constraints from measureSpec
 	     */
-	    private int measureWidth(int measureSpec) {
+	    @SuppressWarnings("unused")
+		private int measureWidth(int measureSpec) {
 	    	
 	    	
 	    	
@@ -93,7 +94,8 @@ public class EventView extends View{
 	     * @param measureSpec A measureSpec packed into an int
 	     * @return The height of the view, honoring constraints from measureSpec
 	     */
-	    private int measureHeight(int measureSpec) {
+	    @SuppressWarnings("unused")
+		private int measureHeight(int measureSpec) {
 	    	
 	        int result = measureSpec;
 	        int specMode = MeasureSpec.getMode(measureSpec);

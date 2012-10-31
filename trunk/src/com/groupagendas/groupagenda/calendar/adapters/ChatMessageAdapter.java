@@ -3,19 +3,16 @@ package com.groupagendas.groupagenda.calendar.adapters;
 import java.util.Calendar;
 import java.util.List;
 
-import android.content.Context;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.groupagendas.groupagenda.R;
 import com.groupagendas.groupagenda.account.Account;
 import com.groupagendas.groupagenda.chat.ChatMessageActivity;
 import com.groupagendas.groupagenda.chat.ChatMessageObject;
-import com.groupagendas.groupagenda.data.ChatManagement;
 import com.groupagendas.groupagenda.utils.DateTimeUtils;
 import com.groupagendas.groupagenda.utils.Utils;
 

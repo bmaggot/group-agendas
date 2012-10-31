@@ -31,9 +31,6 @@ public class ColorsAdapter extends BaseAdapter{
             imageView = (ImageView) convertView;
         }
         
-        String nameColor = "calendarbubble_"+mColors[position]+"_";
-		int image = mContext.getResources().getIdentifier(nameColor, "drawable", "com.groupagendas.groupagenda");
-        
         imageView.setImageBitmap(DrawingUtils.getColoredRoundRectangle(mContext, 20, mColors[position], false));
         return imageView;
 	}

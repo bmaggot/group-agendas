@@ -124,7 +124,7 @@ public class LoginActivity extends Activity {
 			String password = passwordText.getText().toString();
 			Boolean stay = stayCheck.isChecked();
 
-			success = dm.login(login, password);
+			success = dm.login(getApplicationContext(), login, password);
 
 			if (success) {
 				Account acc = new Account(LoginActivity.this);

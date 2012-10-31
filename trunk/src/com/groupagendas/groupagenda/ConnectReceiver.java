@@ -24,10 +24,13 @@ import com.groupagendas.groupagenda.data.OfflineData;
 import com.groupagendas.groupagenda.error.report.Reporter;
 
 public class ConnectReceiver extends BroadcastReceiver {
+	
+	private static Context context;
 
 	@SuppressWarnings("unchecked")
 	@Override
 	public void onReceive(Context context, Intent intent) {
+		ConnectReceiver.context = context;
 		ConnectivityManager conn = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
 
 	     if(intent.getExtras()!=null) {
@@ -92,7 +95,7 @@ public class ConnectReceiver extends BroadcastReceiver {
 					Data.setUnuploadedData(new ArrayList<OfflineData>());
 				}
 			} catch (Exception ex) {
-				Reporter.reportError(this.getClass().toString(), Thread.currentThread().getStackTrace()[2].getMethodName().toString(), ex.getMessage());
+				Reporter.reportError(context, this.getClass().toString(), Thread.currentThread().getStackTrace()[2].getMethodName().toString(), ex.getMessage());
 			}
 //			this.success = success;
 			return success;

@@ -169,7 +169,7 @@ public class GroupEditActivity extends Activity implements OnClickListener {
 			editedGroup.title = temp;
 			
 			// contacts
-			cv.put(ContactsProvider.CMetaData.GroupsMetaData.CONTACTS, MapUtils.mapToString(editedGroup.contacts));
+			cv.put(ContactsProvider.CMetaData.GroupsMetaData.CONTACTS, MapUtils.mapToString(getApplicationContext(), editedGroup.contacts));
 			cv.put(ContactsProvider.CMetaData.GroupsMetaData.CONTACT_COUNT, editedGroup.contacts.size());
 			
 			if(editedGroup.image_bytes != null){
@@ -191,7 +191,7 @@ public class GroupEditActivity extends Activity implements OnClickListener {
 			if (result) {
 				onBackPressed();
 			} else {
-				ERROR_STRING = dm.getError();
+				ERROR_STRING = DataManagement.getError();
 				showDialog(ERROR_DIALOG);
 			}
 			pb.setVisibility(View.GONE);
@@ -222,7 +222,7 @@ public class GroupEditActivity extends Activity implements OnClickListener {
 			editedGroup.title = temp;
 			
 			// contacts
-			cv.put(ContactsProvider.CMetaData.GroupsMetaData.CONTACTS, MapUtils.mapToString(editedGroup.contacts));
+			cv.put(ContactsProvider.CMetaData.GroupsMetaData.CONTACTS, MapUtils.mapToString(getApplicationContext(), editedGroup.contacts));
 			cv.put(ContactsProvider.CMetaData.GroupsMetaData.CONTACT_COUNT, editedGroup.contacts.size());
 			
 			// image
@@ -240,7 +240,7 @@ public class GroupEditActivity extends Activity implements OnClickListener {
 			if(check){
 				Uri uri = Uri.parse(ContactsProvider.CMetaData.GroupsMetaData.CONTENT_URI+"/"+editedGroup.group_id);
 				getContentResolver().update(uri, cv, null, null);
-				check = dm.editGroup(editedGroup);
+				check = dm.editGroup(getApplicationContext(), editedGroup);
 				
 //				if(!success){
 //					cv = new ContentValues();
@@ -260,7 +260,7 @@ public class GroupEditActivity extends Activity implements OnClickListener {
 				setResult(1, intent);
 				finish();
 			} else {
-				ERROR_STRING = dm.getError();
+				ERROR_STRING = DataManagement.getError();
 				showDialog(ERROR_DIALOG);
 			}
 			pb.setVisibility(View.GONE);
@@ -371,7 +371,7 @@ public class GroupEditActivity extends Activity implements OnClickListener {
 
 							startActivityForResult(intent, PICK_FROM_CAMERA);
 						} catch (ActivityNotFoundException e) {
-							Reporter.reportError(this.getClass().toString(), Thread.currentThread().getStackTrace()[2].getMethodName().toString(), e.getMessage());
+							Reporter.reportError(getApplicationContext(), this.getClass().toString(), Thread.currentThread().getStackTrace()[2].getMethodName().toString(), e.getMessage());
 						}
 					} else { // pick from file
 						Intent intent = new Intent();

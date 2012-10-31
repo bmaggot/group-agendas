@@ -19,6 +19,7 @@ import org.json.JSONObject;
 import android.os.AsyncTask;
 
 import com.groupagendas.groupagenda.data.Data;
+import com.groupagendas.groupagenda.data.DataManagement;
 import com.groupagendas.groupagenda.error.report.Reporter;
 
 public class PrefixReceiver extends AsyncTask <String, Void, String> {
@@ -32,7 +33,7 @@ public class PrefixReceiver extends AsyncTask <String, Void, String> {
 		try {
 			reqEntity.addPart("country_name", new StringBody(country[0]));
 		} catch (UnsupportedEncodingException e1) {
-			Reporter.reportError(this.getClass().toString(), Thread.currentThread().getStackTrace()[2].getMethodName().toString(), e1.getMessage());
+			Reporter.reportError(DataManagement.getContext(), this.getClass().toString(), Thread.currentThread().getStackTrace()[2].getMethodName().toString(), e1.getMessage());
 		}
 		post.setEntity(reqEntity);
 		HttpResponse rp;
@@ -46,11 +47,11 @@ public class PrefixReceiver extends AsyncTask <String, Void, String> {
 				}
 			}
 		} catch (ClientProtocolException e) {
-			Reporter.reportError(this.getClass().toString(), Thread.currentThread().getStackTrace()[2].getMethodName().toString(), e.getMessage());
+			Reporter.reportError(DataManagement.getContext(), this.getClass().toString(), Thread.currentThread().getStackTrace()[2].getMethodName().toString(), e.getMessage());
 		} catch (IOException e) {
-			Reporter.reportError(this.getClass().toString(), Thread.currentThread().getStackTrace()[2].getMethodName().toString(), e.getMessage());
+			Reporter.reportError(DataManagement.getContext(), this.getClass().toString(), Thread.currentThread().getStackTrace()[2].getMethodName().toString(), e.getMessage());
 		} catch (JSONException e) {
-			Reporter.reportError(this.getClass().toString(), Thread.currentThread().getStackTrace()[2].getMethodName().toString(), e.getMessage());
+			Reporter.reportError(DataManagement.getContext(), this.getClass().toString(), Thread.currentThread().getStackTrace()[2].getMethodName().toString(), e.getMessage());
 		}
 		Data.localPrefix = phonePrefix;
 		return phonePrefix;

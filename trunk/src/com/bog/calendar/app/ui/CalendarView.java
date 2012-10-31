@@ -689,7 +689,7 @@ public class CalendarView extends FrameLayout {
             outDate.setTime(mDateFormat.parse(date));
             return true;
         } catch (ParseException e) {
-        	Reporter.reportError(this.getClass().toString(), Thread.currentThread().getStackTrace()[2].getMethodName().toString(), e.getMessage());
+        	Reporter.reportError(getContext(), this.getClass().toString(), Thread.currentThread().getStackTrace()[2].getMethodName().toString(), e.getMessage());
             return false;
         }
     }

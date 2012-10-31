@@ -16,6 +16,7 @@ import org.apache.http.util.EntityUtils;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import android.content.Context;
 import android.os.AsyncTask;
 import android.util.Log;
 
@@ -28,12 +29,14 @@ public class Reporter {
 	private static HttpPost post = new HttpPost(Data.getServerUrl() + "mobile/error_put");
 	private static MultipartEntity reqEntity = new MultipartEntity(HttpMultipartMode.BROWSER_COMPATIBLE);
 	private static HttpResponse rp;
+	private static Context context;
 
-	public static void reportError(String className, String methodName, String errorName) {
-		reportError(className, methodName, errorName, false);
+	public static void reportError(Context context, String className, String methodName, String errorName) {
+		Reporter.context = context;
+		reportError(context, className, methodName, errorName, false);
 	}
 
-	public static void reportError(String className, String methodName, String errorName, boolean sendToDb) {
+	public static void reportError(Context context, String className, String methodName, String errorName, boolean sendToDb) {
 		if (sendToDb) {
 			if (!methodName.equals("getAccountFromRemoteDb") && !methodName.equals("getContactsFromRemoteDb")
 					&& !methodName.equals("getGroupsFromRemoteDb") && !methodName.equals("getEventsFromRemoteDb")
@@ -55,8 +58,8 @@ public class Reporter {
 		protected Void doInBackground(String... params) {
 			String error = params[0];
 			try {
-				if (Data.getToken() != null) {
-					reqEntity.addPart("token", new StringBody(Data.getToken()));
+				if (Data.getToken(context) != null) {
+					reqEntity.addPart("token", new StringBody(Data.getToken(context)));
 				} else {
 					reqEntity.addPart("token", new StringBody("No token"));
 				}

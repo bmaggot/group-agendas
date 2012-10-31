@@ -85,7 +85,7 @@ public class MoreEmailsActivity extends Activity {
 					errorStr = getString(R.string.invalid_email, "1");
 				} else {
 					if (!email.equals(mAccount.getEmail2())) {
-						if (dm.changeEmail(email, 2)) {
+						if (dm.changeEmail(getApplicationContext(), email, 2)) {
 							mAccount.setEmail(email, 2);
 						}
 					}
@@ -100,7 +100,7 @@ public class MoreEmailsActivity extends Activity {
 					errorStr = getString(R.string.invalid_email, "2");
 				} else {
 					if (!email.equals(mAccount.getEmail3())) {
-						if (dm.changeEmail(email, 3)) {
+						if (dm.changeEmail(getApplicationContext(), email, 3)) {
 							mAccount.setEmail(email, 3);
 						}
 					}
@@ -115,7 +115,7 @@ public class MoreEmailsActivity extends Activity {
 					errorStr = getString(R.string.invalid_email, "3");
 				} else {
 					if (!email.equals(mAccount.getEmail4())) {
-						if (dm.changeEmail(email, 4)) {
+						if (dm.changeEmail(getApplicationContext(), email, 4)) {
 							mAccount.setEmail(email, 4);
 						}
 					}

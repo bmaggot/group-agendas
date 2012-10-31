@@ -41,8 +41,6 @@ public class ContactInfoActivity extends Activity {
 
 	private final int DELETE_DIALOG = 0;
 	
-	private DateTimeUtils dtUtils;
-	
 	@Override
 	public void onResume() {
 		super.onResume();
@@ -57,7 +55,7 @@ public class ContactInfoActivity extends Activity {
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 
-		dtUtils = new DateTimeUtils(this);
+		new DateTimeUtils(this);
 
 		intent = getIntent();
 
@@ -139,7 +137,7 @@ public class ContactInfoActivity extends Activity {
 			
 			Uri uri = Uri.parse(ContactsProvider.CMetaData.ContactsMetaData.CONTENT_URI+"/"+mContact.contact_id);
 			
-			Boolean result = ContactManagement.removeContactFromRemoteDb(mContact.contact_id);
+			Boolean result = ContactManagement.removeContactFromRemoteDb(getApplicationContext(), mContact.contact_id);
 			
 			if(result){
 				getContentResolver().delete(uri, null, null);

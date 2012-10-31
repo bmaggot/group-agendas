@@ -69,7 +69,7 @@ public class DayInstance  {
 			
 			if (!e.getStartCalendar().after(selectedDate)){
 				String dayStr = new SimpleDateFormat("yyyy-MM-dd").format(selectedDate.getTime());
-				Calendar tmp = Utils.stringToCalendar(dayStr + " 23:59:59", DataManagement.SERVER_TIMESTAMP_FORMAT);
+				Calendar tmp = Utils.stringToCalendar(getContext(), dayStr + " 23:59:59", DataManagement.SERVER_TIMESTAMP_FORMAT);
 				if (!e.getEndCalendar().before(tmp)) return true;
 			}
 			
