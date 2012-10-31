@@ -18,12 +18,19 @@ import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.ProgressBar;
+import android.widget.TextView;
 
 import com.groupagendas.groupagenda.C2DMReceiver;
+import com.groupagendas.groupagenda.EventActivityOnClickListener;
 import com.groupagendas.groupagenda.R;
+import com.groupagendas.groupagenda.account.Account;
 import com.groupagendas.groupagenda.calendar.adapters.ChatMessageAdapter;
 import com.groupagendas.groupagenda.data.ChatManagement;
 import com.groupagendas.groupagenda.data.DataManagement;
+import com.groupagendas.groupagenda.data.EventManagement;
+import com.groupagendas.groupagenda.events.Event;
+import com.groupagendas.groupagenda.events.EventEditActivity;
+import com.groupagendas.groupagenda.events.Invited;
 
 public class ChatMessageActivity extends Activity {
 	private int event_id;
@@ -45,6 +52,10 @@ public class ChatMessageActivity extends Activity {
 	protected void onResume() {
 		super.onResume();
 		setContentView(R.layout.chat);
+		TextView title = (TextView) findViewById(R.id.chat_info_message_title);
+		TextView invitedList = (TextView) findViewById(R.id.chat_info_message_people);
+//		Button chats = (Button) findViewById(R.id.chat_message_info_chats_button);
+		Button eventButton = (Button) findViewById(R.id.chat_message_info_event_button);
 		pb = (ProgressBar) findViewById(R.id.progress);
 
 		event_id = getIntent().getIntExtra("event_id", 0);
@@ -54,6 +65,34 @@ public class ChatMessageActivity extends Activity {
 		Object[] params = { this, event_id, false };
 
 		new GetChatMessagesForEventDb().execute(params);
+		
+		final Event event = EventManagement.getEventFromLocalDb(getApplicationContext(), event_id, EventManagement.ID_EXTERNAL);
+		title.setText(event.getTitle());
+		Account account = new Account(getApplicationContext());
+		String fullname = account.getFullname();
+		String invitedPersons = "";
+		for(Invited invitedPerson : event.getInvited()){
+			if(!invitedPerson.getName().equals(fullname)){
+				invitedPersons += invitedPerson.getName() +", ";
+			} else {
+				invitedPersons += getApplicationContext().getResources().getString(R.string.you) + ", ";
+			}
+		}
+		invitedPersons = invitedPersons.substring(0, invitedPersons.lastIndexOf(","));
+		invitedPersons += ".";
+		invitedList.setText(invitedPersons);
+		eventButton.setOnClickListener(new OnClickListener() {
+			
+			@Override
+			public void onClick(View v) {
+				Intent intent = new Intent(getApplicationContext(), EventEditActivity.class);
+				intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+				intent.putExtra("event_id", event.getInternalID());
+				intent.putExtra("type", event.getType());
+				intent.putExtra("isNative", event.isNative());
+				getApplicationContext().startActivity(intent);
+			}
+		});
 
 		adapter = new ChatMessageAdapter(ChatMessageActivity.this, chatMessages);
 		chat_message_list = (ListView) findViewById(R.id.chat_message_list);
