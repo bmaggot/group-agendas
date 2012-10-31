@@ -18,6 +18,8 @@ int[] importStats = new int[3];
 
 		ContentResolver cr = context.getContentResolver();
         Cursor cur = cr.query(ContactsContract.Contacts.CONTENT_URI, null, null, null, null);
+        
+        totalEntries = cur.getCount();
 
         if (cur.moveToFirst()) {
                 while (!cur.isAfterLast()) {
