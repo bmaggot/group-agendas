@@ -12,6 +12,7 @@
     <color name="red_lighter">#FFEEEE</color>
     <color name="red_darker">#FF002D</color>
     <color name="lighter_blue">#397dca</color>
+    <color name="darker_blue">#66cccc</color>
     
     <color name="event_invite_button_c_gradstart">#058CF5</color>
     <color name="event_invite_button_c_gradend">#015DE6</color>
