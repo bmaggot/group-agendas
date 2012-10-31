@@ -2,7 +2,6 @@ package com.groupagendas.groupagenda.data;
 
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -29,7 +28,6 @@ import android.database.sqlite.SQLiteException;
 import android.net.Uri;
 import android.util.Log;
 
-import com.groupagendas.groupagenda.C2DMReceiver;
 import com.groupagendas.groupagenda.account.Account;
 import com.groupagendas.groupagenda.contacts.Contact;
 import com.groupagendas.groupagenda.contacts.ContactsProvider;
@@ -54,7 +52,6 @@ public class ContactManagement {
 	public static void getContactsFromRemoteDb(Context context, HashSet<Integer> groupIds) {
 		boolean success = false;
 		String error = null;
-		@SuppressWarnings("unused")
 		Account account = new Account(context);
 		HttpClient hc = new DefaultHttpClient();
 		HttpPost post = new HttpPost(Data.getServerUrl() + "mobile/contact_list");
@@ -388,7 +385,7 @@ public class ContactManagement {
 
 				resp = cur.getString(cur.getColumnIndex(ContactsProvider.CMetaData.ContactsMetaData.GROUPS));
 				if (resp != null) {
-					temp.groups = MapUtils.stringToMap(resp);
+					temp.groups = MapUtils.stringToMap(context, resp);
 				}
 
 				temp.setColor(cur.getString(cur.getColumnIndex(ContactsProvider.CMetaData.ContactsMetaData.COLOR)));
@@ -406,11 +403,11 @@ public class ContactManagement {
 		return contacts;
 	}
 
-	public static int insertContactToRemoteDb(Contact contact, int id) {
+	public static int insertContactToRemoteDb(Context context,Contact contact, int id) {
 		String temp;
 		int destination_id = 0;
 		boolean success = false;
-		Account account = new Account();
+		Account account = new Account(context);
 		HttpClient hc = new DefaultHttpClient();
 		HttpPost post = new HttpPost(Data.getServerUrl() + "mobile/contact_create");
 		MultipartEntity reqEntity = new MultipartEntity(HttpMultipartMode.BROWSER_COMPATIBLE);
@@ -422,7 +419,7 @@ public class ContactManagement {
 		}
 
 		try {
-			reqEntity.addPart("token", new StringBody(Data.getToken()));
+			reqEntity.addPart("token", new StringBody(Data.getToken(context)));
 		} catch (UnsupportedEncodingException e) {
 			Log.e("insertContactToRemoteDb(group[id=" + contact.contact_id + "], " + id + ")", "Failed adding token to entity.");
 		}
@@ -732,7 +729,7 @@ public class ContactManagement {
 		cv.put(ContactsProvider.CMetaData.ContactsMetaData.CREATED, contact.created);
 		cv.put(ContactsProvider.CMetaData.ContactsMetaData.MODIFIED, contact.modified);
 
-		cv.put(ContactsProvider.CMetaData.ContactsMetaData.GROUPS, MapUtils.mapToString(contact.groups));
+		cv.put(ContactsProvider.CMetaData.ContactsMetaData.GROUPS, MapUtils.mapToString(context, contact.groups));
 
 		cv.put(ContactsProvider.CMetaData.ContactsMetaData.COLOR, contact.getColor());
 
@@ -747,7 +744,7 @@ public class ContactManagement {
 		boolean success = false;
 		int destination_id = 0;
 
-		destination_id = insertContactToRemoteDb(contact, 0);
+		destination_id = insertContactToRemoteDb(context, contact, 0);
 
 		if (destination_id >= 0) {
 			success = true;
@@ -811,7 +808,7 @@ public class ContactManagement {
 			Uri uri = Uri.parse(ContactsProvider.CMetaData.ContactsMetaData.CONTENT_URI + "/" + id);
 			cur = context.getContentResolver().query(uri, null, null, null, null);
 			if (cur.moveToFirst()){
-				temp = new Contact(cur);
+				temp = new Contact(context, cur);
 				cur.close();
 			}
 		} else {
@@ -820,7 +817,7 @@ public class ContactManagement {
 				cur = context.getContentResolver()
 						.query(ContactsProvider.CMetaData.ContactsMetaData.CONTENT_URI, null, where, null, null);
 				if (cur.moveToFirst())
-					temp = new Contact(cur);
+					temp = new Contact(context, cur);
 				cur.close();
 			}
 		}
@@ -882,7 +879,7 @@ public class ContactManagement {
 
 				resp = cur.getString(cur.getColumnIndex(ContactsProvider.CMetaData.GroupsMetaData.CONTACTS));
 				if (resp != null) {
-					temp.contacts = MapUtils.stringToMap(resp);
+					temp.contacts = MapUtils.stringToMap(context, resp);
 				}
 
 				contacts.add(temp);
@@ -936,7 +933,7 @@ public class ContactManagement {
 		boolean success = false;
 		int destination_id = 0;
 
-		destination_id = insertGroupToRemoteDb(group, 0);
+		destination_id = insertGroupToRemoteDb(context, group, 0);
 
 		if (destination_id > 0) {
 			success = true;
@@ -990,7 +987,7 @@ public class ContactManagement {
 		}
 
 		cv.put(ContactsProvider.CMetaData.GroupsMetaData.CONTACT_COUNT, group.contact_count);
-		cv.put(ContactsProvider.CMetaData.GroupsMetaData.CONTACTS, MapUtils.mapToString(group.contacts));
+		cv.put(ContactsProvider.CMetaData.GroupsMetaData.CONTACTS, MapUtils.mapToString(context, group.contacts));
 
 		try {
 			context.getContentResolver().insert(ContactsProvider.CMetaData.GroupsMetaData.CONTENT_URI, cv);
@@ -999,11 +996,11 @@ public class ContactManagement {
 		}
 	}
 
-	public static int insertGroupToRemoteDb(Group group, int id) {
+	public static int insertGroupToRemoteDb(Context context, Group group, int id) {
 		String temp;
 		int destination_id = 0;
 		boolean success = false;
-		Account account = new Account();
+		Account account = new Account(context);
 		HttpClient hc = new DefaultHttpClient();
 		HttpPost post = new HttpPost(Data.getServerUrl() + "mobile/group_create");
 		MultipartEntity reqEntity = new MultipartEntity(HttpMultipartMode.BROWSER_COMPATIBLE);
@@ -1015,7 +1012,7 @@ public class ContactManagement {
 		}
 
 		try {
-			reqEntity.addPart("token", new StringBody(Data.getToken()));
+			reqEntity.addPart("token", new StringBody(Data.getToken(context)));
 		} catch (UnsupportedEncodingException e) {
 			Log.e("insertGroupToRemoteDb(group[id=" + group.group_id + "], " + id + ")", "Failed adding token to entity.");
 		}
@@ -1160,14 +1157,14 @@ public class ContactManagement {
 			Uri uri = Uri.parse(ContactsProvider.CMetaData.GroupsMetaData.CONTENT_URI + "/" + id);
 			cur = context.getContentResolver().query(uri, null, null, null, null);
 			if (cur.moveToFirst())
-				temp = new Group(cur);
+				temp = new Group(context, cur);
 		} else {
 			if (created > 0) {
 				String where = ContactsProvider.CMetaData.GroupsMetaData.CREATED + "=" + created;
 				cur = context.getContentResolver()
 						.query(ContactsProvider.CMetaData.GroupsMetaData.CONTENT_URI, null, where, null, null);
 				if (cur.moveToFirst())
-					temp = new Group(cur);
+					temp = new Group(context, cur);
 			}
 		}
 
@@ -1188,7 +1185,6 @@ public class ContactManagement {
 	public static void getGroupsFromRemoteDb(Context context, HashSet<Integer> contactIds) {
 		boolean success = false;
 		String error = null;
-		@SuppressWarnings("unused")
 		Account account = new Account(context);
 		HttpClient hc = new DefaultHttpClient();
 		HttpPost post = new HttpPost(Data.getServerUrl() + "mobile/groups_list");
@@ -1201,7 +1197,7 @@ public class ContactManagement {
 		}
 
 		try {
-			reqEntity.addPart("token", new StringBody(Data.getToken()));
+			reqEntity.addPart("token", new StringBody(Data.getToken(context)));
 		} catch (UnsupportedEncodingException e1) {
 			Log.e("getGroupsFromRemoteDb(contactIds)", "Failed adding token to entity");
 		}
@@ -1349,10 +1345,10 @@ public class ContactManagement {
 	}
 
 	// TODO removeContactFromRemoteDb(int id) documentation
-	public static boolean removeContactFromRemoteDb(int id) {
+	public static boolean removeContactFromRemoteDb(Context context, int id) {
 		boolean success = false;
 		String error = null;
-		Account account = new Account();
+		Account account = new Account(context);
 		HttpClient hc = new DefaultHttpClient();
 		HttpPost post = new HttpPost(Data.getServerUrl() + "mobile/contact_remove");
 		MultipartEntity reqEntity = new MultipartEntity(HttpMultipartMode.BROWSER_COMPATIBLE);
@@ -1370,7 +1366,7 @@ public class ContactManagement {
 		}
 
 		try {
-			reqEntity.addPart("token", new StringBody(Data.getToken()));
+			reqEntity.addPart("token", new StringBody(Data.getToken(context)));
 		} catch (UnsupportedEncodingException e) {
 			Log.e("removeContactFromRemoteDb(" + id + ")", "Failed adding user's token to entity.");
 		}
@@ -1415,9 +1411,9 @@ public class ContactManagement {
 	}
 
 	// TODO editContactOnRemoteDb(Contact c) documentation
-	public static boolean editContactOnRemoteDb(Contact c) {
+	public static boolean editContactOnRemoteDb(Context context, Contact c) {
 		boolean success = false;
-		Account account = new Account();
+		Account account = new Account(context);
 		HttpClient hc = new DefaultHttpClient();
 		HttpPost post = new HttpPost(Data.getServerUrl() + "mobile/contact_edit");
 		MultipartEntity reqEntity = new MultipartEntity(HttpMultipartMode.BROWSER_COMPATIBLE);
@@ -1447,7 +1443,7 @@ public class ContactManagement {
 		}
 
 		try {
-			reqEntity.addPart("token", new StringBody(Data.getToken()));
+			reqEntity.addPart("token", new StringBody(Data.getToken(context)));
 		} catch (UnsupportedEncodingException e) {
 			Log.e("editContactOnRemoteDb(contact[contact_id=" + c.contact_id + "])", "Failed adding token to entity.");
 		}
@@ -1625,7 +1621,7 @@ public class ContactManagement {
 		cv.put(ContactsProvider.CMetaData.ContactsMetaData.CREATED, contact.created);
 		cv.put(ContactsProvider.CMetaData.ContactsMetaData.MODIFIED, contact.modified);
 
-		cv.put(ContactsProvider.CMetaData.ContactsMetaData.GROUPS, MapUtils.mapToString(contact.groups));
+		cv.put(ContactsProvider.CMetaData.ContactsMetaData.GROUPS, MapUtils.mapToString(context, contact.groups));
 
 		cv.put(ContactsProvider.CMetaData.ContactsMetaData.COLOR, contact.getColor());
 
@@ -1698,7 +1694,8 @@ public class ContactManagement {
 //			e.printStackTrace();
 //		}
 }
-	private static ContentValues createCVFromContact(Contact contact) {
+	@SuppressWarnings("unused")
+	private static ContentValues createCVFromContact(Context context, Contact contact) {
 		ContentValues cv = new ContentValues();
 
 		
@@ -1740,7 +1737,7 @@ public class ContactManagement {
 		cv.put(ContactsProvider.CMetaData.ContactsMetaData.CREATED, contact.created);
 		cv.put(ContactsProvider.CMetaData.ContactsMetaData.MODIFIED, contact.modified);
 
-		cv.put(ContactsProvider.CMetaData.ContactsMetaData.GROUPS, MapUtils.mapToString(contact.groups));
+		cv.put(ContactsProvider.CMetaData.ContactsMetaData.GROUPS, MapUtils.mapToString(context, contact.groups));
 
 		cv.put(ContactsProvider.CMetaData.ContactsMetaData.COLOR, contact.getColor());
 		return cv;
@@ -1829,7 +1826,7 @@ public class ContactManagement {
 		 */
 		public static void requestContactCopy(Context context, int guid, boolean req) {
 			try {
-				Account account = new Account();
+				Account account = new Account(context);
 				HttpClient hc = new DefaultHttpClient();
 				HttpPost post = new HttpPost(Data.getServerUrl() + "mobile/contact_copy");
 

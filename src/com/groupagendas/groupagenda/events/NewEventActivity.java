@@ -41,7 +41,6 @@ import com.groupagendas.groupagenda.data.ContactManagement;
 import com.groupagendas.groupagenda.data.Data;
 import com.groupagendas.groupagenda.data.DataManagement;
 import com.groupagendas.groupagenda.data.EventManagement;
-import com.groupagendas.groupagenda.events.EventEditActivity.UpdateEventTask;
 import com.groupagendas.groupagenda.templates.TemplatesAdapter;
 import com.groupagendas.groupagenda.templates.TemplatesDialog;
 import com.groupagendas.groupagenda.templates.TemplatesDialogData;
@@ -164,7 +163,7 @@ public class NewEventActivity extends EventActivity {
 
 		String strTime = getIntent().getStringExtra(EXTRA_STRING_FOR_START_CALENDAR);
 		if (strTime != null) {
-			startCalendar = Utils.stringToCalendar(strTime, DataManagement.SERVER_TIMESTAMP_FORMAT);
+			startCalendar = Utils.stringToCalendar(getApplicationContext(), strTime, DataManagement.SERVER_TIMESTAMP_FORMAT);
 			startCalendar.clear(Calendar.SECOND);
 			endCalendar.setTime(startCalendar.getTime());
 			endCalendar.add(Calendar.MINUTE, DEFAULT_EVENT_DURATION_IN_MINS);
@@ -1196,7 +1195,7 @@ public class NewEventActivity extends EventActivity {
 			int testEvent = event.isValid();
 
 			if (testEvent == 0) {
-				DataManagement.getInstance(NewEventActivity.this).createTemplate(event);
+				DataManagement.getInstance(NewEventActivity.this).createTemplate(getApplicationContext(), event);
 				return true;
 			} else {
 				switch (testEvent) {

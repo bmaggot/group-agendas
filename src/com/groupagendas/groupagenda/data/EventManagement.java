@@ -4,7 +4,6 @@ package com.groupagendas.groupagenda.data;
  * @author justinas.marcinka@gmail.com
  * @version 1.0
  */
-import java.nio.charset.Charset;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -49,7 +48,7 @@ public class EventManagement {
 	public static final String CLASS_NAME = "EventManagement.class";
 	private static SimpleDateFormat day_index_formatter = new SimpleDateFormat(EventsProvider.EMetaData.EventsIndexesMetaData.DAY_COLUMN_FORMAT);
 	private static SimpleDateFormat month_index_formatter = new SimpleDateFormat(EventsProvider.EMetaData.EventsIndexesMetaData.MONTH_COLUMN_FORMAT);
-	public static String user_timezone = CalendarSettings.getTimeZone();
+	public static String user_timezone = CalendarSettings.getTimeZone(DataManagement.getContext());
 	public static final String DATA_ENCODING = "UTF-8";
 	
 	
@@ -75,7 +74,7 @@ public class EventManagement {
 			HttpPost post = new HttpPost(Data.getServerUrl() + "mobile/events_get");
 
 			MultipartEntity reqEntity = new MultipartEntity(HttpMultipartMode.BROWSER_COMPATIBLE);
-			reqEntity.addPart(TOKEN, new StringBody(Data.getToken()));
+			reqEntity.addPart(TOKEN, new StringBody(Data.getToken(context)));
 			reqEntity.addPart("event_id", new StringBody(id));
 
 			post.setEntity(reqEntity);
@@ -95,14 +94,14 @@ public class EventManagement {
 							// TODO Error msg
 							return false;
 						}
-						Event event = JSONUtils.createEventFromJSON(e);
+						Event event = JSONUtils.createEventFromJSON(context, e);
 						insertEventToLocalDB(context, event);
 
 					}
 				}
 			}
 		} catch (Exception ex) {
-			Reporter.reportError(CLASS_NAME, Thread.currentThread().getStackTrace()[2].getMethodName().toString(),
+			Reporter.reportError(context, CLASS_NAME, Thread.currentThread().getStackTrace()[2].getMethodName().toString(),
 					ex.getMessage());
 		}
 		return success;
@@ -120,7 +119,7 @@ public class EventManagement {
 	public static void createNewEvent(Context context, Event event) {
 
 		if (DataManagement.networkAvailable) {
-			int id = createEventInRemoteDb(event);
+			int id = createEventInRemoteDb(context, event);
 
 			if (id > 0) {
 				event.setEvent_id(id);
@@ -151,7 +150,7 @@ public class EventManagement {
 	public static void deleteEvent(Context context, Event event) {
 		Boolean deletedFromRemote = false;
 		if (DataManagement.networkAvailable) {
-			 deletedFromRemote = removeEvent(event.getEvent_id());
+			 deletedFromRemote = removeEvent(context, event.getEvent_id());
 		}
 
 		if (!deletedFromRemote){
@@ -179,7 +178,7 @@ public class EventManagement {
 			return;
 		}
 		if (DataManagement.networkAvailable) {
-			event.setUploadedToServer(updateEventStatusInServer(event));
+			event.setUploadedToServer(updateEventStatusInServer(context, event));
 		} else {
 			event.setUploadedToServer(false);
 		}	
@@ -233,7 +232,7 @@ public class EventManagement {
 	 */
 	public static  void updateEvent(Context context, Event event) {
 		if (DataManagement.networkAvailable) {
-			event.setUploadedToServer(editEvent(event));
+			event.setUploadedToServer(editEvent(context, event));
 		} else {
 			event.setUploadedToServer(false);
 		}	
@@ -246,7 +245,7 @@ public class EventManagement {
 		Account account = new Account(context);
 		HttpClient hc = new DefaultHttpClient();
 		HttpPost post = new HttpPost(Data.getServerUrl() + "mobile/events_invite_extra");
-		Charset charset = Charset.forName(DATA_ENCODING);
+//		Charset charset = Charset.forName(DATA_ENCODING);
 
 //		MultipartEntity reqEntity = new MultipartEntity(HttpMultipartMode.BROWSER_COMPATIBLE, "whatever", charset);
 		MultipartEntity reqEntity = new MultipartEntity(HttpMultipartMode.BROWSER_COMPATIBLE);
@@ -353,7 +352,7 @@ public class EventManagement {
 	public static final String MESSAGE_COUNT = "message_count";
 	public static final String NEW_MESSAGE_COUNT = "nmc";
 	public static final String MESSAGE_LAST_TIMESTAMP = "message_last_timestamp";
-	private static final String ASSIGNED_CONTACTS = "assigned_contacts";
+//	private static final String ASSIGNED_CONTACTS = "assigned_contacts";
 	private static final String EVENTS = "events";
 
 	
@@ -491,7 +490,7 @@ public class EventManagement {
 
 			MultipartEntity reqEntity = new MultipartEntity(HttpMultipartMode.BROWSER_COMPATIBLE);
 
-			reqEntity.addPart(TOKEN, new StringBody(Data.getToken()));
+			reqEntity.addPart(TOKEN, new StringBody(Data.getToken(context)));
 			reqEntity.addPart(CATEGORY, new StringBody(eventCategory));
 			post.setEntity(reqEntity);
 			HttpResponse rp = hc.execute(post);
@@ -513,7 +512,7 @@ public class EventManagement {
 						for (int i = 0; i < es.length(); i++) {
 							try{
 							JSONObject e = es.getJSONObject(i);
-							event = JSONUtils.createEventFromJSON(e);
+							event = JSONUtils.createEventFromJSON(context, e);
 							if (event != null && !event.isNative()) {
 								event.setUploadedToServer(true);
 								values[value] = createCVforEventsTable(event);
@@ -534,7 +533,7 @@ public class EventManagement {
 				}
 			}
 		} catch (Exception ex) {
-			Reporter.reportError(CLASS_NAME, Thread.currentThread().getStackTrace()[2].getMethodName().toString(),
+			Reporter.reportError(context, CLASS_NAME, Thread.currentThread().getStackTrace()[2].getMethodName().toString(),
 					ex.getMessage());
 		}
 	}
@@ -551,8 +550,8 @@ public class EventManagement {
 	 */
 	protected static void insertEventToLocalDB(Context context, Event event) {
 		// 1. ADD EVENT details to events table
-		ContentValues cv = createCVforEventsTable(event);
-		Uri eventUri = context.getContentResolver().insert(EventsProvider.EMetaData.INDEXED_EVENTS_URI, cv);
+//		ContentValues cv = createCVforEventsTable(event);
+//		Uri eventUri = context.getContentResolver().insert(EventsProvider.EMetaData.INDEXED_EVENTS_URI, cv);
 
 //		long internalID = ContentUris.parseId(eventUri);
 //		if (internalID >= 0){ 
@@ -740,7 +739,7 @@ public class EventManagement {
 			uri = Uri.parse(uri + "/" + ID);
 			Cursor result = context.getContentResolver().query(uri, null, null, null, null);
 			if (result.moveToFirst()) {
-				item = createEventFromCursor(result);
+				item = createEventFromCursor(context, result);
 			}
 			result.close();
 			return item;
@@ -786,17 +785,17 @@ public class EventManagement {
 /////////////////////////////////////////////////////METHODS THAT WORK WITH RMOTE DB//////////////////////////////////////////////////////	
 		
 		
-		private static boolean updateEventStatusInServer(Event event) {
+		private static boolean updateEventStatusInServer(Context context, Event event) {
 			if (event.getEvent_id() == 0) return false;
 			boolean success = false;
 
 			try {
-				Account account = new Account();
+				Account account = new Account(context);
 				HttpClient hc = new DefaultHttpClient();
 				HttpPost post = new HttpPost(Data.getServerUrl() + "mobile/set_event_status");
 
 				MultipartEntity reqEntity = new MultipartEntity(HttpMultipartMode.BROWSER_COMPATIBLE);
-				reqEntity.addPart(TOKEN, new StringBody(Data.getToken()));
+				reqEntity.addPart(TOKEN, new StringBody(Data.getToken(context)));
 				reqEntity.addPart(EVENT_ID, new StringBody("" + event.getEvent_id()));
 				reqEntity.addPart(STATUS, new StringBody("" + event.getStatus()));
 				reqEntity.addPart("session", new StringBody(account.getSessionId()));
@@ -824,7 +823,7 @@ public class EventManagement {
 					}
 				}
 			} catch (Exception ex) {
-				Reporter.reportError(DataManagement.class.toString(), Thread.currentThread().getStackTrace()[2].getMethodName().toString(),
+				Reporter.reportError(context, DataManagement.class.toString(), Thread.currentThread().getStackTrace()[2].getMethodName().toString(),
 						ex.getMessage());
 			}
 		
@@ -838,7 +837,7 @@ public class EventManagement {
 		 *            - event to create
 		 * @return event id. If create failed, returns 0.
 		 */
-		public static int createEventInRemoteDb(Event e) {
+		public static int createEventInRemoteDb(Context context, Event e) {
 			boolean success = false;
 
 			try {
@@ -847,7 +846,7 @@ public class EventManagement {
 
 				MultipartEntity reqEntity = new MultipartEntity(HttpMultipartMode.BROWSER_COMPATIBLE);
 
-				reqEntity.addPart(TOKEN, new StringBody(Data.getToken()));
+				reqEntity.addPart(TOKEN, new StringBody(Data.getToken(context)));
 
 				if (e.getIcon().length() > 0)
 					reqEntity.addPart("icon", new StringBody(e.getIcon()));
@@ -923,7 +922,7 @@ public class EventManagement {
 				if (e.isBirthday()) {
 					reqEntity.addPart("bd", new StringBody("1"));
 				}
-				Account account = new Account();
+				Account account = new Account(context);
 				reqEntity.addPart("session", new StringBody(account.getSessionId()));
 				post.setEntity(reqEntity);
 
@@ -954,14 +953,14 @@ public class EventManagement {
 					Data.getUnuploadedData().add(uplooad);
 				}
 			} catch (Exception ex) {
-				Reporter.reportError(DataManagement.class.toString(), Thread.currentThread().getStackTrace()[2].getMethodName().toString(),
+				Reporter.reportError(context, DataManagement.class.toString(), Thread.currentThread().getStackTrace()[2].getMethodName().toString(),
 						ex.getMessage());
 			}
 			return 0;
 
 		}
 		
-		private static boolean editEvent(Event e) {
+		private static boolean editEvent(Context context, Event e) {
 			boolean success = false;
 
 			try {
@@ -970,7 +969,7 @@ public class EventManagement {
 
 				MultipartEntity reqEntity = new MultipartEntity(HttpMultipartMode.BROWSER_COMPATIBLE);
 
-				reqEntity.addPart(TOKEN, new StringBody(Data.getToken()));
+				reqEntity.addPart(TOKEN, new StringBody(Data.getToken(context)));
 				reqEntity.addPart("event_id", new StringBody(String.valueOf(e.getEvent_id())));
 
 				reqEntity.addPart("event_type", new StringBody(e.getType()));
@@ -1036,7 +1035,7 @@ public class EventManagement {
 				}
 				
 
-				Account account = new Account();
+				Account account = new Account(context);
 				//				if (e.assigned_groups != null) {
 //					for (int i = 0, l = e.assigned_groups.length; i < l; i++) {
 //						reqEntity.addPart("groups[]", new StringBody(String.valueOf(e.assigned_groups[i])));
@@ -1065,7 +1064,7 @@ public class EventManagement {
 					Data.getUnuploadedData().add(uplooad);
 				}
 			} catch (Exception ex) {
-				Reporter.reportError(CLASS_NAME, Thread.currentThread().getStackTrace()[2].getMethodName().toString(),
+				Reporter.reportError(context, CLASS_NAME, Thread.currentThread().getStackTrace()[2].getMethodName().toString(),
 						ex.getMessage());
 				success = false;
 			}
@@ -1073,17 +1072,17 @@ public class EventManagement {
 			return success;
 		}
 		
-		public static boolean removeEvent(int id) {
+		public static boolean removeEvent(Context context, int id) {
 			boolean success = false;
 
 			try {
-				Account account = new Account();
+				Account account = new Account(context);
 				HttpClient hc = new DefaultHttpClient();
 				HttpPost post = new HttpPost(Data.getServerUrl() + "mobile/events_remove");
 
 				MultipartEntity reqEntity = new MultipartEntity(HttpMultipartMode.BROWSER_COMPATIBLE);
 
-				reqEntity.addPart(TOKEN, new StringBody(Data.getToken()));
+				reqEntity.addPart(TOKEN, new StringBody(Data.getToken(context)));
 				reqEntity.addPart("event_id", new StringBody(String.valueOf(id)));
 				reqEntity.addPart("session", new StringBody(account.getSessionId()));
 				post.setEntity(reqEntity);
@@ -1120,7 +1119,7 @@ public class EventManagement {
 					Data.getUnuploadedData().add(uplooad);
 				}
 			} catch (Exception ex) {
-				Reporter.reportError(CLASS_NAME, Thread.currentThread().getStackTrace()[2].getMethodName().toString(),
+				Reporter.reportError(context, CLASS_NAME, Thread.currentThread().getStackTrace()[2].getMethodName().toString(),
 						ex.getMessage());
 			}
 			return success;
@@ -1219,7 +1218,7 @@ private static String parseInvitedListToJSONArray(ArrayList<Invited> invited) {
 }
 
 //	TODO javadoc
-	protected static Event createEventFromCursor(Cursor result) {
+	protected static Event createEventFromCursor(Context context, Cursor result) {
 		Event item = new Event();
 		long timeinMillis;
 		item.setInternalID(result.getLong(result.getColumnIndex(EventsProvider.EMetaData.EventsMetaData._ID)));
@@ -1282,7 +1281,7 @@ private static String parseInvitedListToJSONArray(ArrayList<Invited> invited) {
 		try {
 			ArrayList<Invited> invites = new ArrayList<Invited>();
 			
-			item.setMyInvite(JSONUtils.createInvitedListFromJSONArrayString(result.getString(result.getColumnIndex(EventsProvider.EMetaData.EventsMetaData.INVITED)), invites));
+			item.setMyInvite(JSONUtils.createInvitedListFromJSONArrayString(context, result.getString(result.getColumnIndex(EventsProvider.EMetaData.EventsMetaData.INVITED)), invites));
 			item.setInvited(invites);
 		} catch (JSONException e) {
 			Log.e("Error parsing invited array from local db", "Event ID: " + item.getEvent_id() + " event local ID: " + item.getInternalID());
@@ -1318,7 +1317,7 @@ private static String parseInvitedListToJSONArray(ArrayList<Invited> invited) {
 
 		if (result.moveToFirst()) {
 			while (!result.isAfterLast()) {
-				item = EventManagement.createEventFromCursor(result);
+				item = EventManagement.createEventFromCursor(context, result);
 				items.add(item);
 				result.moveToNext();
 			}

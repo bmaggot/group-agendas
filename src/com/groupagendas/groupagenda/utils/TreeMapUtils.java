@@ -4,6 +4,9 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.TreeMap;
+
+import android.content.Context;
+
 import com.groupagendas.groupagenda.events.Event;
 
 public class TreeMapUtils {
@@ -19,7 +22,7 @@ public class TreeMapUtils {
 		
 	}
 	
-	public static TreeMap<Calendar, ArrayList<Event>> sortEvents(ArrayList<Event> events) {
+	public static TreeMap<Calendar, ArrayList<Event>> sortEvents(Context context, ArrayList<Event> events) {
 		TreeMap<Calendar, ArrayList<Event>> tm = new TreeMap<Calendar, ArrayList<Event>>();
 		Calendar event_start = null;
 		Calendar event_end = null;
@@ -36,21 +39,21 @@ public class TreeMapUtils {
 				}
 				if (difference == 0) {
 					String dayStr = new SimpleDateFormat("yyyy-MM-dd").format(event_start.getTime());
-					Calendar eventDay = Utils.stringToCalendar(dayStr + " 00:00:00", SERVER_TIMESTAMP_FORMAT);
+					Calendar eventDay = Utils.stringToCalendar(context, dayStr + " 00:00:00", SERVER_TIMESTAMP_FORMAT);
 					tm = putValueIntoTreeMap(tm, eventDay, event);
 				} else if (difference >= 0) {
 					Calendar eventDay = null;
 					for (int i = 0; i < difference; i++) {
 						String dayStr = new SimpleDateFormat("yyyy-MM-dd").format(event_start.getTime());
-						eventDay = Utils.stringToCalendar(dayStr + " 00:00:00", SERVER_TIMESTAMP_FORMAT);
+						eventDay = Utils.stringToCalendar(context, dayStr + " 00:00:00", SERVER_TIMESTAMP_FORMAT);
 						putValueIntoTreeMap(tm, eventDay, event);
 						event_start.add(Calendar.DAY_OF_MONTH, 1);
 					}
 					String dayStr = new SimpleDateFormat("yyyy-MM-dd").format(event_end.getTime());
-					Calendar eventTmpEnd = Utils.stringToCalendar(dayStr + " 00:00:00", SERVER_TIMESTAMP_FORMAT);
+					Calendar eventTmpEnd = Utils.stringToCalendar(context, dayStr + " 00:00:00", SERVER_TIMESTAMP_FORMAT);
 					if (eventTmpEnd.after(eventDay) && event_end.after(eventTmpEnd)) {
 						dayStr = new SimpleDateFormat("yyyy-MM-dd").format(event_start.getTime());
-						event_start = Utils.stringToCalendar(dayStr + " 00:00:00", SERVER_TIMESTAMP_FORMAT);
+						event_start = Utils.stringToCalendar(context, dayStr + " 00:00:00", SERVER_TIMESTAMP_FORMAT);
 						putValueIntoTreeMap(tm, event_start, event);
 					}
 				}
@@ -72,15 +75,15 @@ public class TreeMapUtils {
 		return tm;
 	}
 
-	public static void putEventIntoTreeMap(TreeMap<Calendar, ArrayList<Event>> tm,Event event) {
+	public static void putEventIntoTreeMap(Context context, TreeMap<Calendar, ArrayList<Event>> tm,Event event) {
 		String date_format = SERVER_TIMESTAMP_FORMAT;
 		Calendar event_start = (Calendar) event.getStartCalendar().clone();
 		String dayStr = new SimpleDateFormat("yyyy-MM-dd").format(event_start.getTime());
-		Calendar event_day = Utils.stringToCalendar(dayStr + " 00:00:00", date_format);
+		Calendar event_day = Utils.stringToCalendar(context, dayStr + " 00:00:00", date_format);
 		tm = putValueIntoTreeMap(tm, event_day, event);
 	}
 
-	public static void deleteEventfromTheTreeMap(TreeMap<Calendar, ArrayList<Event>> tm, Event event) {
+	public static void deleteEventfromTheTreeMap(Context context, TreeMap<Calendar, ArrayList<Event>> tm, Event event) {
 		Calendar event_start = null;
 		Calendar event_end = null;
 		Calendar tmp_event_start = null;
@@ -95,28 +98,28 @@ public class TreeMapUtils {
 			}
 			if (difference == 0) {
 				String dayStr = new SimpleDateFormat("yyyy-MM-dd").format(event_start.getTime());
-				Calendar eventDay = Utils.stringToCalendar(dayStr + " 00:00:00", SERVER_TIMESTAMP_FORMAT);
+				Calendar eventDay = Utils.stringToCalendar(context, dayStr + " 00:00:00", SERVER_TIMESTAMP_FORMAT);
 				tm.get(eventDay).remove(event);
 			} else if (difference >= 0) {
 				Calendar eventDay = null;
 				for (int i = 0; i < difference; i++) {
 					String dayStr = new SimpleDateFormat("yyyy-MM-dd").format(event_start.getTime());
-					eventDay = Utils.stringToCalendar(dayStr + " 00:00:00", SERVER_TIMESTAMP_FORMAT);
+					eventDay = Utils.stringToCalendar(context, dayStr + " 00:00:00", SERVER_TIMESTAMP_FORMAT);
 					tm.get(eventDay).remove(event);
 					event_start.add(Calendar.DAY_OF_MONTH, 1);
 				}
 				String dayStr = new SimpleDateFormat("yyyy-MM-dd").format(event_end.getTime());
-				Calendar eventTmpEnd = Utils.stringToCalendar(dayStr + " 00:00:00", SERVER_TIMESTAMP_FORMAT);
+				Calendar eventTmpEnd = Utils.stringToCalendar(context, dayStr + " 00:00:00", SERVER_TIMESTAMP_FORMAT);
 				if (eventTmpEnd.after(eventDay) && event_end.after(eventTmpEnd)) {
 					dayStr = new SimpleDateFormat("yyyy-MM-dd").format(event_start.getTime());
-					event_start = Utils.stringToCalendar(dayStr + " 00:00:00", SERVER_TIMESTAMP_FORMAT);
+					event_start = Utils.stringToCalendar(context, dayStr + " 00:00:00", SERVER_TIMESTAMP_FORMAT);
 					tm.get(event_start).remove(event);
 				}
 			}
 		}
 	}
 
-	public void putNewEventIntoTreeMap(TreeMap<Calendar, ArrayList<Event>> tm, Event event) {
+	public void putNewEventIntoTreeMap(Context context, TreeMap<Calendar, ArrayList<Event>> tm, Event event) {
 		
 		Calendar event_start = null;
 		Calendar event_end = null;
@@ -132,21 +135,21 @@ public class TreeMapUtils {
 			}
 			if (difference == 0) {
 				String dayStr = new SimpleDateFormat("yyyy-MM-dd").format(event_start.getTime());
-				Calendar eventDay = Utils.stringToCalendar(dayStr + " 00:00:00", SERVER_TIMESTAMP_FORMAT);
+				Calendar eventDay = Utils.stringToCalendar(context, dayStr + " 00:00:00", SERVER_TIMESTAMP_FORMAT);
 				tm = putValueIntoTreeMap(tm, eventDay, event);
 			} else if (difference >= 0) {
 				Calendar eventDay = null;
 				for (int i = 0; i < difference; i++) {
 					String dayStr = new SimpleDateFormat("yyyy-MM-dd").format(event_start.getTime());
-					eventDay = Utils.stringToCalendar(dayStr + " 00:00:00", SERVER_TIMESTAMP_FORMAT);
+					eventDay = Utils.stringToCalendar(context, dayStr + " 00:00:00", SERVER_TIMESTAMP_FORMAT);
 					tm = putValueIntoTreeMap(tm, eventDay, event);
 					event_start.add(Calendar.DAY_OF_MONTH, 1);
 				}
 				String dayStr = new SimpleDateFormat("yyyy-MM-dd").format(event_end.getTime());
-				Calendar eventTmpEnd = Utils.stringToCalendar(dayStr + " 00:00:00", SERVER_TIMESTAMP_FORMAT);
+				Calendar eventTmpEnd = Utils.stringToCalendar(context, dayStr + " 00:00:00", SERVER_TIMESTAMP_FORMAT);
 				if (eventTmpEnd.after(eventDay) && event_end.after(eventTmpEnd)) {
 					dayStr = new SimpleDateFormat("yyyy-MM-dd").format(event_start.getTime());
-					event_start = Utils.stringToCalendar(dayStr + " 00:00:00", SERVER_TIMESTAMP_FORMAT);
+					event_start = Utils.stringToCalendar(context, dayStr + " 00:00:00", SERVER_TIMESTAMP_FORMAT);
 					tm = putValueIntoTreeMap(tm, eventDay, event);
 				}
 			}

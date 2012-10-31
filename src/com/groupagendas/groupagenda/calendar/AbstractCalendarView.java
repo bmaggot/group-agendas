@@ -96,7 +96,7 @@ public abstract class AbstractCalendarView extends LinearLayout {
 		super(context, attrs);
 		dtUtils = new DateTimeUtils(context);
 		mInflater = (LayoutInflater)((Activity)context).getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-		am_pmEnabled = CalendarSettings.isUsing_AM_PM();
+		am_pmEnabled = CalendarSettings.isUsing_AM_PM(context);
 		if(am_pmEnabled){
 			HourNames = getResources().getStringArray(R.array.hour_names_am_pm);
 		}

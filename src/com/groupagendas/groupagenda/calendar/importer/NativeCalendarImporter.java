@@ -25,7 +25,7 @@ public class NativeCalendarImporter {
 
 	public static void readCalendar(Context context) {
 	    Cursor cursor;
-	    Account account = new Account();
+	    Account account = new Account(context);
 	    
 	    if (Integer.parseInt(Build.VERSION.SDK) >= 8 ){
 	      cursor = context.getContentResolver().query(Uri.parse("content://com.android.calendar/events"), new String[]{ "calendar_id", "title", "description", "dtstart", "dtend", "eventLocation" }, null, null, null);
@@ -41,16 +41,16 @@ public class NativeCalendarImporter {
 	    	Event event = new Event();
 	    	event.setTitle(cursor.getString(1));
 	    	event.setDescription(cursor.getString(2));
-	    	event.setStartCalendar(Utils.stringToCalendar(writeFormat.format(new Date(Long.parseLong(cursor.getString(3)))), DataManagement.SERVER_TIMESTAMP_FORMAT));
+	    	event.setStartCalendar(Utils.stringToCalendar(context, writeFormat.format(new Date(Long.parseLong(cursor.getString(3)))), DataManagement.SERVER_TIMESTAMP_FORMAT));
 	    	event.getStartCalendar().getTime();
 	    	event.getStartCalendar().clear(Calendar.SECOND);
 	    	event.getStartCalendar().getTime();
-	    	event.setEndCalendar(Utils.stringToCalendar(writeFormat.format(new Date(Long.parseLong(cursor.getString(4)))), DataManagement.SERVER_TIMESTAMP_FORMAT));
+	    	event.setEndCalendar(Utils.stringToCalendar(context, writeFormat.format(new Date(Long.parseLong(cursor.getString(4)))), DataManagement.SERVER_TIMESTAMP_FORMAT));
 	    	event.getEndCalendar().clear(Calendar.SECOND);
 	    	event.setLocation(cursor.getString(5));
 	    	event.setTimezone(account.getTimezone());
 	    	event.setBirthday(true);
-	    	EventManagement.createEventInRemoteDb(event); //TODO O kaip su lokalia?
+	    	EventManagement.createEventInRemoteDb(context, event); //TODO O kaip su lokalia?
 	    	cursor.moveToNext();
 	    }
 	}

@@ -66,8 +66,8 @@ public class CalendarSettings {
 			return false;
 	}
 
-	public static void setUsing_AM_PM(boolean bool) {
-		Account acc = new Account();
+	public static void setUsing_AM_PM(Context context, boolean bool) {
+		Account acc = new Account(context);
 		if (bool) {
 			acc.setSetting_ampm(1);
 		} else {
@@ -75,13 +75,13 @@ public class CalendarSettings {
 		}
 	}
 
-	public static void setDateFormat(String date_format) {
-		Account account = new Account();
+	public static void setDateFormat(Context context, String date_format) {
+		Account account = new Account(context);
 		account.setSetting_date_format(date_format);
 	}
 
-	public static String getDateFormat() {
-		Account account = new Account();
+	public static String getDateFormat(Context context) {
+		Account account = new Account(context);
 		if (account != null) {
 			if (!account.getSetting_date_format().equalsIgnoreCase("null")) {
 				formatterDateFormat = account.getSetting_date_format();
@@ -100,8 +100,8 @@ public class CalendarSettings {
 	 * @return date formatter
 	 * @see com.groupagendas.groupagenda.utils.Utils
 	 */
-	public static SimpleDateFormat getDateFormatter() {
-		Account account = new Account();
+	public static SimpleDateFormat getDateFormatter(Context context) {
+		Account account = new Account(context);
 			if (!account.getSetting_date_format().equalsIgnoreCase("null")) {
 				if (!account.getSetting_date_format().equalsIgnoreCase(formatterDateFormat)) {
 					formatterDateFormat = account.getSetting_date_format();
@@ -116,8 +116,8 @@ public class CalendarSettings {
 		return DEFAULT_FIRST_DAY_OF_WEEK;
 	}
 
-	public static String getDefaultView() {
-		Account account = new Account();
+	public static String getDefaultView(Context context) {
+		Account account = new Account(context);
 		String dw = account.getSetting_default_view();
 		if (dw == null) {
 			dw = DEFAULT_SETTING_DEFAULT_VIEW;
@@ -132,8 +132,8 @@ public class CalendarSettings {
 	 * Sets default view with one defined in
 	 * CalendarSettings.DEFAULT_SETTING_DEFAULT_VIEW
 	 */
-	public static void setDefaultView() {
-		Account account = new Account();
+	public static void setDefaultView(Context context) {
+		Account account = new Account(context);
 		account.setSetting_default_view(DEFAULT_SETTING_DEFAULT_VIEW);
 	}
 }

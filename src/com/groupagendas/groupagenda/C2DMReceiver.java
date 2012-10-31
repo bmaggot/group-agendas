@@ -11,7 +11,6 @@ import android.util.Log;
 import com.google.android.c2dm.C2DMBaseReceiver;
 import com.groupagendas.groupagenda.account.Account;
 import com.groupagendas.groupagenda.chat.ChatMessageActivity;
-import com.groupagendas.groupagenda.data.ChatManagement;
 import com.groupagendas.groupagenda.data.DataManagement;
 import com.groupagendas.groupagenda.data.EventManagement;
 import com.groupagendas.groupagenda.error.report.Reporter;
@@ -166,7 +165,7 @@ public class C2DMReceiver extends C2DMBaseReceiver {
 			}
 
 		} catch (Exception ex) {
-			Reporter.reportError(C2DMReceiver.class.toString(), Thread.currentThread().getStackTrace()[2].getMethodName().toString(),
+			Reporter.reportError(context, C2DMReceiver.class.toString(), Thread.currentThread().getStackTrace()[2].getMethodName().toString(),
 					ex.getMessage());
 		}
 	}

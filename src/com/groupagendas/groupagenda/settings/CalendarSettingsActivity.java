@@ -49,7 +49,7 @@ public class CalendarSettingsActivity extends Activity {
 		new GetAccountFromDBTask().execute();
 
 		am_pmToggle = (ToggleButton) findViewById(R.id.am_pm);
-		am_pmToggle.setChecked(CalendarSettings.isUsing_AM_PM());
+		am_pmToggle.setChecked(CalendarSettings.isUsing_AM_PM(getApplicationContext()));
 
 		defaultviewSpinner = (Spinner) findViewById(R.id.defaultviewSpinner);
 		ArrayAdapter<CharSequence> adapterDefaultview = ArrayAdapter.createFromResource(this, R.array.agenda_views_labels,
@@ -57,7 +57,7 @@ public class CalendarSettingsActivity extends Activity {
 		adapterDefaultview.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
 		defaultviewSpinner.setAdapter(adapterDefaultview);
 		defaultviewArray = getResources().getStringArray(R.array.agenda_views_values);
-		String dw = CalendarSettings.getDefaultView();
+		String dw = CalendarSettings.getDefaultView(getApplicationContext());
 		for (int i = 0; i < defaultviewArray.length; i++) {
 			if (dw.equalsIgnoreCase(defaultviewArray[i])) {
 				defaultviewSpinner.setSelection(i);
@@ -71,7 +71,7 @@ public class CalendarSettingsActivity extends Activity {
 		adapterDateformat.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
 		dateformatSpinner.setAdapter(adapterDateformat);
 		dateformatArray = getResources().getStringArray(R.array.date_format_values);
-		String df = CalendarSettings.getDateFormat();
+		String df = CalendarSettings.getDateFormat(getApplicationContext());
 		for (int i = 0; i < dateformatArray.length; i++) {
 			if (df.equalsIgnoreCase(dateformatArray[i])) {
 				dateformatSpinner.setSelection(i);
@@ -118,10 +118,10 @@ public class CalendarSettingsActivity extends Activity {
 			
 			prefs.save();
 
-			success = dm.changeCalendarSettings(am_pm, defaultview, dateformat);
+			success = dm.changeCalendarSettings(getApplicationContext(), am_pm, defaultview, dateformat);
 			//TODO this is temporary workaround for current account update. We should not store data in RAM, but get data from sqlite via providers when needed.
-			CalendarSettings.setDateFormat(dateformat);
-			CalendarSettings.setUsing_AM_PM(am_pmToggle.isChecked());
+			CalendarSettings.setDateFormat(getApplicationContext(), dateformat);
+			CalendarSettings.setUsing_AM_PM(getApplicationContext(), am_pmToggle.isChecked());
 			account.setSetting_default_view(defaultview);
 
 			if (!success) {

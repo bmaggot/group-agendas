@@ -100,7 +100,7 @@ public class GroupContactsActivity extends ListActivity {
 			if(groupId > 0){
 				Uri uri = Uri.parse(ContactsProvider.CMetaData.GroupsMetaData.CONTENT_URI+"/"+groupId);
 				
-				Boolean result = dm.removeGroup(groupId);
+				Boolean result = dm.removeGroup(getApplicationContext(), groupId);
 				
 				if(result){
 					getContentResolver().delete(uri, null, null);

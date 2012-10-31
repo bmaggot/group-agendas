@@ -20,6 +20,7 @@ import org.apache.http.util.EntityUtils;
 import org.json.JSONArray;
 import org.json.JSONException;
 
+import android.content.Context;
 import android.graphics.Bitmap;
 import android.text.format.DateFormat;
 import android.util.Log;
@@ -36,7 +37,7 @@ public class Utils {
 	
 	public static final String DATE_FORMAT_LONG = DataManagement.SERVER_TIMESTAMP_FORMAT;
 	
-	public static void CopyStream(InputStream is, OutputStream os) {
+	public static void CopyStream(Context context, InputStream is, OutputStream os) {
 		final int buffer_size = 1024;
 		try {
 			byte[] bytes = new byte[buffer_size];
@@ -47,19 +48,19 @@ public class Utils {
 				os.write(bytes, 0, count);
 			}
 		} catch (Exception ex) {
-			Reporter.reportError(Utils.class.toString(), Thread.currentThread().getStackTrace()[2].getMethodName().toString(), ex.getMessage());
+			Reporter.reportError(context, Utils.class.toString(), Thread.currentThread().getStackTrace()[2].getMethodName().toString(), ex.getMessage());
 		}
 	}
 
 
 	
-	public static String formatDateTime(String date_str, String startPattern, String endPattern){
-		Calendar calendar = stringToCalendar(date_str, startPattern);
+	public static String formatDateTime(Context context, String date_str, String startPattern, String endPattern){
+		Calendar calendar = stringToCalendar(context, date_str, startPattern);
 		SimpleDateFormat formatter = new SimpleDateFormat(endPattern);
 		return formatter.format(calendar.getTime());
 	}
 	
-	public static Calendar stringToCalendar(String date_str, String tz, String pattern) {
+	public static Calendar stringToCalendar(Context context, String date_str, String tz, String pattern) {
 		TimeZone timezone = TimeZone.getTimeZone(tz);
 		Calendar calendar = Calendar.getInstance(timezone);
 		try {
@@ -67,12 +68,12 @@ public class Utils {
 			Date date = formatter.parse(date_str);
 			calendar.setTime(date);
 		} catch (ParseException e) {
-			Reporter.reportError(Utils.class.toString(), Thread.currentThread().getStackTrace()[2].getMethodName().toString(), e.getMessage());
+			Reporter.reportError(context, Utils.class.toString(), Thread.currentThread().getStackTrace()[2].getMethodName().toString(), e.getMessage());
 		}
 		return calendar;
 	}
 
-	public static Calendar stringToCalendar(String date_str, String pattern) {
+	public static Calendar stringToCalendar(Context context, String date_str, String pattern) {
 		if(!date_str.equalsIgnoreCase("null")){
 			Calendar calendar = Calendar.getInstance();
 			try {
@@ -80,7 +81,7 @@ public class Utils {
 				Date date = formatter.parse(date_str);
 				calendar.setTime(date);
 			} catch (ParseException e) {
-				Reporter.reportError(Utils.class.toString(), Thread.currentThread().getStackTrace()[2].getMethodName().toString(), e.getMessage());
+				Reporter.reportError(context, Utils.class.toString(), Thread.currentThread().getStackTrace()[2].getMethodName().toString(), e.getMessage());
 			}
 			return calendar;
 		} else {
@@ -126,10 +127,10 @@ public class Utils {
         return EMAIL_ADDRESS_PATTERN.matcher(email).matches();
 	}
 	
-	public static String formatDateTime(String input, String format){
+	public static String formatDateTime(Context context, String input, String format){
 		boolean am_pm = true;
 		
-		Calendar c = stringToCalendar(input, format);
+		Calendar c = stringToCalendar(context, input, format);
 		
 		if(am_pm){
 			format+=" aaa";
@@ -141,7 +142,7 @@ public class Utils {
 	}
 
 	public static String getStringDateInDifferentLocale(Calendar calendarInUserLocale,
-			String timezone) {
+			String timezone, Context context) {
 		Calendar tmpCalendar = Calendar.getInstance();
 		tmpCalendar.set(calendarInUserLocale.get(Calendar.YEAR), 
 						calendarInUserLocale.get(Calendar.MONTH), 
@@ -150,7 +151,7 @@ public class Utils {
 						calendarInUserLocale.get(Calendar.MINUTE), 
 						calendarInUserLocale.get(Calendar.SECOND));
 
-		SimpleDateFormat dateFormat = new SimpleDateFormat(CalendarSettings.getDateFormat());
+		SimpleDateFormat dateFormat = new SimpleDateFormat(CalendarSettings.getDateFormat(context));
 		dateFormat.setTimeZone(TimeZone.getTimeZone(timezone));
 		return dateFormat.format(tmpCalendar.getTime());
 	}
@@ -236,8 +237,8 @@ public class Utils {
 	 * @return
 	 */
 	// TODO crash while offline
-	public static String formatCalendar(Calendar calendar){
-		return CalendarSettings.getDateFormatter().format(calendar.getTime());
+	public static String formatCalendar(Context context, Calendar calendar){
+		return CalendarSettings.getDateFormatter(context).format(calendar.getTime());
 	}
 	
 	/**

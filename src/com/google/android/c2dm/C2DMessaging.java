@@ -16,14 +16,13 @@
 
 package com.google.android.c2dm;
 
-import com.google.android.gcm.GCMConstants;
-
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
-import com.google.android.gcm.GCMRegistrar;
+
+import com.google.android.gcm.GCMConstants;
 
 /**
  * Utilities for device registration.

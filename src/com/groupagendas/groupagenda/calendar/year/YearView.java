@@ -213,7 +213,7 @@ public class YearView extends AbstractCalendarView {
 
 	@Override
 	protected Void doInBackground(Void... params) {
-		sortedEvents = TreeMapUtils.sortEvents(getEventProjectionsForDisplay(selectedDate));
+		sortedEvents = TreeMapUtils.sortEvents(context, getEventProjectionsForDisplay(selectedDate));
 		return null;
 	}
 	

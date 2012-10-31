@@ -18,7 +18,6 @@ import android.content.SharedPreferences.Editor;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.widget.ListView;
 
@@ -131,7 +130,7 @@ public class SettingsActivity extends ListActivity{
 					}
 				}
 			} catch (Exception ex) {
-				Reporter.reportError(DataManagement.class.toString(), Thread.currentThread().getStackTrace()[2].getMethodName().toString(),
+				Reporter.reportError(getApplicationContext(), DataManagement.class.toString(), Thread.currentThread().getStackTrace()[2].getMethodName().toString(),
 						ex.getMessage());
 			}
 			return null;

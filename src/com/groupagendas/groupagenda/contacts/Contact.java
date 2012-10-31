@@ -2,6 +2,7 @@ package com.groupagendas.groupagenda.contacts;
 
 import java.util.Map;
 
+import android.content.Context;
 import android.database.Cursor;
 
 import com.groupagendas.groupagenda.interfaces.Colored;
@@ -51,7 +52,7 @@ public class Contact extends Object implements Colored {
 		super();
 	}
 	
-	public Contact(Cursor cur) {
+	public Contact(Context context, Cursor cur) {
 		this.contact_id = cur.getInt(cur.getColumnIndex(ContactsProvider.CMetaData.ContactsMetaData.C_ID));
 		this.name = cur.getString(cur.getColumnIndex(ContactsProvider.CMetaData.ContactsMetaData.NAME));
 		this.lastname = cur.getString(cur.getColumnIndex(ContactsProvider.CMetaData.ContactsMetaData.LASTNAME));
@@ -91,7 +92,7 @@ public class Contact extends Object implements Colored {
 
 		String resp = cur.getString(cur.getColumnIndex(ContactsProvider.CMetaData.ContactsMetaData.GROUPS));
 		if (resp != null) {
-			this.groups = MapUtils.stringToMap(cur.getString(cur.getColumnIndex(ContactsProvider.CMetaData.ContactsMetaData.GROUPS)));
+			this.groups = MapUtils.stringToMap(context,cur.getString(cur.getColumnIndex(ContactsProvider.CMetaData.ContactsMetaData.GROUPS)));
 		}
 		
 		this.setColor(cur.getString(cur.getColumnIndex(ContactsProvider.CMetaData.ContactsMetaData.COLOR)));

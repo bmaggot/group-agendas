@@ -31,7 +31,6 @@ import com.groupagendas.groupagenda.chat.ChatProvider.CMMetaData;
 import com.groupagendas.groupagenda.events.Event;
 import com.groupagendas.groupagenda.events.EventsProvider;
 import com.groupagendas.groupagenda.events.EventsProvider.EMetaData;
-import com.groupagendas.groupagenda.events.EventsProvider.EMetaData.EventsMetaData;
 import com.groupagendas.groupagenda.utils.Utils;
 
 public class ChatManagement {

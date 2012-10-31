@@ -4,7 +4,6 @@ import android.content.ContentResolver;
 import android.content.Context;
 import android.database.Cursor;
 import android.provider.ContactsContract;
-import android.provider.ContactsContract.RawContacts;
 
 import com.groupagendas.groupagenda.contacts.Contact;
 import com.groupagendas.groupagenda.data.ContactManagement;
@@ -12,10 +11,7 @@ import com.groupagendas.groupagenda.data.ContactManagement;
 public class PhoneContactImport {
 	public static int[] importPhoneContacts(Context context) {
 		String id = "";
-//		String where = RawContacts.ACCOUNT_TYPE + " != 'com.android.contacts.sim' ";
-//		String[] projection = new String[] { RawContacts._ID, RawContacts.ACCOUNT_TYPE,ContactsContract.Contacts.DISPLAY_NAME, ContactsContract.CommonDataKinds.Email._ID };
-		String[] projection = new String[] { RawContacts._ID, "account_type"}; 
-		int[] importStats = new int[3];
+int[] importStats = new int[3];
 		int importedContactAmount = 0;
 		int unimportedContactAmount = 0;
 		int totalEntries = 0;

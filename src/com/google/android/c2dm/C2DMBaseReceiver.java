@@ -190,7 +190,7 @@ public abstract class C2DMBaseReceiver extends IntentService {
                 onRegistered(context, registrationId);
                 C2DMessaging.setRegistrationId(context, registrationId);
             } catch (IOException ex) {
-            	Reporter.reportError(this.getClass().toString(), Thread.currentThread().getStackTrace()[2].getMethodName().toString(), ex.getMessage());
+            	Reporter.reportError(getApplicationContext(), this.getClass().toString(), Thread.currentThread().getStackTrace()[2].getMethodName().toString(), ex.getMessage());
             }
         }
     }

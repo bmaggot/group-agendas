@@ -241,7 +241,7 @@ private SectionListItem[] filterEvents (String filterString, SectionListItem[] e
 
 		@Override
 		protected Void doInBackground(Void... params) {
-			sortedEvents = TreeMapUtils.sortEvents(getEventProjectionsForDisplay(listStartDate));
+			sortedEvents = TreeMapUtils.sortEvents(context, getEventProjectionsForDisplay(listStartDate));
 			return null;
 		}
 

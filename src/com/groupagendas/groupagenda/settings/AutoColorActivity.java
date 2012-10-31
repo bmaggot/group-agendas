@@ -63,7 +63,7 @@ public class AutoColorActivity extends ListActivity {
 	class SetAutoColors extends AsyncTask<Void, Boolean, Boolean>{
 		@Override
 		protected Boolean doInBackground(Void... params) {
-			return dm.setAutoColors();
+			return dm.setAutoColors(getApplicationContext());
 		}
 		@Override
 		protected void onPostExecute(Boolean success) {

@@ -98,13 +98,13 @@ public class DateTimeUtils {
 	 * @param date
 	 * @return
 	 */
-	public Calendar stringDateToCalendar(String date){
+	public Calendar stringDateToCalendar(Context context, String date){
 		Calendar c = Calendar.getInstance();
 		try {
 			Date dateObj = mDateFormater.parse(date);
 			c.setTime(dateObj);
 		} catch (ParseException e) {
-			Reporter.reportError(this.getClass().toString(), Thread.currentThread().getStackTrace()[2].getMethodName().toString(), e.getMessage());
+			Reporter.reportError(context, this.getClass().toString(), Thread.currentThread().getStackTrace()[2].getMethodName().toString(), e.getMessage());
 		}
 		return c;
 	}
@@ -114,13 +114,13 @@ public class DateTimeUtils {
 	 * @param date
 	 * @return
 	 */
-	public String formatDateTime(String date) {
+	public String formatDateTime(Context context, String date) {
 		String formatedDate = "";
 		try {
 			Date dateObj = dDateTimeFormater.parse(date);
 			formatedDate = mDateTimeFormater.format(dateObj);
 		} catch (ParseException e) {
-			Reporter.reportError(this.getClass().toString(), Thread.currentThread().getStackTrace()[2].getMethodName().toString(), e.getMessage());
+			Reporter.reportError(context, this.getClass().toString(), Thread.currentThread().getStackTrace()[2].getMethodName().toString(), e.getMessage());
 		}
 
 		return formatedDate;

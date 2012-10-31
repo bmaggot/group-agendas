@@ -359,7 +359,7 @@ public class AccountActivity extends Activity implements OnClickListener {
 			phone3View.setText(account.getPhone3());
 
 		if (account.getBirthdate() != null) {
-			final Calendar c = Utils.stringToCalendar(account.getBirthdate().toString(), DataManagement.ACCOUNT_BIRTHDATE_TIMESTAMP_FORMAT);
+			final Calendar c = Utils.stringToCalendar(getApplicationContext(), account.getBirthdate().toString(), DataManagement.ACCOUNT_BIRTHDATE_TIMESTAMP_FORMAT);
 			mYear = c.get(Calendar.YEAR);
 			mMonth = c.get(Calendar.MONTH);
 			mDay = c.get(Calendar.DAY_OF_MONTH);
@@ -461,7 +461,7 @@ public class AccountActivity extends Activity implements OnClickListener {
 
 		// Date
 		temp = birthdateView.getText().toString();
-		Calendar birthdate = Utils.stringToCalendar(temp, mAccount.getTimezone(), mAccount.getSetting_date_format());
+		Calendar birthdate = Utils.stringToCalendar(getApplicationContext(), temp, mAccount.getTimezone(), mAccount.getSetting_date_format());
 		mAccount.setBirthdate(birthdate);
 
 		// Sex
@@ -538,7 +538,7 @@ public class AccountActivity extends Activity implements OnClickListener {
 
 							startActivityForResult(intent, PICK_FROM_CAMERA);
 						} catch (ActivityNotFoundException e) {
-							Reporter.reportError(this.getClass().toString(), Thread.currentThread().getStackTrace()[2].getMethodName()
+							Reporter.reportError(getApplicationContext(), this.getClass().toString(), Thread.currentThread().getStackTrace()[2].getMethodName()
 									.toString(), e.getMessage());
 						}
 					} else { // pick from file

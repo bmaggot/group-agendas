@@ -63,7 +63,7 @@ public class AutoIconActivity extends ListActivity{
 	class SetAutoIcons extends AsyncTask<Void, Boolean, Boolean>{
 		@Override
 		protected Boolean doInBackground(Void... params) {
-			return dm.setAutoIcons();
+			return dm.setAutoIcons(getApplicationContext());
 		}
 		
 		@Override

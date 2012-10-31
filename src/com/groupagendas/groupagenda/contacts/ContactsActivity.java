@@ -23,7 +23,6 @@ import android.preference.PreferenceManager;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
-import android.util.SparseBooleanArray;
 import android.util.TypedValue;
 import android.view.GestureDetector;
 import android.view.Gravity;
@@ -595,7 +594,7 @@ public class ContactsActivity extends ListActivity implements OnCheckedChangeLis
 				HttpPost post = new HttpPost(Data.getServerUrl() + "mobile/events_invite_extra");
 
 				MultipartEntity reqEntity = new MultipartEntity(HttpMultipartMode.BROWSER_COMPATIBLE);
-				reqEntity.addPart("token", new StringBody(Data.getToken()));
+				reqEntity.addPart("token", new StringBody(Data.getToken(getApplicationContext())));
 				if (Data.eventForSavingNewInvitedPersons != null) {
 					reqEntity.addPart("event_id", new StringBody(String.valueOf(Data.eventForSavingNewInvitedPersons.getEvent_id())));
 				}
