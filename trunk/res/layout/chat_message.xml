@@ -74,7 +74,7 @@
                         android:layout_marginLeft="5dp"
                         android:src="@drawable/edit_button"
                         android:layout_gravity="right"
-                        android:visibility="gone" />
+                        android:visibility="invisible" />
                 </LinearLayout>
 
                 <TextView
