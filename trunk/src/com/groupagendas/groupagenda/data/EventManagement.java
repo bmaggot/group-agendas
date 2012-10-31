@@ -550,8 +550,8 @@ public class EventManagement {
 	 */
 	protected static void insertEventToLocalDB(Context context, Event event) {
 		// 1. ADD EVENT details to events table
-//		ContentValues cv = createCVforEventsTable(event);
-//		Uri eventUri = context.getContentResolver().insert(EventsProvider.EMetaData.INDEXED_EVENTS_URI, cv);
+		ContentValues cv = createCVforEventsTable(event);
+		context.getContentResolver().insert(EventsProvider.EMetaData.INDEXED_EVENTS_URI, cv);
 
 //		long internalID = ContentUris.parseId(eventUri);
 //		if (internalID >= 0){ 
