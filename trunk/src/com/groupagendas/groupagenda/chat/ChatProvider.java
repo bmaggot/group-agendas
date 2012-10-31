@@ -191,7 +191,7 @@ public class ChatProvider extends ContentProvider {
 		@Override
 		public void onCreate(SQLiteDatabase db) {
 			String query = "CREATE TABLE " + CMMetaData.CHAT_TABLE + " (" 
-					+ CMMetaData.ChatMetaData.M_ID + " INTEGER UNIQUE ON CONFLICT IGNORE,"
+					+ CMMetaData.ChatMetaData.M_ID + " INTEGER UNIQUE ON CONFLICT REPLACE,"
 					+ CMMetaData.ChatMetaData.E_ID + " INTEGER ,"
 					+ CMMetaData.ChatMetaData.USER_ID + " INTEGER ," 
 					+ CMMetaData.ChatMetaData.MESSAGE + " TEXT ,"
