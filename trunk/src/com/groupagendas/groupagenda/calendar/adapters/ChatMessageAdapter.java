@@ -47,8 +47,8 @@ public class ChatMessageAdapter extends AbstractAdapter<ChatMessageObject> {
 		DateTimeUtils dtUtils = new DateTimeUtils(getContext());
 		chatTime.setText(dtUtils.formatDateTime(calendar));
 		TextView fromWho = (TextView) view.findViewById(R.id.chat_message_from_who);
-		fromWho.setText(chatMessage.getFullname());
 		if (chatMessage.getUserId() == account.getUser_id()) {
+			fromWho.setText(getContext().getResources().getString(R.string.you));
 			view.findViewById(R.id.kubiks).setVisibility(View.VISIBLE);
 			ImageView iksiuks = (ImageView) view.findViewById(R.id.delete_button);
 			iksiuks.setClickable(true);
@@ -64,6 +64,7 @@ public class ChatMessageAdapter extends AbstractAdapter<ChatMessageObject> {
 				});
 			}
 		} else {
+			fromWho.setText(chatMessage.getFullname());
 			view.findViewById(R.id.kubiks).setVisibility(View.GONE);
 			ImageView iksiuks = (ImageView) view.findViewById(R.id.delete_button);
 			iksiuks.setClickable(false);
