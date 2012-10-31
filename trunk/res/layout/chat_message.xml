@@ -56,7 +56,6 @@
                             android:layout_gravity="left"
                             android:layout_weight="0.6"
                             android:singleLine="true"
-                            android:text="Rob Jansen"
                             android:textAppearance="@style/chat_message_from_who" />
 
                         <TextView
@@ -64,7 +63,6 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_gravity="right"
-                            android:text="Aug 2012 20:45"
                             android:textAppearance="@style/chat_message_time" />
                     </LinearLayout>
 
@@ -76,7 +74,7 @@
                         android:layout_marginLeft="5dp"
                         android:src="@drawable/edit_button"
                         android:layout_gravity="right"
-                        android:visibility="visible" />
+                        android:visibility="gone" />
                 </LinearLayout>
 
                 <TextView
@@ -86,7 +84,6 @@
                     android:layout_marginBottom="10dp"
                     android:layout_marginLeft="10dp"
                     android:layout_marginRight="15dp"
-                    android:text="Loren ipsum dolor sit amet,consectetuer adipiscing elit, sed consectetur"
                     android:textAppearance="@style/chat_message_body" />
             </LinearLayout>
         </LinearLayout>
