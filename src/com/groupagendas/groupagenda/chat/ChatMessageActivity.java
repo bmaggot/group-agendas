@@ -71,9 +71,9 @@ public class ChatMessageActivity extends Activity {
 		String fullname = account.getFullname();
 		String invitedPersons = "";
 		for(Invited invitedPerson : event.getInvited()){
-			if(!invitedPerson.getName().equals(fullname)){
+			if(!invitedPerson.getName().equals(fullname) && invitedPerson.getStatus() != 0){
 				invitedPersons += invitedPerson.getName() +", ";
-			} else {
+			} else if(invitedPerson.getStatus() != 0) {
 				invitedPersons += getApplicationContext().getResources().getString(R.string.you) + ", ";
 			}
 		}
