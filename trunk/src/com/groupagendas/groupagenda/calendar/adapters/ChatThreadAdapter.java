@@ -29,7 +29,7 @@ public class ChatThreadAdapter extends AbstractAdapter<ChatThreadObject> {
 		
 		ChatThreadObject chatThread = (ChatThreadObject) this.getItem(i);
 		TextView chatMessagesCount = (TextView) view.findViewById(R.id.chat_thread_message_count);
-		chatMessagesCount.setText(String.valueOf(chatThread.getMessage_count()));
+		chatMessagesCount.setText(String.valueOf(chatThread.getNew_messages()));
 		TextView title = (TextView) view.findViewById(R.id.chat_thread_title);
 		title.setText(chatThread.getTitle());
 		TextView chatTime = (TextView) view.findViewById(R.id.chat_thread_time);
