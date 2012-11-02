@@ -21,7 +21,6 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.groupagendas.groupagenda.C2DMReceiver;
-import com.groupagendas.groupagenda.EventActivityOnClickListener;
 import com.groupagendas.groupagenda.R;
 import com.groupagendas.groupagenda.account.Account;
 import com.groupagendas.groupagenda.calendar.adapters.ChatMessageAdapter;
