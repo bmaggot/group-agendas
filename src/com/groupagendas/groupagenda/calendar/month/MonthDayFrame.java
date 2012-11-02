@@ -17,7 +17,6 @@ import android.widget.TextView;
 import com.groupagendas.groupagenda.R;
 import com.groupagendas.groupagenda.calendar.MonthCellState;
 import com.groupagendas.groupagenda.events.Event;
-import com.groupagendas.groupagenda.events.Invited;
 
 public class MonthDayFrame extends RelativeLayout {
 	
