@@ -84,7 +84,11 @@ public class ChatMessageActivity extends Activity {
 				invitedPersons += getApplicationContext().getResources().getString(R.string.you) + ", ";
 			}
 		}
-		invitedPersons = invitedPersons.substring(0, invitedPersons.lastIndexOf(","));
+		if(!invitedPersons.equals("")){
+			invitedPersons = invitedPersons.substring(0, invitedPersons.lastIndexOf(","));
+		} else {
+			invitedPersons = getResources().getString(R.string.you);
+		}
 		invitedPersons += ".";
 		invitedList.setText(invitedPersons);
 		eventButton.setOnClickListener(new OnClickListener() {
