@@ -53,7 +53,14 @@ public class ChatMessageActivity extends Activity {
 		setContentView(R.layout.chat);
 		TextView title = (TextView) findViewById(R.id.chat_info_message_title);
 		TextView invitedList = (TextView) findViewById(R.id.chat_info_message_people);
-//		Button chats = (Button) findViewById(R.id.chat_message_info_chats_button);
+		Button chats = (Button) findViewById(R.id.chat_message_info_chats_button);
+		chats.setOnClickListener(new OnClickListener() {
+			
+			@Override
+			public void onClick(View v) {
+				finish();
+			}
+		});
 		Button eventButton = (Button) findViewById(R.id.chat_message_info_event_button);
 		pb = (ProgressBar) findViewById(R.id.progress);
 

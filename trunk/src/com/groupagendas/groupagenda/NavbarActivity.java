@@ -342,6 +342,9 @@ public class NavbarActivity extends FragmentActivity {
 		case LIST_SEARCH:
 			showListSearchView();
 			break;
+		case CHAT_THREADS:
+			showChatFragment();
+			break;
 		default:
 			showMonthView();
 			break;
@@ -563,10 +566,8 @@ public class NavbarActivity extends FragmentActivity {
 					buttonView.setChecked(false);
 					break;
 				case R.id.btnChatThreads:
-					Fragment chatFragment = ChatThreadFragment.newInstance();
-					FragmentTransaction ft = NavbarActivity.this.getSupportFragmentManager().beginTransaction();
-					calendarContainer.removeAllViews();
-					ft.add(R.id.calendarContainer, chatFragment).setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN).commit();
+					viewState = ViewState.CHAT_THREADS;
+					showChatFragment();
 					break;
 //				case R.id.btnContacts:
 //					Data.newEventPar = false;
@@ -591,6 +592,14 @@ public class NavbarActivity extends FragmentActivity {
 			}
 		}
 	};
+	
+	public void showChatFragment(){
+		Fragment chatFragment = ChatThreadFragment.newInstance();
+//		((ChatThreadFragment) chatFragment).setNavbarActivity(this);
+		FragmentTransaction ft = NavbarActivity.this.getSupportFragmentManager().beginTransaction();
+		calendarContainer.removeAllViews();
+		ft.add(R.id.calendarContainer, chatFragment).setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN).commit();
+	}
 
 	@Override
 	protected void onPause() {
