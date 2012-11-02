@@ -63,7 +63,7 @@ public class ChatMessageAdapter extends AbstractAdapter<ChatMessageObject> {
 					}
 				});
 			} else {
-				iksiuks.setVisibility(View.GONE);
+				iksiuks.setVisibility(View.INVISIBLE);
 			}
 		} else {
 			fromWho.setText(chatMessage.getFullname());
