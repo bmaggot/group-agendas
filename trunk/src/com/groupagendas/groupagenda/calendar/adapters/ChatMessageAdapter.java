@@ -62,6 +62,8 @@ public class ChatMessageAdapter extends AbstractAdapter<ChatMessageObject> {
 						context.deleteMessage(chatMessage.getMessageId(), chatMessage);
 					}
 				});
+			} else {
+				iksiuks.setVisibility(View.GONE);
 			}
 		} else {
 			fromWho.setText(chatMessage.getFullname());
