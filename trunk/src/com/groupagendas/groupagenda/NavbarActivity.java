@@ -736,10 +736,10 @@ public class NavbarActivity extends FragmentActivity {
 						publishProgress(total);
 
 					case 6: // Load chat threads if network available 
-						if (DataManagement.networkAvailable)
-//							dm.getChatThreads();
-						dm.getAddressesFromRemoteDb(getApplicationContext());
-						ChatManagement.getAllChatMessagesFromRemoteDb(NavbarActivity.this);
+						if (DataManagement.networkAvailable) {
+							dm.getAddressesFromRemoteDb(getApplicationContext());
+							ChatManagement.getAllChatMessagesFromRemoteDb(NavbarActivity.this);
+						}
 						loadPhase++;
 						total = 100;
 						publishProgress(total);

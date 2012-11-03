@@ -1158,7 +1158,7 @@ public class DataManagement {
 			if (cursor.moveToFirst()) {
 				item.setNative(true);
 				item.setIs_owner(false);
-				item.setType(Event.NOTE);
+				item.setType(Event.NATIVE_EVENT);
 				item.setStatus(1);
 
 				item.setEvent_id(cursor.getInt(0));
@@ -1191,7 +1191,7 @@ public class DataManagement {
 	}
 
 	public ArrayList<Event> getNaviveCalendarEvents(ArrayList<Event> events) {
-		Cursor calendars = getNativeCalendars();
+		Cursor calendars = getNativeCalendars();;
 
 		if (calendars != null) {
 			while (!calendars.isAfterLast()) {
@@ -1213,7 +1213,7 @@ public class DataManagement {
 
 						item.setNative(true);
 						item.setIs_owner(false);
-						item.setType(Event.NOTE);
+						item.setType(Event.NATIVE_EVENT);
 						item.setStatus(1);
 
 						item.setEvent_id(cursor.getInt(0));

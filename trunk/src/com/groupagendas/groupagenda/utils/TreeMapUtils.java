@@ -119,7 +119,7 @@ public class TreeMapUtils {
 		}
 	}
 
-	public void putNewEventIntoTreeMap(Context context, TreeMap<Calendar, ArrayList<Event>> tm, Event event) {
+	public static void putNewEventIntoTreeMap(Context context, TreeMap<Calendar, ArrayList<Event>> tm, Event event) {
 		
 		Calendar event_start = null;
 		Calendar event_end = null;
@@ -150,7 +150,7 @@ public class TreeMapUtils {
 				if (eventTmpEnd.after(eventDay) && event_end.after(eventTmpEnd)) {
 					dayStr = new SimpleDateFormat("yyyy-MM-dd").format(event_start.getTime());
 					event_start = Utils.stringToCalendar(context, dayStr + " 00:00:00", SERVER_TIMESTAMP_FORMAT);
-					tm = putValueIntoTreeMap(tm, eventDay, event);
+					tm = putValueIntoTreeMap(tm, event_start, event);
 				}
 			}
 		}

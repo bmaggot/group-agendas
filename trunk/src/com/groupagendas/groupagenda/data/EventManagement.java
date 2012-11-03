@@ -37,6 +37,7 @@ import com.groupagendas.groupagenda.error.report.Reporter;
 import com.groupagendas.groupagenda.events.Event;
 import com.groupagendas.groupagenda.events.EventsAdapter;
 import com.groupagendas.groupagenda.events.EventsProvider;
+import com.groupagendas.groupagenda.events.NativeCalendarReader;
 import com.groupagendas.groupagenda.events.EventsProvider.EMetaData;
 import com.groupagendas.groupagenda.events.Invited;
 import com.groupagendas.groupagenda.utils.JSONUtils;
@@ -1339,6 +1340,7 @@ private static String parseInvitedListToJSONArray(ArrayList<Invited> invited) {
 		ArrayList<Event> events;
 	
 		events = EventManagement.getEventsFromLocalDb(context, true);
+		events.addAll(NativeCalendarReader.readAllCalendar(context));
 		if (eAdapter != null) {
 			eAdapter.setItems(events);
 			eAdapter.notifyDataSetChanged();
