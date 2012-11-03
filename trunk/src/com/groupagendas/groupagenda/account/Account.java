@@ -82,6 +82,8 @@ public class Account {
 		public static final String NEED_UPDATE = "need_update";
 		public static final String PUSH_ID = "push_id";
 		public static final String SESSION_ID = "session_id";
+
+		public static final String SHOW_NATIVE_CALENDARS = "show_native_calendars";
 	}
 	
 	public long getLatestUpdateUnixTimestamp(){
@@ -264,6 +266,10 @@ public class Account {
 		return prefs.getInt(Account.AccountMetaData.NEED_UPDATE, 0);
 	}
 
+	public boolean getShow_native_calendars() {
+		return prefs.getBoolean(Account.AccountMetaData.SHOW_NATIVE_CALENDARS, false);
+	}
+	
 	public void setUser_id(int user_id) {
 		prefsEditor.putInt(Account.AccountMetaData.U_ID, user_id);
 		prefsEditor.commit();
@@ -448,6 +454,11 @@ public class Account {
 
 	public void setNeed_update(int need_update) {
 		prefsEditor.putInt(Account.AccountMetaData.NEED_UPDATE, need_update);
+		prefsEditor.commit();
+	}
+	
+	public void getShow_native_calendars(boolean state) {
+		prefsEditor.putBoolean(Account.AccountMetaData.SHOW_NATIVE_CALENDARS, state);
 		prefsEditor.commit();
 	}
 
