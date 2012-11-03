@@ -19,6 +19,7 @@ import com.groupagendas.groupagenda.data.CalendarSettings;
 import com.groupagendas.groupagenda.data.EventManagement;
 import com.groupagendas.groupagenda.events.Event;
 import com.groupagendas.groupagenda.events.EventsProvider;
+import com.groupagendas.groupagenda.events.NativeCalendarReader;
 import com.groupagendas.groupagenda.utils.TreeMapUtils;
 import com.groupagendas.groupagenda.utils.Utils;
 
@@ -240,6 +241,10 @@ public class AgendaView extends AbstractCalendarView {
 		protected Void doInBackground(Void... params) {
 			sortedEvents = TreeMapUtils
 					.sortEvents(context, getEventProjectionsForDisplay(shownDate));
+			ArrayList<Event> nativeEvents = NativeCalendarReader.readNativeCalendarEventsForAFewDays(context, shownDate, SHOWN_DAYS_COUNT);
+			for(Event nativeEvent : nativeEvents){
+				TreeMapUtils.putNewEventIntoTreeMap(context, sortedEvents, nativeEvent);
+			}
 			return null;
 		}
 

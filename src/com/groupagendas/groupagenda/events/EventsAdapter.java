@@ -13,6 +13,7 @@ import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.Filter;
 import android.widget.Filterable;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.groupagendas.groupagenda.R;
@@ -28,6 +29,8 @@ public class EventsAdapter extends BaseAdapter implements Filterable{
 	private String mFilter = null;
 	private Filter filter = null;
 	private int newInvitesCount;
+	private LinearLayout status1block;
+	private LinearLayout status2block;
 	public EventsAdapter(List<Event> objects, Activity activity){
 		events = objects;
 		eventsAll = objects;
@@ -68,6 +71,8 @@ public class EventsAdapter extends BaseAdapter implements Filterable{
 			holder.button_yes = (TextView) convertView.findViewById(R.id.button_yes);
 			holder.button_maybe = (TextView) convertView.findViewById(R.id.button_maybe);
 			holder.button_no = (TextView) convertView.findViewById(R.id.button_no);
+			status1block = (LinearLayout) convertView.findViewById(R.id.status_1_linearBlock);
+			status2block = (LinearLayout) convertView.findViewById(R.id.status_2_linearBlock);
 
 			convertView.setTag(holder);
 		} else {
@@ -95,7 +100,13 @@ public class EventsAdapter extends BaseAdapter implements Filterable{
 			holder.creator.setText(event.getCreator_fullname());
 		}
 		
+		status1block = (LinearLayout) convertView.findViewById(R.id.status_1_linearBlock);
+		status2block = (LinearLayout) convertView.findViewById(R.id.status_2_linearBlock);
+		
 		// status
+		if(!event.isNative()){
+			status1block.setVisibility(View.VISIBLE);
+			status2block.setVisibility(View.VISIBLE);
 			switch (event.getStatus()) {
 			case 0:
 				holder.status.setText(mContext.getString(R.string.status_not_attending));
@@ -122,49 +133,58 @@ public class EventsAdapter extends BaseAdapter implements Filterable{
 				holder.button_no.setVisibility(View.VISIBLE);
 				break;
 			}
-	
-		holder.status_1.setText(String.valueOf(event.getAttendant_1_count()));
-		holder.status_2.setText(String.valueOf(event.getAttendant_2_count()));
+		} else {
+			status1block.setVisibility(View.GONE);
+			status2block.setVisibility(View.GONE);
+			holder.status.setText(mContext.getString(R.string.native_type));
+			holder.button_yes.setVisibility(View.GONE);
+			holder.button_maybe.setVisibility(View.GONE);
+			holder.button_no.setVisibility(View.GONE);
+		}
 		
-		holder.button_yes.setOnClickListener(new OnClickListener() {
-			@Override
-			public void onClick(View arg0) {
-				Log.d("RESPONSE TO EVENT " + event.getEvent_id(), mContext.getString(R.string.status_attending) );
-//				boolean success = dm.changeEventStatus(event.getEvent_id(), "1");
-				holder.button_yes.setVisibility(View.INVISIBLE);
-				holder.button_maybe.setVisibility(View.VISIBLE);
-				holder.button_no.setVisibility(View.VISIBLE);
-				holder.status.setText(mContext.getString(R.string.status_attending));
-				event.setStatus(Invited.ACCEPTED);
-				respondToInvite(event);
-			}
-		});
-		
-		holder.button_maybe.setOnClickListener(new OnClickListener() {
-			@Override
-			public void onClick(View arg0) {
-				Log.d("RESPONSE TO EVENT " + event.getEvent_id(), mContext.getString(R.string.status_maybe) );
-				holder.button_yes.setVisibility(View.VISIBLE);
-				holder.button_maybe.setVisibility(View.INVISIBLE);
-				holder.button_no.setVisibility(View.VISIBLE);
-				holder.status.setText(mContext.getString(R.string.status_maybe));
-				event.setStatus(Invited.MAYBE);
-				respondToInvite(event);
-			}
-		});
-		
-		holder.button_no.setOnClickListener(new OnClickListener() {
-			@Override
-			public void onClick(View arg0) {
-				Log.d("RESPONSE TO EVENT " + event.getEvent_id(), mContext.getString(R.string.status_not_attending) );
-				holder.button_yes.setVisibility(View.VISIBLE);
-				holder.button_maybe.setVisibility(View.VISIBLE);
-				holder.button_no.setVisibility(View.INVISIBLE);
-				holder.status.setText(mContext.getString(R.string.status_not_attending));
-				event.setStatus(Invited.REJECTED);
-				respondToInvite(event);
-			}
-		});
+		if(!event.isNative()){
+			holder.status_1.setText(String.valueOf(event.getAttendant_1_count()));
+			holder.status_2.setText(String.valueOf(event.getAttendant_2_count()));
+			
+			holder.button_yes.setOnClickListener(new OnClickListener() {
+				@Override
+				public void onClick(View arg0) {
+					Log.d("RESPONSE TO EVENT " + event.getEvent_id(), mContext.getString(R.string.status_attending) );
+					holder.button_yes.setVisibility(View.INVISIBLE);
+					holder.button_maybe.setVisibility(View.VISIBLE);
+					holder.button_no.setVisibility(View.VISIBLE);
+					holder.status.setText(mContext.getString(R.string.status_attending));
+					event.setStatus(Invited.ACCEPTED);
+					respondToInvite(event);
+				}
+			});
+			
+			holder.button_maybe.setOnClickListener(new OnClickListener() {
+				@Override
+				public void onClick(View arg0) {
+					Log.d("RESPONSE TO EVENT " + event.getEvent_id(), mContext.getString(R.string.status_maybe) );
+					holder.button_yes.setVisibility(View.VISIBLE);
+					holder.button_maybe.setVisibility(View.INVISIBLE);
+					holder.button_no.setVisibility(View.VISIBLE);
+					holder.status.setText(mContext.getString(R.string.status_maybe));
+					event.setStatus(Invited.MAYBE);
+					respondToInvite(event);
+				}
+			});
+			
+			holder.button_no.setOnClickListener(new OnClickListener() {
+				@Override
+				public void onClick(View arg0) {
+					Log.d("RESPONSE TO EVENT " + event.getEvent_id(), mContext.getString(R.string.status_not_attending) );
+					holder.button_yes.setVisibility(View.VISIBLE);
+					holder.button_maybe.setVisibility(View.VISIBLE);
+					holder.button_no.setVisibility(View.INVISIBLE);
+					holder.status.setText(mContext.getString(R.string.status_not_attending));
+					event.setStatus(Invited.REJECTED);
+					respondToInvite(event);
+				}
+			});
+		}
 		
 		return convertView;
 	}

@@ -26,6 +26,7 @@ private static final String TIMESTAMP_FORMAT = DataManagement.SERVER_TIMESTAMP_F
 	public static final String TELEPHONE_CALL = "t";
 	public static final String SHARED_NOTE = "n";
 	public static final String OPEN_EVENT = "o";
+	public static final String NATIVE_EVENT = "native";
 	
 	private long internalID;
 	private int event_id; //TODO solve ids over 32k
@@ -360,10 +361,18 @@ private static final String TIMESTAMP_FORMAT = DataManagement.SERVER_TIMESTAMP_F
 		return title;
 	}
 	public String getZip() {
-		return zip;
+		if(zip != null){
+			return zip;
+		} else {
+			return "";
+		}
 	}
 	public String getTimezone() {
-		return timezone;
+		if(timezone !=null){
+			return timezone;
+		} else {
+			return "";
+		}
 	}
 	public String getDescription() {
 		if (description_ == null || description_.equalsIgnoreCase("null")) description_ = DEFAULT_DESCRIPTION;
@@ -415,28 +424,60 @@ private static final String TIMESTAMP_FORMAT = DataManagement.SERVER_TIMESTAMP_F
 		return icon;
 	}
 	public String getLocation() {
-		return location;
+		if(location != null){
+			return location;
+		} else {
+			return "";
+		}
 	}
 	public String getAccomodation() {
-		return accomodation;
+		if(accomodation != null){
+			return accomodation;
+		} else {
+			return "";
+		}
 	}
 	public String getCost() {
-		return cost;
+		if (cost != null) {
+			return cost;
+		} else {
+			return "";
+		}
 	}
 	public String getTake_with_you() {
-		return take_with_you;
+		if(take_with_you != null){
+			return take_with_you;
+		} else {
+			return "";
+		}
 	}
 	public String getGo_by() {
-		return go_by;
+		if(go_by != null){
+			return go_by;
+		} else {
+			return "";
+		}
 	}
 	public String getCountry() {
-		return country;
+		if(country != null){
+			return country;
+		} else {
+			return "";
+		}
 	}
 	public String getCity() {
-		return city;
+		if (city != null) {
+			return city;
+		} else {
+			return "";
+		}
 	}
 	public String getStreet() {
-		return street;
+		if(street != null){
+			return street;
+		} else {
+			return "";
+		}
 	}
 /**
  * Getter for reminder 1. Returns NULL if not set

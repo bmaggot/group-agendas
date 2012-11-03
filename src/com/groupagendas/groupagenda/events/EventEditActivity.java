@@ -637,7 +637,7 @@ public class EventEditActivity extends EventActivity {
 			// autoIcons = dm.getAutoIcons();
 
 			if (intent.getBooleanExtra("isNative", false)) {
-				return dm.getNativeCalendarEvent(ids[0]);
+				return NativeCalendarReader.getNativeEventFromLocalDbById(getApplicationContext(), ids[0]);
 			} else {
 				return EventManagement.getEventFromLocalDb(EventEditActivity.this, ids[0], EventManagement.ID_INTERNAL);
 			}
@@ -667,6 +667,8 @@ public class EventEditActivity extends EventActivity {
 				topText.setText(getResources().getStringArray(R.array.type_labels)[4]);
 			} else if (tmpTopText.equalsIgnoreCase("v")) {
 				topText.setText(getResources().getStringArray(R.array.type_labels)[5]);
+			}else if (tmpTopText.equalsIgnoreCase("native event")) {
+				topText.setText(getResources().getStringArray(R.array.type_labels)[6]);
 			}
 
 			// title
@@ -748,6 +750,8 @@ public class EventEditActivity extends EventActivity {
 				showView(accomodationView, detailsLine);
 
 			} else {
+				
+				descView.setEnabled(false);
 				titleView.setEnabled(false);
 				endView.setEnabled(false);
 				endButton.setEnabled(false);
@@ -764,6 +768,9 @@ public class EventEditActivity extends EventActivity {
 				accomodationView.setEnabled(false);
 				saveButton.setVisibility(View.GONE);
 
+			}
+			if(event.isNative()){
+				deleteButton.setVisibility(View.INVISIBLE);
 			}
 
 			int id = account.getUser_id();
@@ -851,17 +858,21 @@ public class EventEditActivity extends EventActivity {
 				showView(accomodationView, detailsLine);
 			}
 
-			chatMessengerButton.setOnClickListener(new OnClickListener() {
+			if(!event.isNative()){
+				chatMessengerButton.setOnClickListener(new OnClickListener() {
 
-				@Override
-				public void onClick(View arg0) {
-					if (event_internal_id > 0) {
-						Intent intent = new Intent(EventEditActivity.this, ChatMessageActivity.class);
-						intent.putExtra("event_id", event.getEvent_id());
-						startActivity(intent);
+					@Override
+					public void onClick(View arg0) {
+						if (event_internal_id > 0) {
+							Intent intent = new Intent(EventEditActivity.this, ChatMessageActivity.class);
+							intent.putExtra("event_id", event.getEvent_id());
+							startActivity(intent);
+						}
 					}
-				}
-			});
+				});
+			} else {
+				chatMessengerButton.setVisibility(View.INVISIBLE);
+			}
 			if (result.getReminder1() != null) {
 				reminder1.setText(dtUtils.formatDateTime(result.getReminder1()));
 			} else {
@@ -893,11 +904,14 @@ public class EventEditActivity extends EventActivity {
 				alarm3.setText("");
 			}
 
-			showInvitesView(EventEditActivity.this);
-
-			if (result.getInvited().size() > 0) {
-				invitationResponseLine.setVisibility(View.VISIBLE);
-				respondToInvitation(result.getStatus());
+			if(!event.isNative()){
+				showInvitesView(EventEditActivity.this);
+				if (result.getInvited().size() > 0) {
+					invitationResponseLine.setVisibility(View.VISIBLE);
+					respondToInvitation(result.getStatus());
+				}
+			} else {
+				inviteButton.setVisibility(View.INVISIBLE);
 			}
 
 			pb.setVisibility(View.INVISIBLE);
