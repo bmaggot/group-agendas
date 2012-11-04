@@ -15,6 +15,7 @@ import com.groupagendas.groupagenda.account.Account;
 import com.groupagendas.groupagenda.contacts.Contact;
 import com.groupagendas.groupagenda.contacts.ContactsProvider;
 import com.groupagendas.groupagenda.contacts.Group;
+import com.groupagendas.groupagenda.data.DataManagement;
 import com.groupagendas.groupagenda.data.EventManagement;
 import com.groupagendas.groupagenda.error.report.Reporter;
 import com.groupagendas.groupagenda.events.Event;
@@ -69,14 +70,20 @@ public class JSONUtils {
 			}
 				// EVENT TIME START
 	
-				unixTimestamp = e.optLong(EventManagement.TIME_START_UTC);
-				if (unixTimestamp == 0) return null;
-				event.setStartCalendar(Utils.createCalendar(Utils.unixTimestampToMilis(unixTimestamp), EventManagement.user_timezone));
-			
+//				unixTimestamp = e.optLong(EventManagement.TIME_START_UTC);
+//				if (unixTimestamp == 0) return null;
+//				event.setStartCalendar(Utils.createCalendar(Utils.unixTimestampToMilis(unixTimestamp), EventManagement.user_timezone));
+				try {
+					event.setStartCalendar(Utils.stringToCalendar(context, e.getString("time_start"), DataManagement.SERVER_TIMESTAMP_FORMAT));
+					event.setEndCalendar(Utils.stringToCalendar(context, e.getString("time_end"), DataManagement.SERVER_TIMESTAMP_FORMAT));
+				} catch (JSONException e2) {
+					// TODO Auto-generated catch block
+					e2.printStackTrace();
+				}
 				// EVENT TIME END
-					unixTimestamp = e.optLong(EventManagement.TIME_END_UTC);
-					if (unixTimestamp == 0) return null;
-				event.setEndCalendar(Utils.createCalendar(Utils.unixTimestampToMilis(unixTimestamp), EventManagement.user_timezone));
+//					unixTimestamp = e.optLong(EventManagement.TIME_END_UTC);
+//					if (unixTimestamp == 0) return null;
+//				event.setEndCalendar(Utils.createCalendar(Utils.unixTimestampToMilis(unixTimestamp), EventManagement.user_timezone));
 			
 			
 			
