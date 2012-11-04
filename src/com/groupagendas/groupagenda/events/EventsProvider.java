@@ -94,7 +94,7 @@ public class EventsProvider extends ContentProvider{
 			public static final String TITLE	= "title";
 			public static final String ICON		= "icon";
 			public static final String COLOR 	= "color";
-			public static final String TEXT_COLOR 	= "text_color";//2012-10-24
+//			public static final String TEXT_COLOR 	= "text_color";//2012-10-24
 			public static final String EVENT_DISPLAY_COLOR 	= "event_display_color";
 			public static final String DESC 	= "description_";
 			
@@ -168,7 +168,7 @@ public class EventsProvider extends ContentProvider{
 		EM.put(EMetaData.EventsMetaData.TITLE, EMetaData.EventsMetaData.TITLE);
 		EM.put(EMetaData.EventsMetaData.ICON, EMetaData.EventsMetaData.ICON);
 		EM.put(EMetaData.EventsMetaData.COLOR, EMetaData.EventsMetaData.COLOR);
-		EM.put(EMetaData.EventsMetaData.TEXT_COLOR, EMetaData.EventsMetaData.TEXT_COLOR);//2012-10-24
+//		EM.put(EMetaData.EventsMetaData.TEXT_COLOR, EMetaData.EventsMetaData.TEXT_COLOR);//2012-10-24
 		EM.put(EMetaData.EventsMetaData.EVENT_DISPLAY_COLOR, EMetaData.EventsMetaData.EVENT_DISPLAY_COLOR);//2012-10-24
 		EM.put(EMetaData.EventsMetaData.DESC, EMetaData.EventsMetaData.DESC);
 		
@@ -532,7 +532,7 @@ public class EventsProvider extends ContentProvider{
 				+EMetaData.EventsMetaData.TITLE+" TEXT ,"
 				+EMetaData.EventsMetaData.ICON+" TEXT ,"
 				+EMetaData.EventsMetaData.COLOR+" TEXT ,"
-				+EMetaData.EventsMetaData.TEXT_COLOR+" TEXT ,"//2012-10-24
+//				+EMetaData.EventsMetaData.TEXT_COLOR+" TEXT ,"//2012-10-24
 				+EMetaData.EventsMetaData.EVENT_DISPLAY_COLOR+" TEXT ,"
 				+EMetaData.EventsMetaData.DESC+" TEXT ,"
 				
