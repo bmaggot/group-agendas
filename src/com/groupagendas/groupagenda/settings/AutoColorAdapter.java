@@ -14,7 +14,7 @@ import com.groupagendas.groupagenda.R;
 import com.groupagendas.groupagenda.utils.DrawingUtils;
 
 public class AutoColorAdapter extends BaseAdapter{
-	private static final int COLOURED_BUBBLE_SIZE = 50;
+	private static final int COLOURED_BUBBLE_SIZE = 20;
 	private Context mContext;
 	private LayoutInflater mInflater;
 	private ArrayList<AutoColorItem> mItems;
