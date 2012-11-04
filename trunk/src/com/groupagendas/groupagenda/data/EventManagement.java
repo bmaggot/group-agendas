@@ -1163,7 +1163,7 @@ public class EventManagement {
 		cv.put(EventsProvider.EMetaData.EventsMetaData.TITLE, event.getTitle());
 		cv.put(EventsProvider.EMetaData.EventsMetaData.ICON, event.getIcon());
 		cv.put(EventsProvider.EMetaData.EventsMetaData.COLOR, event.getColor());
-		cv.put(EventsProvider.EMetaData.EventsMetaData.TEXT_COLOR, event.getTextColor());//2012-10-24
+//		cv.put(EventsProvider.EMetaData.EventsMetaData.TEXT_COLOR, event.getTextColor());//2012-10-24
 		cv.put(EventsProvider.EMetaData.EventsMetaData.EVENT_DISPLAY_COLOR, event.getDisplayColor());//2012-10-24
 		cv.put(EventsProvider.EMetaData.EventsMetaData.DESC, event.getDescription());
 		cv.put(EventsProvider.EMetaData.EventsMetaData.LOCATION, event.getLocation());
@@ -1249,6 +1249,7 @@ private static String parseInvitedListToJSONArray(ArrayList<Invited> invited) {
 		item.setTitle(result.getString(result.getColumnIndex(EventsProvider.EMetaData.EventsMetaData.TITLE)));
 		item.setIcon(result.getString(result.getColumnIndex(EventsProvider.EMetaData.EventsMetaData.ICON)));
 		item.setColor(result.getString(result.getColumnIndex(EventsProvider.EMetaData.EventsMetaData.COLOR)));
+		item.setDisplayColor(result.getString(result.getColumnIndex(EventsProvider.EMetaData.EventsMetaData.EVENT_DISPLAY_COLOR)));
 		item.setDescription(result.getString(result.getColumnIndex(EventsProvider.EMetaData.EventsMetaData.DESC)));
 
 		item.setLocation(result.getString(result.getColumnIndex(EventsProvider.EMetaData.EventsMetaData.LOCATION)));

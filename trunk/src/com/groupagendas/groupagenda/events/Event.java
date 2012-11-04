@@ -174,16 +174,25 @@ private static final String TIMESTAMP_FORMAT = DataManagement.SERVER_TIMESTAMP_F
 	public void setColor(String color) {
 		this.color = DEFAULT_COLOR;
 		if (color != null && (color.matches("[a-fA-F0-9]{6,8}")))
-			if (!color.equalsIgnoreCase("null")) this.color = color;
+			if (!color.equalsIgnoreCase("null")) {
+				this.color = color;
+			}
 		
 	}
 		//2012-10-24
 		    public String getTextColor() {
-			if (textColor == null || textColor.equalsIgnoreCase("null")) {
-					this.textColor = DEFAULT_TEXT_COLOR;
-			}
-
-			return textColor;
+		    	String displayColor = getDisplayColor(); 
+		      	int r = Integer.parseInt(displayColor.substring(0, 2), 16);
+		    	int g = Integer.parseInt(displayColor.substring(2, 4), 16);
+		    	int b = Integer.parseInt(displayColor.substring(4, displayColor.length()), 16);
+		
+		        int yiq = ((r * 299) + (g * 587) + (b * 114)) / 1000;
+		        return (yiq >= 143) ? "000000" : "FFFFFF"; // original 128
+//			if (textColor == null || textColor.equalsIgnoreCase("null")) {
+//					this.textColor = DEFAULT_TEXT_COLOR;
+//			}
+//
+//			return textColor;
 		}
 		
 		public void setTextColor(String textColor) {
@@ -194,10 +203,9 @@ private static final String TIMESTAMP_FORMAT = DataManagement.SERVER_TIMESTAMP_F
 		}
 		//2012-10-24
 		public String getDisplayColor() {
-			if (displayColor == null || displayColor.equalsIgnoreCase("null")) {
-					this.displayColor = DEFAULT_COLOR;
-			}
-
+			if (status == Invited.ACCEPTED) return this.color;
+			if (displayColor == null) return DEFAULT_COLOR;
+			if (displayColor.equalsIgnoreCase("null")) return DEFAULT_COLOR;
 			return displayColor;
 		}
 		

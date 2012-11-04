@@ -472,74 +472,25 @@ public class DayWeekView extends AbstractCalendarView {
 			DayWeekView.daysToShow = daysToShow;
 		}
 
-	
-		private class UpdateEventsInfoTask extends AsyncTask<Void, Integer, Void> {
-			private Context context = DayWeekView.this.getContext();
-			protected String[] EventProjectionForDisplay = {
-					EventsProvider.EMetaData.EventsMetaData.E_ID,
-					EventsProvider.EMetaData.EventsMetaData._ID,
-					EventsProvider.EMetaData.EventsMetaData.COLOR,
-					EventsProvider.EMetaData.EventsMetaData.TEXT_COLOR, //2012-10-29
-					EventsProvider.EMetaData.EventsMetaData.EVENT_DISPLAY_COLOR, //2012-10-29
-					EventsProvider.EMetaData.EventsMetaData.TIME_START_UTC_MILLISECONDS,
-					EventsProvider.EMetaData.EventsMetaData.TIME_END_UTC_MILLISECONDS,
-					EventsProvider.EMetaData.EventsMetaData.ICON,
-					EventsProvider.EMetaData.EventsMetaData.TITLE,
-					};
-			
-			/**
-			 * @author justinas.marcinka@gmail.com
-			 * Returns event projection in: id, color, icon, title, start and end calendars. Other fields are not initialized
-			 * @param date
-			 * @return
-			 */
-			private ArrayList<Event>getEventProjectionsForDisplay(Calendar date){
-				ArrayList<Event> list = new ArrayList<Event>();
-				
-				Cursor result = EventManagement.createEventProjectionByDateFromLocalDb(context, EventProjectionForDisplay, daysShown.getShownDate(), daysShown.getDaysToShow(), EventManagement.TM_EVENTS_ON_GIVEN_MONTH, null, true);
-				if (result.moveToFirst()) {
-					while (!result.isAfterLast()) {
-						Event eventProjection = new Event();
-						
-						
-						
-						eventProjection.setInternalID(result.getLong(result.getColumnIndexOrThrow(EventsProvider.EMetaData.EventsMetaData._ID)));
-						eventProjection.setEvent_id(result.getInt(result.getColumnIndexOrThrow(EventsProvider.EMetaData.EventsMetaData.E_ID)));
-						eventProjection.setTitle(result.getString(result.getColumnIndexOrThrow(EventsProvider.EMetaData.EventsMetaData.TITLE)));
-						eventProjection.setIcon(result.getString(result.getColumnIndexOrThrow(EventsProvider.EMetaData.EventsMetaData.ICON)));
-						eventProjection.setColor(result.getString(result.getColumnIndexOrThrow(EventsProvider.EMetaData.EventsMetaData.COLOR)));
-						eventProjection.setTextColor(result.getString(result.getColumnIndexOrThrow(EventsProvider.EMetaData.EventsMetaData.TEXT_COLOR))); //2012-10-29
-						eventProjection.setDisplayColor(result.getString(result.getColumnIndexOrThrow(EventsProvider.EMetaData.EventsMetaData.EVENT_DISPLAY_COLOR)));  //2012-10-29
-						String user_timezone = CalendarSettings.getTimeZone(context);
-						long timeinMillis = result.getLong(result.getColumnIndexOrThrow(EventsProvider.EMetaData.EventsMetaData.TIME_START_UTC_MILLISECONDS));
-						eventProjection.setStartCalendar(Utils.createCalendar(timeinMillis, user_timezone));
-						timeinMillis = result.getLong(result.getColumnIndexOrThrow(EventsProvider.EMetaData.EventsMetaData.TIME_END_UTC_MILLISECONDS));
-						eventProjection.setEndCalendar(Utils.createCalendar(timeinMillis, user_timezone));
-						list.add(eventProjection);
-						result.moveToNext();
-					}
-				}
-				result.close();
-				return list ;
-				
-			}
-
-			@Override
-			protected Void doInBackground(Void... params) {
-				sortedEvents = TreeMapUtils.sortEvents(context, getEventProjectionsForDisplay(selectedDate));
-				ArrayList<Event> nativeEvents = NativeCalendarReader.readNativeCalendarEventsForAFewDays(context, daysShown.getShownDate(), daysShown.getDaysToShow());
-				for(Event nativeEvent : nativeEvents){
-					TreeMapUtils.putNewEventIntoTreeMap(context, sortedEvents, nativeEvent);
-				}
-				return null;
-			}
-			
+	/**
+	 * 
+	 * @author justinas.marcinka@gmail.com
+	 * @see AbstractCalendarView.UpdateEventsInfoTask
+	 */
+		private class UpdateEventsInfoTask extends AbstractCalendarView.UpdateEventsInfoTask{
 			protected void onPostExecute(Void result) {
 				daysShown.updateEventLists(sortedEvents);
 				updateEventLists();
-		
-				
-				
+			}
+
+			@Override
+			protected Cursor queryProjectionsFromLocalDb(Calendar date) {	
+				return EventManagement.createEventProjectionByDateFromLocalDb(context, EventProjectionForDisplay, daysShown.getShownDate(), daysShown.getDaysToShow(), EventManagement.TM_EVENTS_ON_GIVEN_MONTH, null, true);
+			}
+
+			@Override
+			protected ArrayList<Event> queryNativeEvents() {
+				return NativeCalendarReader.readNativeCalendarEventsForAFewDays(context, daysShown.getShownDate(), daysShown.getDaysToShow());
 			}
 
 

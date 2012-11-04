@@ -177,76 +177,9 @@ public class AgendaView extends AbstractCalendarView {
 		
 	}
 	
-	private class UpdateEventsInfoTask extends AsyncTask<Void, Integer, Void> {
-		private Context context = AgendaView.this.getContext();
-
-		/**
-		 * @author justinas.marcinka@gmail.com Returns event projection in: id,
-		 *         color, icon, title, start and end calendars. Other fields are
-		 *         not initialized
-		 * @param date
-		 * @return
-		 */
-		private ArrayList<Event> getEventProjectionsForDisplay(Calendar dateStart) {
-			ArrayList<Event> list = new ArrayList<Event>();
-			
-			Cursor result = EventManagement.createEventProjectionByDateFromLocalDb(context,
-					EventProjectionForDisplay, dateStart, 7,
-					EventManagement.TM_EVENTS_FROM_GIVEN_DATE, null, true);
-			if (result.moveToFirst()) {
-				while (!result.isAfterLast()) {
-					Event eventProjection = new Event();
-					eventProjection
-							.setInternalID(result.getLong(result
-									.getColumnIndexOrThrow(EventsProvider.EMetaData.EventsMetaData._ID)));
-					eventProjection
-							.setEvent_id(result.getInt(result
-									.getColumnIndexOrThrow(EventsProvider.EMetaData.EventsMetaData.E_ID)));
-					eventProjection
-							.setTitle(result.getString(result
-									.getColumnIndexOrThrow(EventsProvider.EMetaData.EventsMetaData.TITLE)));
-					eventProjection
-							.setIcon(result.getString(result
-									.getColumnIndexOrThrow(EventsProvider.EMetaData.EventsMetaData.ICON)));
-					eventProjection
-							.setColor(result.getString(result
-									.getColumnIndexOrThrow(EventsProvider.EMetaData.EventsMetaData.COLOR)));
-					eventProjection
-					        .setTextColor(result.getString(result
-					        		.getColumnIndexOrThrow(EventsProvider.EMetaData.EventsMetaData.TEXT_COLOR)));//2012-10-24
-					eventProjection
-							.setDisplayColor(result.getString(result
-									.getColumnIndexOrThrow(EventsProvider.EMetaData.EventsMetaData.EVENT_DISPLAY_COLOR)));//2012-10-24
-					String user_timezone = CalendarSettings.getTimeZone(context);
-					long timeinMillis = result
-							.getLong(result
-									.getColumnIndexOrThrow(EventsProvider.EMetaData.EventsMetaData.TIME_START_UTC_MILLISECONDS));
-					eventProjection.setStartCalendar(Utils.createCalendar(
-							timeinMillis, user_timezone));
-					timeinMillis = result
-							.getLong(result
-									.getColumnIndexOrThrow(EventsProvider.EMetaData.EventsMetaData.TIME_END_UTC_MILLISECONDS));
-					eventProjection.setEndCalendar(Utils.createCalendar(
-							timeinMillis, user_timezone));
-					list.add(eventProjection);
-					result.moveToNext();
-				}
-			}
-			result.close();
-			return list;
-
-		}
-
-		@Override
-		protected Void doInBackground(Void... params) {
-			sortedEvents = TreeMapUtils
-					.sortEvents(context, getEventProjectionsForDisplay(shownDate));
-			ArrayList<Event> nativeEvents = NativeCalendarReader.readNativeCalendarEventsForAFewDays(context, shownDate, SHOWN_DAYS_COUNT);
-			for(Event nativeEvent : nativeEvents){
-				TreeMapUtils.putNewEventIntoTreeMap(context, sortedEvents, nativeEvent);
-			}
-			return null;
-		}
+	private class UpdateEventsInfoTask extends AbstractCalendarView.UpdateEventsInfoTask{
+		
+	
 
 		protected void onPostExecute(Void result) {
 			Calendar tmp = (Calendar) shownDate.clone();
@@ -256,6 +189,18 @@ public class AgendaView extends AbstractCalendarView {
 				frame.UpdateList();
 			}
 
+		}
+
+		@Override
+		protected Cursor queryProjectionsFromLocalDb(Calendar date) {
+			return EventManagement.createEventProjectionByDateFromLocalDb(context,
+					EventProjectionForDisplay, date, 7,
+					EventManagement.TM_EVENTS_FROM_GIVEN_DATE, null, true);
+		}
+
+		@Override
+		protected ArrayList<Event> queryNativeEvents() {
+			return NativeCalendarReader.readNativeCalendarEventsForAFewDays(context, shownDate, SHOWN_DAYS_COUNT);
 		}
 
 	}

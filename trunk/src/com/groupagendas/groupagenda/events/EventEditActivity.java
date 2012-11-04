@@ -729,6 +729,7 @@ public class EventEditActivity extends EventActivity {
 							@Override
 							public void onItemClick(AdapterView<?> parent, View v, int position, long id) {
 								result.setColor(colorsValues[position]);
+								selectedColor = colorsValues[position];
 								colorView.setImageBitmap(DrawingUtils.getColoredRoundRectangle(EventEditActivity.this,
 										COLOURED_BUBBLE_SIZE, colorsValues[position], true));
 								dialog.dismiss();
