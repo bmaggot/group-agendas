@@ -1,9 +1,5 @@
 package com.groupagendas.groupagenda.data;
-/**
- * Class is responsible for communicating with remote and local databases. 
- * @author justinas.marcinka@gmail.com
- * @version 1.0
- */
+
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -37,19 +33,24 @@ import com.groupagendas.groupagenda.error.report.Reporter;
 import com.groupagendas.groupagenda.events.Event;
 import com.groupagendas.groupagenda.events.EventsAdapter;
 import com.groupagendas.groupagenda.events.EventsProvider;
-import com.groupagendas.groupagenda.events.NativeCalendarReader;
 import com.groupagendas.groupagenda.events.EventsProvider.EMetaData;
 import com.groupagendas.groupagenda.events.Invited;
+import com.groupagendas.groupagenda.events.NativeCalendarReader;
 import com.groupagendas.groupagenda.utils.JSONUtils;
 import com.groupagendas.groupagenda.utils.Utils;
 
-
+/**
+ * Class is responsible for communicating with remote and local databases. 
+ * @author justinas.marcinka@gmail.com
+ * @version 1.0
+ * @see EventManagement.initUserTimezone(Context context)
+ */
 public class EventManagement {
 	static String error = "";
 	public static final String CLASS_NAME = "EventManagement.class";
 	private static SimpleDateFormat day_index_formatter = new SimpleDateFormat(EventsProvider.EMetaData.EventsIndexesMetaData.DAY_COLUMN_FORMAT);
 	private static SimpleDateFormat month_index_formatter = new SimpleDateFormat(EventsProvider.EMetaData.EventsIndexesMetaData.MONTH_COLUMN_FORMAT);
-	public static String user_timezone = CalendarSettings.getTimeZone(DataManagement.getContext());
+	public static String user_timezone = null; // initUserTimezone(Context context) must be called whenever method with context as param is called
 	public static final String DATA_ENCODING = "UTF-8";
 	
 	
@@ -69,6 +70,8 @@ public class EventManagement {
 	 * @return true if success false otherwise. Also, error message is set in via getError()
 	 */
 	public static boolean getEventByIdFromRemoteDb(Context context, String id) {
+		initUserTimezone(context);
+		
 		boolean success = false;
 		try {
 			HttpClient hc = new DefaultHttpClient();
@@ -108,6 +111,8 @@ public class EventManagement {
 		return success;
 	}
 	
+	
+
 	/**
 	 * @author justinas.marcinka@gmail.com Method creates event in both remote
 	 *         and local databases. NOT YET IMPLEMENTED: If there is no connectivity to remote DB,
@@ -118,7 +123,7 @@ public class EventManagement {
 	 * @version 1.0
 	 */
 	public static void createNewEvent(Context context, Event event) {
-
+		initUserTimezone(context);
 		if (DataManagement.networkAvailable) {
 			int id = createEventInRemoteDb(context, event);
 
@@ -130,6 +135,7 @@ public class EventManagement {
 			}
 		} else {
 			event.setUploadedToServer(false);
+			//TODO OFFLINE MODE TASK.
 		}	
 		
 		insertEventToLocalDB(context, event);
@@ -149,13 +155,14 @@ public class EventManagement {
 	 * @version 1.0
 	 */
 	public static void deleteEvent(Context context, Event event) {
+		initUserTimezone(context);
 		Boolean deletedFromRemote = false;
 		if (DataManagement.networkAvailable) {
 			 deletedFromRemote = removeEvent(context, event.getEvent_id());
 		}
 
 		if (!deletedFromRemote){
-			//TODO add delete event task to tasks list for server remote
+			//TODO OFFLINE MODE TASK: add delete event task to tasks list for server remote
 		}	
 		
 		deleteEventFromLocalDb(context, event.getInternalID());	
@@ -174,6 +181,7 @@ public class EventManagement {
 	 */
 	
 	public static void respondToInvitation(Context context, Event event){
+		initUserTimezone(context);
 		if (!Invited.validateResponse(event.getStatus())){
 			Log.e(CLASS_NAME + " ERROR RESPONDING TO INVITE", "Unknown state: " + event.getStatus());
 			return;
@@ -195,7 +203,7 @@ public class EventManagement {
 	 * @version 1.0
 	 */
 	public static ArrayList<ChatThreadObject> getExistingChatThreads (Context context){
-		
+		initUserTimezone(context);
 		Uri uri = EMetaData.EventsMetaData.CONTENT_URI;
 		String[] projection = { EMetaData.EventsMetaData.TITLE, EMetaData.EventsMetaData.LAST_MESSAGE_DATE_TIME_UTC_MILISECONDS,
 				EMetaData.EventsMetaData.NEW_MESSAGES_COUNT, EMetaData.EventsMetaData.MESSAGES_COUNT, EMetaData.EventsMetaData.E_ID };
@@ -232,6 +240,7 @@ public class EventManagement {
 	 * @version 1.0
 	 */
 	public static  void updateEvent(Context context, Event event) {
+		initUserTimezone(context);
 		if (DataManagement.networkAvailable) {
 			event.setUploadedToServer(editEvent(context, event));
 		} else {
@@ -242,6 +251,7 @@ public class EventManagement {
 
 	// TODO write a javadoc for inviteExtraContacts()
 	public static boolean inviteExtraContacts(Context context, String e_id, ArrayList<Contact> contacts) {
+		initUserTimezone(context);
 		boolean success = false;
 		Account account = new Account(context);
 		HttpClient hc = new DefaultHttpClient();
@@ -385,6 +395,7 @@ public class EventManagement {
 	 */
 	public static Cursor createEventProjectionByDateFromLocalDb(Context context, String[] projection, Calendar date, int daysToSelect, int eventTimeMode,
 			String sortOrder, boolean filterRejected) {
+		initUserTimezone(context);
 		day_index_formatter = new SimpleDateFormat(EventsProvider.EMetaData.EventsIndexesMetaData.DAY_COLUMN_FORMAT);
 		month_index_formatter = new SimpleDateFormat(EventsProvider.EMetaData.EventsIndexesMetaData.MONTH_COLUMN_FORMAT);
 		String where;
@@ -482,6 +493,7 @@ public class EventManagement {
 	 * @version 1.0
 	 */
 	public static void getEventsFromRemoteDb(Context context, String eventCategory) {
+		initUserTimezone(context);
 		boolean success = false;
 		Event event = null;
 		ContentValues[] values;
@@ -1401,7 +1413,14 @@ private static String parseInvitedListToJSONArray(ArrayList<Invited> invited) {
 			
 		}
 	}
-
+	/**
+	 * Method which makes sure that user_timezone static field would be initialized. Must be called in any public method.
+	 * @author justinas.marcinka@gmail.com
+	 * @param context
+	 */
+	private static void initUserTimezone(Context context) {
+		if (user_timezone == null) user_timezone = new Account(context).getTimezone();
+	}
 //	private static Invited createInvitedFromCursor(Cursor result) {
 //		Invited invited = new Invited();
 //		invited.setGcid(result.getInt(result.getColumnIndexOrThrow(EventsProvider.EMetaData.InvitedMetaData.GCID)));
