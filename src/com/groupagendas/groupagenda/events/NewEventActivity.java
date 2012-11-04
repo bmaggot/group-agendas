@@ -936,6 +936,14 @@ public class NewEventActivity extends EventActivity {
 		@Override
 		protected Boolean doInBackground(Event... events) {
 			event = NewEventActivity.this.setEventData(event);
+			
+			if (event.getColor().equals(Event.DEFAULT_COLOR)) {
+				NewEventActivity.this.setAutoColor(NewEventActivity.this);
+			}
+
+			if (event.getIcon().equals(Event.DEFAULT_ICON)) {
+				NewEventActivity.this.setAutoIcon(NewEventActivity.this);
+			}
 
 			int testEvent = event.isValid();
 			if (testEvent == 0) {

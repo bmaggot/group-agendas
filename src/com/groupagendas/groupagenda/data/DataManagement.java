@@ -845,7 +845,7 @@ public class DataManagement {
 		}
 	}
 
-	public boolean setAutoIcons(Context context) {
+	public static boolean setAutoIcons(Context context) {
 		boolean success = false;
 
 		try {
@@ -890,7 +890,7 @@ public class DataManagement {
 			}
 
 		} catch (Exception ex) {
-			Reporter.reportError(context, this.getClass().toString(), Thread.currentThread().getStackTrace()[2].getMethodName().toString(),
+			Reporter.reportError(context, "DataManagement", Thread.currentThread().getStackTrace()[2].getMethodName().toString(),
 					ex.getMessage());
 			return false;
 		}
@@ -898,11 +898,10 @@ public class DataManagement {
 		return success;
 	}
 
-	public ArrayList<AutoIconItem> getAutoIcons() {
+	public static ArrayList<AutoIconItem> getAutoIcons(Context context) {
 		ArrayList<AutoIconItem> Items = new ArrayList<AutoIconItem>();
 
-		Cursor result = Data.getmContext().getContentResolver()
-				.query(AccountProvider.AMetaData.AutoiconMetaData.CONTENT_URI, null, null, null, null);
+		Cursor result = context.getContentResolver().query(AccountProvider.AMetaData.AutoiconMetaData.CONTENT_URI, null, null, null, null);
 		result.moveToFirst();
 
 		while (!result.isAfterLast()) {
@@ -923,7 +922,7 @@ public class DataManagement {
 		return Items;
 	}
 
-	public boolean setAutoColors(Context context) {
+	public static boolean setAutoColors(Context context) {
 		boolean success = false;
 
 		try {
@@ -968,7 +967,7 @@ public class DataManagement {
 			}
 
 		} catch (Exception ex) {
-			Reporter.reportError(context, this.getClass().toString(), Thread.currentThread().getStackTrace()[2].getMethodName().toString(),
+			Reporter.reportError(context, "DataManagement", Thread.currentThread().getStackTrace()[2].getMethodName().toString(),
 					ex.getMessage());
 			return false;
 		}
@@ -976,12 +975,11 @@ public class DataManagement {
 		return success;
 	}
 
-	public ArrayList<AutoColorItem> getAutoColors() {
+	public static ArrayList<AutoColorItem> getAutoColors(Context context) {
 		ArrayList<AutoColorItem> Items = new ArrayList<AutoColorItem>();
 
-		Cursor result = Data.getmContext().getContentResolver()
-				.query(AccountProvider.AMetaData.AutocolorMetaData.CONTENT_URI, null, null, null, null);
-		result.moveToFirst();
+		Cursor result = context.getContentResolver().query(AccountProvider.AMetaData.AutocolorMetaData.CONTENT_URI, null, null, null, null);
+		if (result.moveToFirst()) {
 
 		while (!result.isAfterLast()) {
 
@@ -995,6 +993,7 @@ public class DataManagement {
 			Items.add(item);
 
 			result.moveToNext();
+		}
 		}
 		result.close();
 
@@ -1425,6 +1424,7 @@ public class DataManagement {
 //	
 //	}
 
+	@Deprecated
 	public static Context getContext() {
 		return Data.getmContext();
 	}
@@ -1434,7 +1434,7 @@ public class DataManagement {
 	 * 
 	 * Method creates a multipart entity object, fills it with submitted event's
 	 * data. Afterwards creates a connection to remote server and, if successful
-	 * � uploads data. If not � stores it in an UnuploadedData object
+	 * - uploads data. If not - stores it in an UnuploadedData object
 	 * ArrayList.
 	 * 
 	 * Note: still missing event field upload features.
@@ -2675,13 +2675,4 @@ public class DataManagement {
 	context.getContentResolver().getType(EventsProvider.EMetaData.EventsMetaData.CONTENT_URI);
 		
 	}
-		
-	
-	
-	
-
-
-
-	
-
 }

@@ -976,6 +976,15 @@ public class EventEditActivity extends EventActivity {
 				}
 			} else {
 				event = setEventData(event);
+				
+				if (event.getColor().equals(Event.DEFAULT_COLOR)) {
+					EventEditActivity.this.setAutoColor(EventEditActivity.this);
+				}
+
+				if (event.getIcon().equals(Event.DEFAULT_ICON)) {
+					EventEditActivity.this.setAutoIcon(EventEditActivity.this);
+				}
+
 				int testEvent = event.isValid();
 				if (testEvent == 0) {
 					EventManagement.updateEvent(EventEditActivity.this, event);

@@ -21,21 +21,19 @@ import com.groupagendas.groupagenda.data.DataManagement;
 public class AutoIconActivity extends ListActivity{
 	private ProgressBar pb;
 	private ArrayList<AutoIconItem> mItems;
-	private DataManagement dm;
-	
-	@Override
-	protected void onResume() {
-		super.onResume();
-		new GetAutoIcons().execute();
-	}
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.autoicon);
-		
-		dm = DataManagement.getInstance(this);
+	}
+	
+	@Override
+	protected void onResume() {
+		super.onResume();
+
 		pb = (ProgressBar) findViewById(R.id.progress);
+		new GetAutoIcons().execute();
 	}
 	
 	@Override
@@ -63,7 +61,7 @@ public class AutoIconActivity extends ListActivity{
 	class SetAutoIcons extends AsyncTask<Void, Boolean, Boolean>{
 		@Override
 		protected Boolean doInBackground(Void... params) {
-			return dm.setAutoIcons(getApplicationContext());
+			return DataManagement.setAutoIcons(AutoIconActivity.this);
 		}
 		
 		@Override
@@ -71,8 +69,8 @@ public class AutoIconActivity extends ListActivity{
 			super.onPostExecute(success);
 			if(!success){
 				ContentValues values = new ContentValues();
-				values.put(AccountProvider.AMetaData.AutoiconMetaData.NEED_UPDATE, 1);
 				
+				values.put(AccountProvider.AMetaData.AutoiconMetaData.NEED_UPDATE, 1);				
 				getContentResolver().update(AccountProvider.AMetaData.AutoiconMetaData.CONTENT_URI, values, "", null);
 			}
 		}
@@ -86,7 +84,7 @@ public class AutoIconActivity extends ListActivity{
 		}
 		@Override
 		protected ArrayList<AutoIconItem> doInBackground(Void... arg0) { 
-			return dm.getAutoIcons();
+			return DataManagement.getAutoIcons(AutoIconActivity.this);
 		}
 		
 		@Override
