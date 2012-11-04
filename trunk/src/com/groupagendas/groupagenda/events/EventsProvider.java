@@ -139,7 +139,7 @@ public class EventsProvider extends ContentProvider{
 			public static final String IS_BIRTHDAY = "is_birthday";
 			public static final String IS_ALL_DAY = "is_all_day";
 			public static final String MESSAGES_COUNT = "messages_count";
-			public static final String NEW_MESSAGES_COUNT = "new_messages_count";
+			public static final String NEW_MESSAGES_COUNT = "nmc";
 			public static final String LAST_MESSAGE_DATE_TIME_UTC_MILISECONDS = "last_message_date_time";
 			public static final String INVITED = "invited";
 			

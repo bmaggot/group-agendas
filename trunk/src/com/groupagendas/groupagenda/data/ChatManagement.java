@@ -369,7 +369,7 @@ public class ChatManagement {
 				reqEntity.addPart("from_datetime", new StringBody(String.valueOf(lastMessageTimeStamp)));
 			}
 			if (resetMessageCount) {
-				reqEntity.addPart("update_lastview", new StringBody("0"));
+				reqEntity.addPart("update_lastview", new StringBody("1"));
 			} else {
 				reqEntity.addPart("update_lastview", new StringBody("0"));
 			}
