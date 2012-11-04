@@ -2596,7 +2596,7 @@ public class DataManagement {
 	}
 //TODO javadoc
 	public static void synchronizeWithServer(Context context, AsyncTask<Void, Integer, Void> dataSyncTask,	long latestUpdateUnixTimestamp) {
-		Log.d("synchronizeWithServer", "synchronizing with timestamp " + new Date(Utils.unixTimestampToMilis(latestUpdateUnixTimestamp)));
+		Log.e("synchronizeWithServer", "synchronizing with timestamp " + new Date(Utils.unixTimestampToMilis(latestUpdateUnixTimestamp)));
 		if (!DataManagement.networkAvailable) {
 			Log.e("synchronizeWithServer", "reason: no network connectivity");
 			return;
