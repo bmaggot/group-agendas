@@ -21,21 +21,18 @@ public class AutoColorActivity extends ListActivity {
 	private ProgressBar pb;
 	private ArrayList<AutoColorItem> mItems;
 	
-	private DataManagement dm;
-	
-	@Override
-	protected void onResume() {
-		super.onResume();
-		new GetAutoColors().execute();
-	}
-	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.auto_color);
 		
-		dm = DataManagement.getInstance(this);
 		pb = (ProgressBar) findViewById(R.id.progress);
+	}
+	
+	@Override
+	protected void onResume() {
+		super.onResume();
+		new GetAutoColors().execute();
 	}
 	
 	@Override
@@ -48,7 +45,7 @@ public class AutoColorActivity extends ListActivity {
 	
 	@Override
 	protected void onListItemClick(ListView l, View v, int position, long id) {
-		final AutoColorItem item = mItems.get(position);
+		AutoColorItem item = mItems.get(position);
 		
 		Intent intent = new Intent(AutoColorActivity.this, EditAutoColorActivity.class);
 		intent.putExtra("id", item.id);
@@ -63,7 +60,7 @@ public class AutoColorActivity extends ListActivity {
 	class SetAutoColors extends AsyncTask<Void, Boolean, Boolean>{
 		@Override
 		protected Boolean doInBackground(Void... params) {
-			return dm.setAutoColors(getApplicationContext());
+			return DataManagement.setAutoColors(AutoColorActivity.this);
 		}
 		@Override
 		protected void onPostExecute(Boolean success) {
@@ -83,7 +80,7 @@ public class AutoColorActivity extends ListActivity {
 		}
 		@Override
 		protected ArrayList<AutoColorItem> doInBackground(Void... arg0) {
-			return dm.getAutoColors();
+			return DataManagement.getAutoColors(AutoColorActivity.this);
 		}
 		
 		@Override

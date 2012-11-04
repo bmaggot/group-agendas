@@ -18,10 +18,14 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.groupagendas.groupagenda.R;
+import com.groupagendas.groupagenda.settings.AutoColorActivity;
+import com.groupagendas.groupagenda.settings.AutoColorItem;
+import com.groupagendas.groupagenda.settings.AutoIconItem;
 import com.groupagendas.groupagenda.timezone.CountriesAdapter;
 import com.groupagendas.groupagenda.timezone.TimezonesAdapter;
 import com.groupagendas.groupagenda.account.Account;
 import com.groupagendas.groupagenda.contacts.Contact;
+import com.groupagendas.groupagenda.data.DataManagement;
 import com.groupagendas.groupagenda.utils.DateTimeUtils;
 import com.groupagendas.groupagenda.utils.Prefs;
 
@@ -353,6 +357,28 @@ public class EventActivity extends Activity {
 			break;
 		default:
 			break;
+		}
+	}
+	
+	protected void setAutoIcon(Context context) {
+		ArrayList<AutoIconItem> autoIcons = DataManagement.getAutoIcons(context);
+
+		for (AutoIconItem autoIcon : autoIcons) {
+			if (event.getTitle().contains(autoIcon.keyword)) {
+				event.setIcon(autoIcon.icon);
+				break;
+			}
+		}
+	}
+	
+	protected void setAutoColor(Context context) {
+		ArrayList<AutoColorItem> autoColors = DataManagement.getAutoColors(context);
+
+		for (AutoColorItem autoColor : autoColors) {
+			if (event.getTitle().contains(autoColor.keyword)) {
+				event.setColor(autoColor.color);
+				break;
+			}
 		}
 	}
 }

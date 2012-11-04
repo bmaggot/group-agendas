@@ -37,7 +37,7 @@ public class AutoIconAdapter extends BaseAdapter{
 			holder = (ViewHolder) convertView.getTag();
 		}
 		
-		final AutoIconItem item = mItems.get(position);
+		AutoIconItem item = mItems.get(position);
 		
 		holder.text.setText(item.keyword);
 		

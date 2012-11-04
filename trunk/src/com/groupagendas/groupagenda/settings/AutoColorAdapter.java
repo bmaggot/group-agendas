@@ -11,8 +11,10 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.groupagendas.groupagenda.R;
+import com.groupagendas.groupagenda.utils.DrawingUtils;
 
 public class AutoColorAdapter extends BaseAdapter{
+	private static final int COLOURED_BUBBLE_SIZE = 50;
 	private Context mContext;
 	private LayoutInflater mInflater;
 	private ArrayList<AutoColorItem> mItems;
@@ -41,11 +43,8 @@ public class AutoColorAdapter extends BaseAdapter{
 		
 		holder.text.setText(item.keyword);
 		
-		if(!item.color.equals("")){
-			String colorStr = "calendarbubble_"+item.color+"_";
-			
-			int iconId = mContext.getResources().getIdentifier(colorStr, "drawable", "com.groupagendas.groupagenda");
-			holder.image.setImageResource(iconId);
+		if (!item.color.equals("") && (item.color != null)) {
+			holder.image.setImageBitmap(DrawingUtils.getColoredRoundRectangle(mContext, COLOURED_BUBBLE_SIZE, item.color, true));
 		}
 
 		return convertView;

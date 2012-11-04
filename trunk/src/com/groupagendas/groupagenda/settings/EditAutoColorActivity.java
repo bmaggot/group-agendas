@@ -22,9 +22,12 @@ import android.widget.ProgressBar;
 import com.groupagendas.groupagenda.R;
 import com.groupagendas.groupagenda.account.AccountProvider;
 import com.groupagendas.groupagenda.events.ColorsAdapter;
+import com.groupagendas.groupagenda.utils.DrawingUtils;
 
 public class EditAutoColorActivity extends Activity {
 	
+	private static final int COLOURED_BUBBLE_SIZE = 40;
+
 	private ProgressBar pb;
 	
 	private ImageView colorView;
@@ -45,10 +48,8 @@ public class EditAutoColorActivity extends Activity {
 		
 		colorView = (ImageView) findViewById(R.id.color);
 		mItem.color = getIntent().getStringExtra("color");
-		if(mItem.color != null){
-			String colorStr = "calendarbubble_"+mItem.color+"_";
-			int colorId = getResources().getIdentifier(colorStr, "drawable", "com.groupagendas.groupagenda");
-			colorView.setImageResource(colorId);
+		if ((mItem.color != null) && !mItem.color.equals("")) {
+			colorView.setImageBitmap(DrawingUtils.getColoredRoundRectangle(EditAutoColorActivity.this, COLOURED_BUBBLE_SIZE, mItem.color, true));
 		}
 		
 		Button noColor = (Button) findViewById(R.id.no_color);
