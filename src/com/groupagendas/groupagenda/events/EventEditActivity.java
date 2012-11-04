@@ -771,6 +771,12 @@ public class EventEditActivity extends EventActivity {
 
 			}
 			if(event.isNative()){
+				alarm1container.setEnabled(false);
+				alarm2container.setEnabled(false);
+				alarm3container.setEnabled(false);
+				reminder1container.setEnabled(false);
+				reminder2container.setEnabled(false);
+				reminder3container.setEnabled(false);
 				deleteButton.setVisibility(View.INVISIBLE);
 			}
 
@@ -1177,5 +1183,4 @@ public class EventEditActivity extends EventActivity {
 			return super.onOptionsItemSelected(item);
 		}
 	}
-
 }
