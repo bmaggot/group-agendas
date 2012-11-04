@@ -9,7 +9,9 @@ import java.util.TreeMap;
 
 import android.app.Activity;
 import android.content.Context;
+import android.database.Cursor;
 import android.graphics.Rect;
+import android.os.AsyncTask;
 import android.util.AttributeSet;
 import android.view.GestureDetector;
 import android.view.LayoutInflater;
@@ -22,10 +24,15 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.groupagendas.groupagenda.R;
+import com.groupagendas.groupagenda.calendar.dayandweek.DayWeekView;
 import com.groupagendas.groupagenda.data.CalendarSettings;
+import com.groupagendas.groupagenda.data.EventManagement;
 import com.groupagendas.groupagenda.events.Event;
 import com.groupagendas.groupagenda.events.EventsProvider;
+import com.groupagendas.groupagenda.events.NativeCalendarReader;
 import com.groupagendas.groupagenda.utils.DateTimeUtils;
+import com.groupagendas.groupagenda.utils.TreeMapUtils;
+import com.groupagendas.groupagenda.utils.Utils;
 
 public abstract class AbstractCalendarView extends LinearLayout {
 	protected TreeMap<Calendar, ArrayList<Event>> sortedEvents;
@@ -34,7 +41,7 @@ public abstract class AbstractCalendarView extends LinearLayout {
 			EventsProvider.EMetaData.EventsMetaData._ID,
 			EventsProvider.EMetaData.EventsMetaData.COLOR,
 			EventsProvider.EMetaData.EventsMetaData.EVENT_DISPLAY_COLOR,
-			EventsProvider.EMetaData.EventsMetaData.TEXT_COLOR,
+//			EventsProvider.EMetaData.EventsMetaData.TEXT_COLOR,
 			EventsProvider.EMetaData.EventsMetaData.TIME_START_UTC_MILLISECONDS,
 			EventsProvider.EMetaData.EventsMetaData.TIME_END_UTC_MILLISECONDS,
 			EventsProvider.EMetaData.EventsMetaData.ICON,
@@ -220,6 +227,87 @@ public abstract class AbstractCalendarView extends LinearLayout {
 
 	public GestureDetector getSwipeGestureDetector() {
 		return swipeGestureDetector;
+	}
+
+	/**
+	 * Class for getting events display info from local database and displaying it.<br>
+	 * Pay attention to override following methods:<br>
+	 * - protected void onPostExecute(Void result)<br>
+	 * - protected queryProjectionsFromLocalDb(Calendar date) <br>
+	 * - protected ArrayList<Event> queryNativeEvents() <br>
+	 * 
+	 * @author justinas.marcinka@gmail.com
+	 * 
+	 */
+	protected abstract class UpdateEventsInfoTask extends AsyncTask<Void, Integer, Void> {
+		protected Context context = AbstractCalendarView.this.getContext();
+		
+		/**
+		 * Returns event projection in: id, color, display color, icon, title, start and end calendars. Other fields are not initialized
+		 * @author justinas.marcinka@gmail.com
+		 * @param date
+		 * @return
+		 */
+		protected ArrayList<Event>getEventProjectionsForDisplay(Calendar date){
+			ArrayList<Event> list;
+			
+			Cursor result = queryProjectionsFromLocalDb(date);
+			list = createEventsListFromCursor(result);
+			result.close();
+			return list ;
+			
+		}
+		
+		/**
+		 * Gets events from both local database and native calendar.
+		 * @author justinas.marcinka@gmail.com
+		 */
+		protected final Void doInBackground(Void... params){
+			sortedEvents = TreeMapUtils.sortEvents(context, getEventProjectionsForDisplay(selectedDate));
+			ArrayList<Event> nativeEvents = queryNativeEvents();
+			for(Event nativeEvent : nativeEvents){
+				TreeMapUtils.putNewEventIntoTreeMap(context, sortedEvents, nativeEvent);
+			}
+			return null;
+		}
+
+		private ArrayList<Event> createEventsListFromCursor(Cursor result) {
+			ArrayList<Event> list = new ArrayList<Event>();
+			if (result.moveToFirst()) {
+				while (!result.isAfterLast()) {
+					Event eventProjection = new Event();	
+					eventProjection.setInternalID(result.getLong(result.getColumnIndexOrThrow(EventsProvider.EMetaData.EventsMetaData._ID)));
+					eventProjection.setEvent_id(result.getInt(result.getColumnIndexOrThrow(EventsProvider.EMetaData.EventsMetaData.E_ID)));
+					eventProjection.setTitle(result.getString(result.getColumnIndexOrThrow(EventsProvider.EMetaData.EventsMetaData.TITLE)));
+					eventProjection.setIcon(result.getString(result.getColumnIndexOrThrow(EventsProvider.EMetaData.EventsMetaData.ICON)));
+					eventProjection.setColor(result.getString(result.getColumnIndexOrThrow(EventsProvider.EMetaData.EventsMetaData.COLOR)));
+					eventProjection.setDisplayColor(result.getString(result.getColumnIndexOrThrow(EventsProvider.EMetaData.EventsMetaData.EVENT_DISPLAY_COLOR)));  //2012-10-29
+					String user_timezone = CalendarSettings.getTimeZone(context);
+					long timeinMillis = result.getLong(result.getColumnIndexOrThrow(EventsProvider.EMetaData.EventsMetaData.TIME_START_UTC_MILLISECONDS));
+					eventProjection.setStartCalendar(Utils.createCalendar(timeinMillis, user_timezone));
+					timeinMillis = result.getLong(result.getColumnIndexOrThrow(EventsProvider.EMetaData.EventsMetaData.TIME_END_UTC_MILLISECONDS));
+					eventProjection.setEndCalendar(Utils.createCalendar(timeinMillis, user_timezone));
+					list .add(eventProjection);
+					result.moveToNext();
+				}
+			}
+			return list;
+		}
+		/**
+		 * Must override to properly query projections from local DB.<br>
+		 * @author justinas.marcinka@gmail.com
+		 * @return cursor with events projections
+		 */
+		protected abstract Cursor queryProjectionsFromLocalDb(Calendar date);
+		/**
+		 * must override to query native events to display
+		 * @author justinas.marcinka@gmail.com
+		 * @return
+		 */
+		protected abstract ArrayList<Event> queryNativeEvents();
+		
+		protected abstract void onPostExecute(Void result);
+
 	}
 	
 }

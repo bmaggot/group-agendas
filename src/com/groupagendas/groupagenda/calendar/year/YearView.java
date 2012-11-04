@@ -177,51 +177,8 @@ public class YearView extends AbstractCalendarView {
 		return selectedDate;
 	}
 	
-	private class UpdateEventsInfoTask extends AsyncTask<Void, Integer, Void> {
-		private Context context = YearView.this.getContext();
+	private class UpdateEventsInfoTask extends AbstractCalendarView.UpdateEventsInfoTask{
 		
-		/**
-		 * @author justinas.marcinka@gmail.com
-		 * Returns event projection in: id, color, icon, title, start and end calendars. Other fields are not initialized
-		 * @param date
-		 * @return
-		 */
-	private ArrayList<Event>getEventProjectionsForDisplay(Calendar date){
-		ArrayList<Event> list = new ArrayList<Event>();
-
-		Cursor result = EventManagement.createEventProjectionByDateFromLocalDb(context, EventProjectionForDisplay, date, 0, EventManagement.TM_EVENTS_ON_GIVEN_YEAR, null, true);
-		if (result.moveToFirst()) {
-			while (!result.isAfterLast()) {
-				Event eventProjection = new Event();
-				eventProjection.setInternalID(result.getLong(result.getColumnIndexOrThrow(EventsProvider.EMetaData.EventsMetaData._ID)));
-				eventProjection.setEvent_id(result.getInt(result.getColumnIndexOrThrow(EventsProvider.EMetaData.EventsMetaData.E_ID)));
-				eventProjection.setTitle(result.getString(result.getColumnIndexOrThrow(EventsProvider.EMetaData.EventsMetaData.TITLE)));
-				eventProjection.setIcon(result.getString(result.getColumnIndexOrThrow(EventsProvider.EMetaData.EventsMetaData.ICON)));
-				eventProjection.setColor(result.getString(result.getColumnIndexOrThrow(EventsProvider.EMetaData.EventsMetaData.COLOR)));
-				String user_timezone = CalendarSettings.getTimeZone(context);
-				long timeinMillis = result.getLong(result.getColumnIndexOrThrow(EventsProvider.EMetaData.EventsMetaData.TIME_START_UTC_MILLISECONDS));
-				eventProjection.setStartCalendar(Utils.createCalendar(timeinMillis, user_timezone));
-				timeinMillis = result.getLong(result.getColumnIndexOrThrow(EventsProvider.EMetaData.EventsMetaData.TIME_END_UTC_MILLISECONDS));
-				eventProjection.setEndCalendar(Utils.createCalendar(timeinMillis, user_timezone));
-				list.add(eventProjection);
-				result.moveToNext();
-			}
-		}
-		result.close();
-		return list ;
-		
-	}
-
-	@Override
-	protected Void doInBackground(Void... params) {
-		sortedEvents = TreeMapUtils.sortEvents(context, getEventProjectionsForDisplay(selectedDate));
-		ArrayList<Event> nativeEvents = NativeCalendarReader.readNativeCalendarEventsForAYear(context, selectedDate);
-		for(Event nativeEvent : nativeEvents){
-			TreeMapUtils.putNewEventIntoTreeMap(context, sortedEvents, nativeEvent);
-		}
-		return null;
-	}
-	
 	protected void onPostExecute(Void result) {
 		Calendar tmp = (Calendar) selectedDate.clone();
 		Utils.setCalendarToFirstDayOfYear(tmp);
@@ -231,6 +188,16 @@ public class YearView extends AbstractCalendarView {
 		}
 		selectDate(selectedDate, null);
 		}
+
+	@Override
+	protected Cursor queryProjectionsFromLocalDb(Calendar date) {
+		return EventManagement.createEventProjectionByDateFromLocalDb(context, EventProjectionForDisplay, date, 0, EventManagement.TM_EVENTS_ON_GIVEN_YEAR, null, true);
+	}
+
+	@Override
+	protected ArrayList<Event> queryNativeEvents() {
+		return NativeCalendarReader.readNativeCalendarEventsForAYear(context, selectedDate);
+	}
 		
 	}
 
