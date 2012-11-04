@@ -52,7 +52,7 @@ private static final String TIMESTAMP_FORMAT = DataManagement.SERVER_TIMESTAMP_F
 	private String title;
 	private String icon;
 	private String color;
-	private String textColor;//2012-10-24
+//	private String textColor;//2012-10-24
 	private String displayColor;//2012-10-24
 	private String description_;
 	private String location;
@@ -195,12 +195,12 @@ private static final String TIMESTAMP_FORMAT = DataManagement.SERVER_TIMESTAMP_F
 //			return textColor;
 		}
 		
-		public void setTextColor(String textColor) {
-			this.textColor = DEFAULT_TEXT_COLOR;
-			if (textColor != null && (textColor.matches("[a-fA-F0-9]{6,8}")))
-				if (!textColor.equalsIgnoreCase("null")) this.textColor = textColor;
-		
-		}
+//		public void setTextColor(String textColor) {
+//			this.textColor = DEFAULT_TEXT_COLOR;
+//			if (textColor != null && (textColor.matches("[a-fA-F0-9]{6,8}")))
+//				if (!textColor.equalsIgnoreCase("null")) this.textColor = textColor;
+//		
+//		}
 		//2012-10-24
 		public String getDisplayColor() {
 			if (status == Invited.ACCEPTED) return getColor();
