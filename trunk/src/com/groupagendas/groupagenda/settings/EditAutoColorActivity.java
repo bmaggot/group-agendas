@@ -1,6 +1,7 @@
 package com.groupagendas.groupagenda.settings;
 
 import android.app.Activity;
+import android.app.Dialog;
 import android.content.ContentValues;
 import android.content.Intent;
 import android.net.Uri;
@@ -12,7 +13,6 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.AdapterView;
-import android.widget.AdapterView.OnItemClickListener;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.GridView;
@@ -26,7 +26,7 @@ import com.groupagendas.groupagenda.utils.DrawingUtils;
 
 public class EditAutoColorActivity extends Activity {
 	
-	private static final int COLOURED_BUBBLE_SIZE = 40;
+	private static final int COLOURED_BUBBLE_SIZE = 20;
 
 	private ProgressBar pb;
 	
@@ -41,38 +41,60 @@ public class EditAutoColorActivity extends Activity {
 		setContentView(R.layout.edit_auto_color);
 		
 		pb = (ProgressBar) findViewById(R.id.progress);
+		colorView = (ImageView) findViewById(R.id.color);
+		keywordView = (EditText) findViewById(R.id.keyword);
 		
 		mItem.id = getIntent().getIntExtra("id", 0);
-		
 		mItem.context = getIntent().getStringExtra("context");
-		
-		colorView = (ImageView) findViewById(R.id.color);
 		mItem.color = getIntent().getStringExtra("color");
 		if ((mItem.color != null) && !mItem.color.equals("")) {
 			colorView.setImageBitmap(DrawingUtils.getColoredRoundRectangle(EditAutoColorActivity.this, COLOURED_BUBBLE_SIZE, mItem.color, true));
 		}
 		
-		Button noColor = (Button) findViewById(R.id.no_color);
-		noColor.setOnClickListener(new OnClickListener() {
-			@Override
-			public void onClick(View arg0) {
-				mItem.color = "";
-				colorView.setImageBitmap(null);
-			}
-		});
 		
 		final String[] colorsValues = getResources().getStringArray(R.array.colors_values);
-		GridView gridview = (GridView) findViewById(R.id.gridview);
-		gridview.setAdapter(new ColorsAdapter(EditAutoColorActivity.this, colorsValues));
-		gridview.setOnItemClickListener(new OnItemClickListener() {
+		colorView.setOnClickListener(new OnClickListener() {
 			@Override
-			public void onItemClick(AdapterView<?> parent, View v, int position, long id) {
-				mItem.color = colorsValues[position];
-				setImage(mItem.color);
+			public void onClick(View v) {
+				final Dialog dialog = new Dialog(EditAutoColorActivity.this);
+				dialog.setContentView(R.layout.list_dialog);
+				dialog.setTitle(R.string.choose_color);
+
+				GridView gridview = (GridView) dialog.findViewById(R.id.gridview);
+				gridview.setAdapter(new ColorsAdapter(EditAutoColorActivity.this, colorsValues));
+
+				gridview.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+
+				@Override
+				public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+					mItem.color = (colorsValues[position]);
+					colorView.setImageBitmap(DrawingUtils.getColoredRoundRectangle(EditAutoColorActivity.this, COLOURED_BUBBLE_SIZE, mItem.color, true));
+					dialog.dismiss();
+				}
+				});
+				dialog.show();
 			}
 		});
 		
-		keywordView = (EditText) findViewById(R.id.keyword);
+//		Button noColor = (Button) findViewById(R.id.no_color);
+//		noColor.setOnClickListener(new OnClickListener() {
+//			@Override
+//			public void onClick(View arg0) {
+//				mItem.color = "";
+//				colorView.setImageBitmap(null);
+//			}
+//		});
+		
+//		GridView gridview = (GridView) findViewById(R.id.gridview);
+//		gridview.setAdapter(new ColorsAdapter(EditAutoColorActivity.this, colorsValues));
+//		gridview.setOnItemClickListener(new OnItemClickListener() {
+//			@Override
+//			public void onItemClick(AdapterView<?> parent, View v, int position, long id) {
+//				mItem.color = colorsValues[position];
+//				setImage(mItem.color);
+//			}
+//		});
+		
 		mItem.keyword = getIntent().getStringExtra("keyword");
 		keywordView.setText(mItem.keyword);
 		
@@ -85,12 +107,6 @@ public class EditAutoColorActivity extends Activity {
 				new SaveAutoColor().execute();
 			}
 		});
-	}
-	
-	private void setImage(String color){
-		String nameColor = "calendarbubble_"+color+"_";
-		int image = getResources().getIdentifier(nameColor, "drawable", "com.groupagendas.groupagenda");
-		colorView.setImageResource(image);
 	}
 	
 	class SaveAutoColor extends AsyncTask<Void, Void, Void>{

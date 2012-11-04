@@ -1,6 +1,7 @@
 package com.groupagendas.groupagenda.settings;
 
 import android.app.Activity;
+import android.app.Dialog;
 import android.content.ContentValues;
 import android.content.Intent;
 import android.net.Uri;
@@ -38,40 +39,46 @@ public class EditAutoIconActivity extends Activity {
 		setContentView(R.layout.edit_auto_icon);
 		
 		pb = (ProgressBar) findViewById(R.id.progress);
+		iconView = (ImageView) findViewById(R.id.icon);
+		keywordView = (EditText) findViewById(R.id.keyword);
 		
 		mItem.id = getIntent().getIntExtra("id", 0);
-		
 		mItem.context = getIntent().getStringExtra("context");
-		
-		iconView = (ImageView) findViewById(R.id.icon);
 		mItem.icon = getIntent().getStringExtra("icon");
 		if(mItem.icon != null){
 			int iconId = getResources().getIdentifier(mItem.icon, "drawable", "com.groupagendas.groupagenda");
 			iconView.setImageResource(iconId);
 		}
 		
-		Button noColor = (Button) findViewById(R.id.no_color);
-		noColor.setOnClickListener(new OnClickListener() {
-			@Override
-			public void onClick(View arg0) {
-				mItem.icon = "";
-				iconView.setImageBitmap(null);
-			}
-		});
-		
 		final String[] iconsValues = getResources().getStringArray(R.array.icons_values);
-		GridView gridview = (GridView) findViewById(R.id.gridview);
-		gridview.setAdapter(new IconsAdapter(EditAutoIconActivity.this, iconsValues));
-		gridview.setOnItemClickListener(new OnItemClickListener() {
+		iconView.setOnClickListener(new OnClickListener() {
 			@Override
-			public void onItemClick(AdapterView<?> parent, View v, int position, long id) {
-				mItem.icon = iconsValues[position];
-				int iconId = getResources().getIdentifier(iconsValues[position], "drawable", "com.groupagendas.groupagenda");
-				iconView.setImageResource(iconId);
+			public void onClick(View v) {
+				final Dialog dialog = new Dialog(EditAutoIconActivity.this);
+				dialog.setContentView(R.layout.list_dialog);
+				dialog.setTitle(R.string.choose_icon);
+
+				GridView gridview = (GridView) dialog.findViewById(R.id.gridview);
+				gridview.setAdapter(new IconsAdapter(EditAutoIconActivity.this, iconsValues));
+
+				gridview.setOnItemClickListener(new OnItemClickListener() {
+					@Override
+					public void onItemClick(AdapterView<?> parent, View v, int position, long id) {
+						if (iconsValues[position].equals("noicon")) {
+							iconView.setImageDrawable(getResources().getDrawable(R.drawable.no_icon));
+						} else {
+							mItem.icon = iconsValues[position];
+							int iconId = getResources().getIdentifier(iconsValues[position], "drawable", "com.groupagendas.groupagenda");
+							iconView.setImageResource(iconId);
+						}
+						dialog.dismiss();
+					}
+				});
+
+				dialog.show();
 			}
 		});
 		
-		keywordView = (EditText) findViewById(R.id.keyword);
 		mItem.keyword = getIntent().getStringExtra("keyword");
 		keywordView.setText(mItem.keyword);
 		
@@ -105,9 +112,7 @@ public class EditAutoIconActivity extends Activity {
 				values.put(AccountProvider.AMetaData.AutoiconMetaData.CONTEXT, "title");
 				getContentResolver().insert(AccountProvider.AMetaData.AutoiconMetaData.CONTENT_URI, values);
 			}
-			
-			
-			
+
 			Intent intent = new Intent();
 	        setResult(1,intent);
 			finish();
