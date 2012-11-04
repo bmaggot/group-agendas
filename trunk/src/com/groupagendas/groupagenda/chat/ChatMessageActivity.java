@@ -55,7 +55,7 @@ public class ChatMessageActivity extends Activity {
 		TextView invitedList = (TextView) findViewById(R.id.chat_info_message_people);
 		Button chats = (Button) findViewById(R.id.chat_message_info_chats_button);
 		chats.setOnClickListener(new OnClickListener() {
-			
+
 			@Override
 			public void onClick(View v) {
 				finish();
@@ -71,66 +71,70 @@ public class ChatMessageActivity extends Activity {
 		Object[] params = { this, event_id, false };
 
 		new GetChatMessagesForEventDb().execute(params);
-		
+
 		final Event event = EventManagement.getEventFromLocalDb(getApplicationContext(), event_id, EventManagement.ID_EXTERNAL);
-		title.setText(event.getTitle());
-		Account account = new Account(getApplicationContext());
-		String fullname = account.getFullname();
-		String invitedPersons = "";
-		for(Invited invitedPerson : event.getInvited()){
-			if(!invitedPerson.getName().equals(fullname) && invitedPerson.getStatus() != 0){
-				invitedPersons += invitedPerson.getName() +", ";
-			} else if(invitedPerson.getStatus() != 0) {
-				invitedPersons += getApplicationContext().getResources().getString(R.string.you) + ", ";
+		if (event != null) {
+			title.setText(event.getTitle());
+			Account account = new Account(getApplicationContext());
+			String fullname = account.getFullname();
+			String invitedPersons = "";
+			for (Invited invitedPerson : event.getInvited()) {
+				if (!invitedPerson.getName().equals(fullname) && invitedPerson.getStatus() != 0) {
+					invitedPersons += invitedPerson.getName() + ", ";
+				} else if (invitedPerson.getStatus() != 0) {
+					invitedPersons += getApplicationContext().getResources().getString(R.string.you) + ", ";
+				}
 			}
-		}
-		if(!invitedPersons.equals("")){
-			invitedPersons = invitedPersons.substring(0, invitedPersons.lastIndexOf(","));
-		} else {
-			invitedPersons = getResources().getString(R.string.you);
-		}
-		invitedPersons += ".";
-		invitedList.setText(invitedPersons);
-		eventButton.setOnClickListener(new OnClickListener() {
-			
-			@Override
-			public void onClick(View v) {
-				Intent intent = new Intent(getApplicationContext(), EventEditActivity.class);
-				intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-				intent.putExtra("event_id", event.getInternalID());
-				intent.putExtra("type", event.getType());
-				intent.putExtra("isNative", event.isNative());
-				getApplicationContext().startActivity(intent);
+			if (!invitedPersons.equals("")) {
+				invitedPersons = invitedPersons.substring(0, invitedPersons.lastIndexOf(","));
+			} else {
+				invitedPersons = getResources().getString(R.string.you);
 			}
-		});
-
-		adapter = new ChatMessageAdapter(ChatMessageActivity.this, chatMessages);
-		chat_message_list = (ListView) findViewById(R.id.chat_message_list);
-		chat_message_list.setAdapter(adapter);
-		if (DataManagement.networkAvailable) {
-			chatInput = (EditText) findViewById(R.id.chat_input);
-			chatSend = (Button) findViewById(R.id.chat_send);
-
-			chatSend.setOnClickListener(new OnClickListener() {
+			invitedPersons += ".";
+			invitedList.setText(invitedPersons);
+			eventButton.setOnClickListener(new OnClickListener() {
 
 				@Override
-				public void onClick(View arg0) {
-					String message = chatInput.getText().toString();
-					chatMessageObject = ChatManagement.makeChatMessageObjectNow(ChatMessageActivity.this, message, event_id);
-					chatMessages.add(chatMessageObject);
-					adapter.notifyDataSetChanged();
-					Object[] params = { ChatMessageActivity.this, message, event_id };
-					new PostChatMessage().execute(params);
-					chatInput.setText("");
-					InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
-					imm.hideSoftInputFromWindow(chatInput.getWindowToken(), 0);
-					chat_message_list.setSelection(adapter.getCount() - 1);
-
+				public void onClick(View v) {
+					Intent intent = new Intent(getApplicationContext(), EventEditActivity.class);
+					intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+					intent.putExtra("event_id", event.getInternalID());
+					intent.putExtra("type", event.getType());
+					intent.putExtra("isNative", event.isNative());
+					getApplicationContext().startActivity(intent);
 				}
 			});
+
+			adapter = new ChatMessageAdapter(ChatMessageActivity.this, chatMessages);
+			chat_message_list = (ListView) findViewById(R.id.chat_message_list);
+			chat_message_list.setAdapter(adapter);
+			if (DataManagement.networkAvailable) {
+				chatInput = (EditText) findViewById(R.id.chat_input);
+				chatSend = (Button) findViewById(R.id.chat_send);
+
+				chatSend.setOnClickListener(new OnClickListener() {
+
+					@Override
+					public void onClick(View arg0) {
+						String message = chatInput.getText().toString();
+						chatMessageObject = ChatManagement.makeChatMessageObjectNow(ChatMessageActivity.this, message, event_id);
+						chatMessages.add(chatMessageObject);
+						adapter.notifyDataSetChanged();
+						Object[] params = { ChatMessageActivity.this, message, event_id };
+						new PostChatMessage().execute(params);
+						chatInput.setText("");
+						InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+						imm.hideSoftInputFromWindow(chatInput.getWindowToken(), 0);
+						chat_message_list.setSelection(adapter.getCount() - 1);
+
+					}
+				});
+			} else {
+				LinearLayout chatInputBlock = (LinearLayout) findViewById(R.id.chat_inputBlock);
+				chatInputBlock.setVisibility(View.GONE);
+			}
 		} else {
-			LinearLayout chatInputBlock = (LinearLayout) findViewById(R.id.chat_inputBlock);
-			chatInputBlock.setVisibility(View.GONE);
+			finish();
 		}
 	}
 
@@ -154,7 +158,8 @@ public class ChatMessageActivity extends Activity {
 			if (refreshMessagesList) {
 				refreshMessagesList = false;
 				EventManagement.resetEventsNewMessageCount(context, eventId);
-				ChatManagement.getChatMessagesForEventFromRemoteDb(eventId, context, true, ChatManagement.getLastMessageTimeStamp(context, eventId));
+				ChatManagement.getChatMessagesForEventFromRemoteDb(eventId, context, true,
+						ChatManagement.getLastMessageTimeStamp(context, eventId));
 				chatMessages.clear();
 				chatMessages = ChatManagement.getChatMessagesForEventFromLocalDb(context, eventId);
 			}
