@@ -203,7 +203,7 @@ private static final String TIMESTAMP_FORMAT = DataManagement.SERVER_TIMESTAMP_F
 		}
 		//2012-10-24
 		public String getDisplayColor() {
-			if (status == Invited.ACCEPTED) return this.color;
+			if (status == Invited.ACCEPTED) return getColor();
 			if (displayColor == null) return DEFAULT_COLOR;
 			if (displayColor.equalsIgnoreCase("null")) return DEFAULT_COLOR;
 			return displayColor;
