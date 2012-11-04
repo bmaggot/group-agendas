@@ -11,6 +11,7 @@ import android.util.Log;
 import com.google.android.c2dm.C2DMBaseReceiver;
 import com.groupagendas.groupagenda.account.Account;
 import com.groupagendas.groupagenda.chat.ChatMessageActivity;
+import com.groupagendas.groupagenda.data.ChatManagement;
 import com.groupagendas.groupagenda.data.DataManagement;
 import com.groupagendas.groupagenda.data.EventManagement;
 import com.groupagendas.groupagenda.error.report.Reporter;
@@ -120,6 +121,7 @@ public class C2DMReceiver extends C2DMBaseReceiver {
 	}
 	
 	public static void refreshChatMessages(String rel_id, Context context){
+		ChatManagement.getChatMessagesForEventFromRemoteDb(Integer.parseInt(rel_id), context, true, 0);
 		Intent intent = new Intent(REFRESH_MESSAGES_LIST + rel_id);
 		LocalBroadcastManager.getInstance(context).sendBroadcast(intent);
 	}
