@@ -121,7 +121,7 @@ public class C2DMReceiver extends C2DMBaseReceiver {
 	}
 	
 	public static void refreshChatMessages(String rel_id, Context context){
-		ChatManagement.getChatMessagesForEventFromRemoteDb(Integer.parseInt(rel_id), context, true, 0);
+		ChatManagement.getChatMessagesForEventFromRemoteDb(Integer.parseInt(rel_id), context, false, ChatManagement.getLastMessageTimeStamp(context, Integer.parseInt(rel_id)));
 		Intent intent = new Intent(REFRESH_MESSAGES_LIST + rel_id);
 		LocalBroadcastManager.getInstance(context).sendBroadcast(intent);
 	}
