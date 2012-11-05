@@ -128,6 +128,7 @@ public class ChatManagement {
 	}
 
 	public static ArrayList<ChatMessageObject> getChatMessagesForEventFromLocalDb(Context context, int eventId) {
+//		EventManagement.resetEventsNewMessageCount(context, eventId);
 		ArrayList<ChatMessageObject> chatMessages = new ArrayList<ChatMessageObject>();
 		Cursor cur;
 		String selection = ChatProvider.CMMetaData.ChatMetaData.E_ID + "=" + eventId;
@@ -327,12 +328,12 @@ public class ChatManagement {
 									ChatManagement.makeChatMessageObjectContentValueFromJSON(object.getJSONObject("message")));
 							chatMessageObject = ChatManagement.makeChatMessageObjectFromJSON(object.getJSONObject("message"));
 							ContentValues cv = new ContentValues();
-							Uri uri = EventsProvider.EMetaData.EventsMetaData.UPDATE_EVENT_AFTER_CHAT_POST;
+//							Uri uri = EventsProvider.EMetaData.EventsMetaData.UPDATE_EVENT_AFTER_CHAT_POST;
 //							cv.put(EMetaData.EventsMetaData.E_ID, eventId);
 //							context.getContentResolver().update(uri, cv, null, null);
 							cv = new ContentValues();
 							cv.put(EMetaData.EventsMetaData.LAST_MESSAGE_DATE_TIME_UTC_MILISECONDS, chatMessageObject.getCreated());
-							uri = EventsProvider.EMetaData.EventsMetaData.CONTENT_URI;
+							Uri uri = EventsProvider.EMetaData.EventsMetaData.CONTENT_URI;
 							String where = EventsProvider.EMetaData.EventsMetaData.E_ID + "=" + eventId;
 							Event event = EventManagement.getEventFromLocalDb(context, eventId, EventManagement.ID_EXTERNAL);
 							event.setMessage_count(event.getMessage_count() + 1);

@@ -156,10 +156,9 @@ public class ChatMessageActivity extends Activity {
 				chatMessages = ChatManagement.getChatMessagesForEventFromRemoteDb(eventId, context, true, 0);
 			}
 			if (refreshMessagesList) {
-				refreshMessagesList = false;
-				EventManagement.resetEventsNewMessageCount(context, eventId);
 				ChatManagement.getChatMessagesForEventFromRemoteDb(eventId, context, true,
 						ChatManagement.getLastMessageTimeStamp(context, eventId));
+				refreshMessagesList = false;
 				chatMessages.clear();
 				chatMessages = ChatManagement.getChatMessagesForEventFromLocalDb(context, eventId);
 			}

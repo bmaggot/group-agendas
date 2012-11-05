@@ -58,6 +58,7 @@ public class ChatThreadFragment extends Fragment {
 
 					@Override
 					public void onItemClick(AdapterView<?> arg0, View arg1, int arg2, long arg3) {
+						EventManagement.resetEventsNewMessageCount(getActivity().getApplicationContext(), tmpArray.get(arg2).getEvent_id());
 						Intent intent = new Intent(getActivity(), ChatMessageActivity.class);
 						intent.putExtra("event_id", tmpArray.get(arg2).getEvent_id());
 						startActivity(intent);
