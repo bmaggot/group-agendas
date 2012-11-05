@@ -10,6 +10,8 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.View.OnClickListener;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.ProgressBar;
 
@@ -26,12 +28,22 @@ public class AutoColorActivity extends ListActivity {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.auto_color);
 		
-		pb = (ProgressBar) findViewById(R.id.progress);
+		LinearLayout addEntry = (LinearLayout) findViewById(R.id.auto_color_add);
+		addEntry.setOnClickListener(new OnClickListener() {
+			
+			@Override
+			public void onClick(View v) {
+	            startActivityForResult(new Intent(AutoColorActivity.this, EditAutoColorActivity.class), 1);
+			}
+		});
 	}
 	
 	@Override
 	protected void onResume() {
 		super.onResume();
+
+		pb = (ProgressBar) findViewById(R.id.progress);
+
 		new GetAutoColors().execute();
 	}
 	

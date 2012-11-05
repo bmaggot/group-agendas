@@ -32,6 +32,12 @@
             android:visibility="gone" />
     </RelativeLayout>
 
+    <include layout="@layout/auto_color_add" />
+
+	<View android:layout_width="fill_parent"
+	    android:layout_height="1dp"
+	    android:background="@color/lighter_gray" />
+    
     <ListView
         android:id="@android:id/list"
         android:layout_width="fill_parent"

@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="wrap_content"
+    android:gravity="center_vertical"
+    android:orientation="horizontal"
+ 	android:id="@+id/auto_color_add"
+	android:padding="5dp" >
+
+    <ImageView
+        android:src="@drawable/list_item_add"
+        android:contentDescription="@string/event_color_placeholder"
+        android:layout_width="20dp"
+        android:layout_height="20dp"
+        android:layout_marginRight="10dp" />
+
+    <TextView
+        android:text="@string/add_auto_color"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:textStyle="bold"
+        android:textColor="@android:color/black" />
+</LinearLayout>
