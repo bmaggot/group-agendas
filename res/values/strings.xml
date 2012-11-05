@@ -256,6 +256,9 @@
     <string name="platform">Android</string>
     <string name="wait">Please wait!</string>
     <string name="chat_button_delete_placeholder">Chat delete button place hold!</string>
+    <string name="show_native_calendars">Show native calendar</string>
+    <string name="show_ga_calendars">Show GroupAgendas calendar</string>
+    <string name="calendars">Calendars</string>
     
     
 </resources>
