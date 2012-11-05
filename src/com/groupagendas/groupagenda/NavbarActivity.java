@@ -44,6 +44,7 @@ import com.groupagendas.groupagenda.data.DataManagement;
 import com.groupagendas.groupagenda.data.EventManagement;
 import com.groupagendas.groupagenda.events.EventsActivity;
 import com.groupagendas.groupagenda.events.NewEventActivity;
+import com.groupagendas.groupagenda.settings.CalendarSettingsFragment;
 import com.groupagendas.groupagenda.utils.Utils;
 import com.ptashek.widgets.datetimepicker.DateTimePicker;
 
@@ -248,6 +249,10 @@ public class NavbarActivity extends FragmentActivity {
 		radioButton = (RadioButton) findViewById(R.id.btnCalendar);
 		radioButton.setChecked(false);
 		radioButton.setOnCheckedChangeListener(btnNavBarOnCheckedChangeListener);
+
+		radioButton = (RadioButton) findViewById(R.id.btnCalendarSetings);
+		radioButton.setChecked(false);
+		radioButton.setOnCheckedChangeListener(btnNavBarOnCheckedChangeListener);
 		
 		radioButton = (RadioButton) findViewById(R.id.btnChatThreads);
 		radioButton.setChecked(false);
@@ -344,6 +349,9 @@ public class NavbarActivity extends FragmentActivity {
 			break;
 		case CHAT_THREADS:
 			showChatFragment();
+			break;
+		case CALENDAR_SETTINGS:
+			showCalendarSettingsFragment();
 			break;
 		default:
 			showMonthView();
@@ -565,6 +573,10 @@ public class NavbarActivity extends FragmentActivity {
 					qa.show();
 					buttonView.setChecked(false);
 					break;
+				case R.id.btnCalendarSetings:
+					viewState = ViewState.CALENDAR_SETTINGS;
+					showCalendarSettingsFragment();
+					break;
 				case R.id.btnChatThreads:
 					viewState = ViewState.CHAT_THREADS;
 					showChatFragment();
@@ -595,10 +607,16 @@ public class NavbarActivity extends FragmentActivity {
 	
 	public void showChatFragment(){
 		Fragment chatFragment = ChatThreadFragment.newInstance();
-//		((ChatThreadFragment) chatFragment).setNavbarActivity(this);
 		FragmentTransaction ft = NavbarActivity.this.getSupportFragmentManager().beginTransaction();
 		calendarContainer.removeAllViews();
 		ft.add(R.id.calendarContainer, chatFragment).setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN).commit();
+	}
+	
+	public void showCalendarSettingsFragment(){
+		Fragment calendarSttingsFragment = CalendarSettingsFragment.newInstance();
+		FragmentTransaction ft = NavbarActivity.this.getSupportFragmentManager().beginTransaction();
+		calendarContainer.removeAllViews();
+		ft.add(R.id.calendarContainer, calendarSttingsFragment).setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN).commit();
 	}
 
 	@Override

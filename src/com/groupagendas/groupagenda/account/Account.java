@@ -84,6 +84,7 @@ public class Account {
 		public static final String SESSION_ID = "session_id";
 
 		public static final String SHOW_NATIVE_CALENDARS = "show_native_calendars";
+		public static final String SHOW_GA_CALENDARS = "show_ga_calendars";
 	}
 	
 	public long getLatestUpdateUnixTimestamp(){
@@ -268,6 +269,10 @@ public class Account {
 
 	public boolean getShow_native_calendars() {
 		return prefs.getBoolean(Account.AccountMetaData.SHOW_NATIVE_CALENDARS, false);
+	}
+	
+	public boolean getShow_ga_calendars(){
+		return prefs.getBoolean(Account.AccountMetaData.SHOW_GA_CALENDARS, true);
 	}
 	
 	public void setUser_id(int user_id) {
@@ -457,8 +462,13 @@ public class Account {
 		prefsEditor.commit();
 	}
 	
-	public void getShow_native_calendars(boolean state) {
+	public void setShow_native_calendars(boolean state) {
 		prefsEditor.putBoolean(Account.AccountMetaData.SHOW_NATIVE_CALENDARS, state);
+		prefsEditor.commit();
+	}
+	
+	public void setShow_ga_calendars(boolean state) {
+		prefsEditor.putBoolean(Account.AccountMetaData.SHOW_GA_CALENDARS, state);
 		prefsEditor.commit();
 	}
 

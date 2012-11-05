@@ -63,6 +63,9 @@ public class TreeMapUtils {
 	}
 
 	public static TreeMap<Calendar, ArrayList<Event>> putValueIntoTreeMap(TreeMap<Calendar, ArrayList<Event>> tm, Calendar eventDay, Event event) {
+		if(tm == null){
+			tm = new TreeMap<Calendar, ArrayList<Event>>();
+		}
 		if (tm.containsKey(eventDay)) {
 			ArrayList<Event> tmpArrayList = tm.get(eventDay);
 			tmpArrayList.add(event);
