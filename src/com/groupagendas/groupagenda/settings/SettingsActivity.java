@@ -29,6 +29,7 @@ import com.groupagendas.groupagenda.account.AccountActivity;
 import com.groupagendas.groupagenda.data.Data;
 import com.groupagendas.groupagenda.data.DataManagement;
 import com.groupagendas.groupagenda.error.report.Reporter;
+import com.groupagendas.groupagenda.https.MySSLSocketFactory;
 
 public class SettingsActivity extends ListActivity{
 	@Override
@@ -111,7 +112,7 @@ public class SettingsActivity extends ListActivity{
 		protected Void doInBackground(Void... params) {
 			try {
 				C2DMessaging.unregister(SettingsActivity.this);
-				HttpClient hc = new DefaultHttpClient();
+				HttpClient hc = MySSLSocketFactory.getNewHttpClient();
 				HttpPost post = new HttpPost(Data.getServerUrl() + "mobile/push/unsubscribe");
 
 				MultipartEntity reqEntity = new MultipartEntity(HttpMultipartMode.BROWSER_COMPATIBLE);

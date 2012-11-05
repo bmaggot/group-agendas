@@ -31,6 +31,7 @@ import com.groupagendas.groupagenda.chat.ChatProvider.CMMetaData;
 import com.groupagendas.groupagenda.events.Event;
 import com.groupagendas.groupagenda.events.EventsProvider;
 import com.groupagendas.groupagenda.events.EventsProvider.EMetaData;
+import com.groupagendas.groupagenda.https.MySSLSocketFactory;
 import com.groupagendas.groupagenda.utils.Utils;
 
 public class ChatManagement {
@@ -222,7 +223,7 @@ public class ChatManagement {
 	public static boolean removeChatMessageFromRemoteDb(Context context, int messageId) {
 		boolean success = false;
 		try {
-			HttpClient hc = new DefaultHttpClient();
+			HttpClient hc = MySSLSocketFactory.getNewHttpClient();
 			HttpPost post = new HttpPost(Data.getServerUrl() + "mobile/chat_remove");
 
 			MultipartEntity reqEntity = new MultipartEntity(HttpMultipartMode.BROWSER_COMPATIBLE);
@@ -299,7 +300,7 @@ public class ChatManagement {
 	public static ChatMessageObject postChatMessage(int eventId, String message, Context context) {
 		ChatMessageObject chatMessageObject = new ChatMessageObject();
 		try {
-			HttpClient hc = new DefaultHttpClient();
+			HttpClient hc = MySSLSocketFactory.getNewHttpClient();
 			HttpPost post = new HttpPost(Data.getServerUrl() + "mobile/chat_post");
 
 			MultipartEntity reqEntity = new MultipartEntity(HttpMultipartMode.BROWSER_COMPATIBLE);
@@ -357,7 +358,7 @@ public class ChatManagement {
 	public static ArrayList<ChatMessageObject> getChatMessagesForEventFromRemoteDb(int eventId, Context context, boolean resetMessageCount,
 			long lastMessageTimeStamp) {
 		boolean success = false;
-		HttpClient hc = new DefaultHttpClient();
+		HttpClient hc = MySSLSocketFactory.getNewHttpClient();
 		ArrayList<ChatMessageObject> chatMessages = new ArrayList<ChatMessageObject>();
 		HttpPost post = new HttpPost(Data.getServerUrl() + "mobile/chat_get");
 		Log.e("ChatManagement", "");
@@ -409,7 +410,7 @@ public class ChatManagement {
 
 	public static void getAllChatMessagesFromRemoteDb(Context context) {
 		boolean success = false;
-		HttpClient hc = new DefaultHttpClient();
+		HttpClient hc = MySSLSocketFactory.getNewHttpClient();
 		HttpPost post = new HttpPost(Data.getServerUrl() + "mobile/chat_get_all");
 		MultipartEntity reqEntity = new MultipartEntity(HttpMultipartMode.BROWSER_COMPATIBLE);
 

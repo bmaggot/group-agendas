@@ -32,6 +32,7 @@ import com.groupagendas.groupagenda.account.Account;
 import com.groupagendas.groupagenda.contacts.Contact;
 import com.groupagendas.groupagenda.contacts.ContactsProvider;
 import com.groupagendas.groupagenda.contacts.Group;
+import com.groupagendas.groupagenda.https.MySSLSocketFactory;
 import com.groupagendas.groupagenda.utils.MapUtils;
 import com.groupagendas.groupagenda.utils.Utils;
 
@@ -53,7 +54,7 @@ public class ContactManagement {
 		boolean success = false;
 		String error = null;
 		Account account = new Account(context);
-		HttpClient hc = new DefaultHttpClient();
+		HttpClient hc = MySSLSocketFactory.getNewHttpClient();
 		HttpPost post = new HttpPost(Data.getServerUrl() + "mobile/contact_list");
 		MultipartEntity reqEntity = new MultipartEntity(HttpMultipartMode.BROWSER_COMPATIBLE);
 	    
@@ -408,7 +409,7 @@ public class ContactManagement {
 		int destination_id = 0;
 		boolean success = false;
 		Account account = new Account(context);
-		HttpClient hc = new DefaultHttpClient();
+		HttpClient hc = MySSLSocketFactory.getNewHttpClient();
 		HttpPost post = new HttpPost(Data.getServerUrl() + "mobile/contact_create");
 		MultipartEntity reqEntity = new MultipartEntity(HttpMultipartMode.BROWSER_COMPATIBLE);
 	    
@@ -1001,7 +1002,7 @@ public class ContactManagement {
 		int destination_id = 0;
 		boolean success = false;
 		Account account = new Account(context);
-		HttpClient hc = new DefaultHttpClient();
+		HttpClient hc = MySSLSocketFactory.getNewHttpClient();
 		HttpPost post = new HttpPost(Data.getServerUrl() + "mobile/group_create");
 		MultipartEntity reqEntity = new MultipartEntity(HttpMultipartMode.BROWSER_COMPATIBLE);
 	    
@@ -1186,7 +1187,7 @@ public class ContactManagement {
 		boolean success = false;
 		String error = null;
 		Account account = new Account(context);
-		HttpClient hc = new DefaultHttpClient();
+		HttpClient hc = MySSLSocketFactory.getNewHttpClient();
 		HttpPost post = new HttpPost(Data.getServerUrl() + "mobile/groups_list");
 		MultipartEntity reqEntity = new MultipartEntity(HttpMultipartMode.BROWSER_COMPATIBLE);
 	    
@@ -1349,7 +1350,7 @@ public class ContactManagement {
 		boolean success = false;
 		String error = null;
 		Account account = new Account(context);
-		HttpClient hc = new DefaultHttpClient();
+		HttpClient hc = MySSLSocketFactory.getNewHttpClient();
 		HttpPost post = new HttpPost(Data.getServerUrl() + "mobile/contact_remove");
 		MultipartEntity reqEntity = new MultipartEntity(HttpMultipartMode.BROWSER_COMPATIBLE);
 	    
@@ -1414,7 +1415,7 @@ public class ContactManagement {
 	public static boolean editContactOnRemoteDb(Context context, Contact c) {
 		boolean success = false;
 		Account account = new Account(context);
-		HttpClient hc = new DefaultHttpClient();
+		HttpClient hc = MySSLSocketFactory.getNewHttpClient();
 		HttpPost post = new HttpPost(Data.getServerUrl() + "mobile/contact_edit");
 		MultipartEntity reqEntity = new MultipartEntity(HttpMultipartMode.BROWSER_COMPATIBLE);
 	    
@@ -1827,7 +1828,7 @@ public class ContactManagement {
 		public static void requestContactCopy(Context context, int guid, boolean req) {
 			try {
 				Account account = new Account(context);
-				HttpClient hc = new DefaultHttpClient();
+				HttpClient hc = MySSLSocketFactory.getNewHttpClient();
 				HttpPost post = new HttpPost(Data.getServerUrl() + "mobile/contact_copy");
 
 				MultipartEntity reqEntity = new MultipartEntity(HttpMultipartMode.BROWSER_COMPATIBLE);

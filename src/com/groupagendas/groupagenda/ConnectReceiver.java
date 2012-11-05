@@ -22,6 +22,7 @@ import com.groupagendas.groupagenda.data.Data;
 import com.groupagendas.groupagenda.data.DataManagement;
 import com.groupagendas.groupagenda.data.OfflineData;
 import com.groupagendas.groupagenda.error.report.Reporter;
+import com.groupagendas.groupagenda.https.MySSLSocketFactory;
 
 public class ConnectReceiver extends BroadcastReceiver {
 	
@@ -67,7 +68,7 @@ public class ConnectReceiver extends BroadcastReceiver {
 		protected Boolean doInBackground (ArrayList<OfflineData>... params) {
 			ArrayList<OfflineData> requests = params[0];
 			boolean success = false;
-			HttpClient hc = new DefaultHttpClient();
+			HttpClient hc = MySSLSocketFactory.getNewHttpClient();
 			
 			try {
 				for (OfflineData request : requests) {
