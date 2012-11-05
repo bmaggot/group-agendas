@@ -39,7 +39,7 @@ public class AutoColorAdapter extends BaseAdapter{
 			holder = (ViewHolder) convertView.getTag();
 		}
 		
-		final AutoColorItem item = mItems.get(position);
+		AutoColorItem item = mItems.get(position);
 		
 		holder.text.setText(item.keyword);
 		
