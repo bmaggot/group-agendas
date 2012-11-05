@@ -1,6 +1,7 @@
 package com.groupagendas.groupagenda.data;
 
 import java.io.UnsupportedEncodingException;
+import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.Calendar;
 
@@ -228,10 +229,10 @@ public class ChatManagement {
 
 			MultipartEntity reqEntity = new MultipartEntity(HttpMultipartMode.BROWSER_COMPATIBLE);
 
-			reqEntity.addPart(TOKEN, new StringBody(Data.getToken(context)));
-			reqEntity.addPart("message_id", new StringBody(String.valueOf(messageId)));
+			reqEntity.addPart(TOKEN, new StringBody(Data.getToken(context), Charset.forName("UTF-8")));
+			reqEntity.addPart("message_id", new StringBody(String.valueOf(messageId), Charset.forName("UTF-8")));
 			Account account = new Account(context);
-			reqEntity.addPart("session", new StringBody(account.getSessionId()));
+			reqEntity.addPart("session", new StringBody(account.getSessionId(), Charset.forName("UTF-8")));
 
 			post.setEntity(reqEntity);
 			HttpResponse rp = null;
@@ -305,15 +306,15 @@ public class ChatManagement {
 
 			MultipartEntity reqEntity = new MultipartEntity(HttpMultipartMode.BROWSER_COMPATIBLE);
 
-			reqEntity.addPart(ChatManagement.TOKEN, new StringBody(Data.getToken(context)));
-			reqEntity.addPart("event_id", new StringBody(String.valueOf(eventId)));
+			reqEntity.addPart(ChatManagement.TOKEN, new StringBody(Data.getToken(context), Charset.forName("UTF-8")));
+			reqEntity.addPart("event_id", new StringBody(String.valueOf(eventId), Charset.forName("UTF-8")));
 			if (message == null) {
-				reqEntity.addPart("message", new StringBody(String.valueOf("")));
+				reqEntity.addPart("message", new StringBody(String.valueOf(""), Charset.forName("UTF-8")));
 			} else {
-				reqEntity.addPart("message", new StringBody(String.valueOf(message)));
+				reqEntity.addPart("message", new StringBody(String.valueOf(message), Charset.forName("UTF-8")));
 			}
 			Account account = new Account(context);
-			reqEntity.addPart("session", new StringBody(account.getSessionId()));
+			reqEntity.addPart("session", new StringBody(account.getSessionId(), Charset.forName("UTF-8")));
 
 			post.setEntity(reqEntity);
 			HttpResponse rp = null;
@@ -365,18 +366,18 @@ public class ChatManagement {
 		MultipartEntity reqEntity = new MultipartEntity(HttpMultipartMode.BROWSER_COMPATIBLE);
 
 		try {
-			reqEntity.addPart(ChatManagement.TOKEN, new StringBody(Data.getToken(context)));
-			reqEntity.addPart("event_id", new StringBody(String.valueOf(eventId)));
+			reqEntity.addPart(ChatManagement.TOKEN, new StringBody(Data.getToken(context), Charset.forName("UTF-8")));
+			reqEntity.addPart("event_id", new StringBody(String.valueOf(eventId), Charset.forName("UTF-8")));
 			if (lastMessageTimeStamp != 0) {
-				reqEntity.addPart("from_datetime", new StringBody(String.valueOf(lastMessageTimeStamp)));
+				reqEntity.addPart("from_datetime", new StringBody(String.valueOf(lastMessageTimeStamp), Charset.forName("UTF-8")));
 			}
 			if (resetMessageCount) {
-				reqEntity.addPart("update_lastview", new StringBody("1"));
+				reqEntity.addPart("update_lastview", new StringBody("1", Charset.forName("UTF-8")));
 			} else {
-				reqEntity.addPart("update_lastview", new StringBody("0"));
+				reqEntity.addPart("update_lastview", new StringBody("0", Charset.forName("UTF-8")));
 			}
 			Account account = new Account(context);
-			reqEntity.addPart("session", new StringBody(account.getSessionId()));
+			reqEntity.addPart("session", new StringBody(account.getSessionId(), Charset.forName("UTF-8")));
 
 		} catch (UnsupportedEncodingException e1) {
 			e1.printStackTrace();
@@ -415,9 +416,9 @@ public class ChatManagement {
 		MultipartEntity reqEntity = new MultipartEntity(HttpMultipartMode.BROWSER_COMPATIBLE);
 
 		try {
-			reqEntity.addPart(ChatManagement.TOKEN, new StringBody(Data.getToken(context)));
+			reqEntity.addPart(ChatManagement.TOKEN, new StringBody(Data.getToken(context), Charset.forName("UTF-8")));
 			Account account = new Account(context);
-			reqEntity.addPart("session", new StringBody(account.getSessionId()));
+			reqEntity.addPart("session", new StringBody(account.getSessionId(), Charset.forName("UTF-8")));
 		} catch (UnsupportedEncodingException e1) {
 			e1.printStackTrace();
 		}

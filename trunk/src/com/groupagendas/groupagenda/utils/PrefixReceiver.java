@@ -2,6 +2,7 @@ package com.groupagendas.groupagenda.utils;
 
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
+import java.nio.charset.Charset;
 
 import org.apache.http.HttpResponse;
 import org.apache.http.HttpStatus;
@@ -32,7 +33,7 @@ public class PrefixReceiver extends AsyncTask <String, Void, String> {
 		MultipartEntity reqEntity = new MultipartEntity(HttpMultipartMode.BROWSER_COMPATIBLE);
 		String phonePrefix = null;
 		try {
-			reqEntity.addPart("country_name", new StringBody(country[0]));
+			reqEntity.addPart("country_name", new StringBody(country[0], Charset.forName("UTF-8")));
 		} catch (UnsupportedEncodingException e1) {
 			Reporter.reportError(DataManagement.getContext(), this.getClass().toString(), Thread.currentThread().getStackTrace()[2].getMethodName().toString(), e1.getMessage());
 		}

@@ -1,5 +1,7 @@
 package com.groupagendas.groupagenda.settings;
 
+import java.nio.charset.Charset;
+
 import org.apache.http.HttpResponse;
 import org.apache.http.HttpStatus;
 import org.apache.http.client.HttpClient;
@@ -118,7 +120,7 @@ public class SettingsActivity extends ListActivity{
 				MultipartEntity reqEntity = new MultipartEntity(HttpMultipartMode.BROWSER_COMPATIBLE);
 
 				Account account = new Account(SettingsActivity.this);
-				reqEntity.addPart("device_uuid", new StringBody(account.getPushId()));
+				reqEntity.addPart("device_uuid", new StringBody(account.getPushId(), Charset.forName("UTF-8")));
 
 				post.setEntity(reqEntity);
 

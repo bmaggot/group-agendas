@@ -4,6 +4,7 @@ import java.io.DataOutputStream;
 import java.io.UnsupportedEncodingException;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.nio.charset.Charset;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -116,26 +117,26 @@ public class DataManagement {
 			HttpPost post = new HttpPost(Data.getServerUrl() + "mobile/account_edit");
 
 			MultipartEntity reqEntity = new MultipartEntity(HttpMultipartMode.BROWSER_COMPATIBLE);
-			reqEntity.addPart(TOKEN, new StringBody(Data.getToken(context)));
+			reqEntity.addPart(TOKEN, new StringBody(Data.getToken(context), Charset.forName("UTF-8")));
 
-			reqEntity.addPart(Account.AccountMetaData.LASTNAME, new StringBody(account.getLastname()));
-			reqEntity.addPart(Account.AccountMetaData.NAME, new StringBody(account.getName()));
+			reqEntity.addPart(Account.AccountMetaData.LASTNAME, new StringBody(account.getLastname(), Charset.forName("UTF-8")));
+			reqEntity.addPart(Account.AccountMetaData.NAME, new StringBody(account.getName(), Charset.forName("UTF-8")));
 //	TODO disabled sending account's birthdate.
-//			reqEntity.addPart(Account.AccountMetaData.BIRTHDATE, new StringBody(account.getBirthdate().toString()));
-			reqEntity.addPart(Account.AccountMetaData.SEX, new StringBody(account.getSex()));
+//			reqEntity.addPart(Account.AccountMetaData.BIRTHDATE, new StringBody(account.getBirthdate().toString(), Charset.forName("UTF-8")));
+			reqEntity.addPart(Account.AccountMetaData.SEX, new StringBody(account.getSex(), Charset.forName("UTF-8")));
 
-			reqEntity.addPart(Account.AccountMetaData.COUNTRY, new StringBody(account.getCountry()));
-			reqEntity.addPart(Account.AccountMetaData.CITY, new StringBody(account.getCity()));
-			reqEntity.addPart(Account.AccountMetaData.STREET, new StringBody(account.getStreet()));
-			reqEntity.addPart(Account.AccountMetaData.ZIP, new StringBody(account.getZip()));
+			reqEntity.addPart(Account.AccountMetaData.COUNTRY, new StringBody(account.getCountry(), Charset.forName("UTF-8")));
+			reqEntity.addPart(Account.AccountMetaData.CITY, new StringBody(account.getCity(), Charset.forName("UTF-8")));
+			reqEntity.addPart(Account.AccountMetaData.STREET, new StringBody(account.getStreet(), Charset.forName("UTF-8")));
+			reqEntity.addPart(Account.AccountMetaData.ZIP, new StringBody(account.getZip(), Charset.forName("UTF-8")));
 
-			reqEntity.addPart(Account.AccountMetaData.TIMEZONE, new StringBody(account.getTimezone()));
-			reqEntity.addPart(Account.AccountMetaData.PHONE1, new StringBody(account.getPhone1()));
-			reqEntity.addPart(Account.AccountMetaData.PHONE2, new StringBody(account.getPhone2()));
-			reqEntity.addPart(Account.AccountMetaData.PHONE3, new StringBody(account.getPhone3()));
-			reqEntity.addPart(Account.AccountMetaData.EMAIL, new StringBody(account.getEmail()));
+			reqEntity.addPart(Account.AccountMetaData.TIMEZONE, new StringBody(account.getTimezone(), Charset.forName("UTF-8")));
+			reqEntity.addPart(Account.AccountMetaData.PHONE1, new StringBody(account.getPhone1(), Charset.forName("UTF-8")));
+			reqEntity.addPart(Account.AccountMetaData.PHONE2, new StringBody(account.getPhone2(), Charset.forName("UTF-8")));
+			reqEntity.addPart(Account.AccountMetaData.PHONE3, new StringBody(account.getPhone3(), Charset.forName("UTF-8")));
+			reqEntity.addPart(Account.AccountMetaData.EMAIL, new StringBody(account.getEmail(), Charset.forName("UTF-8")));
 
-			reqEntity.addPart("language", new StringBody("en"));
+			reqEntity.addPart("language", new StringBody("en", Charset.forName("UTF-8")));
 
 			post.setEntity(reqEntity);
 
@@ -177,9 +178,9 @@ public class DataManagement {
 					ByteArrayBody bab = new ByteArrayBody(account.image_bytes, "image");
 					reqEntity.addPart("image", bab);
 				}
-				reqEntity.addPart("remove_image", new StringBody(String.valueOf("0")));
+				reqEntity.addPart("remove_image", new StringBody(String.valueOf("0"), Charset.forName("UTF-8")));
 			} else {
-				reqEntity.addPart("remove_image", new StringBody(String.valueOf("1")));
+				reqEntity.addPart("remove_image", new StringBody(String.valueOf("1"), Charset.forName("UTF-8")));
 			}
 
 			post.setEntity(reqEntity);
@@ -219,7 +220,7 @@ public class DataManagement {
 
 			MultipartEntity reqEntity = new MultipartEntity(HttpMultipartMode.BROWSER_COMPATIBLE);
 
-			reqEntity.addPart(TOKEN, new StringBody(Data.getToken(context)));
+			reqEntity.addPart(TOKEN, new StringBody(Data.getToken(context), Charset.forName("UTF-8")));
 			post.setEntity(reqEntity);
 
 			HttpResponse rp = hc.execute(post);
@@ -479,20 +480,20 @@ public class DataManagement {
 		MultipartEntity reqEntity = new MultipartEntity(HttpMultipartMode.BROWSER_COMPATIBLE);
 
 		try {
-			reqEntity.addPart("language", new StringBody(language));
-			reqEntity.addPart("country", new StringBody(country));
-			reqEntity.addPart("timezone", new StringBody(timezone));
-			reqEntity.addPart("sex", new StringBody(sex));
-			reqEntity.addPart("name", new StringBody(name));
-			reqEntity.addPart("lastname", new StringBody(lastname));
-			reqEntity.addPart("email", new StringBody(email));
-			reqEntity.addPart("phone1_code", new StringBody(phonecode));
-			reqEntity.addPart("phone1", new StringBody(phone));
-			reqEntity.addPart("password", new StringBody(password));
-			reqEntity.addPart("confirm_password", new StringBody(password));
-			reqEntity.addPart("city", new StringBody(city));
-			reqEntity.addPart("street", new StringBody(street + " " + streetNo));
-			reqEntity.addPart("zip", new StringBody(zip));
+			reqEntity.addPart("language", new StringBody(language, Charset.forName("UTF-8")));
+			reqEntity.addPart("country", new StringBody(country, Charset.forName("UTF-8")));
+			reqEntity.addPart("timezone", new StringBody(timezone, Charset.forName("UTF-8")));
+			reqEntity.addPart("sex", new StringBody(sex, Charset.forName("UTF-8")));
+			reqEntity.addPart("name", new StringBody(name, Charset.forName("UTF-8")));
+			reqEntity.addPart("lastname", new StringBody(lastname, Charset.forName("UTF-8")));
+			reqEntity.addPart("email", new StringBody(email, Charset.forName("UTF-8")));
+			reqEntity.addPart("phone1_code", new StringBody(phonecode, Charset.forName("UTF-8")));
+			reqEntity.addPart("phone1", new StringBody(phone, Charset.forName("UTF-8")));
+			reqEntity.addPart("password", new StringBody(password, Charset.forName("UTF-8")));
+			reqEntity.addPart("confirm_password", new StringBody(password, Charset.forName("UTF-8")));
+			reqEntity.addPart("city", new StringBody(city, Charset.forName("UTF-8")));
+			reqEntity.addPart("street", new StringBody(street + " " + streetNo, Charset.forName("UTF-8")));
+			reqEntity.addPart("zip", new StringBody(zip, Charset.forName("UTF-8")));
 
 			post.setEntity(reqEntity);
 
@@ -524,11 +525,11 @@ public class DataManagement {
 			HttpPost post = new HttpPost(Data.getServerUrl() + "mobile/account_email_change");
 
 			MultipartEntity reqEntity = new MultipartEntity(HttpMultipartMode.BROWSER_COMPATIBLE);
-			reqEntity.addPart(TOKEN, new StringBody(Data.getToken(context)));
-			reqEntity.addPart("password", new StringBody(Data.getPassword()));
-			reqEntity.addPart("email", new StringBody(email));
+			reqEntity.addPart(TOKEN, new StringBody(Data.getToken(context), Charset.forName("UTF-8")));
+			reqEntity.addPart("password", new StringBody(Data.getPassword(), Charset.forName("UTF-8")));
+			reqEntity.addPart("email", new StringBody(email, Charset.forName("UTF-8")));
 			if (email_id > 1)
-				reqEntity.addPart("email_id", new StringBody(String.valueOf(email_id)));
+				reqEntity.addPart("email_id", new StringBody(String.valueOf(email_id), Charset.forName("UTF-8")));
 
 			post.setEntity(reqEntity);
 			if (networkAvailable) {
@@ -569,11 +570,11 @@ public class DataManagement {
 
 			MultipartEntity reqEntity = new MultipartEntity(HttpMultipartMode.BROWSER_COMPATIBLE);
 
-			reqEntity.addPart(TOKEN, new StringBody(Data.getToken(context)));
+			reqEntity.addPart(TOKEN, new StringBody(Data.getToken(context), Charset.forName("UTF-8")));
 
-			reqEntity.addPart("setting_ampm", new StringBody(String.valueOf(am_pm)));
-			reqEntity.addPart("setting_default_view", new StringBody(defaultview));
-			reqEntity.addPart("setting_date_format", new StringBody(dateformat));
+			reqEntity.addPart("setting_ampm", new StringBody(String.valueOf(am_pm), Charset.forName("UTF-8")));
+			reqEntity.addPart("setting_default_view", new StringBody(defaultview, Charset.forName("UTF-8")));
+			reqEntity.addPart("setting_date_format", new StringBody(dateformat, Charset.forName("UTF-8")));
 
 			post.setEntity(reqEntity);
 			if (networkAvailable) {
@@ -620,8 +621,8 @@ public class DataManagement {
 
 				MultipartEntity reqEntity = new MultipartEntity(HttpMultipartMode.BROWSER_COMPATIBLE);
 
-				reqEntity.addPart("email", new StringBody(email));
-				reqEntity.addPart("password", new StringBody(password));
+				reqEntity.addPart("email", new StringBody(email, Charset.forName("UTF-8")));
+				reqEntity.addPart("password", new StringBody(password, Charset.forName("UTF-8")));
 
 				post.setEntity(reqEntity);
 
@@ -648,7 +649,7 @@ public class DataManagement {
 
 							reqEntity = new MultipartEntity(HttpMultipartMode.BROWSER_COMPATIBLE);
 
-							reqEntity.addPart(TOKEN, new StringBody(token));
+							reqEntity.addPart(TOKEN, new StringBody(token, Charset.forName("UTF-8")));
 
 							post.setEntity(reqEntity);
 
@@ -831,9 +832,9 @@ public class DataManagement {
 
 			MultipartEntity reqEntity = new MultipartEntity(HttpMultipartMode.BROWSER_COMPATIBLE);
 
-			reqEntity.addPart(TOKEN, new StringBody(Data.getToken(context)));
-			reqEntity.addPart("device_uuid", new StringBody(pushId));
-			reqEntity.addPart("platform", new StringBody(context.getResources().getString(R.string.platform)));
+			reqEntity.addPart(TOKEN, new StringBody(Data.getToken(context), Charset.forName("UTF-8")));
+			reqEntity.addPart("device_uuid", new StringBody(pushId, Charset.forName("UTF-8")));
+			reqEntity.addPart("platform", new StringBody(context.getResources().getString(R.string.platform), Charset.forName("UTF-8")));
 
 			post.setEntity(reqEntity);
 
@@ -854,7 +855,7 @@ public class DataManagement {
 			HttpPost post = new HttpPost(Data.getServerUrl() + "mobile/settings_set_autoicons");
 
 			MultipartEntity reqEntity = new MultipartEntity(HttpMultipartMode.BROWSER_COMPATIBLE);
-			reqEntity.addPart(TOKEN, new StringBody(Data.getToken(context)));
+			reqEntity.addPart(TOKEN, new StringBody(Data.getToken(context), Charset.forName("UTF-8")));
 
 			Cursor result = Data.getmContext().getContentResolver()
 					.query(AccountProvider.AMetaData.AutoiconMetaData.CONTENT_URI, null, null, null, null);
@@ -864,11 +865,11 @@ public class DataManagement {
 			while (!result.isAfterLast()) {
 
 				reqEntity.addPart("autoicon[" + i + "][icon]",
-						new StringBody(result.getString(result.getColumnIndex(AccountProvider.AMetaData.AutoiconMetaData.ICON))));
+						new StringBody(result.getString(result.getColumnIndex(AccountProvider.AMetaData.AutoiconMetaData.ICON)), Charset.forName("UTF-8")));
 				reqEntity.addPart("autoicon[" + i + "][keyword]",
-						new StringBody(result.getString(result.getColumnIndex(AccountProvider.AMetaData.AutoiconMetaData.KEYWORD))));
+						new StringBody(result.getString(result.getColumnIndex(AccountProvider.AMetaData.AutoiconMetaData.KEYWORD)), Charset.forName("UTF-8")));
 				reqEntity.addPart("autoicon[" + i + "][context]",
-						new StringBody(result.getString(result.getColumnIndex(AccountProvider.AMetaData.AutoiconMetaData.CONTEXT))));
+						new StringBody(result.getString(result.getColumnIndex(AccountProvider.AMetaData.AutoiconMetaData.CONTEXT)), Charset.forName("UTF-8")));
 
 				i++;
 				result.moveToNext();
@@ -941,11 +942,11 @@ public class DataManagement {
 			while (!result.isAfterLast()) {
 
 				reqEntity.addPart("autocolor[" + i + "][color]",
-						new StringBody(result.getString(result.getColumnIndex(AccountProvider.AMetaData.AutocolorMetaData.COLOR))));
+						new StringBody(result.getString(result.getColumnIndex(AccountProvider.AMetaData.AutocolorMetaData.COLOR)), Charset.forName("UTF-8")));
 				reqEntity.addPart("autocolor[" + i + "][keyword]",
-						new StringBody(result.getString(result.getColumnIndex(AccountProvider.AMetaData.AutocolorMetaData.KEYWORD))));
+						new StringBody(result.getString(result.getColumnIndex(AccountProvider.AMetaData.AutocolorMetaData.KEYWORD)), Charset.forName("UTF-8")));
 				reqEntity.addPart("autocolor[" + i + "][context]",
-						new StringBody(result.getString(result.getColumnIndex(AccountProvider.AMetaData.AutocolorMetaData.CONTEXT))));
+						new StringBody(result.getString(result.getColumnIndex(AccountProvider.AMetaData.AutocolorMetaData.CONTEXT)), Charset.forName("UTF-8")));
 
 				i++;
 				result.moveToNext();
@@ -1015,13 +1016,13 @@ public class DataManagement {
 			MultipartEntity reqEntity = new MultipartEntity(HttpMultipartMode.BROWSER_COMPATIBLE);
 		    
 		    try {
-				reqEntity.addPart("session", new StringBody(account.getSessionId()));
+				reqEntity.addPart("session", new StringBody(account.getSessionId(), Charset.forName("UTF-8")));
 			} catch (UnsupportedEncodingException e2) {
 				e2.printStackTrace();
 			}
 
-			reqEntity.addPart("group_id", new StringBody(String.valueOf(group_id)));
-			reqEntity.addPart(TOKEN, new StringBody(Data.getToken(context)));
+			reqEntity.addPart("group_id", new StringBody(String.valueOf(group_id), Charset.forName("UTF-8")));
+			reqEntity.addPart(TOKEN, new StringBody(Data.getToken(context), Charset.forName("UTF-8")));
 
 			post.setEntity(reqEntity);
 
@@ -1063,7 +1064,7 @@ public class DataManagement {
 			MultipartEntity reqEntity = new MultipartEntity(HttpMultipartMode.BROWSER_COMPATIBLE);
 		    
 		    try {
-				reqEntity.addPart("session", new StringBody(account.getSessionId()));
+				reqEntity.addPart("session", new StringBody(account.getSessionId(), Charset.forName("UTF-8")));
 			} catch (UnsupportedEncodingException e2) {
 				e2.printStackTrace();
 			}
@@ -1073,22 +1074,22 @@ public class DataManagement {
 					ByteArrayBody bab = new ByteArrayBody(g.image_bytes, "image");
 					reqEntity.addPart("image", bab);
 				}
-				reqEntity.addPart("remove_image", new StringBody(String.valueOf("0")));
+				reqEntity.addPart("remove_image", new StringBody(String.valueOf("0"), Charset.forName("UTF-8")));
 			} else {
-				reqEntity.addPart("remove_image", new StringBody(String.valueOf("1")));
+				reqEntity.addPart("remove_image", new StringBody(String.valueOf("1"), Charset.forName("UTF-8")));
 			}
 
-			reqEntity.addPart("group_id", new StringBody(String.valueOf(g.group_id)));
-			reqEntity.addPart(TOKEN, new StringBody(Data.getToken(context)));
-			reqEntity.addPart("title", new StringBody(g.title));
+			reqEntity.addPart("group_id", new StringBody(String.valueOf(g.group_id), Charset.forName("UTF-8")));
+			reqEntity.addPart(TOKEN, new StringBody(Data.getToken(context), Charset.forName("UTF-8")));
+			reqEntity.addPart("title", new StringBody(g.title, Charset.forName("UTF-8")));
 
 			Map<String, String> contacts = g.contacts;
 			if (contacts != null) {
 				for (int i = 0, l = contacts.size(); i < l; i++) {
-					reqEntity.addPart("contacts[]", new StringBody(contacts.get(String.valueOf(i))));
+					reqEntity.addPart("contacts[]", new StringBody(contacts.get(String.valueOf(i)), Charset.forName("UTF-8")));
 				}
 			} else {
-				reqEntity.addPart("contacts[]", new StringBody(""));
+				reqEntity.addPart("contacts[]", new StringBody("", Charset.forName("UTF-8")));
 			}
 
 			post.setEntity(reqEntity);
@@ -1277,9 +1278,9 @@ public class DataManagement {
 
 				MultipartEntity reqEntity = new MultipartEntity(HttpMultipartMode.BROWSER_COMPATIBLE);
 
-				reqEntity.addPart(TOKEN, new StringBody(Data.getToken(getContext())));
-				reqEntity.addPart("event_id", new StringBody(String.valueOf(event_id)));
-				reqEntity.addPart("status", new StringBody(status));
+				reqEntity.addPart(TOKEN, new StringBody(Data.getToken(getContext()), Charset.forName("UTF-8")));
+				reqEntity.addPart("event_id", new StringBody(String.valueOf(event_id), Charset.forName("UTF-8")));
+				reqEntity.addPart("status", new StringBody(status, Charset.forName("UTF-8")));
 
 				post.setEntity(reqEntity);
 				if (networkAvailable) {
@@ -1331,8 +1332,8 @@ public class DataManagement {
 
 			MultipartEntity reqEntity = new MultipartEntity(HttpMultipartMode.BROWSER_COMPATIBLE);
 
-			reqEntity.addPart(TOKEN, new StringBody(Data.getToken()));
-			reqEntity.addPart("event_id", new StringBody(String.valueOf(event_id)));
+			reqEntity.addPart(TOKEN, new StringBody(Data.getToken(), Charset.forName("UTF-8")));
+			reqEntity.addPart("event_id", new StringBody(String.valueOf(event_id), Charset.forName("UTF-8")));
 
 			post.setEntity(reqEntity);
 			HttpResponse rp = null;
@@ -1455,55 +1456,55 @@ public class DataManagement {
 
 			MultipartEntity reqEntity = new MultipartEntity(HttpMultipartMode.BROWSER_COMPATIBLE);
 
-			reqEntity.addPart("token", new StringBody(Data.getToken(context)));
+			reqEntity.addPart("token", new StringBody(Data.getToken(context), Charset.forName("UTF-8")));
 
 			if (event.getEvent_id() > 0)
-				reqEntity.addPart("template_id", new StringBody(((Integer) event.getEvent_id()).toString()));
+				reqEntity.addPart("template_id", new StringBody(((Integer) event.getEvent_id()).toString(), Charset.forName("UTF-8")));
 			else
-				reqEntity.addPart("template_id", new StringBody(""));
+				reqEntity.addPart("template_id", new StringBody("", Charset.forName("UTF-8")));
 
 			if (event.getIcon() != null)
-				reqEntity.addPart("icon", new StringBody(event.getIcon()));
+				reqEntity.addPart("icon", new StringBody(event.getIcon(), Charset.forName("UTF-8")));
 
 			if (event.getColor() != null)
-				reqEntity.addPart("color", new StringBody(event.getColor()));
+				reqEntity.addPart("color", new StringBody(event.getColor(), Charset.forName("UTF-8")));
 
 			if (event.getActualTitle() != null) {
-				reqEntity.addPart("title", new StringBody(event.getActualTitle()));
-				reqEntity.addPart("template_title", new StringBody(event.getActualTitle()));
+				reqEntity.addPart("title", new StringBody(event.getActualTitle(), Charset.forName("UTF-8")));
+				reqEntity.addPart("template_title", new StringBody(event.getActualTitle(), Charset.forName("UTF-8")));
 			} else {
-				reqEntity.addPart("title", new StringBody(""));
-				reqEntity.addPart("template_title", new StringBody(""));
+				reqEntity.addPart("title", new StringBody("", Charset.forName("UTF-8")));
+				reqEntity.addPart("template_title", new StringBody("", Charset.forName("UTF-8")));
 			}
 
 			if (event.getDescription() != null) {
-				reqEntity.addPart("description", new StringBody(event.getDescription()));
+				reqEntity.addPart("description", new StringBody(event.getDescription(), Charset.forName("UTF-8")));
 			} else {
-				reqEntity.addPart("description", new StringBody(""));
+				reqEntity.addPart("description", new StringBody("", Charset.forName("UTF-8")));
 			}
 
 			if (event.getCountry() != null)
-				reqEntity.addPart("country", new StringBody(event.getCountry()));
+				reqEntity.addPart("country", new StringBody(event.getCountry(), Charset.forName("UTF-8")));
 
 			if (event.getCity() != null)
-				reqEntity.addPart("city", new StringBody(event.getCity()));
+				reqEntity.addPart("city", new StringBody(event.getCity(), Charset.forName("UTF-8")));
 
 			if (event.getStreet() != null)
-				reqEntity.addPart("street", new StringBody(event.getStreet()));
+				reqEntity.addPart("street", new StringBody(event.getStreet(), Charset.forName("UTF-8")));
 
 			if (event.getZip() != null)
-				reqEntity.addPart("zip", new StringBody(event.getZip()));
+				reqEntity.addPart("zip", new StringBody(event.getZip(), Charset.forName("UTF-8")));
 
 			if (event.getTimezone() != null)
-				reqEntity.addPart("timezone", new StringBody(event.getTimezone()));
+				reqEntity.addPart("timezone", new StringBody(event.getTimezone(), Charset.forName("UTF-8")));
 
 			long timeInMillis = event.getStartCalendar().getTimeInMillis();
 			if (timeInMillis > 0)
-				reqEntity.addPart("timestamp_start_utc", new StringBody("" + Utils.millisToUnixTimestamp(timeInMillis)));
+				reqEntity.addPart("timestamp_start_utc", new StringBody("" + Utils.millisToUnixTimestamp(timeInMillis), Charset.forName("UTF-8")));
 
 			timeInMillis = event.getEndCalendar().getTimeInMillis();
 			if (timeInMillis > 0)
-				reqEntity.addPart("timestamp_end_utc", new StringBody("" + Utils.millisToUnixTimestamp(timeInMillis)));
+				reqEntity.addPart("timestamp_end_utc", new StringBody("" + Utils.millisToUnixTimestamp(timeInMillis), Charset.forName("UTF-8")));
 
 			// timeInMillis = event.getReminder1().getTimeInMillis();
 			// if (timeInMillis > 0)
@@ -1811,7 +1812,7 @@ public class DataManagement {
 
 			MultipartEntity reqEntity = new MultipartEntity(HttpMultipartMode.BROWSER_COMPATIBLE);
 
-			reqEntity.addPart("token", new StringBody(Data.getToken(getContext())));
+			reqEntity.addPart("token", new StringBody(Data.getToken(getContext()), Charset.forName("UTF-8")));
 
 			post.setEntity(reqEntity);
 			HttpResponse rp = hc.execute(post);
@@ -2364,7 +2365,7 @@ public class DataManagement {
 
 			MultipartEntity reqEntity = new MultipartEntity(HttpMultipartMode.BROWSER_COMPATIBLE);
 
-			reqEntity.addPart("token", new StringBody(Data.getToken(context)));
+			reqEntity.addPart("token", new StringBody(Data.getToken(context), Charset.forName("UTF-8")));
 
 			post.setEntity(reqEntity);
 			HttpResponse rp = hc.execute(post);
@@ -2491,52 +2492,52 @@ public class DataManagement {
 
 			MultipartEntity reqEntity = new MultipartEntity(HttpMultipartMode.BROWSER_COMPATIBLE);
 
-			reqEntity.addPart("token", new StringBody(Data.getToken(getContext())));
+			reqEntity.addPart("token", new StringBody(Data.getToken(getContext()), Charset.forName("UTF-8")));
 
 			if (address.getId() > 0) {
-				reqEntity.addPart("id", new StringBody(((Integer) address.getId()).toString()));
+				reqEntity.addPart("id", new StringBody(((Integer) address.getId()).toString(), Charset.forName("UTF-8")));
 			}
 
 			if (address.getTitle() != null) {
-				reqEntity.addPart("title", new StringBody(address.getTitle()));
+				reqEntity.addPart("title", new StringBody(address.getTitle(), Charset.forName("UTF-8")));
 			} else {
 				check = false;
 			}
 
 			if (address.getStreet() != null) {
-				reqEntity.addPart("street", new StringBody(address.getStreet()));
+				reqEntity.addPart("street", new StringBody(address.getStreet(), Charset.forName("UTF-8")));
 			} else {
-				reqEntity.addPart("street", new StringBody(""));
+				reqEntity.addPart("street", new StringBody("", Charset.forName("UTF-8")));
 			}
 
 			if (address.getCity() != null) {
-				reqEntity.addPart("city", new StringBody(address.getCity()));
+				reqEntity.addPart("city", new StringBody(address.getCity(), Charset.forName("UTF-8")));
 			} else {
-				reqEntity.addPart("city", new StringBody(""));
+				reqEntity.addPart("city", new StringBody("", Charset.forName("UTF-8")));
 			}
 
 			if (address.getZip() != null) {
-				reqEntity.addPart("zip", new StringBody(address.getZip()));
+				reqEntity.addPart("zip", new StringBody(address.getZip(), Charset.forName("UTF-8")));
 			} else {
-				reqEntity.addPart("zip", new StringBody(""));
+				reqEntity.addPart("zip", new StringBody("", Charset.forName("UTF-8")));
 			}
 
 			if (address.getState() != null) {
-				reqEntity.addPart("state", new StringBody(address.getState()));
+				reqEntity.addPart("state", new StringBody(address.getState(), Charset.forName("UTF-8")));
 			} else {
-				reqEntity.addPart("state", new StringBody(""));
+				reqEntity.addPart("state", new StringBody("", Charset.forName("UTF-8")));
 			}
 
 			if (address.getCountry() != null) {
-				reqEntity.addPart("country", new StringBody(address.getCountry()));
+				reqEntity.addPart("country", new StringBody(address.getCountry(), Charset.forName("UTF-8")));
 			} else {
-				reqEntity.addPart("country", new StringBody(""));
+				reqEntity.addPart("country", new StringBody("", Charset.forName("UTF-8")));
 			}
 
 			if (address.getTimezone() != null) {
-				reqEntity.addPart("timezone", new StringBody(address.getTimezone()));
+				reqEntity.addPart("timezone", new StringBody(address.getTimezone(), Charset.forName("UTF-8")));
 			} else {
-				reqEntity.addPart("timezone", new StringBody(""));
+				reqEntity.addPart("timezone", new StringBody("", Charset.forName("UTF-8")));
 			}
 
 			if (check) {
@@ -2641,8 +2642,8 @@ public class DataManagement {
 
 			MultipartEntity reqEntity = new MultipartEntity(HttpMultipartMode.BROWSER_COMPATIBLE);
 
-			reqEntity.addPart(TOKEN, new StringBody(Data.getToken(context)));
-			reqEntity.addPart(LATEST_UPDATE_UNIX_TIMESTAMP, new StringBody("" + latestUpdateUnixTimestamp));
+			reqEntity.addPart(TOKEN, new StringBody(Data.getToken(context), Charset.forName("UTF-8")));
+			reqEntity.addPart(LATEST_UPDATE_UNIX_TIMESTAMP, new StringBody("" + latestUpdateUnixTimestamp, Charset.forName("UTF-8")));
 
 			
 			post.setEntity(reqEntity);

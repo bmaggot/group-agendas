@@ -2,6 +2,7 @@ package com.groupagendas.groupagenda.error.report;
 
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
+import java.nio.charset.Charset;
 
 import org.apache.http.HttpResponse;
 import org.apache.http.HttpStatus;
@@ -60,13 +61,13 @@ public class Reporter {
 			String error = params[0];
 			try {
 				if (Data.getToken(context) != null) {
-					reqEntity.addPart("token", new StringBody(Data.getToken(context)));
+					reqEntity.addPart("token", new StringBody(Data.getToken(context), Charset.forName("UTF-8")));
 				} else {
-					reqEntity.addPart("token", new StringBody("No token"));
+					reqEntity.addPart("token", new StringBody("No token", Charset.forName("UTF-8")));
 				}
-				reqEntity.addPart("error", new StringBody(error));
-				reqEntity.addPart("app_version", new StringBody(android.os.Build.VERSION.RELEASE));
-				reqEntity.addPart("phone_model", new StringBody(android.os.Build.MODEL));
+				reqEntity.addPart("error", new StringBody(error, Charset.forName("UTF-8")));
+				reqEntity.addPart("app_version", new StringBody(android.os.Build.VERSION.RELEASE, Charset.forName("UTF-8")));
+				reqEntity.addPart("phone_model", new StringBody(android.os.Build.MODEL, Charset.forName("UTF-8")));
 				post.setEntity(reqEntity);
 				if (DataManagement.networkAvailable) {
 					rp = hc.execute(post);
