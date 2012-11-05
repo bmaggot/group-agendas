@@ -20,6 +20,7 @@ import com.groupagendas.groupagenda.error.report.Reporter;
 import com.groupagendas.groupagenda.events.Event;
 import com.groupagendas.groupagenda.events.EventsActivity;
 import com.groupagendas.groupagenda.events.EventsProvider;
+import com.groupagendas.groupagenda.events.EventsProvider.EMetaData;
 
 public class C2DMReceiver extends C2DMBaseReceiver {
 	private static boolean isChatMessage;
@@ -134,6 +135,13 @@ public class C2DMReceiver extends C2DMBaseReceiver {
 	public static void refreshChatMessages(String rel_id, Context context) {
 		ChatManagement.getChatMessagesForEventFromRemoteDb(Integer.parseInt(rel_id), context, false,
 				ChatManagement.getLastMessageTimeStamp(context, Integer.parseInt(rel_id)));
+		
+		ContentValues cv = new ContentValues();
+		cv.put(EMetaData.EventsMetaData.LAST_MESSAGE_DATE_TIME_UTC_MILISECONDS, ChatManagement.getLastMessageTimeStamp(context, Integer.parseInt(rel_id)));
+		Uri uri = EventsProvider.EMetaData.EventsMetaData.CONTENT_URI;
+		String where = EventsProvider.EMetaData.EventsMetaData.E_ID + "=" + Integer.parseInt(rel_id);
+		context.getContentResolver().update(uri, cv, where, null);
+		
 		Intent intent = new Intent(REFRESH_MESSAGES_LIST + rel_id);
 		LocalBroadcastManager.getInstance(context).sendBroadcast(intent);
 	}
