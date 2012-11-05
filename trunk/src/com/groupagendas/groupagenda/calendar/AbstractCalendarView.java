@@ -24,6 +24,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.groupagendas.groupagenda.R;
+import com.groupagendas.groupagenda.account.Account;
 import com.groupagendas.groupagenda.calendar.dayandweek.DayWeekView;
 import com.groupagendas.groupagenda.data.CalendarSettings;
 import com.groupagendas.groupagenda.data.EventManagement;
@@ -263,10 +264,18 @@ public abstract class AbstractCalendarView extends LinearLayout {
 		 * @author justinas.marcinka@gmail.com
 		 */
 		protected final Void doInBackground(Void... params){
-			sortedEvents = TreeMapUtils.sortEvents(context, getEventProjectionsForDisplay(selectedDate));
-			ArrayList<Event> nativeEvents = queryNativeEvents();
-			for(Event nativeEvent : nativeEvents){
-				TreeMapUtils.putNewEventIntoTreeMap(context, sortedEvents, nativeEvent);
+			Account account = new Account(context);
+			if(account.getShow_ga_calendars()){
+				sortedEvents = TreeMapUtils.sortEvents(context, getEventProjectionsForDisplay(selectedDate));
+			}
+			if(account.getShow_native_calendars()){
+				ArrayList<Event> nativeEvents = queryNativeEvents();
+				if(sortedEvents == null){
+					sortedEvents = new TreeMap<Calendar, ArrayList<Event>>();
+				}
+				for(Event nativeEvent : nativeEvents){
+					TreeMapUtils.putNewEventIntoTreeMap(context, sortedEvents, nativeEvent);
+				}
 			}
 			return null;
 		}
