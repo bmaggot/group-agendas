@@ -21,12 +21,13 @@ import android.os.AsyncTask;
 import com.groupagendas.groupagenda.data.Data;
 import com.groupagendas.groupagenda.data.DataManagement;
 import com.groupagendas.groupagenda.error.report.Reporter;
+import com.groupagendas.groupagenda.https.MySSLSocketFactory;
 
 public class PrefixReceiver extends AsyncTask <String, Void, String> {
 	
 	@Override
 	protected String doInBackground (String... country) {
-		HttpClient hc = new DefaultHttpClient();
+		HttpClient hc = MySSLSocketFactory.getNewHttpClient();
 		HttpPost post = new HttpPost(Data.getServerUrl() + "mobile/get_country_code");
 		MultipartEntity reqEntity = new MultipartEntity(HttpMultipartMode.BROWSER_COMPATIBLE);
 		String phonePrefix = null;

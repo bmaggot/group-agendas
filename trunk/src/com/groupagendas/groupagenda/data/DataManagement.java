@@ -54,6 +54,7 @@ import com.groupagendas.groupagenda.contacts.Group;
 import com.groupagendas.groupagenda.error.report.Reporter;
 import com.groupagendas.groupagenda.events.Event;
 import com.groupagendas.groupagenda.events.EventsProvider;
+import com.groupagendas.groupagenda.https.MySSLSocketFactory;
 import com.groupagendas.groupagenda.settings.AutoColorItem;
 import com.groupagendas.groupagenda.settings.AutoIconItem;
 import com.groupagendas.groupagenda.templates.TemplatesProvider;
@@ -111,7 +112,7 @@ public class DataManagement {
 		boolean success = false;
 
 		try {
-			HttpClient hc = new DefaultHttpClient();
+			HttpClient hc = MySSLSocketFactory.getNewHttpClient();
 			HttpPost post = new HttpPost(Data.getServerUrl() + "mobile/account_edit");
 
 			MultipartEntity reqEntity = new MultipartEntity(HttpMultipartMode.BROWSER_COMPATIBLE);
@@ -165,7 +166,7 @@ public class DataManagement {
 
 		// image
 		try {
-			HttpClient hc = new DefaultHttpClient();
+			HttpClient hc = MySSLSocketFactory.getNewHttpClient();
 			HttpPost post = new HttpPost(Data.getServerUrl() + "mobile/account_image");
 
 			MultipartEntity reqEntity = new MultipartEntity(HttpMultipartMode.BROWSER_COMPATIBLE);
@@ -213,7 +214,7 @@ public class DataManagement {
 		Account u = null;
 
 		try {
-			HttpClient hc = new DefaultHttpClient();
+			HttpClient hc = MySSLSocketFactory.getNewHttpClient();
 			HttpPost post = new HttpPost(Data.getServerUrl() + "mobile/account_get");
 
 			MultipartEntity reqEntity = new MultipartEntity(HttpMultipartMode.BROWSER_COMPATIBLE);
@@ -472,7 +473,7 @@ public class DataManagement {
 			String email, String phonecode, String phone, String password, String city, String street, String streetNo, String zip) {
 		boolean success = false;
 
-		HttpClient hc = new DefaultHttpClient();
+		HttpClient hc = MySSLSocketFactory.getNewHttpClient();
 		HttpPost post = new HttpPost(Data.getServerUrl() + "mobile/account_register");
 
 		MultipartEntity reqEntity = new MultipartEntity(HttpMultipartMode.BROWSER_COMPATIBLE);
@@ -519,7 +520,7 @@ public class DataManagement {
 		boolean success = false;
 
 		try {
-			HttpClient hc = new DefaultHttpClient();
+			HttpClient hc = MySSLSocketFactory.getNewHttpClient();
 			HttpPost post = new HttpPost(Data.getServerUrl() + "mobile/account_email_change");
 
 			MultipartEntity reqEntity = new MultipartEntity(HttpMultipartMode.BROWSER_COMPATIBLE);
@@ -563,7 +564,7 @@ public class DataManagement {
 		boolean success = false;
 
 		try {
-			HttpClient hc = new DefaultHttpClient();
+			HttpClient hc = MySSLSocketFactory.getNewHttpClient();
 			HttpPost post = new HttpPost(Data.getServerUrl() + "mobile/settings_update");
 
 			MultipartEntity reqEntity = new MultipartEntity(HttpMultipartMode.BROWSER_COMPATIBLE);
@@ -611,7 +612,7 @@ public class DataManagement {
 
 		if (networkAvailable) {
 			try {
-				HttpClient hc = new DefaultHttpClient();
+				HttpClient hc = MySSLSocketFactory.getNewHttpClient();
 				HttpPost post = new HttpPost(Data.getServerUrl() + "mobile/login");
 				post.setHeader("User-Agent", "Linux; AndroidPhone " + android.os.Build.VERSION.RELEASE);
 				post.setHeader("Accept", "*/*");
@@ -642,7 +643,7 @@ public class DataManagement {
 							Data.setUserId(id);
 
 							// Last login set
-							hc = new DefaultHttpClient();
+							hc = MySSLSocketFactory.getNewHttpClient();
 							post = new HttpPost(Data.getServerUrl() + "mobile/set_lastlogin");
 
 							reqEntity = new MultipartEntity(HttpMultipartMode.BROWSER_COMPATIBLE);
@@ -825,7 +826,7 @@ public class DataManagement {
 
 		try {
 
-			HttpClient hc = new DefaultHttpClient();
+			HttpClient hc = MySSLSocketFactory.getNewHttpClient();
 			HttpPost post = new HttpPost(Data.getServerUrl() + "mobile/push/subscribe");
 
 			MultipartEntity reqEntity = new MultipartEntity(HttpMultipartMode.BROWSER_COMPATIBLE);
@@ -849,7 +850,7 @@ public class DataManagement {
 		boolean success = false;
 
 		try {
-			HttpClient hc = new DefaultHttpClient();
+			HttpClient hc = MySSLSocketFactory.getNewHttpClient();
 			HttpPost post = new HttpPost(Data.getServerUrl() + "mobile/settings_set_autoicons");
 
 			MultipartEntity reqEntity = new MultipartEntity(HttpMultipartMode.BROWSER_COMPATIBLE);
@@ -926,7 +927,7 @@ public class DataManagement {
 		boolean success = false;
 
 		try {
-			HttpClient hc = new DefaultHttpClient();
+			HttpClient hc = MySSLSocketFactory.getNewHttpClient();
 			HttpPost post = new HttpPost(Data.getServerUrl() + "mobile/settings_set_autocolors");
 
 			MultipartEntity reqEntity = new MultipartEntity(HttpMultipartMode.BROWSER_COMPATIBLE);
@@ -1008,7 +1009,7 @@ public class DataManagement {
 
 		try {
 			Account account = new Account(context);
-			HttpClient hc = new DefaultHttpClient();
+			HttpClient hc = MySSLSocketFactory.getNewHttpClient();
 			HttpPost post = new HttpPost(Data.getServerUrl() + "mobile/group_remove");
 
 			MultipartEntity reqEntity = new MultipartEntity(HttpMultipartMode.BROWSER_COMPATIBLE);
@@ -1056,7 +1057,7 @@ public class DataManagement {
 
 		try {
 			Account account = new Account(context);
-			HttpClient hc = new DefaultHttpClient();
+			HttpClient hc = MySSLSocketFactory.getNewHttpClient();
 			HttpPost post = new HttpPost(Data.getServerUrl() + "mobile/groups_edit");
 
 			MultipartEntity reqEntity = new MultipartEntity(HttpMultipartMode.BROWSER_COMPATIBLE);
@@ -1271,7 +1272,7 @@ public class DataManagement {
 			try {
 				int event_id = (Integer) params[0];
 				String status = (String) params[1];
-				HttpClient hc = new DefaultHttpClient();
+				HttpClient hc = MySSLSocketFactory.getNewHttpClient();
 				HttpPost post = new HttpPost(Data.getServerUrl() + "mobile/set_event_status");
 
 				MultipartEntity reqEntity = new MultipartEntity(HttpMultipartMode.BROWSER_COMPATIBLE);
@@ -1325,7 +1326,7 @@ public class DataManagement {
 	public Event updateEventByIdFromRemoteDb(int event_id, Context context) throws ExecutionException, InterruptedException {
 		Event event = null;
 		try {
-			HttpClient hc = new DefaultHttpClient();
+			HttpClient hc = MySSLSocketFactory.getNewHttpClient();
 			HttpPost post = new HttpPost(Data.getServerUrl() + "mobile/events_get");
 
 			MultipartEntity reqEntity = new MultipartEntity(HttpMultipartMode.BROWSER_COMPATIBLE);
@@ -1449,7 +1450,7 @@ public class DataManagement {
 	public int uploadTemplateToRemoteDb(Context context, Event event) {
 		int response = 0;
 		try {
-			HttpClient hc = new DefaultHttpClient();
+			HttpClient hc = MySSLSocketFactory.getNewHttpClient();
 			HttpPost post = new HttpPost(Data.getServerUrl() + "mobile/templates_set");
 
 			MultipartEntity reqEntity = new MultipartEntity(HttpMultipartMode.BROWSER_COMPATIBLE);
@@ -1805,7 +1806,7 @@ public class DataManagement {
 		Event template = null;
 
 		try {
-			HttpClient hc = new DefaultHttpClient();
+			HttpClient hc = MySSLSocketFactory.getNewHttpClient();
 			HttpPost post = new HttpPost(Data.getServerUrl() + "mobile/templates_get");
 
 			MultipartEntity reqEntity = new MultipartEntity(HttpMultipartMode.BROWSER_COMPATIBLE);
@@ -2358,7 +2359,7 @@ public class DataManagement {
 		Address address = null;
 
 		try {
-			HttpClient hc = new DefaultHttpClient();
+			HttpClient hc = MySSLSocketFactory.getNewHttpClient();
 			HttpPost post = new HttpPost(Data.getServerUrl() + "mobile/adressbook_get");
 
 			MultipartEntity reqEntity = new MultipartEntity(HttpMultipartMode.BROWSER_COMPATIBLE);
@@ -2485,7 +2486,7 @@ public class DataManagement {
 		int response = 0;
 		boolean check = true;
 		try {
-			HttpClient hc = new DefaultHttpClient();
+			HttpClient hc = MySSLSocketFactory.getNewHttpClient();
 			HttpPost post = new HttpPost(Data.getServerUrl() + "mobile/adressbook_set");
 
 			MultipartEntity reqEntity = new MultipartEntity(HttpMultipartMode.BROWSER_COMPATIBLE);
@@ -2635,7 +2636,7 @@ public class DataManagement {
 
 	private static JSONObject getDataChangesJSON(Context context, long latestUpdateUnixTimestamp) {
 		try {
-			HttpClient hc = new DefaultHttpClient();
+			HttpClient hc = MySSLSocketFactory.getNewHttpClient();
 			HttpPost post = new HttpPost(Data.getServerUrl() + DATA_DELTA_URL);
 
 			MultipartEntity reqEntity = new MultipartEntity(HttpMultipartMode.BROWSER_COMPATIBLE);

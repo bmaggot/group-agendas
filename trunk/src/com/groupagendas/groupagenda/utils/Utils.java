@@ -14,8 +14,8 @@ import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.HttpStatus;
 import org.apache.http.client.ClientProtocolException;
+import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
-import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.util.EntityUtils;
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -28,6 +28,7 @@ import android.util.Log;
 import com.groupagendas.groupagenda.data.CalendarSettings;
 import com.groupagendas.groupagenda.data.DataManagement;
 import com.groupagendas.groupagenda.error.report.Reporter;
+import com.groupagendas.groupagenda.https.MySSLSocketFactory;
 
 
 
@@ -322,7 +323,7 @@ public static Calendar createCalendar(long timeInMilis, String timezone) {
 
 public static byte[] imageToBytes(String image_url) {
 	if (image_url != null && !image_url.equals("null")) {
-		DefaultHttpClient mHttpClient = new DefaultHttpClient();
+		HttpClient mHttpClient = MySSLSocketFactory.getNewHttpClient();
 		HttpGet mHttpGet = new HttpGet(image_url);
 		HttpResponse mHttpResponse;
 

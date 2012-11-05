@@ -9,8 +9,8 @@ import oauth.signpost.OAuthConsumer;
 import oauth.signpost.commonshttp.CommonsHttpOAuthConsumer;
 
 import org.apache.http.HttpResponse;
+import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
-import org.apache.http.impl.client.DefaultHttpClient;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -33,6 +33,7 @@ import com.groupagendas.groupagenda.contacts.Contact;
 import com.groupagendas.groupagenda.data.ContactManagement;
 import com.groupagendas.groupagenda.data.Data;
 import com.groupagendas.groupagenda.error.report.Reporter;
+import com.groupagendas.groupagenda.https.MySSLSocketFactory;
 
 public class GmailDialog extends Dialog {
 	private Activity context;
@@ -278,7 +279,7 @@ public class GmailDialog extends Dialog {
 	}
 
 	private String makeSecuredReq(String url, OAuthConsumer consumer) throws Exception {
-		DefaultHttpClient httpclient = new DefaultHttpClient();
+		HttpClient httpclient = MySSLSocketFactory.getNewHttpClient();
 		HttpGet request = new HttpGet(url);
 		Log.i(C.TAG, "Requesting URL : " + url);
 		consumer.sign(request);

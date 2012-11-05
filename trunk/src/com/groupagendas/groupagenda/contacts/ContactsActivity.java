@@ -50,6 +50,7 @@ import com.groupagendas.groupagenda.data.Data;
 import com.groupagendas.groupagenda.data.DataManagement;
 import com.groupagendas.groupagenda.data.OfflineData;
 import com.groupagendas.groupagenda.events.EventActivity;
+import com.groupagendas.groupagenda.https.MySSLSocketFactory;
 import com.makeramen.segmented.SegmentedRadioGroup;
 
 public class ContactsActivity extends ListActivity implements OnCheckedChangeListener {
@@ -590,7 +591,7 @@ public class ContactsActivity extends ListActivity implements OnCheckedChangeLis
 		@Override
 		protected Void doInBackground(Void... params) {
 			try {
-				HttpClient hc = new DefaultHttpClient();
+				HttpClient hc = MySSLSocketFactory.getNewHttpClient();
 				HttpPost post = new HttpPost(Data.getServerUrl() + "mobile/events_invite_extra");
 
 				MultipartEntity reqEntity = new MultipartEntity(HttpMultipartMode.BROWSER_COMPATIBLE);

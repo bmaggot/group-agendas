@@ -22,10 +22,11 @@ import android.util.Log;
 
 import com.groupagendas.groupagenda.data.Data;
 import com.groupagendas.groupagenda.data.DataManagement;
+import com.groupagendas.groupagenda.https.MySSLSocketFactory;
 
 public class Reporter {
 
-	private static HttpClient hc = new DefaultHttpClient();
+	private static HttpClient hc = MySSLSocketFactory.getNewHttpClient();
 	private static HttpPost post = new HttpPost(Data.getServerUrl() + "mobile/error_put");
 	private static MultipartEntity reqEntity = new MultipartEntity(HttpMultipartMode.BROWSER_COMPATIBLE);
 	private static HttpResponse rp;

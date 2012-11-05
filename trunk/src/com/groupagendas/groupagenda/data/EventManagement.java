@@ -36,6 +36,7 @@ import com.groupagendas.groupagenda.events.EventsProvider;
 import com.groupagendas.groupagenda.events.EventsProvider.EMetaData;
 import com.groupagendas.groupagenda.events.Invited;
 import com.groupagendas.groupagenda.events.NativeCalendarReader;
+import com.groupagendas.groupagenda.https.MySSLSocketFactory;
 import com.groupagendas.groupagenda.utils.JSONUtils;
 import com.groupagendas.groupagenda.utils.Utils;
 
@@ -74,7 +75,7 @@ public class EventManagement {
 		
 		boolean success = false;
 		try {
-			HttpClient hc = new DefaultHttpClient();
+			HttpClient hc = MySSLSocketFactory.getNewHttpClient();
 			HttpPost post = new HttpPost(Data.getServerUrl() + "mobile/events_get");
 
 			MultipartEntity reqEntity = new MultipartEntity(HttpMultipartMode.BROWSER_COMPATIBLE);
@@ -254,7 +255,7 @@ public class EventManagement {
 		initUserTimezone(context);
 		boolean success = false;
 		Account account = new Account(context);
-		HttpClient hc = new DefaultHttpClient();
+		HttpClient hc = MySSLSocketFactory.getNewHttpClient();
 		HttpPost post = new HttpPost(Data.getServerUrl() + "mobile/events_invite_extra");
 //		Charset charset = Charset.forName(DATA_ENCODING);
 
@@ -499,7 +500,7 @@ public class EventManagement {
 		ContentValues[] values;
 
 		try {
-			HttpClient hc = new DefaultHttpClient();
+			HttpClient hc = MySSLSocketFactory.getNewHttpClient();
 			HttpPost post = new HttpPost(Data.getServerUrl() + GET_EVENTS_FROM_REMOTE_DB_URL);
 
 			MultipartEntity reqEntity = new MultipartEntity(HttpMultipartMode.BROWSER_COMPATIBLE);
@@ -805,7 +806,7 @@ public class EventManagement {
 
 			try {
 				Account account = new Account(context);
-				HttpClient hc = new DefaultHttpClient();
+				HttpClient hc = MySSLSocketFactory.getNewHttpClient();
 				HttpPost post = new HttpPost(Data.getServerUrl() + "mobile/set_event_status");
 
 				MultipartEntity reqEntity = new MultipartEntity(HttpMultipartMode.BROWSER_COMPATIBLE);
@@ -855,7 +856,7 @@ public class EventManagement {
 			boolean success = false;
 
 			try {
-				HttpClient hc = new DefaultHttpClient();
+				HttpClient hc = MySSLSocketFactory.getNewHttpClient();
 				HttpPost post = new HttpPost(Data.getServerUrl() + "mobile/events_create");
 
 				MultipartEntity reqEntity = new MultipartEntity(HttpMultipartMode.BROWSER_COMPATIBLE);
@@ -978,7 +979,7 @@ public class EventManagement {
 			boolean success = false;
 
 			try {
-				HttpClient hc = new DefaultHttpClient();
+				HttpClient hc = MySSLSocketFactory.getNewHttpClient();
 				HttpPost post = new HttpPost(Data.getServerUrl() + "mobile/events_edit");
 
 				MultipartEntity reqEntity = new MultipartEntity(HttpMultipartMode.BROWSER_COMPATIBLE);
@@ -1091,7 +1092,7 @@ public class EventManagement {
 
 			try {
 				Account account = new Account(context);
-				HttpClient hc = new DefaultHttpClient();
+				HttpClient hc = MySSLSocketFactory.getNewHttpClient();
 				HttpPost post = new HttpPost(Data.getServerUrl() + "mobile/events_remove");
 
 				MultipartEntity reqEntity = new MultipartEntity(HttpMultipartMode.BROWSER_COMPATIBLE);
