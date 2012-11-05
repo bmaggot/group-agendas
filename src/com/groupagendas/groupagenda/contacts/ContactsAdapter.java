@@ -31,9 +31,10 @@ public class ContactsAdapter extends AbstractAdapter<Contact> implements Filtera
 		allContacts = objects;
 		this.selectedContacts = selectedContacts;
 		
-		for (Contact c : selectedContacts) {
-			toggleSelected(c.contact_id);
-		}
+		if (selectedContacts != null)
+			for (Contact c : selectedContacts) {
+				toggleSelected(c.contact_id);
+			}
 	}
 
 	@Override
