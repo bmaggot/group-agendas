@@ -651,10 +651,11 @@ public class ContactEditActivity extends Activity implements OnClickListener, On
 			switch (clicked) {
 			case DialogInterface.BUTTON_POSITIVE:
 				editedContact.groups = new HashMap<String, String>();
-
-				for (int i = 0, l = ids.length; i < l; i++) {
-					if (selections[i]) {
-						editedContact.groups.put(String.valueOf(i), String.valueOf(ids[i]));
+				if(ids != null){
+					for (int i = 0, l = ids.length; i < l; i++) {
+						if (selections[i]) {
+							editedContact.groups.put(String.valueOf(i), String.valueOf(ids[i]));
+						}
 					}
 				}
 				break;

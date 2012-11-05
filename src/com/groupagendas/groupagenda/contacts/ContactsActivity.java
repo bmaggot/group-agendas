@@ -1,5 +1,6 @@
 package com.groupagendas.groupagenda.contacts;
 
+import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.TreeMap;
 
@@ -595,18 +596,18 @@ public class ContactsActivity extends ListActivity implements OnCheckedChangeLis
 				HttpPost post = new HttpPost(Data.getServerUrl() + "mobile/events_invite_extra");
 
 				MultipartEntity reqEntity = new MultipartEntity(HttpMultipartMode.BROWSER_COMPATIBLE);
-				reqEntity.addPart("token", new StringBody(Data.getToken(getApplicationContext())));
+				reqEntity.addPart("token", new StringBody(Data.getToken(getApplicationContext()), Charset.forName("UTF-8")));
 				if (Data.eventForSavingNewInvitedPersons != null) {
-					reqEntity.addPart("event_id", new StringBody(String.valueOf(Data.eventForSavingNewInvitedPersons.getEvent_id())));
+					reqEntity.addPart("event_id", new StringBody(String.valueOf(Data.eventForSavingNewInvitedPersons.getEvent_id()), Charset.forName("UTF-8")));
 				}
 				if (selectedContacts != null && !selectedContacts.isEmpty()) {
 					for (int i = 0, l = selectedContacts.size(); i < l; i++) {
-						reqEntity.addPart("contacts[]", new StringBody(String.valueOf(selectedContacts.get(i).contact_id)));
+						reqEntity.addPart("contacts[]", new StringBody(String.valueOf(selectedContacts.get(i).contact_id), Charset.forName("UTF-8")));
 					}
 				}
 				if (selectedGroups != null && !selectedGroups.isEmpty()) {
 					for (int i = 0, l = selectedGroups.size(); i < l; i++) {
-						reqEntity.addPart("groups[]", new StringBody(String.valueOf(selectedGroups.get(i).group_id)));
+						reqEntity.addPart("groups[]", new StringBody(String.valueOf(selectedGroups.get(i).group_id), Charset.forName("UTF-8")));
 					}
 				}
 				post.setEntity(reqEntity);

@@ -1,5 +1,6 @@
 package com.groupagendas.groupagenda.alarm;
 
+import java.nio.charset.Charset;
 import java.util.Calendar;
 
 import org.apache.http.HttpResponse;
@@ -98,7 +99,7 @@ public class AlarmActivity extends Activity {
 				HttpPost post = new HttpPost(Data.getServerUrl() + "mobile/alarms_dismiss");
 
 				MultipartEntity reqEntity = new MultipartEntity(HttpMultipartMode.BROWSER_COMPATIBLE);
-				reqEntity.addPart("token", new StringBody(Data.getToken(getApplicationContext())));
+				reqEntity.addPart("token", new StringBody(Data.getToken(getApplicationContext()), Charset.forName("UTF-8")));
 				post.setEntity(reqEntity);
 				if (DataManagement.networkAvailable) {
 					HttpResponse rp = hc.execute(post);
