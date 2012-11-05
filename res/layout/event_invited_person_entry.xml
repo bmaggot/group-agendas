@@ -4,45 +4,64 @@
     android:background="@drawable/event_invited_entry_notalone_background"
     android:layout_height="wrap_content"
     android:orientation="vertical" >
-    
+   
     <TextView android:id="@+id/invited_fullname"
         android:layout_alignParentTop="true"
         android:layout_alignParentLeft="true"
         android:layout_marginTop="1dp"
         android:layout_marginLeft="10dp"
         android:layout_marginBottom="3dp"
-		android:background="@drawable/transparent" 
+                android:background="@drawable/transparent"
         android:layout_height="25dp"
         android:layout_width="wrap_content"
         android:textColor="@color/black"
         android:textStyle="bold"
         android:textSize="16dp" />
-    
+   
     <TextView android:id="@+id/invited_available_email"
-        android:layout_alignParentBottom="true"
         android:maxLines="1"
         android:layout_alignParentLeft="true"
-		android:background="@drawable/transparent" 
-        android:layout_height="wrap_content"
+                android:background="@drawable/transparent"
+        android:layout_height="20dp"
         android:layout_width="wrap_content"
+        android:layout_below="@+id/invited_fullname"
         android:layout_marginLeft="10dp"
         android:layout_marginTop="5dp"
+        android:layout_marginBottom="10dp"
         android:textColor="@color/darker_gray"
         android:textStyle="normal"
-        android:textSize="14dp" />
+        android:textSize="14dp"
+        android:visibility="invisible"/>
+   
+   
+    <TextView android:id="@+id/add_to_contact"
+       android:layout_height="23dp"
+       android:layout_width="80dp"
+       android:layout_alignParentTop="true"
+       android:layout_alignParentRight="true"
+       android:layout_marginRight="10dp"
+       android:layout_marginTop="4dp"
+       android:text="@string/Add_to_contact"
+       android:textSize="9dp"
+       android:textColor="@color/black"
+       android:layout_gravity="center"
+       android:background="@drawable/border_darkgray"
+       android:gravity="center"
+       android:visibility="invisible"
+	 		/>
     
     <TextView android:id="@+id/invited_status"
-        android:layout_alignParentBottom="true"
         android:layout_alignParentRight="true"
-        android:background="@color/mainBgLineColor" 
+        android:layout_below="@+id/add_to_contact"
+        android:background="@color/mainBgLineColor"
         android:padding="2dp"
         android:layout_height="wrap_content"
         android:layout_width="wrap_content"
+        android:layout_marginTop="5dp"
         android:layout_marginRight="10dp"
         android:layout_marginBottom="10dp"
         android:textColor="@color/white"
         android:textStyle="bold"
         android:textSize="12dp" />
     
-
 </RelativeLayout>
