@@ -8,7 +8,6 @@ import android.content.Context;
 import android.database.Cursor;
 import android.graphics.Color;
 import android.graphics.drawable.GradientDrawable;
-import android.os.AsyncTask;
 import android.util.AttributeSet;
 import android.view.GestureDetector;
 import android.view.MotionEvent;
@@ -21,13 +20,9 @@ import android.widget.TextView;
 import com.groupagendas.groupagenda.EventActivityOnClickListener;
 import com.groupagendas.groupagenda.R;
 import com.groupagendas.groupagenda.calendar.AbstractCalendarView;
-import com.groupagendas.groupagenda.data.CalendarSettings;
 import com.groupagendas.groupagenda.data.EventManagement;
 import com.groupagendas.groupagenda.events.Event;
-import com.groupagendas.groupagenda.events.EventsProvider;
 import com.groupagendas.groupagenda.events.NativeCalendarReader;
-import com.groupagendas.groupagenda.utils.TreeMapUtils;
-import com.groupagendas.groupagenda.utils.Utils;
 
 
 public class DayWeekView extends AbstractCalendarView {
