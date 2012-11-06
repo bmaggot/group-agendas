@@ -45,13 +45,16 @@ public class BirthdayManagement {
 					Event event = new Event();
 					Calendar calendar = Calendar.getInstance();
 					String age="";
+					String yearForm = "yyyy";
+					sdf = new SimpleDateFormat(yearForm);
+					
 					event.setInternalID(Long.valueOf(cursor.getString(5)));
 					event.setCountry(cursor.getString(3));
 					event.setTimezone(cursor.getString(4));
 					String[] date = cursor.getString(2).split("-");
-					age=""+(calendar.get(Calendar.YEAR)-Integer.parseInt(date[0]));
+					age=""+(Integer.parseInt(sdf.format(startTime))-Integer.parseInt(date[0]));
 					event.setTitle(cursor.getString(1)+" (Age: "+ age +")");
-					calendar.set(calendar.get(Calendar.YEAR), Integer.parseInt(date[1])-1,Integer.parseInt(date[2]));
+					calendar.set(Integer.parseInt(sdf.format(startTime)), Integer.parseInt(date[1])-1,Integer.parseInt(date[2]));
 					calendar.clear(Calendar.HOUR);
 					calendar.clear(Calendar.HOUR_OF_DAY);
 					calendar.clear(Calendar.MINUTE);
