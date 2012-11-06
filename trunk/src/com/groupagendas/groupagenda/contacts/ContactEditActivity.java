@@ -457,7 +457,7 @@ public class ContactEditActivity extends Activity implements OnClickListener, On
 			editedContact.birthdate = dtUtils.formatDate(birthdateCalendar);
 			cv.put(ContactsProvider.CMetaData.ContactsMetaData.BIRTHDATE, temp);
 
-			editedContact.country = countriesList.get(timezoneInUse).country;
+			editedContact.country = countriesList.get(timezoneInUse).country_code;
 			cv.put(ContactsProvider.CMetaData.ContactsMetaData.COUNTRY, editedContact.country);
 
 			temp = cityView.getText().toString();
@@ -552,7 +552,7 @@ public class ContactEditActivity extends Activity implements OnClickListener, On
 			editedContact.birthdate = temp;
 			cv.put(ContactsProvider.CMetaData.ContactsMetaData.BIRTHDATE, temp);
 
-			editedContact.country = countriesList.get(timezoneInUse).country;
+			editedContact.country = countriesList.get(timezoneInUse).country_code;
 			cv.put(ContactsProvider.CMetaData.ContactsMetaData.COUNTRY, editedContact.country);
 
 			temp = cityView.getText().toString();
