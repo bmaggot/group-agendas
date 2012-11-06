@@ -38,7 +38,6 @@ import com.groupagendas.groupagenda.contacts.Contact;
 import com.groupagendas.groupagenda.contacts.ContactsActivity;
 import com.groupagendas.groupagenda.data.CalendarSettings;
 import com.groupagendas.groupagenda.data.Data;
-import com.groupagendas.groupagenda.data.DataManagement;
 import com.groupagendas.groupagenda.data.EventManagement;
 import com.groupagendas.groupagenda.timezone.CountriesAdapter;
 import com.groupagendas.groupagenda.timezone.TimezonesAdapter;
@@ -46,8 +45,28 @@ import com.groupagendas.groupagenda.utils.DateTimeUtils;
 import com.groupagendas.groupagenda.utils.DrawingUtils;
 import com.ptashek.widgets.datetimepicker.DateTimePicker;
 
+
 public class EventEditActivity extends EventActivity {
 
+	private class GenericTextWatcher implements TextWatcher{
+
+		private String oldText = null;
+		
+	    public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+	    	oldText = charSequence.toString();
+	    }
+	    public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {}
+	    
+	    public void afterTextChanged(Editable editable) {
+	    	if(!editable.toString().equalsIgnoreCase(oldText)){
+	    		changesMade = true;
+	    		saveButton.setEnabled(changesMade);
+	    		}
+	        }
+	    }
+
+	private TextWatcher watcher;
+	
 	private TextView topText;
 	private Button deleteButton;
 
@@ -76,10 +95,17 @@ public class EventEditActivity extends EventActivity {
 	private boolean remindersShown = false;
 	private boolean alarmsShown = false;
 	private boolean isInvited = false;
-
+	//private boolean eventEdited = false;
+	private boolean changesMade = false;
+	
 	private Intent intent;
 
 	private Button chatMessengerButton;
+	
+
+	public void enableDisableButtons(Boolean state){
+	    saveButton.setEnabled(state);
+	}
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -87,10 +113,13 @@ public class EventEditActivity extends EventActivity {
 		setContentView(R.layout.event_edit);
 		selectedContacts = null;
 	}
-
+	
 	@Override
 	public void onResume() {
 		super.onResume();
+		if (watcher == null) {
+			watcher = new GenericTextWatcher();
+		}
 		dtUtils = new DateTimeUtils(this);
 		account = new Account(EventEditActivity.this);
 		String[] cities;
@@ -135,6 +164,11 @@ public class EventEditActivity extends EventActivity {
 		if (selectedContacts == null)
 			selectedContacts = new ArrayList<Contact>();
 
+		if (!selectedContacts.isEmpty()){
+			changesMade = true;
+			saveButton.setEnabled(changesMade);
+		}
+
 		if (newInvites == null)
 			newInvites = new ArrayList<Invited>();
 
@@ -148,7 +182,7 @@ public class EventEditActivity extends EventActivity {
 		}
 
 		// TODO implement offline
-		event_internal_id = intent.getLongExtra("event_id", 0);
+		    event_internal_id = intent.getLongExtra("event_id", 0);
 		// mode event Edit
 		if (event_internal_id > 0) {
 			new GetEventTask().execute(event_internal_id);
@@ -163,10 +197,13 @@ public class EventEditActivity extends EventActivity {
 		topText = (TextView) findViewById(R.id.topText);
 
 		saveButton = (Button) findViewById(R.id.save_button);
+			saveButton.setEnabled(changesMade);
 		saveButton.setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View v) {
+				//enableDisableButtons(false);
 				if (!saveButton.getText().toString().equalsIgnoreCase(getResources().getString(R.string.saving))) {
+				
 					new UpdateEventTask().execute();
 				} else {
 					Toast.makeText(EventEditActivity.this, R.string.wait, Toast.LENGTH_SHORT);
@@ -178,6 +215,7 @@ public class EventEditActivity extends EventActivity {
 		iconView = (ImageView) findViewById(R.id.iconView);
 		colorView = (ImageView) findViewById(R.id.colorView);
 		titleView = (EditText) findViewById(R.id.title);
+		
 
 		// Start and end time buttons
 		startButton = (Button) findViewById(R.id.startButton);
@@ -560,8 +598,8 @@ public class EventEditActivity extends EventActivity {
 			@Override
 			public void onClick(View v) {
 				Intent i = new Intent(EventEditActivity.this, ContactsActivity.class);
-				i.putExtra("ACTIVITY_MODE", 1); // TODO HARDCODED PARAMETER!
-												// DEFUSE!
+				i.putExtra(ContactsActivity.TASK_MODE_KEY, ContactsActivity.TASK_MODE_SELECTION); 
+				i.putExtra(ContactsActivity.LIST_MODE_KEY, ContactsActivity.LIST_MODE_CONTACTS);								
 				Data.showSaveButtonInContactsForm = true;
 				// TODO Data.eventForSavingNewInvitedPersons = event;
 				startActivity(i);
@@ -616,12 +654,11 @@ public class EventEditActivity extends EventActivity {
 	// view.setTag("my_event_status");
 	// view.setId(MY_INVITED_ENTRY_ID);
 	// }
-	//
 	// return view;
 	// }
 
 	class GetEventTask extends AsyncTask<Long, Event, Event> {
-		final DataManagement dm = DataManagement.getInstance(getParent());
+//		final DataManagement dm = DataManagement.getInstance(getParent());
 		final String[] iconsValues = getResources().getStringArray(R.array.icons_values);
 		final SharedPreferences prefs = getSharedPreferences("LATEST_CREDENTIALS", MODE_PRIVATE);
 
@@ -646,6 +683,7 @@ public class EventEditActivity extends EventActivity {
 		@Override
 		protected void onPostExecute(final Event result) {
 			super.onPostExecute(result);
+			
 			if (result == null) {
 				throw new IllegalStateException("EVENT NOT FOUND IN LOCAL DB!!!!!!");
 			}
@@ -673,6 +711,7 @@ public class EventEditActivity extends EventActivity {
 
 			// title
 			titleView.setText(result.getTitle());
+			titleView.addTextChangedListener(watcher);
 
 			// if this user is owner of event, fields can be edited
 			if (result.is_owner()) {
@@ -694,6 +733,8 @@ public class EventEditActivity extends EventActivity {
 
 							@Override
 							public void onItemClick(AdapterView<?> parent, View v, int position, long id) {
+								
+								String testSelectedIcon = selectedIcon;
 								if (iconsValues[position].equals("noicon")) {
 									selectedIcon = Event.DEFAULT_ICON;
 									iconView.setImageDrawable(getResources().getDrawable(R.drawable.no_icon));
@@ -703,6 +744,11 @@ public class EventEditActivity extends EventActivity {
 											"com.groupagendas.groupagenda");
 									iconView.setImageResource(iconId);
 								}
+								if (!changesMade){
+									changesMade = !testSelectedIcon.equalsIgnoreCase(selectedIcon);
+									saveButton.setEnabled(changesMade);
+								}
+								
 								dialog.dismiss();
 							}
 						});
@@ -728,10 +774,17 @@ public class EventEditActivity extends EventActivity {
 						gridview.setOnItemClickListener(new OnItemClickListener() {
 							@Override
 							public void onItemClick(AdapterView<?> parent, View v, int position, long id) {
+								String testColorsValues = colorsValues[position];
 								result.setColor(colorsValues[position]);
 								selectedColor = colorsValues[position];
 								colorView.setImageBitmap(DrawingUtils.getColoredRoundRectangle(EventEditActivity.this,
 										COLOURED_BUBBLE_SIZE, colorsValues[position], true));
+								if (!changesMade){
+									
+									changesMade = testColorsValues.equalsIgnoreCase(colorsValues[position]) ;
+									
+								saveButton.setEnabled(changesMade);
+							}
 								dialog.dismiss();
 							}
 						});
@@ -806,7 +859,7 @@ public class EventEditActivity extends EventActivity {
 				parent.setVisibility(View.VISIBLE);
 				descView.setText(result.getDescription());
 			}
-
+			descView.addTextChangedListener(watcher);
 			if (result.getTimezone().length() > 0) {
 				for (StaticTimezones entry : countriesList) {
 					if (entry.timezone.equalsIgnoreCase(result.getTimezone()))
@@ -826,43 +879,58 @@ public class EventEditActivity extends EventActivity {
 
 					timezoneView.setText(result.getTimezone());
 					countryView.setText(countriesList.get(timezoneInUse).country2);
+					
 
+					
 					showView(timezoneView, addressLine);
 					showView(countryView, addressLine);
 				}
+				
 			}
+			
+			timezoneView.addTextChangedListener(watcher);
+			countryView.addTextChangedListener(watcher);
+			
+			
 			if (result.getCity().length() > 0) {
 				cityView.setText(result.getCity());
 				showView(cityView, addressLine);
 			}
-
+			cityView.addTextChangedListener(watcher);
 			if (result.getStreet().length() > 0) {
 				streetView.setText(result.getStreet());
 				showView(streetView, addressLine);
 			}
+			streetView.addTextChangedListener(watcher);
 			if (result.getZip().length() > 0) {
 				zipView.setText(result.getZip());
 				showView(zipView, addressLine);
 			}
+			zipView.addTextChangedListener(watcher);
 			if (result.getLocation().length() > 0) {
 				locationView.setText(result.getLocation());
 				showView(locationView, detailsLine);
 			}
+			locationView.addTextChangedListener(watcher);
 			if (result.getGo_by().length() > 0) {
 				gobyView.setText(result.getGo_by());
 				showView(gobyView, detailsLine);
 			}
+			gobyView.addTextChangedListener(watcher);
 			if (result.getTake_with_you().length() > 0) {
 				takewithyouView.setText(result.getTake_with_you());
 				showView(takewithyouView, detailsLine);
 			}
+			takewithyouView.addTextChangedListener(watcher);
 			if (result.getCost().length() > 0) {
 				costView.setText(result.getCost());
 				showView(costView, detailsLine);
 			}
+			costView.addTextChangedListener(watcher);
 			if (result.getAccomodation().length() > 0) {
 				accomodationView.setText(result.getAccomodation());
 				showView(accomodationView, detailsLine);
+				accomodationView.addTextChangedListener(watcher);
 			}
 
 			if(!event.isNative()){
@@ -1144,7 +1212,7 @@ public class EventEditActivity extends EventActivity {
 					break;
 				}
 				view.setText(dtUtils.formatDateTime(mDateTimePicker.getCalendar()));
-
+				saveButton.setEnabled(true);
 				mDateTimeDialog.dismiss();
 			}
 		});

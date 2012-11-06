@@ -18,14 +18,13 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.groupagendas.groupagenda.R;
-import com.groupagendas.groupagenda.settings.AutoColorActivity;
+import com.groupagendas.groupagenda.account.Account;
+import com.groupagendas.groupagenda.contacts.Contact;
+import com.groupagendas.groupagenda.data.DataManagement;
 import com.groupagendas.groupagenda.settings.AutoColorItem;
 import com.groupagendas.groupagenda.settings.AutoIconItem;
 import com.groupagendas.groupagenda.timezone.CountriesAdapter;
 import com.groupagendas.groupagenda.timezone.TimezonesAdapter;
-import com.groupagendas.groupagenda.account.Account;
-import com.groupagendas.groupagenda.contacts.Contact;
-import com.groupagendas.groupagenda.data.DataManagement;
 import com.groupagendas.groupagenda.utils.DateTimeUtils;
 import com.groupagendas.groupagenda.utils.Prefs;
 

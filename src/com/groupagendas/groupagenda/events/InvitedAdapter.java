@@ -38,8 +38,9 @@ public class InvitedAdapter extends AbstractAdapter<Invited> {
 
 		TextView nameView = (TextView) view.findViewById(R.id.invited_fullname);
 		TextView statusView = (TextView) view.findViewById(R.id.invited_status);
-		@SuppressWarnings("unused")
 		TextView emailView = (TextView) view.findViewById(R.id.invited_available_email);
+		TextView addToContactView = (TextView) view.findViewById(R.id.add_to_contact);
+		
 		int statusBackground = 0; 
 
 		invited = list.get(i);
@@ -79,6 +80,7 @@ public class InvitedAdapter extends AbstractAdapter<Invited> {
 			view.setBackgroundResource(R.drawable.event_invited_entry_last_background);
 		
 		if ((invited.getGuid() != myID) && (invited.getMy_contact_id() < 1) && (invited.getGuid() > 0)) {
+			addToContactView.setVisibility(View.VISIBLE);
 			view.setOnClickListener(new OnClickListener() {
 				@Override
 				public void onClick(View v) {
