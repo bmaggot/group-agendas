@@ -62,16 +62,6 @@ public class ContactsActivity extends ListActivity implements OnCheckedChangeLis
 	private ArrayList<Contact> contacts;
 	private ArrayList<Group> groups;
 
-	private final String CONTACTS_TASK = "contactsTask";
-	private final String GROUPS_TASK = "groupsTask";
-	private String CURRENT_TASK = CONTACTS_TASK;
-
-	/*
-	 * 0 - Contacts 1 - Groups
-	 */
-	private int CONTACTS_LIST = 0;
-	private int GROUPS_LIST = 1;
-	private int CURRENT_LIST = CONTACTS_LIST;
 
 	// private ProgressBar pb;
 
@@ -97,10 +87,23 @@ public class ContactsActivity extends ListActivity implements OnCheckedChangeLis
 
 	private Button importButton;
 
-	private int ACTIVITY_MODE = 0;
-	private static final int LISTING_MODE = 0;
-	private static final int SELECTION_MODE = 1;
+	/*
+	 * 0 - Contacts 1 - Groups
+	 */
+	public static final int LIST_MODE_CONTACTS = 0;
+	public static final int LIST_MODE_GROUPS = 1;
+	private int LIST_MODE = LIST_MODE_CONTACTS;
 
+	public static final int TASK_MODE_LISTING = 0;
+	public static final int TASK_MODE_SELECTION = 1;
+	private int TASK_MODE = TASK_MODE_LISTING;
+	
+	private final String CONTACTS_TASK = "contactsTask";
+	private final String GROUPS_TASK = "groupsTask";
+	private String CURRENT_TASK = CONTACTS_TASK;
+	
+	public static final String TASK_MODE_KEY = "TASK_MODE";
+	public static final String LIST_MODE_KEY = "LIST_MODE";
 	@Override
 	public void onWindowFocusChanged(boolean hasFocus) {
 		super.onWindowFocusChanged(hasFocus);
@@ -181,20 +184,23 @@ public class ContactsActivity extends ListActivity implements OnCheckedChangeLis
 		super.onResume();
 		initUI();
 
-		CURRENT_LIST = preferences.getInt("ContactsActivityList", CURRENT_LIST);
-		CURRENT_TASK = preferences.getString("ContactsActivityTask", CURRENT_TASK);
+		LIST_MODE = preferences.getInt("ContactsActivityList", LIST_MODE);
+//		CURRENT_TASK = preferences.getString("ContactsActivityTask", CURRENT_TASK);
 
 		sideIndex.setVisibility(View.GONE);
 
 		searchView.addTextChangedListener(filterTextWatcher);
 
-		if (getIntent().getExtras() != null)
-			ACTIVITY_MODE = getIntent().getExtras().getInt("ACTIVITY_MODE");
-		else
-			ACTIVITY_MODE = LISTING_MODE;
-
-		switch (ACTIVITY_MODE) {
-		case SELECTION_MODE:
+		if (getIntent().getExtras() != null){
+			TASK_MODE = getIntent().getExtras().getInt(TASK_MODE_KEY);
+			 LIST_MODE = getIntent().getExtras().getInt(LIST_MODE_KEY);
+			 //CURRENT_TASK = getIntent().getExtras().;
+		} else {
+			TASK_MODE = TASK_MODE_LISTING;
+			LIST_MODE = LIST_MODE_CONTACTS;
+		}
+		switch (TASK_MODE) {
+		case TASK_MODE_SELECTION:
 			getListView().setChoiceMode(ListView.CHOICE_MODE_MULTIPLE);
 			getListView().setItemsCanFocus(false);
 
@@ -265,7 +271,7 @@ public class ContactsActivity extends ListActivity implements OnCheckedChangeLis
 			});
 
 			break;
-		case LISTING_MODE:
+		case TASK_MODE_LISTING:
 			getListView().setChoiceMode(ListView.CHOICE_MODE_NONE);
 
 			importButton.setText(R.string.contact_import_button);
@@ -277,9 +283,14 @@ public class ContactsActivity extends ListActivity implements OnCheckedChangeLis
 				}
 			});
 			break;
+			
+			default:
+			TASK_MODE = TASK_MODE_LISTING;
+			LIST_MODE = LIST_MODE_CONTACTS;
+			break;
 		}
 
-		if (CURRENT_TASK.equals(CONTACTS_TASK)) {
+		if (LIST_MODE == LIST_MODE_CONTACTS) {
 			contacts = ContactManagement.getContactsFromLocalDb(ContactsActivity.this, null);
 			cAdapter = new ContactsAdapter(contacts, this, selectedContacts);
 			contactList.setAdapter(cAdapter);
@@ -291,7 +302,7 @@ public class ContactsActivity extends ListActivity implements OnCheckedChangeLis
 				indexList = createIndex();
 				sideIndex.setVisibility(View.VISIBLE);
 			}
-		} else if (CURRENT_TASK.equals(GROUPS_TASK)) {
+		} else if (LIST_MODE == LIST_MODE_GROUPS) {
 			groups = ContactManagement.getGroupsFromLocalDb(ContactsActivity.this, null);
 			gAdapter = new GroupsAdapter(groups, this);
 			contactList.setAdapter(gAdapter);
@@ -311,8 +322,7 @@ public class ContactsActivity extends ListActivity implements OnCheckedChangeLis
 	@Override
 	public void onPause() {
 		super.onPause();
-		editor.putString("ContactsActivityTask", CURRENT_TASK);
-		editor.putInt("ContactsActivityList", CURRENT_LIST);
+		editor.putInt("ContactsActivityList", LIST_MODE);
 		editor.commit();
 		searchView.removeTextChangedListener(filterTextWatcher);
 	}
@@ -361,7 +371,7 @@ public class ContactsActivity extends ListActivity implements OnCheckedChangeLis
 		@Override
 		public void onTextChanged(CharSequence s, int start, int before, int count) {
 			if (s != null) {
-				if (CURRENT_LIST == CONTACTS_LIST) {
+				if (LIST_MODE == LIST_MODE_CONTACTS) {
 					if (cAdapter != null) {
 						cAdapter.getFilter().filter(s);
 					}
@@ -429,13 +439,13 @@ public class ContactsActivity extends ListActivity implements OnCheckedChangeLis
 
 	@Override
 	public void onListItemClick(ListView parent, View v, int position, long id) {
-		switch (ACTIVITY_MODE) {
-		case SELECTION_MODE:
+		switch (TASK_MODE) {
+		case TASK_MODE_SELECTION:
 			cAdapter.toggleSelected(Integer.parseInt(v.getTag().toString()));
 			break;
-		case LISTING_MODE:
+		case TASK_MODE_LISTING:
 			Integer c_id = 0;
-			if (CURRENT_LIST == CONTACTS_LIST) {
+			if (LIST_MODE == LIST_MODE_CONTACTS) {
 				Intent contactIntent = new Intent(ContactsActivity.this, ContactInfoActivity.class);
 				if (contacts.get(position).name != null && contacts.get(position).lastname != null) {
 					StringBuilder sb = new StringBuilder(contacts.get(position).name).append(" ").append(contacts.get(position).lastname);
@@ -447,7 +457,7 @@ public class ContactsActivity extends ListActivity implements OnCheckedChangeLis
 					contactIntent.putExtra("contactCreated", contacts.get(position).created);
 					startActivity(contactIntent);
 				}
-			} else if (CURRENT_LIST == GROUPS_LIST) {
+			} else if (LIST_MODE == LIST_MODE_GROUPS) {
 				Intent groupIntent = new Intent(ContactsActivity.this, GroupContactsActivity.class);
 				groupIntent.putExtra("groupName", groups.get(position).title);
 				groupIntent.putExtra("groupId", groups.get(position).group_id);
@@ -464,8 +474,8 @@ public class ContactsActivity extends ListActivity implements OnCheckedChangeLis
 			sideIndex.setVisibility(View.GONE);
 			switch (checkedId) {
 			case R.id.contacts:
-				CURRENT_LIST = CONTACTS_LIST;
-				CURRENT_TASK = CONTACTS_TASK;
+				LIST_MODE = LIST_MODE_CONTACTS;
+
 				// Toast.makeText(this,
 				// getString(R.string.waiting_for_contacts_load),
 				// Toast.LENGTH_SHORT).show();
@@ -474,14 +484,13 @@ public class ContactsActivity extends ListActivity implements OnCheckedChangeLis
 				if (contacts.size() > 10)
 					sideIndex.setVisibility(View.VISIBLE);
 
-				editor.putString("ContactsActivityTask", CONTACTS_TASK);
-				editor.putInt("ContactsActivityList", CONTACTS_LIST);
+				//editor.putString("ContactsActivityTask", CONTACTS_TASK);
+				editor.putInt("ContactsActivityList", LIST_MODE_CONTACTS);
 				editor.commit();
 				break;
 
 			case R.id.groups:
-				CURRENT_LIST = GROUPS_LIST;
-				CURRENT_TASK = GROUPS_TASK;
+				LIST_MODE = LIST_MODE_GROUPS;
 				// Toast.makeText(this,
 				// getString(R.string.waiting_for_groups_load),
 				// Toast.LENGTH_SHORT).show();
@@ -490,8 +499,9 @@ public class ContactsActivity extends ListActivity implements OnCheckedChangeLis
 				contactList.setAdapter(gAdapter);
 				gAdapter.notifyDataSetChanged();
 
-				editor.putString("ContactsActivityTask", GROUPS_TASK);
-				editor.putInt("ContactsActivityList", GROUPS_LIST);
+				//editor.putString("ContactsActivityTask", GROUPS_TASK);
+				//editor.putInt("ContactsActivityList", LIST_MODE_GROUPS);
+				editor.putInt("ContactsActivityList", LIST_MODE_GROUPS);
 				editor.commit();
 				break;
 			}
