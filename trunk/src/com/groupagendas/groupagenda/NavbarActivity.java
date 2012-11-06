@@ -2,6 +2,7 @@ package com.groupagendas.groupagenda;
 
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.util.Locale;
 
 import android.annotation.SuppressLint;
 import android.app.Dialog;
@@ -9,11 +10,14 @@ import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.ActivityInfo;
+import android.content.res.Configuration;
+import android.content.res.Resources;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentTransaction;
+import android.util.DisplayMetrics;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
@@ -45,6 +49,7 @@ import com.groupagendas.groupagenda.data.EventManagement;
 import com.groupagendas.groupagenda.events.EventsActivity;
 import com.groupagendas.groupagenda.events.NewEventActivity;
 import com.groupagendas.groupagenda.settings.CalendarSettingsFragment;
+import com.groupagendas.groupagenda.utils.LanguageCodeGetter;
 import com.groupagendas.groupagenda.utils.Utils;
 import com.ptashek.widgets.datetimepicker.DateTimePicker;
 
@@ -123,121 +128,6 @@ public class NavbarActivity extends FragmentActivity {
 		if (!dataLoaded && (progressDialog == null))
 				new DownLoadAllDataTask().execute();
 		}
-		mInflater = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-
-		list_search = new ActionItem();
-		list_search.setTitle(getString(R.string.list_search));
-		list_search.setOnClickListener(new OnClickListener() {
-
-			@Override
-			public void onClick(View v) {
-				qa.dismiss();
-				showListSearchView();
-			}
-		});
-
-		go_date = new ActionItem();
-		go_date.setTitle(getString(R.string.go_to_date));
-		go_date.setOnClickListener(new OnClickListener() {
-
-			@Override
-			public void onClick(View v) {
-				qa.dismiss();
-				showGoToDateView();
-			}
-		});
-
-		year = new ActionItem();
-		year.setTitle(getString(R.string.year));
-		year.setOnClickListener(new OnClickListener() {
-
-			@Override
-			public void onClick(View v) {
-				qa.dismiss();
-				selectedDate = Utils.createNewTodayCalendar();
-				viewState = ViewState.YEAR;
-				showYearView();
-			}
-		});
-
-		month = new ActionItem();
-		month.setTitle(getString(R.string.month));
-		month.setOnClickListener(new OnClickListener() {
-
-			@Override
-			public void onClick(View v) {
-				viewState = ViewState.MONTH;
-				selectedDate = Utils.createNewTodayCalendar();
-				qa.dismiss();
-				showMonthView();
-			}
-		});
-
-		week = new ActionItem();
-		week.setTitle(getString(R.string.week));
-		week.setOnClickListener(new OnClickListener() {
-
-			@Override
-			public void onClick(View v) {
-				qa.dismiss();
-				selectedDate = Utils.createNewTodayCalendar();
-				viewState = ViewState.WEEK;
-				showWeekView();
-			}
-		});
-
-		day = new ActionItem();
-		day.setTitle(getString(R.string.day));
-		day.setOnClickListener(new OnClickListener() {
-
-			@Override
-			public void onClick(View v) {
-				qa.dismiss();
-				selectedDate = Utils.createNewTodayCalendar();
-				viewState = ViewState.DAY;
-				showDayView();
-			}
-		});
-
-		agenda = new ActionItem();
-		agenda.setTitle(getString(R.string.agenda));
-		agenda.setOnClickListener(new OnClickListener() {
-
-			@Override
-			public void onClick(View v) {
-				qa.dismiss();
-				selectedDate = Utils.createNewTodayCalendar();
-				viewState = ViewState.AGENDA;
-				showAgendaView();
-			}
-		});
-
-		mini_month = new ActionItem();
-		mini_month.setTitle(getString(R.string.mini_month));
-		mini_month.setOnClickListener(new OnClickListener() {
-
-			@Override
-			public void onClick(View v) {
-				qa.dismiss();
-				selectedDate = Utils.createNewTodayCalendar();
-				viewState = ViewState.MINI_MONTH;
-				showMiniMonthView();
-			}
-		});
-
-		today = new ActionItem();
-		today.setTitle(getString(R.string.today));
-		today.setOnClickListener(new OnClickListener() {
-
-			@Override
-			public void onClick(View v) {
-				qa.dismiss();
-				selectedDate = Utils.createNewTodayCalendar();
-				switchToView();
-
-			}
-		});
-
 	}
 
 	@Override
@@ -318,6 +208,13 @@ public class NavbarActivity extends FragmentActivity {
 
 	private void switchToView() {
 
+		Resources res = this.getResources();
+		DisplayMetrics dm = res.getDisplayMetrics();
+		Configuration config = res.getConfiguration();
+		config.locale = new Locale(LanguageCodeGetter.getLanguageCode(new Account(this).getLanguage()));
+		res.updateConfiguration(config, dm);
+		this.initQAitems();
+		
 		if (viewState == null)
 			viewState = ViewState.getValueByString(CalendarSettings
 					.getDefaultView(this));
@@ -830,6 +727,124 @@ public class NavbarActivity extends FragmentActivity {
 			
 			setAlarmsToAllEvents(); 
 		}
+
+	}
+	
+	public void initQAitems(){
+		mInflater = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+
+		list_search = new ActionItem();
+		list_search.setTitle(getString(R.string.list_search));
+		list_search.setOnClickListener(new OnClickListener() {
+
+			@Override
+			public void onClick(View v) {
+				qa.dismiss();
+				showListSearchView();
+			}
+		});
+
+		go_date = new ActionItem();
+		go_date.setTitle(getString(R.string.go_to_date));
+		go_date.setOnClickListener(new OnClickListener() {
+
+			@Override
+			public void onClick(View v) {
+				qa.dismiss();
+				showGoToDateView();
+			}
+		});
+
+		year = new ActionItem();
+		year.setTitle(getString(R.string.year));
+		year.setOnClickListener(new OnClickListener() {
+
+			@Override
+			public void onClick(View v) {
+				qa.dismiss();
+				selectedDate = Utils.createNewTodayCalendar();
+				viewState = ViewState.YEAR;
+				showYearView();
+			}
+		});
+
+		month = new ActionItem();
+		month.setTitle(getString(R.string.month));
+		month.setOnClickListener(new OnClickListener() {
+
+			@Override
+			public void onClick(View v) {
+				viewState = ViewState.MONTH;
+				selectedDate = Utils.createNewTodayCalendar();
+				qa.dismiss();
+				showMonthView();
+			}
+		});
+
+		week = new ActionItem();
+		week.setTitle(getString(R.string.week));
+		week.setOnClickListener(new OnClickListener() {
+
+			@Override
+			public void onClick(View v) {
+				qa.dismiss();
+				selectedDate = Utils.createNewTodayCalendar();
+				viewState = ViewState.WEEK;
+				showWeekView();
+			}
+		});
+
+		day = new ActionItem();
+		day.setTitle(getString(R.string.day));
+		day.setOnClickListener(new OnClickListener() {
+
+			@Override
+			public void onClick(View v) {
+				qa.dismiss();
+				selectedDate = Utils.createNewTodayCalendar();
+				viewState = ViewState.DAY;
+				showDayView();
+			}
+		});
+
+		agenda = new ActionItem();
+		agenda.setTitle(getString(R.string.agenda));
+		agenda.setOnClickListener(new OnClickListener() {
+
+			@Override
+			public void onClick(View v) {
+				qa.dismiss();
+				selectedDate = Utils.createNewTodayCalendar();
+				viewState = ViewState.AGENDA;
+				showAgendaView();
+			}
+		});
+
+		mini_month = new ActionItem();
+		mini_month.setTitle(getString(R.string.mini_month));
+		mini_month.setOnClickListener(new OnClickListener() {
+
+			@Override
+			public void onClick(View v) {
+				qa.dismiss();
+				selectedDate = Utils.createNewTodayCalendar();
+				viewState = ViewState.MINI_MONTH;
+				showMiniMonthView();
+			}
+		});
+
+		today = new ActionItem();
+		today.setTitle(getString(R.string.today));
+		today.setOnClickListener(new OnClickListener() {
+
+			@Override
+			public void onClick(View v) {
+				qa.dismiss();
+				selectedDate = Utils.createNewTodayCalendar();
+				switchToView();
+
+			}
+		});
 
 	}
 

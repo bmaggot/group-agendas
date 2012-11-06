@@ -1,5 +1,6 @@
 package com.groupagendas.groupagenda;
 
+import java.util.Locale;
 import java.util.UUID;
 
 import android.app.Activity;
@@ -10,10 +11,13 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
+import android.content.res.Configuration;
+import android.content.res.Resources;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.util.DisplayMetrics;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -29,6 +33,7 @@ import com.groupagendas.groupagenda.account.Account;
 import com.groupagendas.groupagenda.data.Data;
 import com.groupagendas.groupagenda.data.DataManagement;
 import com.groupagendas.groupagenda.registration.RegistrationActivity;
+import com.groupagendas.groupagenda.utils.LanguageCodeGetter;
 import com.pass_retrieve.forgot_pass1;
 
 public class LoginActivity extends Activity {
@@ -42,6 +47,19 @@ public class LoginActivity extends Activity {
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+		//language
+		Account account = new Account(this);
+		if(account != null){
+			Resources res = this.getResources();
+			DisplayMetrics dm = res.getDisplayMetrics();
+			Configuration config = res.getConfiguration();
+			if(account.getLanguage() != null){
+				config.locale = new Locale(LanguageCodeGetter.getLanguageCode(account.getLanguage()));
+			} else {
+				config.locale = new Locale(LanguageCodeGetter.getLanguageCode(""));
+			}
+			res.updateConfiguration(config, dm);
+		}
 		setContentView(R.layout.login);
 
 		ConnectivityManager conn = (ConnectivityManager) getApplicationContext().getSystemService(Context.CONNECTIVITY_SERVICE);
