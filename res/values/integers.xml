@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <integer
+        name="NAVBAR_HEIGHT"
+        >45</integer>
+    <integer
+        name="CALENDAR_TOPBAR_HEIGHT"
+        >50</integer>
+    
+</resources>

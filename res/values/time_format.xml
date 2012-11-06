@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="time_format">HH:mm</string>
+    <string name="time_format_AMPM">hh:mm a</string>
+
+</resources>
