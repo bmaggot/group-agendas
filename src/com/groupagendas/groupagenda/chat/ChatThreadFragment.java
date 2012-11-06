@@ -2,9 +2,13 @@ package com.groupagendas.groupagenda.chat;
 
 import java.util.ArrayList;
 
-import  android.support.v4.app.Fragment;
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.os.Bundle;
+import android.support.v4.app.Fragment;
+import android.support.v4.content.LocalBroadcastManager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -13,6 +17,7 @@ import android.widget.AdapterView.OnItemClickListener;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 
+import com.groupagendas.groupagenda.C2DMReceiver;
 import com.groupagendas.groupagenda.R;
 import com.groupagendas.groupagenda.calendar.adapters.ChatThreadAdapter;
 import com.groupagendas.groupagenda.data.EventManagement;
@@ -44,6 +49,7 @@ public class ChatThreadFragment extends Fragment {
 
 	@Override
 	public void onResume() {
+		LocalBroadcastManager.getInstance(getActivity()).registerReceiver(mMessageReceiver, new IntentFilter(C2DMReceiver.REFRESH_CHAT_THREAD_LIST));
 		super.onResume();
 		if (container != null) {
 			LinearLayout chatInputBlock = (LinearLayout) container.findViewById(R.id.chat_inputBlock);
@@ -70,4 +76,11 @@ public class ChatThreadFragment extends Fragment {
 			}
 		}
 	}
+	
+	private BroadcastReceiver mMessageReceiver = new BroadcastReceiver() {
+		@Override
+		public void onReceive(Context context, Intent intent) {
+			onResume();
+		}
+	};
 }

@@ -13,6 +13,7 @@ import com.groupagendas.groupagenda.R;
 import com.groupagendas.groupagenda.account.Account;
 import com.groupagendas.groupagenda.chat.ChatMessageActivity;
 import com.groupagendas.groupagenda.chat.ChatMessageObject;
+import com.groupagendas.groupagenda.data.EventManagement;
 import com.groupagendas.groupagenda.utils.DateTimeUtils;
 import com.groupagendas.groupagenda.utils.Utils;
 
@@ -73,7 +74,7 @@ public class ChatMessageAdapter extends AbstractAdapter<ChatMessageObject> {
 			iksiuks.setVisibility(View.GONE);
 			view.setTag(false);
 		}
-
+		EventManagement.resetEventsNewMessageCount(context, chatMessage.getEventId());
 		return view;
 	}
 
