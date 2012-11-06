@@ -22,7 +22,7 @@
 -->
 
 <resources>
-
+	
     <declare-styleable name="CalendarView">
 
         <!-- The first day of week according to {@link java.util.Calendar}. -->
