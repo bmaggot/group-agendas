@@ -25,12 +25,9 @@ import android.widget.TextView;
 
 import com.groupagendas.groupagenda.R;
 import com.groupagendas.groupagenda.account.Account;
-import com.groupagendas.groupagenda.calendar.dayandweek.DayWeekView;
 import com.groupagendas.groupagenda.data.CalendarSettings;
-import com.groupagendas.groupagenda.data.EventManagement;
 import com.groupagendas.groupagenda.events.Event;
 import com.groupagendas.groupagenda.events.EventsProvider;
-import com.groupagendas.groupagenda.events.NativeCalendarReader;
 import com.groupagendas.groupagenda.utils.DateTimeUtils;
 import com.groupagendas.groupagenda.utils.TreeMapUtils;
 import com.groupagendas.groupagenda.utils.Utils;
@@ -265,7 +262,26 @@ public abstract class AbstractCalendarView extends LinearLayout {
 		 */
 		protected final Void doInBackground(Void... params){
 			Account account = new Account(context);
+			sortedEvents = new TreeMap<Calendar, ArrayList<Event>>();
 			if(account.getShow_ga_calendars()){
+				ArrayList<Event> events = getEventProjectionsForDisplay(selectedDate);
+				for(Event event : events){
+					TreeMapUtils.putNewEventIntoTreeMap(context, sortedEvents, event);
+				}
+			}
+			if(account.getShow_native_calendars()){
+				ArrayList<Event> nativeEvents = queryNativeEvents();
+				for(Event nativeEvent : nativeEvents){
+					TreeMapUtils.putNewEventIntoTreeMap(context, sortedEvents, nativeEvent);
+				}
+			}
+			if(account.getShow_birthdays_calendars()){
+				ArrayList<Event> birthdayEvents = queryBirthdayEvents();
+				for(Event birthdayEvent : birthdayEvents){
+					TreeMapUtils.putNewEventIntoTreeMap(context, sortedEvents, birthdayEvent);
+				}
+			}
+			/*if(account.getShow_ga_calendars()){
 				sortedEvents = TreeMapUtils.sortEvents(context, getEventProjectionsForDisplay(selectedDate));
 			}
 			if(account.getShow_native_calendars()){
@@ -278,7 +294,7 @@ public abstract class AbstractCalendarView extends LinearLayout {
 				for(Event nativeEvent : nativeEvents){
 					TreeMapUtils.putNewEventIntoTreeMap(context, sortedEvents, nativeEvent);
 				}
-			}
+			}*/
 			return null;
 		}
 
@@ -316,6 +332,8 @@ public abstract class AbstractCalendarView extends LinearLayout {
 		 * @return
 		 */
 		protected abstract ArrayList<Event> queryNativeEvents();
+		
+		protected abstract ArrayList<Event> queryBirthdayEvents();
 		
 		protected abstract void onPostExecute(Void result);
 
