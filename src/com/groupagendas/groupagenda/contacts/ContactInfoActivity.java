@@ -8,7 +8,6 @@ import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
-import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.view.Menu;
@@ -135,18 +134,23 @@ public class ContactInfoActivity extends Activity {
 		@Override
 		protected Boolean doInBackground(Void... type) {
 			
-			Uri uri = Uri.parse(ContactsProvider.CMetaData.ContactsMetaData.CONTENT_URI+"/"+mContact.contact_id);
 			
-			Boolean result = ContactManagement.removeContactFromRemoteDb(getApplicationContext(), mContact.contact_id);
+			
+			Boolean result = ContactManagement.removeContactFromRemoteDb(ContactInfoActivity.this, mContact.contact_id);
 			
 			if(result){
-				getContentResolver().delete(uri, null, null);
+				ContactManagement.removeContactFromLocalDb(ContactInfoActivity.this, mContact.contact_id);
+				if(mContact.birthdate!=null && mContact.birthdate.length()==10){
+					ContactManagement.removeBirthdayFromLocalDb(ContactInfoActivity.this, mContact.contact_id);
+				}
+				
 			}else{
 //				ContentValues values = new ContentValues();
 //				values.put(ContactsProvider.CMetaData.ContactsMetaData.NEED_UPDATE, 3);
 //				
 //				getContentResolver().update(uri, values, null, null);
 			}
+			
 			
 			return true;
 		}
