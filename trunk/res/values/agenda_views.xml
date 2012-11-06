@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string-array name="agenda_views_values">
+        <item>D</item>
+        <item>W</item>
+        <item>A</item>
+        <item>M</item>
+        <item>MM</item>
+        <item>Y</item>
+        <item>G</item>
+        <item>L</item>
+    </string-array>
+    <string-array name="agenda_views_labels">
+        <item>@string/day</item>
+        <item>@string/week</item>
+        <item>@string/agenda</item>
+        <item>@string/month</item>
+        <item>@string/mini_month</item>
+        <item>@string/year</item>
+    </string-array>
+    <string-array name="date_format_values">
+        <item>yyyy-MM-dd</item>
+        <item>dd-MM-yyyy</item>
+        <item>dd/MM/yyyy</item>
+        <item>MM/dd/yyyy</item>
+    </string-array>
+
+</resources>
