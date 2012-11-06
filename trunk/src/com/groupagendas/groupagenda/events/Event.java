@@ -179,7 +179,7 @@ private static final String TIMESTAMP_FORMAT = DataManagement.SERVER_TIMESTAMP_F
 			}
 		
 	}
-		//2012-10-24
+		
 		    public String getTextColor() {
 		    	String displayColor = getDisplayColor(); 
 		      	int r = Integer.parseInt(displayColor.substring(0, 2), 16);
@@ -201,7 +201,7 @@ private static final String TIMESTAMP_FORMAT = DataManagement.SERVER_TIMESTAMP_F
 //				if (!textColor.equalsIgnoreCase("null")) this.textColor = textColor;
 //		
 //		}
-		//2012-10-24
+		
 		public String getDisplayColor() {
 			if (status == Invited.ACCEPTED) return getColor();
 			if (displayColor == null) return DEFAULT_COLOR;
@@ -446,7 +446,7 @@ private static final String TIMESTAMP_FORMAT = DataManagement.SERVER_TIMESTAMP_F
 		}
 	}
 	public String getCost() {
-		if (cost != null) {
+		if (cost != null && !cost.equalsIgnoreCase("null")) {
 			return cost;
 		} else {
 			return "";
