@@ -20,6 +20,7 @@ import android.widget.TextView;
 import com.groupagendas.groupagenda.EventActivityOnClickListener;
 import com.groupagendas.groupagenda.R;
 import com.groupagendas.groupagenda.calendar.AbstractCalendarView;
+import com.groupagendas.groupagenda.contacts.birthdays.BirthdayManagement;
 import com.groupagendas.groupagenda.data.EventManagement;
 import com.groupagendas.groupagenda.events.Event;
 import com.groupagendas.groupagenda.events.NativeCalendarReader;
@@ -486,6 +487,13 @@ public class DayWeekView extends AbstractCalendarView {
 			@Override
 			protected ArrayList<Event> queryNativeEvents() {
 				return NativeCalendarReader.readNativeCalendarEventsForAFewDays(context, daysShown.getShownDate(), daysShown.getDaysToShow());
+			}
+			
+			@Override
+			protected ArrayList<Event> queryBirthdayEvents() {
+				Calendar cal = (Calendar) daysShown.getShownDate().clone();
+				cal.add(Calendar.DAY_OF_YEAR, daysShown.getDaysToShow());
+				return BirthdayManagement.readBirthdayEventsForTimeInterval(context, daysShown.getShownDate().getTimeInMillis(), cal.getTimeInMillis());
 			}
 
 
