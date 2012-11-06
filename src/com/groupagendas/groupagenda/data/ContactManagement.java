@@ -1711,6 +1711,7 @@ public class ContactManagement {
 		
 		String[] date = contact.birthdate.split("-");
 		cv.put(ContactsProvider.CMetaData.BirthdaysMetaData.BIRTHDATE_MM_DD, date[1]+"-"+date[2]);
+		cv.put(ContactsProvider.CMetaData.BirthdaysMetaData.BIRTHDATE_MM, date[1]);
 
 		cv.put(ContactsProvider.CMetaData.BirthdaysMetaData.CONTACT_ID, birthday.getContact_id());
 		cv.put(ContactsProvider.CMetaData.BirthdaysMetaData.COUNTRY, contact.country);
