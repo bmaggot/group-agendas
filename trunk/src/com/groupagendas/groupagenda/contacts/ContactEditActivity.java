@@ -50,9 +50,11 @@ import android.widget.Toast;
 
 import com.groupagendas.groupagenda.R;
 import com.groupagendas.groupagenda.data.ContactManagement;
+import com.groupagendas.groupagenda.data.Data;
 import com.groupagendas.groupagenda.data.DataManagement;
 import com.groupagendas.groupagenda.error.report.Reporter;
 import com.groupagendas.groupagenda.events.EventActivity;
+import com.groupagendas.groupagenda.events.EventEditActivity;
 import com.groupagendas.groupagenda.events.EventActivity.StaticTimezones;
 import com.groupagendas.groupagenda.timezone.CountriesAdapter;
 import com.groupagendas.groupagenda.utils.DateTimeUtils;
@@ -123,7 +125,7 @@ public class ContactEditActivity extends Activity implements OnClickListener, On
 	public void onResume() {
 		super.onResume();
 
-		setContentView(R.layout.contact_edit);
+//		setContentView(R.layout.contact_edit);
 		Intent intent = getIntent();
 		editedContact = new Contact();
 
@@ -275,7 +277,12 @@ public class ContactEditActivity extends Activity implements OnClickListener, On
 			showDialog(CROP_IMAGE_DIALOG);
 			break;
 		case R.id.groupsButton:
-			showDialog(CHOOSE_GROUPS_DIALOG);
+			Intent i = new Intent(ContactEditActivity.this, ContactsActivity.class);
+			i.putExtra(ContactsActivity.TASK_MODE_KEY, ContactsActivity.TASK_MODE_SELECTION);
+			i.putExtra(ContactsActivity.LIST_MODE_KEY, ContactsActivity.LIST_MODE_GROUPS);
+			Data.showSaveButtonInContactsForm = true;
+			// TODO Data.eventForSavingNewInvitedPersons = event;
+			startActivity(i);			
 			break;
 		}
 	}
@@ -413,17 +420,6 @@ public class ContactEditActivity extends Activity implements OnClickListener, On
 					visibilitySpinner.setSelection(2, true);
 			}
 
-			// ArrayAdapter<CharSequence> adapterVis =
-			// ArrayAdapter.createFromResource(ContactEditActivity.this,
-			// R.array.visibility_labels, android.R.layout.simple_spinner_item);
-			// adapterVis.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-			// visibilitySpinner.setAdapter(adapterVis);
-			// if (!result.visibility.equals("null")) {
-			// int pos = Utils.getArrayIndex(visibilityArray,
-			// result.visibility);
-			// visibilitySpinner.setSelection(pos);
-			// }
-			// WTF1?!
 			super.onPostExecute(result);
 		}
 
