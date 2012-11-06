@@ -1389,7 +1389,7 @@ private static String parseInvitedListToJSONArray(ArrayList<Invited> invited) {
 	
 	protected static void syncEvents(Context context, ArrayList<Event> eventChanges, long[] deletedEventsIDs) {
 		StringBuilder sb;
-		
+		initUserTimezone(context);
 		if (!eventChanges.isEmpty()) {
 			sb = new StringBuilder();
 			for (Event e : eventChanges) {
