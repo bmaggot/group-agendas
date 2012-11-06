@@ -6,7 +6,6 @@ import java.util.Calendar;
 
 import android.content.Context;
 import android.database.Cursor;
-import android.os.AsyncTask;
 import android.util.AttributeSet;
 import android.view.View;
 import android.view.ViewGroup;
@@ -20,10 +19,9 @@ import com.groupagendas.groupagenda.R;
 import com.groupagendas.groupagenda.calendar.AbstractCalendarView;
 import com.groupagendas.groupagenda.calendar.MonthCellState;
 import com.groupagendas.groupagenda.calendar.adapters.MonthAdapter;
-import com.groupagendas.groupagenda.data.CalendarSettings;
+import com.groupagendas.groupagenda.contacts.birthdays.BirthdayManagement;
 import com.groupagendas.groupagenda.data.EventManagement;
 import com.groupagendas.groupagenda.events.Event;
-import com.groupagendas.groupagenda.events.EventsProvider;
 import com.groupagendas.groupagenda.events.NativeCalendarReader;
 import com.groupagendas.groupagenda.utils.TreeMapUtils;
 import com.groupagendas.groupagenda.utils.Utils;
@@ -323,6 +321,14 @@ public class MonthView extends AbstractCalendarView {
 		@Override
 		protected ArrayList<Event> queryNativeEvents() {
 			return NativeCalendarReader.readNativeCalendarEventsForAMonth(context, selectedDate);
+		}
+		
+		@Override
+		protected ArrayList<Event> queryBirthdayEvents() {
+			Calendar cal = (Calendar) selectedDate.clone();
+			cal.add(Calendar.MONTH, 1);
+			cal.add(Calendar.DAY_OF_YEAR, -1);
+			return BirthdayManagement.readBirthdayEventsForTimeInterval(context, selectedDate.getTimeInMillis(), cal.getTimeInMillis());
 		}
 
 
