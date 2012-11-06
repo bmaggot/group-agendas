@@ -272,6 +272,8 @@ public abstract class AbstractCalendarView extends LinearLayout {
 				ArrayList<Event> nativeEvents = queryNativeEvents();
 				if(sortedEvents == null){
 					sortedEvents = new TreeMap<Calendar, ArrayList<Event>>();
+				} else if(!account.getShow_ga_calendars()) {
+					sortedEvents.clear();
 				}
 				for(Event nativeEvent : nativeEvents){
 					TreeMapUtils.putNewEventIntoTreeMap(context, sortedEvents, nativeEvent);
