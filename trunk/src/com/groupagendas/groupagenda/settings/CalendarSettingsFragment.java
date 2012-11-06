@@ -2,9 +2,11 @@ package com.groupagendas.groupagenda.settings;
 
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.view.View.OnKeyListener;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
@@ -64,9 +66,9 @@ public class CalendarSettingsFragment extends Fragment {
 		}
 		final TextView nativeEventsSwitch = (TextView) container.findViewById(R.id.native_event_switch);
 		if (nativeEventsSwitch != null && account.getShow_native_calendars()) {
-			nativeEventsSwitch.setBackgroundResource(R.drawable.event_invite_people_button_standalone_c);
+			nativeEventsSwitch.setBackgroundResource(R.drawable.event_invite_people_button_notalone_c);
 		} else if (nativeEventsSwitch != null) {
-			nativeEventsSwitch.setBackgroundResource(R.drawable.event_invite_people_button_standalone);
+			nativeEventsSwitch.setBackgroundResource(R.drawable.event_invite_people_button_notalone);
 		}
 		if (nativeEventsSwitch != null) {
 			nativeEventsSwitch.setOnClickListener(new OnClickListener() {
@@ -75,10 +77,32 @@ public class CalendarSettingsFragment extends Fragment {
 				public void onClick(View v) {
 					if (account.getShow_native_calendars()) {
 						account.setShow_native_calendars(false);
-						nativeEventsSwitch.setBackgroundResource(R.drawable.event_invite_people_button_standalone);
+						nativeEventsSwitch.setBackgroundResource(R.drawable.event_invite_people_button_notalone);
 					} else {
 						account.setShow_native_calendars(true);
-						nativeEventsSwitch.setBackgroundResource(R.drawable.event_invite_people_button_standalone_c);
+						nativeEventsSwitch.setBackgroundResource(R.drawable.event_invite_people_button_notalone_c);
+					}
+				}
+			});
+		}
+		
+		final TextView birthDayEventsSwitch = (TextView) container.findViewById(R.id.birthday_event_switch);
+		if(birthDayEventsSwitch != null && account.getShow_birthdays_calendars()){
+			birthDayEventsSwitch.setBackgroundResource(R.drawable.event_invited_entry_last_background_c);
+		} else if(birthDayEventsSwitch != null){
+			birthDayEventsSwitch.setBackgroundResource(R.drawable.event_invited_entry_last_background);
+		}
+		if(birthDayEventsSwitch != null){
+			birthDayEventsSwitch.setOnClickListener(new OnClickListener() {
+				
+				@Override
+				public void onClick(View v) {
+					if(account.getShow_birthdays_calendars()){
+						account.setShow_birthdays_calendars(false);
+						birthDayEventsSwitch.setBackgroundResource(R.drawable.event_invited_entry_last_background);
+					} else {
+						account.setShow_birthdays_calendars(true);
+						birthDayEventsSwitch.setBackgroundResource(R.drawable.event_invited_entry_last_background_c);
 					}
 				}
 			});

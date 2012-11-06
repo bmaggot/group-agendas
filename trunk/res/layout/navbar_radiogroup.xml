@@ -24,7 +24,7 @@
         style="@style/navbar_button"
         android:layout_marginLeft="5dp"
         android:background="@drawable/nav_backgroud"
-        android:drawableTop="@drawable/filter_white" />
+        android:drawableTop="@drawable/envelope_white" />
 
     <RadioButton
         android:id="@+id/btnEvents"
