@@ -16,7 +16,6 @@ import org.apache.http.entity.mime.HttpMultipartMode;
 import org.apache.http.entity.mime.MultipartEntity;
 import org.apache.http.entity.mime.content.ByteArrayBody;
 import org.apache.http.entity.mime.content.StringBody;
-import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.util.EntityUtils;
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -33,6 +32,7 @@ import com.groupagendas.groupagenda.account.Account;
 import com.groupagendas.groupagenda.contacts.Contact;
 import com.groupagendas.groupagenda.contacts.ContactsProvider;
 import com.groupagendas.groupagenda.contacts.Group;
+import com.groupagendas.groupagenda.contacts.birthdays.Birthday;
 import com.groupagendas.groupagenda.https.MySSLSocketFactory;
 import com.groupagendas.groupagenda.utils.MapUtils;
 import com.groupagendas.groupagenda.utils.Utils;
@@ -307,6 +307,10 @@ public class ContactManagement {
 								}
 
 								insertContactToLocalDb(context, contact, 0);
+								if (contact.birthdate != null && contact.birthdate.length() == 10) {
+									Birthday birthday = new Birthday(context, contact);
+									insertBirthdayToLocalDb(context, birthday, contact.contact_id);
+								}
 							}
 						}
 					}
@@ -751,9 +755,37 @@ public class ContactManagement {
 		if (destination_id >= 0) {
 			success = true;
 			insertContactToLocalDb(context, contact, destination_id);
+			if (contact.birthdate != null && contact.birthdate.length() == 10) {
+				Birthday birthday = new Birthday(context, contact);
+				insertBirthdayToLocalDb(context, birthday, destination_id);
+			}
 		} 
 
 		return success;
+	}
+	
+	public static void insertBirthdayToLocalDb(Context context, Birthday birthday, int id) {
+		ContentValues cv = new ContentValues();
+
+		cv.put(ContactsProvider.CMetaData.BirthdaysMetaData.B_ID, birthday.getBirthdayId());
+
+		cv.put(ContactsProvider.CMetaData.BirthdaysMetaData.TITLE, birthday.getName() + " " + birthday.getLastName());
+		cv.put(ContactsProvider.CMetaData.BirthdaysMetaData.BIRTHDATE, birthday.getBirthday());
+		
+		String[] date = birthday.getBirthday().split("-");
+		cv.put(ContactsProvider.CMetaData.BirthdaysMetaData.BIRTHDATE_MM_DD, date[1]+"-"+date[2]);
+		cv.put(ContactsProvider.CMetaData.BirthdaysMetaData.BIRTHDATE_MM, date[1]);
+
+		cv.put(ContactsProvider.CMetaData.BirthdaysMetaData.CONTACT_ID, id);
+		cv.put(ContactsProvider.CMetaData.BirthdaysMetaData.COUNTRY, birthday.getCountry());
+
+		cv.put(ContactsProvider.CMetaData.BirthdaysMetaData.TIMEZONE, birthday.getTimezone());
+
+		try {
+			context.getContentResolver().insert(ContactsProvider.CMetaData.BirthdaysMetaData.CONTENT_URI, cv);
+		} catch (SQLiteException e) {
+			Log.e("insertBirthdayToLocalDb(birthday, " + birthday.getBirthdayId() + ")", e.getMessage());
+		}
 	}
 
 	/**
@@ -823,6 +855,18 @@ public class ContactManagement {
 				cur.close();
 			}
 		}
+
+		return temp;
+	}
+	
+	public static Birthday getBirthdayFromLocalDb(Context context, int id) {
+		Cursor cur;
+		Birthday temp = null;
+		String where = ContactsProvider.CMetaData.BirthdaysMetaData.CONTACT_ID + "=" + id;
+		cur = context.getContentResolver().query(ContactsProvider.CMetaData.BirthdaysMetaData.CONTENT_URI, null, where, null, null);
+		if (cur.moveToFirst())
+			temp = new Birthday(context, cur);
+		cur.close();
 
 		return temp;
 	}
@@ -1407,11 +1451,29 @@ public class ContactManagement {
 	}
 
 	// TODO removeContactFromLocalDb(int id) documentation
-	public static boolean removeContactFromLocalDb(int id) {
-		boolean success = false;
-		return success;
+	public static boolean removeContactFromLocalDb(Context context, int id) {
+		String where = ContactsProvider.CMetaData.ContactsMetaData.C_ID + "=" + id;
+		try {
+			context.getContentResolver().delete(ContactsProvider.CMetaData.ContactsMetaData.CONTENT_URI, where, null);
+			return true;
+		} catch (SQLiteException e) {
+			Log.e("removeContactFromLocalDb(contact, " + id + ")", e.getMessage());
+			return false;
+		}
 	}
 
+	// TODO removeBirthdayFromLocalDb(int id) documentation
+	public static boolean removeBirthdayFromLocalDb(Context context, int id) {
+		String where = ContactsProvider.CMetaData.BirthdaysMetaData.CONTACT_ID + "=" + id;
+		try {
+			context.getContentResolver().delete(ContactsProvider.CMetaData.BirthdaysMetaData.CONTENT_URI, where, null);
+			return true;
+		} catch (SQLiteException e) {
+			Log.e("removeBirthdayFromLocalDb(contact, " + id + ")", e.getMessage());
+			return false;
+		}
+	}
+	
 	// TODO editContactOnRemoteDb(Contact c) documentation
 	public static boolean editContactOnRemoteDb(Context context, Contact c) {
 		boolean success = false;
@@ -1636,6 +1698,35 @@ public class ContactManagement {
 			return false;
 		}
 	}
+	
+	public static boolean updateBirthdayOnLocalDb(Context context, Contact contact) {
+		ContentValues cv = new ContentValues();
+		Birthday birthday = getBirthdayFromLocalDb(context, contact.contact_id);
+
+		if (Integer.valueOf(birthday.getBirthdayId()) > 0)
+			cv.put(ContactsProvider.CMetaData.BirthdaysMetaData.B_ID, birthday.getBirthdayId());
+
+		cv.put(ContactsProvider.CMetaData.BirthdaysMetaData.TITLE, contact.name +" "+ contact.lastname);
+		cv.put(ContactsProvider.CMetaData.BirthdaysMetaData.BIRTHDATE, contact.birthdate);
+		
+		String[] date = contact.birthdate.split("-");
+		cv.put(ContactsProvider.CMetaData.BirthdaysMetaData.BIRTHDATE_MM_DD, date[1]+"-"+date[2]);
+
+		cv.put(ContactsProvider.CMetaData.BirthdaysMetaData.CONTACT_ID, birthday.getContact_id());
+		cv.put(ContactsProvider.CMetaData.BirthdaysMetaData.COUNTRY, contact.country);
+
+		cv.put(ContactsProvider.CMetaData.BirthdaysMetaData.TIMEZONE, birthday.getTimezone());
+
+		String where = ContactsProvider.CMetaData.BirthdaysMetaData.CONTACT_ID + "=" + contact.contact_id;
+		try {
+			context.getContentResolver().update(ContactsProvider.CMetaData.BirthdaysMetaData.CONTENT_URI, cv, where, null);
+			return true;
+		} catch (SQLiteException e) {
+			Log.e("insertBirthdayToLocalDb(birthday, " + birthday.getBirthdayId() + ")", e.getMessage());
+			return false;
+		}
+	}
+	
 /**
  * Method works with local db: rewrites changed contacts data and deletes contacts that have been removed from remote db.
  * @author justinas.marcinka@gmail.com
