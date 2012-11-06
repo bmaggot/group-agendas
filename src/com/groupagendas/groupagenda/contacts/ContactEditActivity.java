@@ -54,7 +54,6 @@ import com.groupagendas.groupagenda.data.Data;
 import com.groupagendas.groupagenda.data.DataManagement;
 import com.groupagendas.groupagenda.error.report.Reporter;
 import com.groupagendas.groupagenda.events.EventActivity;
-import com.groupagendas.groupagenda.events.EventEditActivity;
 import com.groupagendas.groupagenda.events.EventActivity.StaticTimezones;
 import com.groupagendas.groupagenda.timezone.CountriesAdapter;
 import com.groupagendas.groupagenda.utils.DateTimeUtils;
@@ -500,6 +499,7 @@ public class ContactEditActivity extends Activity implements OnClickListener, On
 
 				if (check) {
 					check = ContactManagement.updateContactOnLocalDb(ContactEditActivity.this, editedContact);
+					ContactManagement.updateBirthdayOnLocalDb(ContactEditActivity.this, editedContact);
 				}
 			}
 
