@@ -26,6 +26,7 @@ public class ContactsProvider extends ContentProvider{
 
 		public static final String CONTACTS_TABLE = "contacts";
 		public static final String GROUPS_TABLE = "groups";
+		public static final String BIRTHDAYS_TABLE = "birthday";
 
 		public static final class ContactsMetaData implements BaseColumns {
 			public static final Uri CONTENT_URI = Uri.parse("content://" + AUTHORITY + "/" + CONTACTS_TABLE);
@@ -81,6 +82,23 @@ public class ContactsProvider extends ContentProvider{
 			public static final String CONTACTS = "contacts";
 			
 			public static final String DEFAULT_SORT_ORDER = TITLE+" COLLATE NOCASE ASC";
+		}
+		
+		public static final class BirthdaysMetaData implements BaseColumns {
+			public static final Uri CONTENT_URI = Uri.parse("content://" + AUTHORITY + "/" + BIRTHDAYS_TABLE);
+			public static final String CONTENT_TYPE = "vnd.android.cursor.dir/vnd.formula.birthday_item";
+			public static final String CONTENT_ITEM_TYPE = "vnd.android.cursor.item/vnd.formula.birthday_item";
+
+			public static final String B_ID = "birthday_id";
+			public static final String TITLE = "title";
+			public static final String BIRTHDATE = "birthdate";
+			public static final String BIRTHDATE_MM_DD = "birthdate_mm_dd";
+			public static final String BIRTHDATE_MM = "birthdate_mm";
+			public static final String CONTACT_ID = "contact_id";
+			public static final String COUNTRY = "country";
+			public static final String TIMEZONE = "timezone";
+
+			public static final String DEFAULT_SORT_ORDER = BIRTHDATE+" COLLATE NOCASE ASC";
 		}
 	}
 	
@@ -139,6 +157,22 @@ public class ContactsProvider extends ContentProvider{
 	}
 	// END Table Projection Map
 	
+	// Birthdays Table Projection Map
+		private static HashMap<String, String> BM;
+		
+		static {
+			BM = new HashMap<String, String>();
+			BM.put(CMetaData.BirthdaysMetaData.B_ID, CMetaData.BirthdaysMetaData.B_ID);
+			BM.put(CMetaData.BirthdaysMetaData.TITLE, CMetaData.BirthdaysMetaData.TITLE);
+			BM.put(CMetaData.BirthdaysMetaData.BIRTHDATE, CMetaData.BirthdaysMetaData.BIRTHDATE);
+			BM.put(CMetaData.BirthdaysMetaData.BIRTHDATE_MM_DD, CMetaData.BirthdaysMetaData.BIRTHDATE_MM_DD);
+			BM.put(CMetaData.BirthdaysMetaData.BIRTHDATE_MM, CMetaData.BirthdaysMetaData.BIRTHDATE_MM);
+			BM.put(CMetaData.BirthdaysMetaData.CONTACT_ID, CMetaData.BirthdaysMetaData.CONTACT_ID);
+			BM.put(CMetaData.BirthdaysMetaData.COUNTRY, CMetaData.BirthdaysMetaData.COUNTRY);
+			BM.put(CMetaData.BirthdaysMetaData.TIMEZONE, CMetaData.BirthdaysMetaData.TIMEZONE);
+		}
+		// END Table Projection Map
+	
 	// UriMatcher
 	private static final UriMatcher mUriMatcher;
 
@@ -146,6 +180,8 @@ public class ContactsProvider extends ContentProvider{
 	private static final int CONTACTS_ONE = 1;
 	private static final int GROUPS_ALL = 2;
 	private static final int GROUPS_ONE = 3;
+	private static final int BIRTHDAYS_ALL = 4;
+	private static final int BIRTHDAYS_ONE = 5;
 
 	static {
 		mUriMatcher = new UriMatcher(UriMatcher.NO_MATCH);
@@ -153,6 +189,8 @@ public class ContactsProvider extends ContentProvider{
 		mUriMatcher.addURI(CMetaData.AUTHORITY, CMetaData.CONTACTS_TABLE + "/#", CONTACTS_ONE);
 		mUriMatcher.addURI(CMetaData.AUTHORITY, CMetaData.GROUPS_TABLE, GROUPS_ALL);
 		mUriMatcher.addURI(CMetaData.AUTHORITY, CMetaData.GROUPS_TABLE + "/#",GROUPS_ONE);
+		mUriMatcher.addURI(CMetaData.AUTHORITY, CMetaData.BIRTHDAYS_TABLE, BIRTHDAYS_ALL);
+		mUriMatcher.addURI(CMetaData.AUTHORITY, CMetaData.BIRTHDAYS_TABLE + "/#",BIRTHDAYS_ONE);
 	}
 	// END UriMatcher
 	
@@ -171,6 +209,9 @@ public class ContactsProvider extends ContentProvider{
 		case GROUPS_ALL:
 		case GROUPS_ONE:
 			return CMetaData.GroupsMetaData.CONTENT_TYPE;
+		case BIRTHDAYS_ALL:
+		case BIRTHDAYS_ONE:
+			return CMetaData.BirthdaysMetaData.CONTENT_TYPE;
 		default:
 			throw new IllegalArgumentException("Unknow URI " + uri);
 		}
@@ -204,6 +245,18 @@ public class ContactsProvider extends ContentProvider{
 			qb.appendWhere(CMetaData.GroupsMetaData.G_ID + "=" + uri.getPathSegments().get(1));
 			orderBy = (TextUtils.isEmpty(sortOrder)) ? CMetaData.GroupsMetaData.DEFAULT_SORT_ORDER : sortOrder;
 			break;
+			
+		case BIRTHDAYS_ALL:
+			qb.setTables(CMetaData.BIRTHDAYS_TABLE);
+			qb.setProjectionMap(BM);
+			orderBy = (TextUtils.isEmpty(sortOrder)) ? CMetaData.BirthdaysMetaData.DEFAULT_SORT_ORDER : sortOrder;
+			break;
+		case BIRTHDAYS_ONE:
+			qb.setTables(CMetaData.BIRTHDAYS_TABLE);
+			qb.setProjectionMap(BM);
+			qb.appendWhere(CMetaData.BirthdaysMetaData.B_ID + "=" + uri.getPathSegments().get(1));
+			orderBy = (TextUtils.isEmpty(sortOrder)) ? CMetaData.BirthdaysMetaData.DEFAULT_SORT_ORDER : sortOrder;
+			break;
 		default:
 			throw new IllegalArgumentException("Unknow URI " + uri);
 		}
@@ -235,6 +288,14 @@ public class ContactsProvider extends ContentProvider{
 				where = CMetaData.GroupsMetaData.G_ID + "=" + uri.getPathSegments().get(1);
 				count = db.delete(CMetaData.GROUPS_TABLE, where, whereArgs);
 				break;
+				
+			case BIRTHDAYS_ALL:
+				count = db.delete(CMetaData.BIRTHDAYS_TABLE, where, whereArgs);
+				break;
+			case BIRTHDAYS_ONE:
+				where = CMetaData.BirthdaysMetaData.B_ID + "=" + uri.getPathSegments().get(1);
+				count = db.delete(CMetaData.BIRTHDAYS_TABLE, where, whereArgs);
+				break;
 			
 			default:
 				throw new IllegalArgumentException("Unknow URI "+uri);
@@ -255,7 +316,11 @@ public class ContactsProvider extends ContentProvider{
 			break;
 		case GROUPS_ALL:
 			rowId = db.replace(CMetaData.GROUPS_TABLE, CMetaData.GroupsMetaData.G_ID, values);
-			insUri = ContentUris.withAppendedId(CMetaData.ContactsMetaData.CONTENT_URI, rowId);
+			insUri = ContentUris.withAppendedId(CMetaData.GroupsMetaData.CONTENT_URI, rowId);
+			break;
+		case BIRTHDAYS_ALL:
+			rowId = db.replace(CMetaData.BIRTHDAYS_TABLE, CMetaData.BirthdaysMetaData.B_ID, values);
+			insUri = ContentUris.withAppendedId(CMetaData.BirthdaysMetaData.CONTENT_URI, rowId);
 			break;
 		default:
 			throw new IllegalArgumentException("Unknow URI " + uri);
@@ -328,6 +393,18 @@ public class ContactsProvider extends ContentProvider{
 				whereArgs
 			);
 			break;
+		case BIRTHDAYS_ALL:
+			count = db.update(CMetaData.BIRTHDAYS_TABLE, values, where, whereArgs);
+			break;
+		case BIRTHDAYS_ONE:
+			rowId = uri.getPathSegments().get(1);
+			count = db.update(
+				CMetaData.BIRTHDAYS_TABLE,
+				values,
+				CMetaData.BirthdaysMetaData.B_ID+"="+rowId+(!TextUtils.isEmpty(where)?"AND("+where+")":""),
+				whereArgs
+			);
+			break;
 		default:
 			throw new IllegalArgumentException("Unknow URI " + uri);
 		}
@@ -390,6 +467,19 @@ private static class DatabaseHelper extends SQLiteOpenHelper {
 				+CMetaData.GroupsMetaData.CONTACTS+" TEXT)";
 				
 			db.execSQL(query);
+			
+			query =	"CREATE TABLE "
+					+CMetaData.BIRTHDAYS_TABLE+" ("
+					+CMetaData.BirthdaysMetaData.B_ID+" INTEGER PRIMARY KEY,"
+					+CMetaData.BirthdaysMetaData.TITLE+" TEXT ,"
+					+CMetaData.BirthdaysMetaData.BIRTHDATE+" TEXT ,"
+					+CMetaData.BirthdaysMetaData.BIRTHDATE_MM_DD+" TEXT ,"
+					+CMetaData.BirthdaysMetaData.BIRTHDATE_MM+" TEXT ,"
+					+CMetaData.BirthdaysMetaData.CONTACT_ID+" TEXT ,"
+					+CMetaData.BirthdaysMetaData.COUNTRY+" TEXT ,"
+					+CMetaData.BirthdaysMetaData.TIMEZONE+" TEXT)";
+					
+				db.execSQL(query);
 		}
 
 		
