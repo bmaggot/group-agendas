@@ -3,6 +3,8 @@ package com.groupagendas.groupagenda.calendar.adapters;
 import java.util.Calendar;
 import java.util.List;
 
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
@@ -51,7 +53,7 @@ public class ChatMessageAdapter extends AbstractAdapter<ChatMessageObject> {
 		if (chatMessage.getUserId() == account.getUser_id()) {
 			fromWho.setText(getContext().getResources().getString(R.string.you));
 			view.findViewById(R.id.kubiks).setVisibility(View.VISIBLE);
-			ImageView iksiuks = (ImageView) view.findViewById(R.id.delete_button);
+			final ImageView iksiuks = (ImageView) view.findViewById(R.id.delete_button);
 			iksiuks.setClickable(true);
 			if (!chatMessage.isDeleted()) {
 				iksiuks.setVisibility(View.VISIBLE);
@@ -60,7 +62,20 @@ public class ChatMessageAdapter extends AbstractAdapter<ChatMessageObject> {
 
 					@Override
 					public void onClick(View arg0) {
-						context.deleteMessage(chatMessage.getMessageId(), chatMessage);
+						 new AlertDialog.Builder(context)
+					        .setIcon(android.R.drawable.ic_dialog_alert)
+					        .setTitle(context.getResources().getString(R.string.delete_message_title))
+					        .setMessage(context.getResources().getString(R.string.delete_message_confirmation))
+					        .setPositiveButton("Yes", new DialogInterface.OnClickListener(){
+					        @Override
+					        public void onClick(DialogInterface dialog, int which) {
+					        	iksiuks.setEnabled(false);
+					        	context.deleteMessage(chatMessage.getMessageId(), chatMessage); 
+					        }
+
+					    })
+					    .setNegativeButton(context.getResources().getString(R.string.no), null)
+					    .show();
 					}
 				});
 			} else {

@@ -9,10 +9,20 @@
         android:layout_width="match_parent"
         android:layout_height="50dp"
         android:background="@drawable/top_bar_background"
-        android:gravity="center_vertical"
+        android:gravity="center"
         android:orientation="horizontal"
         android:paddingBottom="10dp"
         android:paddingTop="15dp" >
+
+        <TextView
+            android:id="@+id/topText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:text="@string/chats"
+            android:textColor="@android:color/white"
+            android:textSize="20dp"
+            android:textStyle="bold" />
     </LinearLayout>
 
     <ListView

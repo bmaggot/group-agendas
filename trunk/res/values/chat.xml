@@ -27,7 +27,7 @@
     </style>
     
     <style name="chat_message_top_bar_buttons">
-        <item name="android:textSize">20dp</item>
+        <item name="android:textSize">16dp</item>
         <item name="android:textStyle">bold</item>
     </style>
     

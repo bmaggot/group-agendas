@@ -40,7 +40,6 @@ public class ChatMessageActivity extends Activity {
 	ListView chat_message_list;
 	ArrayList<ChatMessageObject> chatMessages;
 	ChatMessageObject chatMessageObject;
-	ProgressBar pb;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -62,7 +61,7 @@ public class ChatMessageActivity extends Activity {
 			}
 		});
 		Button eventButton = (Button) findViewById(R.id.chat_message_info_event_button);
-		pb = (ProgressBar) findViewById(R.id.progress);
+//		pb = (ProgressBar) findViewById(R.id.progress);
 
 		event_id = getIntent().getIntExtra("event_id", 0);
 		LocalBroadcastManager.getInstance(this).registerReceiver(mMessageReceiver,
@@ -110,6 +109,13 @@ public class ChatMessageActivity extends Activity {
 			chat_message_list.setAdapter(adapter);
 			if (DataManagement.networkAvailable) {
 				chatInput = (EditText) findViewById(R.id.chat_input);
+				chatInput.setOnClickListener(new OnClickListener() {
+					
+					@Override
+					public void onClick(View v) {
+						chat_message_list.setSelection(adapter.getCount() - 1);
+					}
+				});
 				chatSend = (Button) findViewById(R.id.chat_send);
 
 				chatSend.setOnClickListener(new OnClickListener() {
@@ -142,7 +148,7 @@ public class ChatMessageActivity extends Activity {
 
 		@Override
 		protected void onPreExecute() {
-			pb.setVisibility(View.VISIBLE);
+//			pb.setVisibility(View.VISIBLE);
 		}
 
 		@Override
@@ -170,7 +176,7 @@ public class ChatMessageActivity extends Activity {
 			adapter.setList(chatMessages);
 			adapter.notifyDataSetChanged();
 			chat_message_list.setSelection(adapter.getCount() - 1);
-			pb.setVisibility(View.INVISIBLE);
+//			pb.setVisibility(View.INVISIBLE);
 		}
 
 	}
@@ -179,7 +185,7 @@ public class ChatMessageActivity extends Activity {
 
 		@Override
 		protected void onPreExecute() {
-			pb.setVisibility(View.VISIBLE);
+//			pb.setVisibility(View.VISIBLE);
 		}
 
 		@Override
@@ -201,7 +207,7 @@ public class ChatMessageActivity extends Activity {
 		protected void onPostExecute(Void result) {
 			adapter.notifyDataSetChanged();
 			chat_message_list.setSelection(adapter.getCount() - 1);
-			pb.setVisibility(View.INVISIBLE);
+//			pb.setVisibility(View.INVISIBLE);
 		}
 
 	}
@@ -210,7 +216,7 @@ public class ChatMessageActivity extends Activity {
 
 		@Override
 		protected void onPreExecute() {
-			pb.setVisibility(View.VISIBLE);
+//			pb.setVisibility(View.VISIBLE);
 		}
 
 		@Override
@@ -227,7 +233,7 @@ public class ChatMessageActivity extends Activity {
 			result.setDeleted(true);
 			adapter.notifyDataSetChanged();
 			chat_message_list.setSelection(adapter.getCount() - 1);
-			pb.setVisibility(View.INVISIBLE);
+//			pb.setVisibility(View.INVISIBLE);
 		}
 
 	}
