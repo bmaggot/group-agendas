@@ -3,7 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     package="com.groupagendas.groupagenda"
     android:versionCode="17"
-    android:versionName="0.9.5503" >
+    android:versionName="0.9.5508" >
 
     <uses-sdk
         android:maxSdkVersion="16"
