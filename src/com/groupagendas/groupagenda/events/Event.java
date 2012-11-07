@@ -13,9 +13,12 @@ public class Event extends Object implements Colored {
 private static final String DEFAULT_TITLE = "";
 private static final String TIMESTAMP_FORMAT = DataManagement.SERVER_TIMESTAMP_FORMAT;
 
-	public static final String DEFAULT_COLOR = "21C0DB";
+	public static final String DEFAULT_COLOR = "99D9EA";
 	public static final String DEFAULT_TEXT_COLOR = "FFFFFF";
 	public static final String DEFAULT_ICON = "";
+	public static final String DEFAULT_COLOR_ATTENDING = "3F48CC";
+	public static final String DEFAULT_COLOR_MAYBE = "ED1C24";
+
 	private static final String DEFAULT_TYPE = "p";
 	private static final String DEFAULT_DESCRIPTION = "";
 	
@@ -202,11 +205,30 @@ private static final String TIMESTAMP_FORMAT = DataManagement.SERVER_TIMESTAMP_F
 //		
 //		}
 		
+		    
+		/**
+		 * Get displayed color.
+		 * 
+		 * @author meska.lt@gmail.com
+		 * @return Color of event to be displayed
+		 * @since 2012-11-07
+		 */
 		public String getDisplayColor() {
-			if (status == Invited.ACCEPTED) return getColor();
-			if (displayColor == null) return DEFAULT_COLOR;
-			if (displayColor.equalsIgnoreCase("null")) return DEFAULT_COLOR;
-			return displayColor;
+			String color = DEFAULT_COLOR;
+			
+			if (!(displayColor == null) && !(displayColor.equalsIgnoreCase("null"))) {
+				color = displayColor;
+			} else {
+				if (getColor().equals(DEFAULT_COLOR)) {
+					if (status == Invited.ACCEPTED) {
+						color = DEFAULT_COLOR_ATTENDING;
+					} else if (!birthday) {
+						color = DEFAULT_COLOR_MAYBE;
+					}
+				}
+			}
+			
+			return color;
 		}
 		
 		public void setDisplayColor(String displayColor) {
