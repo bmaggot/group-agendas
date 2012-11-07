@@ -13,7 +13,6 @@ import org.apache.http.client.methods.HttpPost;
 import org.apache.http.entity.mime.HttpMultipartMode;
 import org.apache.http.entity.mime.MultipartEntity;
 import org.apache.http.entity.mime.content.StringBody;
-import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.util.EntityUtils;
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -477,8 +476,17 @@ public class EventManagement {
 		}
 		
 		String rejectedFilter = " AND " + EventsProvider.EMetaData.EventsMetaData.STATUS + "!=" + Invited.REJECTED;
-		rejectedFilter += " AND " + EventsProvider.EMetaData.EventsMetaData.STATUS + "!=" + Invited.PENDING;
-		if (filterRejected) where += rejectedFilter;
+		
+		String pendingFilter = " AND (" + EventsProvider.EMetaData.EventsMetaData.STATUS + "!=" + Invited.PENDING + 
+								" OR (" + EventsProvider.EMetaData.EventsMetaData.STATUS + " == " + Invited.PENDING +
+								" AND " + EventsProvider.EMetaData.EventsMetaData.TIME_END_UTC_MILLISECONDS + " >= " +
+								Calendar.getInstance().getTimeInMillis() + ")" + ")";
+		
+		
+		if (filterRejected) {
+			where += rejectedFilter;
+			where += pendingFilter;
+		}
 		
 		return context.getContentResolver().query(uri, projection, where, null, sortOrder);
 
