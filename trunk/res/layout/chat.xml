@@ -116,14 +116,14 @@
         <EditText
             android:id="@+id/chat_input"
             android:layout_width="0dp"
-            android:layout_height="fill_parent"
+            android:layout_height="wrap_content"
             android:layout_gravity="left"
             android:layout_marginLeft="10dp"
             android:layout_weight="0.6"
             android:background="@drawable/chat_message_edit_text"
             android:inputType="textMultiLine"
-            android:maxLines="3"
-            android:minLines="2"
+            android:maxLines="100"
+            android:minLines="1"
             android:padding="10dp" />
 
         <Button
