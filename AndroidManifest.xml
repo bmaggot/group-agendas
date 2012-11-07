@@ -260,6 +260,7 @@
         <activity
             android:name=".chat.ChatMessageActivity"
             android:configChanges="keyboardHidden|orientation"
+            android:windowSoftInputMode="stateHidden"
             android:launchMode="singleTask"
             android:theme="@android:style/Theme.NoTitleBar" >
         </activity>
