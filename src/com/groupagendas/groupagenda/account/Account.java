@@ -498,8 +498,7 @@ public class Account {
 	}
 
 	public void setLastTimeConnectedToWeb(Calendar updateTime) {
-		prefsEditor.putLong(Account.AccountMetaData.LAST_TIME_CONNECTED_IN_MS,
-				Utils.millisToUnixTimestamp(updateTime.getTimeInMillis()));
+		prefsEditor.putLong(Account.AccountMetaData.LAST_TIME_CONNECTED_IN_MS, updateTime.getTimeInMillis());
 		prefsEditor.commit();
 	}
 	

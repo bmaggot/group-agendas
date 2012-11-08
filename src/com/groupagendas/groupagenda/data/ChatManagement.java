@@ -455,13 +455,12 @@ public class ChatManagement {
 		Calendar calendar = Calendar.getInstance();
 		chatMessageObject.setMessageId((int) calendar.getTimeInMillis());
 		chatMessageObject.setEventId(event_id);
-		chatMessageObject.setCreated(Utils.millisToUnixTimestamp(calendar.getTimeInMillis()));
+		chatMessageObject.setCreated(calendar.getTimeInMillis());
 		chatMessageObject.setUserId(account.getUser_id());
 		chatMessageObject.setMessage(message);
 		chatMessageObject.setDeleted(false);
-		chatMessageObject.setUpdated(Utils.millisToUnixTimestamp(calendar.getTimeInMillis()));
+		chatMessageObject.setUpdated(calendar.getTimeInMillis());
 		chatMessageObject.setFullname(account.getFullname());
-		insertChatMessageToLocalDb(context, chatMessageObject);
 		return chatMessageObject;
 	}
 
