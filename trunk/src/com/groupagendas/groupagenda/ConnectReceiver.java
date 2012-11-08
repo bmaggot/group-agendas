@@ -55,8 +55,7 @@ public class ConnectReceiver extends BroadcastReceiver {
 		if (conn.getNetworkInfo(0).getState() == NetworkInfo.State.CONNECTED
 				|| conn.getNetworkInfo(1).getState() == NetworkInfo.State.CONNECTED) {
 			DataManagement.networkAvailable = true;
-			ChatManagement.uploadUnploaded(context, ChatManagement.getChatMessagesCreatedOffline(context));
-			account.clearLastTimeConnectedToweb();
+			new ExecuteOfflineChats().execute();
 			boolean success = false;
 			
 			
@@ -78,6 +77,18 @@ public class ConnectReceiver extends BroadcastReceiver {
 			Log.i("app", "No connection to network!");
 		}
 
+	}
+	
+	private class ExecuteOfflineChats extends AsyncTask<Void, Void, Void>{
+
+		@Override
+		protected Void doInBackground(Void... params) {
+			Account account = new Account(context);
+			ChatManagement.uploadUnploaded(context, ChatManagement.getChatMessagesCreatedOffline(context));
+			account.clearLastTimeConnectedToweb();
+			return null;
+		}
+		
 	}
 
 	private class ExecuteOfflineChanges extends

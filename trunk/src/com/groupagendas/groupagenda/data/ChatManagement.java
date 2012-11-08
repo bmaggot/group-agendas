@@ -137,10 +137,10 @@ public class ChatManagement {
 		cur = context.getContentResolver().query(ChatProvider.CMMetaData.ChatMetaData.CONTENT_URI, null, selection, null, null);
 
 		if (cur.moveToFirst()) {
-			while (!cur.isAfterLast()) {
+			do {
 				chatMessages.add(makeChatMessageObjectFromCursor(cur));
 				cur.moveToNext();
-			}
+			} while (!cur.isAfterLast());
 		}
 		cur.close();
 		return chatMessages;
@@ -153,10 +153,10 @@ public class ChatManagement {
 		message.setCreated(cur.getLong(cur.getColumnIndex(ChatProvider.CMMetaData.ChatMetaData.CREATED)));
 		message.setUserId(cur.getInt(cur.getColumnIndex(ChatProvider.CMMetaData.ChatMetaData.USER_ID)));
 		message.setMessage(cur.getString(cur.getColumnIndex(ChatProvider.CMMetaData.ChatMetaData.MESSAGE)));
-		message.setDeleted(cur.getString(cur.getColumnIndex(ChatProvider.CMMetaData.ChatMetaData.DELETED)).equals(
-				ChatManagement.deleted));
+		message.setDeleted(cur.getString(cur.getColumnIndex(ChatProvider.CMMetaData.ChatMetaData.DELETED)).equals(ChatManagement.deleted));
 		message.setUpdated(cur.getLong(cur.getColumnIndex(ChatProvider.CMMetaData.ChatMetaData.MODIFIED)));
 		message.setFullname(cur.getString(cur.getColumnIndex(ChatProvider.CMMetaData.ChatMetaData.FULLNAME)));
+
 		return message;
 	}
 	
@@ -516,21 +516,18 @@ public class ChatManagement {
 			do{
 				offlineChatMessages.add(makeChatMessageObjectFromCursor(cur));
 				cur.moveToNext();
-			} while(cur.isAfterLast());
+			} while(!cur.isAfterLast());
 		}
 		cur.close();
 		return offlineChatMessages;
 	}
 
-	public static void uploadUnploaded(Context context,
-			ArrayList<ChatMessageObject> messages) {
-		for (ChatMessageObject message : messages) {
-			removeChatMessageFromLocalDb(context, message.getMessageId());
-			postChatMessage(message.getEventId(), message.getMessage(), context);
+	public static void uploadUnploaded(Context context, ArrayList<ChatMessageObject> messages) {
+		if (messages != null) {
+			for (ChatMessageObject message : messages) {
+				removeChatMessageFromLocalDb(context, message.getMessageId());
+				postChatMessage(message.getEventId(), message.getMessage(), context);
+			}
 		}
-		{
-
-		}
-
 	}
 }
