@@ -123,6 +123,7 @@ public class ChatMessageActivity extends Activity {
 				public void onClick(View arg0) {
 					String message = chatInput.getText().toString();
 					chatMessageObject = ChatManagement.makeChatMessageObjectNow(ChatMessageActivity.this, message, event_id);
+					ChatManagement.insertChatMessageToLocalDb(getApplicationContext(), chatMessageObject);
 					chatMessages.add(chatMessageObject);
 					adapter.notifyDataSetChanged();
 					if (DataManagement.networkAvailable) {
@@ -158,7 +159,7 @@ public class ChatMessageActivity extends Activity {
 			if (DataManagement.networkAvailable && !refreshMessagesList && chatMessages.isEmpty()) {
 				chatMessages = ChatManagement.getChatMessagesForEventFromRemoteDb(eventId, context, true, 0);
 			}
-			if (refreshMessagesList) {
+			if (DataManagement.networkAvailable && refreshMessagesList) {
 				ChatManagement.getChatMessagesForEventFromRemoteDb(eventId, context, true,
 						ChatManagement.getLastMessageTimeStamp(context, eventId));
 				refreshMessagesList = false;
