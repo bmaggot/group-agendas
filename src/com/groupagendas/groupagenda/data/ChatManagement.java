@@ -25,6 +25,7 @@ import android.net.Uri;
 import android.util.Log;
 
 import com.groupagendas.groupagenda.account.Account;
+import com.groupagendas.groupagenda.account.Account.AccountMetaData;
 import com.groupagendas.groupagenda.chat.ChatMessageObject;
 import com.groupagendas.groupagenda.chat.ChatProvider;
 import com.groupagendas.groupagenda.chat.ChatProvider.CMMetaData;
@@ -137,17 +138,7 @@ public class ChatManagement {
 
 		if (cur.moveToFirst()) {
 			while (!cur.isAfterLast()) {
-				ChatMessageObject message = new ChatMessageObject();
-				message.setMessageId(cur.getInt(cur.getColumnIndex(ChatProvider.CMMetaData.ChatMetaData.M_ID)));
-				message.setEventId(cur.getInt(cur.getColumnIndex(ChatProvider.CMMetaData.ChatMetaData.E_ID)));
-				message.setCreated(cur.getLong(cur.getColumnIndex(ChatProvider.CMMetaData.ChatMetaData.CREATED)));
-				message.setUserId(cur.getInt(cur.getColumnIndex(ChatProvider.CMMetaData.ChatMetaData.USER_ID)));
-				message.setMessage(cur.getString(cur.getColumnIndex(ChatProvider.CMMetaData.ChatMetaData.MESSAGE)));
-				message.setDeleted(cur.getString(cur.getColumnIndex(ChatProvider.CMMetaData.ChatMetaData.DELETED)).equals(
-						ChatManagement.deleted));
-				message.setUpdated(cur.getLong(cur.getColumnIndex(ChatProvider.CMMetaData.ChatMetaData.MODIFIED)));
-				message.setFullname(cur.getString(cur.getColumnIndex(ChatProvider.CMMetaData.ChatMetaData.FULLNAME)));
-				chatMessages.add(message);
+				chatMessages.add(makeChatMessageObjectFromCursor(cur));
 				cur.moveToNext();
 			}
 		}
@@ -155,6 +146,20 @@ public class ChatManagement {
 		return chatMessages;
 	}
 
+	public static ChatMessageObject makeChatMessageObjectFromCursor(Cursor cur){
+		ChatMessageObject message = new ChatMessageObject();
+		message.setMessageId(cur.getInt(cur.getColumnIndex(ChatProvider.CMMetaData.ChatMetaData.M_ID)));
+		message.setEventId(cur.getInt(cur.getColumnIndex(ChatProvider.CMMetaData.ChatMetaData.E_ID)));
+		message.setCreated(cur.getLong(cur.getColumnIndex(ChatProvider.CMMetaData.ChatMetaData.CREATED)));
+		message.setUserId(cur.getInt(cur.getColumnIndex(ChatProvider.CMMetaData.ChatMetaData.USER_ID)));
+		message.setMessage(cur.getString(cur.getColumnIndex(ChatProvider.CMMetaData.ChatMetaData.MESSAGE)));
+		message.setDeleted(cur.getString(cur.getColumnIndex(ChatProvider.CMMetaData.ChatMetaData.DELETED)).equals(
+				ChatManagement.deleted));
+		message.setUpdated(cur.getLong(cur.getColumnIndex(ChatProvider.CMMetaData.ChatMetaData.MODIFIED)));
+		message.setFullname(cur.getString(cur.getColumnIndex(ChatProvider.CMMetaData.ChatMetaData.FULLNAME)));
+		return message;
+	}
+	
 	public static ChatMessageObject getLastMessageForEventFromLocalDb(Context context, int eventId) {
 		ChatMessageObject chatMessageObject = new ChatMessageObject();
 		String selection = ChatProvider.CMMetaData.ChatMetaData.E_ID + "=" + eventId + " AND "
@@ -486,5 +491,22 @@ public class ChatManagement {
 		}
 		cur.close();
 		return timestamp;
+	}
+	
+	public static ArrayList<ChatMessageObject> getChatMessagesCreatedOffline(Context context) {
+		ArrayList<ChatMessageObject> offlineChatMessages = new ArrayList<ChatMessageObject>();
+		Uri uri = ChatProvider.CMMetaData.ChatMetaData.CONTENT_URI;
+		String projection[] = null;
+		Account account = new Account(context);
+		String selection = (ChatProvider.CMMetaData.ChatMetaData.CREATED +">"+ account.getLastTimeConnectedToWeb());
+		Cursor cur = context.getContentResolver().query(uri, projection, selection, null, null);
+		if(cur.moveToFirst()){
+			do{
+				offlineChatMessages.add(makeChatMessageObjectFromCursor(cur));
+				cur.moveToNext();
+			} while(cur.isAfterLast());
+		}
+		cur.close();
+		return offlineChatMessages;
 	}
 }

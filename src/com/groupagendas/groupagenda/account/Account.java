@@ -87,8 +87,12 @@ public class Account {
 		public static final String SHOW_GA_CALENDARS = "show_ga_calendars";
 
 		public static final String SHOW_BIRTHDAYS_CALENDARS = "show_birthdays_calendars";
+		
+		public static final String LAST_TIME_CONNECTED_IN_MS = "last_time_connected_in_ms"; 
 	}
-	
+
+
+
 	public long getLatestUpdateUnixTimestamp(){
 		return prefs.getLong(Account.AccountMetaData.DATA_UPDATE_TIMESTAMP, 0);
 	}
@@ -487,4 +491,21 @@ public class Account {
 		prefsEditor.remove(AccountMetaData.DATA_UPDATE_TIMESTAMP);
 		prefsEditor.commit();
 	}
+	
+	public long getLastTimeConnectedToWeb() {
+		return prefs.getLong(Account.AccountMetaData.LAST_TIME_CONNECTED_IN_MS,
+				0);
+	}
+
+	public void setLastTimeConnectedToWeb(Calendar updateTime) {
+		prefsEditor.putLong(Account.AccountMetaData.LAST_TIME_CONNECTED_IN_MS,
+				Utils.millisToUnixTimestamp(updateTime.getTimeInMillis()));
+		prefsEditor.commit();
+	}
+	
+	public void clearLastTimeConnectedToweb() {
+		prefsEditor.remove(AccountMetaData.LAST_TIME_CONNECTED_IN_MS);
+		prefsEditor.commit();
+	}
 }
+
