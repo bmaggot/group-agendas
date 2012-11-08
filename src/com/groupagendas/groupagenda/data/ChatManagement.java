@@ -331,7 +331,7 @@ public class ChatManagement {
 							chatMessageObject = ChatManagement.makeChatMessageObjectFromJSON(context, object.getJSONObject("message"));
 							ContentValues cv = new ContentValues();
 							cv = new ContentValues();
-							cv.put(EMetaData.EventsMetaData.LAST_MESSAGE_DATE_TIME_UTC_MILISECONDS, chatMessageObject.getCreated());
+							cv.put(EMetaData.EventsMetaData.LAST_MESSAGE_DATE_TIME_UTC_MILISECONDS, Utils.millisToUnixTimestamp(chatMessageObject.getCreated()));
 							Uri uri = EventsProvider.EMetaData.EventsMetaData.CONTENT_URI;
 							String where = EventsProvider.EMetaData.EventsMetaData.E_ID + "=" + eventId;
 							Event event = EventManagement.getEventFromLocalDb(context, eventId, EventManagement.ID_EXTERNAL);
