@@ -155,6 +155,7 @@ public class ChatMessageActivity extends Activity {
 			int eventId = (Integer) params[1];
 			boolean refreshMessagesList = (Boolean) params[2];
 			chatMessages = new ArrayList<ChatMessageObject>();
+			chatMessages.clear();
 			chatMessages = ChatManagement.getChatMessagesForEventFromLocalDb(context, eventId);
 			if (DataManagement.networkAvailable && !refreshMessagesList && chatMessages.isEmpty()) {
 				chatMessages = ChatManagement.getChatMessagesForEventFromRemoteDb(eventId, context, true, 0);
@@ -194,7 +195,9 @@ public class ChatMessageActivity extends Activity {
 			ChatMessageObject newChatMessageObject = ChatManagement.postChatMessage(eventId, message, context);
 			if (newChatMessageObject == null) {
 				chatMessages.remove(chatMessageObject);
+				ChatManagement.removeChatMessageFromLocalDb(context, chatMessageObject.getMessageId());
 			} else {
+				ChatManagement.removeChatMessageFromLocalDb(context, chatMessageObject.getMessageId());
 				chatMessages.remove(chatMessageObject);
 				chatMessages.add(newChatMessageObject);
 			}
