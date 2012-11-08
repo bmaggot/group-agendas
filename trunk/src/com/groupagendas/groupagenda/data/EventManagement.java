@@ -19,6 +19,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import android.content.ContentResolver;
+import android.content.ContentUris;
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
@@ -41,7 +42,8 @@ import com.groupagendas.groupagenda.utils.JSONUtils;
 import com.groupagendas.groupagenda.utils.Utils;
 
 /**
- * Class is responsible for communicating with remote and local databases. 
+ * Class is responsible for communicating with remote and local databases.
+ * 
  * @author justinas.marcinka@gmail.com
  * @version 1.0
  * @see EventManagement.initUserTimezone(Context context)
@@ -49,38 +51,44 @@ import com.groupagendas.groupagenda.utils.Utils;
 public class EventManagement {
 	static String error = "";
 	public static final String CLASS_NAME = "EventManagement.class";
-	private static SimpleDateFormat day_index_formatter = new SimpleDateFormat(EventsProvider.EMetaData.EventsIndexesMetaData.DAY_COLUMN_FORMAT);
-	private static SimpleDateFormat month_index_formatter = new SimpleDateFormat(EventsProvider.EMetaData.EventsIndexesMetaData.MONTH_COLUMN_FORMAT);
-	public static String user_timezone = null; // initUserTimezone(Context context) must be called whenever method with context as param is called
+	private static SimpleDateFormat day_index_formatter = new SimpleDateFormat(
+			EventsProvider.EMetaData.EventsIndexesMetaData.DAY_COLUMN_FORMAT);
+	private static SimpleDateFormat month_index_formatter = new SimpleDateFormat(
+			EventsProvider.EMetaData.EventsIndexesMetaData.MONTH_COLUMN_FORMAT);
+	public static String user_timezone = null; // initUserTimezone(Context
+												// context) must be called
+												// whenever method with context
+												// as param is called
 	public static final String DATA_ENCODING = "UTF-8";
-	
-	
+
 	private static final String GET_EVENTS_FROM_REMOTE_DB_URL = "mobile/events_list";
-	
-	
 
-	
-	
-
-	
-	////////////////////////////METHODS THAT ARE USED BY UI////////////////////////////////////////////////////////////////////
+	// //////////////////////////METHODS THAT ARE USED BY
+	// UI////////////////////////////////////////////////////////////////////
 	/**
 	 * Method gets event from remote db and writes it to local databases
+	 * 
 	 * @author justinas.marcinka@gmail.com
-	 * @param id Event id in remote database
-	 * @return true if success false otherwise. Also, error message is set in via getError()
+	 * @param id
+	 *            Event id in remote database
+	 * @return true if success false otherwise. Also, error message is set in
+	 *         via getError()
 	 */
 	public static boolean getEventByIdFromRemoteDb(Context context, String id) {
 		initUserTimezone(context);
-		
+
 		boolean success = false;
 		try {
 			HttpClient hc = MySSLSocketFactory.getNewHttpClient();
-			HttpPost post = new HttpPost(Data.getServerUrl() + "mobile/events_get");
+			HttpPost post = new HttpPost(Data.getServerUrl()
+					+ "mobile/events_get");
 
-			MultipartEntity reqEntity = new MultipartEntity(HttpMultipartMode.BROWSER_COMPATIBLE);
-			reqEntity.addPart(TOKEN, new StringBody(Data.getToken(context), Charset.forName("UTF-8")));
-			reqEntity.addPart("event_id", new StringBody(id, Charset.forName("UTF-8")));
+			MultipartEntity reqEntity = new MultipartEntity(
+					HttpMultipartMode.BROWSER_COMPATIBLE);
+			reqEntity.addPart(TOKEN, new StringBody(Data.getToken(context),
+					Charset.forName("UTF-8")));
+			reqEntity.addPart("event_id",
+					new StringBody(id, Charset.forName("UTF-8")));
 
 			post.setEntity(reqEntity);
 			HttpResponse rp = hc.execute(post);
@@ -95,7 +103,7 @@ public class EventManagement {
 						// TODO Error msg
 					} else {
 						JSONObject e = object.optJSONObject("event");
-						if(e == null){
+						if (e == null) {
 							// TODO Error msg
 							return false;
 						}
@@ -106,52 +114,54 @@ public class EventManagement {
 				}
 			}
 		} catch (Exception ex) {
-			Reporter.reportError(context, CLASS_NAME, Thread.currentThread().getStackTrace()[2].getMethodName().toString(),
-					ex.getMessage());
+			Reporter.reportError(context, CLASS_NAME, Thread.currentThread()
+					.getStackTrace()[2].getMethodName().toString(), ex
+					.getMessage());
 		}
 		return success;
 	}
-	
-	
 
 	/**
 	 * @author justinas.marcinka@gmail.com Method creates event in both remote
-	 *         and local databases. NOT YET IMPLEMENTED: If there is no connectivity to remote DB,
-	 *         event should be created only in local DB and saved task to upload
-	 *         data when available.
+	 *         and local databases. NOT YET IMPLEMENTED: If there is no
+	 *         connectivity to remote DB, event should be created only in local
+	 *         DB and saved task to upload data when available.
 	 * @param event
 	 * @since 2012-10-09
 	 * @version 1.0
 	 */
 	public static void createNewEvent(Context context, Event event) {
 		initUserTimezone(context);
+		boolean success = false;
+
 		if (DataManagement.networkAvailable) {
 			int id = createEventInRemoteDb(context, event);
 
 			if (id > 0) {
 				event.setEvent_id(id);
 				event.setUploadedToServer(true);
+				success = true;
 			} else {
 				// TODO report error
 			}
-		} else {
-			event.setUploadedToServer(false);
-			//TODO OFFLINE MODE TASK.
-		}	
-		
-		insertEventToLocalDB(context, event);
+		}
+
+		long int_id = insertEventToLocalDB(context, event);
+		if (!success) {
+			// TODO offline tasko iterpimas i nauja lentele
+		}
 
 	}
 
 	/**
 	 * @author justinas.marcinka@gmail.com Method deletes event from both remote
-	 *         and local databases. NOT YET IMPLEMENTED: If there is no connectivity to remote DB,
-	 *         event should be deleted only in local DB and saved task to delete
-	 *         data from remote db when available.
+	 *         and local databases. NOT YET IMPLEMENTED: If there is no
+	 *         connectivity to remote DB, event should be deleted only in local
+	 *         DB and saved task to delete data from remote db when available.
 	 * @param event
-	 * Fields that MUST BE SET:<br>
-	 *  Event.internalID <br>
-	 *  Event.event_ID <br>
+	 *            Fields that MUST BE SET:<br>
+	 *            Event.internalID <br>
+	 *            Event.event_ID <br>
 	 * @since 2012-10-09
 	 * @version 1.0
 	 */
@@ -159,122 +169,153 @@ public class EventManagement {
 		initUserTimezone(context);
 		Boolean deletedFromRemote = false;
 		if (DataManagement.networkAvailable) {
-			 deletedFromRemote = removeEvent(context, event.getEvent_id());
+			deletedFromRemote = removeEvent(context, event.getEvent_id());
 		}
 
-		if (!deletedFromRemote){
-			//TODO OFFLINE MODE TASK: add delete event task to tasks list for server remote
-		}	
-		
-		deleteEventFromLocalDb(context, event.getInternalID());	
+		if (!deletedFromRemote) {
+			// TODO OFFLINE MODE TASK: add delete event task to tasks list for
+			// server remote
+		}
+
+		deleteEventFromLocalDb(context, event.getInternalID());
 	}
-	
+
 	/**
 	 * @author justinas.marcinka@gmail.com
-	 * @param context - method call context
-	 * @param event - event which invitation should be responded to. <br>
-	 * Fields that MUST BE SET:<br>
-	 *  Event.internalID <br>
-	 *  Event.event_ID <br>
-	 *  Event.status<br>
+	 * @param context
+	 *            - method call context
+	 * @param event
+	 *            - event which invitation should be responded to. <br>
+	 *            Fields that MUST BE SET:<br>
+	 *            Event.internalID <br>
+	 *            Event.event_ID <br>
+	 *            Event.status<br>
 	 * @since 2012-10-09
 	 * @version 1.0
 	 */
-	
-	public static void respondToInvitation(Context context, Event event){
+
+	public static void respondToInvitation(Context context, Event event) {
 		initUserTimezone(context);
-		if (!Invited.validateResponse(event.getStatus())){
-			Log.e(CLASS_NAME + " ERROR RESPONDING TO INVITE", "Unknown state: " + event.getStatus());
+		if (!Invited.validateResponse(event.getStatus())) {
+			Log.e(CLASS_NAME + " ERROR RESPONDING TO INVITE", "Unknown state: "
+					+ event.getStatus());
 			return;
 		}
 		if (DataManagement.networkAvailable) {
 			event.setUploadedToServer(updateEventStatusInServer(context, event));
 		} else {
 			event.setUploadedToServer(false);
-		}	
-		updateEventStatusInLocalDb(context, event); //TODO OFFLINE MODE
-		
+		}
+		updateEventStatusInLocalDb(context, event); // TODO OFFLINE MODE
+
 	}
-	
+
 	/**
 	 * returns all existing chat threads
+	 * 
 	 * @author justinas.marcinka@gmail.com
 	 * @author interfectos@gmail.com
 	 * @since 2012-10-09
 	 * @version 1.0
 	 */
-	public static ArrayList<ChatThreadObject> getExistingChatThreads (Context context){
+	public static ArrayList<ChatThreadObject> getExistingChatThreads(
+			Context context) {
 		initUserTimezone(context);
 		Uri uri = EMetaData.EventsMetaData.CONTENT_URI;
-		String[] projection = { EMetaData.EventsMetaData.TITLE, EMetaData.EventsMetaData.LAST_MESSAGE_DATE_TIME_UTC_MILISECONDS,
-				EMetaData.EventsMetaData.NEW_MESSAGES_COUNT, EMetaData.EventsMetaData.MESSAGES_COUNT, EMetaData.EventsMetaData.E_ID };
-		String selection = EMetaData.EventsMetaData.MESSAGES_COUNT + ">0" + " AND " + EMetaData.EventsMetaData.STATUS + "!=" + Invited.REJECTED;
-		String sortOrder = EMetaData.EventsMetaData.LAST_MESSAGE_DATE_TIME_UTC_MILISECONDS + " DESC ";
-		Cursor result = context.getContentResolver().query(uri, projection, selection, null, sortOrder);
+		String[] projection = {
+				EMetaData.EventsMetaData.TITLE,
+				EMetaData.EventsMetaData.LAST_MESSAGE_DATE_TIME_UTC_MILISECONDS,
+				EMetaData.EventsMetaData.NEW_MESSAGES_COUNT,
+				EMetaData.EventsMetaData.MESSAGES_COUNT,
+				EMetaData.EventsMetaData.E_ID };
+		String selection = EMetaData.EventsMetaData.MESSAGES_COUNT + ">0"
+				+ " AND " + EMetaData.EventsMetaData.STATUS + "!="
+				+ Invited.REJECTED;
+		String sortOrder = EMetaData.EventsMetaData.LAST_MESSAGE_DATE_TIME_UTC_MILISECONDS
+				+ " DESC ";
+		Cursor result = context.getContentResolver().query(uri, projection,
+				selection, null, sortOrder);
 		ArrayList<ChatThreadObject> resultList = new ArrayList<ChatThreadObject>();
-		if (result.moveToFirst()){
-			do{
+		if (result.moveToFirst()) {
+			do {
 				ChatThreadObject cto = new ChatThreadObject();
-				cto.setTitle(result.getString(result.getColumnIndex(EMetaData.EventsMetaData.TITLE)));
-				cto.setTimeStart(result.getLong(result.getColumnIndex(EMetaData.EventsMetaData.LAST_MESSAGE_DATE_TIME_UTC_MILISECONDS)));
-				cto.setNew_messages(result.getInt(result.getColumnIndex(EMetaData.EventsMetaData.NEW_MESSAGES_COUNT)));
-				cto.setMessage_count(result.getInt(result.getColumnIndex(EMetaData.EventsMetaData.MESSAGES_COUNT)));
-				cto.setEvent_id(result.getInt(result.getColumnIndex(EMetaData.EventsMetaData.E_ID)));
+				cto.setTitle(result.getString(result
+						.getColumnIndex(EMetaData.EventsMetaData.TITLE)));
+				cto.setTimeStart(result.getLong(result
+						.getColumnIndex(EMetaData.EventsMetaData.LAST_MESSAGE_DATE_TIME_UTC_MILISECONDS)));
+				cto.setNew_messages(result.getInt(result
+						.getColumnIndex(EMetaData.EventsMetaData.NEW_MESSAGES_COUNT)));
+				cto.setMessage_count(result.getInt(result
+						.getColumnIndex(EMetaData.EventsMetaData.MESSAGES_COUNT)));
+				cto.setEvent_id(result.getInt(result
+						.getColumnIndex(EMetaData.EventsMetaData.E_ID)));
 				resultList.add(cto);
-			}while (result.moveToNext());
+			} while (result.moveToNext());
 		}
 		result.close();
 		return resultList;
 	}
 
-
-
 	/**
 	 * @author justinas.marcinka@gmail.com Updates event in both local and
-	 * remote db with given info. Offline mode NOT YET IMPLEMENTED.
-	 * @param event<br>
-	 * Fields that MUST BE SET:<br>
-	 *  Event.internalID <br>
-	 *  Event.event_ID <br>
-	 *  all other fields that contain data to be updated
+	 *         remote db with given info. Offline mode NOT YET IMPLEMENTED.
+	 * @param event
+	 * <br>
+	 *            Fields that MUST BE SET:<br>
+	 *            Event.internalID <br>
+	 *            Event.event_ID <br>
+	 *            all other fields that contain data to be updated
 	 * @since 2012-10-09
 	 * @version 1.0
 	 */
-	public static  void updateEvent(Context context, Event event) {
+	public static void updateEvent(Context context, Event event) {
 		initUserTimezone(context);
 		if (DataManagement.networkAvailable) {
 			event.setUploadedToServer(editEvent(context, event));
 		} else {
 			event.setUploadedToServer(false);
-		}	
+		}
 		updateEventInLocalDb(context, event);
 	}
 
 	// TODO write a javadoc for inviteExtraContacts()
-	public static boolean inviteExtraContacts(Context context, String e_id, ArrayList<Contact> contacts) {
+	public static boolean inviteExtraContacts(Context context, String e_id,
+			ArrayList<Contact> contacts) {
 		initUserTimezone(context);
 		boolean success = false;
 		Account account = new Account(context);
 		HttpClient hc = MySSLSocketFactory.getNewHttpClient();
-		HttpPost post = new HttpPost(Data.getServerUrl() + "mobile/events_invite_extra");
-//		Charset charset = Charset.forName(DATA_ENCODING);
+		HttpPost post = new HttpPost(Data.getServerUrl()
+				+ "mobile/events_invite_extra");
+		// Charset charset = Charset.forName(DATA_ENCODING);
 
-//		MultipartEntity reqEntity = new MultipartEntity(HttpMultipartMode.BROWSER_COMPATIBLE, "whatever", charset);
-		MultipartEntity reqEntity = new MultipartEntity(HttpMultipartMode.BROWSER_COMPATIBLE);
+		// MultipartEntity reqEntity = new
+		// MultipartEntity(HttpMultipartMode.BROWSER_COMPATIBLE, "whatever",
+		// charset);
+		MultipartEntity reqEntity = new MultipartEntity(
+				HttpMultipartMode.BROWSER_COMPATIBLE);
 		try {
-			reqEntity.addPart(TOKEN, new StringBody(Data.getToken(context), Charset.forName("UTF-8")));
-//			reqEntity.addPart(EVENT_ID, new StringBody(e_id, Charset.forName("UTF-8")));
-			reqEntity.addPart(EVENT_ID, new StringBody("" + Integer.parseInt(e_id), Charset.forName("UTF-8")));
-			
+			reqEntity.addPart(TOKEN, new StringBody(Data.getToken(context),
+					Charset.forName("UTF-8")));
+			// reqEntity.addPart(EVENT_ID, new StringBody(e_id,
+			// Charset.forName("UTF-8")));
+			reqEntity.addPart(
+					EVENT_ID,
+					new StringBody("" + Integer.parseInt(e_id), Charset
+							.forName("UTF-8")));
+
 			if (contacts != null) {
 				for (Contact c : contacts) {
-					reqEntity.addPart("contacts[]", new StringBody("" + c.contact_id, Charset.forName("UTF-8")));
+					reqEntity.addPart("contacts[]", new StringBody(""
+							+ c.contact_id, Charset.forName("UTF-8")));
 				}
 			} else {
-				reqEntity.addPart("contacts[]", new StringBody("", Charset.forName("UTF-8")));
+				reqEntity.addPart("contacts[]",
+						new StringBody("", Charset.forName("UTF-8")));
 			}
-			
-			reqEntity.addPart("session", new StringBody(account.getSessionId(), Charset.forName("UTF-8")));
+
+			reqEntity.addPart("session", new StringBody(account.getSessionId(),
+					Charset.forName("UTF-8")));
 			post.setEntity(reqEntity);
 
 			if (DataManagement.networkAvailable) {
@@ -287,37 +328,39 @@ public class EventManagement {
 						success = object.getBoolean("success");
 
 						if (!success) {
-							Log.e("inviteExtraContacts() CATCH!", object.getJSONObject("error").getString("reason"));
+							Log.e("inviteExtraContacts() CATCH!", object
+									.getJSONObject("error").getString("reason"));
 						}
 					}
 				} else {
-					Log.e("inviteExtraContacts()", rp.getStatusLine().getStatusCode() + "");
+					Log.e("inviteExtraContacts()", rp.getStatusLine()
+							.getStatusCode() + "");
 				}
 			} else {
-				OfflineData uplooad = new OfflineData("mobile/events_create", reqEntity);
+				OfflineData uplooad = new OfflineData("mobile/events_create",
+						reqEntity);
 				Data.getUnuploadedData().add(uplooad);
 			}
 		} catch (Exception ex) {
-			Log.e("EventManagement","inviteExtraContacts() CATCH!");
+			Log.e("EventManagement", "inviteExtraContacts() CATCH!");
 		}
 		return success;
 	}
 
-	
 	public static final int TM_EVENTS_FROM_GIVEN_DATE = 0;
 	public static final int TM_EVENTS_ON_GIVEN_DAY = 1;
 	public static final int TM_EVENTS_ON_GIVEN_MONTH = 2;
 	public static final int TM_EVENTS_ON_GIVEN_YEAR = 3;
 	/**
-	 * @author justinas.marcinka@gmail.com
-	 * categories for exchange event data with remote server
+	 * @author justinas.marcinka@gmail.com categories for exchange event data
+	 *         with remote server
 	 */
-	
+
 	private static final String TOKEN = "token";
 	private static final String CATEGORY = "category";
 	private static final String SUCCESS = "success";
 	private static final String REASON = "reason";
-	
+
 	public static final String EVENT_ID = "event_id";
 	public static final String TIMEZONE = "timezone";
 	public static final String TIME_START_UTC = "timestamp_start_utc";
@@ -329,8 +372,8 @@ public class EventManagement {
 	public static final String TITLE = "title";
 	public static final String ICON = "icon";
 	public static final String COLOR = "color";
-	public static final String TEXT_COLOR = "display_text_color"; //2012-10-24
-	public static final String DISPLAY_COLOR = "display_color"; //2012-10-24
+	public static final String TEXT_COLOR = "display_text_color"; // 2012-10-24
+	public static final String DISPLAY_COLOR = "display_color"; // 2012-10-24
 	public static final String DESCRIPTION = "description";
 	public static final String LOCATION = "location";
 	public static final String ACCOMODATION = "accomodation";
@@ -364,11 +407,9 @@ public class EventManagement {
 	public static final String MESSAGE_COUNT = "message_count";
 	public static final String NEW_MESSAGE_COUNT = "nmc";
 	public static final String MESSAGE_LAST_TIMESTAMP = "message_last_timestamp";
-//	private static final String ASSIGNED_CONTACTS = "assigned_contacts";
+	// private static final String ASSIGNED_CONTACTS = "assigned_contacts";
 	private static final String EVENTS = "events";
 
-	
-	
 	/**
 	 * @author justinas.marcinka@gmail.com Gets events projections from local
 	 *         database, according to given date and time mode.
@@ -388,24 +429,28 @@ public class EventManagement {
 	 *            DataManagement.TM_EVENTS_ON_GIVEN_YEAR<br>
 	 * @param sortOrder
 	 *            sort order. if null, default will be used
-	 * @param context 
+	 * @param context
 	 * @return cursor holding projections that met selection criteria. Caller
 	 *         has to set Event objects after return
 	 * @since 2012-10-09
 	 * @version 1.0
 	 */
-	public static Cursor createEventProjectionByDateFromLocalDb(Context context, String[] projection, Calendar date, int daysToSelect, int eventTimeMode,
-			String sortOrder, boolean filterRejected) {
+	public static Cursor createEventProjectionByDateFromLocalDb(
+			Context context, String[] projection, Calendar date,
+			int daysToSelect, int eventTimeMode, String sortOrder,
+			boolean filterRejected) {
 		initUserTimezone(context);
-		day_index_formatter = new SimpleDateFormat(EventsProvider.EMetaData.EventsIndexesMetaData.DAY_COLUMN_FORMAT);
-		month_index_formatter = new SimpleDateFormat(EventsProvider.EMetaData.EventsIndexesMetaData.MONTH_COLUMN_FORMAT);
+		day_index_formatter = new SimpleDateFormat(
+				EventsProvider.EMetaData.EventsIndexesMetaData.DAY_COLUMN_FORMAT);
+		month_index_formatter = new SimpleDateFormat(
+				EventsProvider.EMetaData.EventsIndexesMetaData.MONTH_COLUMN_FORMAT);
 		String where;
-		
+
 		Uri uri;
 		if (date != null) {
 			switch (eventTimeMode) {
 			case TM_EVENTS_FROM_GIVEN_DATE:
-				
+
 				if (daysToSelect > 0) {
 					uri = EventsProvider.EMetaData.EVENTS_ON_DATE_URI;
 					Calendar tmpStart = (Calendar) date.clone();
@@ -426,23 +471,28 @@ public class EventManagement {
 					sb.append(")");
 					String inStringDay = sb.toString();
 					// TODO optimisation by using months column
-					where = EventsProvider.EMetaData.EventsIndexesMetaData.DAY + " IN " + inStringDay;
+					where = EventsProvider.EMetaData.EventsIndexesMetaData.DAY
+							+ " IN " + inStringDay;
 
 				} else {
 					uri = EventsProvider.EMetaData.EventsMetaData.CONTENT_URI;
-					where = EventsProvider.EMetaData.EventsMetaData.TIME_END_UTC_MILLISECONDS + ">" + date.getTimeInMillis();
+					where = EventsProvider.EMetaData.EventsMetaData.TIME_END_UTC_MILLISECONDS
+							+ ">" + date.getTimeInMillis();
 				}
 
-			
 				break;
 			case TM_EVENTS_ON_GIVEN_DAY:
 
 				uri = EventsProvider.EMetaData.EVENTS_ON_DATE_URI;
-				where = EventsProvider.EMetaData.EventsIndexesMetaData.DAY + " = '" + day_index_formatter.format(date.getTime()) + "'";
+				where = EventsProvider.EMetaData.EventsIndexesMetaData.DAY
+						+ " = '" + day_index_formatter.format(date.getTime())
+						+ "'";
 				break;
 			case TM_EVENTS_ON_GIVEN_MONTH:
 				uri = EventsProvider.EMetaData.EVENTS_ON_DATE_URI;
-				where = EventsProvider.EMetaData.EventsIndexesMetaData.MONTH + " = '" + month_index_formatter.format(date.getTime()) + "'" ;
+				where = EventsProvider.EMetaData.EventsIndexesMetaData.MONTH
+						+ " = '" + month_index_formatter.format(date.getTime())
+						+ "'";
 				break;
 			case TM_EVENTS_ON_GIVEN_YEAR:
 				uri = EventsProvider.EMetaData.EVENTS_ON_DATE_URI;
@@ -464,45 +514,56 @@ public class EventManagement {
 				sb.append(")");
 				String inString = sb.toString();
 
-				where = EventsProvider.EMetaData.EventsIndexesMetaData.MONTH + " IN " + inString;
+				where = EventsProvider.EMetaData.EventsIndexesMetaData.MONTH
+						+ " IN " + inString;
 				break;
 
 			default:
-				throw new IllegalStateException("Wrong event Time mode for projection");
+				throw new IllegalStateException(
+						"Wrong event Time mode for projection");
 			}
 		} else {
 			where = null;
 			uri = EventsProvider.EMetaData.EventsMetaData.CONTENT_URI;
 		}
-		
-		String rejectedFilter = " AND " + EventsProvider.EMetaData.EventsMetaData.STATUS + "!=" + Invited.REJECTED;
-		
-		String pendingFilter = " AND (" + EventsProvider.EMetaData.EventsMetaData.STATUS + "!=" + Invited.PENDING + 
-								" OR (" + EventsProvider.EMetaData.EventsMetaData.STATUS + " == " + Invited.PENDING +
-								" AND " + EventsProvider.EMetaData.EventsMetaData.TIME_END_UTC_MILLISECONDS + " >= " +
-								Calendar.getInstance().getTimeInMillis() + ")" + ")";
-		
-		
+
+		String rejectedFilter = " AND "
+				+ EventsProvider.EMetaData.EventsMetaData.STATUS + "!="
+				+ Invited.REJECTED;
+
+		String pendingFilter = " AND ("
+				+ EventsProvider.EMetaData.EventsMetaData.STATUS
+				+ "!="
+				+ Invited.PENDING
+				+ " OR ("
+				+ EventsProvider.EMetaData.EventsMetaData.STATUS
+				+ " == "
+				+ Invited.PENDING
+				+ " AND "
+				+ EventsProvider.EMetaData.EventsMetaData.TIME_END_UTC_MILLISECONDS
+				+ " >= " + Calendar.getInstance().getTimeInMillis() + ")" + ")";
+
 		if (filterRejected) {
 			where += rejectedFilter;
 			where += pendingFilter;
 		}
-		
-		return context.getContentResolver().query(uri, projection, where, null, sortOrder);
+
+		return context.getContentResolver().query(uri, projection, where, null,
+				sortOrder);
 
 	}
-	
-	
-	
+
 	/**
 	 * Gets events from remote Database and writes them to local DB.
 	 * 
 	 * @author justinas.marcinka@gmail.com
-	 * @param eventCategory API category. if empty, gets all events
+	 * @param eventCategory
+	 *            API category. if empty, gets all events
 	 * @since 2012-10-09
 	 * @version 1.0
 	 */
-	public static void getEventsFromRemoteDb(Context context, String eventCategory) {
+	public static void getEventsFromRemoteDb(Context context,
+			String eventCategory) {
 		initUserTimezone(context);
 		boolean success = false;
 		Event event = null;
@@ -510,12 +571,16 @@ public class EventManagement {
 
 		try {
 			HttpClient hc = MySSLSocketFactory.getNewHttpClient();
-			HttpPost post = new HttpPost(Data.getServerUrl() + GET_EVENTS_FROM_REMOTE_DB_URL);
+			HttpPost post = new HttpPost(Data.getServerUrl()
+					+ GET_EVENTS_FROM_REMOTE_DB_URL);
 
-			MultipartEntity reqEntity = new MultipartEntity(HttpMultipartMode.BROWSER_COMPATIBLE);
+			MultipartEntity reqEntity = new MultipartEntity(
+					HttpMultipartMode.BROWSER_COMPATIBLE);
 
-			reqEntity.addPart(TOKEN, new StringBody(Data.getToken(context), Charset.forName("UTF-8")));
-			reqEntity.addPart(CATEGORY, new StringBody(eventCategory, Charset.forName("UTF-8")));
+			reqEntity.addPart(TOKEN, new StringBody(Data.getToken(context),
+					Charset.forName("UTF-8")));
+			reqEntity.addPart(CATEGORY,
+					new StringBody(eventCategory, Charset.forName("UTF-8")));
 			post.setEntity(reqEntity);
 			HttpResponse rp = hc.execute(post);
 
@@ -530,144 +595,178 @@ public class EventManagement {
 					} else {
 
 						JSONArray es = object.getJSONArray(EVENTS);
-					Calendar start = Calendar.getInstance();
-					 values = new ContentValues[es.length()];
-					 int value = 0;
+						Calendar start = Calendar.getInstance();
+						values = new ContentValues[es.length()];
+						int value = 0;
 						for (int i = 0; i < es.length(); i++) {
-							try{
-							JSONObject e = es.getJSONObject(i);
-							event = JSONUtils.createEventFromJSON(context, e);
-							if (event != null && !event.isNative()) {
-								event.setUploadedToServer(true);
-								values[value] = createCVforEventsTable(event);
-								value++;
-//								insertEventToLocalDB(context, event);
-							}
+							try {
+								JSONObject e = es.getJSONObject(i);
+								event = JSONUtils.createEventFromJSON(context,
+										e);
+								if (event != null && !event.isNative()) {
+									event.setUploadedToServer(true);
+									values[value] = createCVforEventsTable(event);
+									value++;
+									// insertEventToLocalDB(context, event);
+								}
 
-							}
-							catch (JSONException ex){
+							} catch (JSONException ex) {
 								Log.e(CLASS_NAME, "JSON");
 							}
 						}
-						if(values != null)
-							context.getContentResolver().bulkInsert(EventsProvider.EMetaData.INDEXED_EVENTS_URI, values);
+						if (values != null)
+							context.getContentResolver()
+									.bulkInsert(
+											EventsProvider.EMetaData.INDEXED_EVENTS_URI,
+											values);
 						Calendar end = Calendar.getInstance();
-						System.out.println("insert time:" + (end.getTimeInMillis() - start.getTimeInMillis()));
+						System.out.println("insert time:"
+								+ (end.getTimeInMillis() - start
+										.getTimeInMillis()));
 					}
 				}
 			}
 		} catch (Exception ex) {
-			Reporter.reportError(context, CLASS_NAME, Thread.currentThread().getStackTrace()[2].getMethodName().toString(),
-					ex.getMessage());
+			Reporter.reportError(context, CLASS_NAME, Thread.currentThread()
+					.getStackTrace()[2].getMethodName().toString(), ex
+					.getMessage());
 		}
 	}
-	
-	/////////////////////////////////////////////////////METHODS THAT WORK WITH LOCAL DB//////////////////////////////////////////////////////
-	
-	
+
+	// ///////////////////////////////////////////////////METHODS THAT WORK WITH
+	// LOCAL DB//////////////////////////////////////////////////////
+
 	/**
-	 * Inserts given event to local DB. Rows that correspond to given ID are overwritten.
+	 * Inserts given event to local DB. Rows that correspond to given ID are
+	 * overwritten.
+	 * 
 	 * @param context
 	 * @param event
 	 * @since 2012-10-09
 	 * @version 1.0
+	 * @return inserted event internal id
 	 */
-	protected static void insertEventToLocalDB(Context context, Event event) {
+	protected static long insertEventToLocalDB(Context context, Event event) {
 		// 1. ADD EVENT details to events table
 		ContentValues cv = createCVforEventsTable(event);
-		context.getContentResolver().insert(EventsProvider.EMetaData.INDEXED_EVENTS_URI, cv);
+		Uri eventUri = context.getContentResolver().insert(
+				EventsProvider.EMetaData.INDEXED_EVENTS_URI, cv);
 
-//		long internalID = ContentUris.parseId(eventUri);
-//		if (internalID >= 0){ 
-//		event.setInternalID(internalID);
-//		
-//		// 2. INSERT EVENT day indexes into events_days table
-//		insertEventToDayIndexTable(context, event);
+		long internalID = ContentUris.parseId(eventUri);
+		return internalID;
+		// if (internalID >= 0){
+		// event.setInternalID(internalID);
+		//
+		// // 2. INSERT EVENT day indexes into events_days table
+		// insertEventToDayIndexTable(context, event);
 		// 3. INSERT EVENT INVITEs
-//		insertEventToInvitesTable(context, event);
-//		}
+		// insertEventToInvitesTable(context, event);
+		// }
 	}
-	
-	
 
-//	private static void insertEventToInvitesTable(Context context, Event event) {
-//		long event_id = event.getInternalID();
-//		ContentValues cv;
-//		ContentResolver resolver = context.getContentResolver();
-//		ArrayList<Invited> invites = event.getInvited();
-//		for (Invited invite : invites){
-//			cv = new ContentValues();
-//			cv.put(EventsProvider.EMetaData.InvitedMetaData.EVENT_ID, event_id);
-//			cv.put(EventsProvider.EMetaData.InvitedMetaData.GCID, invite.getGcid());
-//			cv.put(EventsProvider.EMetaData.InvitedMetaData.GUID, invite.getGuid());
-//			cv.put(EventsProvider.EMetaData.InvitedMetaData.MY_CONTACT_ID, invite.getMy_contact_id());
-//			cv.put(EventsProvider.EMetaData.InvitedMetaData.STATUS, invite.getStatus());
-//			cv.put(EventsProvider.EMetaData.InvitedMetaData.NAME, invite.getName());
-//			resolver.insert(EventsProvider.EMetaData.InvitedMetaData.CONTENT_URI, cv);
-//		}	
-//	}
+	// private static void insertEventToInvitesTable(Context context, Event
+	// event) {
+	// long event_id = event.getInternalID();
+	// ContentValues cv;
+	// ContentResolver resolver = context.getContentResolver();
+	// ArrayList<Invited> invites = event.getInvited();
+	// for (Invited invite : invites){
+	// cv = new ContentValues();
+	// cv.put(EventsProvider.EMetaData.InvitedMetaData.EVENT_ID, event_id);
+	// cv.put(EventsProvider.EMetaData.InvitedMetaData.GCID, invite.getGcid());
+	// cv.put(EventsProvider.EMetaData.InvitedMetaData.GUID, invite.getGuid());
+	// cv.put(EventsProvider.EMetaData.InvitedMetaData.MY_CONTACT_ID,
+	// invite.getMy_contact_id());
+	// cv.put(EventsProvider.EMetaData.InvitedMetaData.STATUS,
+	// invite.getStatus());
+	// cv.put(EventsProvider.EMetaData.InvitedMetaData.NAME, invite.getName());
+	// resolver.insert(EventsProvider.EMetaData.InvitedMetaData.CONTENT_URI,
+	// cv);
+	// }
+	// }
 
 	/**
 	 * Updates event in local DB.
+	 * 
 	 * @author justinas.marcinka@gmail.com
-	 * @param context 
+	 * @param context
 	 * @param event
 	 */
 
 	public static void updateEventInLocalDb(Context context, Event event) {
-		
+
 		Uri uri;
 		String where = null;
 		ContentResolver resolver = context.getContentResolver();
 		long internalID = event.getInternalID();
-	
-//		query for old this event times data to find out if days_index update is needed
+
+		// query for old this event times data to find out if days_index update
+		// is needed
 		boolean eventTimeChanged = false;
-		String[] projection = {EventsProvider.EMetaData.EventsMetaData.TIME_START_UTC_MILLISECONDS, EventsProvider.EMetaData.EventsMetaData.TIME_END_UTC_MILLISECONDS};
-		uri = Uri.parse(EventsProvider.EMetaData.EventsMetaData.CONTENT_URI+ "/" + internalID);
-		
+		String[] projection = {
+				EventsProvider.EMetaData.EventsMetaData.TIME_START_UTC_MILLISECONDS,
+				EventsProvider.EMetaData.EventsMetaData.TIME_END_UTC_MILLISECONDS };
+		uri = Uri.parse(EventsProvider.EMetaData.EventsMetaData.CONTENT_URI
+				+ "/" + internalID);
+
 		Cursor result = resolver.query(uri, projection, where, null, null);
 		long oldStart = 0;
 		long oldEnd = 0;
-		if(result.moveToFirst()){
-			oldStart = result.getLong(result.getColumnIndex(EventsProvider.EMetaData.EventsMetaData.TIME_START_UTC_MILLISECONDS));
-			oldEnd = result.getLong(result.getColumnIndex(EventsProvider.EMetaData.EventsMetaData.TIME_END_UTC_MILLISECONDS));
+		if (result.moveToFirst()) {
+			oldStart = result
+					.getLong(result
+							.getColumnIndex(EventsProvider.EMetaData.EventsMetaData.TIME_START_UTC_MILLISECONDS));
+			oldEnd = result
+					.getLong(result
+							.getColumnIndex(EventsProvider.EMetaData.EventsMetaData.TIME_END_UTC_MILLISECONDS));
 			result.close();
 		}
-	
+
 		ContentValues cv = createCVforEventsTable(event);
-		cv.put(BaseColumns._ID, event.getInternalID()); //this is VERY important
-			// 1 update event in events table
-				uri = Uri
-						.parse(EventsProvider.EMetaData.EventsMetaData.CONTENT_URI
-								+ "/" + internalID);
-		
-			
-			resolver.update(uri, cv, null, null);
+		cv.put(BaseColumns._ID, event.getInternalID()); // this is VERY
+														// important
+		// 1 update event in events table
+		uri = Uri.parse(EventsProvider.EMetaData.EventsMetaData.CONTENT_URI
+				+ "/" + internalID);
 
-		if (event.getStartCalendar() != null && event.getEndCalendar() != null){ // to prevent null pointer exception: that hurts if happens :)
-			
+		resolver.update(uri, cv, null, null);
 
-			
-			eventTimeChanged = oldStart != event.getStartCalendar().getTimeInMillis() || oldEnd != event.getEndCalendar().getTimeInMillis();
-			
+		if (event.getStartCalendar() != null && event.getEndCalendar() != null) { // to
+																					// prevent
+																					// null
+																					// pointer
+																					// exception:
+																					// that
+																					// hurts
+																					// if
+																					// happens
+																					// :)
+
+			eventTimeChanged = oldStart != event.getStartCalendar()
+					.getTimeInMillis()
+					|| oldEnd != event.getEndCalendar().getTimeInMillis();
+
 			// 3 Renew event data in time indexes
 
 			if (eventTimeChanged) {
-				where = EventsProvider.EMetaData.EventsIndexesMetaData.EVENT_INTERNAL_ID + "=" + internalID;
-				resolver.delete(EventsProvider.EMetaData.EventsIndexesMetaData.CONTENT_URI, where, null);
+				where = EventsProvider.EMetaData.EventsIndexesMetaData.EVENT_INTERNAL_ID
+						+ "=" + internalID;
+				resolver.delete(
+						EventsProvider.EMetaData.EventsIndexesMetaData.CONTENT_URI,
+						where, null);
 				insertEventToDayIndexTable(context, event);
 			}
 		}
 
 	}
 
-	
 	/**
 	 * deletes event from local DB
+	 * 
 	 * @author justinas.marcinka@gmail.com
 	 * @param context
-	 * @param internalID event local DB id
+	 * @param internalID
+	 *            event local DB id
 	 * @since 2012-10-09
 	 * @version 1.0
 	 */
@@ -676,15 +775,21 @@ public class EventManagement {
 
 		// 1. Deleting event from events table
 		where = BaseColumns._ID + "=" + internalID;
-		context.getContentResolver().delete(EventsProvider.EMetaData.EventsMetaData.CONTENT_URI, where, null);
+		context.getContentResolver().delete(
+				EventsProvider.EMetaData.EventsMetaData.CONTENT_URI, where,
+				null);
 
 		// 2. Deleting event from events day indexes table
-		where = EventsProvider.EMetaData.EventsIndexesMetaData.EVENT_INTERNAL_ID + "=" + internalID;
-		context.getContentResolver().delete(EventsProvider.EMetaData.EventsIndexesMetaData.CONTENT_URI, where, null);
+		where = EventsProvider.EMetaData.EventsIndexesMetaData.EVENT_INTERNAL_ID
+				+ "=" + internalID;
+		context.getContentResolver().delete(
+				EventsProvider.EMetaData.EventsIndexesMetaData.CONTENT_URI,
+				where, null);
 
 	}
+
 	/**
-	 * @author justinas.marcinka@gmail.com	
+	 * @author justinas.marcinka@gmail.com
 	 * @param context
 	 * @param event
 	 * @since 2012-10-09
@@ -700,10 +805,12 @@ public class EventManagement {
 		long event_internal_id = event.getInternalID();
 		long event_external_id = event.getEvent_id();
 		String ext_id = null;
-		if (event_external_id > 0) ext_id = "" + event_external_id;
+		if (event_external_id > 0)
+			ext_id = "" + event_external_id;
 
 		if (event.is_all_day()) { // only one row is inserted
-			insertEventDayIndexRow(context, event_internal_id, ext_id, eventDayStart);
+			insertEventDayIndexRow(context, event_internal_id, ext_id,
+					eventDayStart);
 		} else
 			while (eventDayStart.before(event.getEndCalendar())) { // rows are
 																	// inserted
@@ -711,634 +818,931 @@ public class EventManagement {
 																	// day that
 																	// event
 																	// lasts
-				insertEventDayIndexRow(context, event_internal_id, ext_id, eventDayStart);
+				insertEventDayIndexRow(context, event_internal_id, ext_id,
+						eventDayStart);
 				eventDayStart.add(Calendar.DATE, 1);
 
 			}
 	}
 
-	//TODO javadoc
-	private static void insertEventDayIndexRow(Context context, long event_id,  String event_external_id, Calendar eventDayStart) {
+	// TODO javadoc
+	private static void insertEventDayIndexRow(Context context, long event_id,
+			String event_external_id, Calendar eventDayStart) {
 		ContentValues cv = new ContentValues();
-		cv.put(EventsProvider.EMetaData.EventsIndexesMetaData.EVENT_INTERNAL_ID, event_id);
-		cv.put(EventsProvider.EMetaData.EventsIndexesMetaData.EVENT_EXTERNAL_ID, event_external_id);
+		cv.put(EventsProvider.EMetaData.EventsIndexesMetaData.EVENT_INTERNAL_ID,
+				event_id);
+		cv.put(EventsProvider.EMetaData.EventsIndexesMetaData.EVENT_EXTERNAL_ID,
+				event_external_id);
 		Date time = eventDayStart.getTime();
 
-		cv.put(EventsProvider.EMetaData.EventsIndexesMetaData.DAY, day_index_formatter.format(time));
+		cv.put(EventsProvider.EMetaData.EventsIndexesMetaData.DAY,
+				day_index_formatter.format(time));
 
-		cv.put(EventsProvider.EMetaData.EventsIndexesMetaData.MONTH, month_index_formatter.format(time));
-		context.getContentResolver().insert(EventsProvider.EMetaData.EventsIndexesMetaData.CONTENT_URI, cv);
+		cv.put(EventsProvider.EMetaData.EventsIndexesMetaData.MONTH,
+				month_index_formatter.format(time));
+		context.getContentResolver().insert(
+				EventsProvider.EMetaData.EventsIndexesMetaData.CONTENT_URI, cv);
 
 	}
-
-	
 
 	public static final int ID_INTERNAL = 0;
 	public static final int ID_EXTERNAL = 1;
+
 	/**
-	 * @author justinas.marcinka@gmail.com
-	 * Gets event object with full info about event from local db by internal or external evetn ID
+	 * @author justinas.marcinka@gmail.com Gets event object with full info
+	 *         about event from local db by internal or external evetn ID
 	 * @param context
-	 * @param ID 
-	 * @param id_mode Indicates whether given param is internal or external id. Available id modes:<br>
-	 * EventManagement.ID_INTERNAL<br>
-	 * EventManagement.ID_EXTERNAL<br>
+	 * @param ID
+	 * @param id_mode
+	 *            Indicates whether given param is internal or external id.
+	 *            Available id modes:<br>
+	 *            EventManagement.ID_INTERNAL<br>
+	 *            EventManagement.ID_EXTERNAL<br>
 	 * @return
 	 */
-		public static Event getEventFromLocalDb(Context context, long ID, int id_mode) {
-			Event item = null;
-			Uri uri;
-			
-			switch (id_mode){
-			case(ID_INTERNAL):
-				uri = EventsProvider.EMetaData.EventsMetaData.CONTENT_URI;
-				break;
-			case (ID_EXTERNAL):
-				uri = EventsProvider.EMetaData.EventsMetaData.CONTENT_URI_EXTERNAL_ID;
-				break;
-			default: throw new IllegalStateException("method getEventFromLocalDB: Unknown id mode");
-			}
-				
-			
-			uri = Uri.parse(uri + "/" + ID);
-			Cursor result = context.getContentResolver().query(uri, null, null, null, null);
-			if (result.moveToFirst()) {
-				item = createEventFromCursor(context, result);
-			}
-			result.close();
-			return item;
-		}	
-//TODO javadoc
-		private static void updateEventStatusInLocalDb(Context context, Event event) {
-			if (event.getMyInvite() != null){
-				event.getMyInvite().setStatus(event.getStatus());                           
-			}
-			ContentValues cv = new ContentValues();
-			cv.put(EventsProvider.EMetaData.EventsMetaData.STATUS, event.getStatus());	
-			cv.put(EventsProvider.EMetaData.EventsMetaData.INVITED, parseInvitedListToJSONArray(event.getInvited()));
-			Uri uri = EventsProvider.EMetaData.EventsMetaData.CONTENT_URI;
-			String where = EventsProvider.EMetaData.EventsMetaData._ID+"=" + event.getInternalID();
-			context.getContentResolver().update(uri, cv, where, null);	
+	public static Event getEventFromLocalDb(Context context, long ID,
+			int id_mode) {
+		Event item = null;
+		Uri uri;
+
+		switch (id_mode) {
+		case (ID_INTERNAL):
+			uri = EventsProvider.EMetaData.EventsMetaData.CONTENT_URI;
+			break;
+		case (ID_EXTERNAL):
+			uri = EventsProvider.EMetaData.EventsMetaData.CONTENT_URI_EXTERNAL_ID;
+			break;
+		default:
+			throw new IllegalStateException(
+					"method getEventFromLocalDB: Unknown id mode");
 		}
-		
-		public static void resetEventsNewMessageCount(Context context, int eventId) {
-			ContentValues cv = new ContentValues();
-			cv.put(EventsProvider.EMetaData.EventsMetaData.NEW_MESSAGES_COUNT, "0");
-			Uri uri = EventsProvider.EMetaData.EventsMetaData.CONTENT_URI;
-			String where = EventsProvider.EMetaData.EventsMetaData.E_ID+"=" + eventId;
-			context.getContentResolver().update(uri, cv, where, null);	
+
+		uri = Uri.parse(uri + "/" + ID);
+		Cursor result = context.getContentResolver().query(uri, null, null,
+				null, null);
+		if (result.moveToFirst()) {
+			item = createEventFromCursor(context, result);
 		}
-	
-//private static ArrayList<Invited> getInvitesForEvent(Context context, Event event) {
-//		ArrayList<Invited> invites = new ArrayList<Invited>();
-//		long id = event.getInternalID();
-//		
-//		String where = EventsProvider.EMetaData.InvitedMetaData.EVENT_ID + "=" + id; 
-//		Uri uri = EventsProvider.EMetaData.InvitedMetaData.CONTENT_URI;
-//		Cursor result = context.getContentResolver().query(uri, null, where, null, null);
-//		if (result.moveToFirst()){
-//			invites.add(createInvitedFromCursor(result));
-//			
-//		}
-//		result.close();
-//		return invites;
-//	}
+		result.close();
+		return item;
+	}
 
+	// TODO javadoc
+	private static void updateEventStatusInLocalDb(Context context, Event event) {
+		if (event.getMyInvite() != null) {
+			event.getMyInvite().setStatus(event.getStatus());
+		}
+		ContentValues cv = new ContentValues();
+		cv.put(EventsProvider.EMetaData.EventsMetaData.STATUS,
+				event.getStatus());
+		cv.put(EventsProvider.EMetaData.EventsMetaData.INVITED,
+				parseInvitedListToJSONArray(event.getInvited()));
+		Uri uri = EventsProvider.EMetaData.EventsMetaData.CONTENT_URI;
+		String where = EventsProvider.EMetaData.EventsMetaData._ID + "="
+				+ event.getInternalID();
+		context.getContentResolver().update(uri, cv, where, null);
+	}
 
+	public static void resetEventsNewMessageCount(Context context, int eventId) {
+		ContentValues cv = new ContentValues();
+		cv.put(EventsProvider.EMetaData.EventsMetaData.NEW_MESSAGES_COUNT, "0");
+		Uri uri = EventsProvider.EMetaData.EventsMetaData.CONTENT_URI;
+		String where = EventsProvider.EMetaData.EventsMetaData.E_ID + "="
+				+ eventId;
+		context.getContentResolver().update(uri, cv, where, null);
+	}
 
-/////////////////////////////////////////////////////METHODS THAT WORK WITH RMOTE DB//////////////////////////////////////////////////////	
-		
-		
-		private static boolean updateEventStatusInServer(Context context, Event event) {
-			if (event.getEvent_id() == 0) return false;
-			boolean success = false;
+	// private static ArrayList<Invited> getInvitesForEvent(Context context,
+	// Event event) {
+	// ArrayList<Invited> invites = new ArrayList<Invited>();
+	// long id = event.getInternalID();
+	//
+	// String where = EventsProvider.EMetaData.InvitedMetaData.EVENT_ID + "=" +
+	// id;
+	// Uri uri = EventsProvider.EMetaData.InvitedMetaData.CONTENT_URI;
+	// Cursor result = context.getContentResolver().query(uri, null, where,
+	// null, null);
+	// if (result.moveToFirst()){
+	// invites.add(createInvitedFromCursor(result));
+	//
+	// }
+	// result.close();
+	// return invites;
+	// }
 
-			try {
-				Account account = new Account(context);
-				HttpClient hc = MySSLSocketFactory.getNewHttpClient();
-				HttpPost post = new HttpPost(Data.getServerUrl() + "mobile/set_event_status");
+	// ///////////////////////////////////////////////////METHODS THAT WORK WITH
+	// RMOTE DB//////////////////////////////////////////////////////
 
-				MultipartEntity reqEntity = new MultipartEntity(HttpMultipartMode.BROWSER_COMPATIBLE);
-				reqEntity.addPart(TOKEN, new StringBody(Data.getToken(context), Charset.forName("UTF-8")));
-				reqEntity.addPart(EVENT_ID, new StringBody("" + event.getEvent_id(), Charset.forName("UTF-8")));
-				reqEntity.addPart(STATUS, new StringBody("" + event.getStatus(), Charset.forName("UTF-8")));
-				reqEntity.addPart("session", new StringBody(account.getSessionId(), Charset.forName("UTF-8")));
-				post.setEntity(reqEntity);
-				
-				if (DataManagement.networkAvailable) {
-					HttpResponse rp = hc.execute(post);
-
-					if (rp.getStatusLine().getStatusCode() == HttpStatus.SC_OK) {
-						String resp = EntityUtils.toString(rp.getEntity());
-						if (resp != null) {
-							JSONObject object = new JSONObject(resp);
-							success = object.getBoolean(SUCCESS);
-							if (!success) {
-								Log.e("Response to event error", object.getJSONObject("error").getString(REASON));
-								return false;
-							} else {
-								return true;
-							}
-
-					
-						}
-					} else {
-						Log.e("createEvent - status", rp.getStatusLine().getStatusCode() + "");
-					}
-				}
-			} catch (Exception ex) {
-				Reporter.reportError(context, DataManagement.class.toString(), Thread.currentThread().getStackTrace()[2].getMethodName().toString(),
-						ex.getMessage());
-			}
-		
+	private static boolean updateEventStatusInServer(Context context,
+			Event event) {
+		if (event.getEvent_id() == 0)
 			return false;
-		}
-		
-		/**
-		 * Creates event in remote DB and returns event ID if success.
-		 * 
-		 * @param e
-		 *            - event to create
-		 * @return event id. If create failed, returns 0.
-		 */
-		public static int createEventInRemoteDb(Context context, Event e) {
-			boolean success = false;
+		boolean success = false;
 
-			try {
-				HttpClient hc = MySSLSocketFactory.getNewHttpClient();
-				HttpPost post = new HttpPost(Data.getServerUrl() + "mobile/events_create");
+		try {
+			Account account = new Account(context);
+			HttpClient hc = MySSLSocketFactory.getNewHttpClient();
+			HttpPost post = new HttpPost(Data.getServerUrl()
+					+ "mobile/set_event_status");
 
-				MultipartEntity reqEntity = new MultipartEntity(HttpMultipartMode.BROWSER_COMPATIBLE);
+			MultipartEntity reqEntity = new MultipartEntity(
+					HttpMultipartMode.BROWSER_COMPATIBLE);
+			reqEntity.addPart(TOKEN, new StringBody(Data.getToken(context),
+					Charset.forName("UTF-8")));
+			reqEntity.addPart(EVENT_ID, new StringBody(
+					"" + event.getEvent_id(), Charset.forName("UTF-8")));
+			reqEntity.addPart(STATUS, new StringBody("" + event.getStatus(),
+					Charset.forName("UTF-8")));
+			reqEntity.addPart("session", new StringBody(account.getSessionId(),
+					Charset.forName("UTF-8")));
+			post.setEntity(reqEntity);
 
-				reqEntity.addPart(TOKEN, new StringBody(Data.getToken(context), Charset.forName("UTF-8")));
+			if (DataManagement.networkAvailable) {
+				HttpResponse rp = hc.execute(post);
 
-				if (e.getIcon().length() > 0)
-					reqEntity.addPart("icon", new StringBody(e.getIcon(), Charset.forName("UTF-8")));
+				if (rp.getStatusLine().getStatusCode() == HttpStatus.SC_OK) {
+					String resp = EntityUtils.toString(rp.getEntity());
+					if (resp != null) {
+						JSONObject object = new JSONObject(resp);
+						success = object.getBoolean(SUCCESS);
+						if (!success) {
+							Log.e("Response to event error", object
+									.getJSONObject("error").getString(REASON));
+							return false;
+						} else {
+							return true;
+						}
 
-				reqEntity.addPart("color", new StringBody(e.getColor(), Charset.forName("UTF-8")));
-
-				reqEntity.addPart("title", new StringBody(e.getTitle(), Charset.forName("UTF-8")));
-
-				reqEntity.addPart("timestamp_start_utc",
-						new StringBody("" + Utils.millisToUnixTimestamp(e.getStartCalendar().getTimeInMillis()), Charset.forName("UTF-8")));
-				reqEntity.addPart("timestamp_end_utc", new StringBody("" + Utils.millisToUnixTimestamp(e.getEndCalendar().getTimeInMillis()), Charset.forName("UTF-8")));
-
-				
-				reqEntity.addPart("description", new StringBody(e.getDescription(), Charset.forName("UTF-8")));
-				
-
-				if (e.getCountry().length() > 0)
-					reqEntity.addPart("country", new StringBody(e.getCountry(), Charset.forName("UTF-8")));
-				if (e.getCity().length() > 0)
-					reqEntity.addPart("city", new StringBody(e.getCity(), Charset.forName("UTF-8")));
-				if (e.getStreet().length() > 0)
-					reqEntity.addPart("street", new StringBody(e.getStreet(), Charset.forName("UTF-8")));
-				if (e.getZip().length() > 0)
-					reqEntity.addPart("zip", new StringBody(e.getZip(), Charset.forName("UTF-8")));
-				reqEntity.addPart(TIMEZONE, new StringBody(e.getTimezone(), Charset.forName("UTF-8")));
-
-				
-				if (e.getLocation().length() > 0)
-					reqEntity.addPart("location", new StringBody(e.getLocation(), Charset.forName("UTF-8")));
-				if (e.getGo_by().length() > 0)
-					reqEntity.addPart("go_by", new StringBody(e.getGo_by(), Charset.forName("UTF-8")));
-				if (e.getTake_with_you().length() > 0)
-					reqEntity.addPart("take_with_you", new StringBody(e.getTake_with_you(), Charset.forName("UTF-8")));
-				if (e.getCost().length() > 0)
-					reqEntity.addPart("cost", new StringBody(e.getCost(), Charset.forName("UTF-8")));
-				if (e.getAccomodation().length() > 0)
-					reqEntity.addPart("accomodation", new StringBody(e.getAccomodation(), Charset.forName("UTF-8")));
-				if (e.getAssigned_contacts() != null) {
-					for (int i = 0, l = e.getAssigned_contacts().length; i < l; i++) {
-						reqEntity.addPart("contacts[]", new StringBody(String.valueOf(e.getAssigned_contacts()[i]), Charset.forName("UTF-8")));
 					}
 				} else {
-					reqEntity.addPart("contacts[]", new StringBody("", Charset.forName("UTF-8")));
+					Log.e("createEvent - status", rp.getStatusLine()
+							.getStatusCode() + "");
 				}
-//				if (e.assigned_groups != null) {
-//					for (int i = 0, l = e.assigned_groups.length; i < l; i++) {
-//						reqEntity.addPart("groups[]", new StringBody(String.valueOf(e.assigned_groups[i])));
-//					}
-//				} else {
-//					reqEntity.addPart("groups[]", new StringBody(""));
-//				}
+			}
+		} catch (Exception ex) {
+			Reporter.reportError(context, DataManagement.class.toString(),
+					Thread.currentThread().getStackTrace()[2].getMethodName()
+							.toString(), ex.getMessage());
+		}
 
-				if (e.getAlarm1() != null) {
-					reqEntity.addPart("a1", new StringBody("" + Utils.millisToUnixTimestamp(e.getAlarm1().getTimeInMillis()), Charset.forName("UTF-8")));
-				}
-				if (e.getAlarm2() != null) {
-					reqEntity.addPart("a2", new StringBody("" + Utils.millisToUnixTimestamp(e.getAlarm2().getTimeInMillis()), Charset.forName("UTF-8")));
-				}
-				if (e.getAlarm3() != null) {
-					reqEntity.addPart("a3", new StringBody("" + Utils.millisToUnixTimestamp(e.getAlarm3().getTimeInMillis()), Charset.forName("UTF-8")));
-				}
+		return false;
+	}
 
-				if (e.getReminder1() != null) {
-					reqEntity.addPart("r1", new StringBody("" + Utils.millisToUnixTimestamp(e.getReminder1().getTimeInMillis()), Charset.forName("UTF-8")));
-				}
-				if (e.getReminder2() != null) {
-					reqEntity.addPart("r2", new StringBody("" + Utils.millisToUnixTimestamp(e.getReminder2().getTimeInMillis()), Charset.forName("UTF-8")));
-				}
-				if (e.getReminder3() != null) {
-					reqEntity.addPart("r3", new StringBody("" + Utils.millisToUnixTimestamp(e.getReminder3().getTimeInMillis()), Charset.forName("UTF-8")));
-				}
+	/**
+	 * Creates event in remote DB and returns event ID if success.
+	 * 
+	 * @param e
+	 *            - event to create
+	 * @return event id. If create failed, returns 0.
+	 */
+	public static int createEventInRemoteDb(Context context, Event e) {
+		boolean success = false;
 
-				if (e.isBirthday()) {
-					reqEntity.addPart("bd", new StringBody("1", Charset.forName("UTF-8")));
+		try {
+			HttpClient hc = MySSLSocketFactory.getNewHttpClient();
+			HttpPost post = new HttpPost(Data.getServerUrl()
+					+ "mobile/events_create");
+
+			MultipartEntity reqEntity = new MultipartEntity(
+					HttpMultipartMode.BROWSER_COMPATIBLE);
+
+			reqEntity.addPart(TOKEN, new StringBody(Data.getToken(context),
+					Charset.forName("UTF-8")));
+
+			if (e.getIcon().length() > 0)
+				reqEntity.addPart("icon",
+						new StringBody(e.getIcon(), Charset.forName("UTF-8")));
+
+			reqEntity.addPart("color",
+					new StringBody(e.getColor(), Charset.forName("UTF-8")));
+
+			reqEntity.addPart("title",
+					new StringBody(e.getTitle(), Charset.forName("UTF-8")));
+
+			reqEntity.addPart(
+					"timestamp_start_utc",
+					new StringBody(""
+							+ Utils.millisToUnixTimestamp(e.getStartCalendar()
+									.getTimeInMillis()), Charset
+							.forName("UTF-8")));
+			reqEntity.addPart(
+					"timestamp_end_utc",
+					new StringBody(""
+							+ Utils.millisToUnixTimestamp(e.getEndCalendar()
+									.getTimeInMillis()), Charset
+							.forName("UTF-8")));
+
+			reqEntity.addPart("description", new StringBody(e.getDescription(),
+					Charset.forName("UTF-8")));
+
+			if (e.getCountry().length() > 0)
+				reqEntity.addPart("country", new StringBody(e.getCountry(),
+						Charset.forName("UTF-8")));
+			if (e.getCity().length() > 0)
+				reqEntity.addPart("city",
+						new StringBody(e.getCity(), Charset.forName("UTF-8")));
+			if (e.getStreet().length() > 0)
+				reqEntity.addPart("street", new StringBody(e.getStreet(),
+						Charset.forName("UTF-8")));
+			if (e.getZip().length() > 0)
+				reqEntity.addPart("zip",
+						new StringBody(e.getZip(), Charset.forName("UTF-8")));
+			reqEntity.addPart(TIMEZONE,
+					new StringBody(e.getTimezone(), Charset.forName("UTF-8")));
+
+			if (e.getLocation().length() > 0)
+				reqEntity.addPart("location", new StringBody(e.getLocation(),
+						Charset.forName("UTF-8")));
+			if (e.getGo_by().length() > 0)
+				reqEntity.addPart("go_by",
+						new StringBody(e.getGo_by(), Charset.forName("UTF-8")));
+			if (e.getTake_with_you().length() > 0)
+				reqEntity.addPart(
+						"take_with_you",
+						new StringBody(e.getTake_with_you(), Charset
+								.forName("UTF-8")));
+			if (e.getCost().length() > 0)
+				reqEntity.addPart("cost",
+						new StringBody(e.getCost(), Charset.forName("UTF-8")));
+			if (e.getAccomodation().length() > 0)
+				reqEntity.addPart(
+						"accomodation",
+						new StringBody(e.getAccomodation(), Charset
+								.forName("UTF-8")));
+			if (e.getAssigned_contacts() != null) {
+				for (int i = 0, l = e.getAssigned_contacts().length; i < l; i++) {
+					reqEntity.addPart(
+							"contacts[]",
+							new StringBody(String.valueOf(e
+									.getAssigned_contacts()[i]), Charset
+									.forName("UTF-8")));
 				}
-				Account account = new Account(context);
-				reqEntity.addPart("session", new StringBody(account.getSessionId(), Charset.forName("UTF-8")));
-				post.setEntity(reqEntity);
+			} else {
+				reqEntity.addPart("contacts[]",
+						new StringBody("", Charset.forName("UTF-8")));
+			}
+			// if (e.assigned_groups != null) {
+			// for (int i = 0, l = e.assigned_groups.length; i < l; i++) {
+			// reqEntity.addPart("groups[]", new
+			// StringBody(String.valueOf(e.assigned_groups[i])));
+			// }
+			// } else {
+			// reqEntity.addPart("groups[]", new StringBody(""));
+			// }
 
-				if (DataManagement.networkAvailable) {
-					HttpResponse rp = hc.execute(post);
+			if (e.getAlarm1() != null) {
+				reqEntity.addPart(
+						"a1",
+						new StringBody(""
+								+ Utils.millisToUnixTimestamp(e.getAlarm1()
+										.getTimeInMillis()), Charset
+								.forName("UTF-8")));
+			}
+			if (e.getAlarm2() != null) {
+				reqEntity.addPart(
+						"a2",
+						new StringBody(""
+								+ Utils.millisToUnixTimestamp(e.getAlarm2()
+										.getTimeInMillis()), Charset
+								.forName("UTF-8")));
+			}
+			if (e.getAlarm3() != null) {
+				reqEntity.addPart(
+						"a3",
+						new StringBody(""
+								+ Utils.millisToUnixTimestamp(e.getAlarm3()
+										.getTimeInMillis()), Charset
+								.forName("UTF-8")));
+			}
 
-					if (rp.getStatusLine().getStatusCode() == HttpStatus.SC_OK) {
-						String resp = EntityUtils.toString(rp.getEntity());
-						if (resp != null) {
-							// Log.e("createEvent - resp", resp + "!!!");
-							JSONObject object = new JSONObject(resp);
+			if (e.getReminder1() != null) {
+				reqEntity.addPart(
+						"r1",
+						new StringBody(""
+								+ Utils.millisToUnixTimestamp(e.getReminder1()
+										.getTimeInMillis()), Charset
+								.forName("UTF-8")));
+			}
+			if (e.getReminder2() != null) {
+				reqEntity.addPart(
+						"r2",
+						new StringBody(""
+								+ Utils.millisToUnixTimestamp(e.getReminder2()
+										.getTimeInMillis()), Charset
+								.forName("UTF-8")));
+			}
+			if (e.getReminder3() != null) {
+				reqEntity.addPart(
+						"r3",
+						new StringBody(""
+								+ Utils.millisToUnixTimestamp(e.getReminder3()
+										.getTimeInMillis()), Charset
+								.forName("UTF-8")));
+			}
+
+			if (e.isBirthday()) {
+				reqEntity.addPart("bd",
+						new StringBody("1", Charset.forName("UTF-8")));
+			}
+			Account account = new Account(context);
+			reqEntity.addPart("session", new StringBody(account.getSessionId(),
+					Charset.forName("UTF-8")));
+			post.setEntity(reqEntity);
+
+			if (DataManagement.networkAvailable) {
+				HttpResponse rp = hc.execute(post);
+
+				if (rp.getStatusLine().getStatusCode() == HttpStatus.SC_OK) {
+					String resp = EntityUtils.toString(rp.getEntity());
+					if (resp != null) {
+						// Log.e("createEvent - resp", resp + "!!!");
+						JSONObject object = new JSONObject(resp);
+						success = object.getBoolean("success");
+
+						// Log.e("createEvent - success", "" + success);
+
+						if (!success) {
+							Log.e("Create event error",
+									object.getJSONObject("error").getString(
+											"reason"));
+							return 0;
+						} else {
+							return object.optInt("event_id");
+						}
+					}
+				} else {
+					Log.e("createEvent - status", rp.getStatusLine()
+							.getStatusCode() + "");
+				}
+			} else {
+				OfflineData uplooad = new OfflineData("mobile/events_create",
+						reqEntity);
+				Data.getUnuploadedData().add(uplooad);
+			}
+		} catch (Exception ex) {
+			Reporter.reportError(context, DataManagement.class.toString(),
+					Thread.currentThread().getStackTrace()[2].getMethodName()
+							.toString(), ex.getMessage());
+		}
+		return 0;
+
+	}
+
+	private static boolean editEvent(Context context, Event e) {
+		boolean success = false;
+
+		try {
+			HttpClient hc = MySSLSocketFactory.getNewHttpClient();
+			HttpPost post = new HttpPost(Data.getServerUrl()
+					+ "mobile/events_edit");
+
+			MultipartEntity reqEntity = new MultipartEntity(
+					HttpMultipartMode.BROWSER_COMPATIBLE);
+
+			reqEntity.addPart(TOKEN, new StringBody(Data.getToken(context),
+					Charset.forName("UTF-8")));
+			reqEntity.addPart(
+					"event_id",
+					new StringBody(String.valueOf(e.getEvent_id()), Charset
+							.forName("UTF-8")));
+
+			reqEntity.addPart("event_type",
+					new StringBody(e.getType(), Charset.forName("UTF-8")));
+
+			reqEntity.addPart("icon",
+					new StringBody(e.getIcon(), Charset.forName("UTF-8")));
+			reqEntity.addPart("color",
+					new StringBody(e.getColor(), Charset.forName("UTF-8")));
+
+			reqEntity.addPart("title",
+					new StringBody(e.getTitle(), Charset.forName("UTF-8")));
+
+			reqEntity.addPart(
+					"timestamp_start_utc",
+					new StringBody(""
+							+ Utils.millisToUnixTimestamp(e.getStartCalendar()
+									.getTimeInMillis()), Charset
+							.forName("UTF-8")));
+			reqEntity.addPart(
+					"timestamp_end_utc",
+					new StringBody(""
+							+ Utils.millisToUnixTimestamp(e.getEndCalendar()
+									.getTimeInMillis()), Charset
+							.forName("UTF-8")));
+
+			reqEntity.addPart("timezone", new StringBody(e.getTimezone(),
+					Charset.forName("UTF-8")));
+
+			reqEntity.addPart("description", new StringBody(e.getDescription(),
+					Charset.forName("UTF-8")));
+
+			reqEntity.addPart("country",
+					new StringBody(e.getCountry(), Charset.forName("UTF-8")));
+			reqEntity.addPart("zip",
+					new StringBody(e.getZip(), Charset.forName("UTF-8")));
+			reqEntity.addPart("city",
+					new StringBody(e.getCity(), Charset.forName("UTF-8")));
+			reqEntity.addPart("street",
+					new StringBody(e.getStreet(), Charset.forName("UTF-8")));
+			reqEntity.addPart("location", new StringBody(e.getLocation(),
+					Charset.forName("UTF-8")));
+
+			reqEntity.addPart("go_by",
+					new StringBody(e.getGo_by(), Charset.forName("UTF-8")));
+			reqEntity.addPart(
+					"take_with_you",
+					new StringBody(e.getTake_with_you(), Charset
+							.forName("UTF-8")));
+			reqEntity.addPart("cost",
+					new StringBody(e.getCost(), Charset.forName("UTF-8")));
+			reqEntity.addPart(
+					"accomodation",
+					new StringBody(e.getAccomodation(), Charset
+							.forName("UTF-8")));
+
+			if (e.getAlarm1() != null) {
+				reqEntity.addPart(
+						"a1",
+						new StringBody(""
+								+ Utils.millisToUnixTimestamp(e.getAlarm1()
+										.getTimeInMillis()), Charset
+								.forName("UTF-8")));
+			}
+			if (e.getAlarm2() != null) {
+				reqEntity.addPart(
+						"a2",
+						new StringBody(""
+								+ Utils.millisToUnixTimestamp(e.getAlarm2()
+										.getTimeInMillis()), Charset
+								.forName("UTF-8")));
+			}
+			if (e.getAlarm3() != null) {
+				reqEntity.addPart(
+						"a3",
+						new StringBody(""
+								+ Utils.millisToUnixTimestamp(e.getAlarm3()
+										.getTimeInMillis()), Charset
+								.forName("UTF-8")));
+			}
+
+			if (e.getReminder1() != null) {
+				reqEntity.addPart(
+						"r1",
+						new StringBody(""
+								+ Utils.millisToUnixTimestamp(e.getReminder1()
+										.getTimeInMillis()), Charset
+								.forName("UTF-8")));
+			}
+			if (e.getReminder2() != null) {
+				reqEntity.addPart(
+						"r2",
+						new StringBody(""
+								+ Utils.millisToUnixTimestamp(e.getReminder2()
+										.getTimeInMillis()), Charset
+								.forName("UTF-8")));
+			}
+			if (e.getReminder3() != null) {
+				reqEntity.addPart(
+						"r3",
+						new StringBody(""
+								+ Utils.millisToUnixTimestamp(e.getReminder3()
+										.getTimeInMillis()), Charset
+								.forName("UTF-8")));
+			}
+
+			// if (Data.selectedContacts != null &&
+			// !Data.selectedContacts.isEmpty()) {
+			// e.assigned_contacts = new int[Data.selectedContacts.size()];
+			// int i = 0;
+			// for (Contact contact : Data.selectedContacts) {
+			// e.assigned_contacts[i] = contact.contact_id;
+			// i++;
+			// }
+			// }
+			if (e.getAssigned_contacts() != null) {
+				for (int i = 0, l = e.getAssigned_contacts().length; i < l; i++) {
+					reqEntity.addPart(
+							"contacts[]",
+							new StringBody(String.valueOf(e
+									.getAssigned_contacts()[i]), Charset
+									.forName("UTF-8")));
+				}
+			} else {
+				reqEntity.addPart("contacts[]",
+						new StringBody("", Charset.forName("UTF-8")));
+			}
+
+			Account account = new Account(context);
+			// if (e.assigned_groups != null) {
+			// for (int i = 0, l = e.assigned_groups.length; i < l; i++) {
+			// reqEntity.addPart("groups[]", new
+			// StringBody(String.valueOf(e.assigned_groups[i])),
+			// Charset.forName("UTF-8"));
+			// }
+			// } else {
+			// reqEntity.addPart("groups[]", new StringBody("",
+			// Charset.forName("UTF-8")));
+			// }
+			reqEntity.addPart("session", new StringBody(account.getSessionId(),
+					Charset.forName("UTF-8")));
+			post.setEntity(reqEntity);
+
+			if (DataManagement.networkAvailable) {
+				HttpResponse rp = hc.execute(post);
+
+				if (rp.getStatusLine().getStatusCode() == HttpStatus.SC_OK) {
+					String resp = EntityUtils.toString(rp.getEntity());
+					if (resp != null) {
+						JSONObject object = new JSONObject(resp);
+						success = object.getBoolean("success");
+						if (!success) {
+							Log.e("Edit event ERROR",
+									object.getJSONObject("error").getString(
+											"reason"));
+						}
+					}
+				}
+			} else {
+				OfflineData uplooad = new OfflineData("mobile/events_edit",
+						reqEntity);
+				Data.getUnuploadedData().add(uplooad);
+			}
+		} catch (Exception ex) {
+			Reporter.reportError(context, CLASS_NAME, Thread.currentThread()
+					.getStackTrace()[2].getMethodName().toString(), ex
+					.getMessage());
+			success = false;
+		}
+
+		return success;
+	}
+
+	public static boolean removeEvent(Context context, int id) {
+		boolean success = false;
+
+		try {
+			Account account = new Account(context);
+			HttpClient hc = MySSLSocketFactory.getNewHttpClient();
+			HttpPost post = new HttpPost(Data.getServerUrl()
+					+ "mobile/events_remove");
+
+			MultipartEntity reqEntity = new MultipartEntity(
+					HttpMultipartMode.BROWSER_COMPATIBLE);
+
+			reqEntity.addPart(TOKEN, new StringBody(Data.getToken(context),
+					Charset.forName("UTF-8")));
+			reqEntity.addPart("event_id", new StringBody(String.valueOf(id),
+					Charset.forName("UTF-8")));
+			reqEntity.addPart("session", new StringBody(account.getSessionId(),
+					Charset.forName("UTF-8")));
+			post.setEntity(reqEntity);
+
+			if (DataManagement.networkAvailable) {
+				HttpResponse rp = hc.execute(post);
+
+				if (rp.getStatusLine().getStatusCode() == HttpStatus.SC_OK) {
+					String resp = EntityUtils.toString(rp.getEntity());
+					if (resp != null) {
+						JSONObject object = new JSONObject(resp);
+						String successStr = object.getString("success");
+
+						if (successStr.equals("null")) {
+							success = false;
+						} else {
 							success = object.getBoolean("success");
-
-							// Log.e("createEvent - success", "" + success);
-
-							if (!success) {
-								Log.e("Create event error", object.getJSONObject("error").getString("reason"));
-								return 0;
-							} else {
-								return object.optInt("event_id");
-							}
 						}
-					} else {
-						Log.e("createEvent - status", rp.getStatusLine().getStatusCode() + "");
-					}
-				} else {
-					OfflineData uplooad = new OfflineData("mobile/events_create", reqEntity);
-					Data.getUnuploadedData().add(uplooad);
-				}
-			} catch (Exception ex) {
-				Reporter.reportError(context, DataManagement.class.toString(), Thread.currentThread().getStackTrace()[2].getMethodName().toString(),
-						ex.getMessage());
-			}
-			return 0;
 
-		}
-		
-		private static boolean editEvent(Context context, Event e) {
-			boolean success = false;
+						// Log.e("removeEvent - success", "" + success);
 
-			try {
-				HttpClient hc = MySSLSocketFactory.getNewHttpClient();
-				HttpPost post = new HttpPost(Data.getServerUrl() + "mobile/events_edit");
-
-				MultipartEntity reqEntity = new MultipartEntity(HttpMultipartMode.BROWSER_COMPATIBLE);
-
-				reqEntity.addPart(TOKEN, new StringBody(Data.getToken(context), Charset.forName("UTF-8")));
-				reqEntity.addPart("event_id", new StringBody(String.valueOf(e.getEvent_id()), Charset.forName("UTF-8")));
-
-				reqEntity.addPart("event_type", new StringBody(e.getType(), Charset.forName("UTF-8")));
-
-				reqEntity.addPart("icon", new StringBody(e.getIcon(), Charset.forName("UTF-8")));
-				reqEntity.addPart("color", new StringBody(e.getColor(), Charset.forName("UTF-8")));
-
-				reqEntity.addPart("title", new StringBody(e.getTitle(), Charset.forName("UTF-8")));
-
-				reqEntity.addPart("timestamp_start_utc",
-						new StringBody("" + Utils.millisToUnixTimestamp(e.getStartCalendar().getTimeInMillis()), Charset.forName("UTF-8")));
-				reqEntity.addPart("timestamp_end_utc", new StringBody("" + Utils.millisToUnixTimestamp(e.getEndCalendar().getTimeInMillis()), Charset.forName("UTF-8")));
-
-				reqEntity.addPart("timezone", new StringBody(e.getTimezone(), Charset.forName("UTF-8")));
-
-				reqEntity.addPart("description", new StringBody(e.getDescription(), Charset.forName("UTF-8")));
-
-				reqEntity.addPart("country", new StringBody(e.getCountry(), Charset.forName("UTF-8")));
-				reqEntity.addPart("zip", new StringBody(e.getZip(), Charset.forName("UTF-8")));
-				reqEntity.addPart("city", new StringBody(e.getCity(), Charset.forName("UTF-8")));
-				reqEntity.addPart("street", new StringBody(e.getStreet(), Charset.forName("UTF-8")));
-				reqEntity.addPart("location", new StringBody(e.getLocation(), Charset.forName("UTF-8")));
-
-				reqEntity.addPart("go_by", new StringBody(e.getGo_by(), Charset.forName("UTF-8")));
-				reqEntity.addPart("take_with_you", new StringBody(e.getTake_with_you(), Charset.forName("UTF-8")));
-				reqEntity.addPart("cost", new StringBody(e.getCost(), Charset.forName("UTF-8")));
-				reqEntity.addPart("accomodation", new StringBody(e.getAccomodation(), Charset.forName("UTF-8")));
-				
-				if(e.getAlarm1() != null){
-					reqEntity.addPart("a1", new StringBody("" + Utils.millisToUnixTimestamp(e.getAlarm1().getTimeInMillis()), Charset.forName("UTF-8")));
-				}
-				if(e.getAlarm2() != null){
-					reqEntity.addPart("a2", new StringBody("" + Utils.millisToUnixTimestamp(e.getAlarm2().getTimeInMillis()), Charset.forName("UTF-8")));
-				}
-				if(e.getAlarm3() != null){
-					reqEntity.addPart("a3", new StringBody("" + Utils.millisToUnixTimestamp(e.getAlarm3().getTimeInMillis()), Charset.forName("UTF-8")));
-				}
-
-				if(e.getReminder1() != null){
-					reqEntity.addPart("r1", new StringBody("" + Utils.millisToUnixTimestamp(e.getReminder1().getTimeInMillis()), Charset.forName("UTF-8")));
-				}
-				if(e.getReminder2() != null){
-					reqEntity.addPart("r2", new StringBody("" + Utils.millisToUnixTimestamp(e.getReminder2().getTimeInMillis()), Charset.forName("UTF-8")));
-				}
-				if(e.getReminder3() != null){
-					reqEntity.addPart("r3", new StringBody("" + Utils.millisToUnixTimestamp(e.getReminder3().getTimeInMillis()), Charset.forName("UTF-8")));
-				}
-
-//				if (Data.selectedContacts != null && !Data.selectedContacts.isEmpty()) {
-//					e.assigned_contacts = new int[Data.selectedContacts.size()];
-//					int i = 0;
-//					for (Contact contact : Data.selectedContacts) {
-//						e.assigned_contacts[i] = contact.contact_id;
-//						i++;
-//					}
-//				}
-				if (e.getAssigned_contacts() != null) {
-					for (int i = 0, l = e.getAssigned_contacts().length; i < l; i++) {
-						reqEntity.addPart("contacts[]", new StringBody(String.valueOf(e.getAssigned_contacts()[i]), Charset.forName("UTF-8")));
-					}
-				} else {
-					reqEntity.addPart("contacts[]", new StringBody("", Charset.forName("UTF-8")));
-				}
-				
-
-				Account account = new Account(context);
-				//				if (e.assigned_groups != null) {
-//					for (int i = 0, l = e.assigned_groups.length; i < l; i++) {
-//						reqEntity.addPart("groups[]", new StringBody(String.valueOf(e.assigned_groups[i])), Charset.forName("UTF-8"));
-//					}
-//				} else {
-//					reqEntity.addPart("groups[]", new StringBody("", Charset.forName("UTF-8")));
-//				}
-				reqEntity.addPart("session", new StringBody(account.getSessionId(), Charset.forName("UTF-8")));
-				post.setEntity(reqEntity);
-
-				if (DataManagement.networkAvailable) {
-					HttpResponse rp = hc.execute(post);
-
-					if (rp.getStatusLine().getStatusCode() == HttpStatus.SC_OK) {
-						String resp = EntityUtils.toString(rp.getEntity());
-						if (resp != null) {
-							JSONObject object = new JSONObject(resp);
-							success = object.getBoolean("success");
-							if (!success) {
-								Log.e("Edit event ERROR", object.getJSONObject("error").getString("reason"));
-							}
+						if (success == false) {
+							// array of errors!!!
+							JSONObject errObj = object.getJSONObject("error");
+							EventManagement.error = (errObj.getString("reason"));
+							Log.e("removeEvent - error: ", Data.getERROR());
+						} else {
+							// Data.getEvents().remove(getEventFromLocalDb(id));
 						}
 					}
-				} else {
-					OfflineData uplooad = new OfflineData("mobile/events_edit", reqEntity);
-					Data.getUnuploadedData().add(uplooad);
 				}
-			} catch (Exception ex) {
-				Reporter.reportError(context, CLASS_NAME, Thread.currentThread().getStackTrace()[2].getMethodName().toString(),
-						ex.getMessage());
-				success = false;
+			} else {
+				OfflineData uplooad = new OfflineData("mobile/events_remove",
+						reqEntity);
+				Data.getUnuploadedData().add(uplooad);
 			}
-
-			return success;
+		} catch (Exception ex) {
+			Reporter.reportError(context, CLASS_NAME, Thread.currentThread()
+					.getStackTrace()[2].getMethodName().toString(), ex
+					.getMessage());
 		}
-		
-		public static boolean removeEvent(Context context, int id) {
-			boolean success = false;
+		return success;
+	}
 
-			try {
-				Account account = new Account(context);
-				HttpClient hc = MySSLSocketFactory.getNewHttpClient();
-				HttpPost post = new HttpPost(Data.getServerUrl() + "mobile/events_remove");
-
-				MultipartEntity reqEntity = new MultipartEntity(HttpMultipartMode.BROWSER_COMPATIBLE);
-
-				reqEntity.addPart(TOKEN, new StringBody(Data.getToken(context), Charset.forName("UTF-8")));
-				reqEntity.addPart("event_id", new StringBody(String.valueOf(id), Charset.forName("UTF-8")));
-				reqEntity.addPart("session", new StringBody(account.getSessionId(), Charset.forName("UTF-8")));
-				post.setEntity(reqEntity);
-
-				if (DataManagement.networkAvailable) {
-					HttpResponse rp = hc.execute(post);
-
-					if (rp.getStatusLine().getStatusCode() == HttpStatus.SC_OK) {
-						String resp = EntityUtils.toString(rp.getEntity());
-						if (resp != null) {
-							JSONObject object = new JSONObject(resp);
-							String successStr = object.getString("success");
-
-							if (successStr.equals("null")) {
-								success = false;
-							} else {
-								success = object.getBoolean("success");
-							}
-
-							// Log.e("removeEvent - success", "" + success);
-
-							if (success == false) {
-								// array of errors!!!
-								JSONObject errObj = object.getJSONObject("error");
-								EventManagement.error = (errObj.getString("reason"));
-								Log.e("removeEvent - error: ", Data.getERROR());
-							} else {
-//								Data.getEvents().remove(getEventFromLocalDb(id));
-							}
-						}
-					}
-				} else {
-					OfflineData uplooad = new OfflineData("mobile/events_remove", reqEntity);
-					Data.getUnuploadedData().add(uplooad);
-				}
-			} catch (Exception ex) {
-				Reporter.reportError(context, CLASS_NAME, Thread.currentThread().getStackTrace()[2].getMethodName().toString(),
-						ex.getMessage());
-			}
-			return success;
-		}
-
-		
-////////////////////////////////////////////////////////////////////DB UTILITY METHODS////////////////////////////////////////////////////////////////////
-//	TODO javadoc
-		/**
-		 * Fills ContentValues instance with event data
-		 * IMPORTANT: _ID field must be set MANUALLY. this method does not take care of that
-		 * @param event
-		 * @return CV for event. 
-		 */
+	// //////////////////////////////////////////////////////////////////DB
+	// UTILITY
+	// METHODS////////////////////////////////////////////////////////////////////
+	// TODO javadoc
+	/**
+	 * Fills ContentValues instance with event data IMPORTANT: _ID field must be
+	 * set MANUALLY. this method does not take care of that
+	 * 
+	 * @param event
+	 * @return CV for event.
+	 */
 	protected static ContentValues createCVforEventsTable(Event event) {
 		ContentValues cv = new ContentValues();
-		cv.put(EventsProvider.EMetaData.EventsMetaData.E_ID, event.getEvent_id());
-		
-		
-		cv.put(EventsProvider.EMetaData.EventsMetaData.USER_ID, event.getUser_id());
-		cv.put(EventsProvider.EMetaData.EventsMetaData.UPLOADED_SUCCESSFULLY, event.isUploadedToServer()? 1 : 0);
-		cv.put(EventsProvider.EMetaData.EventsMetaData.STATUS, event.getStatus());
-		cv.put(EventsProvider.EMetaData.EventsMetaData.CREATOR_CONTACT_ID, event.getCreator_contact_id());
+		cv.put(EventsProvider.EMetaData.EventsMetaData.E_ID,
+				event.getEvent_id());
 
-		cv.put(EventsProvider.EMetaData.EventsMetaData.ATTENDANT_1_COUNT, event.getAttendant_1_count());
-		cv.put(EventsProvider.EMetaData.EventsMetaData.ATTENDANT_2_COUNT, event.getAttendant_2_count());
-		cv.put(EventsProvider.EMetaData.EventsMetaData.ATTENDANT_0_COUNT, event.getAttendant_0_count());
-		cv.put(EventsProvider.EMetaData.EventsMetaData.ATTENDANT_4_COUNT, event.getAttendant_4_count());
+		cv.put(EventsProvider.EMetaData.EventsMetaData.USER_ID,
+				event.getUser_id());
+		cv.put(EventsProvider.EMetaData.EventsMetaData.UPLOADED_SUCCESSFULLY,
+				event.isUploadedToServer() ? 1 : 0);
+		cv.put(EventsProvider.EMetaData.EventsMetaData.STATUS,
+				event.getStatus());
+		cv.put(EventsProvider.EMetaData.EventsMetaData.CREATOR_CONTACT_ID,
+				event.getCreator_contact_id());
+
+		cv.put(EventsProvider.EMetaData.EventsMetaData.ATTENDANT_1_COUNT,
+				event.getAttendant_1_count());
+		cv.put(EventsProvider.EMetaData.EventsMetaData.ATTENDANT_2_COUNT,
+				event.getAttendant_2_count());
+		cv.put(EventsProvider.EMetaData.EventsMetaData.ATTENDANT_0_COUNT,
+				event.getAttendant_0_count());
+		cv.put(EventsProvider.EMetaData.EventsMetaData.ATTENDANT_4_COUNT,
+				event.getAttendant_4_count());
 
 		// native events are not held in GA local db so we do not put
 		// Event.isNative
-		cv.put(EventsProvider.EMetaData.EventsMetaData.IS_SPORTS_EVENT, event.is_sports_event() ? 1 : 0);
-		cv.put(EventsProvider.EMetaData.EventsMetaData.IS_OWNER, event.is_owner() ? 1 : 0);
-		cv.put(EventsProvider.EMetaData.EventsMetaData.IS_ALL_DAY, event.is_all_day() ? 1 : 0);
-		cv.put(EventsProvider.EMetaData.EventsMetaData.IS_BIRTHDAY, event.isBirthday() ? 1 : 0);
+		cv.put(EventsProvider.EMetaData.EventsMetaData.IS_SPORTS_EVENT,
+				event.is_sports_event() ? 1 : 0);
+		cv.put(EventsProvider.EMetaData.EventsMetaData.IS_OWNER,
+				event.is_owner() ? 1 : 0);
+		cv.put(EventsProvider.EMetaData.EventsMetaData.IS_ALL_DAY,
+				event.is_all_day() ? 1 : 0);
+		cv.put(EventsProvider.EMetaData.EventsMetaData.IS_BIRTHDAY,
+				event.isBirthday() ? 1 : 0);
 
 		cv.put(EventsProvider.EMetaData.EventsMetaData.TYPE, event.getType());
-		cv.put(EventsProvider.EMetaData.EventsMetaData.CREATOR_FULLNAME, event.getCreator_fullname());
+		cv.put(EventsProvider.EMetaData.EventsMetaData.CREATOR_FULLNAME,
+				event.getCreator_fullname());
 		cv.put(EventsProvider.EMetaData.EventsMetaData.TITLE, event.getTitle());
 		cv.put(EventsProvider.EMetaData.EventsMetaData.ICON, event.getIcon());
 		cv.put(EventsProvider.EMetaData.EventsMetaData.COLOR, event.getColor());
-//		cv.put(EventsProvider.EMetaData.EventsMetaData.TEXT_COLOR, event.getTextColor());//2012-10-24
-		cv.put(EventsProvider.EMetaData.EventsMetaData.EVENT_DISPLAY_COLOR, event.getDisplayColor());//2012-10-24
-		cv.put(EventsProvider.EMetaData.EventsMetaData.DESC, event.getDescription());
-		cv.put(EventsProvider.EMetaData.EventsMetaData.LOCATION, event.getLocation());
-		cv.put(EventsProvider.EMetaData.EventsMetaData.ACCOMODATION, event.getAccomodation());
+		// cv.put(EventsProvider.EMetaData.EventsMetaData.TEXT_COLOR,
+		// event.getTextColor());//2012-10-24
+		cv.put(EventsProvider.EMetaData.EventsMetaData.EVENT_DISPLAY_COLOR,
+				event.getDisplayColor());// 2012-10-24
+		cv.put(EventsProvider.EMetaData.EventsMetaData.DESC,
+				event.getDescription());
+		cv.put(EventsProvider.EMetaData.EventsMetaData.LOCATION,
+				event.getLocation());
+		cv.put(EventsProvider.EMetaData.EventsMetaData.ACCOMODATION,
+				event.getAccomodation());
 		cv.put(EventsProvider.EMetaData.EventsMetaData.COST, event.getCost());
-		cv.put(EventsProvider.EMetaData.EventsMetaData.TAKE_WITH_YOU, event.getTake_with_you());
+		cv.put(EventsProvider.EMetaData.EventsMetaData.TAKE_WITH_YOU,
+				event.getTake_with_you());
 		cv.put(EventsProvider.EMetaData.EventsMetaData.GO_BY, event.getGo_by());
 
-		cv.put(EventsProvider.EMetaData.EventsMetaData.COUNTRY, event.getCountry());
+		cv.put(EventsProvider.EMetaData.EventsMetaData.COUNTRY,
+				event.getCountry());
 		cv.put(EventsProvider.EMetaData.EventsMetaData.CITY, event.getCity());
-		cv.put(EventsProvider.EMetaData.EventsMetaData.STREET, event.getStreet());
+		cv.put(EventsProvider.EMetaData.EventsMetaData.STREET,
+				event.getStreet());
 		cv.put(EventsProvider.EMetaData.EventsMetaData.ZIP, event.getZip());
 
 		// EVENT TIMES UTC
-		cv.put(EventsProvider.EMetaData.EventsMetaData.TIMEZONE, event.getTimezone());
-		if (event.getStartCalendar()!= null)cv.put(EventsProvider.EMetaData.EventsMetaData.TIME_START_UTC_MILLISECONDS, event.getStartCalendar().getTimeInMillis());
-		if (event.getEndCalendar()!= null)cv.put(EventsProvider.EMetaData.EventsMetaData.TIME_END_UTC_MILLISECONDS, event.getEndCalendar().getTimeInMillis());
+		cv.put(EventsProvider.EMetaData.EventsMetaData.TIMEZONE,
+				event.getTimezone());
+		if (event.getStartCalendar() != null)
+			cv.put(EventsProvider.EMetaData.EventsMetaData.TIME_START_UTC_MILLISECONDS,
+					event.getStartCalendar().getTimeInMillis());
+		if (event.getEndCalendar() != null)
+			cv.put(EventsProvider.EMetaData.EventsMetaData.TIME_END_UTC_MILLISECONDS,
+					event.getEndCalendar().getTimeInMillis());
 
 		// reminders
-		if (event.getReminder1() != null)cv.put(EventsProvider.EMetaData.EventsMetaData.REMINDER1, event.getReminder1().getTimeInMillis());
-		if (event.getReminder2() != null)cv.put(EventsProvider.EMetaData.EventsMetaData.REMINDER2, event.getReminder2().getTimeInMillis());
-		if (event.getReminder3() != null)cv.put(EventsProvider.EMetaData.EventsMetaData.REMINDER3, event.getReminder3().getTimeInMillis());
+		if (event.getReminder1() != null)
+			cv.put(EventsProvider.EMetaData.EventsMetaData.REMINDER1, event
+					.getReminder1().getTimeInMillis());
+		if (event.getReminder2() != null)
+			cv.put(EventsProvider.EMetaData.EventsMetaData.REMINDER2, event
+					.getReminder2().getTimeInMillis());
+		if (event.getReminder3() != null)
+			cv.put(EventsProvider.EMetaData.EventsMetaData.REMINDER3, event
+					.getReminder3().getTimeInMillis());
 
 		// TODO alarms DO SOMETHING WITH ALARM FIRED FIELDS
-		if (event.getAlarm1() != null) cv.put(EventsProvider.EMetaData.EventsMetaData.ALARM1, event.getAlarm1().getTimeInMillis());
-		if (event.getAlarm2() != null)cv.put(EventsProvider.EMetaData.EventsMetaData.ALARM2, event.getAlarm2().getTimeInMillis());
-		if (event.getAlarm3() != null)cv.put(EventsProvider.EMetaData.EventsMetaData.ALARM3, event.getAlarm3().getTimeInMillis());
+		if (event.getAlarm1() != null)
+			cv.put(EventsProvider.EMetaData.EventsMetaData.ALARM1, event
+					.getAlarm1().getTimeInMillis());
+		if (event.getAlarm2() != null)
+			cv.put(EventsProvider.EMetaData.EventsMetaData.ALARM2, event
+					.getAlarm2().getTimeInMillis());
+		if (event.getAlarm3() != null)
+			cv.put(EventsProvider.EMetaData.EventsMetaData.ALARM3, event
+					.getAlarm3().getTimeInMillis());
 
-		cv.put(EventsProvider.EMetaData.EventsMetaData.CREATED_UTC_MILLISECONDS, event.getCreatedUtc());
-		cv.put(EventsProvider.EMetaData.EventsMetaData.MODIFIED_UTC_MILLISECONDS, event.getModifiedMillisUtc());
-		cv.put(EventsProvider.EMetaData.EventsMetaData.INVITED, parseInvitedListToJSONArray(event.getInvited()));
-// TODO???
-//		cv.put(EventsProvider.EMetaData.EventsMetaData.ASSIGNED_CONTACTS, event.getAssigned_contacts_DB_entry());
-//		cv.put(EventsProvider.EMetaData.EventsMetaData.ASSIGNED_GROUPS, event.getAssigned_groups_DB_entry());
-		cv.put(EventsProvider.EMetaData.EventsMetaData.MESSAGES_COUNT, event.getMessage_count());
-		cv.put(EventsProvider.EMetaData.EventsMetaData.NEW_MESSAGES_COUNT, event.getNew_message_count());
-		cv.put(EventsProvider.EMetaData.EventsMetaData.LAST_MESSAGE_DATE_TIME_UTC_MILISECONDS, event.getLast_message_date_time());
+		cv.put(EventsProvider.EMetaData.EventsMetaData.CREATED_UTC_MILLISECONDS,
+				event.getCreatedUtc());
+		cv.put(EventsProvider.EMetaData.EventsMetaData.MODIFIED_UTC_MILLISECONDS,
+				event.getModifiedMillisUtc());
+		cv.put(EventsProvider.EMetaData.EventsMetaData.INVITED,
+				parseInvitedListToJSONArray(event.getInvited()));
+		// TODO???
+		// cv.put(EventsProvider.EMetaData.EventsMetaData.ASSIGNED_CONTACTS,
+		// event.getAssigned_contacts_DB_entry());
+		// cv.put(EventsProvider.EMetaData.EventsMetaData.ASSIGNED_GROUPS,
+		// event.getAssigned_groups_DB_entry());
+		cv.put(EventsProvider.EMetaData.EventsMetaData.MESSAGES_COUNT,
+				event.getMessage_count());
+		cv.put(EventsProvider.EMetaData.EventsMetaData.NEW_MESSAGES_COUNT,
+				event.getNew_message_count());
+		cv.put(EventsProvider.EMetaData.EventsMetaData.LAST_MESSAGE_DATE_TIME_UTC_MILISECONDS,
+				event.getLast_message_date_time());
 		return cv;
 	}
 
-private static String parseInvitedListToJSONArray(ArrayList<Invited> invited) {
-	if(invited.isEmpty()) return "[]";
-	StringBuilder sb = new StringBuilder();
-	sb.append('[');
-	for (Invited invite : invited){
-		sb.append('{');
-		sb.append(invite.toString());
-		sb.append('}');
-		sb.append(',');
+	private static String parseInvitedListToJSONArray(ArrayList<Invited> invited) {
+		if (invited.isEmpty())
+			return "[]";
+		StringBuilder sb = new StringBuilder();
+		sb.append('[');
+		for (Invited invite : invited) {
+			sb.append('{');
+			sb.append(invite.toString());
+			sb.append('}');
+			sb.append(',');
+		}
+		sb.deleteCharAt(sb.length() - 1);
+		sb.append(']');
+		return sb.toString();
 	}
-	sb.deleteCharAt(sb.length() - 1);
-	sb.append(']');
-	return sb.toString();
-}
 
-//	TODO javadoc
+	// TODO javadoc
 	protected static Event createEventFromCursor(Context context, Cursor result) {
 		Event item = new Event();
 		long timeinMillis;
-		item.setInternalID(result.getLong(result.getColumnIndex(EventsProvider.EMetaData.EventsMetaData._ID)));
-		item.setEvent_id(result.getInt(result.getColumnIndex(EventsProvider.EMetaData.EventsMetaData.E_ID)));
-		item.setUser_id(result.getInt(result.getColumnIndex(EventsProvider.EMetaData.EventsMetaData.USER_ID)));
-		item.setUploadedToServer(1 == result.getInt(result.getColumnIndex(EventsProvider.EMetaData.EventsMetaData.UPLOADED_SUCCESSFULLY)));
-		item.setStatus(result.getInt(result.getColumnIndex(EventsProvider.EMetaData.EventsMetaData.STATUS)));
-		item.setCreator_contact_id(result.getInt(result.getColumnIndex(EventsProvider.EMetaData.EventsMetaData.CREATOR_CONTACT_ID)));
+		item.setInternalID(result.getLong(result
+				.getColumnIndex(EventsProvider.EMetaData.EventsMetaData._ID)));
+		item.setEvent_id(result.getInt(result
+				.getColumnIndex(EventsProvider.EMetaData.EventsMetaData.E_ID)));
+		item.setUser_id(result.getInt(result
+				.getColumnIndex(EventsProvider.EMetaData.EventsMetaData.USER_ID)));
+		item.setUploadedToServer(1 == result.getInt(result
+				.getColumnIndex(EventsProvider.EMetaData.EventsMetaData.UPLOADED_SUCCESSFULLY)));
+		item.setStatus(result.getInt(result
+				.getColumnIndex(EventsProvider.EMetaData.EventsMetaData.STATUS)));
+		item.setCreator_contact_id(result.getInt(result
+				.getColumnIndex(EventsProvider.EMetaData.EventsMetaData.CREATOR_CONTACT_ID)));
 
-		item.setAttendant_0_count(result.getInt(result.getColumnIndex(EventsProvider.EMetaData.EventsMetaData.ATTENDANT_1_COUNT)));
-		item.setAttendant_2_count(result.getInt(result.getColumnIndex(EventsProvider.EMetaData.EventsMetaData.ATTENDANT_2_COUNT)));
-		item.setAttendant_0_count(result.getInt(result.getColumnIndex(EventsProvider.EMetaData.EventsMetaData.ATTENDANT_0_COUNT)));
-		item.setAttendant_4_count(result.getInt(result.getColumnIndex(EventsProvider.EMetaData.EventsMetaData.ATTENDANT_4_COUNT)));
+		item.setAttendant_0_count(result.getInt(result
+				.getColumnIndex(EventsProvider.EMetaData.EventsMetaData.ATTENDANT_1_COUNT)));
+		item.setAttendant_2_count(result.getInt(result
+				.getColumnIndex(EventsProvider.EMetaData.EventsMetaData.ATTENDANT_2_COUNT)));
+		item.setAttendant_0_count(result.getInt(result
+				.getColumnIndex(EventsProvider.EMetaData.EventsMetaData.ATTENDANT_0_COUNT)));
+		item.setAttendant_4_count(result.getInt(result
+				.getColumnIndex(EventsProvider.EMetaData.EventsMetaData.ATTENDANT_4_COUNT)));
 
-		item.setSports_event(result.getInt(result.getColumnIndex(EventsProvider.EMetaData.EventsMetaData.IS_SPORTS_EVENT)) == 1);
-		final int is_owner = result.getInt(result.getColumnIndex(EventsProvider.EMetaData.EventsMetaData.IS_OWNER));
+		item.setSports_event(result.getInt(result
+				.getColumnIndex(EventsProvider.EMetaData.EventsMetaData.IS_SPORTS_EVENT)) == 1);
+		final int is_owner = result
+				.getInt(result
+						.getColumnIndex(EventsProvider.EMetaData.EventsMetaData.IS_OWNER));
 		item.setIs_owner(is_owner == 1);
 
-		item.setIs_all_day(result.getInt(result.getColumnIndex(EventsProvider.EMetaData.EventsMetaData.IS_ALL_DAY)) == 1);
-		item.setBirthday(result.getInt(result.getColumnIndex(EventsProvider.EMetaData.EventsMetaData.IS_BIRTHDAY)) == 1);
+		item.setIs_all_day(result.getInt(result
+				.getColumnIndex(EventsProvider.EMetaData.EventsMetaData.IS_ALL_DAY)) == 1);
+		item.setBirthday(result.getInt(result
+				.getColumnIndex(EventsProvider.EMetaData.EventsMetaData.IS_BIRTHDAY)) == 1);
 		item.setNative(false); // native events are not stored in local DB, so
 								// they cant be restored also
 
-		item.setType(result.getString(result.getColumnIndex(EventsProvider.EMetaData.EventsMetaData.TYPE)));
-		item.setCreator_fullname(result.getString(result.getColumnIndex(EventsProvider.EMetaData.EventsMetaData.CREATOR_FULLNAME)));
-		item.setTitle(result.getString(result.getColumnIndex(EventsProvider.EMetaData.EventsMetaData.TITLE)));
-		item.setIcon(result.getString(result.getColumnIndex(EventsProvider.EMetaData.EventsMetaData.ICON)));
-		item.setColor(result.getString(result.getColumnIndex(EventsProvider.EMetaData.EventsMetaData.COLOR)));
-		item.setDisplayColor(result.getString(result.getColumnIndex(EventsProvider.EMetaData.EventsMetaData.EVENT_DISPLAY_COLOR)));
-		item.setDescription(result.getString(result.getColumnIndex(EventsProvider.EMetaData.EventsMetaData.DESC)));
+		item.setType(result.getString(result
+				.getColumnIndex(EventsProvider.EMetaData.EventsMetaData.TYPE)));
+		item.setCreator_fullname(result.getString(result
+				.getColumnIndex(EventsProvider.EMetaData.EventsMetaData.CREATOR_FULLNAME)));
+		item.setTitle(result.getString(result
+				.getColumnIndex(EventsProvider.EMetaData.EventsMetaData.TITLE)));
+		item.setIcon(result.getString(result
+				.getColumnIndex(EventsProvider.EMetaData.EventsMetaData.ICON)));
+		item.setColor(result.getString(result
+				.getColumnIndex(EventsProvider.EMetaData.EventsMetaData.COLOR)));
+		item.setDisplayColor(result.getString(result
+				.getColumnIndex(EventsProvider.EMetaData.EventsMetaData.EVENT_DISPLAY_COLOR)));
+		item.setDescription(result.getString(result
+				.getColumnIndex(EventsProvider.EMetaData.EventsMetaData.DESC)));
 
-		item.setLocation(result.getString(result.getColumnIndex(EventsProvider.EMetaData.EventsMetaData.LOCATION)));
-		item.setAccomodation(result.getString(result.getColumnIndex(EventsProvider.EMetaData.EventsMetaData.ACCOMODATION)));
-		item.setCost(result.getString(result.getColumnIndex(EventsProvider.EMetaData.EventsMetaData.COST)));
-		item.setTake_with_you(result.getString(result.getColumnIndex(EventsProvider.EMetaData.EventsMetaData.TAKE_WITH_YOU)));
-		item.setGo_by(result.getString(result.getColumnIndex(EventsProvider.EMetaData.EventsMetaData.GO_BY)));
+		item.setLocation(result.getString(result
+				.getColumnIndex(EventsProvider.EMetaData.EventsMetaData.LOCATION)));
+		item.setAccomodation(result.getString(result
+				.getColumnIndex(EventsProvider.EMetaData.EventsMetaData.ACCOMODATION)));
+		item.setCost(result.getString(result
+				.getColumnIndex(EventsProvider.EMetaData.EventsMetaData.COST)));
+		item.setTake_with_you(result.getString(result
+				.getColumnIndex(EventsProvider.EMetaData.EventsMetaData.TAKE_WITH_YOU)));
+		item.setGo_by(result.getString(result
+				.getColumnIndex(EventsProvider.EMetaData.EventsMetaData.GO_BY)));
 
-		item.setCountry(result.getString(result.getColumnIndex(EventsProvider.EMetaData.EventsMetaData.COUNTRY)));
-		item.setCity(result.getString(result.getColumnIndex(EventsProvider.EMetaData.EventsMetaData.CITY)));
-		item.setStreet(result.getString(result.getColumnIndex(EventsProvider.EMetaData.EventsMetaData.STREET)));
-		item.setZip(result.getString(result.getColumnIndex(EventsProvider.EMetaData.EventsMetaData.ZIP)));
+		item.setCountry(result.getString(result
+				.getColumnIndex(EventsProvider.EMetaData.EventsMetaData.COUNTRY)));
+		item.setCity(result.getString(result
+				.getColumnIndex(EventsProvider.EMetaData.EventsMetaData.CITY)));
+		item.setStreet(result.getString(result
+				.getColumnIndex(EventsProvider.EMetaData.EventsMetaData.STREET)));
+		item.setZip(result.getString(result
+				.getColumnIndex(EventsProvider.EMetaData.EventsMetaData.ZIP)));
 
-		item.setTimezone(result.getString(result.getColumnIndex(EventsProvider.EMetaData.EventsMetaData.TIMEZONE)));
+		item.setTimezone(result.getString(result
+				.getColumnIndex(EventsProvider.EMetaData.EventsMetaData.TIMEZONE)));
 
-		
-		timeinMillis = result.getLong(result.getColumnIndex(EventsProvider.EMetaData.EventsMetaData.TIME_START_UTC_MILLISECONDS));
+		timeinMillis = result
+				.getLong(result
+						.getColumnIndex(EventsProvider.EMetaData.EventsMetaData.TIME_START_UTC_MILLISECONDS));
 		item.setStartCalendar(Utils.createCalendar(timeinMillis, user_timezone));
-		timeinMillis = result.getLong(result.getColumnIndex(EventsProvider.EMetaData.EventsMetaData.TIME_END_UTC_MILLISECONDS));
+		timeinMillis = result
+				.getLong(result
+						.getColumnIndex(EventsProvider.EMetaData.EventsMetaData.TIME_END_UTC_MILLISECONDS));
 		item.setEndCalendar(Utils.createCalendar(timeinMillis, user_timezone));
 
-		item.setReminder1(Utils.createCalendar(result.getLong(result.getColumnIndex(EventsProvider.EMetaData.EventsMetaData.REMINDER1)), user_timezone));
-		item.setReminder2(Utils.createCalendar(result.getLong(result.getColumnIndex(EventsProvider.EMetaData.EventsMetaData.REMINDER2)), user_timezone));
-		item.setReminder3(Utils.createCalendar(result.getLong(result.getColumnIndex(EventsProvider.EMetaData.EventsMetaData.REMINDER3)), user_timezone));
-		
-		item.setAlarm1(Utils.createCalendar(result.getLong(result.getColumnIndex(EventsProvider.EMetaData.EventsMetaData.ALARM1)), user_timezone));
-		item.setAlarm2(Utils.createCalendar(result.getLong(result.getColumnIndex(EventsProvider.EMetaData.EventsMetaData.ALARM2)), user_timezone));
-		item.setAlarm3(Utils.createCalendar(result.getLong(result.getColumnIndex(EventsProvider.EMetaData.EventsMetaData.ALARM3)), user_timezone));
+		item.setReminder1(Utils.createCalendar(
+				result.getLong(result
+						.getColumnIndex(EventsProvider.EMetaData.EventsMetaData.REMINDER1)),
+				user_timezone));
+		item.setReminder2(Utils.createCalendar(
+				result.getLong(result
+						.getColumnIndex(EventsProvider.EMetaData.EventsMetaData.REMINDER2)),
+				user_timezone));
+		item.setReminder3(Utils.createCalendar(
+				result.getLong(result
+						.getColumnIndex(EventsProvider.EMetaData.EventsMetaData.REMINDER3)),
+				user_timezone));
 
-		item.setCreatedMillisUtc(result.getLong(result.getColumnIndex(EventsProvider.EMetaData.EventsMetaData.CREATED_UTC_MILLISECONDS)));
-		item.setModifiedMillisUtc(result.getLong(result.getColumnIndex(EventsProvider.EMetaData.EventsMetaData.MODIFIED_UTC_MILLISECONDS)));
+		item.setAlarm1(Utils.createCalendar(
+				result.getLong(result
+						.getColumnIndex(EventsProvider.EMetaData.EventsMetaData.ALARM1)),
+				user_timezone));
+		item.setAlarm2(Utils.createCalendar(
+				result.getLong(result
+						.getColumnIndex(EventsProvider.EMetaData.EventsMetaData.ALARM2)),
+				user_timezone));
+		item.setAlarm3(Utils.createCalendar(
+				result.getLong(result
+						.getColumnIndex(EventsProvider.EMetaData.EventsMetaData.ALARM3)),
+				user_timezone));
+
+		item.setCreatedMillisUtc(result.getLong(result
+				.getColumnIndex(EventsProvider.EMetaData.EventsMetaData.CREATED_UTC_MILLISECONDS)));
+		item.setModifiedMillisUtc(result.getLong(result
+				.getColumnIndex(EventsProvider.EMetaData.EventsMetaData.MODIFIED_UTC_MILLISECONDS)));
 		try {
 			ArrayList<Invited> invites = new ArrayList<Invited>();
-			
-			item.setMyInvite(JSONUtils.createInvitedListFromJSONArrayString(context, result.getString(result.getColumnIndex(EventsProvider.EMetaData.EventsMetaData.INVITED)), invites));
+
+			item.setMyInvite(JSONUtils.createInvitedListFromJSONArrayString(
+					context,
+					result.getString(result
+							.getColumnIndex(EventsProvider.EMetaData.EventsMetaData.INVITED)),
+					invites));
 			item.setInvited(invites);
 		} catch (JSONException e) {
-			Log.e("Error parsing invited array from local db", "Event ID: " + item.getEvent_id() + " event local ID: " + item.getInternalID());
+			Log.e("Error parsing invited array from local db",
+					"Event ID: " + item.getEvent_id() + " event local ID: "
+							+ item.getInternalID());
 		}
-		
 
-//		item.setAssigned_contacts_DB_entry(result.getString(result
-//				.getColumnIndex(EventsProvider.EMetaData.EventsMetaData.ASSIGNED_CONTACTS)));
-//		item.setAssigned_groups_DB_entry(result.getString(result.getColumnIndex(EventsProvider.EMetaData.EventsMetaData.ASSIGNED_GROUPS)));
+		// item.setAssigned_contacts_DB_entry(result.getString(result
+		// .getColumnIndex(EventsProvider.EMetaData.EventsMetaData.ASSIGNED_CONTACTS)));
+		// item.setAssigned_groups_DB_entry(result.getString(result.getColumnIndex(EventsProvider.EMetaData.EventsMetaData.ASSIGNED_GROUPS)));
 
-		item.setMessage_count(result.getInt(result.getColumnIndex(EventsProvider.EMetaData.EventsMetaData.MESSAGES_COUNT)));
-		item.setNew_message_count(result.getInt(result.getColumnIndex(EventsProvider.EMetaData.EventsMetaData.NEW_MESSAGES_COUNT)));
-		item.setLast_message_date_time(result.getLong(result.getColumnIndex(EventsProvider.EMetaData.EventsMetaData.LAST_MESSAGE_DATE_TIME_UTC_MILISECONDS)));
+		item.setMessage_count(result.getInt(result
+				.getColumnIndex(EventsProvider.EMetaData.EventsMetaData.MESSAGES_COUNT)));
+		item.setNew_message_count(result.getInt(result
+				.getColumnIndex(EventsProvider.EMetaData.EventsMetaData.NEW_MESSAGES_COUNT)));
+		item.setLast_message_date_time(result.getLong(result
+				.getColumnIndex(EventsProvider.EMetaData.EventsMetaData.LAST_MESSAGE_DATE_TIME_UTC_MILISECONDS)));
 		return item;
-	}	
+	}
 
-	//TODO document
-	public static ArrayList<Event> getEventsFromLocalDb(Context context, boolean filterActual) {
+	// TODO document
+	public static ArrayList<Event> getEventsFromLocalDb(Context context,
+			boolean filterActual) {
 		Event item;
 		String where = null;
-		
+
 		Calendar today = Calendar.getInstance();
 		today.set(Calendar.HOUR_OF_DAY, 0);
 		today.set(Calendar.MINUTE, 0);
 		today.set(Calendar.SECOND, 0);
 		today.set(Calendar.MILLISECOND, 0);
-		if (filterActual) where = EventsProvider.EMetaData.EventsMetaData.TIME_END_UTC_MILLISECONDS + " >= " + today.getTimeInMillis();
-				
+		if (filterActual)
+			where = EventsProvider.EMetaData.EventsMetaData.TIME_END_UTC_MILLISECONDS
+					+ " >= " + today.getTimeInMillis();
+
 		ArrayList<Event> items = new ArrayList<Event>();
-	
-			Cursor result = context.getContentResolver()
-					.query(EventsProvider.EMetaData.EventsMetaData.CONTENT_URI, null, where, null, null);
+
+		Cursor result = context.getContentResolver().query(
+				EventsProvider.EMetaData.EventsMetaData.CONTENT_URI, null,
+				where, null, null);
 
 		if (result.moveToFirst()) {
 			while (!result.isAfterLast()) {
@@ -1348,12 +1752,13 @@ private static String parseInvitedListToJSONArray(ArrayList<Invited> invited) {
 			}
 		}
 		result.close();
-	
+
 		return (items);
 	}
-	
+
 	/**
 	 * Loads all actual events from local db to given adapter.
+	 * 
 	 * @param instance
 	 * @param eAdapter
 	 * @return
@@ -1361,7 +1766,7 @@ private static String parseInvitedListToJSONArray(ArrayList<Invited> invited) {
 	public static int loadEvents(Context context, EventsAdapter eAdapter) {
 		int eventsSize = 0;
 		ArrayList<Event> events;
-	
+
 		events = EventManagement.getEventsFromLocalDb(context, true);
 		events.addAll(NativeCalendarReader.readAllCalendar(context));
 		if (eAdapter != null) {
@@ -1374,28 +1779,36 @@ private static String parseInvitedListToJSONArray(ArrayList<Invited> invited) {
 	public static CharSequence getError() {
 		return error;
 	}
-	
-	protected static void bulkDeleteEvents(Context context, String IDs, int id_mode){
+
+	protected static void bulkDeleteEvents(Context context, String IDs,
+			int id_mode) {
 		String where;
-		switch (id_mode){
-		case(ID_INTERNAL):
+		switch (id_mode) {
+		case (ID_INTERNAL):
 			where = EventsProvider.EMetaData.EventsMetaData._ID;
 			break;
 		case (ID_EXTERNAL):
 			where = EventsProvider.EMetaData.EventsMetaData.E_ID;
 			break;
-		default: throw new IllegalStateException("method getEventFromLocalDB: Unknown id mode");
+		default:
+			throw new IllegalStateException(
+					"method getEventFromLocalDB: Unknown id mode");
 		}
 		StringBuilder sb = new StringBuilder(where);
 		sb.append(" IN (");
 		sb.append(IDs);
 		sb.append(')');
 		where = sb.toString();
-		context.getContentResolver().delete(EventsProvider.EMetaData.EventsMetaData.CONTENT_URI, where, null);
-		context.getContentResolver().delete(EventsProvider.EMetaData.EventsIndexesMetaData.CONTENT_URI, where, null);
+		context.getContentResolver().delete(
+				EventsProvider.EMetaData.EventsMetaData.CONTENT_URI, where,
+				null);
+		context.getContentResolver().delete(
+				EventsProvider.EMetaData.EventsIndexesMetaData.CONTENT_URI,
+				where, null);
 	}
-	
-	protected static void syncEvents(Context context, ArrayList<Event> eventChanges, long[] deletedEventsIDs) {
+
+	protected static void syncEvents(Context context,
+			ArrayList<Event> eventChanges, long[] deletedEventsIDs) {
 		StringBuilder sb;
 		initUserTimezone(context);
 		if (!eventChanges.isEmpty()) {
@@ -1404,13 +1817,14 @@ private static String parseInvitedListToJSONArray(ArrayList<Invited> invited) {
 				sb.append(e.getEvent_id());
 				sb.append(',');
 			}
-			sb.deleteCharAt(sb.length() - 1);		
-			EventManagement.bulkDeleteEvents(context, sb.toString(), EventManagement.ID_EXTERNAL);
-			for (Event e : eventChanges){
+			sb.deleteCharAt(sb.length() - 1);
+			EventManagement.bulkDeleteEvents(context, sb.toString(),
+					EventManagement.ID_EXTERNAL);
+			for (Event e : eventChanges) {
 				insertEventToLocalDB(context, e);
 			}
 		}
-		
+
 		if (deletedEventsIDs.length > 0) {
 			sb = new StringBuilder();
 			for (int i = 0; i < deletedEventsIDs.length; i++) {
@@ -1418,27 +1832,34 @@ private static String parseInvitedListToJSONArray(ArrayList<Invited> invited) {
 				sb.append(',');
 			}
 			sb.deleteCharAt(sb.length() - 1);
-			EventManagement.bulkDeleteEvents(context, sb.toString(), EventManagement.ID_EXTERNAL);
-			
-			
+			EventManagement.bulkDeleteEvents(context, sb.toString(),
+					EventManagement.ID_EXTERNAL);
+
+			// TODO cia reikes realizuoti pazymetu eventu (kurios reikia sukurti
+			// RDB)
+
 		}
 	}
+
 	/**
-	 * Method which makes sure that user_timezone static field would be initialized. Must be called in any public method.
+	 * Method which makes sure that user_timezone static field would be
+	 * initialized. Must be called in any public method.
+	 * 
 	 * @author justinas.marcinka@gmail.com
 	 * @param context
 	 */
 	private static void initUserTimezone(Context context) {
-		if (user_timezone == null) user_timezone = new Account(context).getTimezone();
+		if (user_timezone == null)
+			user_timezone = new Account(context).getTimezone();
 	}
-//	private static Invited createInvitedFromCursor(Cursor result) {
-//		Invited invited = new Invited();
-//		invited.setGcid(result.getInt(result.getColumnIndexOrThrow(EventsProvider.EMetaData.InvitedMetaData.GCID)));
-//		invited.setGuid(result.getInt(result.getColumnIndexOrThrow(EventsProvider.EMetaData.InvitedMetaData.GUID)));
-//		invited.setMy_contact_id(result.getInt(result.getColumnIndexOrThrow(EventsProvider.EMetaData.InvitedMetaData.MY_CONTACT_ID)));
-//		invited.setName(result.getString(result.getColumnIndexOrThrow(EventsProvider.EMetaData.InvitedMetaData.NAME)));
-//		invited.setStatus(result.getInt(result.getColumnIndexOrThrow(EventsProvider.EMetaData.InvitedMetaData.STATUS)));
-//		return invited;
-//	}
-	
+	// private static Invited createInvitedFromCursor(Cursor result) {
+	// Invited invited = new Invited();
+	// invited.setGcid(result.getInt(result.getColumnIndexOrThrow(EventsProvider.EMetaData.InvitedMetaData.GCID)));
+	// invited.setGuid(result.getInt(result.getColumnIndexOrThrow(EventsProvider.EMetaData.InvitedMetaData.GUID)));
+	// invited.setMy_contact_id(result.getInt(result.getColumnIndexOrThrow(EventsProvider.EMetaData.InvitedMetaData.MY_CONTACT_ID)));
+	// invited.setName(result.getString(result.getColumnIndexOrThrow(EventsProvider.EMetaData.InvitedMetaData.NAME)));
+	// invited.setStatus(result.getInt(result.getColumnIndexOrThrow(EventsProvider.EMetaData.InvitedMetaData.STATUS)));
+	// return invited;
+	// }
+
 }
