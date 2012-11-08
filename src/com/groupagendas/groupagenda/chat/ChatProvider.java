@@ -38,10 +38,9 @@ public class ChatProvider extends ContentProvider {
 			public static final String USER_ID = "user_id";
 			public static final String MESSAGE = "message";
 			public static final String DELETED = "deleted";
-			public static final String UPDATED = "updated";
 			public static final String SUCCESSFULLY_UPLOADED = "successfully_uploaded";
 			public static final String CREATED = "timestamp";
-			public static final String MODIFIED = "modified";
+			public static final String MODIFIED = "timestamp_updated";
 			public static final String FULLNAME = "fullname";
 			
 			public static final String DEFAULT_SORT_ORDER = M_ID+" COLLATE NOCASE ASC";
@@ -56,7 +55,6 @@ public class ChatProvider extends ContentProvider {
 		CTM.put(CMMetaData.ChatMetaData.USER_ID, CMMetaData.ChatMetaData.USER_ID);
 		CTM.put(CMMetaData.ChatMetaData.MESSAGE, CMMetaData.ChatMetaData.MESSAGE);
 		CTM.put(CMMetaData.ChatMetaData.DELETED, CMMetaData.ChatMetaData.DELETED);
-		CTM.put(CMMetaData.ChatMetaData.UPDATED, CMMetaData.ChatMetaData.UPDATED);
 		CTM.put(CMMetaData.ChatMetaData.SUCCESSFULLY_UPLOADED, CMMetaData.ChatMetaData.SUCCESSFULLY_UPLOADED);
 		CTM.put(CMMetaData.ChatMetaData.CREATED, CMMetaData.ChatMetaData.CREATED);
 		CTM.put(CMMetaData.ChatMetaData.MODIFIED, CMMetaData.ChatMetaData.MODIFIED);
@@ -196,7 +194,6 @@ public class ChatProvider extends ContentProvider {
 					+ CMMetaData.ChatMetaData.USER_ID + " INTEGER ," 
 					+ CMMetaData.ChatMetaData.MESSAGE + " TEXT ,"
 					+ CMMetaData.ChatMetaData.DELETED + " TEXT ,"
-					+ CMMetaData.ChatMetaData.UPDATED + " TEXT ,"
 					+ CMMetaData.ChatMetaData.SUCCESSFULLY_UPLOADED + " INTEGER DEFAULT 0 ,"
 					+ CMMetaData.ChatMetaData.CREATED + " INTEGER ,"
 					+ CMMetaData.ChatMetaData.MODIFIED + " INTEGER ,"

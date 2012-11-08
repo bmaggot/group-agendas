@@ -7,7 +7,7 @@ public class ChatMessageObject {
 	private int userId;
 	private String message;
 	private boolean deleted;
-	private String updated;
+	private Long updated;
 	private String fullname;
 
 	/**
@@ -103,7 +103,7 @@ public class ChatMessageObject {
 	/**
 	 * @return the updated
 	 */
-	public String getUpdated() {
+	public Long getUpdated() {
 		return updated;
 	}
 
@@ -111,7 +111,7 @@ public class ChatMessageObject {
 	 * @param updated
 	 *            the updated to set
 	 */
-	public void setUpdated(String updated) {
+	public void setUpdated(Long updated) {
 		this.updated = updated;
 	}
 
