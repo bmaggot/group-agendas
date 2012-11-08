@@ -197,8 +197,8 @@ public class ChatMessageActivity extends Activity {
 				chatMessages.remove(chatMessageObject);
 				ChatManagement.removeChatMessageFromLocalDb(context, chatMessageObject.getMessageId());
 			} else {
-				ChatManagement.removeChatMessageFromLocalDb(context, chatMessageObject.getMessageId());
 				chatMessages.remove(chatMessageObject);
+				ChatManagement.removeChatMessageFromLocalDb(context, chatMessageObject.getMessageId());
 				chatMessages.add(newChatMessageObject);
 			}
 			return null;
