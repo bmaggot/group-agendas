@@ -53,7 +53,7 @@ public class AgendaView extends AbstractCalendarView {
 
 	@Override
 	public void goPrev() {
-		shownDate.add(Calendar.DATE, -1 * SHOWN_DAYS_COUNT);
+		shownDate.add(Calendar.DATE, (-1 * SHOWN_DAYS_COUNT));
 		setTopPanel();
 		setDaysTitles();
 		updateEventLists();
@@ -192,7 +192,7 @@ public class AgendaView extends AbstractCalendarView {
 		@Override
 		protected Cursor queryProjectionsFromLocalDb(Calendar date) {
 			return EventManagement.createEventProjectionByDateFromLocalDb(context,
-					EventProjectionForDisplay, date, 7,
+					EventProjectionForDisplay, shownDate, 7,
 					EventManagement.TM_EVENTS_FROM_GIVEN_DATE, null, true);
 		}
 
