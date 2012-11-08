@@ -61,7 +61,7 @@ public class ChatMessageActivity extends Activity {
 			}
 		});
 		Button eventButton = (Button) findViewById(R.id.chat_message_info_event_button);
-//		pb = (ProgressBar) findViewById(R.id.progress);
+		// pb = (ProgressBar) findViewById(R.id.progress);
 
 		event_id = getIntent().getIntExtra("event_id", 0);
 		LocalBroadcastManager.getInstance(this).registerReceiver(mMessageReceiver,
@@ -107,40 +107,35 @@ public class ChatMessageActivity extends Activity {
 			adapter = new ChatMessageAdapter(ChatMessageActivity.this, chatMessages);
 			chat_message_list = (ListView) findViewById(R.id.chat_message_list);
 			chat_message_list.setAdapter(adapter);
-			if (DataManagement.networkAvailable) {
-				chatInput = (EditText) findViewById(R.id.chat_input);
-				chatInput.setOnClickListener(new OnClickListener() {
-					
-					@Override
-					public void onClick(View v) {
-						chat_message_list.setSelection(adapter.getCount() - 1);
+			chatInput = (EditText) findViewById(R.id.chat_input);
+			chatInput.setOnClickListener(new OnClickListener() {
+
+				@Override
+				public void onClick(View v) {
+					chat_message_list.setSelection(adapter.getCount() - 1);
+				}
+			});
+			chatSend = (Button) findViewById(R.id.chat_send);
+
+			chatSend.setOnClickListener(new OnClickListener() {
+
+				@Override
+				public void onClick(View arg0) {
+					String message = chatInput.getText().toString();
+					chatMessageObject = ChatManagement.makeChatMessageObjectNow(ChatMessageActivity.this, message, event_id);
+					chatMessages.add(chatMessageObject);
+					adapter.notifyDataSetChanged();
+					if (DataManagement.networkAvailable) {
+						Object[] params = { ChatMessageActivity.this, message, event_id };
+						new PostChatMessage().execute(params);
 					}
-				});
-				chatSend = (Button) findViewById(R.id.chat_send);
+					chatInput.setText("");
+					InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+					imm.hideSoftInputFromWindow(chatInput.getWindowToken(), 0);
+					chat_message_list.setSelection(adapter.getCount() - 1);
 
-				chatSend.setOnClickListener(new OnClickListener() {
-
-					@Override
-					public void onClick(View arg0) {
-						String message = chatInput.getText().toString();
-						chatMessageObject = ChatManagement.makeChatMessageObjectNow(ChatMessageActivity.this, message, event_id);
-						chatMessages.add(chatMessageObject);
-						adapter.notifyDataSetChanged();
-						if(DataManagement.networkAvailable){
-							Object[] params = { ChatMessageActivity.this, message, event_id };
-							new PostChatMessage().execute(params);
-						}
-						chatInput.setText("");
-						InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
-						imm.hideSoftInputFromWindow(chatInput.getWindowToken(), 0);
-						chat_message_list.setSelection(adapter.getCount() - 1);
-
-					}
-				});
-			} else {
-				LinearLayout chatInputBlock = (LinearLayout) findViewById(R.id.chat_inputBlock);
-				chatInputBlock.setVisibility(View.GONE);
-			}
+				}
+			});
 		} else {
 			finish();
 		}
@@ -150,7 +145,7 @@ public class ChatMessageActivity extends Activity {
 
 		@Override
 		protected void onPreExecute() {
-//			pb.setVisibility(View.VISIBLE);
+			// pb.setVisibility(View.VISIBLE);
 		}
 
 		@Override
@@ -178,7 +173,7 @@ public class ChatMessageActivity extends Activity {
 			adapter.setList(chatMessages);
 			adapter.notifyDataSetChanged();
 			chat_message_list.setSelection(adapter.getCount() - 1);
-//			pb.setVisibility(View.INVISIBLE);
+			// pb.setVisibility(View.INVISIBLE);
 		}
 
 	}
@@ -187,7 +182,7 @@ public class ChatMessageActivity extends Activity {
 
 		@Override
 		protected void onPreExecute() {
-//			pb.setVisibility(View.VISIBLE);
+			// pb.setVisibility(View.VISIBLE);
 		}
 
 		@Override
@@ -209,7 +204,7 @@ public class ChatMessageActivity extends Activity {
 		protected void onPostExecute(Void result) {
 			adapter.notifyDataSetChanged();
 			chat_message_list.setSelection(adapter.getCount() - 1);
-//			pb.setVisibility(View.INVISIBLE);
+			// pb.setVisibility(View.INVISIBLE);
 		}
 
 	}
@@ -218,7 +213,7 @@ public class ChatMessageActivity extends Activity {
 
 		@Override
 		protected void onPreExecute() {
-//			pb.setVisibility(View.VISIBLE);
+			// pb.setVisibility(View.VISIBLE);
 		}
 
 		@Override
@@ -235,7 +230,7 @@ public class ChatMessageActivity extends Activity {
 			result.setDeleted(true);
 			adapter.notifyDataSetChanged();
 			chat_message_list.setSelection(adapter.getCount() - 1);
-//			pb.setVisibility(View.INVISIBLE);
+			// pb.setVisibility(View.INVISIBLE);
 		}
 
 	}
