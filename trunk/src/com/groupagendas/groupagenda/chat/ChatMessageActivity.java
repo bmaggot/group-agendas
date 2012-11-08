@@ -126,8 +126,10 @@ public class ChatMessageActivity extends Activity {
 						chatMessageObject = ChatManagement.makeChatMessageObjectNow(ChatMessageActivity.this, message, event_id);
 						chatMessages.add(chatMessageObject);
 						adapter.notifyDataSetChanged();
-						Object[] params = { ChatMessageActivity.this, message, event_id };
-						new PostChatMessage().execute(params);
+						if(DataManagement.networkAvailable){
+							Object[] params = { ChatMessageActivity.this, message, event_id };
+							new PostChatMessage().execute(params);
+						}
 						chatInput.setText("");
 						InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
 						imm.hideSoftInputFromWindow(chatInput.getWindowToken(), 0);
