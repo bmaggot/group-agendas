@@ -55,7 +55,7 @@ public class ConnectReceiver extends BroadcastReceiver {
 		if (conn.getNetworkInfo(0).getState() == NetworkInfo.State.CONNECTED
 				|| conn.getNetworkInfo(1).getState() == NetworkInfo.State.CONNECTED) {
 			DataManagement.networkAvailable = true;
-			ChatManagement.getChatMessagesCreatedOffline(context);
+			ChatManagement.uploadUnploaded(context, ChatManagement.getChatMessagesCreatedOffline(context));
 			account.clearLastTimeConnectedToweb();
 			boolean success = false;
 			
