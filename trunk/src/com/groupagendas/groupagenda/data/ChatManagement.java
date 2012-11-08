@@ -521,4 +521,16 @@ public class ChatManagement {
 		cur.close();
 		return offlineChatMessages;
 	}
+
+	public static void uploadUnploaded(Context context,
+			ArrayList<ChatMessageObject> messages) {
+		for (ChatMessageObject message : messages) {
+			removeChatMessageFromLocalDb(context, message.getMessageId());
+			postChatMessage(message.getEventId(), message.getMessage(), context);
+		}
+		{
+
+		}
+
+	}
 }
