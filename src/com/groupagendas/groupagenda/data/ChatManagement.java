@@ -272,12 +272,24 @@ public class ChatManagement {
 	 * @version 0.1
 	 */
 
-	public static boolean removeChatMessageFromLocalDb(Context context, int messageId) {
+	public static boolean removeChatMessageInLocalDb(Context context, int messageId) {
 		boolean success = false;
 		try {
 			ContentValues cv = new ContentValues();
 			cv.put(ChatProvider.CMMetaData.ChatMetaData.DELETED, true);
 			context.getContentResolver().update(ChatProvider.CMMetaData.ChatMetaData.CONTENT_URI, cv,
+					ChatProvider.CMMetaData.ChatMetaData.M_ID + "=" + messageId, null);
+			success = true;
+		} catch (Exception e) {
+			Log.e("removeChatMessageFromLoacalDB(Context context, int " + messageId + ")", e.getMessage());
+		}
+		return success;
+	}
+	
+	public static boolean removeChatMessageFromLocalDb(Context context, int messageId) {
+		boolean success = false;
+		try {
+			context.getContentResolver().delete(ChatProvider.CMMetaData.ChatMetaData.CONTENT_URI,
 					ChatProvider.CMMetaData.ChatMetaData.M_ID + "=" + messageId, null);
 			success = true;
 		} catch (Exception e) {
@@ -298,7 +310,7 @@ public class ChatManagement {
 	public static boolean removeChatMessage(Context context, int messageId) {
 		boolean succcess = false;
 		if (removeChatMessageFromRemoteDb(context, messageId)) {
-			succcess = removeChatMessageFromLocalDb(context, messageId);
+			succcess = removeChatMessageInLocalDb(context, messageId);
 		}
 		return succcess;
 	}
@@ -453,7 +465,7 @@ public class ChatManagement {
 		ChatMessageObject chatMessageObject = new ChatMessageObject();
 		Account account = new Account(context);
 		Calendar calendar = Calendar.getInstance();
-		chatMessageObject.setMessageId((int) calendar.getTimeInMillis());
+		chatMessageObject.setMessageId(((int)calendar.getTimeInMillis()));
 		chatMessageObject.setEventId(event_id);
 		chatMessageObject.setCreated(calendar.getTimeInMillis());
 		chatMessageObject.setUserId(account.getUser_id());

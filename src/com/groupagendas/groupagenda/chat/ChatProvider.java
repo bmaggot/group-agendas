@@ -43,7 +43,7 @@ public class ChatProvider extends ContentProvider {
 			public static final String MODIFIED = "timestamp_updated";
 			public static final String FULLNAME = "fullname";
 			
-			public static final String DEFAULT_SORT_ORDER = M_ID+" COLLATE NOCASE ASC";
+			public static final String DEFAULT_SORT_ORDER = CREATED+" COLLATE NOCASE ASC";
 		}
 	}
 
