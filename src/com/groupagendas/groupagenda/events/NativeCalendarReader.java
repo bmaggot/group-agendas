@@ -54,8 +54,8 @@ public class NativeCalendarReader {
 				event.setNative(true);
 				nativeEvents.add(event);
 			} while (cursor.moveToNext());
+			cursor.close();
 		}
-		cursor.close();
 		return nativeEvents;
 	}
 
