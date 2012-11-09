@@ -1765,10 +1765,14 @@ public class EventManagement {
 	 */
 	public static int loadEvents(Context context, EventsAdapter eAdapter) {
 		int eventsSize = 0;
-		ArrayList<Event> events;
-
-		events = EventManagement.getEventsFromLocalDb(context, true);
-		events.addAll(NativeCalendarReader.readAllCalendar(context));
+		ArrayList<Event> events = new ArrayList<Event>();
+		Account account = new Account(null);
+		if(account.getShow_ga_calendars()){
+			events = EventManagement.getEventsFromLocalDb(context, true);
+		}
+		if(account.getShow_native_calendars()){
+			events.addAll(NativeCalendarReader.readAllCalendar(context));
+		}
 		if (eAdapter != null) {
 			eAdapter.setItems(events);
 			eAdapter.notifyDataSetChanged();
