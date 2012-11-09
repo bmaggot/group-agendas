@@ -1766,7 +1766,7 @@ public class EventManagement {
 	public static int loadEvents(Context context, EventsAdapter eAdapter) {
 		int eventsSize = 0;
 		ArrayList<Event> events = new ArrayList<Event>();
-		Account account = new Account(null);
+		Account account = new Account(context);
 		if(account.getShow_ga_calendars()){
 			events = EventManagement.getEventsFromLocalDb(context, true);
 		}
