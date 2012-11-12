@@ -502,7 +502,7 @@ public class ChatManagement {
 			timestamp = cur.getLong(cur.getColumnIndex(LASTEST_UPDATED_TIMESTAMP));
 		}
 		cur.close();
-		return timestamp;
+		return Utils.millisToUnixTimestamp(timestamp);
 	}
 	
 	public static ArrayList<ChatMessageObject> getChatMessagesCreatedOffline(Context context) {

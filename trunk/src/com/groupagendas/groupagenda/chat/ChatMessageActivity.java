@@ -155,7 +155,6 @@ public class ChatMessageActivity extends Activity {
 			int eventId = (Integer) params[1];
 			boolean refreshMessagesList = (Boolean) params[2];
 			chatMessages = new ArrayList<ChatMessageObject>();
-			chatMessages.clear();
 			chatMessages = ChatManagement.getChatMessagesForEventFromLocalDb(context, eventId);
 			if (DataManagement.networkAvailable && !refreshMessagesList && chatMessages.isEmpty()) {
 				chatMessages = ChatManagement.getChatMessagesForEventFromRemoteDb(eventId, context, true, 0);

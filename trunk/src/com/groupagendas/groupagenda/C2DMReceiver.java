@@ -94,7 +94,7 @@ public class C2DMReceiver extends C2DMBaseReceiver {
 					if (receiveIntent.hasExtra(MESSAGE) && !receiveIntent.getStringExtra(MESSAGE).equals("[A-Z]*[a-z]*Self")) {
 						data = receiveIntent.getStringExtra(MESSAGE);
 					}
-					Log.e("C2DMReceiver", "NEW 	PUSH	" + data);
+					Log.e("C2DMReceiver: ", "NEW 	PUSH	" + data);
 					String rel_id = null;
 					if (receiveIntent.hasExtra(REL_OBJ) && receiveIntent.getStringExtra(REL_OBJ).equals(CHAT)
 							&& receiveIntent.hasExtra(REL_ID) && !receiveIntent.getStringExtra(REL_ID).equals("")) {
