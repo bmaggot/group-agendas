@@ -105,7 +105,6 @@ public class MonthView extends AbstractCalendarView {
 		}
 		setDayFrames();
 		updateEventLists();
-		
 	}
 
 	@Override
@@ -121,34 +120,31 @@ public class MonthView extends AbstractCalendarView {
 		
 		setDayFrames();
 		updateEventLists();
-		
 	}
 
 	@Override
 	public void setupView() {
 		monthTable = (TableLayout) findViewById(R.id.month_table);
-		eventsAdapter = new MonthAdapter(getContext(), null, am_pmEnabled);
-		eventsList = (ListView) findViewById(R.id.month_list);
-		eventsList.setAdapter(eventsAdapter);
 		paintTable(selectedDate);
 		setDayFrames();
-		updateEventLists();
 		
+		eventsAdapter = new MonthAdapter(getContext(), null, am_pmEnabled, sortedEvents, selectedDate);
+		eventsList = (ListView) findViewById(R.id.month_list);
+		eventsList.setAdapter(eventsAdapter);
+		updateEventLists();
 	}
 
 	@Override
 	protected void updateEventLists() {
 		ArrayList<Event> eventsList = TreeMapUtils.getEventsFromTreemap(selectedDate, sortedEvents);
 		eventsAdapter.setList(eventsList);
-		eventsAdapter.notifyDataSetChanged();
-		
+		eventsAdapter.setSelectedDate(selectedDate, sortedEvents);
 	}
 
 	@Override
 	protected void setupSelectedDate(Calendar initializationDate) {
 		this.selectedDate = initializationDate;
 		updateShownDate();
-		
 	}
 
 	@Override
@@ -173,19 +169,10 @@ public class MonthView extends AbstractCalendarView {
 					state = MonthCellState.SELECTED;
 			}
 			
-			
-
 			frame.setState(state);
-			
-
-//			if(!frame.hasBubbles){				
-//				ArrayList<Event> eventColorsArray =  Utils.getEventByDate(tmp);
-//				frame.DrawColourBubbles(eventColorsArray, FRAME_WIDTH);
-//			}
 			
 			tmp.add(Calendar.DATE, 1);
 		}
-		
 	}
 
 	private void paintTable(Calendar date) {
