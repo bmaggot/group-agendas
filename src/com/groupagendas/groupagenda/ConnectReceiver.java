@@ -83,9 +83,7 @@ public class ConnectReceiver extends BroadcastReceiver {
 
 		@Override
 		protected Void doInBackground(Void... params) {
-			Account account = new Account(context);
 			ChatManagement.uploadUnploaded(context, ChatManagement.getChatMessagesCreatedOffline(context));
-			account.clearLastTimeConnectedToweb();
 			return null;
 		}
 		
