@@ -106,6 +106,10 @@ public class C2DMReceiver extends C2DMBaseReceiver {
 						ContentValues cv = new ContentValues();
 						cv.put(EventsProvider.EMetaData.EventsMetaData.E_ID, Integer.parseInt(rel_id));
 						context.getContentResolver().update(uri, cv, null, null);
+						
+						Event event = EventManagement.getEventFromLocalDb(context, Integer.parseInt(rel_id), EventManagement.ID_EXTERNAL);
+						event.setMessage_count(event.getMessage_count() + 1);
+						EventManagement.updateEventInLocalDb(context, event);
 
 						if (EventManagement.getEventFromLocalDb(context, Integer.parseInt(rel_id), EventManagement.ID_EXTERNAL) != null) {
 							refreshChatMessages(rel_id, context);

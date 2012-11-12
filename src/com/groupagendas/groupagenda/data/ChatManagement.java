@@ -502,6 +502,16 @@ public class ChatManagement {
 			timestamp = cur.getLong(cur.getColumnIndex(LASTEST_UPDATED_TIMESTAMP));
 		}
 		cur.close();
+		if(timestamp == 0){
+			Uri uriNew = ChatProvider.CMMetaData.ChatMetaData.CONTENT_URI;
+			String projectionNew[] = { "MAX(" + ChatProvider.CMMetaData.ChatMetaData.CREATED + ") AS " + LASTEST_UPDATED_TIMESTAMP };
+			String selectionNew = ChatProvider.CMMetaData.ChatMetaData.E_ID + "=" + eventId;
+			Cursor curNew = context.getContentResolver().query(uriNew, projectionNew, selectionNew, null, null);
+			if (curNew.moveToFirst()) {
+				timestamp = curNew.getLong(curNew.getColumnIndex(LASTEST_UPDATED_TIMESTAMP));
+			}
+			EventManagement.resetEventsNewMessageCount(context, eventId);
+		}
 		return Utils.millisToUnixTimestamp(timestamp);
 	}
 	
