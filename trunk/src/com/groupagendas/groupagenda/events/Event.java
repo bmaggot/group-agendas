@@ -220,10 +220,12 @@ private static final String TIMESTAMP_FORMAT = DataManagement.SERVER_TIMESTAMP_F
 				color = displayColor;
 			} else {
 				if (getColor().equals(DEFAULT_COLOR)) {
-					if (status == Invited.ACCEPTED) {
-						color = DEFAULT_COLOR_ATTENDING;
-					} else if (!birthday) {
-						color = DEFAULT_COLOR_MAYBE;
+					if (!getType().equals(NOTE) || !getType().equals(NATIVE_EVENT)) {
+						if (status == Invited.ACCEPTED) {
+							color = DEFAULT_COLOR_ATTENDING;
+						} else if (!birthday) {
+							color = DEFAULT_COLOR_MAYBE;
+						}
 					}
 				}
 			}
