@@ -84,7 +84,13 @@ public class EventsAdapter extends BaseAdapter implements Filterable{
 		holder.title.setText(event.getActualTitle());
 
 		if (event.getStartCalendar()!= null) {
-			String temp = dtUtils.formatDateTime(event.getStartCalendar());
+			String temp = "";
+			
+			if (event.isBirthday()) {
+				temp = dtUtils.formatDate(event.getStartCalendar());
+			} else {
+				temp = dtUtils.formatDateTime(event.getStartCalendar());
+			}
 			holder.date.setText(temp);
 		}
 		// type
@@ -190,7 +196,7 @@ public class EventsAdapter extends BaseAdapter implements Filterable{
 	}
 	
 	private void respondToInvite(Event event){
-		System.out.println("response " + event.getStatus() );
+//		System.out.println("response " + event.getStatus() );
 		event.getMyInvite().setStatus(event.getStatus());
 		
 		if (newInvitesCount > 0) newInvitesCount--;
