@@ -261,6 +261,8 @@
     <string name="show_birthdays">Show birthdays</string>
     <string name="show_ga_calendars">Show GroupAgendas calendar</string>
     <string name="calendars">Calendars</string>
+    <string name="all_day">All day</string>
+    <string name="three_dots">…</string>
     <string name="delete_message_title">Delete message</string>
     <string name="delete_message_confirmation">Are You sure want to delete this messages</string>
     
