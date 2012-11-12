@@ -29,7 +29,7 @@ public abstract class AbstractAdapter<T> extends BaseAdapter {
 
 	@Override
 	public Object getItem(int i) {
-        if (list != null) {
+        if (list != null && list.size() >= i) {
             return list.get(i);
         }
         return null;
