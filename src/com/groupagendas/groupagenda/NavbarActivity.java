@@ -528,7 +528,13 @@ public class NavbarActivity extends FragmentActivity {
 
 	@Override
 	public void onBackPressed() {
-		moveTaskToBack(true);
+		if(viewState.equals(ViewState.CALENDAR_SETTINGS) || viewState.equals(ViewState.CHAT_THREADS)){
+			Account account = new Account(this);
+			viewState = ViewState.getValueByString(account.getSetting_default_view());
+			this.onResume();
+		} else {
+			moveTaskToBack(true);
+		}
 	}
 
 	public FrameLayout getCalendarContainer() {
