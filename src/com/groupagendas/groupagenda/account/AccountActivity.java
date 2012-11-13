@@ -483,7 +483,11 @@ public class AccountActivity extends Activity implements OnClickListener {
 
 		temp = zipView.getText().toString();
 		mAccount.setZip(temp);
-
+		//language
+		long selectedLanguage = languageSpinner.getSelectedItemId();
+		System.out.println(selectedLanguage + " TESTINAM");
+		String[] languagesArray = getResources().getStringArray(R.array.language_values);
+		mAccount.setLanguage(languagesArray[(int) selectedLanguage]);
 		// Image
 		boolean isRemoveImage = removeImage.isChecked();
 
