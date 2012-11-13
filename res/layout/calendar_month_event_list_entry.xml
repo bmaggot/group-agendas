@@ -27,6 +27,7 @@
 		    android:paddingLeft="5dp"
 		    android:paddingTop="2dp"
 		    android:paddingBottom="2dp"
+		    android:gravity="center"
 		    android:text=""
 		    android:textStyle="normal"
 		    android:textColor="@color/black"
@@ -39,6 +40,7 @@
 		    android:paddingLeft="5dp"
 		    android:paddingTop="2dp"
 		    android:paddingBottom="2dp"
+		    android:gravity="center"
 		    android:text=""
 		    android:textStyle="normal"
 		    android:textColor="@color/black"
@@ -46,8 +48,8 @@
     </LinearLayout>
 
     <ImageView android:id="@+id/month_entry_icon_placeholder"
-        android:layout_width="10dp"
-        android:layout_height="10dp"
+        android:layout_width="25dp"
+        android:layout_height="25dp"
         android:layout_gravity="center_vertical"
         android:contentDescription="@string/event_icons_placeholder"
         android:layout_margin="3dp"
