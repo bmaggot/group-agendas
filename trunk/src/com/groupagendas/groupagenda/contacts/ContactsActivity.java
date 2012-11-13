@@ -59,8 +59,8 @@ public class ContactsActivity extends ListActivity implements OnCheckedChangeLis
 	public ArrayList<Group> selectedGroups = new ArrayList<Group>();
 
 	private SegmentedRadioGroup segmentedButtons;
-	private ArrayList<Contact> contacts;
-	private ArrayList<Group> groups;
+	private ArrayList<Contact> contacts; 
+	private ArrayList<Group> groups; 
 
 
 	// private ProgressBar pb;
