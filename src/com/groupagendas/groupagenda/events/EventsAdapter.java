@@ -149,8 +149,8 @@ public class EventsAdapter extends BaseAdapter implements Filterable{
 		}
 		
 		if(!event.isNative()){
-			holder.status_1.setText(String.valueOf(event.getAttendant_1_count()));
-			holder.status_2.setText(String.valueOf(event.getAttendant_2_count()));
+			holder.status_1.setText(""+event.getAttendant_1_count());
+			holder.status_2.setText(""+(event.getAttendant_2_count()+event.getAttendant_4_count()));
 			
 			holder.button_yes.setOnClickListener(new OnClickListener() {
 				@Override
