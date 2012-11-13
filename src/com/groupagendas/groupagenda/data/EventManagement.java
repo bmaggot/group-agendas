@@ -5,7 +5,6 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
-import java.util.EventObject;
 
 import org.apache.http.HttpResponse;
 import org.apache.http.HttpStatus;
@@ -31,8 +30,6 @@ import android.util.Log;
 import com.groupagendas.groupagenda.SaveDeletedData;
 import com.groupagendas.groupagenda.SaveDeletedData.SDMetaData;
 import com.groupagendas.groupagenda.account.Account;
-import com.groupagendas.groupagenda.chat.ChatMessageObject;
-import com.groupagendas.groupagenda.chat.ChatProvider;
 import com.groupagendas.groupagenda.chat.ChatThreadObject;
 import com.groupagendas.groupagenda.contacts.Contact;
 import com.groupagendas.groupagenda.error.report.Reporter;
@@ -1603,8 +1600,7 @@ public class EventManagement {
 		item.setCreator_contact_id(result.getInt(result
 				.getColumnIndex(EventsProvider.EMetaData.EventsMetaData.CREATOR_CONTACT_ID)));
 
-		item.setAttendant_0_count(result.getInt(result
-				.getColumnIndex(EventsProvider.EMetaData.EventsMetaData.ATTENDANT_1_COUNT)));
+		item.setAttendant_1_count(result.getInt(result				.getColumnIndex(EventsProvider.EMetaData.EventsMetaData.ATTENDANT_1_COUNT)));
 		item.setAttendant_2_count(result.getInt(result
 				.getColumnIndex(EventsProvider.EMetaData.EventsMetaData.ATTENDANT_2_COUNT)));
 		item.setAttendant_0_count(result.getInt(result
