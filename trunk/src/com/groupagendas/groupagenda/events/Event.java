@@ -9,7 +9,7 @@ import android.content.Context;
 import com.groupagendas.groupagenda.data.DataManagement;
 import com.groupagendas.groupagenda.interfaces.Colored;
 
-public class Event extends Object implements Colored {
+public class Event implements Colored {
 private static final String DEFAULT_TITLE = "";
 private static final String TIMESTAMP_FORMAT = DataManagement.SERVER_TIMESTAMP_FORMAT;
 
@@ -19,9 +19,6 @@ private static final String TIMESTAMP_FORMAT = DataManagement.SERVER_TIMESTAMP_F
 	public static final String DEFAULT_COLOR_ATTENDING = "3F48CC";
 	public static final String DEFAULT_COLOR_MAYBE = "ED1C24";
 
-	private static final String DEFAULT_TYPE = "p";
-	private static final String DEFAULT_DESCRIPTION = "";
-	
 	private static final String EMPTY_ENTRY = "";
 	
 	public static final String NOTE = "p";
@@ -30,6 +27,9 @@ private static final String TIMESTAMP_FORMAT = DataManagement.SERVER_TIMESTAMP_F
 	public static final String SHARED_NOTE = "n";
 	public static final String OPEN_EVENT = "o";
 	public static final String NATIVE_EVENT = "native";
+
+	private static final String DEFAULT_TYPE = NOTE;
+	private static final String DEFAULT_DESCRIPTION = "";
 	
 	private long internalID;
 	private int event_id; //TODO solve ids over 32k
