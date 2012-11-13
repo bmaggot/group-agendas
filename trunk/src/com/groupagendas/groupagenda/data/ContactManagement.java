@@ -28,11 +28,15 @@ import android.database.sqlite.SQLiteException;
 import android.net.Uri;
 import android.util.Log;
 
+import com.groupagendas.groupagenda.SaveDeletedData;
+import com.groupagendas.groupagenda.SaveDeletedData.SDMetaData;
 import com.groupagendas.groupagenda.account.Account;
 import com.groupagendas.groupagenda.contacts.Contact;
 import com.groupagendas.groupagenda.contacts.ContactsProvider;
 import com.groupagendas.groupagenda.contacts.Group;
 import com.groupagendas.groupagenda.contacts.birthdays.Birthday;
+import com.groupagendas.groupagenda.events.Event;
+import com.groupagendas.groupagenda.events.EventsProvider;
 import com.groupagendas.groupagenda.https.MySSLSocketFactory;
 import com.groupagendas.groupagenda.utils.MapUtils;
 import com.groupagendas.groupagenda.utils.Utils;
@@ -1950,4 +1954,40 @@ public class ContactManagement {
 			}			
 		}
 
+//		public static void uploadOfflineContact (Context context){
+//			Account account = new Account(context);
+//			System.out.println("UPLOADING");
+//			String projection[] = null;
+//			Uri uri = ContactsProvider.CMetaData.ContactsMetaData.CONTENT_URI;
+//			String where = (ContactsProvider.CMetaData.ContactsMetaData.MODIFIED +">"+ account.getLastTimeConnectedToWeb());
+//			Cursor result = context.getContentResolver().query(uri, projection, where, null, null);
+//			if(result.moveToFirst()){
+//			
+//			while (!result.isAfterLast()){
+//				Contact e = createCVFromContact(context, result) ;
+//				
+//				if(e.getEvent_id() == 0){
+//					int externalId = createEventInRemoteDb(context, e);
+//					ContentValues values = new ContentValues();
+//					values.put(EventsProvider.EMetaData.EventsMetaData.E_ID, externalId);
+//					where = EventsProvider.EMetaData.EventsMetaData._ID + "=" + e.getInternalID();
+//					context.getContentResolver().update(EventsProvider.EMetaData.EventsMetaData.CONTENT_URI, values , where, null);
+//					
+//				}
+//				else{
+//					editEvent(context, e);
+//					}
+//				}
+//			}
+//			result.moveToNext();
+//			SaveDeletedData offlineDeletedEvents = new SaveDeletedData(context);
+//			String offlineDeleted = offlineDeletedEvents.getDELETED_EVENTS();
+//		    String[] ids = offlineDeleted.split(SDMetaData.SEPARATOR);
+//		    for (int i = 0; i<ids.length; i++){
+//		    	int id = Integer.parseInt(ids[i]);
+//		    	removeEvent(context, id);
+//		    }
+//			result.close();
+//				}
+		
 }
