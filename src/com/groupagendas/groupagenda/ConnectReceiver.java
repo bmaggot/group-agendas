@@ -25,8 +25,10 @@ import com.groupagendas.groupagenda.account.Account;
 import com.groupagendas.groupagenda.chat.ChatMessageObject;
 import com.groupagendas.groupagenda.chat.ChatProvider;
 import com.groupagendas.groupagenda.data.ChatManagement;
+import com.groupagendas.groupagenda.data.ContactManagement;
 import com.groupagendas.groupagenda.data.Data;
 import com.groupagendas.groupagenda.data.DataManagement;
+import com.groupagendas.groupagenda.data.EventManagement;
 import com.groupagendas.groupagenda.data.OfflineData;
 import com.groupagendas.groupagenda.error.report.Reporter;
 import com.groupagendas.groupagenda.https.MySSLSocketFactory;
@@ -78,12 +80,17 @@ public class ConnectReceiver extends BroadcastReceiver {
 		}
 
 	}
-	
+	//sita klasse exucutina metodus, kurie update visus duomenys
 	private class ExecuteOfflineChats extends AsyncTask<Void, Void, Void>{
 
 		@Override
 		protected Void doInBackground(Void... params) {
-			ChatManagement.uploadUnploaded(context, ChatManagement.getChatMessagesCreatedOffline(context));
+			Account account = new Account(context);
+			EventManagement.uploadOfflineEvents(context);
+//			ContactManagement.uploadOfflineContact(context);
+			ChatManagement.uploadUnploaded(context, ChatManagement.getChatMessagesCreatedOffline(context)); //grazina arraylista, kuris uplaudina kiekviena message
+			//account.clearLastTimeConnectedToweb();
+			DataManagement.synchronizeWithServer(context, null, account.getLatestUpdateUnixTimestamp());
 			return null;
 		}
 		

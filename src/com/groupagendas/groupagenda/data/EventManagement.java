@@ -5,6 +5,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.EventObject;
 
 import org.apache.http.HttpResponse;
 import org.apache.http.HttpStatus;
@@ -27,7 +28,11 @@ import android.net.Uri;
 import android.provider.BaseColumns;
 import android.util.Log;
 
+import com.groupagendas.groupagenda.SaveDeletedData;
+import com.groupagendas.groupagenda.SaveDeletedData.SDMetaData;
 import com.groupagendas.groupagenda.account.Account;
+import com.groupagendas.groupagenda.chat.ChatMessageObject;
+import com.groupagendas.groupagenda.chat.ChatProvider;
 import com.groupagendas.groupagenda.chat.ChatThreadObject;
 import com.groupagendas.groupagenda.contacts.Contact;
 import com.groupagendas.groupagenda.error.report.Reporter;
@@ -132,7 +137,7 @@ public class EventManagement {
 	 */
 	public static void createNewEvent(Context context, Event event) {
 		initUserTimezone(context);
-		boolean success = false;
+		
 
 		if (DataManagement.networkAvailable) {
 			int id = createEventInRemoteDb(context, event);
@@ -140,16 +145,13 @@ public class EventManagement {
 			if (id > 0) {
 				event.setEvent_id(id);
 				event.setUploadedToServer(true);
-				success = true;
 			} else {
 				// TODO report error
 			}
 		}
 
-		long int_id = insertEventToLocalDB(context, event);
-		if (!success) {
-			// TODO offline tasko iterpimas i nauja lentele
-		}
+		insertEventToLocalDB(context, event);
+		
 
 	}
 
@@ -173,8 +175,9 @@ public class EventManagement {
 		}
 
 		if (!deletedFromRemote) {
-			// TODO OFFLINE MODE TASK: add delete event task to tasks list for
-			// server remote
+			SaveDeletedData offlineDeletedEvents1 = new SaveDeletedData(context);
+			offlineDeletedEvents1.addEventForLaterDelete(event.getEvent_id());
+			
 		}
 
 		deleteEventFromLocalDb(context, event.getInternalID());
@@ -888,6 +891,9 @@ public class EventManagement {
 	}
 
 	// TODO javadoc
+	//nauja update event_id metoda su dviem parametrais: internal_id, external_id, kas suzinoti, kokiam..
+	// reiketu papildomos lenteles eventu duomenu bazei saugoti deleted_events
+	
 	private static void updateEventStatusInLocalDb(Context context, Event event) {
 		if (event.getMyInvite() != null) {
 			event.getMyInvite().setStatus(event.getStatus());
@@ -895,6 +901,8 @@ public class EventManagement {
 		ContentValues cv = new ContentValues();
 		cv.put(EventsProvider.EMetaData.EventsMetaData.STATUS,
 				event.getStatus());
+		cv.put(EventsProvider.EMetaData.EventsMetaData.MODIFIED_UTC_MILLISECONDS,
+				Calendar.getInstance().getTimeInMillis()); //veliau
 		cv.put(EventsProvider.EMetaData.EventsMetaData.INVITED,
 				parseInvitedListToJSONArray(event.getInvited()));
 		Uri uri = EventsProvider.EMetaData.EventsMetaData.CONTENT_URI;
@@ -1865,5 +1873,57 @@ public class EventManagement {
 	// invited.setStatus(result.getInt(result.getColumnIndexOrThrow(EventsProvider.EMetaData.InvitedMetaData.STATUS)));
 	// return invited;
 	// }
-
+	
+//	public static ArrayList<ChatMessageObject> getEventCreatedOffline(Context context) {
+//		ArrayList<EventObject> offlineCreatedEvents = new ArrayList<EventObject>();
+//		Uri uri = EventsProvider.EMetaData.EventsMetaData.CONTENT_URI;
+//		String projection[] = null;
+//		Account account = new Account(context);
+//		String selection = (EventsProvider.EMetaData.EventsMetaData.CREATED_UTC_MILLISECONDS +">"+ account.getLastTimeConnectedToWeb());
+//		Cursor cur = context.getContentResolver().query(uri, projection, selection, null, null);
+//		if(cur.moveToFirst()){
+//			do{
+//				offlineCreatedEvents.add(makeChatMessageObjectFromCursor(cur));
+//				cur.moveToNext();
+//			} while(!cur.isAfterLast());
+//		}
+//		cur.close();
+//		return offlineCreatedEvents;
+//	}
+	
+	public static void uploadOfflineEvents (Context context){
+	Account account = new Account(context);
+	System.out.println("UPLOADING");
+	String projection[] = null;
+	Uri uri = EventsProvider.EMetaData.EventsMetaData.CONTENT_URI;
+	String where = (EventsProvider.EMetaData.EventsMetaData.MODIFIED_UTC_MILLISECONDS +">"+ account.getLastTimeConnectedToWeb());
+	Cursor result = context.getContentResolver().query(uri, projection, where, null, null);
+	if(result.moveToFirst()){
+	
+	while (!result.isAfterLast()){
+		Event e = createEventFromCursor(context, result);
+		
+		if(e.getEvent_id() == 0){
+			int externalId = createEventInRemoteDb(context, e);
+			ContentValues values = new ContentValues();
+			values.put(EventsProvider.EMetaData.EventsMetaData.E_ID, externalId);
+			where = EventsProvider.EMetaData.EventsMetaData._ID + "=" + e.getInternalID();
+			context.getContentResolver().update(EventsProvider.EMetaData.EventsMetaData.CONTENT_URI, values , where, null);
+			
+		}
+		else{
+			editEvent(context, e);
+			}
+		}
+	}
+	result.moveToNext();
+	SaveDeletedData offlineDeletedEvents = new SaveDeletedData(context);
+	String offlineDeleted = offlineDeletedEvents.getDELETED_EVENTS();
+    String[] ids = offlineDeleted.split(SDMetaData.SEPARATOR);
+    for (int i = 0; i<ids.length; i++){
+    	int id = Integer.parseInt(ids[i]);
+    	removeEvent(context, id);
+    }
+	result.close();
+		}
 }
