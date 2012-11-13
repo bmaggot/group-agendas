@@ -140,7 +140,7 @@ public class DataManagement {
 			reqEntity.addPart(Account.AccountMetaData.PHONE3, new StringBody(account.getPhone3(), Charset.forName("UTF-8")));
 			reqEntity.addPart(Account.AccountMetaData.EMAIL, new StringBody(account.getEmail(), Charset.forName("UTF-8")));
 
-			reqEntity.addPart("language", new StringBody("en", Charset.forName("UTF-8")));
+			reqEntity.addPart("language", new StringBody(account.getLanguage(), Charset.forName("UTF-8")));
 
 			post.setEntity(reqEntity);
 

@@ -506,5 +506,7 @@ public class Account {
 		prefsEditor.remove(AccountMetaData.LAST_TIME_CONNECTED_IN_MS);
 		prefsEditor.commit();
 	}
+	
+	
 }
 
