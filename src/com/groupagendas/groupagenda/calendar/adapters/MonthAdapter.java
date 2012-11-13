@@ -144,8 +144,9 @@ public class MonthAdapter extends AbstractAdapter<Event> {
 //			endTime.setText(timeFormat.format(event.getEndCalendar().getTime()));
 			
 			if (event.getIcon().length() <= 0) {
-				icon.setVisibility(View.INVISIBLE);
+				icon.setVisibility(View.GONE);
 			}else{
+				icon.setVisibility(View.VISIBLE);
 				icon.setImageResource(event.getIconId(getContext()));
 			}
 			
