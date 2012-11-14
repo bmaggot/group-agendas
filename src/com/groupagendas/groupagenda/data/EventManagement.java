@@ -898,6 +898,8 @@ public class EventManagement {
 		ContentValues cv = new ContentValues();
 		cv.put(EventsProvider.EMetaData.EventsMetaData.STATUS,
 				event.getStatus());
+		cv.put(EventsProvider.EMetaData.EventsMetaData.EVENT_DISPLAY_COLOR,
+				event.getDisplayColor());
 		cv.put(EventsProvider.EMetaData.EventsMetaData.MODIFIED_UTC_MILLISECONDS,
 				Calendar.getInstance().getTimeInMillis()); //veliau
 		cv.put(EventsProvider.EMetaData.EventsMetaData.INVITED,
@@ -1495,8 +1497,8 @@ public class EventManagement {
 		cv.put(EventsProvider.EMetaData.EventsMetaData.COLOR, event.getColor());
 		// cv.put(EventsProvider.EMetaData.EventsMetaData.TEXT_COLOR,
 		// event.getTextColor());//2012-10-24
-//		cv.put(EventsProvider.EMetaData.EventsMetaData.EVENT_DISPLAY_COLOR,
-//				event.getDisplayColor());// 2012-10-24
+		cv.put(EventsProvider.EMetaData.EventsMetaData.EVENT_DISPLAY_COLOR,
+				event.getDisplayColor());// 2012-10-24
 		cv.put(EventsProvider.EMetaData.EventsMetaData.DESC,
 				event.getDescription());
 		cv.put(EventsProvider.EMetaData.EventsMetaData.LOCATION,
