@@ -5,12 +5,10 @@ import java.util.Calendar;
 
 import org.apache.http.HttpResponse;
 import org.apache.http.HttpStatus;
-import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.entity.mime.HttpMultipartMode;
 import org.apache.http.entity.mime.MultipartEntity;
 import org.apache.http.entity.mime.content.StringBody;
-import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.util.EntityUtils;
 import org.json.JSONObject;
 
@@ -30,7 +28,6 @@ import com.groupagendas.groupagenda.data.DataManagement;
 import com.groupagendas.groupagenda.data.EventManagement;
 import com.groupagendas.groupagenda.data.OfflineData;
 import com.groupagendas.groupagenda.events.Event;
-import com.groupagendas.groupagenda.https.MySSLSocketFactory;
 import com.groupagendas.groupagenda.https.WebService;
 import com.groupagendas.groupagenda.utils.Utils;
 
