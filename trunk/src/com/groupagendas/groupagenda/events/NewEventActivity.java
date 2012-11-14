@@ -543,8 +543,8 @@ public class NewEventActivity extends EventActivity {
 			@Override
 			public void onClick(View v) {
 				Intent i = new Intent(NewEventActivity.this, ContactsActivity.class);
-				i.putExtra("ACTIVITY_MODE", 1); // TODO HARDCODED PARAMETER!
-												// DEFUSE!
+				i.putExtra(ContactsActivity.TASK_MODE_KEY, ContactsActivity.TASK_MODE_SELECTION); 
+				i.putExtra(ContactsActivity.LIST_MODE_KEY, ContactsActivity.LIST_MODE_CONTACTS);								
 				Data.showSaveButtonInContactsForm = true;
 				// TODO Data.eventForSavingNewInvitedPersons = event;
 				startActivity(i);
