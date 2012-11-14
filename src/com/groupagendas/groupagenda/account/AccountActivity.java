@@ -5,6 +5,7 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
+import java.util.Locale;
 
 import net.londatiga.android.CropOption;
 import net.londatiga.android.CropOptionAdapter;
@@ -17,6 +18,8 @@ import android.content.ComponentName;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.ResolveInfo;
+import android.content.res.Configuration;
+import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
@@ -26,6 +29,7 @@ import android.os.Environment;
 import android.provider.MediaStore;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.DisplayMetrics;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.Window;
@@ -51,6 +55,7 @@ import com.groupagendas.groupagenda.events.EventActivity;
 import com.groupagendas.groupagenda.events.EventActivity.StaticTimezones;
 import com.groupagendas.groupagenda.timezone.CountriesAdapter;
 import com.groupagendas.groupagenda.timezone.TimezonesAdapter;
+import com.groupagendas.groupagenda.utils.LanguageCodeGetter;
 import com.groupagendas.groupagenda.utils.Utils;
 
 public class AccountActivity extends Activity implements OnClickListener {
@@ -485,9 +490,13 @@ public class AccountActivity extends Activity implements OnClickListener {
 		mAccount.setZip(temp);
 		//language
 		long selectedLanguage = languageSpinner.getSelectedItemId();
-		System.out.println(selectedLanguage + " TESTINAM");
 		String[] languagesArray = getResources().getStringArray(R.array.language_values);
 		mAccount.setLanguage(languagesArray[(int) selectedLanguage]);
+		Resources res = this.getResources();
+		DisplayMetrics dm = res.getDisplayMetrics();
+		Configuration config = res.getConfiguration();
+		config.locale = new Locale(LanguageCodeGetter.getLanguageCode(new Account(this).getLanguage()));
+		res.updateConfiguration(config, dm);
 		// Image
 		boolean isRemoveImage = removeImage.isChecked();
 
