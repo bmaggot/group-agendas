@@ -31,7 +31,8 @@ import com.groupagendas.groupagenda.utils.Prefs;
 public class EventActivity extends Activity {
 	public static final int DEFAULT_EVENT_DURATION_IN_MINS = 60;
 	protected static final int COLOURED_BUBBLE_SIZE = 50;
-	public static final String EXTRA_STRING_FOR_START_CALENDAR = "strTime";
+	public static final String EXTRA_STRING_FOR_START_CALENDAR = "strStartTime";
+	public static final String EXTRA_STRING_FOR_END_CALENDAR = "strEndTime";
 
 	public static ArrayList<Invited> newInvites;
 	public static ArrayList<Contact> selectedContacts;
@@ -44,7 +45,7 @@ public class EventActivity extends Activity {
 	protected EditText streetView;
 	protected EditText zipView;
 	protected TextView timezoneView;
-	
+
 	protected EditText locationView;
 	protected EditText gobyView;
 	protected EditText takewithyouView;
@@ -56,25 +57,25 @@ public class EventActivity extends Activity {
 	protected Button saveButton;
 	protected ImageView iconView;
 	protected ImageView colorView;
-	
+
 	protected LinearLayout addressPanel;
 	protected LinearLayout addressLine;
-	
+
 	protected LinearLayout countrySpinnerBlock;
 	protected LinearLayout cityViewBlock;
 	protected LinearLayout streetViewBlock;
 	protected LinearLayout zipViewBlock;
 	protected LinearLayout timezoneSpinnerBlock;
-	
+
 	protected LinearLayout detailsPanel;
 	protected LinearLayout detailsLine;
-	
+
 	protected LinearLayout locationViewBlock;
 	protected LinearLayout gobyViewBlock;
 	protected LinearLayout takewithyouViewBlock;
 	protected LinearLayout costViewBlock;
 	protected LinearLayout accomodationViewBlock;
-	
+
 	protected boolean addressPanelVisible = true;
 	protected boolean detailsPanelVisible = true;
 
@@ -114,7 +115,7 @@ public class EventActivity extends Activity {
 	protected ProgressBar pb;
 	protected String selectedIcon = Event.DEFAULT_ICON;
 	protected String selectedColor = Event.DEFAULT_COLOR;
-	
+
 	protected Event event;
 	protected ArrayList<StaticTimezones> countriesList = null;
 	protected ArrayList<StaticTimezones> filteredCountriesList = null;
@@ -130,19 +131,20 @@ public class EventActivity extends Activity {
 	protected TextView response_button_yes;
 	protected TextView response_button_no;
 	protected TextView response_button_maybe;
-	
+
 	protected Account account;
-	
+
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		dtUtils = new DateTimeUtils(this);
 		newInvites = null;
-		
+
 	}
+
 	@Override
 	protected void onResume() {
-		super.onResume();		
+		super.onResume();
 	}
 
 	protected Event setEventData(Event event) {
@@ -150,7 +152,7 @@ public class EventActivity extends Activity {
 		if (timezoneInUse > 0) {
 			event.setTimezone(countriesList.get(timezoneInUse).timezone);
 		}
-		
+
 		event.setDescription(descView.getText().toString());
 		// title
 		event.setTitle(titleView.getText().toString());
@@ -161,7 +163,7 @@ public class EventActivity extends Activity {
 		event.setModifiedMillisUtc(Calendar.getInstance().getTimeInMillis());
 
 		if (timezoneInUse > 0)
-		event.setCountry(countriesList.get(timezoneInUse).country_code);
+			event.setCountry(countriesList.get(timezoneInUse).country_code);
 		event.setZip(zipView.getText().toString());
 		event.setCity(cityView.getText().toString());
 		event.setStreet(streetView.getText().toString());
@@ -184,6 +186,39 @@ public class EventActivity extends Activity {
 		event.setReminder3(reminder3time);
 		event.setIcon(selectedIcon);
 		event.setColor(selectedColor);
+
+		if (event.getInvited().size() > 0) {
+			event.setType(Event.SHARED_EVENT);
+		} else {
+			event.setType(Event.NOTE);
+		}
+
+		if (event.getColor().equals(Event.DEFAULT_COLOR)) {
+			if (!event.getType().equals(Event.NOTE)) {
+				if (event.getStatus() == Invited.ACCEPTED) {
+					event.setDisplayColor(Event.DEFAULT_COLOR_ATTENDING);
+				} else if (!event.isBirthday()) {
+					event.setDisplayColor(Event.DEFAULT_COLOR_MAYBE);
+				} else {
+					event.setDisplayColor(Event.DEFAULT_COLOR);
+				}
+			} else {
+				event.setDisplayColor(Event.DEFAULT_COLOR);
+			}
+		} else {
+			if (!event.getType().equals(Event.NOTE)) {
+				if (event.getStatus() == Invited.ACCEPTED) {
+					event.setDisplayColor(event.getColor());
+				} else if (!event.isBirthday()) {
+					event.setDisplayColor(Event.DEFAULT_COLOR_MAYBE);
+				} else {
+					event.setDisplayColor(Event.DEFAULT_COLOR);
+				}
+			} else {
+				event.setDisplayColor(event.getColor());
+			}
+		}
+
 		return event;
 
 	}
@@ -194,7 +229,7 @@ public class EventActivity extends Activity {
 			return getString(R.string.title_is_required);
 		case 2: // no timezone set
 			return getString(R.string.timezone_required);
-		case 3: // calendar fields are null 
+		case 3: // calendar fields are null
 			return getString(R.string.invalid_start_end_time);
 		case 4: // event start is set after end
 			return getString(R.string.invalid_start_end_time);
@@ -204,7 +239,7 @@ public class EventActivity extends Activity {
 			return getString(R.string.unknown_event_error);
 		}
 	}
-	
+
 	public void showAddressPanel() {
 		addressPanelVisible = true;
 		timezoneSpinnerBlock.setVisibility(View.VISIBLE);
@@ -221,7 +256,7 @@ public class EventActivity extends Activity {
 			addressPanel.setVisibility(View.GONE);
 			detailsPanel.setVisibility(View.GONE);
 		}
-		
+
 		timezoneSpinnerBlock.setVisibility(View.GONE);
 		countrySpinnerBlock.setVisibility(View.GONE);
 		cityViewBlock.setVisibility(View.GONE);
@@ -260,7 +295,7 @@ public class EventActivity extends Activity {
 		LinearLayout accomodationViewBlock = (LinearLayout) findViewById(R.id.accomodationBlock);
 		accomodationViewBlock.setVisibility(View.GONE);
 	}
-	
+
 	public class StaticTimezones {
 		public String id;
 		public String city;
@@ -286,13 +321,13 @@ public class EventActivity extends Activity {
 			boolean contains = false;
 			account = new Account(context);
 			String fullname = account.getFullname();
-			
+
 			for (Invited i : event.getInvited()) {
 				if (i.getName().equals(fullname)) {
 					contains = true;
 				}
 			}
-			
+
 			if (!contains) {
 				Invited me = new Invited();
 				me.setGuid(account.getUser_id());
@@ -302,7 +337,7 @@ public class EventActivity extends Activity {
 				event.getInvited().add(me);
 				invitedListSize++;
 			}
-			
+
 			inviteButton.setBackgroundResource(R.drawable.event_invite_people_button_notalone);
 			invitedAdapter = new InvitedAdapter(this, event.getInvited());
 			for (int i = 0; i < invitedListSize; i++) {
@@ -310,21 +345,23 @@ public class EventActivity extends Activity {
 				invitedPersonList.addView(view);
 			}
 		}
-		
+
 	}
-	
+
 	// TODO write a javadoc for respondToInvitation(int response)
 	protected void respondToInvitation(int response) {
 		invitesColumn = (LinearLayout) findViewById(R.id.invitesLine);
 		RelativeLayout myInvitation = (RelativeLayout) invitesColumn.findViewWithTag(Invited.OWN_INVITATION_ENTRY);
 		TextView myStatus = (TextView) myInvitation.findViewById(R.id.invited_status);
-		
+
 		switch (response) {
 		case 0:
 			event.setStatus(0);
 			invitationResponseStatus.setText(this.getString(R.string.status_not_attending));
 			myStatus.setText(this.getString(R.string.status_not_attending));
-			myStatus.setBackgroundColor(Color.parseColor("#5d5d5d")); // TODO hardcoded color-code
+			myStatus.setBackgroundColor(Color.parseColor("#5d5d5d")); // TODO
+																		// hardcoded
+																		// color-code
 			response_button_yes.setVisibility(View.VISIBLE);
 			response_button_maybe.setVisibility(View.VISIBLE);
 			response_button_no.setVisibility(View.INVISIBLE);
@@ -333,7 +370,9 @@ public class EventActivity extends Activity {
 			event.setStatus(1);
 			invitationResponseStatus.setText(this.getString(R.string.status_attending));
 			myStatus.setText(this.getString(R.string.status_attending));
-			myStatus.setBackgroundColor(Color.parseColor("#26b2d8")); // TODO hardcoded color-code
+			myStatus.setBackgroundColor(Color.parseColor("#26b2d8")); // TODO
+																		// hardcoded
+																		// color-code
 			response_button_yes.setVisibility(View.INVISIBLE);
 			response_button_maybe.setVisibility(View.VISIBLE);
 			response_button_no.setVisibility(View.VISIBLE);
@@ -342,7 +381,9 @@ public class EventActivity extends Activity {
 			event.setStatus(2);
 			invitationResponseStatus.setText(this.getString(R.string.status_maybe));
 			myStatus.setText(this.getString(R.string.status_maybe));
-			myStatus.setBackgroundColor(Color.parseColor("#b5b5b5")); // TODO hardcoded color-code
+			myStatus.setBackgroundColor(Color.parseColor("#b5b5b5")); // TODO
+																		// hardcoded
+																		// color-code
 			response_button_yes.setVisibility(View.VISIBLE);
 			response_button_maybe.setVisibility(View.INVISIBLE);
 			response_button_no.setVisibility(View.VISIBLE);
@@ -358,7 +399,7 @@ public class EventActivity extends Activity {
 			break;
 		}
 	}
-	
+
 	protected void setAutoIcon(Context context) {
 		ArrayList<AutoIconItem> autoIcons = DataManagement.getAutoIcons(context);
 
@@ -369,7 +410,7 @@ public class EventActivity extends Activity {
 			}
 		}
 	}
-	
+
 	protected void setAutoColor(Context context) {
 		ArrayList<AutoColorItem> autoColors = DataManagement.getAutoColors(context);
 
