@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string-array name="visibility_labels">
+        <item>No view</item>
+        <item>Full view</item>
+        <item>Limited view</item>
+    </string-array>
+    <string-array name="visibility_values">
+        <item>n</item>
+        <item>f</item>
+        <item>l</item>
+    </string-array>
+
+</resources>

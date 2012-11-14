@@ -6,6 +6,9 @@ public class LanguageCodeGetter {
 		if(language.equals("english")){
 			return "en";
 		}
+		if(language.equals("dutch")){
+			return "nl";
+		}
 		return "en";
 	}
 	

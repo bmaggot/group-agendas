@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string-array name="sex_labels">
+        <item>None</item>
+        <item>Male</item>
+        <item>Female</item>
+    </string-array>
+    <string-array name="sex_values">
+        <item></item>
+        <item>m</item>
+        <item>f</item>
+    </string-array>
+
+</resources>
