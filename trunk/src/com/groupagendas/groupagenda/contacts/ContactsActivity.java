@@ -6,12 +6,10 @@ import java.util.TreeMap;
 
 import org.apache.http.HttpResponse;
 import org.apache.http.HttpStatus;
-import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.entity.mime.HttpMultipartMode;
 import org.apache.http.entity.mime.MultipartEntity;
 import org.apache.http.entity.mime.content.StringBody;
-import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.util.EntityUtils;
 import org.json.JSONObject;
 
@@ -51,7 +49,7 @@ import com.groupagendas.groupagenda.data.Data;
 import com.groupagendas.groupagenda.data.DataManagement;
 import com.groupagendas.groupagenda.data.OfflineData;
 import com.groupagendas.groupagenda.events.EventActivity;
-import com.groupagendas.groupagenda.https.MySSLSocketFactory;
+import com.groupagendas.groupagenda.https.WebService;
 import com.makeramen.segmented.SegmentedRadioGroup;
 
 public class ContactsActivity extends ListActivity implements OnCheckedChangeListener {
@@ -602,7 +600,7 @@ public class ContactsActivity extends ListActivity implements OnCheckedChangeLis
 		@Override
 		protected Void doInBackground(Void... params) {
 			try {
-				HttpClient hc = MySSLSocketFactory.getNewHttpClient();
+				WebService webService = new WebService();
 				HttpPost post = new HttpPost(Data.getServerUrl() + "mobile/events_invite_extra");
 
 				MultipartEntity reqEntity = new MultipartEntity(HttpMultipartMode.BROWSER_COMPATIBLE);
@@ -622,7 +620,7 @@ public class ContactsActivity extends ListActivity implements OnCheckedChangeLis
 				}
 				post.setEntity(reqEntity);
 				if (DataManagement.networkAvailable) {
-					HttpResponse rp = hc.execute(post);
+					HttpResponse rp = webService.getResponseFromHttpPost(post);
 					if (rp.getStatusLine().getStatusCode() == HttpStatus.SC_OK) {
 						String resp = EntityUtils.toString(rp.getEntity());
 						if (resp != null) {

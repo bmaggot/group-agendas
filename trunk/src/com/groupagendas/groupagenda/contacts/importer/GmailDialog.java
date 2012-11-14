@@ -9,7 +9,6 @@ import oauth.signpost.OAuthConsumer;
 import oauth.signpost.commonshttp.CommonsHttpOAuthConsumer;
 
 import org.apache.http.HttpResponse;
-import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -33,7 +32,7 @@ import com.groupagendas.groupagenda.contacts.Contact;
 import com.groupagendas.groupagenda.data.ContactManagement;
 import com.groupagendas.groupagenda.data.Data;
 import com.groupagendas.groupagenda.error.report.Reporter;
-import com.groupagendas.groupagenda.https.MySSLSocketFactory;
+import com.groupagendas.groupagenda.https.WebService;
 
 public class GmailDialog extends Dialog {
 	private Activity context;
@@ -279,11 +278,11 @@ public class GmailDialog extends Dialog {
 	}
 
 	private String makeSecuredReq(String url, OAuthConsumer consumer) throws Exception {
-		HttpClient httpclient = MySSLSocketFactory.getNewHttpClient();
+		WebService webService = new WebService();
 		HttpGet request = new HttpGet(url);
 		Log.i(C.TAG, "Requesting URL : " + url);
 		consumer.sign(request);
-		HttpResponse response = httpclient.execute(request);
+		HttpResponse response = webService.getResponseFromHttpGet(request);
 		Log.i(C.TAG, "Statusline : " + response.getStatusLine());
 		InputStream data = response.getEntity().getContent();
 		BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(data));

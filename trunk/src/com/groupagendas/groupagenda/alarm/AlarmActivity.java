@@ -31,6 +31,7 @@ import com.groupagendas.groupagenda.data.EventManagement;
 import com.groupagendas.groupagenda.data.OfflineData;
 import com.groupagendas.groupagenda.events.Event;
 import com.groupagendas.groupagenda.https.MySSLSocketFactory;
+import com.groupagendas.groupagenda.https.WebService;
 import com.groupagendas.groupagenda.utils.Utils;
 
 public class AlarmActivity extends Activity {
@@ -95,14 +96,14 @@ public class AlarmActivity extends Activity {
 		@Override
 		protected Void doInBackground(Void... params) {
 			try {
-				HttpClient hc = MySSLSocketFactory.getNewHttpClient();
+				WebService webService = new WebService();
 				HttpPost post = new HttpPost(Data.getServerUrl() + "mobile/alarms_dismiss");
 
 				MultipartEntity reqEntity = new MultipartEntity(HttpMultipartMode.BROWSER_COMPATIBLE);
 				reqEntity.addPart("token", new StringBody(Data.getToken(getApplicationContext()), Charset.forName("UTF-8")));
 				post.setEntity(reqEntity);
 				if (DataManagement.networkAvailable) {
-					HttpResponse rp = hc.execute(post);
+					HttpResponse rp = webService.getResponseFromHttpPost(post);
 					if (rp.getStatusLine().getStatusCode() == HttpStatus.SC_OK) {
 						String resp = EntityUtils.toString(rp.getEntity());
 						if (resp != null) {

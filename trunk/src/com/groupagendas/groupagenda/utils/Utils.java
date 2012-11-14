@@ -14,8 +14,6 @@ import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.HttpStatus;
 import org.apache.http.client.ClientProtocolException;
-import org.apache.http.client.HttpClient;
-import org.apache.http.client.methods.HttpGet;
 import org.apache.http.util.EntityUtils;
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -28,7 +26,7 @@ import android.util.Log;
 import com.groupagendas.groupagenda.data.CalendarSettings;
 import com.groupagendas.groupagenda.data.DataManagement;
 import com.groupagendas.groupagenda.error.report.Reporter;
-import com.groupagendas.groupagenda.https.MySSLSocketFactory;
+import com.groupagendas.groupagenda.https.WebService;
 
 
 
@@ -313,7 +311,7 @@ public static long millisToUnixTimestamp(long milis) {
  * @return
  */
 public static Calendar createCalendar(long timeInMilis, String timezone) {
-	if (timeInMilis == 0) return null;
+	if (timeInMilis == 0 && timezone == null) return null;
 	Calendar cal = Calendar.getInstance(TimeZone.getTimeZone(timezone));
 	cal.setTimeInMillis(timeInMilis);
 	return cal;
@@ -323,12 +321,11 @@ public static Calendar createCalendar(long timeInMilis, String timezone) {
 
 public static byte[] imageToBytes(String image_url) {
 	if (image_url != null && !image_url.equals("null")) {
-		HttpClient mHttpClient = MySSLSocketFactory.getNewHttpClient();
-		HttpGet mHttpGet = new HttpGet(image_url);
+		WebService webService = new WebService();
 		HttpResponse mHttpResponse;
 
 		try {
-			mHttpResponse = mHttpClient.execute(mHttpGet);
+			mHttpResponse = webService.getResponseFromUrl(image_url);
 			if (mHttpResponse.getStatusLine().getStatusCode() == HttpStatus.SC_OK) {
 				HttpEntity entity = mHttpResponse.getEntity();
 				if (entity != null) {
