@@ -9,7 +9,6 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import java.util.Locale;
 import java.util.Map;
 import java.util.concurrent.ExecutionException;
 
@@ -32,14 +31,11 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
-import android.content.res.Configuration;
-import android.content.res.Resources;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.telephony.TelephonyManager;
-import android.util.DisplayMetrics;
 import android.util.Log;
 
 import com.bog.calendar.app.model.CEvent;
@@ -63,7 +59,6 @@ import com.groupagendas.groupagenda.settings.AutoIconItem;
 import com.groupagendas.groupagenda.templates.TemplatesProvider;
 import com.groupagendas.groupagenda.templates.TemplatesProvider.TMetaData.TemplatesMetaData;
 import com.groupagendas.groupagenda.utils.JSONUtils;
-import com.groupagendas.groupagenda.utils.LanguageCodeGetter;
 import com.groupagendas.groupagenda.utils.Prefs;
 import com.groupagendas.groupagenda.utils.Utils;
 
@@ -154,11 +149,7 @@ public class DataManagement {
 						if (!success) {
 							Log.e("Change account ERROR", object.getJSONObject("error").getString("reason"));
 						} else {
-							Resources res = context.getResources();
-							DisplayMetrics dm = res.getDisplayMetrics();
-							Configuration config = res.getConfiguration();
-							config.locale = new Locale(LanguageCodeGetter.getLanguageCode(new Account(context).getLanguage()));
-							res.updateConfiguration(config, dm);
+							
 						}
 					}
 				}
