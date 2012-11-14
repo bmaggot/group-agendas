@@ -1887,7 +1887,7 @@ public class EventManagement {
 //		return offlineCreatedEvents;
 //	}
 	
-	public static void uploadOfflineEvents (Context context){
+	public static void uploadOfflineEvents (Context context){ 
 	Account account = new Account(context);
 	System.out.println("UPLOADING");
 	String projection[] = null;
