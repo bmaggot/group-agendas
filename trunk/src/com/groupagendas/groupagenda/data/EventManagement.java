@@ -1917,9 +1917,12 @@ public class EventManagement {
 	SaveDeletedData offlineDeletedEvents = new SaveDeletedData(context);
 	String offlineDeleted = offlineDeletedEvents.getDELETED_EVENTS();
     String[] ids = offlineDeleted.split(SDMetaData.SEPARATOR);
-    for (int i = 0; i<ids.length; i++){
+    if(ids[0]!= ""){
+    	for (int i = 0; i<ids.length; i++){
     	int id = Integer.parseInt(ids[i]);
-    	removeEvent(context, id);
+    	removeEvent(context, id);	
+    }
+    
     }
 	result.close();
 		}
