@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string-array name="language_labels">
+        <item>English</item>
+        <item>Nederlands</item>
+        <item>Lietuviškai</item>
+    </string-array>
+    
+    <string-array name="language_values">
+        <item>english</item>
+        <item>dutch</item>
+        <item>lithuanian</item>
+    </string-array>
+
+</resources>
