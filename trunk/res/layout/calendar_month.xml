@@ -1,40 +1,51 @@
 <com.groupagendas.groupagenda.calendar.month.MonthView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
     android:orientation="vertical" >
 
     <!-- TOP NAVBAR BEGIN -->
-    <include android:id="@+id/calendar_navbar"
+
+    <include
+        android:id="@+id/calendar_navbar"
         android:layout_gravity="center_horizontal"
         layout="@layout/calendar_top_bar" />
     <!-- TOP NAVBAR END -->
 
-	<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-	    android:background="@drawable/calendar_month_table"
-	    android:orientation="horizontal"
-	    android:layout_width="fill_parent"
-	    android:layout_height="wrap_content">
-	    
-		<LinearLayout android:id="@+id/month_weeknumbers_container"
-		    android:layout_width="wrap_content"
-		    android:layout_height="wrap_content"
-		    android:orientation="vertical" />
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1px"
+        android:background="@color/black"
+        tools:ignore="PxUsage" />
 
-		<TableLayout android:id="@+id/month_table"
-			android:layout_width="fill_parent"
-			android:layout_height="wrap_content"
-			android:orientation="vertical" />
+    <LinearLayout
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/calendar_month_table"
+        android:orientation="horizontal" >
 
-	</LinearLayout>
+        <LinearLayout
+            android:id="@+id/month_weeknumbers_container"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical" />
+
+        <TableLayout
+            android:id="@+id/month_table"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical" />
+    </LinearLayout>
 
     <ListView
         android:id="@+id/month_list"
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
         android:background="@color/white"
+        android:cacheColorHint="#00000000"
         android:divider="@color/lighter_gray"
-        android:dividerHeight="1dp"
-        android:cacheColorHint="#00000000" >
+        android:dividerHeight="1dp" >
     </ListView>
 
 </com.groupagendas.groupagenda.calendar.month.MonthView>
