@@ -46,6 +46,7 @@ public class DayWeekView extends AbstractCalendarView {
 	public final static int DEFAULT_DAYS_SHOWN = 7;
 	public final static int MAX_DAYS_SHOWN = 7;
 	private static final int MIN_DAYS_SHOWN = 1;
+	private int width = 0;
 
 	
 	public static final float DEFAULT_TIME_TO_SCROLL = 7.5f; //DEFAULT HOUR TO SCROLL. 7.5f = 7:30
@@ -116,8 +117,13 @@ public class DayWeekView extends AbstractCalendarView {
 		if (startTimeMinutes % WeekInstance.TIMETABLE_ACCURACY >= WeekInstance.TIMETABLE_ACCURACY / 2) timeUnitsUntilStart++;
 		params.topMargin = (int) (timeUnitHeight * timeUnitsUntilStart);
 		
+		
 		if (neighbourId != 0) {
-			params.addRule(RelativeLayout.RIGHT_OF, neighbourId);
+			//params.addRule(RelativeLayout.RIGHT_OF, neighbourId);
+			width += containerWidth/divider;
+			params.leftMargin = width;
+		} else {
+			width=0;
 		}
 		HourEventRectangle eventFrame = new HourEventRectangle(getContext(), startTimeToShow, event.getTitle(), event.getTextColor(), event.getDisplayColor(), event.getIconId(getContext()));
 		eventFrame.setOnClickListener(new EventActivityOnClickListener(getContext(), event));
