@@ -225,7 +225,24 @@ private static final String TIMESTAMP_FORMAT = DataManagement.SERVER_TIMESTAMP_F
 							color = DEFAULT_COLOR_ATTENDING;
 						} else if (!birthday) {
 							color = DEFAULT_COLOR_MAYBE;
+						} else {
+							color = DEFAULT_COLOR;
 						}
+					} else {
+						color = DEFAULT_COLOR;
+					}
+					
+				} else {
+					if (!getType().equals(NOTE) || !getType().equals(NATIVE_EVENT)) {
+						if (status == Invited.ACCEPTED) {
+							color = DEFAULT_COLOR_ATTENDING;
+						} else if (!birthday) {
+							color = DEFAULT_COLOR_MAYBE;
+						} else {
+							color = DEFAULT_COLOR;
+						}
+					} else {
+						color = getColor();
 					}
 				}
 			}
