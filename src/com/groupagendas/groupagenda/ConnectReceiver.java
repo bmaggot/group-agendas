@@ -5,33 +5,26 @@ import java.util.Calendar;
 
 import org.apache.http.HttpResponse;
 import org.apache.http.HttpStatus;
-import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpPost;
-import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.util.EntityUtils;
 import org.json.JSONObject;
 
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
-import android.database.Cursor;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
-import android.net.Uri;
 import android.os.AsyncTask;
 import android.util.Log;
 
 import com.groupagendas.groupagenda.account.Account;
-import com.groupagendas.groupagenda.chat.ChatMessageObject;
-import com.groupagendas.groupagenda.chat.ChatProvider;
 import com.groupagendas.groupagenda.data.ChatManagement;
-import com.groupagendas.groupagenda.data.ContactManagement;
 import com.groupagendas.groupagenda.data.Data;
 import com.groupagendas.groupagenda.data.DataManagement;
 import com.groupagendas.groupagenda.data.EventManagement;
 import com.groupagendas.groupagenda.data.OfflineData;
 import com.groupagendas.groupagenda.error.report.Reporter;
-import com.groupagendas.groupagenda.https.MySSLSocketFactory;
+import com.groupagendas.groupagenda.https.WebService;
 
 public class ConnectReceiver extends BroadcastReceiver {
 
@@ -103,7 +96,7 @@ public class ConnectReceiver extends BroadcastReceiver {
 		protected Boolean doInBackground(ArrayList<OfflineData>... params) {
 			ArrayList<OfflineData> requests = params[0];
 			boolean success = false;
-			HttpClient hc = MySSLSocketFactory.getNewHttpClient();
+			WebService webService = new WebService();
 
 			try {
 				for (OfflineData request : requests) {
@@ -111,7 +104,7 @@ public class ConnectReceiver extends BroadcastReceiver {
 							+ request.getLocation());
 					post.setEntity(request.getRequest());
 					if (DataManagement.networkAvailable) {
-						HttpResponse rp = hc.execute(post);
+						HttpResponse rp = webService.getResponseFromHttpPost(post);
 
 						if (rp.getStatusLine().getStatusCode() == HttpStatus.SC_OK) {
 							String resp = EntityUtils.toString(rp.getEntity());

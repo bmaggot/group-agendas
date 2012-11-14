@@ -7,7 +7,6 @@ import java.util.Calendar;
 
 import org.apache.http.HttpResponse;
 import org.apache.http.HttpStatus;
-import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.entity.mime.HttpMultipartMode;
 import org.apache.http.entity.mime.MultipartEntity;
@@ -25,14 +24,13 @@ import android.net.Uri;
 import android.util.Log;
 
 import com.groupagendas.groupagenda.account.Account;
-import com.groupagendas.groupagenda.account.Account.AccountMetaData;
 import com.groupagendas.groupagenda.chat.ChatMessageObject;
 import com.groupagendas.groupagenda.chat.ChatProvider;
 import com.groupagendas.groupagenda.chat.ChatProvider.CMMetaData;
 import com.groupagendas.groupagenda.events.Event;
 import com.groupagendas.groupagenda.events.EventsProvider;
 import com.groupagendas.groupagenda.events.EventsProvider.EMetaData;
-import com.groupagendas.groupagenda.https.MySSLSocketFactory;
+import com.groupagendas.groupagenda.https.WebService;
 import com.groupagendas.groupagenda.utils.Utils;
 
 public class ChatManagement {
@@ -229,7 +227,7 @@ public class ChatManagement {
 	public static boolean removeChatMessageFromRemoteDb(Context context, int messageId) {
 		boolean success = false;
 		try {
-			HttpClient hc = MySSLSocketFactory.getNewHttpClient();
+			WebService webService = new WebService();
 			HttpPost post = new HttpPost(Data.getServerUrl() + "mobile/chat_remove");
 
 			MultipartEntity reqEntity = new MultipartEntity(HttpMultipartMode.BROWSER_COMPATIBLE);
@@ -242,7 +240,7 @@ public class ChatManagement {
 			post.setEntity(reqEntity);
 			HttpResponse rp = null;
 			if (DataManagement.networkAvailable) {
-				rp = hc.execute(post);
+				rp = webService.getResponseFromHttpPost(post);
 				if (rp.getStatusLine().getStatusCode() == HttpStatus.SC_OK) {
 					String resp = EntityUtils.toString(rp.getEntity());
 					if (resp != null) {
@@ -318,7 +316,7 @@ public class ChatManagement {
 	public static ChatMessageObject postChatMessage(int eventId, String message, Context context) {
 		ChatMessageObject chatMessageObject = new ChatMessageObject();
 		try {
-			HttpClient hc = MySSLSocketFactory.getNewHttpClient();
+			WebService webService = new WebService();
 			HttpPost post = new HttpPost(Data.getServerUrl() + "mobile/chat_post");
 
 			MultipartEntity reqEntity = new MultipartEntity(HttpMultipartMode.BROWSER_COMPATIBLE);
@@ -336,7 +334,7 @@ public class ChatManagement {
 			post.setEntity(reqEntity);
 			HttpResponse rp = null;
 			if (DataManagement.networkAvailable) {
-				rp = hc.execute(post);
+				rp = webService.getResponseFromHttpPost(post);
 				if (rp.getStatusLine().getStatusCode() == HttpStatus.SC_OK) {
 					String resp = EntityUtils.toString(rp.getEntity());
 					if (resp != null) {
@@ -373,7 +371,7 @@ public class ChatManagement {
 	public static ArrayList<ChatMessageObject> getChatMessagesForEventFromRemoteDb(int eventId, Context context, boolean resetMessageCount,
 			long lastMessageTimeStamp) {
 		boolean success = false;
-		HttpClient hc = MySSLSocketFactory.getNewHttpClient();
+		WebService webService = new WebService();
 		ArrayList<ChatMessageObject> chatMessages = new ArrayList<ChatMessageObject>();
 		HttpPost post = new HttpPost(Data.getServerUrl() + "mobile/chat_get");
 		Log.e("ChatManagement", "");
@@ -399,7 +397,7 @@ public class ChatManagement {
 
 		post.setEntity(reqEntity);
 		try {
-			HttpResponse rp = hc.execute(post);
+			HttpResponse rp = webService.getResponseFromHttpPost(post);
 			if (rp.getStatusLine().getStatusCode() == HttpStatus.SC_OK) {
 				String resp = EntityUtils.toString(rp.getEntity());
 				if (resp != null) {
@@ -425,7 +423,7 @@ public class ChatManagement {
 
 	public static void getAllChatMessagesFromRemoteDb(Context context) {
 		boolean success = false;
-		HttpClient hc = MySSLSocketFactory.getNewHttpClient();
+		WebService webService = new WebService();
 		HttpPost post = new HttpPost(Data.getServerUrl() + "mobile/chat_get_all");
 		MultipartEntity reqEntity = new MultipartEntity(HttpMultipartMode.BROWSER_COMPATIBLE);
 
@@ -439,7 +437,7 @@ public class ChatManagement {
 
 		post.setEntity(reqEntity);
 		try {
-			HttpResponse rp = hc.execute(post);
+			HttpResponse rp = webService.getResponseFromHttpPost(post);
 			if (rp.getStatusLine().getStatusCode() == HttpStatus.SC_OK) {
 				String resp = EntityUtils.toString(rp.getEntity());
 				if (resp != null) {

@@ -8,7 +8,6 @@ import java.util.Date;
 
 import org.apache.http.HttpResponse;
 import org.apache.http.HttpStatus;
-import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.entity.mime.HttpMultipartMode;
 import org.apache.http.entity.mime.MultipartEntity;
@@ -39,7 +38,7 @@ import com.groupagendas.groupagenda.events.EventsProvider;
 import com.groupagendas.groupagenda.events.EventsProvider.EMetaData;
 import com.groupagendas.groupagenda.events.Invited;
 import com.groupagendas.groupagenda.events.NativeCalendarReader;
-import com.groupagendas.groupagenda.https.MySSLSocketFactory;
+import com.groupagendas.groupagenda.https.WebService;
 import com.groupagendas.groupagenda.utils.JSONUtils;
 import com.groupagendas.groupagenda.utils.Utils;
 
@@ -81,7 +80,7 @@ public class EventManagement {
 
 		boolean success = false;
 		try {
-			HttpClient hc = MySSLSocketFactory.getNewHttpClient();
+			WebService webService = new WebService();
 			HttpPost post = new HttpPost(Data.getServerUrl()
 					+ "mobile/events_get");
 
@@ -93,7 +92,7 @@ public class EventManagement {
 					new StringBody(id, Charset.forName("UTF-8")));
 
 			post.setEntity(reqEntity);
-			HttpResponse rp = hc.execute(post);
+			HttpResponse rp = webService.getResponseFromHttpPost(post);
 
 			if (rp.getStatusLine().getStatusCode() == HttpStatus.SC_OK) {
 				String resp = EntityUtils.toString(rp.getEntity());
@@ -284,7 +283,7 @@ public class EventManagement {
 		initUserTimezone(context);
 		boolean success = false;
 		Account account = new Account(context);
-		HttpClient hc = MySSLSocketFactory.getNewHttpClient();
+		WebService webService = new WebService();
 		HttpPost post = new HttpPost(Data.getServerUrl()
 				+ "mobile/events_invite_extra");
 		// Charset charset = Charset.forName(DATA_ENCODING);
@@ -319,7 +318,7 @@ public class EventManagement {
 			post.setEntity(reqEntity);
 
 			if (DataManagement.networkAvailable) {
-				HttpResponse rp = hc.execute(post);
+				HttpResponse rp = webService.getResponseFromHttpPost(post);
 
 				if (rp.getStatusLine().getStatusCode() == HttpStatus.SC_OK) {
 					String resp = EntityUtils.toString(rp.getEntity());
@@ -570,7 +569,7 @@ public class EventManagement {
 		ContentValues[] values;
 
 		try {
-			HttpClient hc = MySSLSocketFactory.getNewHttpClient();
+			WebService webService = new WebService();
 			HttpPost post = new HttpPost(Data.getServerUrl()
 					+ GET_EVENTS_FROM_REMOTE_DB_URL);
 
@@ -582,7 +581,7 @@ public class EventManagement {
 			reqEntity.addPart(CATEGORY,
 					new StringBody(eventCategory, Charset.forName("UTF-8")));
 			post.setEntity(reqEntity);
-			HttpResponse rp = hc.execute(post);
+			HttpResponse rp = webService.getResponseFromHttpPost(post);
 
 			if (rp.getStatusLine().getStatusCode() == HttpStatus.SC_OK) {
 				String resp = EntityUtils.toString(rp.getEntity());
@@ -948,7 +947,7 @@ public class EventManagement {
 
 		try {
 			Account account = new Account(context);
-			HttpClient hc = MySSLSocketFactory.getNewHttpClient();
+			WebService webService = new WebService();
 			HttpPost post = new HttpPost(Data.getServerUrl()
 					+ "mobile/set_event_status");
 
@@ -965,7 +964,7 @@ public class EventManagement {
 			post.setEntity(reqEntity);
 
 			if (DataManagement.networkAvailable) {
-				HttpResponse rp = hc.execute(post);
+				HttpResponse rp = webService.getResponseFromHttpPost(post);
 
 				if (rp.getStatusLine().getStatusCode() == HttpStatus.SC_OK) {
 					String resp = EntityUtils.toString(rp.getEntity());
@@ -1006,7 +1005,7 @@ public class EventManagement {
 		boolean success = false;
 
 		try {
-			HttpClient hc = MySSLSocketFactory.getNewHttpClient();
+			WebService webService = new WebService();
 			HttpPost post = new HttpPost(Data.getServerUrl()
 					+ "mobile/events_create");
 
@@ -1157,7 +1156,7 @@ public class EventManagement {
 			post.setEntity(reqEntity);
 
 			if (DataManagement.networkAvailable) {
-				HttpResponse rp = hc.execute(post);
+				HttpResponse rp = webService.getResponseFromHttpPost(post);
 
 				if (rp.getStatusLine().getStatusCode() == HttpStatus.SC_OK) {
 					String resp = EntityUtils.toString(rp.getEntity());
@@ -1199,7 +1198,7 @@ public class EventManagement {
 		boolean success = false;
 
 		try {
-			HttpClient hc = MySSLSocketFactory.getNewHttpClient();
+			WebService webService = new WebService();
 			HttpPost post = new HttpPost(Data.getServerUrl()
 					+ "mobile/events_edit");
 
@@ -1355,7 +1354,7 @@ public class EventManagement {
 			post.setEntity(reqEntity);
 
 			if (DataManagement.networkAvailable) {
-				HttpResponse rp = hc.execute(post);
+				HttpResponse rp = webService.getResponseFromHttpPost(post);
 
 				if (rp.getStatusLine().getStatusCode() == HttpStatus.SC_OK) {
 					String resp = EntityUtils.toString(rp.getEntity());
@@ -1389,7 +1388,7 @@ public class EventManagement {
 
 		try {
 			Account account = new Account(context);
-			HttpClient hc = MySSLSocketFactory.getNewHttpClient();
+			WebService webService = new WebService();
 			HttpPost post = new HttpPost(Data.getServerUrl()
 					+ "mobile/events_remove");
 
@@ -1405,7 +1404,7 @@ public class EventManagement {
 			post.setEntity(reqEntity);
 
 			if (DataManagement.networkAvailable) {
-				HttpResponse rp = hc.execute(post);
+				HttpResponse rp = webService.getResponseFromHttpPost(post);
 
 				if (rp.getStatusLine().getStatusCode() == HttpStatus.SC_OK) {
 					String resp = EntityUtils.toString(rp.getEntity());

@@ -7,12 +7,10 @@ import java.nio.charset.Charset;
 import org.apache.http.HttpResponse;
 import org.apache.http.HttpStatus;
 import org.apache.http.client.ClientProtocolException;
-import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.entity.mime.HttpMultipartMode;
 import org.apache.http.entity.mime.MultipartEntity;
 import org.apache.http.entity.mime.content.StringBody;
-import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.util.EntityUtils;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -22,13 +20,13 @@ import android.os.AsyncTask;
 import com.groupagendas.groupagenda.data.Data;
 import com.groupagendas.groupagenda.data.DataManagement;
 import com.groupagendas.groupagenda.error.report.Reporter;
-import com.groupagendas.groupagenda.https.MySSLSocketFactory;
+import com.groupagendas.groupagenda.https.WebService;
 
 public class PrefixReceiver extends AsyncTask <String, Void, String> {
 	
 	@Override
 	protected String doInBackground (String... country) {
-		HttpClient hc = MySSLSocketFactory.getNewHttpClient();
+		WebService webService = new WebService();
 		HttpPost post = new HttpPost(Data.getServerUrl() + "mobile/get_country_code");
 		MultipartEntity reqEntity = new MultipartEntity(HttpMultipartMode.BROWSER_COMPATIBLE);
 		String phonePrefix = null;
@@ -40,7 +38,7 @@ public class PrefixReceiver extends AsyncTask <String, Void, String> {
 		post.setEntity(reqEntity);
 		HttpResponse rp;
 		try {
-			rp = hc.execute(post);
+			rp = webService.getResponseFromHttpPost(post);
 			if (rp.getStatusLine().getStatusCode() == HttpStatus.SC_OK) {
 				String response = EntityUtils.toString(rp.getEntity());
 				JSONObject js = new JSONObject(response);

@@ -7,12 +7,10 @@ import java.nio.charset.Charset;
 import org.apache.http.HttpResponse;
 import org.apache.http.HttpStatus;
 import org.apache.http.client.ClientProtocolException;
-import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.entity.mime.HttpMultipartMode;
 import org.apache.http.entity.mime.MultipartEntity;
 import org.apache.http.entity.mime.content.StringBody;
-import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.util.EntityUtils;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -23,11 +21,10 @@ import android.util.Log;
 
 import com.groupagendas.groupagenda.data.Data;
 import com.groupagendas.groupagenda.data.DataManagement;
-import com.groupagendas.groupagenda.https.MySSLSocketFactory;
+import com.groupagendas.groupagenda.https.WebService;
 
 public class Reporter {
 
-	private static HttpClient hc = MySSLSocketFactory.getNewHttpClient();
 	private static HttpPost post = new HttpPost(Data.getServerUrl() + "mobile/error_put");
 	private static MultipartEntity reqEntity = new MultipartEntity(HttpMultipartMode.BROWSER_COMPATIBLE);
 	private static HttpResponse rp;
@@ -59,6 +56,7 @@ public class Reporter {
 		@Override
 		protected Void doInBackground(String... params) {
 			String error = params[0];
+			WebService webService = new WebService();
 			try {
 				if (Data.getToken(context) != null) {
 					reqEntity.addPart("token", new StringBody(Data.getToken(context), Charset.forName("UTF-8")));
@@ -70,7 +68,7 @@ public class Reporter {
 				reqEntity.addPart("phone_model", new StringBody(android.os.Build.MODEL, Charset.forName("UTF-8")));
 				post.setEntity(reqEntity);
 				if (DataManagement.networkAvailable) {
-					rp = hc.execute(post);
+					rp = webService.getResponseFromHttpPost(post);
 					if (rp.getStatusLine().getStatusCode() == HttpStatus.SC_OK) {
 						String resp = EntityUtils.toString(rp.getEntity());
 						Log.e("ERROR: ", error);

@@ -10,7 +10,6 @@ import java.util.Map;
 
 import org.apache.http.HttpResponse;
 import org.apache.http.HttpStatus;
-import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.entity.mime.HttpMultipartMode;
 import org.apache.http.entity.mime.MultipartEntity;
@@ -28,16 +27,12 @@ import android.database.sqlite.SQLiteException;
 import android.net.Uri;
 import android.util.Log;
 
-import com.groupagendas.groupagenda.SaveDeletedData;
-import com.groupagendas.groupagenda.SaveDeletedData.SDMetaData;
 import com.groupagendas.groupagenda.account.Account;
 import com.groupagendas.groupagenda.contacts.Contact;
 import com.groupagendas.groupagenda.contacts.ContactsProvider;
 import com.groupagendas.groupagenda.contacts.Group;
 import com.groupagendas.groupagenda.contacts.birthdays.Birthday;
-import com.groupagendas.groupagenda.events.Event;
-import com.groupagendas.groupagenda.events.EventsProvider;
-import com.groupagendas.groupagenda.https.MySSLSocketFactory;
+import com.groupagendas.groupagenda.https.WebService;
 import com.groupagendas.groupagenda.utils.MapUtils;
 import com.groupagendas.groupagenda.utils.Utils;
 
@@ -59,7 +54,7 @@ public class ContactManagement {
 		boolean success = false;
 		String error = null;
 		Account account = new Account(context);
-		HttpClient hc = MySSLSocketFactory.getNewHttpClient();
+		WebService webService = new WebService();
 		HttpPost post = new HttpPost(Data.getServerUrl() + "mobile/contact_list");
 		MultipartEntity reqEntity = new MultipartEntity(HttpMultipartMode.BROWSER_COMPATIBLE);
 	    
@@ -88,7 +83,7 @@ public class ContactManagement {
 
 		post.setEntity(reqEntity);
 		try {
-			HttpResponse rp = hc.execute(post);
+			HttpResponse rp = webService.getResponseFromHttpPost(post);
 
 			if (rp.getStatusLine().getStatusCode() == HttpStatus.SC_OK) {
 				String resp = EntityUtils.toString(rp.getEntity());
@@ -418,7 +413,7 @@ public class ContactManagement {
 		int destination_id = 0;
 		boolean success = false;
 		Account account = new Account(context);
-		HttpClient hc = MySSLSocketFactory.getNewHttpClient();
+		WebService webService = new WebService();
 		HttpPost post = new HttpPost(Data.getServerUrl() + "mobile/contact_create");
 		MultipartEntity reqEntity = new MultipartEntity(HttpMultipartMode.BROWSER_COMPATIBLE);
 	    
@@ -652,7 +647,7 @@ public class ContactManagement {
 		post.setEntity(reqEntity);
 		try {
 			if (DataManagement.networkAvailable) {
-				HttpResponse rp = hc.execute(post);
+				HttpResponse rp = webService.getResponseFromHttpPost(post);
 
 				if (rp.getStatusLine().getStatusCode() == HttpStatus.SC_OK) {
 					String resp = EntityUtils.toString(rp.getEntity());
@@ -1051,7 +1046,7 @@ public class ContactManagement {
 		int destination_id = 0;
 		boolean success = false;
 		Account account = new Account(context);
-		HttpClient hc = MySSLSocketFactory.getNewHttpClient();
+		WebService webService = new WebService();
 		HttpPost post = new HttpPost(Data.getServerUrl() + "mobile/group_create");
 		MultipartEntity reqEntity = new MultipartEntity(HttpMultipartMode.BROWSER_COMPATIBLE);
 	    
@@ -1160,7 +1155,7 @@ public class ContactManagement {
 		post.setEntity(reqEntity);
 		try {
 			if (DataManagement.networkAvailable) {
-				HttpResponse rp = hc.execute(post);
+				HttpResponse rp = webService.getResponseFromHttpPost(post);
 
 				if (rp.getStatusLine().getStatusCode() == HttpStatus.SC_OK) {
 					String resp = EntityUtils.toString(rp.getEntity());
@@ -1236,7 +1231,7 @@ public class ContactManagement {
 		boolean success = false;
 		String error = null;
 		Account account = new Account(context);
-		HttpClient hc = MySSLSocketFactory.getNewHttpClient();
+		WebService webService = new WebService();
 		HttpPost post = new HttpPost(Data.getServerUrl() + "mobile/groups_list");
 		MultipartEntity reqEntity = new MultipartEntity(HttpMultipartMode.BROWSER_COMPATIBLE);
 	    
@@ -1265,7 +1260,7 @@ public class ContactManagement {
 
 		post.setEntity(reqEntity);
 		try {
-			HttpResponse rp = hc.execute(post);
+			HttpResponse rp = webService.getResponseFromHttpPost(post);
 
 			if (rp.getStatusLine().getStatusCode() == HttpStatus.SC_OK) {
 				String resp = EntityUtils.toString(rp.getEntity());
@@ -1399,7 +1394,7 @@ public class ContactManagement {
 		boolean success = false;
 		String error = null;
 		Account account = new Account(context);
-		HttpClient hc = MySSLSocketFactory.getNewHttpClient();
+		WebService webService = new WebService();
 		HttpPost post = new HttpPost(Data.getServerUrl() + "mobile/contact_remove");
 		MultipartEntity reqEntity = new MultipartEntity(HttpMultipartMode.BROWSER_COMPATIBLE);
 	    
@@ -1424,7 +1419,7 @@ public class ContactManagement {
 		post.setEntity(reqEntity);
 		try {
 			if (DataManagement.networkAvailable) {
-				HttpResponse rp = hc.execute(post);
+				HttpResponse rp = webService.getResponseFromHttpPost(post);
 
 				if (rp.getStatusLine().getStatusCode() == HttpStatus.SC_OK) {
 					String resp = EntityUtils.toString(rp.getEntity());
@@ -1482,7 +1477,7 @@ public class ContactManagement {
 	public static boolean editContactOnRemoteDb(Context context, Contact c) {
 		boolean success = false;
 		Account account = new Account(context);
-		HttpClient hc = MySSLSocketFactory.getNewHttpClient();
+		WebService webService = new WebService();
 		HttpPost post = new HttpPost(Data.getServerUrl() + "mobile/contact_edit");
 		MultipartEntity reqEntity = new MultipartEntity(HttpMultipartMode.BROWSER_COMPATIBLE);
 	    
@@ -1603,7 +1598,7 @@ public class ContactManagement {
 
 		try {
 			if (DataManagement.networkAvailable) {
-				HttpResponse rp = hc.execute(post);
+				HttpResponse rp = webService.getResponseFromHttpPost(post);
 
 				if (rp.getStatusLine().getStatusCode() == HttpStatus.SC_OK) {
 					String resp = EntityUtils.toString(rp.getEntity());
@@ -1925,7 +1920,7 @@ public class ContactManagement {
 		public static void requestContactCopy(Context context, int guid, boolean req) {
 			try {
 				Account account = new Account(context);
-				HttpClient hc = MySSLSocketFactory.getNewHttpClient();
+				WebService webService = new WebService();
 				HttpPost post = new HttpPost(Data.getServerUrl() + "mobile/contact_copy");
 
 				MultipartEntity reqEntity = new MultipartEntity(HttpMultipartMode.BROWSER_COMPATIBLE);
@@ -1944,7 +1939,7 @@ public class ContactManagement {
 				post.setEntity(reqEntity);
 				if (DataManagement.networkAvailable) {
 					@SuppressWarnings("unused")
-					HttpResponse rp = hc.execute(post);
+					HttpResponse rp = webService.getResponseFromHttpPost(post);
 				} else {
 					OfflineData uplooad = new OfflineData("mobile/contact_copy", reqEntity);
 					Data.getUnuploadedData().add(uplooad);
