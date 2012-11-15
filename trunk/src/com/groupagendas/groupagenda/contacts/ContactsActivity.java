@@ -57,9 +57,8 @@ public class ContactsActivity extends ListActivity implements OnCheckedChangeLis
 	public ArrayList<Group> selectedGroups = new ArrayList<Group>();
 
 	private SegmentedRadioGroup segmentedButtons;
-	private ArrayList<Contact> contacts; 
-	private ArrayList<Group> groups; 
-
+	private ArrayList<Contact> contacts;
+	private ArrayList<Group> groups;
 
 	// private ProgressBar pb;
 
@@ -84,6 +83,8 @@ public class ContactsActivity extends ListActivity implements OnCheckedChangeLis
 	private GroupsAdapter gAdapter;
 
 	private Button importButton;
+	
+	private TextView listTitle;
 
 	/*
 	 * 0 - Contacts 1 - Groups
@@ -95,13 +96,14 @@ public class ContactsActivity extends ListActivity implements OnCheckedChangeLis
 	public static final int TASK_MODE_LISTING = 0;
 	public static final int TASK_MODE_SELECTION = 1;
 	private int TASK_MODE = TASK_MODE_LISTING;
-	
+
 	private final String CONTACTS_TASK = "contactsTask";
 	private final String GROUPS_TASK = "groupsTask";
 	private String CURRENT_TASK = CONTACTS_TASK;
-	
+
 	public static final String TASK_MODE_KEY = "TASK_MODE";
 	public static final String LIST_MODE_KEY = "LIST_MODE";
+
 	@Override
 	public void onWindowFocusChanged(boolean hasFocus) {
 		super.onWindowFocusChanged(hasFocus);
@@ -182,86 +184,60 @@ public class ContactsActivity extends ListActivity implements OnCheckedChangeLis
 		super.onResume();
 		initUI();
 
-		LIST_MODE = preferences.getInt("ContactsActivityList", LIST_MODE);
-//		CURRENT_TASK = preferences.getString("ContactsActivityTask", CURRENT_TASK);
+		LIST_MODE = preferences.getInt(LIST_MODE_KEY, LIST_MODE);
+		TASK_MODE = preferences.getInt(TASK_MODE_KEY, TASK_MODE);
 
 		sideIndex.setVisibility(View.GONE);
 
 		searchView.addTextChangedListener(filterTextWatcher);
 
-		if (getIntent().getExtras() != null){
+		if (getIntent().getExtras() != null) {
 			TASK_MODE = getIntent().getExtras().getInt(TASK_MODE_KEY);
-			 LIST_MODE = getIntent().getExtras().getInt(LIST_MODE_KEY);
-			 //CURRENT_TASK = getIntent().getExtras().;
-		} else {
-			TASK_MODE = TASK_MODE_LISTING;
-			LIST_MODE = LIST_MODE_CONTACTS;
-		}
+			LIST_MODE = getIntent().getExtras().getInt(LIST_MODE_KEY);
+		} 
+		
 		switch (TASK_MODE) {
 		case TASK_MODE_SELECTION:
 			getListView().setChoiceMode(ListView.CHOICE_MODE_MULTIPLE);
 			getListView().setItemsCanFocus(false);
+			
+			if (LIST_MODE == LIST_MODE_GROUPS) {
+				segmentedButtons.setVisibility(View.INVISIBLE);
+				listTitle.setText(R.string.groups);
+				listTitle.setVisibility(View.VISIBLE);
+			} else {
+				segmentedButtons.setVisibility(View.VISIBLE);
+				listTitle.setVisibility(View.INVISIBLE);
+			}
 
 			if (EventActivity.selectedContacts == null)
 				EventActivity.selectedContacts = new ArrayList<Contact>();
 
 			selectedContacts = EventActivity.selectedContacts;
 
+			if (ContactEditActivity.selectedGroups == null)
+				ContactEditActivity.selectedGroups = new ArrayList<Group>();
+
+			selectedGroups = ContactEditActivity.selectedGroups;
+
 			importButton.setText(R.string.contact_invite_save_button);
 			importButton.setOnClickListener(new OnClickListener() {
-
-				// @Override
-				// public void onClick(View v) {
-				// SparseBooleanArray selection =
-				// getListView().getCheckedItemPositions();
-				//
-				// if (selection != null) {
-				// for (int i=0; i<selection.size(); i++) {
-				// if (selection.get(selection.keyAt(i))) {
-				// int contains = -1;
-				// Contact c = (Contact) cAdapter.getItem(selection.keyAt(i));
-				//
-				// for (int j = 0; j < EventActivity.selectedContacts.size();
-				// j++) {
-				// if (EventActivity.selectedContacts.get(j).contact_id ==
-				// c.contact_id)
-				// contains = j;
-				// }
-				//
-				// if (contains < 0) {
-				// EventActivity.selectedContacts.add(c);
-				// } else {
-				// EventActivity.selectedContacts.remove(contains);
-				// }
-				// }
-				// }
-				// }
-				//
-				// finish();
-				// }
 				@Override
 				public void onClick(View v) {
-					ArrayList<Contact> selected = cAdapter.getSelected();
+					ArrayList<Contact> selectedContact = null;
+					ArrayList<Group> selectedGroup = null;
+					if (LIST_MODE == LIST_MODE_CONTACTS) {
+						selectedContact = cAdapter.getSelected();
 
-					if (selected != null) {
-						// for (int i=0; i<selected.size(); i++) {
-						// int contains = -1;
-						// Contact c = selected.get(i);
-						//
-						// for (int j = 0; j <
-						// EventActivity.selectedContacts.size(); j++) {
-						// if (EventActivity.selectedContacts.get(j).contact_id
-						// == c.contact_id)
-						// contains = j;
-						// }
-						//
-						// if (contains < 0) {
-						// EventActivity.selectedContacts.add(c);
-						// } else {
-						// EventActivity.selectedContacts.remove(contains);
-						// }
-						// }
-						EventActivity.selectedContacts = selected;
+						if (selectedContact != null) {
+							EventActivity.selectedContacts = selectedContact;
+						}
+					} else if (LIST_MODE == LIST_MODE_GROUPS) {
+						selectedGroup = gAdapter.getSelected();
+						if (selectedGroup != null) {
+							ContactEditActivity.selectedGroups = selectedGroup;
+						}
+
 					}
 
 					finish();
@@ -281,8 +257,8 @@ public class ContactsActivity extends ListActivity implements OnCheckedChangeLis
 				}
 			});
 			break;
-			
-			default:
+
+		default:
 			TASK_MODE = TASK_MODE_LISTING;
 			LIST_MODE = LIST_MODE_CONTACTS;
 			break;
@@ -302,7 +278,7 @@ public class ContactsActivity extends ListActivity implements OnCheckedChangeLis
 			}
 		} else if (LIST_MODE == LIST_MODE_GROUPS) {
 			groups = ContactManagement.getGroupsFromLocalDb(ContactsActivity.this, null);
-			gAdapter = new GroupsAdapter(groups, this);
+			gAdapter = new GroupsAdapter(groups, this, selectedGroups);
 			contactList.setAdapter(gAdapter);
 			gAdapter.notifyDataSetChanged();
 		}
@@ -320,7 +296,8 @@ public class ContactsActivity extends ListActivity implements OnCheckedChangeLis
 	@Override
 	public void onPause() {
 		super.onPause();
-		editor.putInt("ContactsActivityList", LIST_MODE);
+		editor.putInt(LIST_MODE_KEY, LIST_MODE);
+		editor.putInt(TASK_MODE_KEY, TASK_MODE);
 		editor.commit();
 		searchView.removeTextChangedListener(filterTextWatcher);
 	}
@@ -335,8 +312,8 @@ public class ContactsActivity extends ListActivity implements OnCheckedChangeLis
 		preferences = PreferenceManager.getDefaultSharedPreferences(this);
 		editor = preferences.edit();
 
-		editor.remove("ContactsActivityTask");
-		editor.remove("ContactsActivityList");
+		editor.remove(TASK_MODE_KEY);
+		editor.remove(LIST_MODE_KEY);
 		editor.commit();
 
 		segmentedButtons = (SegmentedRadioGroup) findViewById(R.id.segmentedButtons);
@@ -439,7 +416,11 @@ public class ContactsActivity extends ListActivity implements OnCheckedChangeLis
 	public void onListItemClick(ListView parent, View v, int position, long id) {
 		switch (TASK_MODE) {
 		case TASK_MODE_SELECTION:
-			cAdapter.toggleSelected(Integer.parseInt(v.getTag().toString()));
+			if (LIST_MODE == LIST_MODE_CONTACTS) {
+				cAdapter.toggleSelected(Integer.parseInt(v.getTag().toString()));
+			} else if (LIST_MODE == LIST_MODE_GROUPS) {
+				gAdapter.toggleSelected(Integer.parseInt(v.getTag().toString()));
+			}
 			break;
 		case TASK_MODE_LISTING:
 			Integer c_id = 0;
@@ -479,11 +460,11 @@ public class ContactsActivity extends ListActivity implements OnCheckedChangeLis
 				// Toast.LENGTH_SHORT).show();
 				setListAdapter(cAdapter);
 
-				if (contacts.size() > 10)
+				if ((contacts != null) && (contacts.size() > 10))
 					sideIndex.setVisibility(View.VISIBLE);
 
-				//editor.putString("ContactsActivityTask", CONTACTS_TASK);
-				editor.putInt("ContactsActivityList", LIST_MODE_CONTACTS);
+				// editor.putString("ContactsActivityTask", CONTACTS_TASK);
+				editor.putInt(LIST_MODE_KEY, LIST_MODE_CONTACTS);
 				editor.commit();
 				break;
 
@@ -492,14 +473,15 @@ public class ContactsActivity extends ListActivity implements OnCheckedChangeLis
 				// Toast.makeText(this,
 				// getString(R.string.waiting_for_groups_load),
 				// Toast.LENGTH_SHORT).show();
+				
 				groups = ContactManagement.getGroupsFromLocalDb(ContactsActivity.this, null);
-				gAdapter = new GroupsAdapter(groups, this);
+				gAdapter = new GroupsAdapter(groups, this, selectedGroups);
 				contactList.setAdapter(gAdapter);
 				gAdapter.notifyDataSetChanged();
 
-				//editor.putString("ContactsActivityTask", GROUPS_TASK);
-				//editor.putInt("ContactsActivityList", LIST_MODE_GROUPS);
-				editor.putInt("ContactsActivityList", LIST_MODE_GROUPS);
+				// editor.putString("ContactsActivityTask", GROUPS_TASK);
+				// editor.putInt("ContactsActivityList", LIST_MODE_GROUPS);
+				editor.putInt(LIST_MODE_KEY, LIST_MODE_GROUPS);
 				editor.commit();
 				break;
 			}
@@ -576,6 +558,7 @@ public class ContactsActivity extends ListActivity implements OnCheckedChangeLis
 		importButton = (Button) findViewById(R.id.import_button);
 		sideIndex = (LinearLayout) findViewById(R.id.sideIndex);
 		segmentedButtons = (SegmentedRadioGroup) findViewById(R.id.segmentedButtons);
+		listTitle = (TextView) findViewById(R.id.listTitle);
 	}
 
 	public void showImportStats() {
@@ -606,16 +589,19 @@ public class ContactsActivity extends ListActivity implements OnCheckedChangeLis
 				MultipartEntity reqEntity = new MultipartEntity(HttpMultipartMode.BROWSER_COMPATIBLE);
 				reqEntity.addPart("token", new StringBody(Data.getToken(getApplicationContext()), Charset.forName("UTF-8")));
 				if (Data.eventForSavingNewInvitedPersons != null) {
-					reqEntity.addPart("event_id", new StringBody(String.valueOf(Data.eventForSavingNewInvitedPersons.getEvent_id()), Charset.forName("UTF-8")));
+					reqEntity.addPart("event_id", new StringBody(String.valueOf(Data.eventForSavingNewInvitedPersons.getEvent_id()),
+							Charset.forName("UTF-8")));
 				}
 				if (selectedContacts != null && !selectedContacts.isEmpty()) {
 					for (int i = 0, l = selectedContacts.size(); i < l; i++) {
-						reqEntity.addPart("contacts[]", new StringBody(String.valueOf(selectedContacts.get(i).contact_id), Charset.forName("UTF-8")));
+						reqEntity.addPart("contacts[]",
+								new StringBody(String.valueOf(selectedContacts.get(i).contact_id), Charset.forName("UTF-8")));
 					}
 				}
 				if (selectedGroups != null && !selectedGroups.isEmpty()) {
 					for (int i = 0, l = selectedGroups.size(); i < l; i++) {
-						reqEntity.addPart("groups[]", new StringBody(String.valueOf(selectedGroups.get(i).group_id), Charset.forName("UTF-8")));
+						reqEntity.addPart("groups[]",
+								new StringBody(String.valueOf(selectedGroups.get(i).group_id), Charset.forName("UTF-8")));
 					}
 				}
 				post.setEntity(reqEntity);
