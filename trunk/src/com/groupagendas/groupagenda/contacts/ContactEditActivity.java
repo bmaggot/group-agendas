@@ -108,6 +108,8 @@ public class ContactEditActivity extends Activity implements OnClickListener, On
 	private CountriesAdapter countriesAdapter;
 	private LinearLayout countrySpinnerBlock;
 	private int timezoneInUse;
+	
+	public static ArrayList<Group> selectedGroups;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
