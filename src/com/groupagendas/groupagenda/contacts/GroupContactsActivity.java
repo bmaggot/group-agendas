@@ -84,6 +84,7 @@ public class GroupContactsActivity extends ListActivity {
 			if (contacts != null) {
 				cAdapter = new ContactsAdapter(contacts, GroupContactsActivity.this, null);
 				cAdapter.notifyDataSetChanged();
+				setListAdapter(cAdapter);
 			}
 			
 			super.onPostExecute(contacts);
