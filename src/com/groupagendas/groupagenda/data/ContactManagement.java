@@ -1701,29 +1701,35 @@ public class ContactManagement {
 	public static boolean updateBirthdayOnLocalDb(Context context, Contact contact) {
 		ContentValues cv = new ContentValues();
 		Birthday birthday = getBirthdayFromLocalDb(context, contact.contact_id);
-
-		if (Integer.valueOf(birthday.getBirthdayId()) > 0)
-			cv.put(ContactsProvider.CMetaData.BirthdaysMetaData.B_ID, birthday.getBirthdayId());
-
-		cv.put(ContactsProvider.CMetaData.BirthdaysMetaData.TITLE, contact.name +" "+ contact.lastname);
-		cv.put(ContactsProvider.CMetaData.BirthdaysMetaData.BIRTHDATE, contact.birthdate);
 		
-		String[] date = contact.birthdate.split("-");
-		cv.put(ContactsProvider.CMetaData.BirthdaysMetaData.BIRTHDATE_MM_DD, date[1]+"-"+date[2]);
-		cv.put(ContactsProvider.CMetaData.BirthdaysMetaData.BIRTHDATE_MM, date[1]);
-
-		cv.put(ContactsProvider.CMetaData.BirthdaysMetaData.CONTACT_ID, birthday.getContact_id());
-		cv.put(ContactsProvider.CMetaData.BirthdaysMetaData.COUNTRY, contact.country);
-
-		cv.put(ContactsProvider.CMetaData.BirthdaysMetaData.TIMEZONE, birthday.getTimezone());
-
-		String where = ContactsProvider.CMetaData.BirthdaysMetaData.CONTACT_ID + "=" + contact.contact_id;
-		try {
-			context.getContentResolver().update(ContactsProvider.CMetaData.BirthdaysMetaData.CONTENT_URI, cv, where, null);
+		if(birthday == null){
+			Birthday newBirthday = new Birthday(context, contact);
+			insertBirthdayToLocalDb(context, newBirthday, contact.contact_id);
 			return true;
-		} catch (SQLiteException e) {
-			Log.e("insertBirthdayToLocalDb(birthday, " + birthday.getBirthdayId() + ")", e.getMessage());
-			return false;
+		} else {
+			if (Integer.valueOf(birthday.getBirthdayId()) > 0)
+				cv.put(ContactsProvider.CMetaData.BirthdaysMetaData.B_ID, birthday.getBirthdayId());
+	
+			cv.put(ContactsProvider.CMetaData.BirthdaysMetaData.TITLE, contact.name +" "+ contact.lastname);
+			cv.put(ContactsProvider.CMetaData.BirthdaysMetaData.BIRTHDATE, contact.birthdate);
+			
+			String[] date = contact.birthdate.split("-");
+			cv.put(ContactsProvider.CMetaData.BirthdaysMetaData.BIRTHDATE_MM_DD, date[1]+"-"+date[2]);
+			cv.put(ContactsProvider.CMetaData.BirthdaysMetaData.BIRTHDATE_MM, date[1]);
+	
+			cv.put(ContactsProvider.CMetaData.BirthdaysMetaData.CONTACT_ID, birthday.getContact_id());
+			cv.put(ContactsProvider.CMetaData.BirthdaysMetaData.COUNTRY, contact.country);
+	
+			cv.put(ContactsProvider.CMetaData.BirthdaysMetaData.TIMEZONE, birthday.getTimezone());
+	
+			String where = ContactsProvider.CMetaData.BirthdaysMetaData.CONTACT_ID + "=" + contact.contact_id;
+			try {
+				context.getContentResolver().update(ContactsProvider.CMetaData.BirthdaysMetaData.CONTENT_URI, cv, where, null);
+				return true;
+			} catch (SQLiteException e) {
+				Log.e("insertBirthdayToLocalDb(birthday, " + birthday.getBirthdayId() + ")", e.getMessage());
+				return false;
+			}
 		}
 	}
 	
