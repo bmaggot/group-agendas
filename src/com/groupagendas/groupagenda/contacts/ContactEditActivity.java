@@ -390,7 +390,7 @@ public class ContactEditActivity extends Activity implements OnClickListener, On
 			if (!result.phone1.equals("null"))
 				phoneView.setText(result.phone1);
 
-			if (!result.birthdate.equals("null")) {			
+			if (!result.birthdate.equals("")) {			
 				birthdateCalendar = Utils.stringToCalendar(getApplicationContext(), result.birthdate, DataManagement.ACCOUNT_BIRTHDATE_TIMESTAMP_FORMAT);
 				birthdateView.setText(dtUtils.formatDate(birthdateCalendar));
 			}
