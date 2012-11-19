@@ -3,6 +3,7 @@ package com.groupagendas.groupagenda.data;
 import java.io.UnsupportedEncodingException;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -27,6 +28,8 @@ import android.database.sqlite.SQLiteException;
 import android.net.Uri;
 import android.util.Log;
 
+import com.groupagendas.groupagenda.SaveDeletedData;
+import com.groupagendas.groupagenda.SaveDeletedData.SDMetaData;
 import com.groupagendas.groupagenda.account.Account;
 import com.groupagendas.groupagenda.contacts.Contact;
 import com.groupagendas.groupagenda.contacts.ContactsProvider;
@@ -439,14 +442,18 @@ public class ContactManagement {
 			Log.e("insertContactToRemoteDb(group[id=" + contact.contact_id + "], " + id + ")", "Failed getting name from Contact object.");
 		}
 
-		if (contact.lastname != null)
-			temp = contact.lastname;
-		else
-			temp = "";
-		try {
-			reqEntity.addPart(ContactsProvider.CMetaData.ContactsMetaData.LASTNAME, new StringBody(temp, Charset.forName("UTF-8")));
-		} catch (UnsupportedEncodingException e) {
-			Log.e("insertContactToRemoteDb(group, " + id + ")", "Failed adding lastname to entity.");
+		if (contact.lastname != null){
+			try {
+				reqEntity.addPart(ContactsProvider.CMetaData.ContactsMetaData.LASTNAME, new StringBody(contact.lastname, Charset.forName("UTF-8")));
+			} catch (UnsupportedEncodingException e) {
+				Log.e("insertContactToRemoteDb(group, " + id + ")", "Failed adding lastname to entity.");
+			}
+		} else {
+			try {
+				reqEntity.addPart(ContactsProvider.CMetaData.ContactsMetaData.LASTNAME, new StringBody("", Charset.forName("UTF-8")));
+			} catch (UnsupportedEncodingException e) {
+				Log.e("insertContactToRemoteDb(group, " + id + ")", "Failed adding lastname to entity.");
+			}
 		}
 
 		if (contact.email != null)
@@ -654,9 +661,10 @@ public class ContactManagement {
 					if (resp != null) {
 						JSONObject object = new JSONObject(resp);
 						success = object.getBoolean("success");
-						if (success)
+						if (success){
 							destination_id = object.getInt("contact_id");
-						Log.i("createContact - success", "" + success);
+							Log.i("createContact - success", "" + success);
+						}
 
 						if (success == false) {
 							Data.setERROR(object.getJSONObject("error").getString("reason"));
@@ -665,9 +673,6 @@ public class ContactManagement {
 						}
 					}
 				}
-			} else {
-				OfflineData uplooad = new OfflineData("mobile/contact_create", reqEntity, contact.created);
-				Data.getUnuploadedData().add(uplooad);
 			}
 		} catch (Exception ex) {
 			Log.e("insertContactToRemoteDb(group, " + id + ")", "Failed executing POST request.");
@@ -695,8 +700,10 @@ public class ContactManagement {
 
 		if (id > 0)
 			cv.put(ContactsProvider.CMetaData.ContactsMetaData.C_ID, id);
-		else
+		else{
+			contact.contact_id = (int) Calendar.getInstance().getTimeInMillis();
 			cv.put(ContactsProvider.CMetaData.ContactsMetaData.C_ID, contact.contact_id);
+		}
 
 		cv.put(ContactsProvider.CMetaData.ContactsMetaData.NAME, contact.name);
 		cv.put(ContactsProvider.CMetaData.ContactsMetaData.LASTNAME, contact.lastname);
@@ -748,10 +755,13 @@ public class ContactManagement {
 	public static boolean insertContact(Context context, Contact contact) {
 		boolean success = false;
 		int destination_id = 0;
+		
+		if(DataManagement.networkAvailable){
+			destination_id = insertContactToRemoteDb(context, contact, 0);
+		}
+		
 
-		destination_id = insertContactToRemoteDb(context, contact, 0);
-
-		if (destination_id >= 0) {
+		if (destination_id >= 0) { //TODO visa laika bus true
 			success = true;
 			insertContactToLocalDb(context, contact, destination_id);
 			if (contact.birthdate != null && contact.birthdate.length() == 10) {
@@ -834,7 +844,7 @@ public class ContactManagement {
 	 * @version 0.1
 	 */
 	public static Contact getContactFromLocalDb(Context context, int id, long created) {
-		Cursor cur;
+		Cursor cur = null;
 		Contact temp = null;
 
 		if (id > 0) {
@@ -854,7 +864,9 @@ public class ContactManagement {
 				cur.close();
 			}
 		}
-
+		if(cur != null){
+			cur.close();
+		}
 		return temp;
 	}
 	
@@ -1460,6 +1472,17 @@ public class ContactManagement {
 			return false;
 		}
 	}
+	//TODO kad nebutu tokios gedos...
+	public static boolean removeContactFromLocalDbByInternalId(Context context, int id) {
+		String where = ContactsProvider.CMetaData.ContactsMetaData._ID + "=" + id;
+		try {
+			context.getContentResolver().delete(ContactsProvider.CMetaData.ContactsMetaData.CONTENT_URI, where, null);
+			return true;
+		} catch (SQLiteException e) {
+			Log.e("removeContactFromLocalDb(contact, " + id + ")", e.getMessage());
+			return false;
+		}
+	}
 
 	// TODO removeBirthdayFromLocalDb(int id) documentation
 	public static boolean removeBirthdayFromLocalDb(Context context, int id) {
@@ -1595,7 +1618,6 @@ public class ContactManagement {
 		}
 
 		post.setEntity(reqEntity);
-
 		try {
 			if (DataManagement.networkAvailable) {
 				HttpResponse rp = webService.getResponseFromHttpPost(post);
@@ -1618,8 +1640,6 @@ public class ContactManagement {
 				}
 			} else {
 				Log.i("editContactOnRemoteDb(" + c.contact_id + ")", "No internet connection.");
-				OfflineData uplooad = new OfflineData("mobile/contact_edit", reqEntity);
-				Data.getUnuploadedData().add(uplooad);
 			}
 		} catch (Exception ex) {
 			Log.e("editContactOnRemoteDb(" + c.contact_id + ")", "Failed executing HTTP POST.");
@@ -1701,35 +1721,33 @@ public class ContactManagement {
 	public static boolean updateBirthdayOnLocalDb(Context context, Contact contact) {
 		ContentValues cv = new ContentValues();
 		Birthday birthday = getBirthdayFromLocalDb(context, contact.contact_id);
+
+		if (birthday != null && Integer.valueOf(birthday.getBirthdayId()) > 0)
+			cv.put(ContactsProvider.CMetaData.BirthdaysMetaData.B_ID, birthday.getBirthdayId());
+
+		cv.put(ContactsProvider.CMetaData.BirthdaysMetaData.TITLE, contact.name +" "+ contact.lastname);
+		cv.put(ContactsProvider.CMetaData.BirthdaysMetaData.BIRTHDATE, contact.birthdate);
 		
-		if(birthday == null){
-			Birthday newBirthday = new Birthday(context, contact);
-			insertBirthdayToLocalDb(context, newBirthday, contact.contact_id);
-			return true;
-		} else {
-			if (Integer.valueOf(birthday.getBirthdayId()) > 0)
-				cv.put(ContactsProvider.CMetaData.BirthdaysMetaData.B_ID, birthday.getBirthdayId());
-	
-			cv.put(ContactsProvider.CMetaData.BirthdaysMetaData.TITLE, contact.name +" "+ contact.lastname);
-			cv.put(ContactsProvider.CMetaData.BirthdaysMetaData.BIRTHDATE, contact.birthdate);
-			
-			String[] date = contact.birthdate.split("-");
-			cv.put(ContactsProvider.CMetaData.BirthdaysMetaData.BIRTHDATE_MM_DD, date[1]+"-"+date[2]);
-			cv.put(ContactsProvider.CMetaData.BirthdaysMetaData.BIRTHDATE_MM, date[1]);
-	
+		String[] date = contact.birthdate.split("-");
+		cv.put(ContactsProvider.CMetaData.BirthdaysMetaData.BIRTHDATE_MM_DD, date[1]+"-"+date[2]);
+		cv.put(ContactsProvider.CMetaData.BirthdaysMetaData.BIRTHDATE_MM, date[1]);
+		
+		if(birthday != null){
 			cv.put(ContactsProvider.CMetaData.BirthdaysMetaData.CONTACT_ID, birthday.getContact_id());
-			cv.put(ContactsProvider.CMetaData.BirthdaysMetaData.COUNTRY, contact.country);
-	
+		}
+		cv.put(ContactsProvider.CMetaData.BirthdaysMetaData.COUNTRY, contact.country);
+		
+		if(birthday != null){
 			cv.put(ContactsProvider.CMetaData.BirthdaysMetaData.TIMEZONE, birthday.getTimezone());
-	
-			String where = ContactsProvider.CMetaData.BirthdaysMetaData.CONTACT_ID + "=" + contact.contact_id;
-			try {
-				context.getContentResolver().update(ContactsProvider.CMetaData.BirthdaysMetaData.CONTENT_URI, cv, where, null);
-				return true;
-			} catch (SQLiteException e) {
-				Log.e("insertBirthdayToLocalDb(birthday, " + birthday.getBirthdayId() + ")", e.getMessage());
-				return false;
-			}
+		}
+
+		String where = ContactsProvider.CMetaData.BirthdaysMetaData.CONTACT_ID + "=" + contact.contact_id;
+		try {
+			context.getContentResolver().update(ContactsProvider.CMetaData.BirthdaysMetaData.CONTENT_URI, cv, where, null);
+			return true;
+		} catch (SQLiteException e) {
+			Log.e("insertBirthdayToLocalDb(birthday, " + birthday.getBirthdayId() + ")", e.getMessage());
+			return false;
 		}
 	}
 	
@@ -1955,40 +1973,66 @@ public class ContactManagement {
 			}			
 		}
 
-//		public static void uploadOfflineContact (Context context){
-//			Account account = new Account(context);
-//			System.out.println("UPLOADING");
-//			String projection[] = null;
-//			Uri uri = ContactsProvider.CMetaData.ContactsMetaData.CONTENT_URI;
-//			String where = (ContactsProvider.CMetaData.ContactsMetaData.MODIFIED +">"+ account.getLastTimeConnectedToWeb());
-//			Cursor result = context.getContentResolver().query(uri, projection, where, null, null);
-//			if(result.moveToFirst()){
-//			
-//			while (!result.isAfterLast()){
-//				Contact e = createCVFromContact(context, result) ;
-//				
-//				if(e.getEvent_id() == 0){
-//					int externalId = createEventInRemoteDb(context, e);
-//					ContentValues values = new ContentValues();
-//					values.put(EventsProvider.EMetaData.EventsMetaData.E_ID, externalId);
-//					where = EventsProvider.EMetaData.EventsMetaData._ID + "=" + e.getInternalID();
-//					context.getContentResolver().update(EventsProvider.EMetaData.EventsMetaData.CONTENT_URI, values , where, null);
-//					
-//				}
-//				else{
-//					editEvent(context, e);
-//					}
-//				}
-//			}
-//			result.moveToNext();
-//			SaveDeletedData offlineDeletedEvents = new SaveDeletedData(context);
-//			String offlineDeleted = offlineDeletedEvents.getDELETED_EVENTS();
-//		    String[] ids = offlineDeleted.split(SDMetaData.SEPARATOR);
-//		    for (int i = 0; i<ids.length; i++){
-//		    	int id = Integer.parseInt(ids[i]);
-//		    	removeEvent(context, id);
-//		    }
-//			result.close();
-//				}
+		public static void deleteContact(Context context, Contact contact) {
+			Boolean deletedFromRemote = false;
+			if (DataManagement.networkAvailable) {
+				deletedFromRemote = removeContactFromRemoteDb(context, contact.contact_id);
+			}
+
+			if (!deletedFromRemote) {
+				SaveDeletedData offlineDeletedContacts = new SaveDeletedData(context);
+				offlineDeletedContacts.addContactForLaterDelete(contact.contact_id);
+				
+			}
+			removeContactFromLocalDbByInternalId(context, contact.contact_id);
+			if(contact.birthdate!=null && contact.birthdate.length()==10){
+				removeBirthdayFromLocalDb(context, contact.contact_id);
+			}
+		}
+		
+		public static void uploadOfflineContact (Context context){ 
+			Account account = new Account(context);
+			System.out.println("UPLOADING");
+			String projection[] = null;
+			Uri uri = ContactsProvider.CMetaData.ContactsMetaData.CONTENT_URI;
+			String where = (ContactsProvider.CMetaData.ContactsMetaData.MODIFIED +">"+ account.getLastTimeConnectedToWeb());
+			Cursor result = context.getContentResolver().query(uri, projection, where, null, null);//result nieko neismeta
+			if(result.moveToFirst()){
+				while (!result.isAfterLast()){
+					Contact c = new Contact(context, result);
+					
+					if(c.contact_id != 0){
+						insertContact(context, c);
+						boolean edited = editContactOnRemoteDb(context, c);
+						if(edited){
+							updateContactOnLocalDb(context, c);
+							updateBirthdayOnLocalDb(context, c);
+						}
+//						try{
+//							removeContactFromLocalDb(context, c.contact_id);
+//						} catch (Exception e) {
+//							Log.i("removeContactFromLocalDb", "failed");
+//						}
+	//					int externalId = insertContactToRemoteDb(context, c, c.contact_id);
+	//					ContentValues values = new ContentValues();
+	//					values.put(ContactsProvider.CMetaData.ContactsMetaData._ID, externalId);
+	//					where = ContactsProvider.CMetaData.ContactsMetaData._ID + "=" + c.getInternal_id();
+	//					context.getContentResolver().insert(ContactsProvider.CMetaData.ContactsMetaData.CONTENT_URI, values);
+						
+					}
+					result.moveToNext();
+				}
+			}
+			SaveDeletedData offlineDeletedContacts = new SaveDeletedData(context);
+			String offlineDeleted = offlineDeletedContacts.getDELETED_CONTACTS();
+		    String[] ids = offlineDeleted.split(SDMetaData.SEPARATOR);
+		    if(ids[0]!= ""){
+		    for (int i = 0; i<ids.length; i++){
+		    	int id = Integer.parseInt(ids[i]);
+		    	removeContactFromRemoteDb(context, id);
+		    	}
+		    }
+			result.close();
+		}
 		
 }
