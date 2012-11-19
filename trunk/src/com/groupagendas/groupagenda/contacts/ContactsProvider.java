@@ -425,7 +425,7 @@ private static class DatabaseHelper extends SQLiteOpenHelper {
 			String query =	"CREATE TABLE "
 				+CMetaData.CONTACTS_TABLE+" ("
 				+CMetaData.ContactsMetaData._ID+" INTEGER PRIMARY KEY AUTOINCREMENT,"
-				+CMetaData.ContactsMetaData.C_ID+" INTEGER UNIQUE ," //TODO realizuoti atitinkama on conflict
+				+CMetaData.ContactsMetaData.C_ID+" INTEGER UNIQUE  ON CONFLICT REPLACE,"
 				+CMetaData.ContactsMetaData.NAME+" TEXT ,"
 				+CMetaData.ContactsMetaData.LASTNAME+" TEXT ,"
 				+CMetaData.ContactsMetaData.EMAIL+" TEXT ,"
