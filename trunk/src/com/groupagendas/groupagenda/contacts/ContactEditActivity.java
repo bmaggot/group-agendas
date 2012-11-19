@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.ExecutionException;
 
 import net.londatiga.android.CropOption;
@@ -478,6 +479,13 @@ public class ContactEditActivity extends Activity implements OnClickListener, On
 			cv.put(ContactsProvider.CMetaData.ContactsMetaData.VISIBILITY, temp);
 
 			// groups
+			int i = 0;
+			Map<String, String> map = new HashMap<String, String>();
+			editedContact.groups = map;
+			for (Group g : selectedGroups) {
+				editedContact.groups.put(""+i, ""+g.group_id);
+				i++;
+			}
 			cv.put(ContactsProvider.CMetaData.ContactsMetaData.GROUPS, MapUtils.mapToString(getApplicationContext(), editedContact.groups));
 
 			// image
@@ -580,6 +588,13 @@ public class ContactEditActivity extends Activity implements OnClickListener, On
 			cv.put(ContactsProvider.CMetaData.ContactsMetaData.MODIFIED, editedContact.modified);
 
 			// groups
+			int i = 0;
+			Map<String, String> map = new HashMap<String, String>();
+			editedContact.groups = map;
+			for (Group g : selectedGroups) {
+				editedContact.groups.put(""+i, ""+g.group_id);
+				i++;
+			}
 			cv.put(ContactsProvider.CMetaData.ContactsMetaData.GROUPS, MapUtils.mapToString(getApplicationContext(), editedContact.groups));
 
 			if (editedContact.image_bytes != null) {
