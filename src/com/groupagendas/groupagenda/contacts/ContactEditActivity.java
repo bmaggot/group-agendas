@@ -499,10 +499,10 @@ public class ContactEditActivity extends Activity implements OnClickListener, On
 
 				check = ContactManagement.editContactOnRemoteDb(getApplicationContext(), editedContact);
 
-				if (check) {
-					check = ContactManagement.updateContactOnLocalDb(ContactEditActivity.this, editedContact);
+//				if (check) {
+					ContactManagement.updateContactOnLocalDb(ContactEditActivity.this, editedContact);
 					ContactManagement.updateBirthdayOnLocalDb(ContactEditActivity.this, editedContact);
-				}
+//				}
 			}
 
 			return check;
@@ -510,12 +510,12 @@ public class ContactEditActivity extends Activity implements OnClickListener, On
 
 		@Override
 		protected void onPostExecute(Boolean results) {
-			if (results) {
+//			if (results) {
 				ContactEditActivity.this.finish();
-			} else {
-				ERROR_STRING = DataManagement.getError();
-				showDialog(ERROR_DIALOG);
-			}
+//			} else {
+//				ERROR_STRING = DataManagement.getError();
+//				showDialog(ERROR_DIALOG);
+//			}
 			super.onPostExecute(results);
 		}
 

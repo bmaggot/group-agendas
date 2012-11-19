@@ -34,6 +34,7 @@ public class Contact extends Object implements Colored {
 	public Map<String, String> groups = null;
 
 	private String color;
+	private int internal_id;
 	
 	@Override
 	public String getColor () {
@@ -52,7 +53,16 @@ public class Contact extends Object implements Colored {
 		super();
 	}
 	
+	public int getInternal_id() {
+		return internal_id;
+	}
+
+	public void setInternal_id(int internal_id) {
+		this.internal_id = internal_id;
+	}
+
 	public Contact(Context context, Cursor cur) {
+		this.internal_id = cur.getInt(cur.getColumnIndex(ContactsProvider.CMetaData.ContactsMetaData._ID));
 		this.contact_id = cur.getInt(cur.getColumnIndex(ContactsProvider.CMetaData.ContactsMetaData.C_ID));
 		this.name = cur.getString(cur.getColumnIndex(ContactsProvider.CMetaData.ContactsMetaData.NAME));
 		this.lastname = cur.getString(cur.getColumnIndex(ContactsProvider.CMetaData.ContactsMetaData.LASTNAME));

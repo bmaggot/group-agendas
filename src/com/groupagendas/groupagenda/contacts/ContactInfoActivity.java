@@ -3,6 +3,7 @@ package com.groupagendas.groupagenda.contacts;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
@@ -23,7 +24,9 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.groupagendas.groupagenda.R;
+import com.groupagendas.groupagenda.SaveDeletedData;
 import com.groupagendas.groupagenda.data.ContactManagement;
+import com.groupagendas.groupagenda.data.DataManagement;
 import com.groupagendas.groupagenda.utils.DateTimeUtils;
 import com.groupagendas.groupagenda.utils.Utils;
 
@@ -131,30 +134,29 @@ public class ContactInfoActivity extends Activity {
 	}
 
 	class DeleteContactTask extends AsyncTask<Void, Boolean, Boolean> {
-		@Override
-		protected Boolean doInBackground(Void... type) {
-			
-			
-			
-			Boolean result = ContactManagement.removeContactFromRemoteDb(ContactInfoActivity.this, mContact.contact_id);
-			
-			if(result){
-				ContactManagement.removeContactFromLocalDb(ContactInfoActivity.this, mContact.contact_id);
-				if(mContact.birthdate!=null && mContact.birthdate.length()==10){
-					ContactManagement.removeBirthdayFromLocalDb(ContactInfoActivity.this, mContact.contact_id);
-				}
-				
-			}else{
-//				ContentValues values = new ContentValues();
-//				values.put(ContactsProvider.CMetaData.ContactsMetaData.NEED_UPDATE, 3);
+	
+			@Override
+			protected Boolean doInBackground(Void... type) {
+			ContactManagement.deleteContact(ContactInfoActivity.this, mContact);	
+//			Boolean result = ContactManagement.removeContactFromRemoteDb(ContactInfoActivity.this, mContact.contact_id);
+//			
+//			if(result){
+//				ContactManagement.removeContactFromLocalDb(ContactInfoActivity.this, mContact.contact_id);
+//				if(mContact.birthdate!=null && mContact.birthdate.length()==10){
+//					ContactManagement.removeBirthdayFromLocalDb(ContactInfoActivity.this, mContact.contact_id);
+//				}
 //				
-//				getContentResolver().update(uri, values, null, null);
-			}
+//			}else{
+////				ContentValues values = new ContentValues();
+////				values.put(ContactsProvider.CMetaData.ContactsMetaData.NEED_UPDATE, 3);
+////				
+////				getContentResolver().update(uri, values, null, null);
+//			}
 			
 			
 			return true;
 		}
-
+	
 		@Override
 		protected void onPostExecute(Boolean result) {
 			toast = Toast.makeText(ContactInfoActivity.this, "", Toast.LENGTH_SHORT);
@@ -226,7 +228,10 @@ public class ContactInfoActivity extends Activity {
 		switch (item.getItemId()) {
 		case R.id.edit_contact:
 			Intent contactEdit = new Intent(ContactInfoActivity.this, ContactEditActivity.class);
-			contactEdit.putExtra("contact_id", mContact.contact_id);
+			if(mContact != null){
+				contactEdit.putExtra("contact_id", mContact.contact_id);
+			}
+			
 			startActivity(contactEdit);
 			return true;
 		case R.id.delete_contact:
