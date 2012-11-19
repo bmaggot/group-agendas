@@ -811,11 +811,11 @@ public class ContactManagement {
 	 * @since 2012-09-28
 	 * @version 0.1
 	 */
-	public static boolean updateContactIdInLocalDb(Context context, long created, int id) {
+	public static boolean updateContactIdInLocalDb(Context context, long internal_id, int id) {
 		ContentValues cv = new ContentValues();
 		boolean success = false;
 		int queryResult = 0;
-		String where = ContactsProvider.CMetaData.ContactsMetaData.CREATED + "=" + created;
+		String where = ContactsProvider.CMetaData.ContactsMetaData._ID + "=" + internal_id;
 
 		cv.put(ContactsProvider.CMetaData.ContactsMetaData.C_ID, id);
 
@@ -823,7 +823,7 @@ public class ContactManagement {
 			queryResult = context.getContentResolver()
 					.update(ContactsProvider.CMetaData.ContactsMetaData.CONTENT_URI, cv, where, null);
 		} catch (SQLiteException e) {
-			Log.e("updateContactIdInLocalDb(" + created + ", " + id + ")", e.getMessage());
+			Log.e("updateContactIdInLocalDb(" + internal_id + ", " + id + ")", e.getMessage());
 		}
 
 		if (queryResult == 1)
@@ -2055,22 +2055,12 @@ public class ContactManagement {
 					
 					if(c.contact_id != 0){
 						int destination_id = insertContactToRemoteDb(context, c, 0);
-						updateContactIdInLocalDb(context, c.created, destination_id);
+						updateContactIdInLocalDb(context, c.getInternal_id(), destination_id);
 						boolean edited = editContactOnRemoteDb(context, c);
 						if(edited){
 							updateContactOnLocalDb(context, c);
 							updateBirthdayOnLocalDb(context, c);
 						}
-//						try{
-//							removeContactFromLocalDb(context, c.contact_id);
-//						} catch (Exception e) {
-//							Log.i("removeContactFromLocalDb", "failed");
-//						}
-	//					int externalId = insertContactToRemoteDb(context, c, c.contact_id);
-	//					ContentValues values = new ContentValues();
-	//					values.put(ContactsProvider.CMetaData.ContactsMetaData._ID, externalId);
-	//					where = ContactsProvider.CMetaData.ContactsMetaData._ID + "=" + c.getInternal_id();
-	//					context.getContentResolver().insert(ContactsProvider.CMetaData.ContactsMetaData.CONTENT_URI, values);
 						
 					}
 					result.moveToNext();
