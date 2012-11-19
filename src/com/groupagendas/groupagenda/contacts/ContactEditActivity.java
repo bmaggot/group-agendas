@@ -485,6 +485,7 @@ public class ContactEditActivity extends Activity implements OnClickListener, On
 			cv.put(ContactsProvider.CMetaData.ContactsMetaData.VISIBILITY, temp);
 
 			// groups
+
 			if(selectedGroups != null){
 				int i = 0;
 				Map<String, String> map = new HashMap<String, String>();
@@ -494,6 +495,8 @@ public class ContactEditActivity extends Activity implements OnClickListener, On
 					ContactManagement.updateGroupOnLocalDb(getApplicationContext(), g, editedContact.contact_id);
 					i++;
 				}
+
+			}
 			}
 			cv.put(ContactsProvider.CMetaData.ContactsMetaData.GROUPS, MapUtils.mapToString(getApplicationContext(), editedContact.groups));
 
