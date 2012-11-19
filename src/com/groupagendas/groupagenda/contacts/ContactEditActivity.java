@@ -572,6 +572,12 @@ public class ContactEditActivity extends Activity implements OnClickListener, On
 			temp = visibilityArray[visibilitySpinner.getSelectedItemPosition()];
 			editedContact.visibility = temp;
 			cv.put(ContactsProvider.CMetaData.ContactsMetaData.VISIBILITY, temp);
+			
+			//created modified times
+			editedContact.created = Calendar.getInstance().getTimeInMillis();
+			cv.put(ContactsProvider.CMetaData.ContactsMetaData.CREATED, editedContact.created);
+			editedContact.modified = editedContact.created;
+			cv.put(ContactsProvider.CMetaData.ContactsMetaData.MODIFIED, editedContact.modified);
 
 			// groups
 			cv.put(ContactsProvider.CMetaData.ContactsMetaData.GROUPS, MapUtils.mapToString(getApplicationContext(), editedContact.groups));

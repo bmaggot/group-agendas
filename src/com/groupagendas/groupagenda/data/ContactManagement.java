@@ -448,12 +448,6 @@ public class ContactManagement {
 			} catch (UnsupportedEncodingException e) {
 				Log.e("insertContactToRemoteDb(group, " + id + ")", "Failed adding lastname to entity.");
 			}
-		} else {
-			try {
-				reqEntity.addPart(ContactsProvider.CMetaData.ContactsMetaData.LASTNAME, new StringBody("", Charset.forName("UTF-8")));
-			} catch (UnsupportedEncodingException e) {
-				Log.e("insertContactToRemoteDb(group, " + id + ")", "Failed adding lastname to entity.");
-			}
 		}
 
 		if (contact.email != null)
@@ -1992,7 +1986,6 @@ public class ContactManagement {
 		
 		public static void uploadOfflineContact (Context context){ 
 			Account account = new Account(context);
-			System.out.println("UPLOADING");
 			String projection[] = null;
 			Uri uri = ContactsProvider.CMetaData.ContactsMetaData.CONTENT_URI;
 			String where = (ContactsProvider.CMetaData.ContactsMetaData.MODIFIED +">"+ account.getLastTimeConnectedToWeb());
