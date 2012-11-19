@@ -51,7 +51,9 @@ public class ConnectReceiver extends BroadcastReceiver {
 		if (conn.getNetworkInfo(0).getState() == NetworkInfo.State.CONNECTED
 				|| conn.getNetworkInfo(1).getState() == NetworkInfo.State.CONNECTED) {
 			DataManagement.networkAvailable = true;
-			new ExecuteOfflineChats().execute();
+			if(account.getLastTimeConnectedToWeb() != 0){
+				new ExecuteOfflineChats().execute();
+			}
 			boolean success = false;
 			
 			
@@ -82,10 +84,15 @@ public class ConnectReceiver extends BroadcastReceiver {
 			Account account = new Account(context);
 			EventManagement.uploadOfflineEvents(context);
 			ContactManagement.uploadOfflineContact(context);
-			ChatManagement.uploadUnploaded(context, ChatManagement.getChatMessagesCreatedOffline(context)); //grazina arraylista, kuris uplaudina kiekviena message
-			//account.clearLastTimeConnectedToweb();
+			ChatManagement.uploadUnploaded(context, ChatManagement.getChatMessagesCreatedOffline(context));
 			DataManagement.synchronizeWithServer(context, null, account.getLatestUpdateUnixTimestamp());
 			return null;
+		}
+		
+		@Override
+		protected void onPostExecute(Void result){
+			Account account = new Account(context);
+			account.clearLastTimeConnectedToweb();
 		}
 		
 	}
