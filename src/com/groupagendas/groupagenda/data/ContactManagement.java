@@ -632,7 +632,7 @@ public class ContactManagement {
 			for (int i = 0, l = groups.size(); i < l; i++) {
 				try {
 					reqEntity.addPart(ContactsProvider.CMetaData.ContactsMetaData.GROUPS + "[]",
-							new StringBody(String.valueOf(groups.get(i)), Charset.forName("UTF-8")));
+							new StringBody(groups.get(""+i), Charset.forName("UTF-8")));
 				} catch (UnsupportedEncodingException e) {
 					Log.e("insertContactToRemoteDb(group, " + id + ")", "Failed adding group to entity.");
 				}
@@ -1044,6 +1044,45 @@ public class ContactManagement {
 			context.getContentResolver().insert(ContactsProvider.CMetaData.GroupsMetaData.CONTENT_URI, cv);
 		} catch (SQLiteException e) {
 			Log.e("insertGroupToLocalDb(group, " + id + ")", e.getMessage());
+		}
+	}
+	
+	public static boolean updateGroupOnLocalDb(Context context, Group group) {
+		ContentValues cv = new ContentValues();
+
+		if (group.group_id > 0)
+			cv.put(ContactsProvider.CMetaData.GroupsMetaData.G_ID, group.group_id);
+
+		cv.put(ContactsProvider.CMetaData.GroupsMetaData.TITLE, group.title);
+		cv.put(ContactsProvider.CMetaData.GroupsMetaData.CREATED, group.created);
+		cv.put(ContactsProvider.CMetaData.GroupsMetaData.MODIFIED, group.modified);
+		cv.put(ContactsProvider.CMetaData.GroupsMetaData.DELETED, group.deleted);
+
+		if (group.image) {
+			cv.put(ContactsProvider.CMetaData.GroupsMetaData.IMAGE, "1");
+		} else {
+			cv.put(ContactsProvider.CMetaData.GroupsMetaData.IMAGE, "0");
+		}
+
+		cv.put(ContactsProvider.CMetaData.GroupsMetaData.IMAGE_URL, group.image_url);
+		cv.put(ContactsProvider.CMetaData.GroupsMetaData.IMAGE_THUMB_URL, group.image_thumb_url);
+		cv.put(ContactsProvider.CMetaData.GroupsMetaData.IMAGE_BYTES, group.image_bytes);
+		if (group.remove_image) {
+			cv.put(ContactsProvider.CMetaData.GroupsMetaData.REMOVE_IMAGE, "1");
+		} else {
+			cv.put(ContactsProvider.CMetaData.GroupsMetaData.REMOVE_IMAGE, "0");
+		}
+
+		cv.put(ContactsProvider.CMetaData.GroupsMetaData.CONTACT_COUNT, group.contact_count);
+		cv.put(ContactsProvider.CMetaData.GroupsMetaData.CONTACTS, MapUtils.mapToString(context, group.contacts));
+		
+		String where = ContactsProvider.CMetaData.GroupsMetaData.G_ID + "=" + group.group_id;
+		try {
+			context.getContentResolver().update(ContactsProvider.CMetaData.GroupsMetaData.CONTENT_URI, cv, where, null);
+			return true;
+		} catch (SQLiteException e) {
+			Log.e("insertGroupToLocalDb(contact, " + group.group_id + ")", e.getMessage());
+			return false;
 		}
 	}
 
@@ -1598,7 +1637,7 @@ public class ContactManagement {
 		if (groups != null) {
 			for (int i = 0, l = groups.size(); i < l; i++) {
 				try {
-					reqEntity.addPart(ContactsProvider.CMetaData.ContactsMetaData.GROUPS+"[]", new StringBody(String.valueOf(groups.get(i)), Charset.forName("UTF-8")));
+					reqEntity.addPart(ContactsProvider.CMetaData.ContactsMetaData.GROUPS+"[]", new StringBody(groups.get(""+i), Charset.forName("UTF-8")));
 				} catch (UnsupportedEncodingException e) {
 					Log.e("editContactOnRemoteDb(contact[contact_id=" + c.contact_id + "])", "Failed adding group to entity.");
 				}
