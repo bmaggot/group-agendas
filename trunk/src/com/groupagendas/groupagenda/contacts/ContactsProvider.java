@@ -32,7 +32,7 @@ public class ContactsProvider extends ContentProvider{
 			public static final Uri CONTENT_URI = Uri.parse("content://" + AUTHORITY + "/" + CONTACTS_TABLE);
 			public static final String CONTENT_TYPE = "vnd.android.cursor.dir/vnd.formula.contact_item";
 			public static final String CONTENT_ITEM_TYPE = "vnd.android.cursor.item/vnd.formula.contact_item";
-
+            
 			public static final String C_ID = "contact_id";
 			public static final String NAME = "name";
 			public static final String LASTNAME = "lastname";
@@ -107,6 +107,7 @@ public class ContactsProvider extends ContentProvider{
 	
 	static {
 		CM = new HashMap<String, String>();
+		CM.put(CMetaData.ContactsMetaData._ID, CMetaData.ContactsMetaData._ID);
 		CM.put(CMetaData.ContactsMetaData.C_ID, CMetaData.ContactsMetaData.C_ID);
 		CM.put(CMetaData.ContactsMetaData.NAME, CMetaData.ContactsMetaData.NAME);
 		CM.put(CMetaData.ContactsMetaData.LASTNAME, CMetaData.ContactsMetaData.LASTNAME);
@@ -140,7 +141,6 @@ public class ContactsProvider extends ContentProvider{
 	static {
 		GM = new HashMap<String, String>();
 		GM.put(CMetaData.GroupsMetaData.G_ID, CMetaData.GroupsMetaData.G_ID);
-		
 		GM.put(CMetaData.GroupsMetaData.TITLE, CMetaData.GroupsMetaData.TITLE);
 		GM.put(CMetaData.GroupsMetaData.CREATED, CMetaData.GroupsMetaData.CREATED);
 		GM.put(CMetaData.GroupsMetaData.MODIFIED, CMetaData.GroupsMetaData.MODIFIED);
@@ -420,9 +420,12 @@ private static class DatabaseHelper extends SQLiteOpenHelper {
 
 		@Override
 		public void onCreate(SQLiteDatabase db) {
+			
+		
 			String query =	"CREATE TABLE "
 				+CMetaData.CONTACTS_TABLE+" ("
-				+CMetaData.ContactsMetaData.C_ID+" INTEGER PRIMARY KEY,"
+				+CMetaData.ContactsMetaData._ID+" INTEGER PRIMARY KEY AUTOINCREMENT,"
+				+CMetaData.ContactsMetaData.C_ID+" INTEGER UNIQUE ," //TODO realizuoti atitinkama on conflict
 				+CMetaData.ContactsMetaData.NAME+" TEXT ,"
 				+CMetaData.ContactsMetaData.LASTNAME+" TEXT ,"
 				+CMetaData.ContactsMetaData.EMAIL+" TEXT ,"
@@ -446,7 +449,7 @@ private static class DatabaseHelper extends SQLiteOpenHelper {
 				+CMetaData.ContactsMetaData.AGENDA_VIEW+" TEXT ,"
 				+CMetaData.ContactsMetaData.GROUPS+" TEXT ,"
 				+CMetaData.ContactsMetaData.REGISTERED+" TEXT)";
-				
+			System.out.println(query);
 			db.execSQL(query);
 			
 			query =	"CREATE TABLE "

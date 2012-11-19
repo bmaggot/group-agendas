@@ -19,6 +19,7 @@ import android.util.Log;
 
 import com.groupagendas.groupagenda.account.Account;
 import com.groupagendas.groupagenda.data.ChatManagement;
+import com.groupagendas.groupagenda.data.ContactManagement;
 import com.groupagendas.groupagenda.data.Data;
 import com.groupagendas.groupagenda.data.DataManagement;
 import com.groupagendas.groupagenda.data.EventManagement;
@@ -80,7 +81,7 @@ public class ConnectReceiver extends BroadcastReceiver {
 		protected Void doInBackground(Void... params) {
 			Account account = new Account(context);
 			EventManagement.uploadOfflineEvents(context);
-//			ContactManagement.uploadOfflineContact(context);
+			ContactManagement.uploadOfflineContact(context);
 			ChatManagement.uploadUnploaded(context, ChatManagement.getChatMessagesCreatedOffline(context)); //grazina arraylista, kuris uplaudina kiekviena message
 			//account.clearLastTimeConnectedToweb();
 			DataManagement.synchronizeWithServer(context, null, account.getLatestUpdateUnixTimestamp());
