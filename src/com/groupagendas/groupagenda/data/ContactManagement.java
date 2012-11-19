@@ -631,8 +631,10 @@ public class ContactManagement {
 		if (groups != null) {
 			for (int i = 0, l = groups.size(); i < l; i++) {
 				try {
-					reqEntity.addPart(ContactsProvider.CMetaData.ContactsMetaData.GROUPS + "[]",
-							new StringBody(groups.get(""+i), Charset.forName("UTF-8")));
+					if(groups.get(""+i) != null){
+						reqEntity.addPart(ContactsProvider.CMetaData.ContactsMetaData.GROUPS + "[]",
+								new StringBody(groups.get(""+i), Charset.forName("UTF-8")));
+					}
 				} catch (UnsupportedEncodingException e) {
 					Log.e("insertContactToRemoteDb(group, " + id + ")", "Failed adding group to entity.");
 				}
@@ -1637,7 +1639,9 @@ public class ContactManagement {
 		if (groups != null) {
 			for (int i = 0, l = groups.size(); i < l; i++) {
 				try {
-					reqEntity.addPart(ContactsProvider.CMetaData.ContactsMetaData.GROUPS+"[]", new StringBody(groups.get(""+i), Charset.forName("UTF-8")));
+					if(groups.get(""+i) != null){
+						reqEntity.addPart(ContactsProvider.CMetaData.ContactsMetaData.GROUPS+"[]", new StringBody(groups.get(""+i), Charset.forName("UTF-8")));
+					}
 				} catch (UnsupportedEncodingException e) {
 					Log.e("editContactOnRemoteDb(contact[contact_id=" + c.contact_id + "])", "Failed adding group to entity.");
 				}

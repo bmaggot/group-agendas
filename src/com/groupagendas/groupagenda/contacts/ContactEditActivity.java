@@ -591,12 +591,13 @@ public class ContactEditActivity extends Activity implements OnClickListener, On
 			int i = 0;
 			Map<String, String> map = new HashMap<String, String>();
 			editedContact.groups = map;
-			for (Group g : selectedGroups) {
-				editedContact.groups.put(""+i, ""+g.group_id);
-				i++;
+			if(selectedGroups != null && !selectedGroups.isEmpty()){
+				for (Group g : selectedGroups) {
+					editedContact.groups.put(""+i, ""+g.group_id);
+					i++;
+				}
+				cv.put(ContactsProvider.CMetaData.ContactsMetaData.GROUPS, MapUtils.mapToString(getApplicationContext(), editedContact.groups));
 			}
-			cv.put(ContactsProvider.CMetaData.ContactsMetaData.GROUPS, MapUtils.mapToString(getApplicationContext(), editedContact.groups));
-
 			if (editedContact.image_bytes != null) {
 				cv.put(ContactsProvider.CMetaData.ContactsMetaData.IMAGE_BYTES, editedContact.image_bytes);
 				cv.put(ContactsProvider.CMetaData.ContactsMetaData.IMAGE, true);
