@@ -87,7 +87,7 @@ public class ContactEditActivity extends Activity implements OnClickListener, On
 
 	private EditText birthdateView;
 	private Button birthdateButton;
-	private Calendar birthdateCalendar = Calendar.getInstance();
+	private Calendar birthdateCalendar;
 
 	private EditText countryView;
 
@@ -306,6 +306,7 @@ public class ContactEditActivity extends Activity implements OnClickListener, On
 		AlertDialog.Builder builder = new AlertDialog.Builder(this);
 		switch (id) {
 		case BIRTHDATE_DIALOG:
+			birthdateCalendar = Calendar.getInstance();
 			return new DatePickerDialog(this, mDateSetListener, birthdateCalendar.get(Calendar.YEAR),
 					birthdateCalendar.get(Calendar.MONTH), birthdateCalendar.get(Calendar.DAY_OF_MONTH));
 		case ERROR_DIALOG:
@@ -455,9 +456,14 @@ public class ContactEditActivity extends Activity implements OnClickListener, On
 			temp = phoneView.getText().toString();
 			editedContact.phone1 = temp;
 			cv.put(ContactsProvider.CMetaData.ContactsMetaData.PHONE, temp);
-
-			editedContact.birthdate = dtUtils.formatDate(birthdateCalendar);
-			cv.put(ContactsProvider.CMetaData.ContactsMetaData.BIRTHDATE, temp);
+			
+			if(birthdateCalendar != null){
+				editedContact.birthdate = dtUtils.formatDate(birthdateCalendar);
+				cv.put(ContactsProvider.CMetaData.ContactsMetaData.BIRTHDATE, editedContact.birthdate);
+			} else {
+				editedContact.birthdate = "";
+				cv.put(ContactsProvider.CMetaData.ContactsMetaData.BIRTHDATE, editedContact.birthdate);
+			}
 
 			editedContact.country = countriesList.get(timezoneInUse).country_code;
 			cv.put(ContactsProvider.CMetaData.ContactsMetaData.COUNTRY, editedContact.country);
@@ -479,12 +485,15 @@ public class ContactEditActivity extends Activity implements OnClickListener, On
 			cv.put(ContactsProvider.CMetaData.ContactsMetaData.VISIBILITY, temp);
 
 			// groups
-			int i = 0;
-			Map<String, String> map = new HashMap<String, String>();
-			editedContact.groups = map;
-			for (Group g : selectedGroups) {
-				editedContact.groups.put(""+i, ""+g.group_id);
-				i++;
+			if(selectedGroups != null){
+				int i = 0;
+				Map<String, String> map = new HashMap<String, String>();
+				editedContact.groups = map;
+				for (Group g : selectedGroups) {
+					editedContact.groups.put(""+i, ""+g.group_id);
+					ContactManagement.updateGroupOnLocalDb(getApplicationContext(), g, editedContact.contact_id);
+					i++;
+				}
 			}
 			cv.put(ContactsProvider.CMetaData.ContactsMetaData.GROUPS, MapUtils.mapToString(getApplicationContext(), editedContact.groups));
 
@@ -509,7 +518,9 @@ public class ContactEditActivity extends Activity implements OnClickListener, On
 
 //				if (check) {
 					ContactManagement.updateContactOnLocalDb(ContactEditActivity.this, editedContact);
-					ContactManagement.updateBirthdayOnLocalDb(ContactEditActivity.this, editedContact);
+					if(!editedContact.birthdate.contentEquals("")){
+						ContactManagement.updateBirthdayOnLocalDb(ContactEditActivity.this, editedContact);
+					}
 //				}
 			}
 
@@ -588,16 +599,18 @@ public class ContactEditActivity extends Activity implements OnClickListener, On
 			cv.put(ContactsProvider.CMetaData.ContactsMetaData.MODIFIED, editedContact.modified);
 
 			// groups
-			int i = 0;
-			Map<String, String> map = new HashMap<String, String>();
-			editedContact.groups = map;
-			if(selectedGroups != null && !selectedGroups.isEmpty()){
+			if(selectedGroups != null){
+				int i = 0;
+				Map<String, String> map = new HashMap<String, String>();
+				editedContact.groups = map;
 				for (Group g : selectedGroups) {
 					editedContact.groups.put(""+i, ""+g.group_id);
+					ContactManagement.updateGroupOnLocalDb(getApplicationContext(), g, editedContact.contact_id);
 					i++;
 				}
-				cv.put(ContactsProvider.CMetaData.ContactsMetaData.GROUPS, MapUtils.mapToString(getApplicationContext(), editedContact.groups));
 			}
+			cv.put(ContactsProvider.CMetaData.ContactsMetaData.GROUPS, MapUtils.mapToString(getApplicationContext(), editedContact.groups));
+
 			if (editedContact.image_bytes != null) {
 				cv.put(ContactsProvider.CMetaData.ContactsMetaData.IMAGE_BYTES, editedContact.image_bytes);
 				cv.put(ContactsProvider.CMetaData.ContactsMetaData.IMAGE, true);
