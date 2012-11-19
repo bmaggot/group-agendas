@@ -762,7 +762,7 @@ public class ContactManagement {
 		}
 		
 
-		if (destination_id >= 0) { //TODO visa laika bus true
+		if (destination_id >= 0) {
 			success = true;
 			insertContactToLocalDb(context, contact, destination_id);
 			if (contact.birthdate != null && contact.birthdate.length() == 10) {
@@ -2055,11 +2055,18 @@ public class ContactManagement {
 					
 					if(c.contact_id != 0){
 						int destination_id = insertContactToRemoteDb(context, c, 0);
-						updateContactIdInLocalDb(context, c.getInternal_id(), destination_id);
+						if(destination_id >= 0){
+							updateContactIdInLocalDb(context, c.getInternal_id(), destination_id);
+							c.contact_id = destination_id;
+						} else {
+							removeContactFromLocalDbByInternalId(context, c.getInternal_id());
+						}
 						boolean edited = editContactOnRemoteDb(context, c);
 						if(edited){
 							updateContactOnLocalDb(context, c);
-							updateBirthdayOnLocalDb(context, c);
+							if(!c.birthdate.contentEquals("")){
+								updateBirthdayOnLocalDb(context, c);
+							}
 						}
 						
 					}
