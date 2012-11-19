@@ -497,7 +497,7 @@ public class ContactEditActivity extends Activity implements OnClickListener, On
 				}
 
 			}
-			}
+			
 			cv.put(ContactsProvider.CMetaData.ContactsMetaData.GROUPS, MapUtils.mapToString(getApplicationContext(), editedContact.groups));
 
 			// image
