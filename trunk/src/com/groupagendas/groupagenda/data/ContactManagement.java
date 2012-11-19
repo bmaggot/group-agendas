@@ -698,8 +698,12 @@ public class ContactManagement {
 		if (id > 0)
 			cv.put(ContactsProvider.CMetaData.ContactsMetaData.C_ID, id);
 		else{
-			contact.contact_id = (int) Calendar.getInstance().getTimeInMillis();
-			cv.put(ContactsProvider.CMetaData.ContactsMetaData.C_ID, contact.contact_id);
+			if(contact.contact_id > 0){
+				cv.put(ContactsProvider.CMetaData.ContactsMetaData.C_ID, contact.contact_id);
+			} else {
+				contact.contact_id = (int) Calendar.getInstance().getTimeInMillis();
+				cv.put(ContactsProvider.CMetaData.ContactsMetaData.C_ID, contact.contact_id);
+			}
 		}
 
 		cv.put(ContactsProvider.CMetaData.ContactsMetaData.NAME, contact.name);
@@ -1050,9 +1054,21 @@ public class ContactManagement {
 		}
 	}
 	
-	public static boolean updateGroupOnLocalDb(Context context, Group group) {
+	public static boolean updateGroupOnLocalDb(Context context, Group group, int contactID) {
 		ContentValues cv = new ContentValues();
-
+		
+		if(contactID > 0){
+			Map<String, String> map = new HashMap<String, String>();
+			int contact_count = group.contact_count;
+			map = group.contacts;
+			map.put(""+map.size(), ""+contactID);
+			cv.put(ContactsProvider.CMetaData.GroupsMetaData.CONTACT_COUNT, (contact_count+1));
+			cv.put(ContactsProvider.CMetaData.GroupsMetaData.CONTACTS, MapUtils.mapToString(context, map));
+		} else {
+			cv.put(ContactsProvider.CMetaData.GroupsMetaData.CONTACT_COUNT, group.contact_count);
+			cv.put(ContactsProvider.CMetaData.GroupsMetaData.CONTACTS, MapUtils.mapToString(context, group.contacts));
+		}
+		
 		if (group.group_id > 0)
 			cv.put(ContactsProvider.CMetaData.GroupsMetaData.G_ID, group.group_id);
 
@@ -1075,9 +1091,6 @@ public class ContactManagement {
 		} else {
 			cv.put(ContactsProvider.CMetaData.GroupsMetaData.REMOVE_IMAGE, "0");
 		}
-
-		cv.put(ContactsProvider.CMetaData.GroupsMetaData.CONTACT_COUNT, group.contact_count);
-		cv.put(ContactsProvider.CMetaData.GroupsMetaData.CONTACTS, MapUtils.mapToString(context, group.contacts));
 		
 		String where = ContactsProvider.CMetaData.GroupsMetaData.G_ID + "=" + group.group_id;
 		try {
