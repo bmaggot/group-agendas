@@ -526,7 +526,7 @@ public class ContactManagement {
 		else
 			temp = "";
 		try {
-			reqEntity.addPart(ContactsProvider.CMetaData.ContactsMetaData.VISIBILITY, new StringBody("n", Charset.forName("UTF-8")));
+			reqEntity.addPart(ContactsProvider.CMetaData.ContactsMetaData.VISIBILITY, new StringBody(contact.visibility, Charset.forName("UTF-8")));
 		} catch (UnsupportedEncodingException e) {
 			Log.e("insertContactToRemoteDb(group, " + id + ")", "Failed adding visibility to entity.");
 		}
@@ -625,12 +625,6 @@ public class ContactManagement {
 			reqEntity.addPart(ContactsProvider.CMetaData.ContactsMetaData.COLOR, new StringBody(contact.getColor(), Charset.forName("UTF-8")));
 		} catch (UnsupportedEncodingException e) {
 			Log.e("insertContactToRemoteDb(group, " + id + ")", "Failed adding color to entity.");
-		}
-		
-		try {
-			reqEntity.addPart(ContactsProvider.CMetaData.ContactsMetaData.VISIBILITY, new StringBody(contact.visibility, Charset.forName("UTF-8")));
-		} catch (UnsupportedEncodingException e) {
-			Log.e("insertContactToRemoteDb(group, " + id + ")", "Failed adding visibility to entity.");
 		}
 
 		Map<String, String> groups = contact.groups;
