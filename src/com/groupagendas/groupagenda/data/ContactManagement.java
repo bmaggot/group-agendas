@@ -659,6 +659,7 @@ public class ContactManagement {
 						success = object.getBoolean("success");
 						if (success){
 							destination_id = object.getInt("contact_id");
+							DataManagement.synchronizeWithServer(context, null, account.getLatestUpdateUnixTimestamp());
 							Log.i("createContact - success", "" + success);
 						}
 
