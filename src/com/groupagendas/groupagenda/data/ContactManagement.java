@@ -763,7 +763,7 @@ public class ContactManagement {
 				insertBirthdayToLocalDb(context, birthday, destination_id);
 			}
 		} 
-
+		
 		return success;
 	}
 	
@@ -2034,7 +2034,8 @@ public class ContactManagement {
 					Contact c = new Contact(context, result);
 					
 					if(c.contact_id != 0){
-						insertContact(context, c);
+						int destination_id = insertContactToRemoteDb(context, c, 0);
+						updateContactIdInLocalDb(context, c.created, destination_id);
 						boolean edited = editContactOnRemoteDb(context, c);
 						if(edited){
 							updateContactOnLocalDb(context, c);
