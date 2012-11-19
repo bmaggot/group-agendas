@@ -2035,7 +2035,9 @@ public class ContactManagement {
 				offlineDeletedContacts.addContactForLaterDelete(contact.contact_id);
 				
 			}
-			removeContactFromLocalDbByInternalId(context, contact.contact_id);
+			
+			removeContactFromLocalDbByInternalId(context, contact.getInternal_id());
+			//removeContactFromLocalDb(context, contact.contact_id);
 			if(contact.birthdate!=null && contact.birthdate.length()==10){
 				removeBirthdayFromLocalDb(context, contact.contact_id);
 			}
