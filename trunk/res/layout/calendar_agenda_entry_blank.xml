@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="wrap_content"
+    android:orientation="horizontal" >
+
+    <LinearLayout
+        android:layout_width="fill_parent"
+        android:layout_height="100dp"
+        android:background="@color/white"
+        android:orientation="horizontal" >
+
+        <!-- <TextView
+            android:id="@+id/agenda_entry_blank_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Suka" /> -->
+
+        <ImageView
+            android:id="@+id/agenda_entry_blank_color_placeholder"
+            android:layout_width="10dp"
+            android:layout_height="10dp"
+            android:layout_marginBottom="3dp"
+            android:layout_marginTop="3dp"
+            android:contentDescription="@string/event_color_placeholder"
+            android:src="@null" />
+
+        <!-- <ImageView
+            android:id="@+id/agenda_entry_blank_icon_placeholder"
+            android:layout_width="10dp"
+            android:layout_height="10dp"
+            android:layout_marginBottom="3dp"
+            android:layout_marginTop="3dp"
+            android:contentDescription="@string/event_icons_placeholder"
+            android:src="@null" /> -->
+
+        <TextView
+            android:id="@+id/agenda_entry_blank_time_placeholder"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:paddingLeft="5dp"
+            android:layout_marginTop="3dp"
+            android:textColor="@color/black"
+            android:textSize="10dp"
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/agenda_entry_blank_title_placeholder"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:maxLines="2"
+            android:paddingLeft="5dp"
+            android:layout_marginTop="3dp"
+            android:textColor="@color/black"
+            android:textSize="10dp"
+            android:textStyle="normal" />
+    </LinearLayout>
+
+</LinearLayout>
