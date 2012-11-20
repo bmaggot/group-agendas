@@ -485,18 +485,30 @@ public class ContactEditActivity extends Activity implements OnClickListener, On
 			cv.put(ContactsProvider.CMetaData.ContactsMetaData.VISIBILITY, temp);
 
 			// groups
-
+			Map<String, String> contactGroupsMap = new HashMap<String, String>();
+			contactGroupsMap = editedContact.groups;
 			if(selectedGroups != null){
 				int i = 0;
-				Map<String, String> map = new HashMap<String, String>();
-				editedContact.groups = map;
-				for (Group g : selectedGroups) {
-					editedContact.groups.put(""+i, ""+g.group_id);
-					ContactManagement.updateGroupOnLocalDb(getApplicationContext(), g, editedContact.contact_id);
-					i++;
+				Map<String, String> selectedGroupsMap = new HashMap<String, String>();
+				editedContact.groups = selectedGroupsMap;
+				if(contactGroupsMap != null && !contactGroupsMap.isEmpty()){
+					for (String s : contactGroupsMap.keySet()) {
+						Group g = ContactManagement.getGroupFromLocalDb(getApplicationContext(), Integer.valueOf(contactGroupsMap.get(s)), 0);
+						if(g != null){
+							ContactManagement.updateGroupOnLocalDb(getApplicationContext(), g, editedContact.contact_id, false);
+						}
+					}
 				}
-
-			}
+				if(!selectedGroups.isEmpty()){
+					for (Group g : selectedGroups) {
+						editedContact.groups.put(""+i, ""+g.group_id);
+						ContactManagement.updateGroupOnLocalDb(getApplicationContext(), g, editedContact.contact_id, true);
+						i++;
+					}
+				}
+				
+				selectedGroups = null;
+			} 
 			
 			cv.put(ContactsProvider.CMetaData.ContactsMetaData.GROUPS, MapUtils.mapToString(getApplicationContext(), editedContact.groups));
 
@@ -608,7 +620,7 @@ public class ContactEditActivity extends Activity implements OnClickListener, On
 				editedContact.groups = map;
 				for (Group g : selectedGroups) {
 					editedContact.groups.put(""+i, ""+g.group_id);
-					ContactManagement.updateGroupOnLocalDb(getApplicationContext(), g, editedContact.contact_id);
+//					ContactManagement.updateGroupOnLocalDb(getApplicationContext(), g, editedContact.contact_id);
 					i++;
 				}
 			}
