@@ -25,6 +25,7 @@ public class YearView extends AbstractCalendarView {
 	
 	private static final int MonthsInYear = 12;
 	private static final int DAYS_PER_WEEK = 7;
+	public boolean stillLoading = true;
 	
 	private LinearLayout year_Table;
 	private ArrayList<ArrayList<YearViewMonthInnerCell>>yearDaysMap = new ArrayList<ArrayList<YearViewMonthInnerCell>>();
@@ -58,18 +59,22 @@ public class YearView extends AbstractCalendarView {
 
 	@Override
 	public void goPrev() {
-		selectedDate.add(Calendar.YEAR, -1);
-		setTopPanel();
-		refresh();
+		if(!stillLoading){
+			selectedDate.add(Calendar.YEAR, -1);
+			setTopPanel();
+			refresh();
+		}
 	}
 
 
 
 	@Override
 	public void goNext() {
-		selectedDate.add(Calendar.YEAR, 1);
-		setTopPanel();
-		refresh();
+		if(!stillLoading){
+			selectedDate.add(Calendar.YEAR, 1);
+			setTopPanel();
+			refresh();
+		}
 	}
 	
 	
@@ -184,7 +189,12 @@ public class YearView extends AbstractCalendarView {
 			tmp.add(Calendar.MONTH, 1);
 		}
 		selectDate(selectedDate, null);
-		}
+		stillLoading = false;
+	}
+	
+	protected void onPreExecute() {
+		stillLoading = true;
+	}
 
 	@Override
 	protected Cursor queryProjectionsFromLocalDb(Calendar date) {
