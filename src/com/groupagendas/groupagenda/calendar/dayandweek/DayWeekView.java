@@ -47,6 +47,7 @@ public class DayWeekView extends AbstractCalendarView {
 	public final static int MAX_DAYS_SHOWN = 7;
 	private static final int MIN_DAYS_SHOWN = 1;
 	private int width = 0;
+	public boolean stillLoading = true;
 
 	
 	public static final float DEFAULT_TIME_TO_SCROLL = 7.5f; //DEFAULT HOUR TO SCROLL. 7.5f = 7:30
@@ -361,16 +362,20 @@ public class DayWeekView extends AbstractCalendarView {
 
 		@Override
 		public void goPrev(){
-			daysShown.prevPage();
-			setTopPanel(); 
-			new UpdateEventsInfoTask().execute();
+			if(!stillLoading){
+				daysShown.prevPage();
+				setTopPanel(); 
+				new UpdateEventsInfoTask().execute();
+			}
 		}
 		
 		@Override
 		public void goNext(){
-			daysShown.nextPage();
-			setTopPanel();
-			new UpdateEventsInfoTask().execute();
+			if(!stillLoading){
+				daysShown.nextPage();
+				setTopPanel();
+				new UpdateEventsInfoTask().execute();
+			}
 		}	
 		private void scrollHourPanel() {
 			final float hour = DEFAULT_TIME_TO_SCROLL;
@@ -483,6 +488,11 @@ public class DayWeekView extends AbstractCalendarView {
 			protected void onPostExecute(Void result) {
 				daysShown.updateEventLists(sortedEvents);
 				updateEventLists();
+				stillLoading = false;
+			}
+			
+			protected void onPreExecute() {
+				stillLoading = true;
 			}
 
 			@Override
