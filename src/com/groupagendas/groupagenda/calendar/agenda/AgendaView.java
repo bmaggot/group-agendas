@@ -4,32 +4,48 @@ import java.util.ArrayList;
 import java.util.Calendar;
 
 import android.content.Context;
+import android.content.Intent;
 import android.database.Cursor;
+import android.graphics.drawable.BitmapDrawable;
 import android.util.AttributeSet;
+import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.ListView;
+import android.widget.PopupWindow.OnDismissListener;
 import android.widget.TableLayout;
 import android.widget.TableRow;
 import android.widget.TextView;
+import az.mecid.android.ActionItem;
+import az.mecid.android.QuickAction;
 
 import com.groupagendas.groupagenda.R;
 import com.groupagendas.groupagenda.calendar.AbstractCalendarView;
 import com.groupagendas.groupagenda.contacts.birthdays.BirthdayManagement;
+import com.groupagendas.groupagenda.data.DataManagement;
 import com.groupagendas.groupagenda.data.EventManagement;
 import com.groupagendas.groupagenda.events.Event;
 import com.groupagendas.groupagenda.events.NativeCalendarReader;
+import com.groupagendas.groupagenda.events.NewEventActivity;
+import com.groupagendas.groupagenda.utils.DrawingUtils;
 import com.groupagendas.groupagenda.utils.TreeMapUtils;
 import com.groupagendas.groupagenda.utils.Utils;
 
 public class AgendaView extends AbstractCalendarView {
-	
+
 	private static final int FRAMES_PER_ROW = 2;
 	private Calendar shownDate;
 	private static final int TABLE_ROWS_COUNT = 3;
 	private static final int SHOWN_DAYS_COUNT = 7;
-	
+	public boolean stillLoading = true;
+
+	private QuickAction qa;
+	private ActionItem New;
+	private Calendar cal = Calendar.getInstance();
+
 	ArrayList<AgendaFrame> daysList = new ArrayList<AgendaFrame>();
-	
+
 	private TableLayout agendaTable;
 
 	public AgendaView(Context context) {
@@ -53,19 +69,23 @@ public class AgendaView extends AbstractCalendarView {
 
 	@Override
 	public void goPrev() {
-		shownDate.add(Calendar.DATE, (-1 * SHOWN_DAYS_COUNT));
-		setTopPanel();
-		setDaysTitles();
-		updateEventLists();
+		if(!stillLoading){
+			shownDate.add(Calendar.DATE, (-1 * SHOWN_DAYS_COUNT));
+			setTopPanel();
+			setDaysTitles();
+			updateEventLists();
+		}
 
 	}
 
 	@Override
 	public void goNext() {
-		shownDate.add(Calendar.DATE, SHOWN_DAYS_COUNT);
-		setTopPanel();
-		setDaysTitles();
-		updateEventLists();
+		if(!stillLoading){
+			shownDate.add(Calendar.DATE, SHOWN_DAYS_COUNT);
+			setTopPanel();
+			setDaysTitles();
+			updateEventLists();
+		}
 
 	}
 
@@ -73,31 +93,25 @@ public class AgendaView extends AbstractCalendarView {
 	public void setupView() {
 		agendaTable = (TableLayout) findViewById(R.id.agenda_table);
 		agendaTable.setOnTouchListener(createListener(swipeGestureDetector));
-		TableLayout.LayoutParams rowLp = new TableLayout.LayoutParams(
-		        ViewGroup.LayoutParams.FILL_PARENT,
-		        ViewGroup.LayoutParams.FILL_PARENT,
-		        1.0f);
-		
-		TableRow.LayoutParams cellLp = new TableRow.LayoutParams(
-		        VIEW_WIDTH / FRAMES_PER_ROW,
-		        VIEW_HEIGHT/TABLE_ROWS_COUNT,
-		        1.0f);
-		
+		TableLayout.LayoutParams rowLp = new TableLayout.LayoutParams(ViewGroup.LayoutParams.FILL_PARENT,
+				ViewGroup.LayoutParams.FILL_PARENT, 1.0f);
 
-//		Adding rows
+		TableRow.LayoutParams cellLp = new TableRow.LayoutParams(VIEW_WIDTH / FRAMES_PER_ROW, VIEW_HEIGHT / TABLE_ROWS_COUNT, 1.0f);
+
+		// Adding rows
 		TableRow row;
-		for (int i = 0; i < TABLE_ROWS_COUNT - 1; i++){
+		for (int i = 0; i < TABLE_ROWS_COUNT - 1; i++) {
 			row = (TableRow) mInflater.inflate(R.layout.calendar_agenda_row, null);
 			addWorkingDay(row, cellLp);
-			addWorkingDay(row, cellLp);	
+			addWorkingDay(row, cellLp);
 			agendaTable.addView(row, rowLp);
 		}
-//		Add last row
+		// Add last row
 		row = (TableRow) mInflater.inflate(R.layout.calendar_agenda_row, null);
 		addWorkingDay(row, cellLp);
 		addWeekend(row, cellLp);
 		agendaTable.addView(row, rowLp);
-		
+
 		setDaysTitles();
 		updateEventLists();
 
@@ -105,94 +119,243 @@ public class AgendaView extends AbstractCalendarView {
 
 	private void setDaysTitles() {
 		int day = 0;
-		for (AgendaFrame frame : daysList){
+		for (AgendaFrame frame : daysList) {
 			TextView dayTitle = (TextView) frame.getDayContainer().findViewById(R.id.agenda_day_title);
 			Calendar tmp = (Calendar) shownDate.clone();
 			tmp.add(Calendar.DATE, day);
 			day++;
-			
-			String title = WeekDayNames[tmp.get(Calendar.DAY_OF_WEEK) -1];
+
+			String title = WeekDayNames[tmp.get(Calendar.DAY_OF_WEEK) - 1];
 			title += ", ";
 			title += MonthNames[tmp.get(Calendar.MONTH)];
 			title += " ";
 			title += tmp.get(Calendar.DATE);
 			title += ", ";
 			title += tmp.get(Calendar.YEAR);
-			
+
 			dayTitle.setText(title);
-			if (Utils.isToday(tmp)){
+			if (Utils.isToday(tmp)) {
 				dayTitle.setBackgroundColor(getResources().getColor(R.color.darker_gray));
-			} else{
+			} else {
 				dayTitle.setBackgroundColor(getResources().getColor(R.color.lighter_gray));
 			}
 		}
-		
+
 	}
 
-	private void addWeekend(TableRow row,
-			android.widget.TableRow.LayoutParams cellLp) {
-		LinearLayout.LayoutParams params = new LayoutParams(ViewGroup.LayoutParams.FILL_PARENT,
-		        ViewGroup.LayoutParams.FILL_PARENT,
-		        1.0f);
+	private void addWeekend(TableRow row, android.widget.TableRow.LayoutParams cellLp) {
+		LinearLayout.LayoutParams params = new LayoutParams(ViewGroup.LayoutParams.FILL_PARENT, ViewGroup.LayoutParams.FILL_PARENT, 1.0f);
 		LinearLayout weekEndFrame = new LinearLayout(getContext());
 		weekEndFrame.setOrientation(VERTICAL);
-		
+
 		LinearLayout saturday = (LinearLayout) mInflater.inflate(R.layout.calendar_agenda_day_container, null);
 		weekEndFrame.addView(saturday, params);
+
+		ListView lv = (ListView) saturday.findViewById(R.id.agenda_day_entries);
+		final TextView titleTime = (TextView) saturday.findViewById(R.id.agenda_day_title);
+		View v = mInflater.inflate(R.layout.calendar_agenda_entry_blank, null);
+		lv.addFooterView(v);
+
 		daysList.add(new AgendaFrame(saturday, getContext()));
-		
+		addEventLikeIphone(v, titleTime);
+
 		LinearLayout sunday = (LinearLayout) mInflater.inflate(R.layout.calendar_agenda_day_container, null);
 		weekEndFrame.addView(sunday, params);
+
+		ListView lv2 = (ListView) sunday.findViewById(R.id.agenda_day_entries);
+		final TextView titleTime2 = (TextView) sunday.findViewById(R.id.agenda_day_title);
+		View v2 = mInflater.inflate(R.layout.calendar_agenda_entry_blank, null);
+		lv2.addFooterView(v2);
+
 		daysList.add(new AgendaFrame(sunday, getContext()));
-		
-		row.addView(weekEndFrame, cellLp);	
+		addEventLikeIphone(v2, titleTime2);
+
+		row.addView(weekEndFrame, cellLp);
 	}
 
 	private void addWorkingDay(TableRow row, android.widget.TableRow.LayoutParams cellLp) {
 		LinearLayout workingDayFrame = (LinearLayout) mInflater.inflate(R.layout.calendar_agenda_day_container, null);
 		row.addView(workingDayFrame, cellLp);
+
+		ListView lv = (ListView) workingDayFrame.findViewById(R.id.agenda_day_entries);
+		final TextView titleTime = (TextView) workingDayFrame.findViewById(R.id.agenda_day_title);
+		View v = mInflater.inflate(R.layout.calendar_agenda_entry_blank, null);
+		lv.addFooterView(v);
+
 		daysList.add(new AgendaFrame(workingDayFrame, getContext()));
-		
+
+		addEventLikeIphone(v, titleTime);
+	}
+
+	private void addEventLikeIphone(View v, final TextView titleTime) {
+		New = new ActionItem();
+		New.setTitle(getResources().getString(R.string.New));
+		New.setOnClickListener(new OnClickListener() {
+
+			@Override
+			public void onClick(View v) {
+				qa.dismiss();
+				Calendar calEnd = (Calendar) cal.clone();
+				calEnd.add(Calendar.MINUTE, 30);
+				Intent intent = new Intent(getContext(), NewEventActivity.class);
+				intent.putExtra(NewEventActivity.EXTRA_STRING_FOR_START_CALENDAR,
+						Utils.formatCalendar(cal, DataManagement.SERVER_TIMESTAMP_FORMAT));
+				intent.putExtra(NewEventActivity.EXTRA_STRING_FOR_END_CALENDAR,
+						Utils.formatCalendar(calEnd, DataManagement.SERVER_TIMESTAMP_FORMAT));
+				getContext().startActivity(intent);
+			}
+		});
+
+		v.setOnLongClickListener(new OnLongClickListener() {
+
+			@Override
+			public boolean onLongClick(View v) {
+				String date = "" + titleTime.getText();
+				date.replace(" ", "");
+				final String[] splitDate = date.split(",");
+				String year = splitDate[2].replace(" ", "");
+				String[] splitMonth = splitDate[1].split(" ");
+				cal.set(Calendar.DAY_OF_MONTH, Integer.valueOf(splitMonth[2]));
+				cal.set(Calendar.YEAR, Integer.valueOf(year));
+				cal.set(Calendar.HOUR_OF_DAY, 12);
+				cal.set(Calendar.MINUTE, 0);
+				cal.clear(Calendar.MILLISECOND);
+				if (splitMonth[1].contains(MonthNames[0])) {
+					cal.set(Calendar.MONTH, 0);
+				} else {
+					if (splitMonth[1].contains(MonthNames[1])) {
+						cal.set(Calendar.MONTH, 1);
+					} else {
+						if (splitMonth[1].contains(MonthNames[2])) {
+							cal.set(Calendar.MONTH, 2);
+						} else {
+							if (splitMonth[1].contains(MonthNames[3])) {
+								cal.set(Calendar.MONTH, 3);
+							} else {
+								if (splitMonth[1].contains(MonthNames[4])) {
+									cal.set(Calendar.MONTH, 4);
+								} else {
+									if (splitMonth[1].contains(MonthNames[5])) {
+										cal.set(Calendar.MONTH, 5);
+									} else {
+										if (splitMonth[1].contains(MonthNames[6])) {
+											cal.set(Calendar.MONTH, 6);
+										} else {
+											if (splitMonth[1].contains(MonthNames[7])) {
+												cal.set(Calendar.MONTH, 7);
+											} else {
+												if (splitMonth[1].contains(MonthNames[8])) {
+													cal.set(Calendar.MONTH, 8);
+												} else {
+													if (splitMonth[1].contains(MonthNames[9])) {
+														cal.set(Calendar.MONTH, 9);
+													} else {
+														if (splitMonth[1].contains(MonthNames[10])) {
+															cal.set(Calendar.MONTH, 10);
+														} else {
+															if (splitMonth[1].contains(MonthNames[11])) {
+																cal.set(Calendar.MONTH, 11);
+															}
+														}
+													}
+												}
+											}
+										}
+									}
+								}
+							}
+						}
+					}
+				}
+				
+				//TODO netrinti!
+//				if (cal.get(Calendar.MINUTE) > 30) {
+//					cal.clear(Calendar.MINUTE);
+//					cal.add(Calendar.HOUR_OF_DAY, 1);
+//				} else {
+//					cal.clear(Calendar.MINUTE);
+//				}
+				
+				final TextView time = (TextView) v.findViewById(R.id.agenda_entry_blank_time_placeholder);
+				time.setVisibility(View.VISIBLE);
+				if(cal.get(Calendar.MINUTE) < 2){
+					time.setText("" + cal.get(Calendar.HOUR_OF_DAY) + ":" + cal.get(Calendar.MINUTE) + "0");
+				} else {
+					time.setText("" + cal.get(Calendar.HOUR_OF_DAY) + ":" + cal.get(Calendar.MINUTE));
+				}
+				
+				final TextView title = (TextView) v.findViewById(R.id.agenda_entry_blank_title_placeholder);
+				title.setVisibility(View.VISIBLE);
+				title.setText(R.string.new_event);
+				final ImageView bubble = (ImageView) v.findViewById(R.id.agenda_entry_blank_color_placeholder);
+				bubble.setVisibility(View.VISIBLE);
+				bubble.setBackgroundDrawable(new BitmapDrawable(DrawingUtils.getColoredRoundRectangle(getContext(), 15,
+						Event.DEFAULT_COLOR, true)));
+				LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
+				int margins = DrawingUtils.convertDPtoPX(2);
+				params.setMargins(margins, margins, 0, 0);
+				bubble.setLayoutParams(params);
+
+				qa = new QuickAction(title);
+				qa.addActionItem(New);
+				qa.show();
+
+				qa.setOnDismissListener(new OnDismissListener() {
+
+					@Override
+					public void onDismiss() {
+						time.setVisibility(View.INVISIBLE);
+						title.setVisibility(View.INVISIBLE);
+						bubble.setVisibility(View.INVISIBLE);
+
+					}
+				});
+				return false;
+			}
+		});
 	}
 
 	@Override
 	protected void updateEventLists() {
 		new UpdateEventsInfoTask().execute();
-		
+
 	}
 
 	@Override
 	public Calendar getDateToResume() {
-		if(selectedDate.get(Calendar.WEEK_OF_YEAR) == shownDate.get(Calendar.WEEK_OF_YEAR)) return selectedDate;
+		if (selectedDate.get(Calendar.WEEK_OF_YEAR) == shownDate.get(Calendar.WEEK_OF_YEAR))
+			return selectedDate;
 		return shownDate;
 	}
 
 	@Override
 	protected void setupSelectedDate(Calendar initializationDate) {
 		this.selectedDate = initializationDate;
-		this.shownDate = (Calendar)selectedDate.clone();
+		this.shownDate = (Calendar) selectedDate.clone();
 		Utils.setCalendarToFirstDayOfWeek(this.shownDate);
-		
+
 	}
-	
-	private class UpdateEventsInfoTask extends AbstractCalendarView.UpdateEventsInfoTask{
-		
-	
+
+	private class UpdateEventsInfoTask extends AbstractCalendarView.UpdateEventsInfoTask {
 
 		protected void onPostExecute(Void result) {
 			Calendar tmp = (Calendar) shownDate.clone();
-			for (AgendaFrame frame : daysList){	
+			for (AgendaFrame frame : daysList) {
 				frame.setEventList(TreeMapUtils.getEventsFromTreemap(tmp, sortedEvents));
 				tmp.add(Calendar.DATE, 1);
 				frame.UpdateList();
 			}
+			stillLoading = false;
 
+		}
+		
+		protected void onPreExecute() {
+			stillLoading = true;
 		}
 
 		@Override
 		protected Cursor queryProjectionsFromLocalDb(Calendar date) {
-			return EventManagement.createEventProjectionByDateFromLocalDb(context,
-					EventProjectionForDisplay, shownDate, 7,
+			return EventManagement.createEventProjectionByDateFromLocalDb(context, EventProjectionForDisplay, shownDate, 7,
 					EventManagement.TM_EVENTS_FROM_GIVEN_DATE, null, true);
 		}
 
@@ -200,7 +363,7 @@ public class AgendaView extends AbstractCalendarView {
 		protected ArrayList<Event> queryNativeEvents() {
 			return NativeCalendarReader.readNativeCalendarEventsForAFewDays(context, shownDate, SHOWN_DAYS_COUNT);
 		}
-		
+
 		@Override
 		protected ArrayList<Event> queryBirthdayEvents() {
 			Calendar cal = (Calendar) shownDate.clone();
@@ -209,6 +372,5 @@ public class AgendaView extends AbstractCalendarView {
 		}
 
 	}
-	
 
 }
