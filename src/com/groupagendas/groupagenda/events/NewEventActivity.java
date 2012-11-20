@@ -55,6 +55,7 @@ import com.ptashek.widgets.datetimepicker.DateTimePicker;
 
 public class NewEventActivity extends EventActivity {
 
+
 	@SuppressWarnings("unused")
 	private Button templatesButton;
 
@@ -161,12 +162,19 @@ public class NewEventActivity extends EventActivity {
 		titleView.setEnabled(true);
 		// titleView.addTextChangedListener(filterTextWatcher);
 
-		String strTime = getIntent().getStringExtra(EXTRA_STRING_FOR_START_CALENDAR);
-		if (strTime != null) {
-			startCalendar = Utils.stringToCalendar(getApplicationContext(), strTime, DataManagement.SERVER_TIMESTAMP_FORMAT);
+		String strStartTime = getIntent().getStringExtra(EXTRA_STRING_FOR_START_CALENDAR);
+		if (strStartTime != null) {
+			startCalendar = Utils.stringToCalendar(getApplicationContext(), strStartTime, DataManagement.SERVER_TIMESTAMP_FORMAT);
 			startCalendar.clear(Calendar.SECOND);
 			endCalendar.setTime(startCalendar.getTime());
 			endCalendar.add(Calendar.MINUTE, DEFAULT_EVENT_DURATION_IN_MINS);
+
+		}
+		
+		String strEndTime = getIntent().getStringExtra(EXTRA_STRING_FOR_END_CALENDAR);
+		if (strEndTime != null) {
+			endCalendar = Utils.stringToCalendar(getApplicationContext(), strEndTime, DataManagement.SERVER_TIMESTAMP_FORMAT);
+			endCalendar.clear(Calendar.SECOND);
 
 		}
 		// start
