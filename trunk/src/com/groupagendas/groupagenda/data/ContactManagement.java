@@ -32,6 +32,7 @@ import com.groupagendas.groupagenda.SaveDeletedData;
 import com.groupagendas.groupagenda.SaveDeletedData.SDMetaData;
 import com.groupagendas.groupagenda.account.Account;
 import com.groupagendas.groupagenda.contacts.Contact;
+import com.groupagendas.groupagenda.contacts.ContactEditActivity;
 import com.groupagendas.groupagenda.contacts.ContactsProvider;
 import com.groupagendas.groupagenda.contacts.Group;
 import com.groupagendas.groupagenda.contacts.birthdays.Birthday;
@@ -769,6 +770,12 @@ public class ContactManagement {
 				Birthday birthday = new Birthday(context, contact);
 				insertBirthdayToLocalDb(context, birthday, destination_id);
 			}
+			if(ContactEditActivity.selectedGroups != null){
+				for (Group g : ContactEditActivity.selectedGroups) {
+					ContactManagement.updateGroupOnLocalDb(context, g, destination_id, true);
+				}
+				ContactEditActivity.selectedGroups = null;
+			}
 		} 
 		
 		return success;
@@ -1054,16 +1061,49 @@ public class ContactManagement {
 		}
 	}
 	
-	public static boolean updateGroupOnLocalDb(Context context, Group group, int contactID) {
+	public static boolean updateGroupOnLocalDb(Context context, Group group, int contactID, boolean insert) {
 		ContentValues cv = new ContentValues();
 		
 		if(contactID > 0){
 			Map<String, String> map = new HashMap<String, String>();
 			int contact_count = group.contact_count;
+			int target = -1;
+			int max_key = 0;
 			map = group.contacts;
-			map.put(""+map.size(), ""+contactID);
-			cv.put(ContactsProvider.CMetaData.GroupsMetaData.CONTACT_COUNT, (contact_count+1));
-			cv.put(ContactsProvider.CMetaData.GroupsMetaData.CONTACTS, MapUtils.mapToString(context, map));
+			for (String s : map.keySet()) {
+				int temp = Integer.parseInt(s);
+				if(temp > max_key){
+					max_key = temp;
+				}
+				if ((map.get(s) != null) && (map.get(s).equalsIgnoreCase(""+contactID))) {
+					target = temp;
+					if(!insert){
+						map.remove(s);
+						cv.put(ContactsProvider.CMetaData.GroupsMetaData.CONTACT_COUNT, (contact_count-1));
+						cv.put(ContactsProvider.CMetaData.GroupsMetaData.CONTACTS, MapUtils.mapToString(context, map));
+						target = -1;
+					}
+					break;
+				}
+			}
+//			for(int i=0;i<map.size();i++){
+//				if ((map.get(""+i) != null) && (map.get(""+i).equalsIgnoreCase(""+contactID))) {
+//					target = i;
+//					if(!insert){
+//						map.remove(""+i);
+//						cv.put(ContactsProvider.CMetaData.GroupsMetaData.CONTACT_COUNT, (contact_count-1));
+//						cv.put(ContactsProvider.CMetaData.GroupsMetaData.CONTACTS, MapUtils.mapToString(context, map));
+//						target = -1;
+//					}
+//					break;
+//				}
+//			}
+			if(insert && target == -1){
+				map.put(""+(max_key+1), ""+contactID);
+				cv.put(ContactsProvider.CMetaData.GroupsMetaData.CONTACT_COUNT, (contact_count+1));
+				cv.put(ContactsProvider.CMetaData.GroupsMetaData.CONTACTS, MapUtils.mapToString(context, map));
+				target = -1;
+			}
 		} else {
 			cv.put(ContactsProvider.CMetaData.GroupsMetaData.CONTACT_COUNT, group.contact_count);
 			cv.put(ContactsProvider.CMetaData.GroupsMetaData.CONTACTS, MapUtils.mapToString(context, group.contacts));
@@ -2037,6 +2077,17 @@ public class ContactManagement {
 			}
 			
 			removeContactFromLocalDbByInternalId(context, contact.getInternal_id());
+			Map<String, String> map = new HashMap<String, String>();
+			map = contact.groups;
+			for(int i=0;i<map.size();i++){
+				map.get(""+i);
+				Group g = getGroupFromLocalDb(context, Integer.valueOf(map.get(""+i)), 0);
+				if(g != null){
+					updateGroupOnLocalDb(context, g, contact.contact_id, false);
+				}
+				
+				
+			}
 			//removeContactFromLocalDb(context, contact.contact_id);
 			if(contact.birthdate!=null && contact.birthdate.length()==10){
 				removeBirthdayFromLocalDb(context, contact.contact_id);
