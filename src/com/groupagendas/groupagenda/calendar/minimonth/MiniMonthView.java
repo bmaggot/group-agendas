@@ -4,126 +4,140 @@ import java.util.ArrayList;
 import java.util.Calendar;
 
 import android.content.Context;
+import android.content.Intent;
 import android.database.Cursor;
+import android.graphics.drawable.BitmapDrawable;
 import android.util.AttributeSet;
+import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.ListView;
+import android.widget.PopupWindow.OnDismissListener;
 import android.widget.TableLayout;
 import android.widget.TableRow;
 import android.widget.TextView;
+import az.mecid.android.ActionItem;
+import az.mecid.android.QuickAction;
 
 import com.groupagendas.groupagenda.R;
 import com.groupagendas.groupagenda.calendar.AbstractCalendarView;
 import com.groupagendas.groupagenda.calendar.agenda.AgendaFrame;
 import com.groupagendas.groupagenda.contacts.birthdays.BirthdayManagement;
+import com.groupagendas.groupagenda.data.DataManagement;
 import com.groupagendas.groupagenda.data.EventManagement;
 import com.groupagendas.groupagenda.events.Event;
 import com.groupagendas.groupagenda.events.NativeCalendarReader;
+import com.groupagendas.groupagenda.events.NewEventActivity;
 import com.groupagendas.groupagenda.utils.DrawingUtils;
 import com.groupagendas.groupagenda.utils.TreeMapUtils;
 import com.groupagendas.groupagenda.utils.Utils;
 
-public class MiniMonthView extends AbstractCalendarView {	
-	
+public class MiniMonthView extends AbstractCalendarView {
+
 	ArrayList<AgendaFrame> daysList = new ArrayList<AgendaFrame>();
-	
+
 	private TableLayout miniMonthTable;
 
 	private boolean showWeekTitle = true;
 
-
+	private QuickAction qa;
+	private ActionItem New;
+	private Calendar cal = Calendar.getInstance();
 
 	private Calendar firstShownDate;
 
 	private int FRAMES_PER_ROW;
 
 	private int TABLE_ROWS_COUNT;
-
+	public boolean stillLoading = true;
 
 	public MiniMonthView(Context context) {
 		this(context, null);
 	}
+
 	public MiniMonthView(Context context, AttributeSet attrs) {
 		super(context, attrs);
 		WeekDayNames = getResources().getStringArray(R.array.week_days_short);
 		MonthNames = getResources().getStringArray(R.array.month_names);
 
-		
 	}
+
 	@Override
 	protected void instantiateTopPanelBottomLine() {
 		LinearLayout calendarTopPanelBottomLine = new LinearLayout(getContext());
-		LayoutParams params = new LayoutParams(android.view.ViewGroup.LayoutParams.MATCH_PARENT, android.view.ViewGroup.LayoutParams.MATCH_PARENT);
+		LayoutParams params = new LayoutParams(android.view.ViewGroup.LayoutParams.MATCH_PARENT,
+				android.view.ViewGroup.LayoutParams.MATCH_PARENT);
 		calendarTopPanelBottomLine.setOrientation(LinearLayout.HORIZONTAL);
 		calendarTopPanelBottomLine.setLayoutParams(params);
 		getTopPanelBottomLine().addView(calendarTopPanelBottomLine);
-		
+
 	}
-	
+
 	@Override
 	protected void setTopPanel() {
 		String title = MonthNames[selectedDate.get(Calendar.MONTH)];
 		title += " ";
 		title += selectedDate.get(Calendar.YEAR);
 		this.getTopPanelTitle().setText(title);
-		
-		LinearLayout bottomBar = (LinearLayout)getTopPanelBottomLine().getChildAt(0);
+
+		LinearLayout bottomBar = (LinearLayout) getTopPanelBottomLine().getChildAt(0);
 		bottomBar.removeAllViews();
-		
+
 		TextView entry;
 		if (showWeekTitle) {
-			entry = (TextView) mInflater.inflate(
-					R.layout.calendar_top_bar_bottomline_entry, null);
+			entry = (TextView) mInflater.inflate(R.layout.calendar_top_bar_bottomline_entry, null);
 			entry.setText(R.string.week_title);
 			entry.setPadding(DrawingUtils.convertDPtoPX(1), 0, 0, 0);
 			bottomBar.addView(entry);
 		}
 		Calendar tmp = (Calendar) firstShownDate.clone();
-//		add view for every day
-		
-		for (int i = 0; i < FRAMES_PER_ROW; i++){
+		// add view for every day
+
+		for (int i = 0; i < FRAMES_PER_ROW; i++) {
 			entry = (TextView) mInflater.inflate(R.layout.calendar_top_bar_bottomline_entry, null);
-			
+
 			String text = WeekDayNames[tmp.get(Calendar.DAY_OF_WEEK) - 1];
 			tmp.add(Calendar.DATE, 1);
 			entry.setText(text);
-			entry.setWidth(Math.round((DISPLAY_WIDTH) / (float)FRAMES_PER_ROW));
+			entry.setWidth(Math.round((DISPLAY_WIDTH) / (float) FRAMES_PER_ROW));
 			bottomBar.addView(entry);
 		}
 
 	}
 
-	
 	@Override
 	public void goPrev() {
-		int LastMonthWeeksCount = selectedDate.getActualMaximum(Calendar.WEEK_OF_MONTH);
-		selectedDate.add(Calendar.MONTH, -1);
-		firstShownDate = updateShownDate();
-		setTopPanel();
-		if(LastMonthWeeksCount != selectedDate.getActualMaximum(Calendar.WEEK_OF_MONTH)){
-			paintTable(selectedDate);
+		if (!stillLoading) {
+			int LastMonthWeeksCount = selectedDate.getActualMaximum(Calendar.WEEK_OF_MONTH);
+			selectedDate.add(Calendar.MONTH, -1);
+			firstShownDate = updateShownDate();
+			setTopPanel();
+			if (LastMonthWeeksCount != selectedDate.getActualMaximum(Calendar.WEEK_OF_MONTH)) {
+				paintTable(selectedDate);
+			}
+			setDaysTitles();
+			updateEventLists();
 		}
-		setDaysTitles();
-		updateEventLists();
 
 	}
 
-	
 	@Override
 	public void goNext() {
-		int LastMonthWeeksCount = selectedDate.getActualMaximum(Calendar.WEEK_OF_MONTH);
-		selectedDate.add(Calendar.MONTH, 1);
-		firstShownDate = updateShownDate();
-		setTopPanel();
-		if(LastMonthWeeksCount != selectedDate.getActualMaximum(Calendar.WEEK_OF_MONTH)){
-			paintTable(selectedDate);
+		if (!stillLoading) {
+			int LastMonthWeeksCount = selectedDate.getActualMaximum(Calendar.WEEK_OF_MONTH);
+			selectedDate.add(Calendar.MONTH, 1);
+			firstShownDate = updateShownDate();
+			setTopPanel();
+			if (LastMonthWeeksCount != selectedDate.getActualMaximum(Calendar.WEEK_OF_MONTH)) {
+				paintTable(selectedDate);
+			}
+
+			setDaysTitles();
+			updateEventLists();
 		}
-		
-		setDaysTitles();
-		updateEventLists();
 
 	}
-	
 
 	@Override
 	public void setupView() {
@@ -132,132 +146,213 @@ public class MiniMonthView extends AbstractCalendarView {
 		setDaysTitles();
 		updateEventLists();
 	}
-	
+
 	private void paintTable(Calendar date) {
 		miniMonthTable.removeAllViews();
 		daysList = new ArrayList<AgendaFrame>();
-		
-		
-		TableLayout.LayoutParams rowLp = new TableLayout.LayoutParams(
-		        ViewGroup.LayoutParams.FILL_PARENT,
-		        ViewGroup.LayoutParams.FILL_PARENT,
-		        1.0f);		
-		
-		TableRow.LayoutParams cellLp = new TableRow.LayoutParams(
-		        VIEW_WIDTH / FRAMES_PER_ROW,
-		        VIEW_HEIGHT/TABLE_ROWS_COUNT,
-		        1.0f);		
 
-//		Adding rows
+		TableLayout.LayoutParams rowLp = new TableLayout.LayoutParams(ViewGroup.LayoutParams.FILL_PARENT,
+				ViewGroup.LayoutParams.FILL_PARENT, 1.0f);
+
+		TableRow.LayoutParams cellLp = new TableRow.LayoutParams(VIEW_WIDTH / FRAMES_PER_ROW, VIEW_HEIGHT / TABLE_ROWS_COUNT, 1.0f);
+
+		// Adding rows
 		TableRow row;
-		for (int i = 0; i < TABLE_ROWS_COUNT; i++){
+		for (int i = 0; i < TABLE_ROWS_COUNT; i++) {
 			row = (TableRow) mInflater.inflate(R.layout.calendar_mm_row, null);
 			for (int j = 0; j < FRAMES_PER_ROW; j++)
-			addDay(row, cellLp);
+				addDay(row, cellLp);
 			miniMonthTable.addView(row, rowLp);
-		}		
+		}
 	}
-	
-	
-	private void addDay(TableRow row,
-			android.widget.TableRow.LayoutParams cellLp) {
+
+	private void addDay(TableRow row, android.widget.TableRow.LayoutParams cellLp) {
 		LinearLayout dayFrame = (LinearLayout) mInflater.inflate(R.layout.calendar_mm_day_container, null);
 		row.addView(dayFrame, cellLp);
+
+		ListView lv = (ListView) dayFrame.findViewById(R.id.agenda_day_entries);
+		final TextView titleTime = (TextView) dayFrame.findViewById(R.id.agenda_day_title);
+		TextView dayTitle = (TextView) dayFrame.findViewById(R.id.agenda_day_title);
+		View v = mInflater.inflate(R.layout.calendar_agenda_entry_blank, null);
+		lv.addFooterView(v);
+
 		daysList.add(new AgendaFrame(dayFrame, getContext(), false));
-		
+
+		addEventLikeIphone(v, titleTime, dayTitle);
+
 	}
-	
+
+	private void addEventLikeIphone(View v, final TextView titleTime, final TextView dayTitle) {
+		New = new ActionItem();
+		New.setTitle(getResources().getString(R.string.New));
+		New.setOnClickListener(new OnClickListener() {
+
+			@Override
+			public void onClick(View v) {
+				qa.dismiss();
+				Calendar calEnd = (Calendar) cal.clone();
+				calEnd.add(Calendar.MINUTE, 30);
+				Intent intent = new Intent(getContext(), NewEventActivity.class);
+				intent.putExtra(NewEventActivity.EXTRA_STRING_FOR_START_CALENDAR,
+						Utils.formatCalendar(cal, DataManagement.SERVER_TIMESTAMP_FORMAT));
+				intent.putExtra(NewEventActivity.EXTRA_STRING_FOR_END_CALENDAR,
+						Utils.formatCalendar(calEnd, DataManagement.SERVER_TIMESTAMP_FORMAT));
+				getContext().startActivity(intent);
+			}
+		});
+
+		v.setOnLongClickListener(new OnLongClickListener() {
+
+			@Override
+			public boolean onLongClick(View v) {
+				Calendar temp = (Calendar) dayTitle.getTag();
+				cal.set(Calendar.DAY_OF_MONTH, temp.get(Calendar.DAY_OF_MONTH));
+				cal.set(Calendar.YEAR, temp.get(Calendar.YEAR));
+				cal.set(Calendar.MONTH, temp.get(Calendar.MONTH));
+				cal.set(Calendar.HOUR_OF_DAY, 12);
+				cal.set(Calendar.MINUTE, 0);
+				cal.clear(Calendar.MILLISECOND);
+
+				// TODO netrinti!
+				// if (cal.get(Calendar.MINUTE) > 30) {
+				// cal.clear(Calendar.MINUTE);
+				// cal.add(Calendar.HOUR_OF_DAY, 1);
+				// } else {
+				// cal.clear(Calendar.MINUTE);
+				// }
+
+				final TextView time = (TextView) v.findViewById(R.id.agenda_entry_blank_time_placeholder);
+				time.setVisibility(View.GONE);
+				time.setText("" + cal.get(Calendar.HOUR_OF_DAY) + ":" + cal.get(Calendar.MINUTE) + "0");
+				final TextView title = (TextView) v.findViewById(R.id.agenda_entry_blank_title_placeholder);
+				title.setVisibility(View.VISIBLE);
+				title.setText(R.string.new_event);
+				final ImageView bubble = (ImageView) v.findViewById(R.id.agenda_entry_blank_color_placeholder);
+				bubble.setVisibility(View.VISIBLE);
+				bubble.setBackgroundDrawable(new BitmapDrawable(DrawingUtils.getColoredRoundRectangle(getContext(), 15,
+						Event.DEFAULT_COLOR, true)));
+				LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
+				int margins = DrawingUtils.convertDPtoPX(2);
+				params.setMargins(margins, margins, 0, 0);
+				bubble.setLayoutParams(params);
+
+				qa = new QuickAction(title);
+				qa.addActionItem(New);
+				qa.show();
+
+				qa.setOnDismissListener(new OnDismissListener() {
+
+					@Override
+					public void onDismiss() {
+						time.setVisibility(View.INVISIBLE);
+						title.setVisibility(View.INVISIBLE);
+						bubble.setVisibility(View.INVISIBLE);
+
+					}
+				});
+				return false;
+			}
+		});
+	}
+
 	private void setDaysTitles() {
-		
+
 		Calendar tmp = (Calendar) firstShownDate.clone();
 		int firstDayOfWeek = tmp.getFirstDayOfWeek();
-		
-		for (AgendaFrame frame : daysList){
-			TextView dayTitle = (TextView) frame.getDayContainer().findViewById(R.id.agenda_day_title);	
+
+		for (AgendaFrame frame : daysList) {
+			TextView dayTitle = (TextView) frame.getDayContainer().findViewById(R.id.agenda_day_title);
 			TextView weekNum = (TextView) frame.getDayContainer().findViewById(R.id.agenda_week_title);
 			String title = "" + tmp.get(Calendar.DATE);
 			dayTitle.setText(title);
-			
-			if (Utils.isToday(tmp)){
+			if (Utils.isToday(tmp)) {
 				dayTitle.setBackgroundColor(getResources().getColor(R.color.darker_gray));
 				weekNum.setBackgroundColor(getResources().getColor(R.color.darker_gray));
-			} else{
+			} else {
 				dayTitle.setBackgroundColor(getResources().getColor(R.color.lighter_gray));
 				weekNum.setBackgroundColor(getResources().getColor(R.color.lighter_gray));
 			}
-			
-			if (tmp.get(Calendar.DAY_OF_WEEK) == firstDayOfWeek){					
+
+			if (tmp.get(Calendar.DAY_OF_WEEK) == firstDayOfWeek) {
 				weekNum.setVisibility(VISIBLE);
 				weekNum.setText("" + tmp.get(Calendar.WEEK_OF_YEAR));
-			}else {
+			} else {
 				frame.getDayContainer().findViewById(R.id.agenda_week_title).setVisibility(GONE);
 			}
-			
-			
-			
+
+			dayTitle.setTag(tmp.clone());
+
 			tmp.add(Calendar.DATE, 1);
 		}
-		
+
 	}
+
 	@Override
 	protected void updateEventLists() {
 		new UpdateEventsInfoTask().execute();
 	}
-	
+
 	private Calendar updateShownDate() {
 		Calendar tmp = (Calendar) selectedDate.clone();
 		Utils.setCalendarToFirstDayOfMonth(tmp);
 		Utils.setCalendarToFirstDayOfWeek(tmp);
 		return tmp;
 	}
+
 	@Override
 	public Calendar getDateToResume() {
-		if (firstShownDate.get(Calendar.MONTH) != selectedDate.get(Calendar.MONTH) || firstShownDate.get(Calendar.YEAR) != selectedDate.get(Calendar.YEAR)){
+		if (firstShownDate.get(Calendar.MONTH) != selectedDate.get(Calendar.MONTH)
+				|| firstShownDate.get(Calendar.YEAR) != selectedDate.get(Calendar.YEAR)) {
 			Calendar tmp = (Calendar) firstShownDate.clone();
-			if (tmp.get(Calendar.DATE) != 1) tmp.add(Calendar.MONTH, 1);
+			if (tmp.get(Calendar.DATE) != 1)
+				tmp.add(Calendar.MONTH, 1);
 			tmp.set(tmp.get(Calendar.YEAR), tmp.get(Calendar.MONTH), 1);
 			return tmp;
 		}
 		return selectedDate;
 	}
+
 	@Override
 	protected void setupSelectedDate(Calendar initializationDate) {
 		this.selectedDate = initializationDate;
 		FRAMES_PER_ROW = selectedDate.getMaximum(Calendar.DAY_OF_WEEK);
 		TABLE_ROWS_COUNT = selectedDate.getActualMaximum(Calendar.WEEK_OF_MONTH);
 		firstShownDate = updateShownDate();
-		
+
 	}
-	
-	
+
 	private class UpdateEventsInfoTask extends AbstractCalendarView.UpdateEventsInfoTask {
-	
-		
+
 		protected void onPostExecute(Void result) {
 			Calendar tmp = (Calendar) firstShownDate.clone();
-			
-			for (AgendaFrame frame : daysList){	
-				if (tmp.get(Calendar.MONTH) == selectedDate.get(Calendar.MONTH)){
+
+			for (AgendaFrame frame : daysList) {
+				if (tmp.get(Calendar.MONTH) == selectedDate.get(Calendar.MONTH)) {
 					frame.setEventList(TreeMapUtils.getEventsFromTreemap(tmp, sortedEvents));
-				}else {
+				} else {
 					frame.setEventList(new ArrayList<Event>());
 				}
 				frame.UpdateList();
 				tmp.add(Calendar.DATE, 1);
 			}
-			
+			stillLoading = false;
+		}
+
+		protected void onPreExecute() {
+			stillLoading = true;
 		}
 
 		@Override
 		protected Cursor queryProjectionsFromLocalDb(Calendar date) {
-			return EventManagement.createEventProjectionByDateFromLocalDb(context, EventProjectionForDisplay, date, 0, EventManagement.TM_EVENTS_ON_GIVEN_MONTH, null, true);
+			return EventManagement.createEventProjectionByDateFromLocalDb(context, EventProjectionForDisplay, date, 0,
+					EventManagement.TM_EVENTS_ON_GIVEN_MONTH, null, true);
 		}
 
 		@Override
 		protected ArrayList<Event> queryNativeEvents() {
 			return NativeCalendarReader.readNativeCalendarEventsForAMonth(context, selectedDate);
 		}
-		
+
 		@Override
 		protected ArrayList<Event> queryBirthdayEvents() {
 			Calendar cal = (Calendar) selectedDate.clone();
@@ -266,9 +361,6 @@ public class MiniMonthView extends AbstractCalendarView {
 			return BirthdayManagement.readBirthdayEventsForTimeInterval(context, selectedDate.getTimeInMillis(), cal.getTimeInMillis());
 		}
 
-
 	}
-	
-	
 
 }
