@@ -39,6 +39,7 @@ public class MonthView extends AbstractCalendarView {
 	private MonthAdapter eventsAdapter;
 	private int FRAME_WIDTH;
 	protected boolean redrawBubbles = true; //indicates whether to redraw color bubbles
+	public boolean stillLoading = true;
 
 
     public MonthView(Context context) {
@@ -95,31 +96,35 @@ public class MonthView extends AbstractCalendarView {
 
 	@Override
 	public void goPrev() {
-		redrawBubbles = true;
-		int LastMonthWeeksCount = selectedDate.getActualMaximum(Calendar.WEEK_OF_MONTH);
-		selectedDate.add(Calendar.MONTH, -1);
-		updateShownDate();
-		setTopPanel();
-		if(LastMonthWeeksCount != selectedDate.getActualMaximum(Calendar.WEEK_OF_MONTH)){
-			paintTable(selectedDate);
+		if(!stillLoading){
+			redrawBubbles = true;
+			int LastMonthWeeksCount = selectedDate.getActualMaximum(Calendar.WEEK_OF_MONTH);
+			selectedDate.add(Calendar.MONTH, -1);
+			updateShownDate();
+			setTopPanel();
+			if(LastMonthWeeksCount != selectedDate.getActualMaximum(Calendar.WEEK_OF_MONTH)){
+				paintTable(selectedDate);
+			}
+			setDayFrames();
+			updateEventLists();
 		}
-		setDayFrames();
-		updateEventLists();
 	}
 
 	@Override
 	public void goNext() {
-		redrawBubbles = true;
-		int LastMonthWeeksCount = selectedDate.getActualMaximum(Calendar.WEEK_OF_MONTH);
-		selectedDate.add(Calendar.MONTH, 1);
-		updateShownDate();
-		setTopPanel();
-		if(LastMonthWeeksCount != selectedDate.getActualMaximum(Calendar.WEEK_OF_MONTH)){
-			paintTable(selectedDate);
+		if(!stillLoading){
+			redrawBubbles = true;
+			int LastMonthWeeksCount = selectedDate.getActualMaximum(Calendar.WEEK_OF_MONTH);
+			selectedDate.add(Calendar.MONTH, 1);
+			updateShownDate();
+			setTopPanel();
+			if(LastMonthWeeksCount != selectedDate.getActualMaximum(Calendar.WEEK_OF_MONTH)){
+				paintTable(selectedDate);
+			}
+			
+			setDayFrames();
+			updateEventLists();
 		}
-		
-		setDayFrames();
-		updateEventLists();
 	}
 
 	@Override
@@ -297,7 +302,11 @@ public class MonthView extends AbstractCalendarView {
 				}		
 				tmp.add(Calendar.DATE, 1);
 			}
-			
+			stillLoading = false;
+		}
+		
+		protected void onPreExecute() {
+			stillLoading = true;
 		}
 
 		@Override
