@@ -265,5 +265,6 @@
     <string name="three_dots">…</string>
     <string name="delete_message_title">Delete message</string>
     <string name="delete_message_confirmation">Are You sure want to delete this messages</string>
+    <string name="New">New</string>
     
 </resources>
