@@ -458,7 +458,7 @@ public class NavbarActivity extends FragmentActivity {
 				case R.id.btnCalendar:
 					qa = new QuickAction(buttonView);
 					qa.addActionItem(list_search);
-					qa.addActionItem(year);
+//					qa.addActionItem(year);
 					qa.addActionItem(month);
 					qa.addActionItem(mini_month);
 					qa.addActionItem(agenda);
@@ -761,18 +761,18 @@ public class NavbarActivity extends FragmentActivity {
 			}
 		});
 
-		year = new ActionItem();
-		year.setTitle(getString(R.string.year));
-		year.setOnClickListener(new OnClickListener() {
-
-			@Override
-			public void onClick(View v) {
-				qa.dismiss();
-				selectedDate = Utils.createNewTodayCalendar();
-				viewState = ViewState.YEAR;
-				showYearView();
-			}
-		});
+//		year = new ActionItem();
+//		year.setTitle(getString(R.string.year));
+//		year.setOnClickListener(new OnClickListener() {
+//
+//			@Override
+//			public void onClick(View v) {
+//				qa.dismiss();
+//				selectedDate = Utils.createNewTodayCalendar();
+//				viewState = ViewState.YEAR;
+//				showYearView();
+//			}
+//		});
 
 		month = new ActionItem();
 		month.setTitle(getString(R.string.month));
