@@ -47,7 +47,6 @@ import com.groupagendas.groupagenda.contacts.importer.ImportActivity;
 import com.groupagendas.groupagenda.data.ContactManagement;
 import com.groupagendas.groupagenda.data.Data;
 import com.groupagendas.groupagenda.data.DataManagement;
-import com.groupagendas.groupagenda.data.OfflineData;
 import com.groupagendas.groupagenda.events.EventActivity;
 import com.groupagendas.groupagenda.https.WebService;
 import com.makeramen.segmented.SegmentedRadioGroup;
@@ -617,9 +616,6 @@ public class ContactsActivity extends ListActivity implements OnCheckedChangeLis
 							}
 						}
 					}
-				} else {
-					OfflineData uplooad = new OfflineData("mobile/events_invite_extra", reqEntity);
-					Data.getUnuploadedData().add(uplooad);
 				}
 			} catch (Exception e) {
 

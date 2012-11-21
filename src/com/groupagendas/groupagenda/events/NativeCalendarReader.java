@@ -2,6 +2,7 @@ package com.groupagendas.groupagenda.events;
 
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.TimeZone;
 
 import android.content.Context;
 import android.database.Cursor;
@@ -12,17 +13,26 @@ import com.groupagendas.groupagenda.R;
 import com.groupagendas.groupagenda.account.Account;
 
 public class NativeCalendarReader {
+	private static String ID = "_id";
+	private static String TITLE = "title";
+	private static String DESCRIPTION = "description";
+	private static String DTSTART = "dtstart";
+	private static String DTEND = "dtend";
+	private static String ALLDAY = "allDay";
+	private static String EVENTTIMEZONE = "eventTimezone";
+	private static String EVENTLOCATION = "eventLocation";
+	
 	static Cursor cursor;
 
 	public static ArrayList<Event> readAllCalendar(Context context) {
 		ArrayList<Event> nativeEvents = new ArrayList<Event>();
 		if (Integer.parseInt(Build.VERSION.SDK) >= 8) {
 			cursor = context.getContentResolver().query(Uri.parse("content://com.android.calendar/events"),
-					new String[] { "_id", "title", "description", "dtstart", "dtend", "allDay", "eventTimezone", "eventLocation" }, null,
+					new String[] { ID, TITLE, DESCRIPTION, DTSTART, DTEND, ALLDAY, EVENTTIMEZONE, EVENTLOCATION }, null,
 					null, null);
 		} else {
 			cursor = context.getContentResolver().query(Uri.parse("content://calendar/events"),
-					new String[] { "_id", "title", "description", "dtstart", "dtend", "allDay", "eventTimezone", "eventLocation" }, null,
+					new String[] { ID, TITLE, DESCRIPTION, DTSTART, DTEND, ALLDAY, EVENTTIMEZONE, EVENTLOCATION }, null,
 					null, null);
 		}
 
@@ -40,21 +50,21 @@ public class NativeCalendarReader {
 		String selection = "";
 
 		if (startTime > 0) {
-			selection = "(dtstart >=" + startTime + " AND dtstart <=" + endTime + ")";
+			selection = "(" + DTSTART + " >=" + startTime + " AND " + DTSTART + " <=" + endTime + ")";
 		}
 		if (endTime > 0 && !selection.equals("")) {
-			selection += " OR (dtend >=" + startTime + " AND dtend <=" + endTime + ")";
+			selection += " OR (" + DTEND + " >=" + startTime + " AND " + DTEND + " <=" + endTime + ")";
 		} else if (endTime > 0 && selection.equals("")) {
-			selection = "dtend <=" + startTime;
+			selection = DTEND + " <=" + startTime;
 		}
 
 		if (Integer.parseInt(Build.VERSION.SDK) >= 8) {
 			cursor = context.getContentResolver().query(Uri.parse("content://com.android.calendar/events"),
-					new String[] { "_id", "title", "description", "dtstart", "dtend", "allDay", "eventTimezone", "eventLocation" },
+					new String[] { ID, TITLE, DESCRIPTION, DTSTART, DTEND, ALLDAY, EVENTTIMEZONE, EVENTLOCATION },
 					selection, null, null);
 		} else {
 			cursor = context.getContentResolver().query(Uri.parse("content://calendar/events"),
-					new String[] { "_id", "title", "description", "dtstart", "dtend", "allDay", "eventTimezone", "eventLocation" },
+					new String[] { ID, TITLE, DESCRIPTION, DTSTART, DTEND, ALLDAY, EVENTTIMEZONE, EVENTLOCATION, },
 					selection, null, null);
 		}
 
@@ -113,11 +123,11 @@ public class NativeCalendarReader {
 
 		if (Integer.parseInt(Build.VERSION.SDK) >= 8) {
 			cursor = context.getContentResolver().query(Uri.parse("content://com.android.calendar/events"),
-					new String[] { "_id", "title", "description", "dtstart", "dtend", "allDay", "eventTimezone", "eventLocation" },
+					new String[] { ID, TITLE, DESCRIPTION, DTSTART, DTEND, ALLDAY, EVENTTIMEZONE, EVENTLOCATION },
 					selection, null, null);
 		} else {
 			cursor = context.getContentResolver().query(Uri.parse("content://calendar/events"),
-					new String[] { "_id", "title", "description", "dtstart", "dtend", "allDay", "eventTimezone", "eventLocation" },
+					new String[] { ID, TITLE, DESCRIPTION, DTSTART, DTEND, ALLDAY, EVENTTIMEZONE, EVENTLOCATION },
 					selection, null, null);
 		}
 
@@ -130,13 +140,13 @@ public class NativeCalendarReader {
 
 	public static long getNtiveEventStartTimeInUTCmillis(Context context, long id) {
 		long startTime = 0;
-		String selection = "_id=" + id;
+		String selection = ID + "=" + id;
 
 		if (Integer.parseInt(Build.VERSION.SDK) >= 8) {
-			cursor = context.getContentResolver().query(Uri.parse("content://com.android.calendar/events"), new String[] { "dtstart" },
+			cursor = context.getContentResolver().query(Uri.parse("content://com.android.calendar/events"), new String[] { DTSTART },
 					selection, null, null);
 		} else {
-			cursor = context.getContentResolver().query(Uri.parse("content://calendar/events"), new String[] { "dtstart" }, selection,
+			cursor = context.getContentResolver().query(Uri.parse("content://calendar/events"), new String[] { DTSTART }, selection,
 					null, null);
 		}
 		if (cursor != null && cursor.moveToFirst()) {
@@ -177,30 +187,64 @@ public class NativeCalendarReader {
 		}
 		return readNativeCalendarEventsForTimeInterval(context, startDate.getTimeInMillis(), endDate.getTimeInMillis());
 	}
-	
-	public static Event makeNativeEventFromCursor(Context context, Cursor cur){
+
+	public static Event makeNativeEventFromCursor(Context context, Cursor cur) {
 		Event event = new Event();
-		Account account = new Account(context);
-		Calendar startCalendar = Calendar.getInstance();
-		event.setInternalID(Long.valueOf(cursor.getString(0)));
-		event.setTitle(cursor.getString(1));
-		event.setDescription(cursor.getString(2));
-		startCalendar.setTimeInMillis(Long.valueOf(cursor.getString(3)));
-		event.setStartCalendar(startCalendar);
-		Calendar endCalendar = Calendar.getInstance();
-		if(cursor.getString(4) != null){
-			endCalendar.setTimeInMillis(Long.valueOf(cursor.getString(4)));
-		} else {
-			endCalendar.setTimeInMillis(Long.valueOf(cursor.getString(3)));
+		try {
+			Account account = new Account(context);
+			event.setInternalID(Long.valueOf(cursor.getString(0)));
+			event.setTitle(cursor.getString(1));
+			event.setDescription(cursor.getString(2));
+			
+//		    String input_format = account.getSetting_date_format() + " HH:mm ";
+//		    String input_value="Wed Jun 13 17:05:44 +0000 2012";
+//		    Date date = null;
+//
+//		    SimpleDateFormat sdf = new SimpleDateFormat(input_format);
+//		    try {
+//		        date = sdf.parse(input_value);
+//		    } catch (ParseException e) {
+//		        e.printStackTrace();
+//		    }
+//
+//		    Calendar calendar = sdf.getCalendar();
+//		    calendar.setTime(date);
+			
+			TimeZone timeZone = TimeZone.getTimeZone(account.getTimezone());
+			Calendar startCalendar = Calendar.getInstance();			
+			startCalendar.setTimeInMillis(Long.valueOf(cursor.getString(3)));
+			if(!startCalendar.getTimeZone().equals(TimeZone.getTimeZone("UTC"))){
+				Calendar output = Calendar.getInstance();  
+
+			    output.set(Calendar.DAY_OF_MONTH, startCalendar.get(Calendar.DAY_OF_MONTH)); 
+			    output.set(Calendar.MONTH, startCalendar.get(Calendar.MONTH));
+			    output.set(Calendar.YEAR, startCalendar.get(Calendar.YEAR)); 
+			    output.set(Calendar.HOUR_OF_DAY, startCalendar.get(Calendar.HOUR_OF_DAY));  
+			    output.set(Calendar.MINUTE, startCalendar.get(Calendar.MINUTE));  
+			    output.set(Calendar.SECOND, startCalendar.get(Calendar.SECOND));  
+			    output.set(Calendar.MILLISECOND, startCalendar.get(Calendar.MILLISECOND));
+			}
+			
+			startCalendar.setTimeZone(Calendar.getInstance().getTimeZone());
+			event.setStartCalendar(startCalendar);
+			Calendar endCalendar = Calendar.getInstance();
+			if (cursor.getString(4) != null) { 
+				endCalendar.setTimeInMillis(Long.valueOf(cursor.getString(4)));
+			} else {
+				endCalendar.setTimeInMillis(Long.valueOf(cursor.getString(3)));
+			}
+			endCalendar.setTimeZone(Calendar.getInstance().getTimeZone());
+			event.setEndCalendar(endCalendar);
+			event.setIs_all_day(cursor.getString(5).equals("1"));
+			event.setTimezone(account.getTimezone());
+			event.setCreator_fullname(context.getResources().getString(R.string.you));
+			event.setLocation(cursor.getString(7));
+			event.setType("native");
+			event.setStatus(1);
+			event.setNative(true);
+		} catch (Exception e) {
+			System.out.println("Exception");
 		}
-		event.setEndCalendar(endCalendar);
-		event.setIs_all_day(cursor.getString(5).equals("1"));
-		event.setTimezone(account.getTimezone());
-		event.setCreator_fullname(context.getResources().getString(R.string.you));
-		event.setLocation(cursor.getString(7));
-		event.setType("native");
-		event.setStatus(1);
-		event.setNative(true);
 		return event;
 	}
 }

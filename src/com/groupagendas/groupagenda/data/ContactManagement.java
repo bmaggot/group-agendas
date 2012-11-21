@@ -1281,9 +1281,6 @@ public class ContactManagement {
 						}
 					}
 				}
-			} else {
-				OfflineData uplooad = new OfflineData("mobile/contact_create", reqEntity, group.created);
-				Data.getUnuploadedData().add(uplooad);
 			}
 		} catch (Exception ex) {
 			Log.e("insertGroupToRemoteDb(group, " + id + ")", "Failed executing POST request.");
@@ -1724,11 +1721,6 @@ public class ContactManagement {
 					} else
 						Log.e("removeContactFromRemoteDb(" + id + ")", "No response from server.");
 				}
-			} else {
-				// TODO Use logging info more often.
-				Log.i("removeContactFromRemoteDb(" + id + ")", "There is no internet connection.");
-				OfflineData uplooad = new OfflineData("mobile/contact_remove", reqEntity);
-				Data.getUnuploadedData().add(uplooad);
 			}
 		} catch (Exception ex) {
 			Log.e("removeContactFromRemoteDb(" + id + ")", "Failed executing HTTP POST.");
@@ -2242,9 +2234,6 @@ public class ContactManagement {
 				if (DataManagement.networkAvailable) {
 					@SuppressWarnings("unused")
 					HttpResponse rp = webService.getResponseFromHttpPost(post);
-				} else {
-					OfflineData uplooad = new OfflineData("mobile/contact_copy", reqEntity);
-					Data.getUnuploadedData().add(uplooad);
 				}
 			} catch (Exception e) {
 
@@ -2394,5 +2383,7 @@ public class ContactManagement {
 			
 			removeGroupFromLocalDb(context, groupId);
 		}
+		
+		
 		
 }
