@@ -24,12 +24,22 @@ public class Group extends Object{
 	
 	public int contact_count;
 	public Map<String, String> contacts = null;
+	private int internal_id;
 	
 	public Group() {
 		super();
 	}
 	
+	public int getInternal_id() {
+		return internal_id;
+	}
+
+	public void setInternal_id(int internal_id) {
+		this.internal_id = internal_id;
+	}
+	
 	public Group(Context context, Cursor cur) {
+		this.internal_id = cur.getInt(cur.getColumnIndex(ContactsProvider.CMetaData.GroupsMetaData._ID));
 		this.group_id = cur.getInt(cur.getColumnIndex(ContactsProvider.CMetaData.GroupsMetaData.G_ID));
 		this.title = cur.getString(cur.getColumnIndex(ContactsProvider.CMetaData.GroupsMetaData.TITLE));
 		this.created = cur.getLong(cur.getColumnIndex(ContactsProvider.CMetaData.GroupsMetaData.CREATED));
