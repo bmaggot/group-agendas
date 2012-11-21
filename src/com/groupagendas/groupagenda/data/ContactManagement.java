@@ -17,6 +17,7 @@ import org.apache.http.client.methods.HttpPost;
 import org.apache.http.entity.mime.HttpMultipartMode;
 import org.apache.http.entity.mime.MultipartEntity;
 import org.apache.http.entity.mime.content.ByteArrayBody;
+import org.apache.http.entity.mime.content.FileBody;
 import org.apache.http.entity.mime.content.StringBody;
 import org.apache.http.util.EntityUtils;
 import org.json.JSONArray;
@@ -2393,6 +2394,86 @@ public class ContactManagement {
 			}
 			
 			removeGroupFromLocalDb(context, groupId);
+		}
+		
+		public static boolean updateGroupInRemoteDb(Context context, Group group) throws UnsupportedEncodingException{
+			boolean success = false;
+			Account account = new Account(context);
+			WebService webService = new WebService();
+			HttpPost post = new HttpPost(Data.getServerUrl() + "mobile/groups_edit");
+
+			MultipartEntity reqEntity = new MultipartEntity(HttpMultipartMode.BROWSER_COMPATIBLE);
+			
+		    try {
+				reqEntity.addPart("session", new StringBody(account.getSessionId(), Charset.forName("UTF-8")));
+			} catch (UnsupportedEncodingException e2) {
+				e2.printStackTrace();
+			}
+
+		    try {
+				reqEntity.addPart("token", new StringBody(Data.getToken(context), Charset.forName("UTF-8")));
+			} catch (UnsupportedEncodingException e) {
+				e.printStackTrace();
+			}
+		    
+		    try {
+				reqEntity.addPart("group_id", new StringBody(group.group_id + "", Charset.forName("UTF-8")));
+			} catch (UnsupportedEncodingException e) {
+				e.printStackTrace();
+			}
+		    
+		    try {
+				reqEntity.addPart("title", new StringBody(group.title, Charset.forName("UTF-8")));
+			} catch (UnsupportedEncodingException e) {
+				e.printStackTrace();
+			}
+		    
+		    try {
+				reqEntity.addPart("remove_image", new StringBody(group.remove_image ? "1" : "0", Charset.forName("UTF-8")));
+			} catch (UnsupportedEncodingException e) {
+				e.printStackTrace();
+			}
+		    
+		    if(group.contacts != null && !group.contacts.isEmpty()){
+		    	for(String contactId : group.contacts.values()){
+		    		try {
+						reqEntity.addPart("contacts[]", new StringBody(contactId, Charset.forName("UTF-8")));
+					} catch (UnsupportedEncodingException e) {
+						e.printStackTrace();
+					}
+		    	}
+		    }
+		    
+		    post.setEntity(reqEntity);
+			if (DataManagement.networkAvailable) {
+				try {
+					HttpResponse rp = webService.getResponseFromHttpPost(post);
+					if (rp.getStatusLine().getStatusCode() == HttpStatus.SC_OK) {
+						String resp = EntityUtils.toString(rp.getEntity());
+						if (resp != null) {
+							JSONObject object;
+							object = new JSONObject(resp);
+							success = object.getBoolean("success");
+						}
+					}
+				} catch (ClientProtocolException e) {
+					e.printStackTrace();
+				} catch (IOException e) {
+					e.printStackTrace();
+				} catch (JSONException e) {
+					e.printStackTrace();
+				}
+			}
+		    
+		    return success;
+		}
+		
+		public static void updateGroupInLocalDb(){
+			
+		}
+		
+		public static void updateGroup(){
+			
 		}
 		
 		public static void uploadOfflineCreatedGroups (Context context){ 
