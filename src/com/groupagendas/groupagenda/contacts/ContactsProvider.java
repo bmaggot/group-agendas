@@ -454,7 +454,8 @@ private static class DatabaseHelper extends SQLiteOpenHelper {
 			
 			query =	"CREATE TABLE "
 				+CMetaData.GROUPS_TABLE+" ("
-				+CMetaData.GroupsMetaData.G_ID+" INTEGER PRIMARY KEY,"
+				+CMetaData.GroupsMetaData._ID+" INTEGER PRIMARY KEY AUTOINCREMENT,"
+				+CMetaData.GroupsMetaData.G_ID+" INTEGER UNIQUE  ON CONFLICT REPLACE,"
 				+CMetaData.GroupsMetaData.TITLE+" TEXT ,"
 				+CMetaData.GroupsMetaData.CREATED+" INTEGER ,"
 				+CMetaData.GroupsMetaData.MODIFIED+" INTEGER ,"
