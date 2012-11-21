@@ -496,6 +496,7 @@ public class ContactEditActivity extends Activity implements OnClickListener, On
 						Group g = ContactManagement.getGroupFromLocalDb(getApplicationContext(), Integer.valueOf(contactGroupsMap.get(s)), 0);
 						if(g != null){
 							ContactManagement.updateGroupOnLocalDb(getApplicationContext(), g, editedContact.contact_id, false);
+							ContactManagement.editGroupOnRemoteDb(getApplicationContext(), g, editedContact.contact_id, false);
 						}
 					}
 				}
@@ -503,6 +504,7 @@ public class ContactEditActivity extends Activity implements OnClickListener, On
 					for (Group g : selectedGroups) {
 						editedContact.groups.put(""+i, ""+g.group_id);
 						ContactManagement.updateGroupOnLocalDb(getApplicationContext(), g, editedContact.contact_id, true);
+						ContactManagement.editGroupOnRemoteDb(getApplicationContext(), g, editedContact.contact_id, true);
 						i++;
 					}
 				}
