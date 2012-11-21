@@ -976,11 +976,11 @@ public class ContactManagement {
 	 * @since 2012-09-28
 	 * @version 0.1
 	 */
-	public static boolean updateGroupIdInLocalDb(Context context, long created, int id) {
+	public static boolean updateGroupIdInLocalDb(Context context, int internalId, int id) {
 		ContentValues cv = new ContentValues();
 		boolean success = false;
 		int queryResult = 0;
-		String where = ContactsProvider.CMetaData.GroupsMetaData.CREATED + "=" + created;
+		String where = ContactsProvider.CMetaData.GroupsMetaData._ID + "=" + internalId;
 
 		cv.put(ContactsProvider.CMetaData.GroupsMetaData.G_ID, id);
 
@@ -988,7 +988,7 @@ public class ContactManagement {
 			queryResult = context.getContentResolver()
 					.update(ContactsProvider.CMetaData.GroupsMetaData.CONTENT_URI, cv, where, null);
 		} catch (SQLiteException e) {
-			Log.e("updateGroupIdInLocalDb(" + created + ", " + id + ")", e.getMessage());
+			Log.e("updateGroupIdInLocalDb(" + internalId + ", " + id + ")", e.getMessage());
 		}
 
 		if (queryResult == 1)
@@ -2369,6 +2369,17 @@ public class ContactManagement {
 			}
 		}
 		
+		public static boolean removeGroupFromLocalDbByInternalId(Context context, int id) {
+			String where = ContactsProvider.CMetaData.GroupsMetaData._ID + "=" + id;
+			try {
+				context.getContentResolver().delete(ContactsProvider.CMetaData.GroupsMetaData.CONTENT_URI, where, null);
+				return true;
+			} catch (SQLiteException e) {
+				Log.e("removeContactFromLocalDb(contact, " + id + ")", e.getMessage());
+				return false;
+			}
+		}
+		
 		public static void removeGroup(Context context, int groupId) {
 			Boolean deletedFromRemote = false;
 			if (DataManagement.networkAvailable) {
@@ -2384,6 +2395,43 @@ public class ContactManagement {
 			removeGroupFromLocalDb(context, groupId);
 		}
 		
-		
+		public static void uploadOfflineCreatedGroups (Context context){ 
+			Account account = new Account(context);
+			String projection[] = null;
+			Uri uri = ContactsProvider.CMetaData.GroupsMetaData.CONTENT_URI;
+			String where = ContactsProvider.CMetaData.GroupsMetaData.MODIFIED +">"+ account.getLastTimeConnectedToWeb();
+			Cursor result = context.getContentResolver().query(uri, projection, where, null, null);
+			if(result.moveToFirst()){
+				while (!result.isAfterLast()){
+					Group group = new Group(context, result);
+					
+					if(group.group_id != 0){
+						int destination_id = insertGroupToRemoteDb(context, group, 0);
+						if(destination_id >= 0){
+							updateGroupIdInLocalDb(context, group.getInternal_id() , destination_id);
+							group.group_id = destination_id;
+						} else {
+							removeGroupFromLocalDbByInternalId(context, group.getInternal_id());
+						}
+						//TODO implement
+//						boolean edited = editGroupOnRemoteDb(context, group, 0 , insert);
+//						if(edited){
+//						}
+						
+					}
+					result.moveToNext();
+				}
+			}
+			SaveDeletedData offlineDeletedGroups = new SaveDeletedData(context);
+			String offlineDeleted = offlineDeletedGroups.getDELETED_GROUPS();
+		    String[] ids = offlineDeleted.split(SDMetaData.SEPARATOR);
+		    if(ids[0]!= ""){
+		    for (int i = 0; i<ids.length; i++){
+		    	int id = Integer.parseInt(ids[i]);
+		    	removeGroupFromRemoteDb(context, id);
+		    	}
+		    }
+			result.close();
+		}
 		
 }
