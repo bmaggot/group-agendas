@@ -2227,7 +2227,7 @@ public class ContactManagement {
 
 			    reqEntity.addPart("token", new StringBody(Data.getToken(context), Charset.forName("UTF-8")));
 				reqEntity.addPart("guid", new StringBody(""+guid, Charset.forName("UTF-8")));
-				if(req){
+				if(req){ 
 					reqEntity.addPart("req_details", new StringBody("1", Charset.forName("UTF-8")));
 				}
 				post.setEntity(reqEntity);
