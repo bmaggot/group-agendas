@@ -775,6 +775,7 @@ public class ContactManagement {
 			if(ContactEditActivity.selectedGroups != null){
 				for (Group g : ContactEditActivity.selectedGroups) {
 					ContactManagement.updateGroupOnLocalDb(context, g, destination_id, true);
+					ContactManagement.editGroupOnRemoteDb(context, g, destination_id, true);
 				}
 				ContactEditActivity.selectedGroups = null;
 			}
@@ -1063,6 +1064,16 @@ public class ContactManagement {
 		}
 	}
 	
+	/**
+	 * Update a group into local database.
+	 * 
+	 * @author audrius6@gmail.com
+	 * @param group - Group object containing validated group data.
+	 * @param contactID - contact insert to group.
+	 * @param insert - if true insert contact to group, if false remove contact from group.
+	 * @since 2012-11-21
+	 * @version 0.1
+	 */
 	public static boolean updateGroupOnLocalDb(Context context, Group group, int contactID, boolean insert) {
 		ContentValues cv = new ContentValues();
 		
@@ -1088,23 +1099,18 @@ public class ContactManagement {
 					break;
 				}
 			}
-//			for(int i=0;i<map.size();i++){
-//				if ((map.get(""+i) != null) && (map.get(""+i).equalsIgnoreCase(""+contactID))) {
-//					target = i;
-//					if(!insert){
-//						map.remove(""+i);
-//						cv.put(ContactsProvider.CMetaData.GroupsMetaData.CONTACT_COUNT, (contact_count-1));
-//						cv.put(ContactsProvider.CMetaData.GroupsMetaData.CONTACTS, MapUtils.mapToString(context, map));
-//						target = -1;
-//					}
-//					break;
-//				}
-//			}
+
 			if(insert && target == -1){
 				map.put(""+(max_key+1), ""+contactID);
 				cv.put(ContactsProvider.CMetaData.GroupsMetaData.CONTACT_COUNT, (contact_count+1));
 				cv.put(ContactsProvider.CMetaData.GroupsMetaData.CONTACTS, MapUtils.mapToString(context, map));
 				target = -1;
+			} else {
+				if(insert){
+					cv.put(ContactsProvider.CMetaData.GroupsMetaData.CONTACT_COUNT, contact_count);
+					cv.put(ContactsProvider.CMetaData.GroupsMetaData.CONTACTS, MapUtils.mapToString(context, map));
+					target = -1;
+				}
 			}
 		} else {
 			cv.put(ContactsProvider.CMetaData.GroupsMetaData.CONTACT_COUNT, group.contact_count);
@@ -1150,7 +1156,7 @@ public class ContactManagement {
 		boolean success = false;
 		Account account = new Account(context);
 		WebService webService = new WebService();
-		HttpPost post = new HttpPost(Data.getServerUrl() + "mobile/group_create");
+		HttpPost post = new HttpPost(Data.getServerUrl() + "mobile/groups_create");
 		MultipartEntity reqEntity = new MultipartEntity(HttpMultipartMode.BROWSER_COMPATIBLE);
 	    
 	    try {
@@ -1285,6 +1291,185 @@ public class ContactManagement {
 		}
 		return destination_id;
 	}
+	
+	/**
+	 * Edit a group on remote database.
+	 * 
+	 * @author audrius6@gmail.com
+	 * @param group - Group object containing validated group data.
+	 * @param contactID - contact insert to group.
+	 * @param insert - if true insert contact to group, if false remove contact from group.
+	 * @since 2012-11-21
+	 * @version 0.1
+	 */
+	public static boolean editGroupOnRemoteDb(Context context, Group group, int contactID, boolean insert) {
+		String temp;
+		boolean success = false;
+		Account account = new Account(context);
+		WebService webService = new WebService();
+		HttpPost post = new HttpPost(Data.getServerUrl() + "mobile/groups_edit");
+		MultipartEntity reqEntity = new MultipartEntity(HttpMultipartMode.BROWSER_COMPATIBLE);
+		
+		Map<String, String> map = new HashMap<String, String>();
+		if(contactID > 0){
+			int target = -1;
+			int max_key = 0;
+			map = group.contacts;
+			for (String s : map.keySet()) {
+				int temp2 = Integer.parseInt(s);
+				if(temp2 > max_key){
+					max_key = temp2;
+				}
+				if ((map.get(s) != null) && (map.get(s).equalsIgnoreCase(""+contactID))) {
+					target = temp2;
+					if(!insert){
+						map.remove(s);
+						target = -1;
+					}
+					break;
+				}
+			}
+
+			if(insert && target == -1){
+				map.put(""+(max_key+1), ""+contactID);
+				target = -1;
+			}
+		} else {
+			map = group.contacts;
+		}
+		
+		Map<String, String> contacts = map;
+		if (contacts != null) {
+			for (String s : contacts.keySet()) {
+				try {
+					reqEntity.addPart(ContactsProvider.CMetaData.GroupsMetaData.CONTACTS + "[]",
+							new StringBody(contacts.get(s), Charset.forName("UTF-8")));
+				} catch (UnsupportedEncodingException e) {
+					Log.e("editGroupOnRemoteDb(group, " + group.group_id + ")", "Failed adding contact to entity.");
+				}
+			}
+		} else {
+			try {
+				reqEntity.addPart(ContactsProvider.CMetaData.GroupsMetaData.CONTACTS + "[]", new StringBody("", Charset.forName("UTF-8")));
+			} catch (UnsupportedEncodingException e) {
+				Log.e("editGroupOnRemoteDb(group, " + group.group_id + ")", "Failed adding contact to entity.");
+			}
+		}
+	    
+	    try {
+			reqEntity.addPart("session", new StringBody(account.getSessionId(), Charset.forName("UTF-8")));
+		} catch (UnsupportedEncodingException e2) {
+			e2.printStackTrace();
+		}
+
+		try {
+			reqEntity.addPart("token", new StringBody(Data.getToken(context), Charset.forName("UTF-8")));
+		} catch (UnsupportedEncodingException e) {
+			Log.e("editGroupOnRemoteDb(group[id=" + group.group_id + "])", "Failed adding token to entity.");
+		}
+
+		try {
+			reqEntity.addPart(ContactsProvider.CMetaData.GroupsMetaData.G_ID, new StringBody("" + group.group_id, Charset.forName("UTF-8")));
+		} catch (UnsupportedEncodingException e) {
+			Log.e("editGroupOnRemoteDb(group, " + group.group_id + ")", "Failed adding group_id to entity.");
+		}
+
+		if (group.title != null) {
+			try {
+				reqEntity.addPart(ContactsProvider.CMetaData.GroupsMetaData.TITLE, new StringBody(group.title, Charset.forName("UTF-8")));
+			} catch (UnsupportedEncodingException e) {
+				Log.e("editGroupOnRemoteDb(group[id=" + group.group_id + "])", "Failed adding title to entity.");
+			}
+		} else {
+			Log.e("editGroupOnRemoteDb(group[id=" + group.group_id + "])", "Failed getting title from Group object.");
+		}
+
+		if (group.image)
+			temp = "1";
+		else
+			temp = "0";
+		try {
+			reqEntity.addPart(ContactsProvider.CMetaData.GroupsMetaData.IMAGE, new StringBody(temp, Charset.forName("UTF-8")));
+		} catch (UnsupportedEncodingException e) {
+			Log.e("editGroupOnRemoteDb(group, " + group.group_id + ")", "Failed adding image to entity.");
+		}
+
+		if (group.image_url != null)
+			temp = group.image_url;
+		else
+			temp = "";
+		try {
+			reqEntity.addPart(ContactsProvider.CMetaData.GroupsMetaData.IMAGE_URL, new StringBody(temp, Charset.forName("UTF-8")));
+		} catch (UnsupportedEncodingException e) {
+			Log.e("editGroupOnRemoteDb(group, " + group.group_id + ")", "Failed adding image_url to entity.");
+		}
+
+		if (group.image_thumb_url != null)
+			temp = group.image_thumb_url;
+		else
+			temp = "";
+		try {
+			reqEntity.addPart(ContactsProvider.CMetaData.GroupsMetaData.IMAGE_THUMB_URL, new StringBody(temp, Charset.forName("UTF-8")));
+		} catch (UnsupportedEncodingException e) {
+			Log.e("editGroupOnRemoteDb(group, " + group.group_id + ")", "Failed adding image_thumb_url to entity.");
+		}
+
+		if (group.image_bytes != null)
+			temp = group.image_bytes.toString();
+		else
+			temp = "";
+		try {
+			reqEntity.addPart(ContactsProvider.CMetaData.GroupsMetaData.IMAGE_BYTES, new StringBody(temp, Charset.forName("UTF-8")));
+		} catch (UnsupportedEncodingException e) {
+			Log.e("editGroupOnRemoteDb(group, " + group.group_id + ")", "Failed adding image_bytes to entity.");
+		}
+
+		if (group.remove_image)
+			temp = "1";
+		else
+			temp = "0";
+		try {
+			reqEntity.addPart(ContactsProvider.CMetaData.GroupsMetaData.REMOVE_IMAGE, new StringBody(temp, Charset.forName("UTF-8")));
+		} catch (UnsupportedEncodingException e) {
+			Log.e("editGroupOnRemoteDb(group, " + group.group_id + ")", "Failed adding remove_image to entity.");
+		}
+
+		try {
+			reqEntity.addPart(ContactsProvider.CMetaData.GroupsMetaData.CONTACT_COUNT, new StringBody("" + group.contact_count, Charset.forName("UTF-8")));
+		} catch (UnsupportedEncodingException e) {
+			Log.e("editGroupOnRemoteDb(group, " + group.group_id + ")", "Failed adding contacts_count to entity.");
+		}
+
+		post.setEntity(reqEntity);
+		try {
+			if (DataManagement.networkAvailable) {
+				HttpResponse rp = webService.getResponseFromHttpPost(post);
+
+				if (rp.getStatusLine().getStatusCode() == HttpStatus.SC_OK) {
+					String resp = EntityUtils.toString(rp.getEntity());
+					if (resp != null) {
+						JSONObject object = new JSONObject(resp);
+						success = object.getBoolean("success");
+						
+						Log.e("editGroup - success", "" + success);
+
+						if (success == false) {
+							Data.setERROR(object.getJSONObject("error").getString("reason"));
+							Log.e("editGroup - error: ", Data.getERROR());
+						}
+					}
+				}
+			} else {
+				Log.i("editGroupOnRemoteDb(group" + group.group_id + ")", "No internet connection.");
+			}
+		} catch (Exception ex) {
+			Log.e("editGroupToRemoteDb(group, " + group.group_id + ")", "Failed executing POST request.");
+			return false;
+		}
+		return success;
+	}
+	
+	
 
 	/**
 	 * Get group's object from local database.
@@ -2086,6 +2271,7 @@ public class ContactManagement {
 				Group g = getGroupFromLocalDb(context, Integer.valueOf(map.get(""+i)), 0);
 				if(g != null){
 					updateGroupOnLocalDb(context, g, contact.contact_id, false);
+					editGroupOnRemoteDb(context, g, contact.contact_id, false);
 				}
 				
 				
