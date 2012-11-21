@@ -153,10 +153,6 @@ public class DataManagement {
 						}
 					}
 				}
-			} else {
-				// TODO overview account update on remote.
-				OfflineData uplooad = new OfflineData("mobile/account_edit", reqEntity);
-				Data.getUnuploadedData().add(uplooad);
 			}
 
 		} catch (Exception ex) {
@@ -197,11 +193,7 @@ public class DataManagement {
 						}
 					}
 				}
-			} else {
-				OfflineData uplooad = new OfflineData("mobile/account_image", reqEntity);
-				Data.getUnuploadedData().add(uplooad);
 			}
-
 		} catch (Exception ex) {
 			Data.setERROR(ex.getMessage());
 			Reporter.reportError(context, "DataManagement", Thread.currentThread().getStackTrace()[2].getMethodName().toString(),
@@ -1040,9 +1032,6 @@ public class DataManagement {
 						}
 					}
 				}
-			} else {
-				OfflineData uplooad = new OfflineData("mobile/group_remove", reqEntity);
-				Data.getUnuploadedData().add(uplooad);
 			}
 		} catch (Exception ex) {
 			Reporter.reportError(context, this.getClass().toString(), Thread.currentThread().getStackTrace()[2].getMethodName().toString(),
@@ -1112,9 +1101,6 @@ public class DataManagement {
 						}
 					}
 				}
-			} else {
-				OfflineData uplooad = new OfflineData("mobile/groups_edit", reqEntity);
-				Data.getUnuploadedData().add(uplooad);
 			}
 		} catch (Exception ex) {
 			Reporter.reportError(context, this.getClass().toString(), Thread.currentThread().getStackTrace()[2].getMethodName().toString(),
@@ -1296,9 +1282,6 @@ public class DataManagement {
 							}
 						}
 					}
-				} else {
-					OfflineData uplooad = new OfflineData("mobile/set_event_status", reqEntity);
-					Data.getUnuploadedData().add(uplooad);
 				}
 			} catch (Exception ex) {
 				Reporter.reportError(getContext(), this.getClass().toString(), Thread.currentThread().getStackTrace()[2].getMethodName().toString(),
@@ -1612,9 +1595,6 @@ public class DataManagement {
 				} else {
 					Log.e("setTemplate - status", rp.getStatusLine().getStatusCode() + "");
 				}
-			} else {
-				OfflineData uplooad = new OfflineData("mobile/templates_set", reqEntity);
-				Data.getUnuploadedData().add(uplooad);
 			}
 		} catch (Exception ex) {
 			Reporter.reportError(context, this.getClass().toString(), Thread.currentThread().getStackTrace()[2].getMethodName().toString(),
@@ -2560,9 +2540,6 @@ public class DataManagement {
 					} else {
 						Log.e("setTemplate - status", rp.getStatusLine().getStatusCode() + "");
 					}
-				} else {
-					OfflineData uplooad = new OfflineData("mobile/templates_set", reqEntity);
-					Data.getUnuploadedData().add(uplooad);
 				}
 			} else {
 

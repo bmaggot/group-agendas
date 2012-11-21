@@ -335,10 +335,6 @@ public class EventManagement {
 					Log.e("inviteExtraContacts()", rp.getStatusLine()
 							.getStatusCode() + "");
 				}
-			} else {
-				OfflineData uplooad = new OfflineData("mobile/events_create",
-						reqEntity);
-				Data.getUnuploadedData().add(uplooad);
 			}
 		} catch (Exception ex) {
 			Log.e("EventManagement", "inviteExtraContacts() CATCH!");
@@ -1180,10 +1176,6 @@ public class EventManagement {
 					Log.e("createEvent - status", rp.getStatusLine()
 							.getStatusCode() + "");
 				}
-			} else {
-				OfflineData uplooad = new OfflineData("mobile/events_create",
-						reqEntity);
-				Data.getUnuploadedData().add(uplooad);
 			}
 		} catch (Exception ex) {
 			Reporter.reportError(context, DataManagement.class.toString(),
@@ -1368,10 +1360,6 @@ public class EventManagement {
 						}
 					}
 				}
-			} else {
-				OfflineData uplooad = new OfflineData("mobile/events_edit",
-						reqEntity);
-				Data.getUnuploadedData().add(uplooad);
 			}
 		} catch (Exception ex) {
 			Reporter.reportError(context, CLASS_NAME, Thread.currentThread()
@@ -1430,10 +1418,6 @@ public class EventManagement {
 						}
 					}
 				}
-			} else {
-				OfflineData uplooad = new OfflineData("mobile/events_remove",
-						reqEntity);
-				Data.getUnuploadedData().add(uplooad);
 			}
 		} catch (Exception ex) {
 			Reporter.reportError(context, CLASS_NAME, Thread.currentThread()

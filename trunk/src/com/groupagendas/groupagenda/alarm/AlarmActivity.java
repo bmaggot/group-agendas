@@ -26,7 +26,6 @@ import com.groupagendas.groupagenda.R;
 import com.groupagendas.groupagenda.data.Data;
 import com.groupagendas.groupagenda.data.DataManagement;
 import com.groupagendas.groupagenda.data.EventManagement;
-import com.groupagendas.groupagenda.data.OfflineData;
 import com.groupagendas.groupagenda.events.Event;
 import com.groupagendas.groupagenda.https.WebService;
 import com.groupagendas.groupagenda.utils.Utils;
@@ -111,9 +110,6 @@ public class AlarmActivity extends Activity {
 							}
 						}
 					}
-				} else {
-					OfflineData uplooad = new OfflineData("mobile/alarms_dismiss", reqEntity);
-					Data.getUnuploadedData().add(uplooad);
 				}
 			} catch (Exception e) {
 

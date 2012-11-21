@@ -54,7 +54,6 @@ public class Data {
 	private static ArrayList<ChatMessageObject> chatMessages = new ArrayList<ChatMessageObject>();
 	private static ArrayList<ChatThreadObject> chatThreads = new ArrayList<ChatThreadObject>();
 
-	public static ArrayList<OfflineData> unuploadedData = new ArrayList<OfflineData>();
 	public static boolean needToClearData = true;
 	public static String localPrefix = "";
 
@@ -396,14 +395,6 @@ public class Data {
 		if (_editor == null)
 			return;
 		_editor.putInt("userid", id);
-	}
-
-	public static ArrayList<OfflineData> getUnuploadedData() {
-		return unuploadedData;
-	}
-
-	public static void setUnuploadedData(ArrayList<OfflineData> unuploadedData) {
-		Data.unuploadedData = unuploadedData;
 	}
 
 	public boolean isNeedToClearData() {

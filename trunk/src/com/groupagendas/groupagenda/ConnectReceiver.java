@@ -1,13 +1,6 @@
 package com.groupagendas.groupagenda;
 
-import java.util.ArrayList;
 import java.util.Calendar;
-
-import org.apache.http.HttpResponse;
-import org.apache.http.HttpStatus;
-import org.apache.http.client.methods.HttpPost;
-import org.apache.http.util.EntityUtils;
-import org.json.JSONObject;
 
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -20,12 +13,8 @@ import android.util.Log;
 import com.groupagendas.groupagenda.account.Account;
 import com.groupagendas.groupagenda.data.ChatManagement;
 import com.groupagendas.groupagenda.data.ContactManagement;
-import com.groupagendas.groupagenda.data.Data;
 import com.groupagendas.groupagenda.data.DataManagement;
 import com.groupagendas.groupagenda.data.EventManagement;
-import com.groupagendas.groupagenda.data.OfflineData;
-import com.groupagendas.groupagenda.error.report.Reporter;
-import com.groupagendas.groupagenda.https.WebService;
 
 public class ConnectReceiver extends BroadcastReceiver {
 
@@ -53,19 +42,6 @@ public class ConnectReceiver extends BroadcastReceiver {
 			DataManagement.networkAvailable = true;
 			if(account.getLastTimeConnectedToWeb() != 0){
 				new ExecuteOfflineChats().execute();
-			}
-			boolean success = false;
-			
-			
-			if (DataManagement.networkAvailable
-					&& (Data.getUnuploadedData().size() > 0)) {
-				new ExecuteOfflineChanges().execute(Data.getUnuploadedData());
-			}
-
-			if (success) {
-
-			} else {
-
 			}
 		} else {
 			// reikes account'a long'a uzsetinti dabartini momenta
@@ -95,64 +71,5 @@ public class ConnectReceiver extends BroadcastReceiver {
 			account.clearLastTimeConnectedToweb();
 		}
 		
-	}
-
-	private class ExecuteOfflineChanges extends
-			AsyncTask<ArrayList<OfflineData>, Void, Boolean> {
-
-		@Override
-		protected Boolean doInBackground(ArrayList<OfflineData>... params) {
-			ArrayList<OfflineData> requests = params[0];
-			boolean success = false;
-			WebService webService = new WebService();
-
-			try {
-				for (OfflineData request : requests) {
-					HttpPost post = new HttpPost(Data.getServerUrl()
-							+ request.getLocation());
-					post.setEntity(request.getRequest());
-					if (DataManagement.networkAvailable) {
-						HttpResponse rp = webService.getResponseFromHttpPost(post);
-
-						if (rp.getStatusLine().getStatusCode() == HttpStatus.SC_OK) {
-							String resp = EntityUtils.toString(rp.getEntity());
-							if (resp != null) {
-								JSONObject object = new JSONObject(resp);
-								success = object.getBoolean("success");
-
-								if (success == false) {
-									Log.e("Create event error",
-											object.getJSONObject("error")
-													.getString("reason"));
-								}
-							}
-						} else {
-							Log.e("createEvent - status", rp.getStatusLine()
-									.getStatusCode() + "");
-						}
-					}
-				}
-				if (success == true) {
-					Data.setUnuploadedData(new ArrayList<OfflineData>());
-				}
-			} catch (Exception ex) {
-				Reporter.reportError(context, this.getClass().toString(),
-						Thread.currentThread().getStackTrace()[2]
-								.getMethodName().toString(), ex.getMessage());
-			}
-			// this.success = success;
-			return success;
-		}
-
-		@Override
-		protected void onPostExecute(Boolean success) {
-			if (success) {
-				Data.setUnuploadedData(new ArrayList<OfflineData>());
-			}
-		}
-
-		@Override
-		protected void onProgressUpdate(Void... values) {
-		}
 	}
 }

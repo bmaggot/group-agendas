@@ -251,9 +251,6 @@ public class ChatManagement {
 						}
 					}
 				}
-			} else {
-				OfflineData uplooad = new OfflineData("mobile/chat_remove", reqEntity);
-				Data.getUnuploadedData().add(uplooad);
 			}
 		} catch (Exception e) {
 			Log.e("removeChatMessageFromRemoteDb(Context context, int " + messageId + ")", e.getMessage());
@@ -358,9 +355,6 @@ public class ChatManagement {
 						}
 					}
 				}
-			} else {
-				OfflineData uplooad = new OfflineData("mobile/chat_post", reqEntity);
-				Data.getUnuploadedData().add(uplooad);
 			}
 		} catch (Exception e) {
 			Log.e("postChatMessage(Context context, message " + message + ", event id " + eventId + ")", e.getMessage());
