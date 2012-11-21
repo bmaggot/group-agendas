@@ -1,5 +1,6 @@
 package com.groupagendas.groupagenda.data;
 
+import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
@@ -11,6 +12,7 @@ import java.util.Map;
 
 import org.apache.http.HttpResponse;
 import org.apache.http.HttpStatus;
+import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.entity.mime.HttpMultipartMode;
 import org.apache.http.entity.mime.MultipartEntity;
@@ -2134,6 +2136,77 @@ public class ContactManagement {
 		    	}
 		    }
 			result.close();
+		}
+		
+		public static boolean removeGroupFromRemoteDb(Context context, int groupId){
+			boolean success = false;
+			Account account = new Account(context);
+			WebService webService = new WebService();
+			HttpPost post = new HttpPost(Data.getServerUrl() + "mobile/group_remove");
+
+			MultipartEntity reqEntity = new MultipartEntity(HttpMultipartMode.BROWSER_COMPATIBLE);
+			
+		    try {
+				reqEntity.addPart("session", new StringBody(account.getSessionId(), Charset.forName("UTF-8")));
+			} catch (UnsupportedEncodingException e2) {
+				e2.printStackTrace();
+			}
+
+		    try {
+				reqEntity.addPart("token", new StringBody(Data.getToken(context), Charset.forName("UTF-8")));
+			} catch (UnsupportedEncodingException e) {
+				e.printStackTrace();
+			}
+			try {
+				reqEntity.addPart("group_id", new StringBody(groupId + "", Charset.forName("UTF-8")));
+			} catch (UnsupportedEncodingException e) {
+				e.printStackTrace();
+			}
+			post.setEntity(reqEntity);
+			if (DataManagement.networkAvailable) {
+				try {
+					HttpResponse rp = webService.getResponseFromHttpPost(post);
+					if (rp.getStatusLine().getStatusCode() == HttpStatus.SC_OK) {
+						String resp = EntityUtils.toString(rp.getEntity());
+						if (resp != null) {
+							JSONObject object;
+							object = new JSONObject(resp);
+							success = object.getBoolean("success");
+						}
+					}
+				} catch (ClientProtocolException e) {
+					e.printStackTrace();
+				} catch (IOException e) {
+					e.printStackTrace();
+				} catch (JSONException e) {
+					e.printStackTrace();
+				}
+			}
+			return success;
+		}
+		
+		public static void removeGroupFromLocalDb(Context context, int groupId){
+			String where = ContactsProvider.CMetaData.GroupsMetaData.G_ID + "=" + groupId;
+			try {
+				context.getContentResolver().delete(ContactsProvider.CMetaData.GroupsMetaData.CONTENT_URI, where, null);
+			} catch (SQLiteException e) {
+				Log.e("removeContactFromLocalDb(contact, " + groupId + ")", e.getMessage());
+			}
+		}
+		
+		public static void removeGroup(Context context, int groupId) {
+			Boolean deletedFromRemote = false;
+			if (DataManagement.networkAvailable) {
+				deletedFromRemote = removeGroupFromRemoteDb(context, groupId);
+			}
+
+			if (!deletedFromRemote) {
+				SaveDeletedData offlineDeletedGroups = new SaveDeletedData(context);
+				offlineDeletedGroups.addGroupForLaterDelete(groupId);
+				
+			}
+			
+			removeGroupFromLocalDb(context, groupId);
 		}
 		
 }
