@@ -2396,7 +2396,7 @@ public class ContactManagement {
 			removeGroupFromLocalDb(context, groupId);
 		}
 		
-		public static boolean updateGroupInRemoteDb(Context context, Group group) throws UnsupportedEncodingException{
+		public static boolean updateGroupInRemoteDb(Context context, Group group){
 			boolean success = false;
 			Account account = new Account(context);
 			WebService webService = new WebService();
@@ -2406,8 +2406,8 @@ public class ContactManagement {
 			
 		    try {
 				reqEntity.addPart("session", new StringBody(account.getSessionId(), Charset.forName("UTF-8")));
-			} catch (UnsupportedEncodingException e2) {
-				e2.printStackTrace();
+			} catch (UnsupportedEncodingException e) {
+				e.printStackTrace();
 			}
 
 		    try {
@@ -2494,10 +2494,13 @@ public class ContactManagement {
 						} else {
 							removeGroupFromLocalDbByInternalId(context, group.getInternal_id());
 						}
-						//TODO implement
-//						boolean edited = editGroupOnRemoteDb(context, group, 0 , insert);
-//						if(edited){
-//						}
+						boolean edited = false;
+						if(DataManagement.networkAvailable){
+							edited = updateGroupInRemoteDb(context, group);
+						}
+						if(edited){
+							
+						}
 						
 					}
 					result.moveToNext();
