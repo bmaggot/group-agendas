@@ -94,13 +94,13 @@ public class MonthView extends AbstractCalendarView {
 	public void goPrev() {
 		if (!stillLoading) {
 			redrawBubbles = true;
-			int LastMonthWeeksCount = selectedDate.getActualMaximum(Calendar.WEEK_OF_MONTH);
+//			int LastMonthWeeksCount = selectedDate.getActualMaximum(Calendar.WEEK_OF_MONTH);
 			selectedDate.add(Calendar.MONTH, -1);
 			updateShownDate();
 			setTopPanel();
-			if (LastMonthWeeksCount != selectedDate.getActualMaximum(Calendar.WEEK_OF_MONTH)) {
+//			if (LastMonthWeeksCount != selectedDate.getActualMaximum(Calendar.WEEK_OF_MONTH)) {
 				paintTable(selectedDate);
-			}
+//			}
 			setDayFrames();
 			updateEventLists();
 		}
@@ -110,13 +110,13 @@ public class MonthView extends AbstractCalendarView {
 	public void goNext() {
 		if (!stillLoading) {
 			redrawBubbles = true;
-			int LastMonthWeeksCount = selectedDate.getActualMaximum(Calendar.WEEK_OF_MONTH);
+//			int LastMonthWeeksCount = selectedDate.getActualMaximum(Calendar.WEEK_OF_MONTH);
 			selectedDate.add(Calendar.MONTH, 1);
 			updateShownDate();
 			setTopPanel();
-			if (LastMonthWeeksCount != selectedDate.getActualMaximum(Calendar.WEEK_OF_MONTH)) {
+//			if (LastMonthWeeksCount != selectedDate.getActualMaximum(Calendar.WEEK_OF_MONTH)) {
 				paintTable(selectedDate);
-			}
+//			}
 
 			setDayFrames();
 			updateEventLists();
@@ -232,7 +232,7 @@ public class MonthView extends AbstractCalendarView {
 				Calendar clickedDate = (Calendar) firstShownDate.clone();
 				clickedDate.add(Calendar.DATE, clickedDayPos);
 
-				int LastMonthWeeksCount = selectedDate.getActualMaximum(Calendar.WEEK_OF_MONTH);
+//				int LastMonthWeeksCount = selectedDate.getActualMaximum(Calendar.WEEK_OF_MONTH);
 
 				if (!frame.isSelected()) {
 
@@ -244,9 +244,9 @@ public class MonthView extends AbstractCalendarView {
 						redrawBubbles = true;
 						setTopPanel();
 
-						if (LastMonthWeeksCount != selectedDate.getActualMaximum(Calendar.WEEK_OF_MONTH)) {
+//						if (LastMonthWeeksCount != selectedDate.getActualMaximum(Calendar.WEEK_OF_MONTH)) {
 							paintTable(selectedDate);
-						}
+//						}
 
 					}
 
