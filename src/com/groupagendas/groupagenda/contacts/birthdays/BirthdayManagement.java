@@ -65,6 +65,7 @@ public class BirthdayManagement {
 					event.setType("Note");
 					event.setIs_all_day(true);
 					event.setBirthday(true);
+					event.setIcon("iconbd");
 					
 					birthdayEvents.add(event);
 				} while (cursor.moveToNext());
