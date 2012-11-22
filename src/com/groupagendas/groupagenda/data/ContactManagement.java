@@ -2499,7 +2499,7 @@ public class ContactManagement {
 							edited = updateGroupInRemoteDb(context, group);
 						}
 						if(edited){
-							
+							updateGroupOnLocalDb(context, group, 0, false);
 						}
 						
 					}
