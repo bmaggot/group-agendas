@@ -114,19 +114,19 @@ public class MonthAdapter extends AbstractAdapter<Event> {
 				}
 			}
 			
-			if (isYesterday && isTomorrow) {
+			if (isYesterday && isTomorrow || event.isBirthday()) {
 				startTime.setText(R.string.all_day);
 				endTime.setText("");
 				
 				endTime.setVisibility(View.GONE);
 			} else {
-				if (event.isBirthday()) {
-					startTime.setVisibility(View.INVISIBLE);
-					endTime.setVisibility(View.INVISIBLE);
-				} else {
-					startTime.setVisibility(View.VISIBLE);
-					endTime.setVisibility(View.VISIBLE);
-				}
+//				if (event.isBirthday()) {
+//					startTime.setVisibility(View.INVISIBLE);
+//					endTime.setVisibility(View.INVISIBLE);
+//				} else {
+//					startTime.setVisibility(View.VISIBLE);
+//					endTime.setVisibility(View.VISIBLE);
+//				}
 				if (isYesterday) {
 					startTime.setText(R.string.three_dots);
 				} else {
