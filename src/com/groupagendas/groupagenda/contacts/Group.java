@@ -39,7 +39,7 @@ public class Group extends Object{
 	}
 	
 	public Group(Context context, Cursor cur) {
-		//this.internal_id = cur.getInt(cur.getColumnIndex(ContactsProvider.CMetaData.GroupsMetaData._ID));
+		this.internal_id = cur.getInt(cur.getColumnIndex(ContactsProvider.CMetaData.GroupsMetaData._ID));
 		this.group_id = cur.getInt(cur.getColumnIndex(ContactsProvider.CMetaData.GroupsMetaData.G_ID));
 		this.title = cur.getString(cur.getColumnIndex(ContactsProvider.CMetaData.GroupsMetaData.TITLE));
 		this.created = cur.getLong(cur.getColumnIndex(ContactsProvider.CMetaData.GroupsMetaData.CREATED));
