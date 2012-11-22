@@ -60,7 +60,7 @@ public class GroupEditActivity extends Activity implements OnClickListener {
 	private ProgressBar pb;
 
 	private String group_name;
-	private Group editedGroup;
+	public Group editedGroup;
 
 	private Button sendButton;
 	private Button contactsButton;
@@ -179,7 +179,6 @@ public class GroupEditActivity extends Activity implements OnClickListener {
 			
 			if(check){
 				check = ContactManagement.insertGroup(GroupEditActivity.this, editedGroup);
-				getContentResolver().insert(ContactsProvider.CMetaData.GroupsMetaData.CONTENT_URI, cv);
 			}
 			
 			return check;
@@ -404,7 +403,7 @@ public class GroupEditActivity extends Activity implements OnClickListener {
 
 				for (int i = 0, l = ids.length; i < l; i++) {
 					if (selections[i]) {
-						editedGroup.contacts.put(String.valueOf(i), String.valueOf(ids[i]));
+						editedGroup.contacts.put(""+i, ""+ids[i]);
 					}
 				}
 				editedGroup.contact_count = editedGroup.contacts.size();
