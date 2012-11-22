@@ -9,6 +9,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Map;
+import java.util.Set;
 
 import org.apache.http.HttpResponse;
 import org.apache.http.HttpStatus;
@@ -2393,7 +2394,6 @@ public class ContactManagement {
 		public static void removeGroupFromLocalDb(Context context, int groupId){
 			String where = ContactsProvider.CMetaData.GroupsMetaData.G_ID + "=" + groupId;
 			Group group = ContactManagement.getGroupFromLocalDb(context, groupId, 0);
-			int max_key = 0;
 			
 			if(group.contacts != null){
 				
@@ -2401,16 +2401,15 @@ public class ContactManagement {
 					Contact c = ContactManagement.getContactFromLocalDb(context, Integer.parseInt(group.contacts.get(s)), 0);
 					
 					if(c.groups != null){
-						for(String key : c.groups.keySet()){
-							int temp = Integer.parseInt(key);
-							if(temp > max_key){
-								max_key = temp;
+						Set<String> keySet = c.groups.keySet();
+						for(String g : keySet){
+							if(c.groups.get(g).equalsIgnoreCase(""+groupId)){
+								c.groups.remove(g);
+								ContactManagement.updateContactOnLocalDb(context, c);
+								break;
 							}
 						}
-						c.groups.remove(""+(max_key+1));
 					}
-					
-					ContactManagement.updateContactOnLocalDb(context, c);
 				}
 			}
 			try {
