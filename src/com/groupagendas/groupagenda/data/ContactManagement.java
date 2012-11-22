@@ -17,7 +17,6 @@ import org.apache.http.client.methods.HttpPost;
 import org.apache.http.entity.mime.HttpMultipartMode;
 import org.apache.http.entity.mime.MultipartEntity;
 import org.apache.http.entity.mime.content.ByteArrayBody;
-import org.apache.http.entity.mime.content.FileBody;
 import org.apache.http.entity.mime.content.StringBody;
 import org.apache.http.util.EntityUtils;
 import org.json.JSONArray;
@@ -938,8 +937,14 @@ public class ContactManagement {
 				temp.image_url = cur.getString(cur.getColumnIndex(ContactsProvider.CMetaData.GroupsMetaData.IMAGE_URL));
 				temp.image_thumb_url = cur.getString(cur.getColumnIndex(ContactsProvider.CMetaData.GroupsMetaData.IMAGE_THUMB_URL));
 				temp.image_bytes = cur.getBlob(cur.getColumnIndex(ContactsProvider.CMetaData.GroupsMetaData.IMAGE_BYTES));
-				if (cur.getString(cur.getColumnIndex(ContactsProvider.CMetaData.GroupsMetaData.REMOVE_IMAGE)).equals("1")) {
-					temp.remove_image = true;
+				
+				String resp2 = cur.getString(cur.getColumnIndex(ContactsProvider.CMetaData.GroupsMetaData.REMOVE_IMAGE));
+				if(resp2 != null){
+					if (resp2.equals("1")) {
+						temp.remove_image = true;
+					} else {
+						temp.remove_image = false;
+					}
 				} else {
 					temp.remove_image = false;
 				}
@@ -1007,9 +1012,33 @@ public class ContactManagement {
 		if (destination_id > 0) {
 			success = true;
 			insertGroupToLocalDb(context, group, destination_id);
-		} else {
-			insertGroupToLocalDb(context, group, 0);
+			int max_key = 0;
+			
+			if(group.contacts != null){
+				
+				for(String s : group.contacts.keySet()){
+					Contact c = ContactManagement.getContactFromLocalDb(context, Integer.parseInt(group.contacts.get(s)), 0);
+					
+					if(c.groups != null){
+						for(String key : c.groups.keySet()){
+							int temp = Integer.parseInt(key);
+							if(temp > max_key){
+								max_key = temp;
+							}
+						}
+						c.groups.put(""+(max_key+1), ""+destination_id);
+					} else {
+						c.groups = new HashMap<String, String>();
+						c.groups.put(""+max_key, ""+destination_id);
+					}
+					
+					ContactManagement.updateContactOnLocalDb(context, c);
+				}
+			}
 		}
+//		else {
+//			insertGroupToLocalDb(context, group, 0);
+//		}
 
 		return success;
 	}
@@ -1246,10 +1275,10 @@ public class ContactManagement {
 
 		Map<String, String> contacts = group.contacts;
 		if (contacts != null) {
-			for (int i = 0, l = contacts.size(); i < l; i++) {
+			for (String s : contacts.keySet()) {
 				try {
 					reqEntity.addPart(ContactsProvider.CMetaData.GroupsMetaData.CONTACTS + "[]",
-							new StringBody(String.valueOf(contacts.get(i)), Charset.forName("UTF-8")));
+							new StringBody(contacts.get(s), Charset.forName("UTF-8")));
 				} catch (UnsupportedEncodingException e) {
 					Log.e("insertGroupToRemoteDb(group, " + id + ")", "Failed adding contact to entity.");
 				}
@@ -1273,12 +1302,12 @@ public class ContactManagement {
 						JSONObject object = new JSONObject(resp);
 						success = object.getBoolean("success");
 						if (success)
-							destination_id = object.getInt("contact_id");
-						Log.e("createContact - success", "" + success);
+							destination_id = object.getInt("group_id");
+						Log.e("createGroup - success", "" + success);
 
 						if (success == false) {
 							Data.setERROR(object.getJSONObject("error").getString("reason"));
-							Log.e("createContact - error: ", Data.getERROR());
+							Log.e("createGroup - error: ", Data.getERROR());
 						}
 					}
 				}
