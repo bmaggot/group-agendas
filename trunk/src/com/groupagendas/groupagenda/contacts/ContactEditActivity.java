@@ -486,11 +486,27 @@ public class ContactEditActivity extends Activity implements OnClickListener, On
 
 			// groups
 			Map<String, String> contactGroupsMap = new HashMap<String, String>();
-			contactGroupsMap = editedContact.groups;
+			if(editedContact.groups == null){
+				contactGroupsMap = new HashMap<String, String>();
+			} else {
+				if(editedContact.groups.isEmpty()){
+					contactGroupsMap = new HashMap<String, String>();
+				}
+				contactGroupsMap = editedContact.groups;
+			}
 			if(selectedGroups != null){
 				int i = 0;
 				Map<String, String> selectedGroupsMap = new HashMap<String, String>();
 				editedContact.groups = selectedGroupsMap;
+				if(contactGroupsMap != null && contactGroupsMap.isEmpty()){
+					for (String s : contactGroupsMap.keySet()) {
+						Group g = ContactManagement.getGroupFromLocalDb(getApplicationContext(), Integer.valueOf(contactGroupsMap.get(s)), 0);
+						if(g != null){
+							ContactManagement.updateGroupOnLocalDb(getApplicationContext(), g, editedContact.contact_id, false);
+							ContactManagement.editGroupOnRemoteDb(getApplicationContext(), g, editedContact.contact_id, false);
+						}
+					}
+				}
 				if(contactGroupsMap != null && !contactGroupsMap.isEmpty()){
 					for (String s : contactGroupsMap.keySet()) {
 						Group g = ContactManagement.getGroupFromLocalDb(getApplicationContext(), Integer.valueOf(contactGroupsMap.get(s)), 0);
