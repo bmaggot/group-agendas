@@ -99,17 +99,7 @@ public class GroupContactsActivity extends ListActivity {
 			int groupId = intent.getIntExtra("groupId", 0);
 			
 			if(groupId > 0){
-				Uri uri = Uri.parse(ContactsProvider.CMetaData.GroupsMetaData.CONTENT_URI+"/"+groupId);
-				
-				Boolean result = dm.removeGroup(getApplicationContext(), groupId);
-				
-				if(result){
-					getContentResolver().delete(uri, null, null);
-				}else{
-//					ContentValues values = new ContentValues();
-//					values.put(ContactsProvider.CMetaData.GroupsMetaData.NEED_UPDATE, 3);					
-//					getContentResolver().update(uri, values, null, null);
-				}
+				ContactManagement.removeGroup(getApplicationContext(), groupId);
 			}
 			
 			return true;
