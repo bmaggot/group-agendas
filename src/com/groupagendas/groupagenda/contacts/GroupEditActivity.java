@@ -5,6 +5,8 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 import net.londatiga.android.CropOption;
 import net.londatiga.android.CropOptionAdapter;
@@ -73,6 +75,8 @@ public class GroupEditActivity extends Activity implements OnClickListener {
 	private boolean[] selections;
 	
 	private boolean ACTION_EDIT = true;
+	
+	Map<String, String> groupContactsMapTemp = new HashMap<String, String>();
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -242,6 +246,43 @@ public class GroupEditActivity extends Activity implements OnClickListener {
 				//check = dm.editGroup(getApplicationContext(), editedGroup);
 				check = ContactManagement.editGroupOnRemoteDb(getApplicationContext(), editedGroup, 0, true);
 				
+				for(String s : groupContactsMapTemp.keySet()){
+					Contact c = ContactManagement.getContactFromLocalDb(getApplicationContext(), Integer.parseInt(groupContactsMapTemp.get(s)), 0);
+					if(c.groups != null){
+						Set<String> keySet = c.groups.keySet();
+						for(String g : keySet){
+							if(c.groups.get(g).equalsIgnoreCase(""+editedGroup.group_id)){
+								c.groups.remove(g);
+								ContactManagement.updateContactOnLocalDb(getApplicationContext(), c);
+								break;
+							}
+						}
+					}
+				}
+				
+				int max_key = 0;
+				if(editedGroup.contacts != null){
+					
+					for(String s : editedGroup.contacts.keySet()){
+						Contact c = ContactManagement.getContactFromLocalDb(getApplicationContext(), Integer.parseInt(editedGroup.contacts.get(s)), 0);
+						
+						if(c.groups != null){
+							for(String key : c.groups.keySet()){
+								int temp2 = Integer.parseInt(key);
+								if(temp2 > max_key){
+									max_key = temp2;
+								}
+							}
+							c.groups.put(""+(max_key+1), ""+editedGroup.group_id);
+						} else {
+							c.groups = new HashMap<String, String>();
+							c.groups.put(""+max_key, ""+editedGroup.group_id);
+						}
+						
+						ContactManagement.updateContactOnLocalDb(getApplicationContext(), c);
+					}
+				}
+
 //				if(!success){
 //					cv = new ContentValues();
 //					cv.put(ContactsProvider.CMetaData.GroupsMetaData.NEED_UPDATE, 1);
@@ -331,6 +372,7 @@ public class GroupEditActivity extends Activity implements OnClickListener {
 				selections[i] = false;
 			}else{
 				selections[i] = editedGroup.contacts.containsValue(String.valueOf(contacts.get(i).contact_id));
+				groupContactsMapTemp = editedGroup.contacts;
 			}
 		}
 	}
