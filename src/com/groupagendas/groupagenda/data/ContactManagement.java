@@ -2392,6 +2392,27 @@ public class ContactManagement {
 		
 		public static void removeGroupFromLocalDb(Context context, int groupId){
 			String where = ContactsProvider.CMetaData.GroupsMetaData.G_ID + "=" + groupId;
+			Group group = ContactManagement.getGroupFromLocalDb(context, groupId, 0);
+			int max_key = 0;
+			
+			if(group.contacts != null){
+				
+				for(String s : group.contacts.keySet()){
+					Contact c = ContactManagement.getContactFromLocalDb(context, Integer.parseInt(group.contacts.get(s)), 0);
+					
+					if(c.groups != null){
+						for(String key : c.groups.keySet()){
+							int temp = Integer.parseInt(key);
+							if(temp > max_key){
+								max_key = temp;
+							}
+						}
+						c.groups.remove(""+(max_key+1));
+					}
+					
+					ContactManagement.updateContactOnLocalDb(context, c);
+				}
+			}
 			try {
 				context.getContentResolver().delete(ContactsProvider.CMetaData.GroupsMetaData.CONTENT_URI, where, null);
 			} catch (SQLiteException e) {
