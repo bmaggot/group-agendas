@@ -1010,7 +1010,7 @@ public class ContactManagement {
 
 		destination_id = insertGroupToRemoteDb(context, group, 0);
 
-		if (destination_id > 0) {
+		if (destination_id >= 0) {
 			success = true;
 			insertGroupToLocalDb(context, group, destination_id);
 			int max_key = 0;
@@ -1037,9 +1037,6 @@ public class ContactManagement {
 				}
 			}
 		}
-//		else {
-//			insertGroupToLocalDb(context, group, 0);
-//		}
 
 		return success;
 	}
@@ -1189,7 +1186,7 @@ public class ContactManagement {
 		WebService webService = new WebService();
 		HttpPost post = new HttpPost(Data.getServerUrl() + "mobile/groups_create");
 		MultipartEntity reqEntity = new MultipartEntity(HttpMultipartMode.BROWSER_COMPATIBLE);
-	    
+
 	    try {
 			reqEntity.addPart("session", new StringBody(account.getSessionId(), Charset.forName("UTF-8")));
 		} catch (UnsupportedEncodingException e2) {
@@ -2539,6 +2536,28 @@ public class ContactManagement {
 						int destination_id = insertGroupToRemoteDb(context, group, 0);
 						if(destination_id >= 0){
 							updateGroupIdInLocalDb(context, group.getInternal_id() , destination_id);
+							int max_key = 0;
+							if(group.contacts != null){
+								
+								for(String s : group.contacts.keySet()){
+									Contact c = ContactManagement.getContactFromLocalDb(context, Integer.parseInt(group.contacts.get(s)), 0);
+									
+									if(c.groups != null){
+										for(String key : c.groups.keySet()){
+											int temp = Integer.parseInt(key);
+											if(temp > max_key){
+												max_key = temp;
+											}
+										}
+										c.groups.put(""+(max_key+1), ""+destination_id);
+									} else {
+										c.groups = new HashMap<String, String>();
+										c.groups.put(""+max_key, ""+destination_id);
+									}
+									
+									ContactManagement.updateContactOnLocalDb(context, c);
+								}
+							}
 							group.group_id = destination_id;
 						} else {
 							removeGroupFromLocalDbByInternalId(context, group.getInternal_id());

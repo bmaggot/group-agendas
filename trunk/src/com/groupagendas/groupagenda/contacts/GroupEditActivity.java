@@ -3,6 +3,7 @@ package com.groupagendas.groupagenda.contacts;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -175,6 +176,12 @@ public class GroupEditActivity extends Activity implements OnClickListener {
 			// contacts
 			cv.put(ContactsProvider.CMetaData.GroupsMetaData.CONTACTS, MapUtils.mapToString(getApplicationContext(), editedGroup.contacts));
 			cv.put(ContactsProvider.CMetaData.GroupsMetaData.CONTACT_COUNT, editedGroup.contacts.size());
+			
+			editedGroup.group_id = (int) Calendar.getInstance().getTimeInMillis();
+			editedGroup.created = Calendar.getInstance().getTimeInMillis();
+			cv.put(ContactsProvider.CMetaData.GroupsMetaData.CREATED, editedGroup.created);
+			editedGroup.modified = editedGroup.created;
+			cv.put(ContactsProvider.CMetaData.GroupsMetaData.MODIFIED, editedGroup.modified);
 			
 			if(editedGroup.image_bytes != null){
 				cv.put(ContactsProvider.CMetaData.GroupsMetaData.IMAGE_BYTES, editedGroup.image_bytes);

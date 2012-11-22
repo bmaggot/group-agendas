@@ -140,6 +140,7 @@ public class ContactsProvider extends ContentProvider{
 	
 	static {
 		GM = new HashMap<String, String>();
+		GM.put(CMetaData.GroupsMetaData._ID, CMetaData.GroupsMetaData._ID);
 		GM.put(CMetaData.GroupsMetaData.G_ID, CMetaData.GroupsMetaData.G_ID);
 		GM.put(CMetaData.GroupsMetaData.TITLE, CMetaData.GroupsMetaData.TITLE);
 		GM.put(CMetaData.GroupsMetaData.CREATED, CMetaData.GroupsMetaData.CREATED);
