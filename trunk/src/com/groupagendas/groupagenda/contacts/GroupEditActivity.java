@@ -239,7 +239,8 @@ public class GroupEditActivity extends Activity implements OnClickListener {
 			if(check){
 				Uri uri = Uri.parse(ContactsProvider.CMetaData.GroupsMetaData.CONTENT_URI+"/"+editedGroup.group_id);
 				getContentResolver().update(uri, cv, null, null);
-				check = dm.editGroup(getApplicationContext(), editedGroup);
+				//check = dm.editGroup(getApplicationContext(), editedGroup);
+				check = ContactManagement.editGroupOnRemoteDb(getApplicationContext(), editedGroup, 0, true);
 				
 //				if(!success){
 //					cv = new ContentValues();
