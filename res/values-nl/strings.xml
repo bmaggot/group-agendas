@@ -265,5 +265,6 @@
     <string name="three_dots">…</string>
     <string name="delete_message_title">verwijder bericht</string>
     <string name="delete_message_confirmation">Weet u het zeker dat u het bericht wilt verwijderen?</string>
+    <string name="new_group">New group</string>
     
 </resources>
