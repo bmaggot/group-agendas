@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
     android:background="#FFFFFF"
@@ -9,9 +9,6 @@
         android:id="@+id/topBar"
         android:layout_width="fill_parent"
         android:layout_height="50dp"
-        android:layout_alignParentTop="true"
-        android:layout_centerHorizontal="true"
-        android:layout_centerVertical="true"
         android:background="@drawable/top_bar_background" >
 
         <TextView
@@ -19,7 +16,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_centerInParent="true"
-            android:text="@string/events"
+            android:text="@string/new_group"
             android:textColor="@android:color/white"
             android:textSize="20dp"
             android:textStyle="bold" />
@@ -33,118 +30,138 @@
             android:layout_centerInParent="true"
             android:layout_marginRight="20dp"
             android:visibility="gone" />
-    </RelativeLayout>
-
-    <TableLayout
-        android:layout_width="fill_parent"
-        android:layout_height="fill_parent"
-        android:layout_above="@+id/bottom"
-        android:layout_below="@id/topBar"
-        android:padding="10dp"
-        android:stretchColumns="2" >
-
-        <TableRow
-            android:layout_marginLeft="10dp"
-            android:layout_marginRight="10dp"
-            android:padding="3dp" >
-
-            <TextView
-                android:layout_marginRight="10dp"
-                android:text="@string/name"
-                android:textColor="#01a2b5"
-                android:textSize="18dp" />
-
-            <EditText
-                android:id="@+id/group_name"
-                android:textColor="#000000" />
-        </TableRow>
-
-        <View
-            android:layout_width="fill_parent"
-            android:layout_height="1dp"
-            android:background="#FF909090" />
-
-        <TableRow
-            android:layout_marginLeft="10dp"
-            android:layout_marginRight="10dp"
-            android:padding="3dp" >
-
-            <TextView
-                android:layout_width="fill_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginRight="10dp"
-                android:text="@string/replace_image"
-                android:textColor="#01a2b5"
-                android:textSize="18dp" />
-
-            <ImageView
-                android:id="@+id/group_image"
-                android:layout_width="120dp"
-                android:layout_height="120dp" />
-        </TableRow>
-
-        <View
-            android:layout_width="fill_parent"
-            android:layout_height="1dp"
-            android:background="#FF909090" />
-
-        <TableRow
-            android:id="@+id/remove_image_row"
-            android:layout_marginLeft="10dp"
-            android:layout_marginRight="10dp"
-            android:padding="3dp" >
-
-            <TextView
-                android:layout_width="fill_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginRight="10dp"
-                android:text="@string/remove_image"
-                android:textColor="#01a2b5"
-                android:textSize="18dp" />
-
-            <CheckBox android:id="@+id/remove_image" />
-        </TableRow>
-
-        <View
-            android:id="@+id/remove_image_line"
-            android:layout_width="fill_parent"
-            android:layout_height="1dp"
-            android:background="#FF909090" />
-
-        <TableRow
-            android:layout_marginLeft="10dp"
-            android:layout_marginRight="10dp"
-            android:padding="3dp" >
-
-            <TextView
-                android:layout_width="fill_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginRight="10dp"
-                android:text="@string/contacts_"
-                android:textColor="#01a2b5"
-                android:textSize="18dp" />
-
-            <Button
-                android:id="@+id/contactsButton"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/choose" />
-        </TableRow>
-    </TableLayout>
-
-    <LinearLayout
-        android:id="@+id/bottom"
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        android:layout_marginBottom="10dp"
-        android:gravity="center_horizontal|center_vertical" >
 
         <Button
-            android:id="@+id/sendbutton"
-            android:layout_width="100dp"
+            android:id="@+id/import_button"
+            android:layout_width="wrap_content"
+            android:layout_height="33dp"
+            android:layout_alignParentRight="true"
+            android:layout_marginRight="5dp"
+            android:layout_marginTop="8dp"
+            android:background="@drawable/contacts_save_import_button"
+            android:gravity="center"
+            android:paddingBottom="5dp"
+            android:paddingLeft="4dp"
+            android:paddingRight="4dp"
+            android:paddingTop="5dp"
+            android:shadowColor="@color/black"
+            android:shadowDx="0"
+            android:shadowDy="2"
+            android:shadowRadius="1.5"
+            android:text="@string/contact_import_button"
+            android:textColor="@color/white"
+            android:textSize="14dp"
+            android:textStyle="bold" />
+    </RelativeLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="40dp"
+        android:layout_margin="10dp"
+        android:background="@drawable/event_invite_people_button_standalone"
+        android:paddingBottom="5dp"
+        android:paddingLeft="10dp"
+        android:paddingRight="10dp"
+        android:paddingTop="5dp" >
+
+        <TextView
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/save" />
+            android:layout_marginRight="5dp"
+            android:paddingBottom="5dp"
+            android:paddingTop="4dp"
+            android:singleLine="true"
+            android:text="@string/title"
+            android:textColor="@color/black"
+            android:textSize="15dp"
+            android:textStyle="bold" />
+
+        <EditText
+            android:id="@+id/group_name"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:background="#00000000"
+            android:inputType="text"
+            android:paddingBottom="5dp"
+            android:paddingTop="4dp"
+            android:singleLine="true"
+            android:textColor="@color/black"
+            android:textSize="15dp" />
     </LinearLayout>
 
-</RelativeLayout>
+    <!-- <TableRow
+    android:layout_marginLeft="10dp"
+    android:layout_marginRight="10dp"
+    android:layout_marginTop="10dp"
+    android:padding="3dp"
+    android:visibility="gone" >
+
+
+    <TextView
+    android:layout_width="fill_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginRight="10dp"
+    android:text="@string/replace_image"
+    android:textColor="#01a2b5"
+    android:textSize="18dp" />
+
+
+    <ImageView
+    android:id="@+id/group_image"
+    android:layout_width="120dp"
+    android:layout_height="120dp"
+    android:contentDescription="@string/group_icon_placeholder" />
+    </TableRow>
+
+
+    <TableRow
+    android:id="@+id/remove_image_row"
+    android:layout_marginLeft="10dp"
+    android:layout_marginRight="10dp"
+    android:padding="3dp"
+    android:visibility="gone" >
+
+
+    <TextView
+    android:layout_width="fill_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginRight="10dp"
+    android:text="@string/remove_image"
+    android:textColor="#01a2b5"
+    android:textSize="18dp" />
+
+
+    <CheckBox android:id="@+id/remove_image" />
+    </TableRow> -->
+
+    <Button
+        android:id="@+id/contactsButton"
+        android:layout_width="match_parent"
+        android:layout_height="40dp"
+        android:layout_marginLeft="10dp"
+        android:layout_marginRight="10dp"
+        android:layout_marginTop="10dp"
+        android:background="@drawable/event_invite_people_button_standalone"
+        android:text="@string/select_contacts"
+        android:textColor="@color/black"
+        android:textSize="16dp"
+        android:textStyle="bold" />
+
+    <LinearLayout
+        android:id="@+id/selectedContacts"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical" />
+
+<!--    <Button
+        android:id="@+id/sendbutton"
+        android:layout_width="match_parent"
+        android:layout_height="40dp"
+        android:layout_margin="10dp"
+        android:background="@drawable/event_invite_people_button_standalone"
+        android:text="@string/save"
+        android:textColor="@color/black"
+        android:textSize="16dp"
+        android:textStyle="bold" /> -->
+
+</LinearLayout>
