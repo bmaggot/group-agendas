@@ -1010,7 +1010,7 @@ public class ContactManagement {
 
 		destination_id = insertGroupToRemoteDb(context, group, 0);
 
-		if (destination_id >= 0) {
+		if (destination_id > 0) {
 			success = true;
 			insertGroupToLocalDb(context, group, destination_id);
 			int max_key = 0;
@@ -1031,6 +1031,34 @@ public class ContactManagement {
 					} else {
 						c.groups = new HashMap<String, String>();
 						c.groups.put(""+max_key, ""+destination_id);
+					}
+					
+					ContactManagement.updateContactOnLocalDb(context, c);
+				}
+			}
+		} 
+		
+		if (destination_id == 0) {
+			success = true;
+			insertGroupToLocalDb(context, group, 0);
+			int max_key = 0;
+			
+			if(group.contacts != null){
+				
+				for(String s : group.contacts.keySet()){
+					Contact c = ContactManagement.getContactFromLocalDb(context, Integer.parseInt(group.contacts.get(s)), 0);
+					
+					if(c.groups != null){
+						for(String key : c.groups.keySet()){
+							int temp = Integer.parseInt(key);
+							if(temp > max_key){
+								max_key = temp;
+							}
+						}
+						c.groups.put(""+(max_key+1), ""+group.group_id);
+					} else {
+						c.groups = new HashMap<String, String>();
+						c.groups.put(""+max_key, ""+group.group_id);
 					}
 					
 					ContactManagement.updateContactOnLocalDb(context, c);
@@ -2509,7 +2537,7 @@ public class ContactManagement {
 				} catch (JSONException e) {
 					e.printStackTrace();
 				}
-			}
+			} 
 		    
 		    return success;
 		}
@@ -2533,7 +2561,11 @@ public class ContactManagement {
 					Group group = new Group(context, result);
 					
 					if(group.group_id != 0){
-						int destination_id = insertGroupToRemoteDb(context, group, 0);
+						boolean check = updateGroupInRemoteDb(context, group);
+						int destination_id = group.group_id;
+						if(!check){
+							destination_id = insertGroupToRemoteDb(context, group, 0);
+						}
 						if(destination_id >= 0){
 							updateGroupIdInLocalDb(context, group.getInternal_id() , destination_id);
 							int max_key = 0;
@@ -2541,6 +2573,17 @@ public class ContactManagement {
 								
 								for(String s : group.contacts.keySet()){
 									Contact c = ContactManagement.getContactFromLocalDb(context, Integer.parseInt(group.contacts.get(s)), 0);
+									
+									if(c.groups != null){
+										Set<String> keySet = c.groups.keySet();
+										for(String g : keySet){
+											if(c.groups.get(g).equalsIgnoreCase(""+group.group_id)){
+												c.groups.remove(g);
+												ContactManagement.updateContactOnLocalDb(context, c);
+												break;
+											}
+										}
+									}
 									
 									if(c.groups != null){
 										for(String key : c.groups.keySet()){
