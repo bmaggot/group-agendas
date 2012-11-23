@@ -48,7 +48,7 @@
             android:shadowDx="0"
             android:shadowDy="2"
             android:shadowRadius="1.5"
-            android:text="@string/contact_import_button"
+            android:text="@string/save"
             android:textColor="@color/white"
             android:textSize="14dp"
             android:textStyle="bold" />
