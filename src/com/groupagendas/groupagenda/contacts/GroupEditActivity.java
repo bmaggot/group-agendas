@@ -231,6 +231,9 @@ public class GroupEditActivity extends Activity implements OnClickListener {
 			cv.put(ContactsProvider.CMetaData.GroupsMetaData.TITLE, temp);
 			editedGroup.title = temp;
 			
+			editedGroup.modified = Calendar.getInstance().getTimeInMillis();
+			cv.put(ContactsProvider.CMetaData.GroupsMetaData.MODIFIED, editedGroup.modified);
+			
 			// contacts
 			cv.put(ContactsProvider.CMetaData.GroupsMetaData.CONTACTS, MapUtils.mapToString(getApplicationContext(), editedGroup.contacts));
 			cv.put(ContactsProvider.CMetaData.GroupsMetaData.CONTACT_COUNT, editedGroup.contacts.size());
@@ -251,7 +254,9 @@ public class GroupEditActivity extends Activity implements OnClickListener {
 				Uri uri = Uri.parse(ContactsProvider.CMetaData.GroupsMetaData.CONTENT_URI+"/"+editedGroup.group_id);
 				getContentResolver().update(uri, cv, null, null);
 				//check = dm.editGroup(getApplicationContext(), editedGroup);
-				check = ContactManagement.editGroupOnRemoteDb(getApplicationContext(), editedGroup, 0, true);
+				if (DataManagement.networkAvailable) {
+					check = ContactManagement.editGroupOnRemoteDb(getApplicationContext(), editedGroup, 0, true);
+				}
 				
 				for(String s : groupContactsMapTemp.keySet()){
 					Contact c = ContactManagement.getContactFromLocalDb(getApplicationContext(), Integer.parseInt(groupContactsMapTemp.get(s)), 0);
@@ -260,6 +265,9 @@ public class GroupEditActivity extends Activity implements OnClickListener {
 						for(String g : keySet){
 							if(c.groups.get(g).equalsIgnoreCase(""+editedGroup.group_id)){
 								c.groups.remove(g);
+								if(c.groups.size() == 0){
+									c.groups = new HashMap<String, String>();
+								}
 								ContactManagement.updateContactOnLocalDb(getApplicationContext(), c);
 								break;
 							}
@@ -273,11 +281,15 @@ public class GroupEditActivity extends Activity implements OnClickListener {
 					for(String s : editedGroup.contacts.keySet()){
 						Contact c = ContactManagement.getContactFromLocalDb(getApplicationContext(), Integer.parseInt(editedGroup.contacts.get(s)), 0);
 						
-						if(c.groups != null){
+						if(c.groups != null && !c.groups.isEmpty()){
 							for(String key : c.groups.keySet()){
-								int temp2 = Integer.parseInt(key);
-								if(temp2 > max_key){
-									max_key = temp2;
+								if(!key.contentEquals("")){
+									int temp2 = Integer.parseInt(key);
+									if(temp2 > max_key){
+										max_key = temp2;
+									}
+								} else{
+									c.groups = new HashMap<String, String>();
 								}
 							}
 							c.groups.put(""+(max_key+1), ""+editedGroup.group_id);
