@@ -22,7 +22,6 @@ import android.content.Intent;
 import android.content.pm.ResolveInfo;
 import android.graphics.Bitmap;
 import android.graphics.Bitmap.CompressFormat;
-import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -32,11 +31,8 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
-import android.widget.CheckBox;
 import android.widget.EditText;
-import android.widget.ImageView;
 import android.widget.ProgressBar;
-import android.widget.TableRow;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -45,7 +41,6 @@ import com.groupagendas.groupagenda.data.ContactManagement;
 import com.groupagendas.groupagenda.data.DataManagement;
 import com.groupagendas.groupagenda.error.report.Reporter;
 import com.groupagendas.groupagenda.utils.MapUtils;
-import com.groupagendas.groupagenda.utils.Utils;
 
 public class GroupEditActivity extends Activity implements OnClickListener {
 	private String ERROR_STRING = "";
@@ -57,8 +52,6 @@ public class GroupEditActivity extends Activity implements OnClickListener {
 	private static final int PICK_FROM_CAMERA = 1;
 	private static final int CROP_FROM_CAMERA = 2;
 	private static final int PICK_FROM_FILE = 3;
-
-	private DataManagement dm;
 	
 	private ProgressBar pb;
 
@@ -68,8 +61,8 @@ public class GroupEditActivity extends Activity implements OnClickListener {
 	private Button sendButton;
 	private Button contactsButton;
 	private EditText groupNameView;
-	private ImageView imageView;
-	private CheckBox removeImage;
+//	private ImageView imageView;
+//	private CheckBox removeImage;
 
 	private CharSequence[] titles;
 	private int[] ids;
@@ -86,10 +79,7 @@ public class GroupEditActivity extends Activity implements OnClickListener {
 		
 		pb = (ProgressBar) findViewById(R.id.progress);
 		
-		dm = DataManagement.getInstance(this);
-
 		Intent intent = getIntent();
-		
 		
 		// Views
 		TextView titleView = (TextView) findViewById(R.id.title);
@@ -102,10 +92,10 @@ public class GroupEditActivity extends Activity implements OnClickListener {
 		
 		groupNameView = (EditText) findViewById(R.id.group_name);
 		
-		imageView = (ImageView) findViewById(R.id.group_image);
-		imageView.setOnClickListener(this);
-		
-		removeImage = (CheckBox) findViewById(R.id.remove_image);
+//		imageView = (ImageView) findViewById(R.id.group_image);
+//		imageView.setOnClickListener(this);
+//		
+//		removeImage = (CheckBox) findViewById(R.id.remove_image);
 		
 		// GET ACTION
 		ACTION_EDIT = intent.getBooleanExtra("action", true);
@@ -118,17 +108,17 @@ public class GroupEditActivity extends Activity implements OnClickListener {
 			groupNameView.setText(group_name);
 			
 		}else{
-			TableRow RIRow = (TableRow) findViewById(R.id.remove_image_row);
-			RIRow.setVisibility(View.GONE);
-			View RIView = findViewById(R.id.remove_image_line);
-			RIView.setVisibility(View.GONE);
+//			TableRow RIRow = (TableRow) findViewById(R.id.remove_image_row);
+//			RIRow.setVisibility(View.GONE);
+//			View RIView = findViewById(R.id.remove_image_line);
+//			RIView.setVisibility(View.GONE);
 			
 			new GetContactsTask().execute();
 			
 			editedGroup = new Group();
 			
 			titleView.setText(getString(R.string.add_group));
-			imageView.setImageResource(R.drawable.group_icon);
+//			imageView.setImageResource(R.drawable.group_icon);
 		}
 	}
 
@@ -142,9 +132,9 @@ public class GroupEditActivity extends Activity implements OnClickListener {
 				new CreateGroupTask().execute(editedGroup);
 			}
 			break;
-		case R.id.group_image:
-			showDialog(CROP_IMAGE_DIALOG);
-			break;
+//		case R.id.group_image:
+//			showDialog(CROP_IMAGE_DIALOG);
+//			break;
 		case R.id.contactsButton:
 			showDialog(CHOOSE_CONTACTS_DIALOG);
 			break;
@@ -239,13 +229,15 @@ public class GroupEditActivity extends Activity implements OnClickListener {
 			cv.put(ContactsProvider.CMetaData.GroupsMetaData.CONTACT_COUNT, editedGroup.contacts.size());
 			
 			// image
-			editedGroup.remove_image = removeImage.isChecked();
-			if(removeImage.isChecked()){
+//			editedGroup.remove_image = removeImage.isChecked();
+			editedGroup.remove_image = false;
+			
+			if(editedGroup.remove_image){
 				cv.put(ContactsProvider.CMetaData.GroupsMetaData.IMAGE, false);
 				cv.put(ContactsProvider.CMetaData.GroupsMetaData.IMAGE_URL, "");
 				cv.put(ContactsProvider.CMetaData.GroupsMetaData.IMAGE_THUMB_URL, "");
 				cv.put(ContactsProvider.CMetaData.GroupsMetaData.IMAGE_BYTES, "");
-				cv.put(ContactsProvider.CMetaData.GroupsMetaData.REMOVE_IMAGE, removeImage.isChecked());
+				cv.put(ContactsProvider.CMetaData.GroupsMetaData.REMOVE_IMAGE, editedGroup.remove_image);
 			}else{
 				cv.put(ContactsProvider.CMetaData.GroupsMetaData.IMAGE_BYTES, editedGroup.image_bytes);
 			}
@@ -348,10 +340,10 @@ public class GroupEditActivity extends Activity implements OnClickListener {
 		@Override
 		protected void onPostExecute(Group result) {
 			if (result.image) {
-				Bitmap bitmap = Utils.getResizedBitmap(BitmapFactory.decodeByteArray(result.image_bytes, 0, result.image_bytes.length), 120, 120);
-				imageView.setImageBitmap(bitmap);
+//				Bitmap bitmap = Utils.getResizedBitmap(BitmapFactory.decodeByteArray(result.image_bytes, 0, result.image_bytes.length), 120, 120);
+//				imageView.setImageBitmap(bitmap);
 			} else {
-				imageView.setImageResource(R.drawable.group_icon);
+//				imageView.setImageResource(R.drawable.group_icon);
 			}
 
 			pb.setVisibility(View.GONE);
@@ -497,7 +489,7 @@ public class GroupEditActivity extends Activity implements OnClickListener {
 
 			if (extras != null) {
 				Bitmap photo = extras.getParcelable("data");
-				imageView.setImageBitmap(photo);
+//				imageView.setImageBitmap(photo);
 				ByteArrayOutputStream bos = new ByteArrayOutputStream();
 				photo.compress(CompressFormat.PNG, 100, bos);
 				editedGroup.image_bytes = bos.toByteArray();
