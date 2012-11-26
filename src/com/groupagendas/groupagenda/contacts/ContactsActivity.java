@@ -96,10 +96,6 @@ public class ContactsActivity extends ListActivity implements OnCheckedChangeLis
 	public static final int TASK_MODE_SELECTION = 1;
 	private int TASK_MODE = TASK_MODE_LISTING;
 
-	private final String CONTACTS_TASK = "contactsTask";
-	private final String GROUPS_TASK = "groupsTask";
-	private String CURRENT_TASK = CONTACTS_TASK;
-
 	public static final String TASK_MODE_KEY = "TASK_MODE";
 	public static final String LIST_MODE_KEY = "LIST_MODE";
 
