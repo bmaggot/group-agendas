@@ -267,5 +267,7 @@
     <string name="delete_message_confirmation">Are You sure want to delete this messages</string>
     <string name="New">New</string>
     <string name="new_group">New group</string>
+    <string name="failed_getting_error">Failed getting error message.</string>
+    <string name="no_internet_conn">There is no internet connection.</string>
     
 </resources>
