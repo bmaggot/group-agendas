@@ -1388,6 +1388,7 @@ public class ContactManagement {
 					target = temp2;
 					if(!insert){
 						map.remove(s);
+						group.contact_count-=1;
 						target = -1;
 					}
 					break;
@@ -1396,6 +1397,7 @@ public class ContactManagement {
 
 			if(insert && target == -1){
 				map.put(""+(max_key+1), ""+contactID);
+				group.contact_count+=1;
 				target = -1;
 			}
 		} else {
@@ -2354,6 +2356,16 @@ public class ContactManagement {
 						int destination_id = insertContactToRemoteDb(context, c, 0);
 						if(destination_id >= 0){
 							updateContactIdInLocalDb(context, c.getInternal_id(), destination_id);
+							
+							if(c.groups != null){
+								for(String key : c.groups.keySet()){
+									if(!key.contentEquals("")){
+										Group g = getGroupFromLocalDb(context, Integer.parseInt(c.groups.get(key)), 0);
+										editGroupOnRemoteDb(context, g, 0, true);
+									}
+								}
+							}
+							
 							c.contact_id = destination_id;
 						} else {
 							removeContactFromLocalDbByInternalId(context, c.getInternal_id());
@@ -2437,17 +2449,18 @@ public class ContactManagement {
 				
 				for(String s : group.contacts.keySet()){
 					Contact c = ContactManagement.getContactFromLocalDb(context, Integer.parseInt(group.contacts.get(s)), 0);
-					
-					if(c.groups != null){
-						Set<String> keySet = c.groups.keySet();
-						for(String g : keySet){
-							if(c.groups.get(g).equalsIgnoreCase(""+groupId)){
-								c.groups.remove(g);
-								ContactManagement.updateContactOnLocalDb(context, c);
-								break;
+					if(c != null){
+						if(c.groups != null){
+							Set<String> keySet = c.groups.keySet();
+							for(String g : keySet){
+								if(c.groups.get(g).equalsIgnoreCase(""+groupId)){
+									c.groups.remove(g);
+									ContactManagement.updateContactOnLocalDb(context, c);
+									break;
+								}
 							}
 						}
-					}
+				}
 				}
 			}
 			try {
@@ -2519,6 +2532,12 @@ public class ContactManagement {
 				reqEntity.addPart("remove_image", new StringBody(group.remove_image ? "1" : "0", Charset.forName("UTF-8")));
 			} catch (UnsupportedEncodingException e) {
 				e.printStackTrace();
+			}
+		    
+		    try {
+				reqEntity.addPart(ContactsProvider.CMetaData.GroupsMetaData.CONTACT_COUNT, new StringBody("" + group.contacts.size(), Charset.forName("UTF-8")));
+			} catch (UnsupportedEncodingException e) {
+				Log.e("editGroupOnRemoteDb(group, " + group.group_id + ")", "Failed adding contacts_count to entity.");
 			}
 		    
 		    if(group.contacts != null && !group.contacts.isEmpty()){
