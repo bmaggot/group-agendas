@@ -66,7 +66,7 @@ public class NavbarActivity extends FragmentActivity {
 
 	private ActionItem list_search;
 	private ActionItem go_date;
-	private ActionItem year;
+//	private ActionItem year;
 	private ActionItem month;
 	private ActionItem week;
 	private ActionItem day;
