@@ -2311,15 +2311,17 @@ public class ContactManagement {
 			removeContactFromLocalDbByInternalId(context, contact.getInternal_id());
 			Map<String, String> map = new HashMap<String, String>();
 			map = contact.groups;
-			for(int i=0;i<map.size();i++){
-				map.get(""+i);
-				Group g = getGroupFromLocalDb(context, Integer.valueOf(map.get(""+i)), 0);
-				if(g != null){
-					updateGroupOnLocalDb(context, g, contact.contact_id, false);
-					editGroupOnRemoteDb(context, g, contact.contact_id, false);
+			if(map != null){
+				for(int i=0;i<map.size();i++){
+					map.get(""+i);
+					Group g = getGroupFromLocalDb(context, Integer.valueOf(map.get(""+i)), 0);
+					if(g != null){
+						updateGroupOnLocalDb(context, g, contact.contact_id, false);
+						editGroupOnRemoteDb(context, g, contact.contact_id, false);
+					}
+					
+					
 				}
-				
-				
 			}
 			//removeContactFromLocalDb(context, contact.contact_id);
 			if(contact.birthdate!=null && contact.birthdate.length()==10){
