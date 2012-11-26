@@ -21,7 +21,6 @@ import android.widget.ImageView;
 
 import com.groupagendas.groupagenda.AgendaApplication;
 import com.groupagendas.groupagenda.R;
-import com.groupagendas.groupagenda.data.DataManagement;
 import com.groupagendas.groupagenda.error.report.Reporter;
 
 public class ImageLoader {
@@ -131,7 +130,7 @@ public class ImageLoader {
 			o2.inSampleSize = scale;
 			return BitmapFactory.decodeStream(new FileInputStream(f), null, o2);
 		} catch (FileNotFoundException e) {
-			Reporter.reportError(DataManagement.getContext(), this.getClass().toString(), Thread.currentThread().getStackTrace()[2].getMethodName().toString(), e.getMessage());
+			Reporter.reportError(mActivity, this.getClass().toString(), Thread.currentThread().getStackTrace()[2].getMethodName().toString(), e.getMessage());
 		}
 		return null;
 	}
@@ -185,7 +184,7 @@ public class ImageLoader {
 						synchronized (photosQueue.photosToLoad) {
 							photoToLoad = photosQueue.photosToLoad.pop();
 						}
-						Bitmap bmp = getBitmap(DataManagement.getContext(), photoToLoad.url);
+						Bitmap bmp = getBitmap(mActivity, photoToLoad.url);
 						if(saveToMemory) memoryCache.put(photoToLoad.url, bmp);
 						String tag = imageViews.get(photoToLoad.imageView);
 						if (tag != null && tag.equals(photoToLoad.url)) {
