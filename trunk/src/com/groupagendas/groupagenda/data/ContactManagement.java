@@ -702,12 +702,7 @@ public class ContactManagement {
 		if (id > 0)
 			cv.put(ContactsProvider.CMetaData.ContactsMetaData.C_ID, id);
 		else{
-			if(contact.contact_id > 0){
-				cv.put(ContactsProvider.CMetaData.ContactsMetaData.C_ID, contact.contact_id);
-			} else {
-				contact.contact_id = (int) Calendar.getInstance().getTimeInMillis();
-				cv.put(ContactsProvider.CMetaData.ContactsMetaData.C_ID, contact.contact_id);
-			}
+			cv.put(ContactsProvider.CMetaData.ContactsMetaData.C_ID, contact.contact_id);
 		}
 
 		cv.put(ContactsProvider.CMetaData.ContactsMetaData.NAME, contact.name);
@@ -766,7 +761,7 @@ public class ContactManagement {
 		}
 		
 
-		if (destination_id >= 0) {
+		if (destination_id > 0) {
 			success = true;
 			insertContactToLocalDb(context, contact, destination_id);
 			if (contact.birthdate != null && contact.birthdate.length() == 10) {
@@ -777,6 +772,22 @@ public class ContactManagement {
 				for (Group g : ContactEditActivity.selectedGroups) {
 					ContactManagement.updateGroupOnLocalDb(context, g, destination_id, true);
 					ContactManagement.editGroupOnRemoteDb(context, g, destination_id, true);
+				}
+				ContactEditActivity.selectedGroups = null;
+			}
+		} 
+		
+		if (destination_id == 0) {
+			success = true;
+			insertContactToLocalDb(context, contact, 0);
+			if (contact.birthdate != null && contact.birthdate.length() == 10) {
+				Birthday birthday = new Birthday(context, contact);
+				insertBirthdayToLocalDb(context, birthday, contact.contact_id);
+			}
+			if(ContactEditActivity.selectedGroups != null){
+				for (Group g : ContactEditActivity.selectedGroups) {
+					ContactManagement.updateGroupOnLocalDb(context, g, contact.contact_id, true);
+					ContactManagement.editGroupOnRemoteDb(context, g, contact.contact_id, true);
 				}
 				ContactEditActivity.selectedGroups = null;
 			}
