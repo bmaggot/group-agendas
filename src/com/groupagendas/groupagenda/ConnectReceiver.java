@@ -20,7 +20,6 @@ public class ConnectReceiver extends BroadcastReceiver {
 
 	private static Context context;
 
-	@SuppressWarnings("unchecked")
 	@Override
 	public void onReceive(Context context, Intent intent) {
 		ConnectReceiver.context = context;
