@@ -38,7 +38,7 @@ public class InvitedAdapter extends AbstractAdapter<Invited> {
 
 		TextView nameView = (TextView) view.findViewById(R.id.invited_fullname);
 		TextView statusView = (TextView) view.findViewById(R.id.invited_status);
-		TextView emailView = (TextView) view.findViewById(R.id.invited_available_email);
+//		TextView emailView = (TextView) view.findViewById(R.id.invited_available_email);
 		TextView addToContactView = (TextView) view.findViewById(R.id.add_to_contact);
 		
 		int statusBackground = 0; 
