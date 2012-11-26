@@ -7,7 +7,6 @@ import android.app.Dialog;
 import android.app.ListActivity;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.view.Menu;
@@ -20,11 +19,9 @@ import android.widget.Toast;
 
 import com.groupagendas.groupagenda.R;
 import com.groupagendas.groupagenda.data.ContactManagement;
-import com.groupagendas.groupagenda.data.DataManagement;
 
 public class GroupContactsActivity extends ListActivity {
 
-	private DataManagement dm;
 	private Intent intent;
 
 	private ArrayList<Contact> contacts;
@@ -49,8 +46,6 @@ public class GroupContactsActivity extends ListActivity {
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		this.setContentView(R.layout.group_contacts);
-
-		dm = DataManagement.getInstance(this);
 
 		intent = getIntent();
 		
