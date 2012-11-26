@@ -42,7 +42,8 @@ public class MapUtils {
 		for (String nameValuePair : nameValuePairs) {
 			String[] nameValue = nameValuePair.split("=");
 			try {
-				map.put(URLDecoder.decode(nameValue[0], "UTF-8"), nameValue.length > 1 ? URLDecoder.decode(nameValue[1], "UTF-8") : "");
+				if (nameValue.length > 1)
+					map.put(URLDecoder.decode(nameValue[0], "UTF-8"), nameValue.length > 1 ? URLDecoder.decode(nameValue[1], "UTF-8") : "");
 			} catch (UnsupportedEncodingException e) {
 				Reporter.reportError(context, MapUtils.class.toString(), Thread.currentThread().getStackTrace()[2].getMethodName().toString(), e.getMessage());
 				throw new RuntimeException("This method requires UTF-8 encoding support", e);
