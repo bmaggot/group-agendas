@@ -181,6 +181,11 @@ public class LoginActivity extends Activity {
 				finish();
 			} else {
 				error = DataManagement.getError();
+				
+				if ((error.equals("Failed getting error message.")) && (!DataManagement.networkAvailable)) {
+					error = getResources().getString(R.string.no_internet_conn);
+				}
+				
 				showDialog(0);
 			}
 
