@@ -4,7 +4,6 @@ import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -860,8 +859,7 @@ public class ContactManagement {
 	 * Executes a call to SQLite database and retrieving contact entry's data.
 	 * 
 	 * @author meska.lt@gmail.com
-	 * @param id
-	 *            � Contact's ID.
+	 * @param id - Contact's ID.
 	 * @return Contact object.
 	 * @since 2012-09-28
 	 * @version 0.1
@@ -913,8 +911,7 @@ public class ContactManagement {
 	 * it.
 	 * 
 	 * @author meska.lt@gmail.com
-	 * @param where
-	 *            � DOCUMENTATION PENDING
+	 * @param where - DOCUMENTATION PENDING
 	 * @return ArrayList of Contact objects got from response.
 	 * @since 2012-09-28
 	 * @version 0.1
@@ -1557,6 +1554,7 @@ public class ContactManagement {
 			cur = context.getContentResolver().query(uri, null, null, null, null);
 			if (cur.moveToFirst())
 				temp = new Group(context, cur);
+			cur.close();
 		} else {
 			if (created > 0) {
 				String where = ContactsProvider.CMetaData.GroupsMetaData.CREATED + "=" + created;
@@ -1564,6 +1562,7 @@ public class ContactManagement {
 						.query(ContactsProvider.CMetaData.GroupsMetaData.CONTENT_URI, null, where, null, null);
 				if (cur.moveToFirst())
 					temp = new Group(context, cur);
+				cur.close();
 			}
 		}
 
@@ -2648,6 +2647,7 @@ public class ContactManagement {
 					}
 					result.moveToNext();
 				}
+				result.close();
 			}
 			SaveDeletedData offlineDeletedGroups = new SaveDeletedData(context);
 			String offlineDeleted = offlineDeletedGroups.getDELETED_GROUPS();
