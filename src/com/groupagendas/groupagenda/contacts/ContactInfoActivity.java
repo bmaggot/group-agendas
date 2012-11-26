@@ -3,7 +3,6 @@ package com.groupagendas.groupagenda.contacts;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
-import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
@@ -24,9 +23,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.groupagendas.groupagenda.R;
-import com.groupagendas.groupagenda.SaveDeletedData;
 import com.groupagendas.groupagenda.data.ContactManagement;
-import com.groupagendas.groupagenda.data.DataManagement;
 import com.groupagendas.groupagenda.utils.DateTimeUtils;
 import com.groupagendas.groupagenda.utils.Utils;
 
