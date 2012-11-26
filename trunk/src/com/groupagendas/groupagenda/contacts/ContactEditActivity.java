@@ -109,7 +109,7 @@ public class ContactEditActivity extends Activity implements OnClickListener, On
 	private CountriesAdapter countriesAdapter;
 	private LinearLayout countrySpinnerBlock;
 	private int timezoneInUse;
-	
+
 	public static ArrayList<Group> selectedGroups;
 
 	@Override
@@ -127,7 +127,7 @@ public class ContactEditActivity extends Activity implements OnClickListener, On
 	public void onResume() {
 		super.onResume();
 
-//		setContentView(R.layout.contact_edit);
+		// setContentView(R.layout.contact_edit);
 		Intent intent = getIntent();
 		editedContact = new Contact();
 
@@ -284,7 +284,7 @@ public class ContactEditActivity extends Activity implements OnClickListener, On
 			i.putExtra(ContactsActivity.LIST_MODE_KEY, ContactsActivity.LIST_MODE_GROUPS);
 			Data.showSaveButtonInContactsForm = true;
 			// TODO Data.eventForSavingNewInvitedPersons = event;
-			startActivity(i);			
+			startActivity(i);
 			break;
 		}
 	}
@@ -297,7 +297,7 @@ public class ContactEditActivity extends Activity implements OnClickListener, On
 			birthdateCalendar.set(Calendar.MONTH, monthOfYear);
 			birthdateCalendar.set(Calendar.DAY_OF_MONTH, dayOfMonth);
 
-			birthdateView.setText(dtUtils.formatDate(birthdateCalendar.getTime()));
+			birthdateView.setText(dtUtils.formatDate(birthdateCalendar));
 		}
 	};
 
@@ -306,7 +306,13 @@ public class ContactEditActivity extends Activity implements OnClickListener, On
 		AlertDialog.Builder builder = new AlertDialog.Builder(this);
 		switch (id) {
 		case BIRTHDATE_DIALOG:
-			birthdateCalendar = Calendar.getInstance();
+			if ((editedContact.birthdate != null) && (!editedContact.birthdate.equalsIgnoreCase(""))
+					&& (!editedContact.birthdate.equalsIgnoreCase("null"))) {
+				birthdateCalendar = Utils
+						.stringToCalendar(this, editedContact.birthdate, DataManagement.ACCOUNT_BIRTHDATE_TIMESTAMP_FORMAT);
+			} else {
+				birthdateCalendar = Calendar.getInstance();
+			}
 			return new DatePickerDialog(this, mDateSetListener, birthdateCalendar.get(Calendar.YEAR),
 					birthdateCalendar.get(Calendar.MONTH), birthdateCalendar.get(Calendar.DAY_OF_MONTH));
 		case ERROR_DIALOG:
@@ -343,8 +349,8 @@ public class ContactEditActivity extends Activity implements OnClickListener, On
 
 							startActivityForResult(intent, PICK_FROM_CAMERA);
 						} catch (ActivityNotFoundException e) {
-							Reporter.reportError(getApplicationContext(), this.getClass().toString(), Thread.currentThread().getStackTrace()[2].getMethodName()
-									.toString(), e.getMessage());
+							Reporter.reportError(getApplicationContext(), this.getClass().toString(), Thread.currentThread()
+									.getStackTrace()[2].getMethodName().toString(), e.getMessage());
 						}
 					} else { // pick from file
 						Intent intent = new Intent();
@@ -392,8 +398,9 @@ public class ContactEditActivity extends Activity implements OnClickListener, On
 			if (!result.phone1.equals("null"))
 				phoneView.setText(result.phone1);
 
-			if (!result.birthdate.equals("")) {			
-				birthdateCalendar = Utils.stringToCalendar(getApplicationContext(), result.birthdate, DataManagement.ACCOUNT_BIRTHDATE_TIMESTAMP_FORMAT);
+			if (!result.birthdate.equals("")) {
+				birthdateCalendar = Utils.stringToCalendar(getApplicationContext(), result.birthdate,
+						DataManagement.ACCOUNT_BIRTHDATE_TIMESTAMP_FORMAT);
 				birthdateView.setText(dtUtils.formatDate(birthdateCalendar));
 			}
 
@@ -415,11 +422,11 @@ public class ContactEditActivity extends Activity implements OnClickListener, On
 
 			// TODO set visibility
 			if (!result.visibility.equals("null")) {
-				if (result.visibility.equals("n"))
+				if (result.visibility.equalsIgnoreCase("n"))
 					visibilitySpinner.setSelection(0, true);
-				else if (result.visibility.equals("f"))
+				else if (result.visibility.equalsIgnoreCase("f"))
 					visibilitySpinner.setSelection(1, true);
-				else if (result.visibility.equals("l"))
+				else if (result.visibility.equalsIgnoreCase("l"))
 					visibilitySpinner.setSelection(2, true);
 			}
 
@@ -456,8 +463,8 @@ public class ContactEditActivity extends Activity implements OnClickListener, On
 			temp = phoneView.getText().toString();
 			editedContact.phone1 = temp;
 			cv.put(ContactsProvider.CMetaData.ContactsMetaData.PHONE, temp);
-			
-			if(birthdateCalendar != null){
+
+			if (birthdateCalendar != null) {
 				editedContact.birthdate = dtUtils.formatDate(birthdateCalendar);
 				cv.put(ContactsProvider.CMetaData.ContactsMetaData.BIRTHDATE, editedContact.birthdate);
 			} else {
@@ -480,58 +487,58 @@ public class ContactEditActivity extends Activity implements OnClickListener, On
 			editedContact.zip = temp;
 			cv.put(ContactsProvider.CMetaData.ContactsMetaData.ZIP, temp);
 
-			temp = visibilityArray[visibilitySpinner.getSelectedItemPosition()];
-			editedContact.visibility = temp;
-			cv.put(ContactsProvider.CMetaData.ContactsMetaData.VISIBILITY, temp);
+			cv.put(ContactsProvider.CMetaData.ContactsMetaData.VISIBILITY, editedContact.visibility.toLowerCase());
 
 			// groups
 			Map<String, String> contactGroupsMap = new HashMap<String, String>();
-			if(editedContact.groups == null){
+			if (editedContact.groups == null) {
 				contactGroupsMap = new HashMap<String, String>();
 			} else {
-				if(editedContact.groups.isEmpty()){
+				if (editedContact.groups.isEmpty()) {
 					contactGroupsMap = new HashMap<String, String>();
 				}
 				contactGroupsMap = editedContact.groups;
 			}
-			if(selectedGroups != null){
+			if (selectedGroups != null) {
 				int i = 0;
 				Map<String, String> selectedGroupsMap = new HashMap<String, String>();
 				editedContact.groups = selectedGroupsMap;
-				if(contactGroupsMap != null && contactGroupsMap.isEmpty()){
+				if (contactGroupsMap != null && contactGroupsMap.isEmpty()) {
 					for (String s : contactGroupsMap.keySet()) {
-						if(!s.contentEquals("")){
-							Group g = ContactManagement.getGroupFromLocalDb(getApplicationContext(), Integer.valueOf(contactGroupsMap.get(s)), 0);
-							if(g != null){
+						if (!s.contentEquals("")) {
+							Group g = ContactManagement.getGroupFromLocalDb(getApplicationContext(),
+									Integer.valueOf(contactGroupsMap.get(s)), 0);
+							if (g != null) {
 								ContactManagement.updateGroupOnLocalDb(getApplicationContext(), g, editedContact.contact_id, false);
 								ContactManagement.editGroupOnRemoteDb(getApplicationContext(), g, editedContact.contact_id, false);
 							}
 						}
 					}
 				}
-				if(contactGroupsMap != null && !contactGroupsMap.isEmpty()){
+				if (contactGroupsMap != null && !contactGroupsMap.isEmpty()) {
 					for (String s : contactGroupsMap.keySet()) {
-						if(!s.contentEquals("")){
-							Group g = ContactManagement.getGroupFromLocalDb(getApplicationContext(), Integer.valueOf(contactGroupsMap.get(s)), 0);
-							if(g != null){
+						if (!s.contentEquals("")) {
+							Group g = ContactManagement.getGroupFromLocalDb(getApplicationContext(),
+									Integer.valueOf(contactGroupsMap.get(s)), 0);
+							if (g != null) {
 								ContactManagement.updateGroupOnLocalDb(getApplicationContext(), g, editedContact.contact_id, false);
 								ContactManagement.editGroupOnRemoteDb(getApplicationContext(), g, editedContact.contact_id, false);
 							}
 						}
 					}
 				}
-				if(!selectedGroups.isEmpty()){
+				if (!selectedGroups.isEmpty()) {
 					for (Group g : selectedGroups) {
-						editedContact.groups.put(""+i, ""+g.group_id);
+						editedContact.groups.put("" + i, "" + g.group_id);
 						ContactManagement.updateGroupOnLocalDb(getApplicationContext(), g, editedContact.contact_id, true);
 						ContactManagement.editGroupOnRemoteDb(getApplicationContext(), g, editedContact.contact_id, true);
 						i++;
 					}
 				}
-				
+
 				selectedGroups = null;
-			} 
-			
+			}
+
 			cv.put(ContactsProvider.CMetaData.ContactsMetaData.GROUPS, MapUtils.mapToString(getApplicationContext(), editedContact.groups));
 
 			// image
@@ -549,16 +556,16 @@ public class ContactEditActivity extends Activity implements OnClickListener, On
 			if (check) {
 				Uri uri = Uri.parse(ContactsProvider.CMetaData.ContactsMetaData.CONTENT_URI + "/" + editedContact.contact_id);
 				getContentResolver().update(uri, cv, null, null);
-				editedContact.modified = Calendar.getInstance().getTimeInMillis();
+				editedContact.modified = Calendar.getInstance().getTimeInMillis() / 1000;
 
 				check = ContactManagement.editContactOnRemoteDb(getApplicationContext(), editedContact);
 
-//				if (check) {
-					ContactManagement.updateContactOnLocalDb(ContactEditActivity.this, editedContact);
-					if(!editedContact.birthdate.contentEquals("")){
-						ContactManagement.updateBirthdayOnLocalDb(ContactEditActivity.this, editedContact);
-					}
-//				}
+				// if (check) {
+				ContactManagement.updateContactOnLocalDb(ContactEditActivity.this, editedContact);
+				if (!editedContact.birthdate.contentEquals("")) {
+					ContactManagement.updateBirthdayOnLocalDb(ContactEditActivity.this, editedContact);
+				}
+				// }
 			}
 
 			return check;
@@ -566,12 +573,12 @@ public class ContactEditActivity extends Activity implements OnClickListener, On
 
 		@Override
 		protected void onPostExecute(Boolean results) {
-//			if (results) {
-				ContactEditActivity.this.finish();
-//			} else {
-//				ERROR_STRING = DataManagement.getError();
-//				showDialog(ERROR_DIALOG);
-//			}
+			// if (results) {
+			ContactEditActivity.this.finish();
+			// } else {
+			// ERROR_STRING = DataManagement.getError();
+			// showDialog(ERROR_DIALOG);
+			// }
 			super.onPostExecute(results);
 		}
 
@@ -597,7 +604,7 @@ public class ContactEditActivity extends Activity implements OnClickListener, On
 			temp = lastnameView.getText().toString();
 			editedContact.lastname = temp;
 			cv.put(ContactsProvider.CMetaData.ContactsMetaData.LASTNAME, temp);
-			
+
 			editedContact.contact_id = (int) Calendar.getInstance().getTimeInMillis();
 
 			temp = emailView.getText().toString();
@@ -608,10 +615,18 @@ public class ContactEditActivity extends Activity implements OnClickListener, On
 			editedContact.phone1 = temp;
 			cv.put(ContactsProvider.CMetaData.ContactsMetaData.PHONE, temp);
 
-			temp = birthdateView.getText().toString();
-			editedContact.birthdate = temp;
-			cv.put(ContactsProvider.CMetaData.ContactsMetaData.BIRTHDATE, temp);
+			// temp = birthdateView.getText().toString();
+			// editedContact.birthdate = temp;
+			// cv.put(ContactsProvider.CMetaData.ContactsMetaData.BIRTHDATE,
+			// temp);
 
+			if (birthdateCalendar != null) {
+				editedContact.birthdate = dtUtils.formatDate(birthdateCalendar);
+				cv.put(ContactsProvider.CMetaData.ContactsMetaData.BIRTHDATE, editedContact.birthdate);
+			} else {
+				editedContact.birthdate = "";
+				cv.put(ContactsProvider.CMetaData.ContactsMetaData.BIRTHDATE, editedContact.birthdate);
+			}
 			editedContact.country = countriesList.get(timezoneInUse).country_code;
 			cv.put(ContactsProvider.CMetaData.ContactsMetaData.COUNTRY, editedContact.country);
 
@@ -627,24 +642,23 @@ public class ContactEditActivity extends Activity implements OnClickListener, On
 			editedContact.zip = temp;
 			cv.put(ContactsProvider.CMetaData.ContactsMetaData.ZIP, temp);
 
-			temp = visibilityArray[visibilitySpinner.getSelectedItemPosition()];
-			editedContact.visibility = temp;
-			cv.put(ContactsProvider.CMetaData.ContactsMetaData.VISIBILITY, temp);
-			
-			//created modified times
-			editedContact.created = Calendar.getInstance().getTimeInMillis();
+			cv.put(ContactsProvider.CMetaData.ContactsMetaData.VISIBILITY, editedContact.visibility.toLowerCase());
+
+			// created modified times
+			editedContact.created = Calendar.getInstance().getTimeInMillis() / 1000;
 			cv.put(ContactsProvider.CMetaData.ContactsMetaData.CREATED, editedContact.created);
 			editedContact.modified = editedContact.created;
 			cv.put(ContactsProvider.CMetaData.ContactsMetaData.MODIFIED, editedContact.modified);
 
 			// groups
-			if(selectedGroups != null){
+			if (selectedGroups != null) {
 				int i = 0;
 				Map<String, String> map = new HashMap<String, String>();
 				editedContact.groups = map;
 				for (Group g : selectedGroups) {
-					editedContact.groups.put(""+i, ""+g.group_id);
-//					ContactManagement.updateGroupOnLocalDb(getApplicationContext(), g, editedContact.contact_id);
+					editedContact.groups.put("" + i, "" + g.group_id);
+					// ContactManagement.updateGroupOnLocalDb(getApplicationContext(),
+					// g, editedContact.contact_id);
 					i++;
 				}
 			}
@@ -723,7 +737,7 @@ public class ContactEditActivity extends Activity implements OnClickListener, On
 			switch (clicked) {
 			case DialogInterface.BUTTON_POSITIVE:
 				editedContact.groups = new HashMap<String, String>();
-				if(ids != null){
+				if (ids != null) {
 					for (int i = 0, l = ids.length; i < l; i++) {
 						if (selections[i]) {
 							editedContact.groups.put(String.valueOf(i), String.valueOf(ids[i]));
@@ -850,7 +864,7 @@ public class ContactEditActivity extends Activity implements OnClickListener, On
 	public void onItemSelected(AdapterView<?> parent, View view, int pos, long id) {
 		switch (parent.getId()) {
 		case R.id.visibility:
-			editedContact.visibility = visibilityArray[pos];
+			editedContact.visibility = "" + visibilityArray[pos].charAt(0);
 			break;
 		}
 	}
