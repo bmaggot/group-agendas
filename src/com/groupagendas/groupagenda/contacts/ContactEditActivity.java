@@ -500,19 +500,23 @@ public class ContactEditActivity extends Activity implements OnClickListener, On
 				editedContact.groups = selectedGroupsMap;
 				if(contactGroupsMap != null && contactGroupsMap.isEmpty()){
 					for (String s : contactGroupsMap.keySet()) {
-						Group g = ContactManagement.getGroupFromLocalDb(getApplicationContext(), Integer.valueOf(contactGroupsMap.get(s)), 0);
-						if(g != null){
-							ContactManagement.updateGroupOnLocalDb(getApplicationContext(), g, editedContact.contact_id, false);
-							ContactManagement.editGroupOnRemoteDb(getApplicationContext(), g, editedContact.contact_id, false);
+						if(!s.contentEquals("")){
+							Group g = ContactManagement.getGroupFromLocalDb(getApplicationContext(), Integer.valueOf(contactGroupsMap.get(s)), 0);
+							if(g != null){
+								ContactManagement.updateGroupOnLocalDb(getApplicationContext(), g, editedContact.contact_id, false);
+								ContactManagement.editGroupOnRemoteDb(getApplicationContext(), g, editedContact.contact_id, false);
+							}
 						}
 					}
 				}
 				if(contactGroupsMap != null && !contactGroupsMap.isEmpty()){
 					for (String s : contactGroupsMap.keySet()) {
-						Group g = ContactManagement.getGroupFromLocalDb(getApplicationContext(), Integer.valueOf(contactGroupsMap.get(s)), 0);
-						if(g != null){
-							ContactManagement.updateGroupOnLocalDb(getApplicationContext(), g, editedContact.contact_id, false);
-							ContactManagement.editGroupOnRemoteDb(getApplicationContext(), g, editedContact.contact_id, false);
+						if(!s.contentEquals("")){
+							Group g = ContactManagement.getGroupFromLocalDb(getApplicationContext(), Integer.valueOf(contactGroupsMap.get(s)), 0);
+							if(g != null){
+								ContactManagement.updateGroupOnLocalDb(getApplicationContext(), g, editedContact.contact_id, false);
+								ContactManagement.editGroupOnRemoteDb(getApplicationContext(), g, editedContact.contact_id, false);
+							}
 						}
 					}
 				}
