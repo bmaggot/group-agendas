@@ -202,10 +202,10 @@
     <string name="contact_import_button">Importeer</string>
     <string name="contact_import_button_clear_auth">verwijder login gegevens</string>
     <string name="contact_import_dialog_welcome_message">Welkom bij contacten importeren. Kies volgende taak:</string>
-    <string name="contact_import_dialog_launching_auth">De lanceren van authenticatie venster ... wachten.</string>
-    <string name="contact_import_dialog_starting_gimp">Contacten importeren uit Gmail ... wachten.</string>
-    <string name="contact_import_dialog_clearing_auth">Afsluiten proces ... wachten.</string>
-    <string name="contact_import_dialog_finished_gimp">ontactpersonen uit Gmail zijn Geïmporteerd... Druk op knop Terug.</string>
+    <string name="contact_import_dialog_launching_auth">De lanceren van authenticatie venster … wachten.</string>
+    <string name="contact_import_dialog_starting_gimp">Contacten importeren uit Gmail … wachten.</string>
+    <string name="contact_import_dialog_clearing_auth">Afsluiten proces … wachten.</string>
+    <string name="contact_import_dialog_finished_gimp">ontactpersonen uit Gmail zijn Geïmporteerd… Druk op knop Terug.</string>
     <string name="contact_import_dialog_gmail_title">Gmail importeren</string>
     <string name="contact_import_placeholder_phone">Mobiele telefoon</string>
     <string name="contact_import_placeholder_gmail">Gmail account</string>
@@ -266,5 +266,7 @@
     <string name="delete_message_title">verwijder bericht</string>
     <string name="delete_message_confirmation">Weet u het zeker dat u het bericht wilt verwijderen?</string>
     <string name="new_group">New group</string>
+    <string name="failed_getting_error">Failed getting error message.</string>
+    <string name="no_internet_conn">There is no internet connection.</string>
     
 </resources>
