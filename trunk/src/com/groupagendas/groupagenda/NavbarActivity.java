@@ -7,11 +7,13 @@ import java.util.Locale;
 import android.annotation.SuppressLint;
 import android.app.Dialog;
 import android.app.ProgressDialog;
+import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.content.res.Configuration;
 import android.content.res.Resources;
+import android.database.Cursor;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -29,6 +31,7 @@ import android.widget.FrameLayout;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.RelativeLayout;
+import android.widget.TextView;
 import az.mecid.android.ActionItem;
 import az.mecid.android.QuickAction;
 
@@ -47,6 +50,8 @@ import com.groupagendas.groupagenda.data.ContactManagement;
 import com.groupagendas.groupagenda.data.DataManagement;
 import com.groupagendas.groupagenda.data.EventManagement;
 import com.groupagendas.groupagenda.events.EventsActivity;
+import com.groupagendas.groupagenda.events.EventsProvider;
+import com.groupagendas.groupagenda.events.Invited;
 import com.groupagendas.groupagenda.events.NewEventActivity;
 import com.groupagendas.groupagenda.settings.CalendarSettingsFragment;
 import com.groupagendas.groupagenda.utils.LanguageCodeGetter;
@@ -160,6 +165,21 @@ public class NavbarActivity extends FragmentActivity {
 		radioButton.setChecked(false);
 		radioButton
 				.setOnCheckedChangeListener(btnNavBarOnCheckedChangeListener);
+		
+		// badges
+		TextView logo = (TextView) findViewById(R.id.textLogo);
+		
+		ContentResolver cr = getApplicationContext().getContentResolver();
+		String where = EventsProvider.EMetaData.EventsMetaData.STATUS + " = " + Invited.PENDING 
+				+ " AND " + EventsProvider.EMetaData.EventsMetaData.TIME_END_UTC_MILLISECONDS + " > strftime('%s000', 'now')" ;
+		Cursor cur = cr.query(EventsProvider.EMetaData.EventsMetaData.CONTENT_URI, null, where, null, null);
+		int new_invites = cur.getCount();
+		
+		if(new_invites > 0){
+			logo.setVisibility(View.VISIBLE);
+			logo.setText(""+new_invites);
+		}
+		// end badges
 
 		if (dataLoaded)
 			switchToView();
