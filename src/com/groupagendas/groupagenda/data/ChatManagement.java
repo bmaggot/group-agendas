@@ -512,7 +512,7 @@ public class ChatManagement {
 		Uri uri = ChatProvider.CMMetaData.ChatMetaData.CONTENT_URI;
 		String projection[] = null;
 		Account account = new Account(context);
-		String selection = (ChatProvider.CMMetaData.ChatMetaData.CREATED +">"+ account.getLastTimeConnectedToWeb());
+		String selection = (ChatProvider.CMMetaData.ChatMetaData.MODIFIED +">"+ account.getLastTimeConnectedToWeb());
 		Cursor cur = context.getContentResolver().query(uri, projection, selection, null, null);
 		if(cur.moveToFirst()){
 			do{
