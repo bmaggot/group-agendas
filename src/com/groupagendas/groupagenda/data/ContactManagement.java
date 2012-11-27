@@ -1147,6 +1147,12 @@ public class ContactManagement {
 			int target = -1;
 			int max_key = 0;
 			map = group.contacts;
+			
+			if (map == null) {
+				map = new HashMap<String, String>();
+			}
+			
+			
 			for (String s : map.keySet()) {
 				int temp = Integer.parseInt(s);
 				if(temp > max_key){
@@ -1376,6 +1382,11 @@ public class ContactManagement {
 			int target = -1;
 			int max_key = 0;
 			map = group.contacts;
+			
+			if (map == null) {
+				map = new HashMap<String, String>();
+			}			
+			
 			for (String s : map.keySet()) {
 				int temp2 = Integer.parseInt(s);
 				if(temp2 > max_key){
