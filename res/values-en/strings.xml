@@ -29,11 +29,11 @@
     <string name="firstname">Firstname</string>
     <string name="lastname">Lastname</string>
     <string name="email">Email</string>
-    <string name="birthday">Birth date</string>
+    <string name="birthday">Birthday</string>
     <string name="city">City</string>
     <string name="get_contacts">Get contacts list…</string>
     <string name="get_groups">Getting groups list…</string>
-    <string name="phone">Phone number</string>
+    <string name="phone">Phone</string>
     <string name="country">Country</string>
     <string name="street">Street</string>
     <string name="zip">ZIP code</string>
@@ -268,5 +268,6 @@
     <string name="new_group">New group</string>
     <string name="failed_getting_error">Failed getting error message.</string>
     <string name="no_internet_conn">There is no internet connection.</string>
+    <string name="agenda_visibility">Agenda visibility</string>
     
 </resources>

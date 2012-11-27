@@ -33,7 +33,7 @@
     <string name="city">Woonplaats</string>
     <string name="get_contacts">Laden contacten…</string>
     <string name="get_groups">laden groepen…</string>
-    <string name="phone">Telefoonnummer</string>
+    <string name="phone">Telefoon</string>
     <string name="country">Land</string>
     <string name="street">Straat</string>
     <string name="zip">Postcode</string>
@@ -268,5 +268,6 @@
     <string name="new_group">New group</string>
     <string name="failed_getting_error">Failed getting error message.</string>
     <string name="no_internet_conn">There is no internet connection.</string>
+    <string name="agenda_visibility">Agenda visibility</string>
     
 </resources>
