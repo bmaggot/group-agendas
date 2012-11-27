@@ -227,15 +227,16 @@ public class ContactsActivity extends ListActivity implements OnCheckedChangeLis
 						if (selectedContact != null) {
 							EventActivity.selectedContacts = selectedContact;
 						}
+						ContactsActivity.this.finish();
 					} else if (LIST_MODE == LIST_MODE_GROUPS) {
 						selectedGroup = gAdapter.getSelected();
 						if (selectedGroup != null) {
 							ContactEditActivity.selectedGroups = selectedGroup;
 						}
-
+						ContactsActivity.this.finish();
 					}
 
-					finish();
+//					finish();
 				}
 			});
 
@@ -386,6 +387,9 @@ public class ContactsActivity extends ListActivity implements OnCheckedChangeLis
 	@Override
 	protected void onDestroy() {
 		super.onDestroy();
+		editor.putInt(TASK_MODE_KEY, TASK_MODE_LISTING);
+		editor.putInt(LIST_MODE_KEY, LIST_MODE_CONTACTS);
+		editor.commit();
 		searchView.removeTextChangedListener(filterTextWatcher);
 	}
 
