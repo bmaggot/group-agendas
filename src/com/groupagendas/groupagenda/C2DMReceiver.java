@@ -109,16 +109,18 @@ public class C2DMReceiver extends C2DMBaseReceiver {
 						context.getContentResolver().update(uri, cv, null, null);
 						
 						Event event = EventManagement.getEventFromLocalDb(context, Integer.parseInt(rel_id), EventManagement.ID_EXTERNAL);
-						event.setMessage_count(event.getMessage_count() + 1);
-						EventManagement.updateEventInLocalDb(context, event);
-
-						if (EventManagement.getEventFromLocalDb(context, Integer.parseInt(rel_id), EventManagement.ID_EXTERNAL) != null) {
-							refreshChatMessages(rel_id, context);
-							showNotification(context, data, rel_id);
-						} else {
-							Account account = new Account(context);
-							DataManagement.synchronizeWithServer(context, null, account.getLatestUpdateUnixTimestamp());
-							refreshChatMessages(rel_id, context);
+						if(event != null){
+							event.setMessage_count(event.getMessage_count() + 1);
+							EventManagement.updateEventInLocalDb(context, event);
+	
+							if (EventManagement.getEventFromLocalDb(context, Integer.parseInt(rel_id), EventManagement.ID_EXTERNAL) != null) {
+								refreshChatMessages(rel_id, context);
+								showNotification(context, data, rel_id);
+							} else {
+								Account account = new Account(context);
+								DataManagement.synchronizeWithServer(context, null, account.getLatestUpdateUnixTimestamp());
+								refreshChatMessages(rel_id, context);
+							}
 						}
 					} else if (receiveIntent.hasExtra(REL_ID) && !receiveIntent.getStringExtra(REL_ID).equals("")) {
 						rel_id = receiveIntent.getStringExtra(REL_ID);
