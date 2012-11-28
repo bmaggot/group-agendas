@@ -7,10 +7,11 @@ import java.util.Locale;
 import android.annotation.SuppressLint;
 import android.app.Dialog;
 import android.app.ProgressDialog;
+import android.content.BroadcastReceiver;
 import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
-import android.content.pm.ActivityInfo;
+import android.content.IntentFilter;
 import android.content.res.Configuration;
 import android.content.res.Resources;
 import android.database.Cursor;
@@ -19,6 +20,7 @@ import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentTransaction;
+import android.support.v4.content.LocalBroadcastManager;
 import android.util.DisplayMetrics;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
@@ -51,6 +53,7 @@ import com.groupagendas.groupagenda.data.DataManagement;
 import com.groupagendas.groupagenda.data.EventManagement;
 import com.groupagendas.groupagenda.events.EventsActivity;
 import com.groupagendas.groupagenda.events.EventsProvider;
+import com.groupagendas.groupagenda.events.EventsProvider.EMetaData;
 import com.groupagendas.groupagenda.events.Invited;
 import com.groupagendas.groupagenda.events.NewEventActivity;
 import com.groupagendas.groupagenda.settings.CalendarSettingsFragment;
@@ -137,6 +140,7 @@ public class NavbarActivity extends FragmentActivity {
 
 	@Override
 	public void onResume() {
+		LocalBroadcastManager.getInstance(this).registerReceiver(mMessageReceiver, new IntentFilter(C2DMReceiver.REFRESH_CHAT_MESSAGES_BADGE));
 		calendarContainer = (FrameLayout) findViewById(R.id.calendarContainer);
 		
 		super.onResume();
@@ -167,6 +171,16 @@ public class NavbarActivity extends FragmentActivity {
 				.setOnCheckedChangeListener(btnNavBarOnCheckedChangeListener);
 		
 		// badges
+		newEventBadge();
+		newMessageBadge();
+		// end badges
+		
+		if (dataLoaded)
+			switchToView();
+
+	}
+	
+	private void newEventBadge(){
 		TextView logo = (TextView) findViewById(R.id.textLogo);
 		
 		ContentResolver cr = getApplicationContext().getContentResolver();
@@ -178,12 +192,32 @@ public class NavbarActivity extends FragmentActivity {
 		if(new_invites > 0){
 			logo.setVisibility(View.VISIBLE);
 			logo.setText(""+new_invites);
+		} else {
+			logo.setVisibility(View.GONE); 
 		}
-		// end badges
-
-		if (dataLoaded)
-			switchToView();
-
+		
+		cur.close();
+	}
+	
+	
+	private void newMessageBadge(){
+		TextView message = (TextView) findViewById(R.id.textChat);
+		
+		ContentResolver cr = getApplicationContext().getContentResolver();
+		String[] projection = {"SUM("+ EventsProvider.EMetaData.EventsMetaData.NEW_MESSAGES_COUNT +") AS `sum`"};
+		String where2 = EMetaData.EventsMetaData.MESSAGES_COUNT +" > 0 AND "+ EMetaData.EventsMetaData.STATUS +" != "+ Invited.REJECTED;
+		Cursor cur2 = cr.query(EventsProvider.EMetaData.EventsMetaData.CONTENT_URI, projection, where2, null, null);
+		cur2.moveToFirst();
+		int new_messages = cur2.getInt(cur2.getColumnIndex("sum"));
+		
+		if(new_messages > 0){
+			message.setVisibility(View.VISIBLE);
+			message.setText(""+new_messages);
+		} else {
+			message.setVisibility(View.GONE);
+		}
+		
+		cur2.close();
 	}
 
 	@Override
@@ -871,4 +905,12 @@ public class NavbarActivity extends FragmentActivity {
 
 	}
 
+	private BroadcastReceiver mMessageReceiver = new BroadcastReceiver() {
+		@Override
+		public void onReceive(Context context, Intent intent) {
+			newEventBadge();
+			newMessageBadge();
+		}
+	};
+	
 }
