@@ -43,15 +43,12 @@ public class ConnectReceiver extends BroadcastReceiver {
 				new ExecuteOfflineChats().execute();
 			}
 		} else {
-			// reikes account'a long'a uzsetinti dabartini momenta
-
 			account.setLastTimeConnectedToWeb(Calendar.getInstance());
 			DataManagement.networkAvailable = false;
 			Log.i("app", "No connection to network!");
 		}
 
 	}
-	//sita klasse exucutina metodus, kurie update visus duomenys
 	private class ExecuteOfflineChats extends AsyncTask<Void, Void, Void>{
 
 		@Override
