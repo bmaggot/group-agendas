@@ -3,14 +3,17 @@ package com.groupagendas.groupagenda;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
+import android.preference.PreferenceManager;
+import android.provider.Contacts.Settings;
+import android.provider.Contacts.SettingsColumns;
 
 public class SaveDeletedData {
 	SharedPreferences prefs;
 	Editor prefsEditor;
-
+	
 	public SaveDeletedData(Context context) {
 		prefs = context.getSharedPreferences("SAVE_DELETED_DATA", 0);
-		prefsEditor = prefs.edit();
+	    prefsEditor = prefs.edit();
 	}
 	
 	public static class SDMetaData {
@@ -42,9 +45,16 @@ public class SaveDeletedData {
 			
 		prefsEditor.putString(columnName, entry);
 		prefsEditor.commit();
-		
 	}
+	
+	public void clear(){
+	    SharedPreferences.Editor editor = prefs.edit();
 
+	    editor.clear();
+	    editor.commit();	
+	}
+	
+	
 	public String getDELETED_EVENTS() {
 		return prefs.getString(SaveDeletedData.SDMetaData.DELETED_EVENTS, "");
 	}
@@ -54,5 +64,7 @@ public class SaveDeletedData {
 	public String getDELETED_GROUPS() {
 		return prefs.getString(SaveDeletedData.SDMetaData.DELETED_GROUPS, "");
 	}
+	
+	
 	
 }
