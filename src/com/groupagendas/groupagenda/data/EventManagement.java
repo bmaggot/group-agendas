@@ -1874,7 +1874,6 @@ public class EventManagement {
 	
 	public static void uploadOfflineEvents (Context context){ 
 	Account account = new Account(context);
-	System.out.println("UPLOADING");
 	String projection[] = null;
 	Uri uri = EventsProvider.EMetaData.EventsMetaData.CONTENT_URI;
 	String where = (EventsProvider.EMetaData.EventsMetaData.MODIFIED_UTC_MILLISECONDS +">"+ account.getLastTimeConnectedToWeb());
