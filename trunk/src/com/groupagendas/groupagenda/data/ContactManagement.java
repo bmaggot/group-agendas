@@ -25,9 +25,11 @@ import org.json.JSONObject;
 
 import android.content.ContentValues;
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteException;
 import android.net.Uri;
+import android.preference.PreferenceManager;
 import android.util.Log;
 
 import com.groupagendas.groupagenda.SaveDeletedData;
@@ -2359,8 +2361,10 @@ public class ContactManagement {
 		    	int id = Integer.parseInt(ids[i]);
 		    	removeContactFromRemoteDb(context, id);
 		    	}
+
 		    }
-			result.close();
+		    offlineDeletedContacts.clear();
+		    result.close();
 		}
 		
 		public static boolean removeGroupFromRemoteDb(Context context, int groupId){
@@ -2628,6 +2632,7 @@ public class ContactManagement {
 		    	removeGroupFromRemoteDb(context, id);
 		    	}
 		    }
+		    offlineDeletedGroups.clear();
 			result.close();
 		}
 		

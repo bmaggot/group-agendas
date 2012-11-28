@@ -1907,6 +1907,7 @@ public class EventManagement {
     }
     
     }
+    offlineDeletedEvents.clear();
 	result.close();
 		}
 }
