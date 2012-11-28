@@ -596,7 +596,6 @@ public class NavbarActivity extends FragmentActivity {
 
 		@Override
 		protected void onPreExecute() {
-			setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_NOSENSOR);
 
 			// Create a new progress dialog
 			progressDialog = new ProgressDialog(NavbarActivity.this);
@@ -730,7 +729,6 @@ public class NavbarActivity extends FragmentActivity {
 			progressDialog.dismiss();
 			dataLoaded = true;
 			switchToView();
-			setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_SENSOR);
 			
 			setAlarmsToAllEvents(); 
 		}
@@ -749,7 +747,6 @@ public class NavbarActivity extends FragmentActivity {
 			acc.setLatestUpdateTime(Calendar.getInstance());
 			dataLoaded = true;
 			switchToView();
-			setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_SENSOR);
 			
 			setAlarmsToAllEvents(); 
 		}
