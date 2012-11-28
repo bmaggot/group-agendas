@@ -210,6 +210,7 @@ public class NativeCalendarReader {
 //		    Calendar calendar = sdf.getCalendar();
 //		    calendar.setTime(date);
 			
+			@SuppressWarnings("unused")
 			TimeZone timeZone = TimeZone.getTimeZone(account.getTimezone());
 			Calendar startCalendar = Calendar.getInstance();			
 			startCalendar.setTimeInMillis(Long.valueOf(cursor.getString(3)));
