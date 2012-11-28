@@ -41,6 +41,7 @@ public class C2DMReceiver extends C2DMBaseReceiver {
 	public static String CONTACT = "contact";
 	public static String REFRESH_MESSAGES_LIST = "refreshMessagesList";
 	public static String REFRESH_CHAT_THREAD_LIST = "refreshChatThreadList";
+	public static String REFRESH_CHAT_MESSAGES_BADGE = "refreshChatMessagesBadge";
 
 	public C2DMReceiver() {
 		super(DataManagement.PROJECT_ID);
@@ -151,6 +152,8 @@ public class C2DMReceiver extends C2DMBaseReceiver {
 		LocalBroadcastManager.getInstance(context).sendBroadcast(intent);
 		Intent intent2 = new Intent(REFRESH_CHAT_THREAD_LIST);
 		LocalBroadcastManager.getInstance(context).sendBroadcast(intent2);
+		Intent intent3 = new Intent(REFRESH_CHAT_MESSAGES_BADGE);
+		LocalBroadcastManager.getInstance(context).sendBroadcast(intent3);
 	}
 
 	public static void showNotification(Context context, String data, String rel_id) {
