@@ -80,6 +80,7 @@ public class ContactEditActivity extends Activity implements OnClickListener, On
 	private ImageView imageView;
 //	private CheckBox removeImage;
 
+	private TextView titleView;
 	private EditText nameView;
 	private EditText lastnameView;
 	private EditText emailView;
@@ -89,7 +90,7 @@ public class ContactEditActivity extends Activity implements OnClickListener, On
 	private LinearLayout birthdateButton;
 	private Calendar birthdateCalendar;
 
-	private EditText countryView;
+	private TextView countryView;
 
 	private EditText cityView;
 	private EditText streetView;
@@ -149,6 +150,7 @@ public class ContactEditActivity extends Activity implements OnClickListener, On
 		nameView = (EditText) findViewById(R.id.name);
 		pb = findViewById(R.id.progress);
 		lastnameView = (EditText) findViewById(R.id.lastname);
+		titleView = (TextView) findViewById(R.id.title);
 		emailView = (EditText) findViewById(R.id.email);
 		phoneView = (EditText) findViewById(R.id.phone);
 		visibilityArray = getResources().getStringArray(R.array.visibility_labels);
@@ -204,7 +206,7 @@ public class ContactEditActivity extends Activity implements OnClickListener, On
 		}
 
 		countrySpinnerBlock = (LinearLayout) findViewById(R.id.countrySpinnerBlock);
-		countryView = (EditText) findViewById(R.id.countryView);
+		countryView = (TextView) findViewById(R.id.countryView);
 		countrySpinnerBlock.setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View arg0) {
@@ -368,6 +370,7 @@ public class ContactEditActivity extends Activity implements OnClickListener, On
 	}
 
 	class GetContactTask extends AsyncTask<Integer, Contact, Contact> {
+
 		@Override
 		protected void onPreExecute() {
 			pb.setVisibility(View.VISIBLE);
@@ -396,8 +399,10 @@ public class ContactEditActivity extends Activity implements OnClickListener, On
 			}
 
 			nameView.setText(result.name);
-			if (result.lastname != null && !result.lastname.equals("null"))
+			if (result.lastname != null && !result.lastname.equals("null")) {
 				lastnameView.setText(result.lastname);
+				titleView.setText(result.lastname);
+			}
 			if (result.email != null && !result.email.equals("null"))
 				emailView.setText(result.email);
 			if (!result.phone1.equals("null"))
@@ -571,7 +576,7 @@ public class ContactEditActivity extends Activity implements OnClickListener, On
 			if (check) {
 				Uri uri = Uri.parse(ContactsProvider.CMetaData.ContactsMetaData.CONTENT_URI + "/" + editedContact.contact_id);
 				getContentResolver().update(uri, cv, null, null);
-				editedContact.modified = Calendar.getInstance().getTimeInMillis() / 1000;
+				editedContact.modified = Calendar.getInstance().getTimeInMillis();
 
 				check = ContactManagement.editContactOnRemoteDb(getApplicationContext(), editedContact);
 
@@ -670,7 +675,7 @@ public class ContactEditActivity extends Activity implements OnClickListener, On
 			cv.put(ContactsProvider.CMetaData.ContactsMetaData.VISIBILITY, editedContact.visibility.toLowerCase());
 
 			// created modified times
-			editedContact.created = Calendar.getInstance().getTimeInMillis() / 1000;
+			editedContact.created = Calendar.getInstance().getTimeInMillis();
 			cv.put(ContactsProvider.CMetaData.ContactsMetaData.CREATED, editedContact.created);
 			editedContact.modified = editedContact.created;
 			cv.put(ContactsProvider.CMetaData.ContactsMetaData.MODIFIED, editedContact.modified);
