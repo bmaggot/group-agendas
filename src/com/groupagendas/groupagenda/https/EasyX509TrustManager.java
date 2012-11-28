@@ -12,7 +12,8 @@ import javax.net.ssl.X509TrustManager;
 
 public class EasyX509TrustManager implements X509TrustManager {
  
-    private X509TrustManager standardTrustManager = null;
+    @SuppressWarnings("unused")
+	private X509TrustManager standardTrustManager = null;
  
     /**
      * Constructor for EasyX509TrustManager.
