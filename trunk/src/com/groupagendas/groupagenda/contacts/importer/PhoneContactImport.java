@@ -6,6 +6,7 @@ import android.database.Cursor;
 import android.provider.ContactsContract;
 import android.provider.ContactsContract.CommonDataKinds.Event;
 import android.provider.ContactsContract.Data;
+import android.util.Log;
 
 import com.groupagendas.groupagenda.contacts.Contact;
 import com.groupagendas.groupagenda.data.ContactManagement;
@@ -87,11 +88,15 @@ int[] importStats = new int[3];
                                 }
                                 cur1.close();
                         }
-                        Cursor bdc = cr.query(android.provider.ContactsContract.Data.CONTENT_URI, new String[] { Event.DATA }, android.provider.ContactsContract.Data.CONTACT_ID+" = "+id+" AND "+Data.MIMETYPE+" = '"+Event.CONTENT_ITEM_TYPE+"' AND "+Event.TYPE+" = "+Event.TYPE_BIRTHDAY, null, android.provider.ContactsContract.Data.DISPLAY_NAME);
-                        if (bdc.getCount() > 0) {
-                            while (bdc.moveToNext()) {
-                                phoneContact2.birthdate = bdc.getString(0);
-                            }
+                        try{
+	                        Cursor bdc = cr.query(android.provider.ContactsContract.Data.CONTENT_URI, new String[] { Event.DATA }, android.provider.ContactsContract.Data.CONTACT_ID+" = "+id+" AND "+Data.MIMETYPE+" = '"+Event.CONTENT_ITEM_TYPE+"' AND "+Event.TYPE+" = "+Event.TYPE_BIRTHDAY, null, android.provider.ContactsContract.Data.DISPLAY_NAME);
+	                        if (bdc.getCount() > 0) {
+	                            while (bdc.moveToNext()) {
+	                                phoneContact2.birthdate = bdc.getString(0);
+	                            }
+	                        }
+                        } catch (Exception e) {
+                        	Log.i("PhoneContactImport", "No BDay");
                         }
                         if(ContactManagement.insertContact(context, phoneContact2)){
                         	importedContactAmount++;

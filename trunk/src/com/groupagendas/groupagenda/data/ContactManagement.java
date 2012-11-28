@@ -415,7 +415,6 @@ public class ContactManagement {
 	}
 
 	public static int insertContactToRemoteDb(Context context,Contact contact, int id) {
-		String temp;
 		int destination_id = 0;
 		boolean success = false;
 		Account account = new Account(context);
@@ -607,12 +606,6 @@ public class ContactManagement {
 				} catch (UnsupportedEncodingException e) {
 					Log.e("insertContactToRemoteDb(group, " + id + ")", "Failed adding group to entity.");
 				}
-			}
-		} else {
-			try {
-				reqEntity.addPart(ContactsProvider.CMetaData.ContactsMetaData.GROUPS + "[]", new StringBody("", Charset.forName("UTF-8")));
-			} catch (UnsupportedEncodingException e) {
-				Log.e("insertContactToRemoteDb(group, " + id + ")", "Failed adding group to entity.");
 			}
 		}
 
