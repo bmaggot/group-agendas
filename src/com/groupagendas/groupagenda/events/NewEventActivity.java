@@ -553,6 +553,7 @@ public class NewEventActivity extends EventActivity {
 				Intent i = new Intent(NewEventActivity.this, ContactsActivity.class);
 				i.putExtra(ContactsActivity.TASK_MODE_KEY, ContactsActivity.TASK_MODE_SELECTION); 
 				i.putExtra(ContactsActivity.LIST_MODE_KEY, ContactsActivity.LIST_MODE_CONTACTS);								
+				i.putExtra(ContactsActivity.DESTINATION_KEY, ContactsActivity.DEST_EVENT_ACTIVITY);								
 				Data.showSaveButtonInContactsForm = true;
 				// TODO Data.eventForSavingNewInvitedPersons = event;
 				startActivity(i);
