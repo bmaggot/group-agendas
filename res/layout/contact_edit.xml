@@ -37,8 +37,8 @@
             android:layout_marginRight="5dp"
             android:layout_marginTop="8dp"
             android:background="@drawable/contacts_save_import_button"
-            android:onClick="onClick"
             android:gravity="center"
+            android:onClick="onClick"
             android:paddingBottom="5dp"
             android:paddingLeft="4dp"
             android:paddingRight="4dp"
@@ -102,11 +102,11 @@
 
                     <EditText
                         android:id="@+id/lastname"
-                        android:hint="@string/lastname"
                         android:layout_width="fill_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="5dp"
                         android:background="@drawable/transparent"
+                        android:hint="@string/lastname"
                         android:inputType="text"
                         android:singleLine="true"
                         android:textColor="#000000"
@@ -147,19 +147,43 @@
                 android:layout_marginLeft="10dp"
                 android:layout_marginRight="10dp"
                 android:background="@drawable/event_icon_placeholder"
-                android:orientation="horizontal"
-                android:padding="10dp" >
+                android:orientation="horizontal" >
 
                 <TextView
                     android:layout_width="60dp"
                     android:layout_height="wrap_content"
-                    android:layout_marginRight="5dp"
+                    android:layout_marginLeft="10dp"
+                    android:layout_marginBottom="10dp"
+                    android:layout_marginTop="10dp"
                     android:text="@string/phone"
                     android:textColor="@android:color/black"
                     android:textStyle="bold" />
+                
+                <View android:layout_width="1dp"
+                    android:layout_height="match_parent"
+                    android:background="@color/darker_gray" />
+
+                <EditText
+                    android:id="@+id/phone_code"
+                    android:layout_marginBottom="10dp"
+                    android:layout_marginTop="10dp"
+                    android:gravity="center"
+                    android:ems="3"
+                    android:layout_height="wrap_content"
+                    android:layout_width="wrap_content"
+                    android:background="@drawable/transparent"
+                    android:inputType="phone" />
+                
+                <View android:layout_width="1dp"
+                    android:layout_height="match_parent"
+                    android:background="@color/darker_gray" />
 
                 <EditText
                     android:id="@+id/phone"
+                    android:layout_marginLeft="5dp"
+                    android:layout_marginRight="10dp"
+                    android:layout_marginBottom="10dp"
+                    android:layout_marginTop="10dp"
                     android:layout_width="fill_parent"
                     android:layout_height="wrap_content"
                     android:background="@drawable/transparent"
@@ -190,7 +214,9 @@
                     android:layout_width="fill_parent"
                     android:layout_height="wrap_content"
                     android:enabled="false"
-                    android:focusableInTouchMode="false" />
+                    android:focusableInTouchMode="false"
+                    android:textColor="@color/black"
+                    android:textSize="15dp" />
             </LinearLayout>
 
             <LinearLayout
@@ -217,7 +243,6 @@
                         android:singleLine="true"
                         android:text="@string/country"
                         android:textColor="@color/black"
-                        android:textSize="15dp"
                         android:textStyle="bold" />
 
                     <TextView
@@ -227,8 +252,7 @@
                         android:background="#00000000"
                         android:focusableInTouchMode="false"
                         android:singleLine="true"
-                        android:textColor="@color/black"
-                        android:textSize="15dp" />
+                        android:textColor="@color/black" />
                 </LinearLayout>
 
                 <LinearLayout
@@ -303,17 +327,17 @@
                 android:layout_marginBottom="10dp"
                 android:layout_marginLeft="10dp"
                 android:layout_marginRight="10dp"
-                android:padding="5dp"
-                android:orientation="vertical" >
+                android:orientation="vertical"
+                android:padding="5dp" >
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginBottom="5dp"
                     android:layout_gravity="center_horizontal"
+                    android:layout_marginBottom="5dp"
                     android:text="@string/agenda_visibility"
-                    android:textSize="15dp"
-                    android:textColor="@android:color/black" />
+                    android:textColor="@android:color/black"
+                    android:textSize="15dp" />
 
                 <Spinner
                     android:id="@+id/visibility"
@@ -330,9 +354,9 @@
                 android:layout_marginBottom="10dp"
                 android:layout_marginLeft="10dp"
                 android:layout_marginRight="10dp"
-                android:padding="10dp"
                 android:background="@drawable/event_icon_placeholder"
                 android:onClick="onClick"
+                android:padding="10dp"
                 android:text="@string/groups"
                 android:textStyle="bold" />
         </LinearLayout>
