@@ -43,6 +43,8 @@ import com.groupagendas.groupagenda.error.report.Reporter;
 import com.groupagendas.groupagenda.utils.MapUtils;
 
 public class GroupEditActivity extends Activity implements OnClickListener {
+	public static ArrayList<Contact> selectedContacts;
+
 	private String ERROR_STRING = "";
 	private final int ERROR_DIALOG = 0;
 	private final int CROP_IMAGE_DIALOG = 1;
@@ -401,6 +403,7 @@ public class GroupEditActivity extends Activity implements OnClickListener {
 			});
 			break;
 		case CHOOSE_CONTACTS_DIALOG:
+//			i.putExtra(ContactsActivity.DESTINATION_KEY, ContactsActivity.DEST_EVENT_ACTIVITY);								
 			builder.setTitle(getString(R.string.choose_contacts)).setMultiChoiceItems(titles, selections, new DialogSelectionClickHandler())
 					.setPositiveButton(getString(R.string.ok), new DialogButtonClickHandler());
 			break;
