@@ -2,6 +2,7 @@ package com.groupagendas.groupagenda.contacts;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.HashMap;
@@ -50,6 +51,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.groupagendas.groupagenda.R;
+import com.groupagendas.groupagenda.account.Account;
 import com.groupagendas.groupagenda.data.ContactManagement;
 import com.groupagendas.groupagenda.data.Data;
 import com.groupagendas.groupagenda.data.DataManagement;
@@ -73,6 +75,7 @@ public class ContactEditActivity extends Activity implements OnClickListener, On
 	private static final int PICK_FROM_CAMERA = 1;
 	private static final int CROP_FROM_CAMERA = 2;
 	private static final int PICK_FROM_FILE = 3;
+	private static final int LEAST_YEAR_VALUE = 1900;
 
 	private Contact editedContact;
 
@@ -85,6 +88,7 @@ public class ContactEditActivity extends Activity implements OnClickListener, On
 	private EditText lastnameView;
 	private EditText emailView;
 	private EditText phoneView;
+	private EditText phonecodeView;
 
 	private TextView birthdateView;
 	private LinearLayout birthdateButton;
@@ -102,8 +106,9 @@ public class ContactEditActivity extends Activity implements OnClickListener, On
 	private boolean[] selections;
 
 	private boolean ACTION_EDIT = true;
+	private boolean DATA_LOADED = false;
 
-	private String[] visibilityArray;
+	private String[] visibilityValues;
 
 	private DateTimeUtils dtUtils;
 	private ArrayList<StaticTimezones> countriesList;
@@ -111,6 +116,7 @@ public class ContactEditActivity extends Activity implements OnClickListener, On
 	private LinearLayout countrySpinnerBlock;
 	private int timezoneInUse;
 	private View pb;
+	private Account account;
 
 	public static ArrayList<Group> selectedGroups;
 
@@ -119,7 +125,44 @@ public class ContactEditActivity extends Activity implements OnClickListener, On
 		super.onCreate(savedInstanceState);
 		this.setContentView(R.layout.contact_edit);
 		pb = findViewById(R.id.progress);
+		phonecodeView = (EditText) findViewById(R.id.phone_code);
+		countryView = (TextView) findViewById(R.id.countryView);
 
+		account = new Account(this);
+
+		String[] countries;
+		String[] timezones;
+		String[] country_codes;
+		String[] call_codes;
+		countriesList = new ArrayList<StaticTimezones>();
+
+		countries = getResources().getStringArray(R.array.countries);
+		timezones = getResources().getStringArray(R.array.timezones);
+		country_codes = getResources().getStringArray(R.array.country_codes);
+		call_codes = getResources().getStringArray(R.array.call_codes);
+		for (int i = 0; i < countries.length; i++) {
+			// TODO OMG WHAT HAVE I DONE AGAIN?! :|
+			StaticTimezones temp = new EventActivity().new StaticTimezones();
+
+			temp.id = "" + i;
+			temp.country = countries[i];
+			temp.country_code = country_codes[i];
+			temp.call_code = call_codes[i];
+			temp.timezone = timezones[i];
+
+			countriesList.add(temp);
+		}
+
+		String tmz = account.getTimezone();
+		for (StaticTimezones item : countriesList) {
+			if (item.timezone.equalsIgnoreCase(tmz)) {
+				timezoneInUse = Integer.parseInt(item.id);
+				countryView.setText(countriesList.get(timezoneInUse).country);
+				phonecodeView.setText("+" + countriesList.get(timezoneInUse).call_code);
+				continue;
+			}
+		}
+		
 		dtUtils = new DateTimeUtils(this);
 
 	}
@@ -134,7 +177,7 @@ public class ContactEditActivity extends Activity implements OnClickListener, On
 
 		// GET ACTION
 		ACTION_EDIT = intent.getBooleanExtra("action", true);
-		if (ACTION_EDIT) {
+		if (ACTION_EDIT && !DATA_LOADED) {
 			try {
 				editedContact = new GetContactTask().execute(intent.getIntExtra("contact_id", 0)).get();
 			} catch (InterruptedException e) {
@@ -153,7 +196,8 @@ public class ContactEditActivity extends Activity implements OnClickListener, On
 		titleView = (TextView) findViewById(R.id.title);
 		emailView = (EditText) findViewById(R.id.email);
 		phoneView = (EditText) findViewById(R.id.phone);
-		visibilityArray = getResources().getStringArray(R.array.visibility_labels);
+		phonecodeView = (EditText) findViewById(R.id.phone_code);
+		visibilityValues = getResources().getStringArray(R.array.visibility_values);
 		visibilitySpinner = (Spinner) findViewById(R.id.visibility);
 		visibilitySpinner.setOnItemSelectedListener(this);
 		groupsButton = (Button) findViewById(R.id.groupsButton);
@@ -173,34 +217,29 @@ public class ContactEditActivity extends Activity implements OnClickListener, On
 		streetView = (EditText) findViewById(R.id.street);
 		zipView = (EditText) findViewById(R.id.zip);
 
-		String[] cities;
 		String[] countries;
-		String[] countries2;
-		String[] country_codes;
 		String[] timezones;
-		String[] altnames;
+		String[] country_codes;
+		String[] call_codes;
 		countriesList = new ArrayList<StaticTimezones>();
 
-		cities = getResources().getStringArray(R.array.city);
 		countries = getResources().getStringArray(R.array.countries);
-		countries2 = getResources().getStringArray(R.array.countries2);
-		country_codes = getResources().getStringArray(R.array.country_codes);
 		timezones = getResources().getStringArray(R.array.timezones);
-		altnames = getResources().getStringArray(R.array.timezone_altnames);
-		for (int i = 0; i < cities.length; i++) {
+		country_codes = getResources().getStringArray(R.array.country_codes);
+		call_codes = getResources().getStringArray(R.array.call_codes);
+		for (int i = 0; i < countries.length; i++) {
 			// TODO OMG WHAT HAVE I DONE AGAIN?! :|
 			StaticTimezones temp = new EventActivity().new StaticTimezones();
 
 			temp.id = "" + i;
-			temp.city = cities[i];
 			temp.country = countries[i];
-			temp.country2 = countries2[i];
 			temp.country_code = country_codes[i];
+			temp.call_code = call_codes[i];
 			temp.timezone = timezones[i];
-			temp.altname = altnames[i];
 
 			countriesList.add(temp);
 		}
+		
 		if (countriesList != null) {
 			countriesAdapter = new CountriesAdapter(ContactEditActivity.this, R.layout.search_dialog_item, countriesList);
 		}
@@ -210,7 +249,7 @@ public class ContactEditActivity extends Activity implements OnClickListener, On
 		countrySpinnerBlock.setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View arg0) {
-				final Dialog dia1 = new Dialog(ContactEditActivity.this);
+				final Dialog dia1 = new Dialog(ContactEditActivity.this, R.style.yearview_eventlist);
 				dia1.requestWindowFeature(Window.FEATURE_NO_TITLE);
 				dia1.setContentView(R.layout.search_dialog);
 
@@ -246,6 +285,7 @@ public class ContactEditActivity extends Activity implements OnClickListener, On
 					public void onItemClick(AdapterView<?> parent, View view, int pos, long arg3) {
 						timezoneInUse = Integer.parseInt(view.getTag().toString());
 						countryView.setText(countriesList.get(timezoneInUse).country);
+						phonecodeView.setText("+" + countriesList.get(timezoneInUse).call_code);
 						dia1.dismiss();
 					}
 				});
@@ -284,6 +324,7 @@ public class ContactEditActivity extends Activity implements OnClickListener, On
 			Intent i = new Intent(ContactEditActivity.this, ContactsActivity.class);
 			i.putExtra(ContactsActivity.TASK_MODE_KEY, ContactsActivity.TASK_MODE_SELECTION);
 			i.putExtra(ContactsActivity.LIST_MODE_KEY, ContactsActivity.LIST_MODE_GROUPS);
+			i.putExtra(ContactsActivity.DESTINATION_KEY, ContactsActivity.DEST_CONTACT_EDIT);
 			Data.showSaveButtonInContactsForm = true;
 			// TODO Data.eventForSavingNewInvitedPersons = event;
 			startActivity(i);
@@ -315,6 +356,11 @@ public class ContactEditActivity extends Activity implements OnClickListener, On
 			} else {
 				birthdateCalendar = Calendar.getInstance();
 			}
+			
+			if (birthdateCalendar.get(Calendar.YEAR) < LEAST_YEAR_VALUE) {
+				birthdateCalendar.set(Calendar.YEAR, LEAST_YEAR_VALUE);
+			}
+
 			return new DatePickerDialog(this, mDateSetListener, birthdateCalendar.get(Calendar.YEAR),
 					birthdateCalendar.get(Calendar.MONTH), birthdateCalendar.get(Calendar.DAY_OF_MONTH));
 		case ERROR_DIALOG:
@@ -399,18 +445,23 @@ public class ContactEditActivity extends Activity implements OnClickListener, On
 			}
 
 			nameView.setText(result.name);
+			titleView.setText(result.name);
 			if (result.lastname != null && !result.lastname.equals("null")) {
 				lastnameView.setText(result.lastname);
-				titleView.setText(result.lastname);
 			}
 			if (result.email != null && !result.email.equals("null"))
 				emailView.setText(result.email);
-			if (!result.phone1.equals("null"))
+			if ((result.phone1 != null) && !result.phone1.equals("null") && (result.phone1.length() > 0))
 				phoneView.setText(result.phone1);
+			if ((result.phone1_code != null) && !result.phone1_code.equals("null") && (result.phone1_code.length() > 0))
+				phonecodeView.setText(result.phone1_code);
 
 			if (!result.birthdate.equals("")) {
 				birthdateCalendar = Utils.stringToCalendar(getApplicationContext(), result.birthdate,
 						DataManagement.ACCOUNT_BIRTHDATE_TIMESTAMP_FORMAT);
+				if (birthdateCalendar.get(Calendar.YEAR) < LEAST_YEAR_VALUE) {
+					birthdateCalendar.set(Calendar.YEAR, LEAST_YEAR_VALUE);
+				}
 				birthdateView.setText(dtUtils.formatDate(birthdateCalendar));
 			}
 
@@ -430,7 +481,6 @@ public class ContactEditActivity extends Activity implements OnClickListener, On
 			if (!result.zip.equals("null"))
 				zipView.setText(result.zip);
 
-			// TODO set visibility
 			if (!result.visibility.equals("null")) {
 				if (result.visibility.equalsIgnoreCase("n"))
 					visibilitySpinner.setSelection(0, true);
@@ -439,6 +489,9 @@ public class ContactEditActivity extends Activity implements OnClickListener, On
 				else if (result.visibility.equalsIgnoreCase("l"))
 					visibilitySpinner.setSelection(2, true);
 			}
+			
+			DATA_LOADED = true;
+			
 			pb.setVisibility(View.GONE);
 
 			super.onPostExecute(result);
@@ -484,8 +537,13 @@ public class ContactEditActivity extends Activity implements OnClickListener, On
 			editedContact.phone1 = temp;
 			cv.put(ContactsProvider.CMetaData.ContactsMetaData.PHONE, temp);
 
+			temp = phonecodeView.getText().toString();
+			editedContact.phone1_code = temp;
+			cv.put(ContactsProvider.CMetaData.ContactsMetaData.PHONE_CODE, temp);
+
 			if (birthdateCalendar != null) {
-				editedContact.birthdate = dtUtils.formatDate(birthdateCalendar);
+				SimpleDateFormat sdf = new SimpleDateFormat(DataManagement.ACCOUNT_BIRTHDATE_TIMESTAMP_FORMAT);
+				editedContact.birthdate = sdf.format(birthdateCalendar.getTime());
 				cv.put(ContactsProvider.CMetaData.ContactsMetaData.BIRTHDATE, editedContact.birthdate);
 			} else {
 				editedContact.birthdate = "";
@@ -507,7 +565,9 @@ public class ContactEditActivity extends Activity implements OnClickListener, On
 			editedContact.zip = temp;
 			cv.put(ContactsProvider.CMetaData.ContactsMetaData.ZIP, temp);
 
-			cv.put(ContactsProvider.CMetaData.ContactsMetaData.VISIBILITY, editedContact.visibility.toLowerCase());
+			temp = visibilityValues[visibilitySpinner.getSelectedItemPosition()];
+			editedContact.visibility = temp;
+			cv.put(ContactsProvider.CMetaData.ContactsMetaData.VISIBILITY, editedContact.visibility);
 
 			// groups
 			Map<String, String> contactGroupsMap = new HashMap<String, String>();
@@ -645,13 +705,13 @@ public class ContactEditActivity extends Activity implements OnClickListener, On
 			editedContact.phone1 = temp;
 			cv.put(ContactsProvider.CMetaData.ContactsMetaData.PHONE, temp);
 
-			// temp = birthdateView.getText().toString();
-			// editedContact.birthdate = temp;
-			// cv.put(ContactsProvider.CMetaData.ContactsMetaData.BIRTHDATE,
-			// temp);
+			temp = phonecodeView.getText().toString();
+			editedContact.phone1_code = temp;
+			cv.put(ContactsProvider.CMetaData.ContactsMetaData.PHONE_CODE, temp);
 
 			if (birthdateCalendar != null) {
-				editedContact.birthdate = dtUtils.formatDate(birthdateCalendar);
+				SimpleDateFormat sdf = new SimpleDateFormat(DataManagement.ACCOUNT_BIRTHDATE_TIMESTAMP_FORMAT);
+				editedContact.birthdate = sdf.format(birthdateCalendar.getTime());
 				cv.put(ContactsProvider.CMetaData.ContactsMetaData.BIRTHDATE, editedContact.birthdate);
 			} else {
 				editedContact.birthdate = "";
@@ -672,7 +732,9 @@ public class ContactEditActivity extends Activity implements OnClickListener, On
 			editedContact.zip = temp;
 			cv.put(ContactsProvider.CMetaData.ContactsMetaData.ZIP, temp);
 
-			cv.put(ContactsProvider.CMetaData.ContactsMetaData.VISIBILITY, editedContact.visibility.toLowerCase());
+			temp = visibilityValues[visibilitySpinner.getSelectedItemPosition()];
+			editedContact.visibility = temp;
+			cv.put(ContactsProvider.CMetaData.ContactsMetaData.VISIBILITY, editedContact.visibility);
 
 			// created modified times
 			editedContact.created = Calendar.getInstance().getTimeInMillis();
@@ -897,7 +959,7 @@ public class ContactEditActivity extends Activity implements OnClickListener, On
 	public void onItemSelected(AdapterView<?> parent, View view, int pos, long id) {
 		switch (parent.getId()) {
 		case R.id.visibility:
-			editedContact.visibility = "" + visibilityArray[pos].charAt(0);
+			editedContact.visibility = visibilityValues[pos];
 			break;
 		}
 	}
