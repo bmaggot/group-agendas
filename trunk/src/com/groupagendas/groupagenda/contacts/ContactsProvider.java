@@ -450,7 +450,6 @@ private static class DatabaseHelper extends SQLiteOpenHelper {
 				+CMetaData.ContactsMetaData.AGENDA_VIEW+" TEXT ,"
 				+CMetaData.ContactsMetaData.GROUPS+" TEXT ,"
 				+CMetaData.ContactsMetaData.REGISTERED+" TEXT)";
-			System.out.println(query);
 			db.execSQL(query);
 			
 			query =	"CREATE TABLE "

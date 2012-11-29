@@ -32,6 +32,7 @@ import android.net.Uri;
 import android.preference.PreferenceManager;
 import android.util.Log;
 
+import com.groupagendas.groupagenda.R;
 import com.groupagendas.groupagenda.SaveDeletedData;
 import com.groupagendas.groupagenda.SaveDeletedData.SDMetaData;
 import com.groupagendas.groupagenda.account.Account;
@@ -586,6 +587,20 @@ public class ContactManagement {
 		if (contact.modified > 0){
 			try {
 				reqEntity.addPart(ContactsProvider.CMetaData.ContactsMetaData.MODIFIED, new StringBody(contact.modified + "", Charset.forName("UTF-8")));
+			} catch (UnsupportedEncodingException e) {
+				Log.e("insertContactToRemoteDb(group, " + id + ")", "Failed adding modified to entity.");
+			}
+		}
+		
+		if (contact.visibility != null){
+			try {
+				reqEntity.addPart(ContactsProvider.CMetaData.ContactsMetaData.VISIBILITY, new StringBody(contact.visibility + "", Charset.forName("UTF-8")));
+			} catch (UnsupportedEncodingException e) {
+				Log.e("insertContactToRemoteDb(group, " + id + ")", "Failed adding modified to entity.");
+			}
+		} else {
+			try {
+				reqEntity.addPart(ContactsProvider.CMetaData.ContactsMetaData.VISIBILITY, new StringBody(context.getResources().getStringArray(R.array.visibility_values)[0], Charset.forName("UTF-8")));
 			} catch (UnsupportedEncodingException e) {
 				Log.e("insertContactToRemoteDb(group, " + id + ")", "Failed adding modified to entity.");
 			}
