@@ -1,5 +1,7 @@
 package com.groupagendas.groupagenda.contacts.importer;
 
+import java.util.ArrayList;
+
 import android.content.ContentResolver;
 import android.content.Context;
 import android.database.Cursor;
@@ -8,16 +10,19 @@ import android.provider.ContactsContract.CommonDataKinds.Event;
 import android.provider.ContactsContract.Data;
 import android.util.Log;
 
+import com.groupagendas.groupagenda.account.Account;
 import com.groupagendas.groupagenda.contacts.Contact;
 import com.groupagendas.groupagenda.data.ContactManagement;
+import com.groupagendas.groupagenda.data.DataManagement;
 
 public class PhoneContactImport {
 	public static int[] importPhoneContacts(Context context) {
 		String id = "";
-int[] importStats = new int[3];
+		int[] importStats = new int[3];
 		int importedContactAmount = 0;
 		int unimportedContactAmount = 0;
 		int totalEntries = 0;
+		ArrayList<Contact> phoneContacts = new ArrayList<Contact>();
 
 		ContentResolver cr = context.getContentResolver();
         Cursor cur = cr.query(ContactsContract.Contacts.CONTENT_URI, null, null, null, null);
@@ -58,7 +63,7 @@ int[] importStats = new int[3];
                                         
                                         Cursor phone = context.getContentResolver().query(ContactsContract.CommonDataKinds.Phone.CONTENT_URI, null,
                                                         ContactsContract.CommonDataKinds.Phone.CONTACT_ID + " = " + id, null, null);
-                                        if (phone.moveToFirst()) {
+                                        if (phone != null && phone.moveToFirst()) {
                                                 while (!phone.isAfterLast()) {
                                                         phoneContact2.phone1 = phone.getString(phone
                                                                         .getColumnIndex(ContactsContract.CommonDataKinds.Phone.NUMBER));
@@ -98,15 +103,13 @@ int[] importStats = new int[3];
                         } catch (Exception e) {
                         	Log.i("PhoneContactImport", "No BDay");
                         }
-                        if(ContactManagement.insertContact(context, phoneContact2)){
-                        	importedContactAmount++;
-        				} else {
-        					unimportedContactAmount++;
-        				}
+                        phoneContacts.add(phoneContact2);
                         cur.moveToNext();
                 }
+                ContactManagement.bulkInsertContactsToRemoteDb(context, phoneContacts);
         }
         cur.close();
+        DataManagement.synchronizeWithServer(context, null, new Account(context).getLatestUpdateUnixTimestamp());
 		importStats[0] = importedContactAmount;
 		importStats[1] = unimportedContactAmount;
 		importStats[2] = totalEntries;
