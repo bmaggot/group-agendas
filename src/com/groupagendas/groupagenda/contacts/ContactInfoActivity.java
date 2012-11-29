@@ -1,5 +1,7 @@
 package com.groupagendas.groupagenda.contacts;
 
+import java.util.Calendar;
+
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
@@ -24,6 +26,7 @@ import android.widget.Toast;
 
 import com.groupagendas.groupagenda.R;
 import com.groupagendas.groupagenda.data.ContactManagement;
+import com.groupagendas.groupagenda.data.DataManagement;
 import com.groupagendas.groupagenda.utils.DateTimeUtils;
 import com.groupagendas.groupagenda.utils.Utils;
 
@@ -39,6 +42,9 @@ public class ContactInfoActivity extends Activity {
 	private Contact mContact;
 
 	private final int DELETE_DIALOG = 0;
+	private int timezoneInUse = 0;
+	private String[] country_codes;
+	private String[] country_titles;
 	
 	@Override
 	public void onResume() {
@@ -46,6 +52,8 @@ public class ContactInfoActivity extends Activity {
 		this.setContentView(R.layout.contact_info);
 
 		table = (TableLayout) findViewById(R.id.table);
+		country_codes = getResources().getStringArray(R.array.country_codes);
+		country_titles = getResources().getStringArray(R.array.countries);
 		
 		new GetGroupContactsTask().execute();
 	}
@@ -65,6 +73,8 @@ public class ContactInfoActivity extends Activity {
 	}
 
 	class GetGroupContactsTask extends AsyncTask<Void, Contact, Contact> {
+
+		private static final int LEAST_YEAR_VALUE = 1900;
 
 		@Override
 		protected Contact doInBackground(Void... type) {
@@ -92,26 +102,44 @@ public class ContactInfoActivity extends Activity {
 				nameView.setText(contact.name);
 				// Lastname
 				TextView lastnameView = (TextView) findViewById(R.id.lastname);
-				if(contact.lastname != null && !contact.lastname.equals("null"))	lastnameView.setText(contact.lastname);
+				if(contact.lastname != null && !contact.lastname.equals("null"))
+					lastnameView.setText(contact.lastname);
 				
 				// Email
 				if (contact.email != null && !contact.email.equals("null")) {
 					setTableRow(getString(R.string.email), contact.email);
 				}
 				// Phone
-				if (contact.phone1 != null && !contact.phone1.equals("null")) {
-					setTableRow(getString(R.string.phone), contact.phone1);
+				String phone_full = "";
+				if (contact.phone1_code != null && !contact.phone1_code.equals("null")) {
+					phone_full += contact.phone1_code + "\t";
 				}
+				if (contact.phone1 != null && !contact.phone1.equals("null")) {
+					phone_full += contact.phone1;
+				}
+				setTableRow(getString(R.string.phone), phone_full);
 				// Birth date
 				if (contact.birthdate != null && !contact.birthdate.equals("null")) {
-					setTableRow(getString(R.string.birthday), contact.birthdate); //TODO format using dtUtils
+					Calendar birthdateCalendar = Utils.stringToCalendar(getApplicationContext(), contact.birthdate,
+							DataManagement.ACCOUNT_BIRTHDATE_TIMESTAMP_FORMAT);
+					if (birthdateCalendar.get(Calendar.YEAR) < LEAST_YEAR_VALUE) {
+						birthdateCalendar.set(Calendar.YEAR, LEAST_YEAR_VALUE);
+					}
+					DateTimeUtils dtUtils = new DateTimeUtils(ContactInfoActivity.this);
+					setTableRow(getString(R.string.birthday), dtUtils.formatDate(birthdateCalendar.getTime()));
 				}
 				// Country
 				if (contact.country != null && !contact.country.equals("null")) {
-					int resId = getResources().getIdentifier(contact.country, "string", "com.groupagendas.groupagenda");
-					if(resId > 0){
-						setTableRow(getString(R.string.country), getString(resId));
+
+					if (contact.country.length() > 0) {
+						for (int iterator = 0; iterator < country_codes.length; iterator++) {
+							if (country_codes[iterator].equalsIgnoreCase(contact.country)) {
+								timezoneInUse = iterator;
+							}
+						}
 					}
+
+					setTableRow(getString(R.string.country), country_titles[timezoneInUse]);
 				}
 				// City
 				if (contact.city != null && !contact.city.equals("null")) {
