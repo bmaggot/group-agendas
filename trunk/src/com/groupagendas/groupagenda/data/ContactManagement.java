@@ -2160,7 +2160,7 @@ public class ContactManagement {
 			}
 			sb.deleteCharAt(sb.length() - 1);
 			bulkDeleteContacts(context, sb.toString());
-			bulkInsertContacts(context, contactChanges);
+			bulkInsertContactsToLocalDb(context, contactChanges);
 
 		}
 
@@ -2176,7 +2176,7 @@ public class ContactManagement {
 
 	}
 
-	private static void bulkInsertContacts(Context context, ArrayList<Contact> contactChanges) {
+	private static void bulkInsertContactsToLocalDb(Context context, ArrayList<Contact> contactChanges) {
 
 		for (Contact c : contactChanges) {
 			insertContactToLocalDb(context, c, 0);
@@ -2199,6 +2199,80 @@ public class ContactManagement {
 		// // TODO Auto-generated catch block
 		// e.printStackTrace();
 		// }
+	}
+	
+	public static void bulkInsertContactsToRemoteDb(Context context, ArrayList<Contact> contactChanges){
+		Account account = new Account(context);
+		WebService webService = new WebService();
+		HttpPost post = new HttpPost(Data.getServerUrl() + "mobile/contact_create_batch");
+
+		MultipartEntity reqEntity = new MultipartEntity(HttpMultipartMode.BROWSER_COMPATIBLE);
+	    
+	    try {
+			reqEntity.addPart("session", new StringBody(account.getSessionId(), Charset.forName("UTF-8")));
+		} catch (UnsupportedEncodingException e2) {
+			e2.printStackTrace();
+		}
+
+	    try {
+			reqEntity.addPart("token", new StringBody(Data.getToken(context), Charset.forName("UTF-8")));
+		} catch (UnsupportedEncodingException e) {
+			e.printStackTrace();
+		}
+	    int i = 0;
+		for(Contact c : contactChanges){
+			if(c.name != null){
+				try {
+					reqEntity.addPart("contacts["+ i +"][" + ContactsProvider.CMetaData.ContactsMetaData.NAME +"]", new StringBody(c.name, Charset.forName("UTF-8")));
+				} catch (UnsupportedEncodingException e) {
+					e.printStackTrace();
+				}
+			}
+			if(c.email != null){
+				try {
+					reqEntity.addPart("contacts["+ i +"][" + ContactsProvider.CMetaData.ContactsMetaData.EMAIL +"]", new StringBody(c.email, Charset.forName("UTF-8")));
+				} catch (UnsupportedEncodingException e) {
+					e.printStackTrace();
+				}
+			}
+			if(c.country != null){
+				try {
+					reqEntity.addPart("contacts["+ i +"][" + ContactsProvider.CMetaData.ContactsMetaData.COUNTRY +"]", new StringBody(c.country, Charset.forName("UTF-8")));
+				} catch (UnsupportedEncodingException e) {
+					e.printStackTrace();
+				}
+			}
+			if(c.phone1 != null){
+				try {
+					reqEntity.addPart("contacts["+ i +"][" + ContactsProvider.CMetaData.ContactsMetaData.PHONE +"]", new StringBody(c.phone1, Charset.forName("UTF-8")));
+				} catch (UnsupportedEncodingException e) {
+					e.printStackTrace();
+				}
+			}
+			if(c.birthdate != null){
+				try {
+					reqEntity.addPart("contacts["+ i +"][" + ContactsProvider.CMetaData.ContactsMetaData.BIRTHDATE +"]", new StringBody(c.birthdate, Charset.forName("UTF-8")));
+				} catch (UnsupportedEncodingException e) {
+					e.printStackTrace();
+				}
+			}
+			try {
+				reqEntity.addPart("contacts["+ i +"][local_id]", new StringBody(c.getInternal_id()+"", Charset.forName("UTF-8")));
+			} catch (UnsupportedEncodingException e) {
+				e.printStackTrace();
+			}
+			
+			i++;
+		}
+		try {
+			post.setEntity(reqEntity);
+			@SuppressWarnings("unused")
+			HttpResponse httpResponse = webService.getResponseFromHttpPost(post);
+		} catch (ClientProtocolException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 	}
 
 	@SuppressWarnings("unused")
