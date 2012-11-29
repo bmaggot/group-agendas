@@ -228,8 +228,8 @@ public class EventManagement {
 				EMetaData.EventsMetaData.MESSAGES_COUNT,
 				EMetaData.EventsMetaData.E_ID };
 		String selection = EMetaData.EventsMetaData.MESSAGES_COUNT + ">0"
-				+ " AND " + EMetaData.EventsMetaData.STATUS + "!="
-				+ Invited.REJECTED;
+				+ " AND " + EMetaData.EventsMetaData.STATUS + "="
+				+ Invited.ACCEPTED;
 		String sortOrder = EMetaData.EventsMetaData.LAST_MESSAGE_DATE_TIME_UTC_MILISECONDS
 				+ " DESC ";
 		Cursor result = context.getContentResolver().query(uri, projection,
