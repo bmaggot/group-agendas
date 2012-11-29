@@ -137,8 +137,9 @@ public class ContactsAdapter extends AbstractAdapter<Contact> implements Filtera
 				List<Contact> filteredItems = new ArrayList<Contact>();
 
 				for (int i = 0; i < items.size(); i++) {
-					if (items.get(i).name.toLowerCase().startsWith(constraint.toString().toLowerCase())
-							|| items.get(i).lastname.toLowerCase().startsWith(constraint.toString().toLowerCase())) {
+					if (items.get(i).name.toLowerCase().contains(constraint.toString().toLowerCase())
+							|| items.get(i).lastname.toLowerCase().contains(constraint.toString().toLowerCase()) 
+							|| items.get(i).email.toLowerCase().contains(constraint.toString().toLowerCase())) {
 						filteredItems.add(items.get(i));
 					}
 				}
