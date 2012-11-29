@@ -694,10 +694,10 @@ public class NavbarActivity extends FragmentActivity {
 						publishProgress(total);
 
 					case 4: // Load event templates 
-						if (DataManagement.networkAvailable) 
-							dm.getTemplates();
-						else
-							dm.getTemplateFromLocalDb(0);
+//						if (DataManagement.networkAvailable) 
+//							dm.getTemplates();
+//						else
+//							dm.getTemplateFromLocalDb(0);
 						loadPhase++;
 						total = 60;
 						publishProgress(total);
