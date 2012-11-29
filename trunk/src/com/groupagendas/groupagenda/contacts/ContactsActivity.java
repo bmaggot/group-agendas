@@ -95,9 +95,15 @@ public class ContactsActivity extends ListActivity implements OnCheckedChangeLis
 	public static final int TASK_MODE_LISTING = 0;
 	public static final int TASK_MODE_SELECTION = 1;
 	private int TASK_MODE = TASK_MODE_LISTING;
-
+	
+	public static final int DEST_EVENT_ACTIVITY = 1;
+	public static final int DEST_CONTACT_EDIT = 2;
+	public static final int DEST_GROUP_EDIT = 3;
+	private int DESTINATION = 0;
+	
 	public static final String TASK_MODE_KEY = "TASK_MODE";
 	public static final String LIST_MODE_KEY = "LIST_MODE";
+	public static final String DESTINATION_KEY = "DESTINATION";
 
 	@Override
 	public void onWindowFocusChanged(boolean hasFocus) {
@@ -136,7 +142,7 @@ public class ContactsActivity extends ListActivity implements OnCheckedChangeLis
 				tmpTV.setText(tmpLetter);
 				tmpTV.setGravity(Gravity.CENTER);
 				tmpTV.setPadding(5, 0, 0, 0);
-				tmpTV.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 16);
+				tmpTV.setTextSize(TypedValue.COMPLEX_UNIT_SP, 14);
 				LayoutParams params = new LayoutParams(android.view.ViewGroup.LayoutParams.WRAP_CONTENT,
 						android.view.ViewGroup.LayoutParams.WRAP_CONTENT, 1);
 				tmpTV.setLayoutParams(params);
@@ -189,6 +195,7 @@ public class ContactsActivity extends ListActivity implements OnCheckedChangeLis
 		if (getIntent().getExtras() != null) {
 			TASK_MODE = getIntent().getExtras().getInt(TASK_MODE_KEY);
 			LIST_MODE = getIntent().getExtras().getInt(LIST_MODE_KEY);
+			DESTINATION = getIntent().getExtras().getInt(DESTINATION_KEY);
 		} 
 		
 		switch (TASK_MODE) {
@@ -225,13 +232,28 @@ public class ContactsActivity extends ListActivity implements OnCheckedChangeLis
 						selectedContact = cAdapter.getSelected();
 
 						if (selectedContact != null) {
-							EventActivity.selectedContacts = selectedContact;
+							switch (DESTINATION) {
+							case DEST_EVENT_ACTIVITY:
+								EventActivity.selectedContacts = selectedContact;
+								break;
+							case DEST_GROUP_EDIT:
+								GroupEditActivity.selectedContacts = selectedContact;
+								break;
+							default:
+								break;
+							}
 						}
 						ContactsActivity.this.finish();
 					} else if (LIST_MODE == LIST_MODE_GROUPS) {
 						selectedGroup = gAdapter.getSelected();
 						if (selectedGroup != null) {
-							ContactEditActivity.selectedGroups = selectedGroup;
+							switch (DESTINATION) {
+							case DEST_CONTACT_EDIT:
+								ContactEditActivity.selectedGroups = selectedGroup;
+								break;
+							default:
+								break;
+							}
 						}
 						ContactsActivity.this.finish();
 					}
