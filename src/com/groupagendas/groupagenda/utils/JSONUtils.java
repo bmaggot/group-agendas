@@ -331,6 +331,16 @@ public class JSONUtils {
 		}
 
 		try {
+			temp = c.getString(ContactsProvider.CMetaData.ContactsMetaData.PHONE_CODE);
+			if (temp != null && !temp.equals("null"))
+				contact.phone1_code = temp;
+			else
+				contact.phone1_code = "";
+		} catch (JSONException e) {
+			Log.e("getContactsFromRemoteDb(contactIds)", "Failed getting phone code.");
+		}
+
+		try {
 			temp = c.getString(ContactsProvider.CMetaData.ContactsMetaData.BIRTHDATE);
 			if (temp != null && !temp.equals("null"))
 				contact.birthdate = temp;
