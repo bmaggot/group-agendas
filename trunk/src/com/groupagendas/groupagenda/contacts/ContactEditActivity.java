@@ -33,6 +33,7 @@ import android.provider.MediaStore;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.Window;
@@ -173,8 +174,11 @@ public class ContactEditActivity extends Activity implements OnClickListener, On
 
 		// setContentView(R.layout.contact_edit);
 		Intent intent = getIntent();
-		editedContact = new Contact();
-
+		
+		if (editedContact == null) {
+			editedContact = new Contact();
+		}
+		
 		// GET ACTION
 		ACTION_EDIT = intent.getBooleanExtra("action", true);
 		if (ACTION_EDIT && !DATA_LOADED) {
@@ -292,6 +296,8 @@ public class ContactEditActivity extends Activity implements OnClickListener, On
 				dia1.show();
 			}
 		});
+		
+		displaySelectedGroups();
 	}
 
 	public void onClick(View v) {
@@ -966,5 +972,38 @@ public class ContactEditActivity extends Activity implements OnClickListener, On
 
 	@Override
 	public void onNothingSelected(AdapterView<?> arg0) {
+	}
+	
+	private void displaySelectedGroups() {
+		LayoutInflater mInflater = LayoutInflater.from(ContactEditActivity.this);
+		LinearLayout groupsList = (LinearLayout) findViewById(R.id.groupsList);
+		
+		groupsButton = (Button) findViewById(R.id.groupsButton);
+		
+		if (groupsList.getChildCount() > 0) {
+			groupsList.removeAllViews();
+		}
+		
+		if (selectedGroups != null) {
+			int groupAmount = selectedGroups.size();
+			
+			if (groupAmount > 0) {
+				groupsButton.setBackgroundResource(R.drawable.contact_edit_invitegroup_button_notalone);
+				
+				for (int iterator = 0; iterator < groupAmount; iterator++) {
+					String groupTitle = selectedGroups.get(iterator).title; 
+					TextView entry = (TextView) mInflater.inflate(R.layout.contact_edit_invited_entry, null);
+					entry.setText(groupTitle);
+					
+					if (iterator == (groupAmount - 1)) {
+						entry.setBackgroundResource(R.drawable.contact_edit_invitegroup_entry_last_background);
+					}
+					
+					groupsList.addView(entry);
+				}
+			}
+		} else {
+			groupsButton.setBackgroundResource(R.drawable.event_icon_placeholder);
+		}
 	}
 }
