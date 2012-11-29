@@ -14,6 +14,7 @@ public class Contact extends Object implements Colored {
 	public String lastname;
 	public String email;
 	public String phone1;
+	public String phone1_code;
 	public String birthdate;
 	public String country;
 	public String city;
@@ -69,6 +70,7 @@ public class Contact extends Object implements Colored {
 
 		this.email = cur.getString(cur.getColumnIndex(ContactsProvider.CMetaData.ContactsMetaData.EMAIL));
 		this.phone1 = cur.getString(cur.getColumnIndex(ContactsProvider.CMetaData.ContactsMetaData.PHONE));
+		this.phone1_code = cur.getString(cur.getColumnIndex(ContactsProvider.CMetaData.ContactsMetaData.PHONE_CODE));
 
 		this.birthdate = cur.getString(cur.getColumnIndex(ContactsProvider.CMetaData.ContactsMetaData.BIRTHDATE));
 
