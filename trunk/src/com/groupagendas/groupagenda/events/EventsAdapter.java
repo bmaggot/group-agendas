@@ -197,7 +197,9 @@ public class EventsAdapter extends BaseAdapter implements Filterable{
 	
 	private void respondToInvite(Event event){
 //		System.out.println("response " + event.getStatus() );
-		event.getMyInvite().setStatus(event.getStatus());
+		if(event.getMyInvite() != null){
+			event.getMyInvite().setStatus(event.getStatus());
+		}
 		
 		if (newInvitesCount > 0) newInvitesCount--;
 		EventManagement.respondToInvitation(mContext, event);
