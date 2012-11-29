@@ -38,6 +38,7 @@ public class ContactsProvider extends ContentProvider{
 			public static final String LASTNAME = "lastname";
 			public static final String EMAIL = "email";
 			public static final String PHONE = "phone1";
+			public static final String PHONE_CODE = "phone1_code";
 			public static final String BIRTHDATE = "birthdate";
 			public static final String COUNTRY = "country";
 			public static final String CITY = "city";
@@ -113,6 +114,7 @@ public class ContactsProvider extends ContentProvider{
 		CM.put(CMetaData.ContactsMetaData.LASTNAME, CMetaData.ContactsMetaData.LASTNAME);
 		CM.put(CMetaData.ContactsMetaData.EMAIL, CMetaData.ContactsMetaData.EMAIL);
 		CM.put(CMetaData.ContactsMetaData.PHONE, CMetaData.ContactsMetaData.PHONE);
+		CM.put(CMetaData.ContactsMetaData.PHONE_CODE, CMetaData.ContactsMetaData.PHONE_CODE);
 		CM.put(CMetaData.ContactsMetaData.BIRTHDATE, CMetaData.ContactsMetaData.BIRTHDATE);
 		CM.put(CMetaData.ContactsMetaData.COUNTRY, CMetaData.ContactsMetaData.COUNTRY);
 		CM.put(CMetaData.ContactsMetaData.CITY, CMetaData.ContactsMetaData.CITY);
@@ -431,6 +433,7 @@ private static class DatabaseHelper extends SQLiteOpenHelper {
 				+CMetaData.ContactsMetaData.LASTNAME+" TEXT ,"
 				+CMetaData.ContactsMetaData.EMAIL+" TEXT ,"
 				+CMetaData.ContactsMetaData.PHONE+" TEXT ,"
+				+CMetaData.ContactsMetaData.PHONE_CODE+" TEXT ,"
 				+CMetaData.ContactsMetaData.BIRTHDATE+" TEXT ,"
 				+CMetaData.ContactsMetaData.COUNTRY+" TEXT ,"
 				+CMetaData.ContactsMetaData.CITY+" TEXT ,"
