@@ -42,6 +42,7 @@ public class C2DMReceiver extends C2DMBaseReceiver {
 	public static String REFRESH_MESSAGES_LIST = "refreshMessagesList";
 	public static String REFRESH_CHAT_THREAD_LIST = "refreshChatThreadList";
 	public static String REFRESH_CHAT_MESSAGES_BADGE = "refreshChatMessagesBadge";
+	public static String REFRESH_EVENT_EDIT_ACTIVITY = "refreshEventEditActivity";
 
 	public C2DMReceiver() {
 		super(DataManagement.PROJECT_ID);

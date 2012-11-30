@@ -6,11 +6,15 @@ import java.util.HashMap;
 
 import android.app.AlertDialog;
 import android.app.Dialog;
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.support.v4.content.LocalBroadcastManager;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.Menu;
@@ -33,6 +37,7 @@ import android.widget.SlidingDrawer;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.groupagendas.groupagenda.C2DMReceiver;
 import com.groupagendas.groupagenda.R;
 import com.groupagendas.groupagenda.account.Account;
 import com.groupagendas.groupagenda.chat.ChatMessageActivity;
@@ -121,6 +126,7 @@ public class EventEditActivity extends EventActivity {
 	
 	@Override
 	public void onResume() {
+		LocalBroadcastManager.getInstance(this).registerReceiver(mMessageReceiver, new IntentFilter(C2DMReceiver.REFRESH_EVENT_EDIT_ACTIVITY));
 		super.onResume();
 		if (watcher == null) {
 			watcher = new GenericTextWatcher();
@@ -1303,4 +1309,11 @@ public class EventEditActivity extends EventActivity {
 			return super.onOptionsItemSelected(item);
 		}
 	}
+	
+	private BroadcastReceiver mMessageReceiver = new BroadcastReceiver() {
+		@Override
+		public void onReceive(Context context, Intent intent) {
+			onResume();
+		}
+	};
 }

@@ -12,6 +12,7 @@ import android.widget.TextView;
 import com.groupagendas.groupagenda.R;
 import com.groupagendas.groupagenda.account.Account;
 import com.groupagendas.groupagenda.calendar.adapters.AbstractAdapter;
+import com.groupagendas.groupagenda.data.ContactManagement;
 import com.groupagendas.groupagenda.utils.InviteDialog;
 
 public class InvitedAdapter extends AbstractAdapter<Invited> {
@@ -38,7 +39,7 @@ public class InvitedAdapter extends AbstractAdapter<Invited> {
 
 		TextView nameView = (TextView) view.findViewById(R.id.invited_fullname);
 		TextView statusView = (TextView) view.findViewById(R.id.invited_status);
-//		TextView emailView = (TextView) view.findViewById(R.id.invited_available_email);
+		TextView emailView = (TextView) view.findViewById(R.id.invited_available_email);
 		TextView addToContactView = (TextView) view.findViewById(R.id.add_to_contact);
 		
 		int statusBackground = 0; 
@@ -47,6 +48,9 @@ public class InvitedAdapter extends AbstractAdapter<Invited> {
 		if (invited != null) {
 			temp = invited.getName();
 			nameView.setText(temp);
+			if(invited.getMy_contact_id() > 0){
+				emailView.setText(ContactManagement.getContactFromLocalDb(context, invited.getMy_contact_id(), 0).email);
+			}
 
 			if (temp.equals("You") || temp.equals(myFullname))
 				view.setTag(Invited.OWN_INVITATION_ENTRY);
@@ -79,7 +83,7 @@ public class InvitedAdapter extends AbstractAdapter<Invited> {
 		if (i == listSize - 1)
 			view.setBackgroundResource(R.drawable.event_invited_entry_last_background);
 		
-		if ((invited.getGuid() != myID) && (invited.getMy_contact_id() < 1) && (invited.getGuid() > 0)) {
+		if (((invited.getGuid() != myID) && (invited.getMy_contact_id() < 1)) || ((invited.getGuid() > 0) && invited.getMy_contact_id() < 1)) {
 			addToContactView.setVisibility(View.VISIBLE);
 			view.setOnClickListener(new OnClickListener() {
 				@Override
