@@ -7,11 +7,14 @@ import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -37,7 +40,7 @@ public class ContactInfoActivity extends Activity {
 	private LinearLayout.LayoutParams paramsD;
 
 	private Intent intent;
-	
+
 	private Toast toast;
 	private Contact mContact;
 
@@ -45,7 +48,7 @@ public class ContactInfoActivity extends Activity {
 	private int timezoneInUse = 0;
 	private String[] country_codes;
 	private String[] country_titles;
-	
+
 	@Override
 	public void onResume() {
 		super.onResume();
@@ -54,10 +57,10 @@ public class ContactInfoActivity extends Activity {
 		table = (TableLayout) findViewById(R.id.table);
 		country_codes = getResources().getStringArray(R.array.country_codes);
 		country_titles = getResources().getStringArray(R.array.countries);
-		
-		new GetGroupContactsTask().execute();
+
+		new GetContactTask().execute();
 	}
-	
+
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -72,13 +75,14 @@ public class ContactInfoActivity extends Activity {
 		paramsD = new LinearLayout.LayoutParams(LayoutParams.FILL_PARENT, 1);
 	}
 
-	class GetGroupContactsTask extends AsyncTask<Void, Contact, Contact> {
+	class GetContactTask extends AsyncTask<Void, Contact, Contact> {
 
 		private static final int LEAST_YEAR_VALUE = 1900;
 
 		@Override
 		protected Contact doInBackground(Void... type) {
-			Contact contact = ContactManagement.getContactFromLocalDb(ContactInfoActivity.this, intent.getIntExtra("contactId", 0), intent.getLongExtra("contactCreated", 0));
+			Contact contact = ContactManagement.getContactFromLocalDb(ContactInfoActivity.this, intent.getIntExtra("contactId", 0),
+					intent.getLongExtra("contactCreated", 0));
 			return contact;
 		}
 
@@ -87,13 +91,14 @@ public class ContactInfoActivity extends Activity {
 			if (contact != null) {
 
 				mContact = contact;
-				
+
 				table.removeAllViews();
-				
+
 				// Image
 				if (contact.image && contact.image_bytes != null) {
 					ImageView imageView = (ImageView) findViewById(R.id.image);
-					Bitmap bitmap = Utils.getResizedBitmap(BitmapFactory.decodeByteArray(contact.image_bytes, 0, contact.image_bytes.length), 120, 120);
+					Bitmap bitmap = Utils.getResizedBitmap(
+							BitmapFactory.decodeByteArray(contact.image_bytes, 0, contact.image_bytes.length), 120, 120);
 					if (bitmap != null)
 						imageView.setImageBitmap(bitmap);
 				}
@@ -102,16 +107,16 @@ public class ContactInfoActivity extends Activity {
 				nameView.setText(contact.name);
 				// Lastname
 				TextView lastnameView = (TextView) findViewById(R.id.lastname);
-				if(contact.lastname != null && !contact.lastname.equals("null"))
+				if (contact.lastname != null && !contact.lastname.equals("null"))
 					lastnameView.setText(contact.lastname);
-				
+
 				// Email
 				if (contact.email != null && !contact.email.equals("null")) {
 					setTableRow(getString(R.string.email), contact.email);
 				}
 				// Phone
 				String phone_full = "";
-				if (contact.phone1_code != null && !contact.phone1_code.equals("null")) {
+				if (contact.phone1_code != null && !contact.phone1_code.equals("null") && (contact.phone1_code.length() > 0)) {
 					phone_full += contact.phone1_code + "\t";
 				}
 				if (contact.phone1 != null && !contact.phone1.equals("null")) {
@@ -146,42 +151,46 @@ public class ContactInfoActivity extends Activity {
 					setTableRow(getString(R.string.city), contact.city);
 				}
 				// Street
-				if (contact.street !=null &&!contact.street.equals("null")) {
+				if (contact.street != null && !contact.street.equals("null")) {
 					setTableRow(getString(R.string.street), contact.street);
 				}
 				// ZIP code
 				if (contact.zip != null && !contact.zip.equals("null")) {
 					setTableRow(getString(R.string.zip), contact.zip);
 				}
+
+				// Groups
+				String groupsList = "";
+				if (contact.groups != null) {
+					if (contact.groups.size() > 0) {
+						String groupsIds = "";
+						
+						for (String id : contact.groups.values()) {
+							if (groupsIds.length() < 1) {
+								groupsIds += id;
+							} else {
+								groupsIds += ", " + id;
+							}
+						}
+						
+						groupsList = getGroupTitles(groupsIds);
+					}
+				}
+				setTableRow(getString(R.string.groups), groupsList);
 			}
 		}
 
 	}
 
 	class DeleteContactTask extends AsyncTask<Void, Boolean, Boolean> {
-	
-			@Override
-			protected Boolean doInBackground(Void... type) {
-			ContactManagement.deleteContact(ContactInfoActivity.this, mContact);	
-//			Boolean result = ContactManagement.removeContactFromRemoteDb(ContactInfoActivity.this, mContact.contact_id);
-//			
-//			if(result){
-//				ContactManagement.removeContactFromLocalDb(ContactInfoActivity.this, mContact.contact_id);
-//				if(mContact.birthdate!=null && mContact.birthdate.length()==10){
-//					ContactManagement.removeBirthdayFromLocalDb(ContactInfoActivity.this, mContact.contact_id);
-//				}
-//				
-//			}else{
-////				ContentValues values = new ContentValues();
-////				values.put(ContactsProvider.CMetaData.ContactsMetaData.NEED_UPDATE, 3);
-////				
-////				getContentResolver().update(uri, values, null, null);
-//			}
-			
-			
+
+		@Override
+		protected Boolean doInBackground(Void... type) {
+			ContactManagement.deleteContact(ContactInfoActivity.this, mContact);
+
 			return true;
 		}
-	
+
 		@Override
 		protected void onPostExecute(Boolean result) {
 			toast = Toast.makeText(ContactInfoActivity.this, "", Toast.LENGTH_SHORT);
@@ -201,7 +210,7 @@ public class ContactInfoActivity extends Activity {
 		tvLeft.setText(field);
 
 		TextView tvRight = new TextView(this);
-		tvRight.setPadding(3, 3, 3, 3);
+		tvRight.setPadding(3, 3, 3, 0);
 		tvRight.setTextColor(Color.parseColor("#000000"));
 		tvRight.setText(value);
 
@@ -253,10 +262,10 @@ public class ContactInfoActivity extends Activity {
 		switch (item.getItemId()) {
 		case R.id.edit_contact:
 			Intent contactEdit = new Intent(ContactInfoActivity.this, ContactEditActivity.class);
-			if(mContact != null){
+			if (mContact != null) {
 				contactEdit.putExtra("contact_id", mContact.contact_id);
 			}
-			
+
 			startActivity(contactEdit);
 			return true;
 		case R.id.delete_contact:
@@ -266,4 +275,35 @@ public class ContactInfoActivity extends Activity {
 			return super.onOptionsItemSelected(item);
 		}
 	}
+	
+	private String getGroupTitles(String ids) {
+		Cursor cur;
+		String result = "";
+
+		Uri uri = ContactsProvider.CMetaData.GroupsMetaData.CONTENT_URI;
+		String[] projection = { ContactsProvider.CMetaData.GroupsMetaData.TITLE };
+		String selection = ContactsProvider.CMetaData.GroupsMetaData.G_ID + " IN (" + ids + ")";
+
+		cur = getContentResolver().query(uri, projection, selection, null, null);
+
+		if ((cur != null) && (cur.getCount() > 0)) {
+			if (cur.moveToFirst()) {
+				while (!cur.isAfterLast()) {
+					if (result.length() < 1) {
+						result += cur.getString(cur.getColumnIndex(projection[0]));
+					} else {
+						result += "\n" + cur.getString(cur.getColumnIndex(projection[0]));
+					}
+					cur.moveToNext();
+				}
+			}
+		} else {
+			Log.i("GetGroupTitlesTask", "Query didn't return any entry");
+		}
+
+		cur.close();
+
+		return result;
+	}
+
 }
