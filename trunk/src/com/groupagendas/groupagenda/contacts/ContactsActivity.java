@@ -202,6 +202,11 @@ public class ContactsActivity extends ListActivity implements OnCheckedChangeLis
 				EventActivity.selectedContacts = new ArrayList<Contact>();
 
 			selectedContacts = EventActivity.selectedContacts;
+			
+			if (EventActivity.selectedGroups == null)
+				EventActivity.selectedGroups = new ArrayList<Group>();
+
+			selectedGroups = EventActivity.selectedGroups;
 
 			if (ContactEditActivity.selectedGroups == null)
 				ContactEditActivity.selectedGroups = new ArrayList<Group>();
@@ -234,6 +239,9 @@ public class ContactsActivity extends ListActivity implements OnCheckedChangeLis
 						selectedGroup = gAdapter.getSelected();
 						if (selectedGroup != null) {
 							switch (DESTINATION) {
+							case DEST_EVENT_ACTIVITY:
+								EventActivity.selectedGroups = selectedGroup;
+								break;
 							case DEST_CONTACT_EDIT:
 								ContactEditActivity.selectedGroups = selectedGroup;
 								break;
