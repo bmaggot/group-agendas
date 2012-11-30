@@ -2408,7 +2408,7 @@ public class ContactManagement {
 	 * @param req
 	 *            - Trigger if contact's details should be requested.
 	 */
-	public static void requestContactCopy(Context context, int guid, boolean req) {
+	public static void requestContactCopy(Context context, int guid, int gcid, boolean req) {
 		try {
 			Account account = new Account(context);
 			WebService webService = new WebService();
@@ -2423,7 +2423,11 @@ public class ContactManagement {
 			}
 
 			reqEntity.addPart("token", new StringBody(Data.getToken(context), Charset.forName("UTF-8")));
-			reqEntity.addPart("guid", new StringBody("" + guid, Charset.forName("UTF-8")));
+			if(guid > 0){
+				reqEntity.addPart("guid", new StringBody("" + guid, Charset.forName("UTF-8")));
+			} else if(gcid > 0){
+				reqEntity.addPart("gcid", new StringBody("" + gcid, Charset.forName("UTF-8")));
+			}
 			if (req) {
 				reqEntity.addPart("req_details", new StringBody("1", Charset.forName("UTF-8")));
 			}
