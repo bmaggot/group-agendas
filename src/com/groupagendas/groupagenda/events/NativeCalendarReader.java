@@ -195,25 +195,10 @@ public class NativeCalendarReader {
 			event.setInternalID(Long.valueOf(cursor.getString(0)));
 			event.setTitle(cursor.getString(1));
 			event.setDescription(cursor.getString(2));
-			
-//		    String input_format = account.getSetting_date_format() + " HH:mm ";
-//		    String input_value="Wed Jun 13 17:05:44 +0000 2012";
-//		    Date date = null;
-//
-//		    SimpleDateFormat sdf = new SimpleDateFormat(input_format);
-//		    try {
-//		        date = sdf.parse(input_value);
-//		    } catch (ParseException e) {
-//		        e.printStackTrace();
-//		    }
-//
-//		    Calendar calendar = sdf.getCalendar();
-//		    calendar.setTime(date);
-			
-			@SuppressWarnings("unused")
-			TimeZone timeZone = TimeZone.getTimeZone(account.getTimezone());
+
 			Calendar startCalendar = Calendar.getInstance();			
 			startCalendar.setTimeInMillis(Long.valueOf(cursor.getString(3)));
+			startCalendar.clear(Calendar.DST_OFFSET);
 			if(!startCalendar.getTimeZone().equals(TimeZone.getTimeZone("UTC"))){
 				Calendar output = Calendar.getInstance();  
 
@@ -234,6 +219,7 @@ public class NativeCalendarReader {
 			} else {
 				endCalendar.setTimeInMillis(Long.valueOf(cursor.getString(3)));
 			}
+			endCalendar.clear(Calendar.DST_OFFSET);
 			endCalendar.setTimeZone(Calendar.getInstance().getTimeZone());
 			event.setEndCalendar(endCalendar);
 			event.setIs_all_day(cursor.getString(5).equals("1"));
