@@ -1,27 +1,15 @@
 package com.groupagendas.groupagenda.contacts;
 
-import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.TreeMap;
-
-import org.apache.http.HttpResponse;
-import org.apache.http.HttpStatus;
-import org.apache.http.client.methods.HttpPost;
-import org.apache.http.entity.mime.HttpMultipartMode;
-import org.apache.http.entity.mime.MultipartEntity;
-import org.apache.http.entity.mime.content.StringBody;
-import org.apache.http.util.EntityUtils;
-import org.json.JSONObject;
 
 import android.app.ListActivity;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.text.Editable;
 import android.text.TextWatcher;
-import android.util.Log;
 import android.util.TypedValue;
 import android.view.GestureDetector;
 import android.view.Gravity;
@@ -46,9 +34,7 @@ import com.groupagendas.groupagenda.R;
 import com.groupagendas.groupagenda.contacts.importer.ImportActivity;
 import com.groupagendas.groupagenda.data.ContactManagement;
 import com.groupagendas.groupagenda.data.Data;
-import com.groupagendas.groupagenda.data.DataManagement;
 import com.groupagendas.groupagenda.events.EventActivity;
-import com.groupagendas.groupagenda.https.WebService;
 import com.makeramen.segmented.SegmentedRadioGroup;
 
 public class ContactsActivity extends ListActivity implements OnCheckedChangeListener {
@@ -597,53 +583,5 @@ public class ContactsActivity extends ListActivity implements OnCheckedChangeLis
 
 			Data.returnedFromContactImport = false;
 		}
-	}
-
-	public class AddNewPersonsToEvent extends AsyncTask<Void, Void, Void> {
-
-		@Override
-		protected Void doInBackground(Void... params) {
-			try {
-				WebService webService = new WebService();
-				HttpPost post = new HttpPost(Data.getServerUrl() + "mobile/events_invite_extra");
-
-				MultipartEntity reqEntity = new MultipartEntity(HttpMultipartMode.BROWSER_COMPATIBLE);
-				reqEntity.addPart("token", new StringBody(Data.getToken(getApplicationContext()), Charset.forName("UTF-8")));
-				if (Data.eventForSavingNewInvitedPersons != null) {
-					reqEntity.addPart("event_id", new StringBody(String.valueOf(Data.eventForSavingNewInvitedPersons.getEvent_id()),
-							Charset.forName("UTF-8")));
-				}
-				if (selectedContacts != null && !selectedContacts.isEmpty()) {
-					for (int i = 0, l = selectedContacts.size(); i < l; i++) {
-						reqEntity.addPart("contacts[]",
-								new StringBody(String.valueOf(selectedContacts.get(i).contact_id), Charset.forName("UTF-8")));
-					}
-				}
-				if (selectedGroups != null && !selectedGroups.isEmpty()) {
-					for (int i = 0, l = selectedGroups.size(); i < l; i++) {
-						reqEntity.addPart("groups[]",
-								new StringBody(String.valueOf(selectedGroups.get(i).group_id), Charset.forName("UTF-8")));
-					}
-				}
-				post.setEntity(reqEntity);
-				if (DataManagement.networkAvailable) {
-					HttpResponse rp = webService.getResponseFromHttpPost(post);
-					if (rp.getStatusLine().getStatusCode() == HttpStatus.SC_OK) {
-						String resp = EntityUtils.toString(rp.getEntity());
-						if (resp != null) {
-							JSONObject object = new JSONObject(resp);
-							boolean success = object.getBoolean("success");
-							if (!success) {
-								Log.e("Adding new contacts to event ERROR", object.getJSONObject("error").getString("reason"));
-							}
-						}
-					}
-				}
-			} catch (Exception e) {
-
-			}
-			return null;
-		}
-
 	}
 }
