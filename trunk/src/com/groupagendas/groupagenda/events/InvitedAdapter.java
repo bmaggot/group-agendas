@@ -19,9 +19,12 @@ public class InvitedAdapter extends AbstractAdapter<Invited> {
 	int listSize;
 	int myID = 0;
 	String myFullname = "";
+	View view;
+	int event_id = 0;
 
-	public InvitedAdapter(Context context, List<Invited> list) {
+	public InvitedAdapter(Context context, List<Invited> list, int event_id) {
 		super(context, list);
+		this.event_id = event_id;
 		listSize = list.size();
 		Account account = new Account(context);
 		myFullname = account.getFullname();
@@ -83,12 +86,13 @@ public class InvitedAdapter extends AbstractAdapter<Invited> {
 		if (i == listSize - 1)
 			view.setBackgroundResource(R.drawable.event_invited_entry_last_background);
 		
-		if (((invited.getGuid() != myID) && (invited.getMy_contact_id() < 1)) || ((invited.getGuid() > 0) && invited.getMy_contact_id() < 1)) {
+		if (((invited.getGuid() != myID) && (invited.getMy_contact_id() < 1)) || ((invited.getGcid() > 0) && invited.getMy_contact_id() < 1)) {
 			addToContactView.setVisibility(View.VISIBLE);
+			this.view = view;
 			view.setOnClickListener(new OnClickListener() {
 				@Override
 				public void onClick(View v) {
-					InviteDialog dia = new InviteDialog(context, 0, invited);
+					InviteDialog dia = new InviteDialog(context, 0, invited, InvitedAdapter.this.view, event_id);
 					dia.show();
 				}
 			});

@@ -341,7 +341,7 @@ public class EventActivity extends Activity {
 			}
 
 			inviteButton.setBackgroundResource(R.drawable.event_invite_people_button_notalone);
-			invitedAdapter = new InvitedAdapter(this, event.getInvited());
+			invitedAdapter = new InvitedAdapter(this, event.getInvited(), event.getEvent_id());
 			for (int i = 0; i < invitedListSize; i++) {
 				View view = invitedAdapter.getView(i, null, null);
 				invitedPersonList.addView(view);
