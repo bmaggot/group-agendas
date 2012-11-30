@@ -2,6 +2,7 @@ package com.groupagendas.groupagenda.events;
 
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.HashMap;
 
 import android.app.AlertDialog;
 import android.app.Dialog;
@@ -28,6 +29,7 @@ import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
+import android.widget.SlidingDrawer;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -36,7 +38,9 @@ import com.groupagendas.groupagenda.account.Account;
 import com.groupagendas.groupagenda.chat.ChatMessageActivity;
 import com.groupagendas.groupagenda.contacts.Contact;
 import com.groupagendas.groupagenda.contacts.ContactsActivity;
+import com.groupagendas.groupagenda.contacts.Group;
 import com.groupagendas.groupagenda.data.CalendarSettings;
+import com.groupagendas.groupagenda.data.ContactManagement;
 import com.groupagendas.groupagenda.data.Data;
 import com.groupagendas.groupagenda.data.EventManagement;
 import com.groupagendas.groupagenda.timezone.CountriesAdapter;
@@ -112,6 +116,7 @@ public class EventEditActivity extends EventActivity {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.event_edit);
 		selectedContacts = null;
+		selectedGroups = null;
 	}
 	
 	@Override
@@ -168,6 +173,14 @@ public class EventEditActivity extends EventActivity {
 			changesMade = true;
 			saveButton.setEnabled(changesMade);
 		}
+		
+		if (selectedGroups == null)
+			selectedGroups = new ArrayList<Group>();
+
+		if (!selectedGroups.isEmpty()){
+			changesMade = true;
+			saveButton.setEnabled(changesMade);
+		}
 
 		if (newInvites == null)
 			newInvites = new ArrayList<Invited>();
@@ -179,6 +192,35 @@ public class EventEditActivity extends EventActivity {
 			nu.setStatus(Invited.PENDING);
 
 			EventActivity.newInvites.add(nu);
+		}
+		
+		ArrayList<Contact> selectedContactsFromGroups = new ArrayList<Contact>();
+		for(Group group : EventActivity.selectedGroups){
+			for(String id : group.contacts.values()){
+				selectedContactsFromGroups.add(ContactManagement.getContactFromLocalDb(this, Integer.valueOf(id), 0));
+			}
+		}
+		for (Contact temp : selectedContactsFromGroups) {
+			Invited nu = new Invited();
+			nu.setMy_contact_id(temp.contact_id);
+			nu.setName(temp.name + " " + temp.lastname);
+			nu.setStatus(Invited.PENDING);
+			boolean contains = false;
+			for(Invited tmp : EventActivity.newInvites){
+				if(nu.getMy_contact_id() == tmp.getMy_contact_id()){
+					contains = true;
+				}
+			}
+			if(EventManagement.getEventFromLocalDb(this, event_internal_id, EventManagement.ID_INTERNAL) != null){
+				for(Invited tmp : EventManagement.getEventFromLocalDb(this, event_internal_id, EventManagement.ID_INTERNAL).getInvited()){
+					if(nu.getMy_contact_id() == tmp.getMy_contact_id()){
+						contains = true;
+					}
+				}
+			}
+			if(!contains){
+				EventActivity.newInvites.add(nu);
+			}
 		}
 
 		// TODO implement offline

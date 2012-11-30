@@ -20,6 +20,7 @@ import android.widget.TextView;
 import com.groupagendas.groupagenda.R;
 import com.groupagendas.groupagenda.account.Account;
 import com.groupagendas.groupagenda.contacts.Contact;
+import com.groupagendas.groupagenda.contacts.Group;
 import com.groupagendas.groupagenda.data.DataManagement;
 import com.groupagendas.groupagenda.settings.AutoColorItem;
 import com.groupagendas.groupagenda.settings.AutoIconItem;
@@ -36,6 +37,7 @@ public class EventActivity extends Activity {
 
 	public static ArrayList<Invited> newInvites;
 	public static ArrayList<Contact> selectedContacts;
+	public static ArrayList<Group> selectedGroups;
 
 	protected DateTimeUtils dtUtils;
 	protected EditText descView;

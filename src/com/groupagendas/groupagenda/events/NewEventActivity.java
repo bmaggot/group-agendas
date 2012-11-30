@@ -36,6 +36,7 @@ import com.groupagendas.groupagenda.R;
 import com.groupagendas.groupagenda.account.Account;
 import com.groupagendas.groupagenda.contacts.Contact;
 import com.groupagendas.groupagenda.contacts.ContactsActivity;
+import com.groupagendas.groupagenda.contacts.Group;
 import com.groupagendas.groupagenda.data.CalendarSettings;
 import com.groupagendas.groupagenda.data.ContactManagement;
 import com.groupagendas.groupagenda.data.Data;
@@ -80,6 +81,7 @@ public class NewEventActivity extends EventActivity {
 		setContentView(R.layout.new_event);
 		account = new Account(this);
 		selectedContacts = null;
+		selectedGroups = null;
 
 		startCalendar.clear(Calendar.SECOND);
 		endCalendar.clear(Calendar.SECOND);
@@ -655,6 +657,9 @@ public class NewEventActivity extends EventActivity {
 
 		if (selectedContacts == null)
 			selectedContacts = new ArrayList<Contact>();
+		
+		if (selectedGroups == null)
+			selectedGroups = new ArrayList<Group>();
 
 		if (newInvites == null)
 			newInvites = new ArrayList<Invited>();
@@ -666,6 +671,28 @@ public class NewEventActivity extends EventActivity {
 			nu.setStatus(Invited.PENDING);
 
 			EventActivity.newInvites.add(nu);
+		}
+		
+		ArrayList<Contact> selectedContactsFromGroups = new ArrayList<Contact>();
+		for(Group group : EventActivity.selectedGroups){
+			for(String id : group.contacts.values()){
+				selectedContactsFromGroups.add(ContactManagement.getContactFromLocalDb(this, Integer.valueOf(id), 0));
+			}
+		}
+		for (Contact temp : selectedContactsFromGroups) {
+			Invited nu = new Invited();
+			nu.setMy_contact_id(temp.contact_id);
+			nu.setName(temp.name + " " + temp.lastname);
+			nu.setStatus(Invited.PENDING);
+			boolean contains = false;
+			for(Invited tmp : EventActivity.newInvites){
+				if(nu.getMy_contact_id() == tmp.getMy_contact_id()){
+					contains = true;
+				}
+			}
+			if(!contains){
+				EventActivity.newInvites.add(nu);
+			}			
 		}
 
 		event.setInvited(new ArrayList<Invited>());
