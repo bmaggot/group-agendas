@@ -203,15 +203,23 @@ public class ContactsActivity extends ListActivity implements OnCheckedChangeLis
 
 			selectedContacts = EventActivity.selectedContacts;
 			
-			if (EventActivity.selectedGroups == null)
-				EventActivity.selectedGroups = new ArrayList<Group>();
+			
+			switch (DESTINATION) {
+			case DEST_EVENT_ACTIVITY:
+				if (EventActivity.selectedGroups == null)
+					EventActivity.selectedGroups = new ArrayList<Group>();
 
-			selectedGroups = EventActivity.selectedGroups;
+				selectedGroups = EventActivity.selectedGroups;
+				break;
+			case DEST_CONTACT_EDIT:
+				if (ContactEditActivity.selectedGroups == null)
+					ContactEditActivity.selectedGroups = new ArrayList<Group>();
 
-			if (ContactEditActivity.selectedGroups == null)
-				ContactEditActivity.selectedGroups = new ArrayList<Group>();
-
-			selectedGroups = ContactEditActivity.selectedGroups;
+				selectedGroups = ContactEditActivity.selectedGroups;
+				break;
+			default:
+				break;
+			}
 
 			importButton.setText(R.string.contact_invite_save_button);
 			importButton.setOnClickListener(new OnClickListener() {
