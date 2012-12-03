@@ -8,6 +8,7 @@ import java.util.TimeZone;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import android.content.Context;
 import android.content.Intent;
 import android.graphics.Typeface;
 import android.util.Log;
@@ -23,16 +24,15 @@ import com.groupagendas.groupagenda.contacts.ContactInfoActivity;
 import com.groupagendas.groupagenda.data.DataManagement;
 import com.groupagendas.groupagenda.data.EventManagement;
 import com.groupagendas.groupagenda.events.Event;
-import com.groupagendas.groupagenda.events.ResponsesActivity;
 import com.groupagendas.groupagenda.utils.DateTimeUtils;
 import com.groupagendas.groupagenda.utils.Utils;
 
 public class ResponsesAdapter extends AbstractAdapter<JSONObject> {
 	
-	ResponsesActivity context;
+	Context context;
 
-	public ResponsesAdapter(ResponsesActivity context, List<JSONObject> list) {
-		super(context, list);
+	public ResponsesAdapter(Context context, List<JSONObject> list) {
+		super(context, list); 
 		this.context = context;
 	}
 
@@ -71,21 +71,14 @@ public class ResponsesAdapter extends AbstractAdapter<JSONObject> {
 		} catch (JSONException e) {
 			Log.e("ResponsesAdapter", "Failed getting event title.");
 		}
-		
-		String deleted = "";
+				
+		Event event = new Event();;
 		try {
-			deleted = responsesThread.getString("deleted");
-		} catch (JSONException e2) {
-			Log.e("ResponsesAdapter", "Failed getting deleted feald.");
+			event = EventManagement.getEventFromLocalDb(context, responsesThread.getLong("event_id"), EventManagement.ID_EXTERNAL);
+		} catch (JSONException e1) {
+			Log.e("ResponsesAdapter", "Failed getting event id.");
 		}
-		
-		if(deleted.contentEquals("null")){
-			Event event = new Event();;
-			try {
-				event = EventManagement.getEventFromLocalDb(context, responsesThread.getLong("event_id"), EventManagement.ID_EXTERNAL);
-			} catch (JSONException e1) {
-				Log.e("ResponsesAdapter", "Failed getting event id.");
-			}
+		if(event != null){
 			eventTitle.setOnClickListener(new EventActivityOnClickListener(context, event));
 			eventTitle.setTypeface(null, Typeface.BOLD);
 		}
