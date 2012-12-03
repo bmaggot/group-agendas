@@ -9,6 +9,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import android.content.Intent;
+import android.graphics.Typeface;
 import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -71,13 +72,23 @@ public class ResponsesAdapter extends AbstractAdapter<JSONObject> {
 			Log.e("ResponsesAdapter", "Failed getting event title.");
 		}
 		
-		Event event = new Event();;
+		String deleted = "";
 		try {
-			event = EventManagement.getEventFromLocalDb(context, responsesThread.getLong("event_id"), EventManagement.ID_EXTERNAL);
-		} catch (JSONException e1) {
-			Log.e("ResponsesAdapter", "Failed getting event id.");
+			deleted = responsesThread.getString("deleted");
+		} catch (JSONException e2) {
+			Log.e("ResponsesAdapter", "Failed getting deleted feald.");
 		}
-		eventTitle.setOnClickListener(new EventActivityOnClickListener(context, event));
+		
+		if(deleted.contentEquals("null")){
+			Event event = new Event();;
+			try {
+				event = EventManagement.getEventFromLocalDb(context, responsesThread.getLong("event_id"), EventManagement.ID_EXTERNAL);
+			} catch (JSONException e1) {
+				Log.e("ResponsesAdapter", "Failed getting event id.");
+			}
+			eventTitle.setOnClickListener(new EventActivityOnClickListener(context, event));
+			eventTitle.setTypeface(null, Typeface.BOLD);
+		}
 		
 		TextView eventDate = (TextView) view.findViewById(R.id.responses_event_date);
 		String temp ="";
