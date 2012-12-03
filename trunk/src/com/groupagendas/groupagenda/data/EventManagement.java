@@ -121,6 +121,54 @@ public class EventManagement {
 		}
 		return success;
 	}
+	
+	public static boolean updateEventByIdFromRemoteDb(Context context, String id) {
+		initUserTimezone(context);
+
+		boolean success = false;
+		try {
+			WebService webService = new WebService();
+			HttpPost post = new HttpPost(Data.getServerUrl()
+					+ "mobile/events_get");
+
+			MultipartEntity reqEntity = new MultipartEntity(
+					HttpMultipartMode.BROWSER_COMPATIBLE);
+			reqEntity.addPart(TOKEN, new StringBody(Data.getToken(context),
+					Charset.forName("UTF-8")));
+			reqEntity.addPart("event_id",
+					new StringBody(id, Charset.forName("UTF-8")));
+
+			post.setEntity(reqEntity);
+			HttpResponse rp = webService.getResponseFromHttpPost(post);
+
+			if (rp.getStatusLine().getStatusCode() == HttpStatus.SC_OK) {
+				String resp = EntityUtils.toString(rp.getEntity());
+				if (resp != null) {
+					JSONObject object = new JSONObject(resp);
+					success = object.getBoolean("success");
+
+					if (success == false) {
+						// TODO Error msg
+					} else {
+						JSONObject e = object.optJSONObject("event");
+						if (e == null) {
+							// TODO Error msg
+							return false;
+						}
+						Event event = JSONUtils.createEventFromJSON(context, e);
+						event.setInternalID(getEventFromLocalDb(context, event.getEvent_id(), ID_EXTERNAL).getInternalID());
+						updateEventInLocalDb(context, event);
+
+					}
+				}
+			}
+		} catch (Exception ex) {
+			Reporter.reportError(context, CLASS_NAME, Thread.currentThread()
+					.getStackTrace()[2].getMethodName().toString(), ex
+					.getMessage());
+		}
+		return success;
+	}
 
 	/**
 	 * @author justinas.marcinka@gmail.com Method creates event in both remote
