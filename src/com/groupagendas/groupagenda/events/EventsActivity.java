@@ -2,6 +2,9 @@ package com.groupagendas.groupagenda.events;
 
 import java.util.ArrayList;
 
+import org.json.JSONArray;
+import org.json.JSONObject;
+
 import android.app.ListActivity;
 import android.content.Intent;
 import android.database.DataSetObserver;
@@ -18,6 +21,8 @@ import az.mecid.android.QuickAction;
 
 import com.groupagendas.groupagenda.NavbarActivity;
 import com.groupagendas.groupagenda.R;
+import com.groupagendas.groupagenda.account.Account;
+import com.groupagendas.groupagenda.calendar.adapters.ResponsesAdapter;
 import com.groupagendas.groupagenda.contacts.ContactsActivity;
 import com.groupagendas.groupagenda.data.Data;
 import com.groupagendas.groupagenda.data.EventManagement;
@@ -53,6 +58,7 @@ public class EventsActivity extends ListActivity {
 	private EventsAdapter eventsAdapter;
 
 	private TextView topView;
+	
 
 	@Override
 	public void onResume() {
@@ -74,8 +80,12 @@ public class EventsActivity extends ListActivity {
 		radioButton.setChecked(false);
 		radioButton.setOnCheckedChangeListener(btnNavBarOnCheckedChangeListener);
 
-		
-		setListAdapter(eventsAdapter);
+		if(NavbarActivity.notResponses){
+			setListAdapter(eventsAdapter);
+		} else {
+			changeTitle(getString(R.string.responses));
+			createResponsesList();
+		}
 		try {
 			EventManagement.loadEvents(this, eventsAdapter);
 		} catch (Exception e) {
@@ -83,11 +93,13 @@ public class EventsActivity extends ListActivity {
 		}
 		
 		//filter events to new invites if there are such
-		if(NavbarActivity.showInvites && eventsAdapter.getNewInvitesCount() != 0){
-			filterState = FilterState.NEW_INVITES;
-			filterEventsByStatus(Invited.PENDING);
-			NavbarActivity.showInvites = false;
-			changeTitle(getString(R.string.status_new_invites_count, eventsAdapter.getNewInvitesCount()));
+		if(NavbarActivity.notResponses){
+			if(NavbarActivity.showInvites && eventsAdapter.getNewInvitesCount() != 0){
+				filterState = FilterState.NEW_INVITES;
+				filterEventsByStatus(Invited.PENDING);
+				NavbarActivity.showInvites = false;
+				changeTitle(getString(R.string.status_new_invites_count, eventsAdapter.getNewInvitesCount()));
+			}
 		}
 	}
 
@@ -162,19 +174,53 @@ public class EventsActivity extends ListActivity {
 	protected void onListItemClick(ListView l, View v, int pos, long id) {
 		super.onListItemClick(l, v, pos, id);
 		Intent intent = new Intent(EventsActivity.this, EventEditActivity.class);
+		try{
 		Event event = (Event) getListAdapter().getItem(pos);
 		intent.putExtra("event_id", event.getInternalID());
 		intent.putExtra("type", event.getType());
 		intent.putExtra("isNative", event.isNative());
 		startActivity(intent);
+		} catch (Exception e) {
+		}
+	}
+	
+	public void createResponsesList(){
+		boolean success = false;
+		String error = null;
+		ArrayList<JSONObject> list = new ArrayList<JSONObject>();
+		Account acc = new Account(getApplicationContext());
+		try {
+			JSONObject object = new JSONObject(acc.getResponses());
+			success = object.getBoolean("success");
+
+			if (success == false) {
+				error = object.getString("error");
+				Log.e("getResponsesList - error: ", error);
+			} else {
+				JSONArray gs = object.getJSONArray("items");
+				int count = gs.length();
+				if (count > 0) {
+					for (int i = 0; i < count; i++) {
+						JSONObject g = gs.getJSONObject(i);
+						list.add(g);
+					}
+				}
+			}
+		} catch (Exception ex) {
+			Log.e("JSON err", ex.getMessage());
+		}
+		ResponsesAdapter adapter = new ResponsesAdapter(EventsActivity.this, list);
+		setListAdapter(adapter);
 	}
 
 	private CompoundButton.OnCheckedChangeListener btnNavBarOnCheckedChangeListener = new CompoundButton.OnCheckedChangeListener() {
 		@Override
 		public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+			
 			if (isChecked) {
 				switch (buttonView.getId()) {
 				case R.id.btnStatus:
+					
 
 					// status
 					new_invites = new ActionItem();
@@ -183,6 +229,7 @@ public class EventsActivity extends ListActivity {
 
 						@Override
 						public void onClick(View v) {
+							setListAdapter(eventsAdapter);
 //							EventManagement.loadEvents(EventsActivity.this, eventsAdapter);
 							changeTitle(getString(R.string.status_new_invites_count, eventsAdapter.getNewInvitesCount()));
 							qa.dismiss();
@@ -200,6 +247,7 @@ public class EventsActivity extends ListActivity {
 
 						@Override
 						public void onClick(View v) {
+							setListAdapter(eventsAdapter);
 //							EventManagement.loadEvents(EventsActivity.this, eventsAdapter);
 							changeTitle(getString(R.string.status_not_attending));
 							qa.dismiss();
@@ -214,6 +262,7 @@ public class EventsActivity extends ListActivity {
 
 						@Override
 						public void onClick(View v) {
+							setListAdapter(eventsAdapter);
 //							EventManagement.loadEvents(EventsActivity.this, eventsAdapter);
 							changeTitle(getString(R.string.status_attending));
 							qa.dismiss();
@@ -229,6 +278,7 @@ public class EventsActivity extends ListActivity {
 
 						@Override
 						public void onClick(View v) {
+							setListAdapter(eventsAdapter);
 //							EventManagement.loadEvents(EventsActivity.this, eventsAdapter);
 							changeTitle(getString(R.string.status_maybe));
 							qa.dismiss();
@@ -247,6 +297,7 @@ public class EventsActivity extends ListActivity {
 					break;
 					
 				case R.id.btnContacts:
+					NavbarActivity.notResponses = true;
 					Data.newEventPar = false;
 					startActivity(new Intent(EventsActivity.this,
 							ContactsActivity.class));
@@ -254,6 +305,7 @@ public class EventsActivity extends ListActivity {
 					
 				case R.id.btnType:
 
+					NavbarActivity.notResponses = true;
 					// responses
 					responses = new ActionItem();
 					responses.setTitle(getString(R.string.responses));
@@ -261,9 +313,12 @@ public class EventsActivity extends ListActivity {
 
 						@Override
 						public void onClick(View v) {
+							NavbarActivity.notResponses = false;
+							changeTitle(getString(R.string.responses));
 							qa.dismiss();
-							Intent i = new Intent(EventsActivity.this, ResponsesActivity.class);
-							startActivity(i);
+							createResponsesList();
+//							Intent i = new Intent(EventsActivity.this, ResponsesActivity.class);
+//							startActivity(i);
 
 						}
 					});
@@ -275,6 +330,8 @@ public class EventsActivity extends ListActivity {
 
 						@Override
 						public void onClick(View v) {
+							setListAdapter(eventsAdapter);
+							NavbarActivity.notResponses = true;
 							changeTitle(getString(R.string.r_type));
 							qa.dismiss();
 							filterEventsByType(getString(R.string.r_type));
@@ -303,6 +360,8 @@ public class EventsActivity extends ListActivity {
 
 						@Override
 						public void onClick(View v) {
+							setListAdapter(eventsAdapter);
+							NavbarActivity.notResponses = true;
 							changeTitle(getString(R.string.o_type));
 							qa.dismiss();
 							filterState = FilterState.OPEN_EVENTS;
@@ -329,6 +388,8 @@ public class EventsActivity extends ListActivity {
 
 						@Override
 						public void onClick(View v) {
+							setListAdapter(eventsAdapter);
+							NavbarActivity.notResponses = true;
 							filterState = FilterState.PRIVATE_NOTES;
 							changeTitle(getString(R.string.p_type));
 							qa.dismiss();
