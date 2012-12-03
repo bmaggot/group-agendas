@@ -4,18 +4,43 @@
     android:layout_height="fill_parent"
     android:background="@android:color/white"
     android:gravity="center_horizontal"
-    android:orientation="vertical"
-    android:padding="10dp" >
+    android:orientation="vertical" >
 
-    <ImageView android:contentDescription="@string/login_ga_logo_placeholder"
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:orientation="horizontal" >
+
+        <Button
+            android:id="@+id/registerButton"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginRight="5dp"
+            android:layout_weight="0.45"
+            android:text="@string/register" />
+
+        <Button
+            android:id="@+id/forgot_pass"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="5dp"
+            android:layout_weight="0.45"
+            android:text="@string/forgot_pass" />
+    </LinearLayout>
+
+    <ImageView
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
+        android:contentDescription="@string/login_ga_logo_placeholder"
         android:src="@drawable/ga_logo" />
 
     <EditText
         android:id="@+id/login_emailText"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
+        android:layout_marginLeft="10dp"
+        android:layout_marginRight="10dp"
         android:hint="@string/email_address"
         android:inputType="textEmailAddress" >
     </EditText>
@@ -24,39 +49,48 @@
         android:id="@+id/login_passwordText"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
+        android:layout_marginLeft="10dp"
+        android:layout_marginRight="10dp"
         android:hint="@string/password"
         android:imeOptions="actionDone"
         android:inputType="textPassword" />
 
-    <LinearLayout android:orientation="horizontal"
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:gravity="left" >
-        
+        android:layout_marginLeft="10dp"
+        android:layout_marginRight="10dp"
+        android:gravity="left"
+        android:orientation="horizontal" >
+
         <CheckBox
             android:id="@+id/login_stayLoggedIn"
-            android:checked="true"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center_vertical" />
-
-        <TextView android:text="@string/stay_logged_in"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center_vertical"
+            android:checked="true" />
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:layout_weight="0.6"
+            android:text="@string/stay_logged_in"
             android:textColor="@color/black" />
+
+        <Button
+            android:id="@+id/loginButton"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_gravity="right"
+            android:layout_weight="0.4"
+            android:text="@string/login" />
     </LinearLayout>
 
     <RelativeLayout
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="5dp" >
-
-        <Button
-            android:id="@+id/registerButton"
-            android:layout_width="100dp"
-            android:layout_height="wrap_content"
-            android:text="@string/register" />
 
         <ProgressBar
             android:id="@+id/progress"
@@ -66,20 +100,6 @@
             android:layout_centerInParent="true"
             android:layout_marginTop="10dp"
             android:visibility="gone" />
-
-        <Button
-            android:id="@+id/loginButton"
-            android:layout_width="100dp"
-            android:layout_height="wrap_content"
-            android:layout_alignParentRight="true"
-            android:text="@string/login" />
     </RelativeLayout>
-
-    <Button
-        android:id="@+id/forgot_pass"
-        android:layout_width="150dp"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="5dp"
-        android:text="@string/forgot_pass" />
 
 </LinearLayout>
