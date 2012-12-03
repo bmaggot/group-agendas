@@ -126,9 +126,11 @@ public class NavbarActivity extends FragmentActivity {
 		// maybe...)
 		if (acc.getLatestUpdateUnixTimestamp() > 0) {
 			new DataSyncTask().execute();
+			acc.setResponses(""+EventManagement.getResponsesFromRemoteDb(getApplicationContext()));
 		} else {
-			if (!dataLoaded && (progressDialog == null))
+			if (!dataLoaded && (progressDialog == null)){
 				new DownLoadAllDataTask().execute();
+			}
 		}
 	}
 
@@ -681,8 +683,10 @@ public class NavbarActivity extends FragmentActivity {
 					publishProgress(total);
 
 				case 5: // Load events
-					if (DataManagement.networkAvailable)
+					if (DataManagement.networkAvailable){
 						EventManagement.getEventsFromRemoteDb(NavbarActivity.this, "");
+						acc.setResponses(""+EventManagement.getResponsesFromRemoteDb(getApplicationContext()));
+					}
 					loadPhase++;
 					total = 80;
 					publishProgress(total);
@@ -751,6 +755,9 @@ public class NavbarActivity extends FragmentActivity {
 		@Override
 		protected Void doInBackground(Void... params) {
 			DataManagement.synchronizeWithServer(NavbarActivity.this, this, acc.getLatestUpdateUnixTimestamp());
+			if (DataManagement.networkAvailable){
+				acc.setResponses(""+EventManagement.getResponsesFromRemoteDb(getApplicationContext()));
+			}
 			return null;
 		}
 
