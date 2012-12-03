@@ -210,7 +210,7 @@ public class ContactInfoActivity extends Activity {
 		tvLeft.setText(field);
 
 		TextView tvRight = new TextView(this);
-		tvRight.setPadding(3, 3, 3, 0);
+		tvRight.setPadding(3, 3, 3, 10);
 		tvRight.setTextColor(Color.parseColor("#000000"));
 		tvRight.setText(value);
 
