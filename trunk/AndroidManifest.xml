@@ -121,6 +121,12 @@
             android:theme="@android:style/Theme.NoTitleBar" >
         </activity>
         <activity
+            android:name=".events.ResponsesActivity"
+            android:configChanges="keyboardHidden|orientation"
+            android:screenOrientation="portrait"
+            android:theme="@android:style/Theme.NoTitleBar" >
+        </activity>
+        <activity
             android:name=".events.EventEditActivity"
             android:configChanges="keyboardHidden|orientation"
             android:screenOrientation="portrait"
