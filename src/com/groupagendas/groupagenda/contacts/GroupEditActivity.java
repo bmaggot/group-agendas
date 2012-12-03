@@ -8,6 +8,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.ExecutionException;
 
 import net.londatiga.android.CropOption;
 import net.londatiga.android.CropOptionAdapter;
@@ -27,17 +28,20 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.groupagendas.groupagenda.R;
 import com.groupagendas.groupagenda.data.ContactManagement;
+import com.groupagendas.groupagenda.data.Data;
 import com.groupagendas.groupagenda.data.DataManagement;
 import com.groupagendas.groupagenda.error.report.Reporter;
 import com.groupagendas.groupagenda.utils.MapUtils;
@@ -108,20 +112,31 @@ public class GroupEditActivity extends Activity implements OnClickListener {
 			
 			titleView.setText(group_name);
 			groupNameView.setText(group_name);
-			
+			try {
+				selectedContacts = new GetContactsTask().execute().get();
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			} catch (ExecutionException e) {
+				e.printStackTrace();
+			}
 		}else{
 //			TableRow RIRow = (TableRow) findViewById(R.id.remove_image_row);
 //			RIRow.setVisibility(View.GONE);
 //			View RIView = findViewById(R.id.remove_image_line);
 //			RIView.setVisibility(View.GONE);
-			
-			new GetContactsTask().execute();
-			
+						
 			editedGroup = new Group();
 			
 			titleView.setText(getString(R.string.add_group));
 //			imageView.setImageResource(R.drawable.group_icon);
 		}
+		
+	}
+	
+	@Override
+	public void onResume() {
+		super.onResume();
+		displaySelectedContacts();
 	}
 
 	@Override
@@ -138,7 +153,13 @@ public class GroupEditActivity extends Activity implements OnClickListener {
 //			showDialog(CROP_IMAGE_DIALOG);
 //			break;
 		case R.id.contactsButton:
-			showDialog(CHOOSE_CONTACTS_DIALOG);
+			Intent i = new Intent(GroupEditActivity.this, ContactsActivity.class);
+			i.putExtra(ContactsActivity.TASK_MODE_KEY, ContactsActivity.TASK_MODE_SELECTION);
+			i.putExtra(ContactsActivity.LIST_MODE_KEY, ContactsActivity.LIST_MODE_CONTACTS);
+			i.putExtra(ContactsActivity.DESTINATION_KEY, ContactsActivity.DEST_GROUP_EDIT);
+			Data.showSaveButtonInContactsForm = true;
+			// TODO Data.eventForSavingNewInvitedPersons = event;
+			startActivity(i);
 			break;
 		}
 	}
@@ -166,6 +187,13 @@ public class GroupEditActivity extends Activity implements OnClickListener {
 			editedGroup.title = temp;
 			
 			// contacts
+			editedGroup.contacts = new HashMap<String, String>();
+
+			for (int i = 0, l = selectedContacts.size(); i < l; i++) {
+				editedGroup.contacts.put(""+i, ""+selectedContacts.get(i).contact_id);
+			}
+			editedGroup.contact_count = editedGroup.contacts.size();
+			
 			cv.put(ContactsProvider.CMetaData.GroupsMetaData.CONTACTS, MapUtils.mapToString(getApplicationContext(), editedGroup.contacts));
 			cv.put(ContactsProvider.CMetaData.GroupsMetaData.CONTACT_COUNT, editedGroup.contacts.size());
 			
@@ -227,6 +255,13 @@ public class GroupEditActivity extends Activity implements OnClickListener {
 			cv.put(ContactsProvider.CMetaData.GroupsMetaData.MODIFIED, editedGroup.modified);
 			
 			// contacts
+			editedGroup.contacts = new HashMap<String, String>();
+
+			for (int i = 0, l = selectedContacts.size(); i < l; i++) {
+				editedGroup.contacts.put(""+i, ""+selectedContacts.get(i).contact_id);
+			}
+			editedGroup.contact_count = editedGroup.contacts.size();
+			
 			cv.put(ContactsProvider.CMetaData.GroupsMetaData.CONTACTS, MapUtils.mapToString(getApplicationContext(), editedGroup.contacts));
 			cv.put(ContactsProvider.CMetaData.GroupsMetaData.CONTACT_COUNT, editedGroup.contacts.size());
 			
@@ -354,20 +389,23 @@ public class GroupEditActivity extends Activity implements OnClickListener {
 
 	}
 	
-	class GetContactsTask extends AsyncTask<Void, Void, Void>{
+	class GetContactsTask extends AsyncTask<Void, Void, ArrayList<Contact>>{
 		@Override
 		protected void onPreExecute() {
+			pb = (ProgressBar) findViewById(R.id.progress);
+			pb.setVisibility(View.VISIBLE);
 			contactsButton.setEnabled(false);
 		}
 		@Override
-		protected Void doInBackground(Void... params) {
-			ArrayList<Contact> contacts = ContactManagement.getContactsFromLocalDb(GroupEditActivity.this, null);
-			getContactsList(contacts, true);
-			return null;
+		protected ArrayList<Contact> doInBackground(Void... params) {
+			String where = ContactsProvider.CMetaData.ContactsMetaData.GROUPS+" LIKE '%="+ editedGroup.group_id + "&%' OR "+ContactsProvider.CMetaData.ContactsMetaData.GROUPS+" LIKE '%=" + editedGroup.group_id + "'";
+			return ContactManagement.getContactsFromLocalDb(GroupEditActivity.this, where);
 		}
 		@Override
-		protected void onPostExecute(Void result) {
+		protected void onPostExecute(ArrayList<Contact> result) {
+			pb.setVisibility(View.GONE);
 			contactsButton.setEnabled(true);
+			selectedContacts = result;
 		}
 	}
 	
@@ -577,6 +615,39 @@ public class GroupEditActivity extends Activity implements OnClickListener {
 
 				alert.show();
 			}
+		}
+	}
+	
+	private void displaySelectedContacts() {
+		LayoutInflater mInflater = LayoutInflater.from(GroupEditActivity.this);
+		LinearLayout groupsList = (LinearLayout) findViewById(R.id.contactsList);
+		
+		contactsButton = (Button) findViewById(R.id.contactsButton);
+		
+		if (groupsList.getChildCount() > 0) {
+			groupsList.removeAllViews();
+		}
+		
+		if (selectedContacts != null) {
+			int groupAmount = selectedContacts.size();
+			
+			if (groupAmount > 0) {
+				contactsButton.setBackgroundResource(R.drawable.contact_edit_invitegroup_button_notalone);
+				
+				for (int iterator = 0; iterator < groupAmount; iterator++) {
+					String fullname = selectedContacts.get(iterator).name + selectedContacts.get(iterator).lastname; 
+					TextView entry = (TextView) mInflater.inflate(R.layout.contact_edit_invited_entry, null);
+					entry.setText(fullname);
+					
+					if (iterator == (groupAmount - 1)) {
+						entry.setBackgroundResource(R.drawable.contact_edit_invitegroup_entry_last_background);
+					}
+					
+					groupsList.addView(entry);
+				}
+			}
+		} else {
+			contactsButton.setBackgroundResource(R.drawable.event_icon_placeholder);
 		}
 	}
 }

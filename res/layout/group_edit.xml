@@ -58,7 +58,7 @@
         android:layout_width="match_parent"
         android:layout_height="40dp"
         android:layout_margin="10dp"
-        android:background="@drawable/event_invite_people_button_standalone"
+        android:background="@drawable/event_icon_placeholder"
         android:paddingBottom="5dp"
         android:paddingLeft="10dp"
         android:paddingRight="10dp"
@@ -89,79 +89,26 @@
             android:textSize="15dp" />
     </LinearLayout>
 
-    <!-- <TableRow
-    android:layout_marginLeft="10dp"
-    android:layout_marginRight="10dp"
-    android:layout_marginTop="10dp"
-    android:padding="3dp"
-    android:visibility="gone" >
-
-
-    <TextView
-    android:layout_width="fill_parent"
-    android:layout_height="wrap_content"
-    android:layout_marginRight="10dp"
-    android:text="@string/replace_image"
-    android:textColor="#01a2b5"
-    android:textSize="18dp" />
-
-
-    <ImageView
-    android:id="@+id/group_image"
-    android:layout_width="120dp"
-    android:layout_height="120dp"
-    android:contentDescription="@string/group_icon_placeholder" />
-    </TableRow>
-
-
-    <TableRow
-    android:id="@+id/remove_image_row"
-    android:layout_marginLeft="10dp"
-    android:layout_marginRight="10dp"
-    android:padding="3dp"
-    android:visibility="gone" >
-
-
-    <TextView
-    android:layout_width="fill_parent"
-    android:layout_height="wrap_content"
-    android:layout_marginRight="10dp"
-    android:text="@string/remove_image"
-    android:textColor="#01a2b5"
-    android:textSize="18dp" />
-
-
-    <CheckBox android:id="@+id/remove_image" />
-    </TableRow> -->
-
     <Button
         android:id="@+id/contactsButton"
         android:layout_width="match_parent"
-        android:layout_height="40dp"
+        android:layout_height="wrap_content"
         android:layout_marginLeft="10dp"
         android:layout_marginRight="10dp"
-        android:layout_marginTop="10dp"
-        android:background="@drawable/event_invite_people_button_standalone"
-        android:text="@string/select_contacts"
-        android:textColor="@color/black"
-        android:textSize="16dp"
+        android:background="@drawable/event_icon_placeholder"
+        android:onClick="onClick"
+        android:padding="10dp"
+        android:text="@string/contacts"
+        android:textSize="18dp"
         android:textStyle="bold" />
 
     <LinearLayout
-        android:id="@+id/selectedContacts"
+        android:id="@+id/contactsList"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginBottom="10dp"
+        android:layout_marginLeft="10dp"
+        android:layout_marginRight="10dp"
         android:orientation="vertical" />
-
-<!--    <Button
-        android:id="@+id/sendbutton"
-        android:layout_width="match_parent"
-        android:layout_height="40dp"
-        android:layout_margin="10dp"
-        android:background="@drawable/event_invite_people_button_standalone"
-        android:text="@string/save"
-        android:textColor="@color/black"
-        android:textSize="16dp"
-        android:textStyle="bold" /> -->
 
 </LinearLayout>
