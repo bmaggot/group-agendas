@@ -102,6 +102,7 @@ public class NavbarActivity extends FragmentActivity {
 	private Account acc;
 
 	public static boolean showInvites = false;
+	public static boolean notResponses = true;
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
