@@ -1,5 +1,6 @@
 package com.groupagendas.groupagenda.data;
 
+import java.io.UnsupportedEncodingException;
 import java.nio.charset.Charset;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -674,6 +675,59 @@ public class EventManagement {
 					.getStackTrace()[2].getMethodName().toString(), ex
 					.getMessage());
 		}
+	}
+	
+	public static ArrayList <JSONObject> getResponsesFromRemoteDb(Context context) {
+		boolean success = false;
+		String error = null;
+		ArrayList <JSONObject> list = new ArrayList<JSONObject>();
+		Account account = new Account(context);
+		WebService webService = new WebService();
+		HttpPost post = new HttpPost(Data.getServerUrl() + "mobile/latest_changes");
+		MultipartEntity reqEntity = new MultipartEntity(HttpMultipartMode.BROWSER_COMPATIBLE);
+
+		try {
+			reqEntity.addPart("session", new StringBody(account.getSessionId(), Charset.forName("UTF-8")));
+		} catch (UnsupportedEncodingException e2) {
+			e2.printStackTrace();
+		}
+
+		try {
+			reqEntity.addPart("token", new StringBody(Data.getToken(context), Charset.forName("UTF-8")));
+		} catch (UnsupportedEncodingException e1) {
+			Log.e("getResponsesFromRemoteDb(contactIds)", "Failed adding token to entity");
+		}
+
+		post.setEntity(reqEntity);
+		try {
+			HttpResponse rp = webService.getResponseFromHttpPost(post);
+
+			if (rp.getStatusLine().getStatusCode() == HttpStatus.SC_OK) {
+				String resp = EntityUtils.toString(rp.getEntity());
+				if (resp != null) {
+					JSONObject object = new JSONObject(resp);
+					success = object.getBoolean("success");
+
+					if (success == false) {
+						error = object.getString("error");
+						Log.e("getResponsesList - error: ", error);
+					} else {
+						JSONArray gs = object.getJSONArray("items");
+						int count = gs.length();
+						if (count > 0) {
+							for (int i = 0; i < count; i++) {
+								JSONObject g = gs.getJSONObject(i);
+								list.add(g);
+							}
+						}
+					}
+				}
+
+			}
+		} catch (Exception ex) {
+			Log.e("getResponsesFromRemoteDb", ex.getMessage());
+		}
+		return list;
 	}
 
 	// ///////////////////////////////////////////////////METHODS THAT WORK WITH
