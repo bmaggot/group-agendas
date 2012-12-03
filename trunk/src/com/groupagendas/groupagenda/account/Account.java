@@ -89,9 +89,19 @@ public class Account {
 		public static final String SHOW_BIRTHDAYS_CALENDARS = "show_birthdays_calendars";
 		
 		public static final String LAST_TIME_CONNECTED_IN_MS = "last_time_connected_in_ms"; 
+		
+		public static final String RESPONSES = "responses"; 
 	}
 
 
+	public String getResponses(){
+		return prefs.getString(Account.AccountMetaData.RESPONSES, "");
+	}
+	
+	public void setResponses(String responses){
+		prefsEditor.putString(Account.AccountMetaData.RESPONSES, responses);
+		prefsEditor.commit();
+	}
 
 	public long getLatestUpdateUnixTimestamp(){
 		return prefs.getLong(Account.AccountMetaData.DATA_UPDATE_TIMESTAMP, 0);
