@@ -50,7 +50,7 @@ public class ResponsesActivity extends Activity {
 		} catch (Exception ex) {
 			Log.e("JSON err", ex.getMessage());
 		}
-		adapter = new ResponsesAdapter(ResponsesActivity.this, list);
+		//adapter = new ResponsesAdapter(ResponsesActivity.this, list);
 		responses_thread_list.setAdapter(adapter);
 
 	}
