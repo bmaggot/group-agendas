@@ -80,7 +80,6 @@
                 android:layout_weight="0.5"
                 android:singleLine="true"
                 android:textColor="@color/black"
-                android:textStyle="bold"
                 android:textSize="12dp" />
 
             <TextView
