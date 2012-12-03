@@ -32,7 +32,7 @@ public class InvitedAdapter extends AbstractAdapter<Invited> {
 	}
 
 	@Override
-	public View getView(int i, View view, ViewGroup viewGroup) {
+	public View getView(final int i, View view, final ViewGroup viewGroup) {
 		final Invited invited;
 		String temp = "";
 
@@ -51,7 +51,10 @@ public class InvitedAdapter extends AbstractAdapter<Invited> {
 		if (invited != null) {
 			temp = invited.getName();
 			nameView.setText(temp);
-			if(invited.getMy_contact_id() > 0){
+			if(invited.getMy_contact_id() == 1){
+				emailView.setText(getContext().getResources().getString(R.string.adding));
+			} 
+			if(invited.getMy_contact_id() > 1 ){
 				emailView.setText(ContactManagement.getContactFromLocalDb(context, invited.getMy_contact_id(), 0).email);
 			}
 
@@ -88,11 +91,10 @@ public class InvitedAdapter extends AbstractAdapter<Invited> {
 		
 		if (((invited.getGuid() != myID) && (invited.getMy_contact_id() < 1)) || ((invited.getGcid() > 0) && invited.getMy_contact_id() < 1)) {
 			addToContactView.setVisibility(View.VISIBLE);
-			this.view = view;
 			view.setOnClickListener(new OnClickListener() {
 				@Override
 				public void onClick(View v) {
-					InviteDialog dia = new InviteDialog(context, 0, invited, InvitedAdapter.this.view, event_id);
+					InviteDialog dia = new InviteDialog(context, 0, invited, event_id);
 					dia.show();
 				}
 			});
