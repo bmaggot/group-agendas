@@ -117,10 +117,9 @@ public class ResponsesAdapter extends AbstractAdapter<JSONObject> {
 		
 		SimpleDateFormat sdf = new SimpleDateFormat("HH:mm");
 		sdf.setTimeZone(TimeZone.getTimeZone(acc.getTimezone()));
-		String time = sdf.format(tempCal.getTime());
 		sdf.applyPattern(DataManagement.ACCOUNT_BIRTHDATE_TIMESTAMP_FORMAT);
 		responsesDate.setText(dateTimeUtils.formatDate(tempCal));
-		responsesTime.setText(time);
+		responsesTime.setText(dateTimeUtils.formatTime(tempCal));
 		
 		TextView responses_title = (TextView) view.findViewById(R.id.responses_title);
 		try {
