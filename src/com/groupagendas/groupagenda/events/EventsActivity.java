@@ -38,6 +38,8 @@ public class EventsActivity extends ListActivity {
 	private ActionItem open_event;
 	private ActionItem shared_note;
 	private ActionItem private_note;
+	private ActionItem responses;
+	
 	// may be needed in case Rob wants ;] private ActionItem all_types;
 	// status
 	private ActionItem maybe;
@@ -252,6 +254,20 @@ public class EventsActivity extends ListActivity {
 					
 				case R.id.btnType:
 
+					// responses
+					responses = new ActionItem();
+					responses.setTitle(getString(R.string.responses));
+					responses.setOnClickListener(new OnClickListener() {
+
+						@Override
+						public void onClick(View v) {
+							qa.dismiss();
+							Intent i = new Intent(EventsActivity.this, ResponsesActivity.class);
+							startActivity(i);
+
+						}
+					});
+					
 					// types
 					shared_event = new ActionItem();
 					shared_event.setTitle(getString(R.string.r_type));
@@ -326,6 +342,7 @@ public class EventsActivity extends ListActivity {
 					qa.addActionItem(open_event);
 					qa.addActionItem(shared_note);
 					qa.addActionItem(private_note);
+					qa.addActionItem(responses);
 					qa.show();
 					buttonView.setChecked(false);
 					break;
