@@ -677,7 +677,7 @@ public class EventManagement {
 		}
 	}
 	
-	public static ArrayList <JSONObject> getResponsesFromRemoteDb(Context context) {
+	public static String getResponsesFromRemoteDb(Context context) {
 		boolean success = false;
 		String error = null;
 		ArrayList <JSONObject> list = new ArrayList<JSONObject>();
@@ -699,11 +699,12 @@ public class EventManagement {
 		}
 
 		post.setEntity(reqEntity);
+		String resp = "";
 		try {
 			HttpResponse rp = webService.getResponseFromHttpPost(post);
 
 			if (rp.getStatusLine().getStatusCode() == HttpStatus.SC_OK) {
-				String resp = EntityUtils.toString(rp.getEntity());
+				resp = EntityUtils.toString(rp.getEntity());
 				if (resp != null) {
 					JSONObject object = new JSONObject(resp);
 					success = object.getBoolean("success");
@@ -727,7 +728,7 @@ public class EventManagement {
 		} catch (Exception ex) {
 			Log.e("getResponsesFromRemoteDb", ex.getMessage());
 		}
-		return list;
+		return resp;
 	}
 
 	// ///////////////////////////////////////////////////METHODS THAT WORK WITH
