@@ -28,7 +28,7 @@ public class Data {
 	private static boolean loadGroupsData = false;
 	private static boolean loadEventsData = false;
 
-	private static final String DEFAULT_SERVER_URL = "http://dev.groupagendas.com";
+	private static final String DEFAULT_SERVER_URL = "http://dev.groupagendas.com/";
 
 	private static String DEFAULT_EMAIL = "";
 	private static String DEFAULT_PASSWORD = "";
