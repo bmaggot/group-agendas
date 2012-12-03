@@ -64,8 +64,6 @@ import com.ptashek.widgets.datetimepicker.DateTimePicker;
 @SuppressLint("ParserError")
 public class NavbarActivity extends FragmentActivity {
 
-
-
 	private DataManagement dm;
 
 	private ProgressDialog progressDialog;
@@ -74,7 +72,7 @@ public class NavbarActivity extends FragmentActivity {
 
 	private ActionItem list_search;
 	private ActionItem go_date;
-//	private ActionItem year;
+	// private ActionItem year;
 	private ActionItem month;
 	private ActionItem week;
 	private ActionItem day;
@@ -90,8 +88,8 @@ public class NavbarActivity extends FragmentActivity {
 	private FrameLayout calendarContainer;
 	private LayoutInflater mInflater;
 
-//	private EditText searchView;
-//	private EntryAdapter entryAdapter;
+	// private EditText searchView;
+	// private EntryAdapter entryAdapter;
 	private ViewState viewState;
 
 	private boolean dataLoaded = false;
@@ -105,8 +103,6 @@ public class NavbarActivity extends FragmentActivity {
 
 	public static boolean showInvites = false;
 
-	
-
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -116,11 +112,8 @@ public class NavbarActivity extends FragmentActivity {
 		setContentView(R.layout.actnavbar);
 
 		RadioGroup radiogroup = (RadioGroup) this.findViewById(R.id.radiogroup);
-		android.widget.RelativeLayout.LayoutParams params = (android.widget.RelativeLayout.LayoutParams) radiogroup
-				.getLayoutParams();
-		params.height = Math.round(getResources().getInteger(
-				R.integer.NAVBAR_HEIGHT)
-				* getResources().getDisplayMetrics().density);
+		android.widget.RelativeLayout.LayoutParams params = (android.widget.RelativeLayout.LayoutParams) radiogroup.getLayoutParams();
+		params.height = Math.round(getResources().getInteger(R.integer.NAVBAR_HEIGHT) * getResources().getDisplayMetrics().density);
 
 		if (savedInstanceState == null) { // if no selectedDate will be restored
 											// we create today's date
@@ -129,20 +122,22 @@ public class NavbarActivity extends FragmentActivity {
 
 		restoreMe(savedInstanceState);
 		acc = new Account(this);
-//TODO move data loading to approporiate class (Login activity maybe...)
-	 if (acc.getLatestUpdateUnixTimestamp() > 0){
+		// TODO move data loading to approporiate class (Login activity
+		// maybe...)
+		if (acc.getLatestUpdateUnixTimestamp() > 0) {
 			new DataSyncTask().execute();
-		}	else {
-		if (!dataLoaded && (progressDialog == null))
+		} else {
+			if (!dataLoaded && (progressDialog == null))
 				new DownLoadAllDataTask().execute();
 		}
 	}
 
 	@Override
 	public void onResume() {
-		LocalBroadcastManager.getInstance(this).registerReceiver(mMessageReceiver, new IntentFilter(C2DMReceiver.REFRESH_CHAT_MESSAGES_BADGE));
+		LocalBroadcastManager.getInstance(this).registerReceiver(mMessageReceiver,
+				new IntentFilter(C2DMReceiver.REFRESH_CHAT_MESSAGES_BADGE));
 		calendarContainer = (FrameLayout) findViewById(R.id.calendarContainer);
-		
+
 		super.onResume();
 		RadioButton radioButton;
 		radioButton = (RadioButton) findViewById(R.id.btnCalendar);
@@ -152,71 +147,68 @@ public class NavbarActivity extends FragmentActivity {
 		radioButton = (RadioButton) findViewById(R.id.btnCalendarSetings);
 		radioButton.setChecked(false);
 		radioButton.setOnCheckedChangeListener(btnNavBarOnCheckedChangeListener);
-		
+
 		radioButton = (RadioButton) findViewById(R.id.btnChatThreads);
 		radioButton.setChecked(false);
 		radioButton.setOnCheckedChangeListener(btnNavBarOnCheckedChangeListener);
-		
-//		radioButton = (RadioButton) findViewById(R.id.btnContacts);
-//		radioButton.setChecked(false);
-//		radioButton.setOnCheckedChangeListener(btnNavBarOnCheckedChangeListener);
-		
+
+		// radioButton = (RadioButton) findViewById(R.id.btnContacts);
+		// radioButton.setChecked(false);
+		// radioButton.setOnCheckedChangeListener(btnNavBarOnCheckedChangeListener);
+
 		radioButton = (RadioButton) findViewById(R.id.btnEvents);
 		radioButton.setChecked(false);
-		radioButton
-				.setOnCheckedChangeListener(btnNavBarOnCheckedChangeListener);
+		radioButton.setOnCheckedChangeListener(btnNavBarOnCheckedChangeListener);
 		radioButton = (RadioButton) findViewById(R.id.btnNewevent);
 		radioButton.setChecked(false);
-		radioButton
-				.setOnCheckedChangeListener(btnNavBarOnCheckedChangeListener);
-		
+		radioButton.setOnCheckedChangeListener(btnNavBarOnCheckedChangeListener);
+
 		// badges
 		newEventBadge();
 		newMessageBadge();
 		// end badges
-		
+
 		if (dataLoaded)
 			switchToView();
 
 	}
-	
-	private void newEventBadge(){
+
+	private void newEventBadge() {
 		TextView logo = (TextView) findViewById(R.id.textLogo);
-		
+
 		ContentResolver cr = getApplicationContext().getContentResolver();
-		String where = EventsProvider.EMetaData.EventsMetaData.STATUS + " = " + Invited.PENDING 
-				+ " AND " + EventsProvider.EMetaData.EventsMetaData.TIME_END_UTC_MILLISECONDS + " > strftime('%s000', 'now')" ;
+		String where = EventsProvider.EMetaData.EventsMetaData.STATUS + " = " + Invited.PENDING + " AND "
+				+ EventsProvider.EMetaData.EventsMetaData.TIME_END_UTC_MILLISECONDS + " > strftime('%s000', 'now')";
 		Cursor cur = cr.query(EventsProvider.EMetaData.EventsMetaData.CONTENT_URI, null, where, null, null);
 		int new_invites = cur.getCount();
-		
-		if(new_invites > 0){
+
+		if (new_invites > 0) {
 			logo.setVisibility(View.VISIBLE);
-			logo.setText(""+new_invites);
+			logo.setText("" + new_invites);
 		} else {
-			logo.setVisibility(View.GONE); 
+			logo.setVisibility(View.GONE);
 		}
-		
+
 		cur.close();
 	}
-	
-	
-	private void newMessageBadge(){
+
+	private void newMessageBadge() {
 		TextView message = (TextView) findViewById(R.id.textChat);
-		
+
 		ContentResolver cr = getApplicationContext().getContentResolver();
-		String[] projection = {"SUM("+ EventsProvider.EMetaData.EventsMetaData.NEW_MESSAGES_COUNT +") AS `sum`"};
-		String where2 = EMetaData.EventsMetaData.MESSAGES_COUNT +" > 0 AND "+ EMetaData.EventsMetaData.STATUS +" = "+ Invited.ACCEPTED;
+		String[] projection = { "SUM(" + EventsProvider.EMetaData.EventsMetaData.NEW_MESSAGES_COUNT + ") AS `sum`" };
+		String where2 = EMetaData.EventsMetaData.MESSAGES_COUNT + " > 0 AND " + EMetaData.EventsMetaData.STATUS + " = " + Invited.ACCEPTED;
 		Cursor cur2 = cr.query(EventsProvider.EMetaData.EventsMetaData.CONTENT_URI, projection, where2, null, null);
 		cur2.moveToFirst();
 		int new_messages = cur2.getInt(cur2.getColumnIndex("sum"));
-		
-		if(new_messages > 0){
+
+		if (new_messages > 0) {
 			message.setVisibility(View.VISIBLE);
-			message.setText(""+new_messages);
+			message.setText("" + new_messages);
 		} else {
 			message.setVisibility(View.GONE);
 		}
-		
+
 		cur2.close();
 	}
 
@@ -227,17 +219,14 @@ public class NavbarActivity extends FragmentActivity {
 		outState.putInt("loadPhase", loadPhase);
 		outState.putString("viewState", "" + viewState);
 		if (calendarContainer.getChildAt(0) instanceof AbstractCalendarView) {
-			selectedDate = ((AbstractCalendarView) calendarContainer
-					.getChildAt(0)).getDateToResume();
+			selectedDate = ((AbstractCalendarView) calendarContainer.getChildAt(0)).getDateToResume();
 		}
 		if (viewState == ViewState.DAY || viewState == ViewState.WEEK) {
 			outState.putBoolean("resumeDayWeekView", true);
 			outState.putInt("dayWeekViewShowDays", DayWeekView.getDaysToShow());
 		}
 
-		String dateStr = new SimpleDateFormat(
-				DataManagement.SERVER_TIMESTAMP_FORMAT).format(selectedDate
-				.getTime());
+		String dateStr = new SimpleDateFormat(DataManagement.SERVER_TIMESTAMP_FORMAT).format(selectedDate.getTime());
 		outState.putString("selectedDate", dateStr);
 	}
 
@@ -246,13 +235,10 @@ public class NavbarActivity extends FragmentActivity {
 		if (state != null) {
 			dataLoaded = state.getBoolean("isDataLoaded");
 			loadPhase = state.getInt("loadPhase");
-			viewState = ViewState
-					.getValueByString(state.getString("viewState"));
-			selectedDate = Utils.stringToCalendar( getApplicationContext(),
-					state.getString("selectedDate"),
+			viewState = ViewState.getValueByString(state.getString("viewState"));
+			selectedDate = Utils.stringToCalendar(getApplicationContext(), state.getString("selectedDate"),
 					DataManagement.SERVER_TIMESTAMP_FORMAT);
-			selectedDate
-					.setFirstDayOfWeek(CalendarSettings.getFirstDayofWeek());
+			selectedDate.setFirstDayOfWeek(CalendarSettings.getFirstDayofWeek());
 			if (viewState == ViewState.DAY || viewState == ViewState.WEEK) {
 				resumeDayWeekView = state.getBoolean("resumeDayWeekView");
 				dayWeekViewShowDays = state.getInt("dayWeekViewShowDays");
@@ -268,10 +254,9 @@ public class NavbarActivity extends FragmentActivity {
 		config.locale = new Locale(LanguageCodeGetter.getLanguageCode(new Account(this).getLanguage()));
 		res.updateConfiguration(config, dm);
 		this.initQAitems();
-		
+
 		if (viewState == null)
-			viewState = ViewState.getValueByString(CalendarSettings
-					.getDefaultView(this));
+			viewState = ViewState.getValueByString(CalendarSettings.getDefaultView(this));
 
 		switch (viewState) {
 		case DAY:
@@ -313,49 +298,40 @@ public class NavbarActivity extends FragmentActivity {
 
 	private void showGoToDateView() {
 		final Dialog mDateTimeDialog = new Dialog(this);
-		final RelativeLayout mDateTimeDialogView = (RelativeLayout) getLayoutInflater()
-				.inflate(R.layout.date_time_dialog, null);
-		final DateTimePicker mDateTimePicker = (DateTimePicker) mDateTimeDialogView
-				.findViewById(R.id.DateTimePicker);
+		final RelativeLayout mDateTimeDialogView = (RelativeLayout) getLayoutInflater().inflate(R.layout.date_time_dialog, null);
+		final DateTimePicker mDateTimePicker = (DateTimePicker) mDateTimeDialogView.findViewById(R.id.DateTimePicker);
 		Calendar c = Calendar.getInstance();
-		mDateTimePicker.updateDate(c.get(Calendar.YEAR), c.get(Calendar.MONTH),
-				c.get(Calendar.DAY_OF_MONTH));
+		mDateTimePicker.updateDate(c.get(Calendar.YEAR), c.get(Calendar.MONTH), c.get(Calendar.DAY_OF_MONTH));
 
-		((Button) mDateTimeDialogView.findViewById(R.id.SetDateTime))
-				.setOnClickListener(new OnClickListener() {
+		((Button) mDateTimeDialogView.findViewById(R.id.SetDateTime)).setOnClickListener(new OnClickListener() {
 
-					@Override
-					public void onClick(View v) {
-						mDateTimePicker.clearFocus();
-						String dayStr = new SimpleDateFormat("yyyy-MM-dd")
-								.format(mDateTimePicker.getCalendar().getTime());
-						selectedDate = Utils.stringToCalendar(getApplicationContext(), dayStr
-								+ " 00:00:00",
-								DataManagement.SERVER_TIMESTAMP_FORMAT);
-						selectedDate.setFirstDayOfWeek(CalendarSettings
-								.getFirstDayofWeek());
-						mDateTimeDialog.dismiss();
-						switchToView();
-					}
-				});
+			@Override
+			public void onClick(View v) {
+				mDateTimePicker.clearFocus();
+				String dayStr = new SimpleDateFormat("yyyy-MM-dd").format(mDateTimePicker.getCalendar().getTime());
+				selectedDate = Utils
+						.stringToCalendar(getApplicationContext(), dayStr + " 00:00:00", DataManagement.SERVER_TIMESTAMP_FORMAT);
+				selectedDate.setFirstDayOfWeek(CalendarSettings.getFirstDayofWeek());
+				mDateTimeDialog.dismiss();
+				switchToView();
+			}
+		});
 
-		((Button) mDateTimeDialogView.findViewById(R.id.CancelDialog))
-				.setOnClickListener(new OnClickListener() {
+		((Button) mDateTimeDialogView.findViewById(R.id.CancelDialog)).setOnClickListener(new OnClickListener() {
 
-					@Override
-					public void onClick(View v) {
-						mDateTimeDialog.cancel();
-					}
-				});
+			@Override
+			public void onClick(View v) {
+				mDateTimeDialog.cancel();
+			}
+		});
 
-		((Button) mDateTimeDialogView.findViewById(R.id.ResetDateTime))
-				.setOnClickListener(new OnClickListener() {
+		((Button) mDateTimeDialogView.findViewById(R.id.ResetDateTime)).setOnClickListener(new OnClickListener() {
 
-					@Override
-					public void onClick(View v) {
-						mDateTimePicker.reset();
-					}
-				});
+			@Override
+			public void onClick(View v) {
+				mDateTimePicker.reset();
+			}
+		});
 
 		mDateTimeDialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
 		mDateTimeDialog.setContentView(mDateTimeDialogView);
@@ -366,8 +342,7 @@ public class NavbarActivity extends FragmentActivity {
 	private void showListSearchView() {
 		calendarContainer.removeAllViews();
 		mInflater.inflate(R.layout.calendar_listnsearch, calendarContainer);
-		ListnSearchView view = (ListnSearchView) calendarContainer
-				.getChildAt(0);
+		ListnSearchView view = (ListnSearchView) calendarContainer.getChildAt(0);
 		view.init();
 	}
 
@@ -418,8 +393,7 @@ public class NavbarActivity extends FragmentActivity {
 			calendarContainer.removeAllViews();
 			mInflater.inflate(R.layout.calendar_week, calendarContainer);
 			if (calendarContainer.getChildAt(0) instanceof DayWeekView) {
-				DayWeekView view = (DayWeekView) calendarContainer
-						.getChildAt(0);
+				DayWeekView view = (DayWeekView) calendarContainer.getChildAt(0);
 				int daysToShow = 1;
 				DayWeekView.setDaysToShow(daysToShow);
 				view.init(selectedDate, daysToShow);
@@ -438,81 +412,81 @@ public class NavbarActivity extends FragmentActivity {
 
 	}
 
-//	class GetAllEventsTask extends
-//			AsyncTask<Void, ArrayList<Item>, ArrayList<Item>> {
-//
-//		@Override
-//		protected ArrayList<Item> doInBackground(Void... arg0) {
-//			ArrayList<Item> items = new ArrayList<Item>();
-//			ArrayList<Event> events = EventManagement.getEventsFromLocalDb(NavbarActivity.this, true);
-//
-//			String time = "1970-01-01";
-//
-//			for (int i = 0, l = events.size(); i < l; i++) {
-//				final Event event = events.get(i);
-//// temprorary workaround to build. Solution: remove this unused class
-//				final String newtime = "";//Utils.formatDateTime(
-////						event.my_time_start,
-////						DataManagement.SERVER_TIMESTAMP_FORMAT,
-////						"EEE, dd MMMM yyyy");
-//				if (!time.equals(newtime)) {
-//					time = newtime;
-//					items.add(new SectionItem(time));
-//				}
-//
-//				items.add(new EntryItem(event));
-//			}
-//
-//			return items;
-//		}
-//
-//		@Override
-//		protected void onPostExecute(ArrayList<Item> items) {
-//			calendarContainer.removeAllViews();
-//			View view = mInflater.inflate(R.layout.calendar_all,
-//					calendarContainer);
-//			ListView listView = (ListView) view.findViewById(R.id.listView);
-//			entryAdapter = new EntryAdapter(NavbarActivity.this, items);
-//			listView.setAdapter(entryAdapter);
-//
-//			searchView = (EditText) view.findViewById(R.id.search);
-//			searchView.addTextChangedListener(filterTextWatcher);
-//			super.onPostExecute(items);
-//		}
-//
-//	}
-//
-//	private TextWatcher filterTextWatcher = new TextWatcher() {
-//
-//		@Override
-//		public void afterTextChanged(Editable s) {
-//		}
-//
-//		@Override
-//		public void beforeTextChanged(CharSequence s, int start, int count,
-//				int after) {
-//		}
-//
-//		@Override
-//		public void onTextChanged(CharSequence s, int start, int before,
-//				int count) {
-//			if (s != null && entryAdapter != null) {
-//				entryAdapter.getFilter().filter(s);
-//			}
-//		}
-//
-//	};
+	// class GetAllEventsTask extends
+	// AsyncTask<Void, ArrayList<Item>, ArrayList<Item>> {
+	//
+	// @Override
+	// protected ArrayList<Item> doInBackground(Void... arg0) {
+	// ArrayList<Item> items = new ArrayList<Item>();
+	// ArrayList<Event> events =
+	// EventManagement.getEventsFromLocalDb(NavbarActivity.this, true);
+	//
+	// String time = "1970-01-01";
+	//
+	// for (int i = 0, l = events.size(); i < l; i++) {
+	// final Event event = events.get(i);
+	// // temprorary workaround to build. Solution: remove this unused class
+	// final String newtime = "";//Utils.formatDateTime(
+	// // event.my_time_start,
+	// // DataManagement.SERVER_TIMESTAMP_FORMAT,
+	// // "EEE, dd MMMM yyyy");
+	// if (!time.equals(newtime)) {
+	// time = newtime;
+	// items.add(new SectionItem(time));
+	// }
+	//
+	// items.add(new EntryItem(event));
+	// }
+	//
+	// return items;
+	// }
+	//
+	// @Override
+	// protected void onPostExecute(ArrayList<Item> items) {
+	// calendarContainer.removeAllViews();
+	// View view = mInflater.inflate(R.layout.calendar_all,
+	// calendarContainer);
+	// ListView listView = (ListView) view.findViewById(R.id.listView);
+	// entryAdapter = new EntryAdapter(NavbarActivity.this, items);
+	// listView.setAdapter(entryAdapter);
+	//
+	// searchView = (EditText) view.findViewById(R.id.search);
+	// searchView.addTextChangedListener(filterTextWatcher);
+	// super.onPostExecute(items);
+	// }
+	//
+	// }
+	//
+	// private TextWatcher filterTextWatcher = new TextWatcher() {
+	//
+	// @Override
+	// public void afterTextChanged(Editable s) {
+	// }
+	//
+	// @Override
+	// public void beforeTextChanged(CharSequence s, int start, int count,
+	// int after) {
+	// }
+	//
+	// @Override
+	// public void onTextChanged(CharSequence s, int start, int before,
+	// int count) {
+	// if (s != null && entryAdapter != null) {
+	// entryAdapter.getFilter().filter(s);
+	// }
+	// }
+	//
+	// };
 
 	private CompoundButton.OnCheckedChangeListener btnNavBarOnCheckedChangeListener = new CompoundButton.OnCheckedChangeListener() {
 		@Override
-		public void onCheckedChanged(CompoundButton buttonView,
-				boolean isChecked) {
+		public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
 			if (isChecked) {
 				switch (buttonView.getId()) {
 				case R.id.btnCalendar:
 					qa = new QuickAction(buttonView);
 					qa.addActionItem(list_search);
-//					qa.addActionItem(year);
+					// qa.addActionItem(year);
 					qa.addActionItem(month);
 					qa.addActionItem(mini_month);
 					qa.addActionItem(agenda);
@@ -532,22 +506,22 @@ public class NavbarActivity extends FragmentActivity {
 					viewState = ViewState.CHAT_THREADS;
 					showChatFragment();
 					break;
-//				case R.id.btnContacts:
-//					Data.newEventPar = false;
-//					startActivity(new Intent(NavbarActivity.this,
-//							ContactsActivity.class));
-//					break;
+				// case R.id.btnContacts:
+				// Data.newEventPar = false;
+				// startActivity(new Intent(NavbarActivity.this,
+				// ContactsActivity.class));
+				// break;
 				case R.id.btnEvents:
 					showInvites = true;
-					startActivity(new Intent(NavbarActivity.this,
-							EventsActivity.class));
+					startActivity(new Intent(NavbarActivity.this, EventsActivity.class));
 					break;
 				case R.id.btnNewevent:
 					Intent intent = new Intent(NavbarActivity.this, NewEventActivity.class);
 					View view = calendarContainer.getChildAt(0);
-					if (view instanceof AbstractCalendarView){
-						Calendar cal = ((AbstractCalendarView)view).getDateToResume();
-						intent.putExtra(NewEventActivity.EXTRA_STRING_FOR_START_CALENDAR, Utils.formatCalendar(cal, DataManagement.SERVER_TIMESTAMP_FORMAT));
+					if (view instanceof AbstractCalendarView) {
+						Calendar cal = ((AbstractCalendarView) view).getDateToResume();
+						intent.putExtra(NewEventActivity.EXTRA_STRING_FOR_START_CALENDAR,
+								Utils.formatCalendar(cal, DataManagement.SERVER_TIMESTAMP_FORMAT));
 					}
 					startActivity(intent);
 					break;
@@ -555,15 +529,15 @@ public class NavbarActivity extends FragmentActivity {
 			}
 		}
 	};
-	
-	public void showChatFragment(){
+
+	public void showChatFragment() {
 		Fragment chatFragment = ChatThreadFragment.newInstance();
 		FragmentTransaction ft = NavbarActivity.this.getSupportFragmentManager().beginTransaction();
 		calendarContainer.removeAllViews();
 		ft.add(R.id.calendarContainer, chatFragment).setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN).commit();
 	}
-	
-	public void showCalendarSettingsFragment(){
+
+	public void showCalendarSettingsFragment() {
 		Fragment calendarSttingsFragment = CalendarSettingsFragment.newInstance();
 		FragmentTransaction ft = NavbarActivity.this.getSupportFragmentManager().beginTransaction();
 		calendarContainer.removeAllViews();
@@ -582,7 +556,7 @@ public class NavbarActivity extends FragmentActivity {
 
 	@Override
 	public void onBackPressed() {
-		if(viewState.equals(ViewState.CALENDAR_SETTINGS) || viewState.equals(ViewState.CHAT_THREADS)){
+		if (viewState.equals(ViewState.CALENDAR_SETTINGS) || viewState.equals(ViewState.CHAT_THREADS)) {
 			Account account = new Account(this);
 			viewState = ViewState.getValueByString(account.getSetting_default_view());
 			this.onResume();
@@ -603,29 +577,34 @@ public class NavbarActivity extends FragmentActivity {
 	public boolean dispatchTouchEvent(MotionEvent ev) {
 		super.dispatchTouchEvent(ev);
 		if (calendarContainer.getChildAt(0) instanceof AbstractCalendarView) {
-			AbstractCalendarView view = (AbstractCalendarView) calendarContainer
-					.getChildAt(0);
+			AbstractCalendarView view = (AbstractCalendarView) calendarContainer.getChildAt(0);
 			return view.getSwipeGestureDetector().onTouchEvent(ev);
 		}
 		return false;
 	}
-	
-	public void setAlarmsToAllEvents(){
-//		AlarmReceiver alarm = new AlarmReceiver();
-		//TODO Justui V. implement and remove from navbar activity
-//		for (Event event : Data.getEvents()) {
-//			if (!event.alarm1fired && !event.alarm1.equals("null")) {
-//				alarm.SetAlarm(getApplicationContext(), Utils.stringToCalendar(event.alarm1, DataManagement.SERVER_TIMESTAMP_FORMAT).getTimeInMillis(), event, 1);
-//			}
-//			if (!event.alarm2fired && !event.alarm2.equals("null")) {
-//				alarm.SetAlarm(getApplicationContext(), Utils.stringToCalendar(event.alarm2, DataManagement.SERVER_TIMESTAMP_FORMAT).getTimeInMillis(), event, 2);
-//			}
-//			if (!event.alarm3fired && !event.alarm3.equals("null")) {
-//				alarm.SetAlarm(getApplicationContext(), Utils.stringToCalendar(event.alarm3, DataManagement.SERVER_TIMESTAMP_FORMAT).getTimeInMillis(), event, 3);
-//			}
-//		}
+
+	public void setAlarmsToAllEvents() {
+		// AlarmReceiver alarm = new AlarmReceiver();
+		// TODO Justui V. implement and remove from navbar activity
+		// for (Event event : Data.getEvents()) {
+		// if (!event.alarm1fired && !event.alarm1.equals("null")) {
+		// alarm.SetAlarm(getApplicationContext(),
+		// Utils.stringToCalendar(event.alarm1,
+		// DataManagement.SERVER_TIMESTAMP_FORMAT).getTimeInMillis(), event, 1);
+		// }
+		// if (!event.alarm2fired && !event.alarm2.equals("null")) {
+		// alarm.SetAlarm(getApplicationContext(),
+		// Utils.stringToCalendar(event.alarm2,
+		// DataManagement.SERVER_TIMESTAMP_FORMAT).getTimeInMillis(), event, 2);
+		// }
+		// if (!event.alarm3fired && !event.alarm3.equals("null")) {
+		// alarm.SetAlarm(getApplicationContext(),
+		// Utils.stringToCalendar(event.alarm3,
+		// DataManagement.SERVER_TIMESTAMP_FORMAT).getTimeInMillis(), event, 3);
+		// }
+		// }
 	}
-	
+
 	private class DownLoadAllDataTask extends AsyncTask<Void, Integer, Void> {
 
 		@Override
@@ -659,65 +638,64 @@ public class NavbarActivity extends FragmentActivity {
 
 				int total = 0;
 
-				
 				switch (loadPhase) {
-					case 0:
-						//TODO remove
+				case 0:
+					// TODO remove
 
-						loadPhase++;
-						total = 10;
-						publishProgress(total);
-					case 1: // Load account
-						if (DataManagement.networkAvailable) 
-							dm.getAccountFromRemoteDb(NavbarActivity.this);
-						else
-							new Account(NavbarActivity.this);
-//						NativeCalendarImporter.readCalendar(dm.getmContext());
-						loadPhase++;
-						total = 20;
-						publishProgress(total);
-					case 2:// Load contacts
-						if (DataManagement.networkAvailable) 
-							ContactManagement.getContactsFromRemoteDb(NavbarActivity.this, null);
-						else
-							ContactManagement.getContactsFromLocalDb(NavbarActivity.this, null);
-						loadPhase++;
-						total = 40;
-						publishProgress(total);
-					case 3:// Load groups
-						if (DataManagement.networkAvailable) 
-							ContactManagement.getGroupsFromRemoteDb(NavbarActivity.this, null);
-						else
-							ContactManagement.getGroupsFromLocalDb(NavbarActivity.this, null);
-						loadPhase++;
-						total = 50;
-						publishProgress(total);
+					loadPhase++;
+					total = 10;
+					publishProgress(total);
+				case 1: // Load account
+					if (DataManagement.networkAvailable)
+						dm.getAccountFromRemoteDb(NavbarActivity.this);
+					else
+						new Account(NavbarActivity.this);
+					// NativeCalendarImporter.readCalendar(dm.getmContext());
+					loadPhase++;
+					total = 20;
+					publishProgress(total);
+				case 2:// Load contacts
+					if (DataManagement.networkAvailable)
+						ContactManagement.getContactsFromRemoteDb(NavbarActivity.this, null);
+					else
+						ContactManagement.getContactsFromLocalDb(NavbarActivity.this, null);
+					loadPhase++;
+					total = 40;
+					publishProgress(total);
+				case 3:// Load groups
+					if (DataManagement.networkAvailable)
+						ContactManagement.getGroupsFromRemoteDb(NavbarActivity.this, null);
+					else
+						ContactManagement.getGroupsFromLocalDb(NavbarActivity.this, null);
+					loadPhase++;
+					total = 50;
+					publishProgress(total);
 
-					case 4: // Load event templates 
-//						if (DataManagement.networkAvailable) 
-//							dm.getTemplates();
-//						else
-//							dm.getTemplateFromLocalDb(0);
-						loadPhase++;
-						total = 60;
-						publishProgress(total);
-						
-					case 5: // Load events
-						if (DataManagement.networkAvailable)
-							EventManagement.getEventsFromRemoteDb(NavbarActivity.this, "");
-						loadPhase++;
-						total = 80;
-						publishProgress(total);
+				case 4: // Load event templates
+					// if (DataManagement.networkAvailable)
+					// dm.getTemplates();
+					// else
+					// dm.getTemplateFromLocalDb(0);
+					loadPhase++;
+					total = 60;
+					publishProgress(total);
 
-					case 6: // Load chat threads if network available 
-						if (DataManagement.networkAvailable) {
-							dm.getAddressesFromRemoteDb(getApplicationContext());
-							ChatManagement.getAllChatMessagesFromRemoteDb(NavbarActivity.this);
-						}
-						loadPhase++;
-						total = 100;
-						publishProgress(total);
+				case 5: // Load events
+					if (DataManagement.networkAvailable)
+						EventManagement.getEventsFromRemoteDb(NavbarActivity.this, "");
+					loadPhase++;
+					total = 80;
+					publishProgress(total);
+
+				case 6: // Load chat threads if network available
+					if (DataManagement.networkAvailable) {
+						dm.getAddressesFromRemoteDb(getApplicationContext());
+						ChatManagement.getAllChatMessagesFromRemoteDb(NavbarActivity.this);
 					}
+					loadPhase++;
+					total = 100;
+					publishProgress(total);
+				}
 			}
 			return null;
 		}
@@ -741,7 +719,7 @@ public class NavbarActivity extends FragmentActivity {
 				progressDialog.setMessage(getString(R.string.loading_groups));
 				break;
 			case 50:
-//				progressDialog.setMessage(getString(R.string.loading_templates));
+				// progressDialog.setMessage(getString(R.string.loading_templates));
 				break;
 			case 60:
 				progressDialog.setMessage(getString(R.string.loading_events));
@@ -758,16 +736,16 @@ public class NavbarActivity extends FragmentActivity {
 		// after executing the code in the thread
 		@Override
 		protected void onPostExecute(Void result) {
-			
+
 			acc.setLatestUpdateTime(Calendar.getInstance());
 			progressDialog.dismiss();
 			dataLoaded = true;
 			switchToView();
-			
-			setAlarmsToAllEvents(); 
+
+			setAlarmsToAllEvents();
 		}
 	}
-	
+
 	private class DataSyncTask extends AsyncTask<Void, Integer, Void> {
 
 		@Override
@@ -775,19 +753,20 @@ public class NavbarActivity extends FragmentActivity {
 			DataManagement.synchronizeWithServer(NavbarActivity.this, this, acc.getLatestUpdateUnixTimestamp());
 			return null;
 		}
+
 		@Override
 		protected void onPostExecute(Void result) {
-			
+
 			acc.setLatestUpdateTime(Calendar.getInstance());
 			dataLoaded = true;
 			switchToView();
-			
-			setAlarmsToAllEvents(); 
+
+			setAlarmsToAllEvents();
 		}
 
 	}
-	
-	public void initQAitems(){
+
+	public void initQAitems() {
 		mInflater = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 
 		list_search = new ActionItem();
@@ -812,18 +791,18 @@ public class NavbarActivity extends FragmentActivity {
 			}
 		});
 
-//		year = new ActionItem();
-//		year.setTitle(getString(R.string.year));
-//		year.setOnClickListener(new OnClickListener() {
-//
-//			@Override
-//			public void onClick(View v) {
-//				qa.dismiss();
-//				selectedDate = Utils.createNewTodayCalendar();
-//				viewState = ViewState.YEAR;
-//				showYearView();
-//			}
-//		});
+		// year = new ActionItem();
+		// year.setTitle(getString(R.string.year));
+		// year.setOnClickListener(new OnClickListener() {
+		//
+		// @Override
+		// public void onClick(View v) {
+		// qa.dismiss();
+		// selectedDate = Utils.createNewTodayCalendar();
+		// viewState = ViewState.YEAR;
+		// showYearView();
+		// }
+		// });
 
 		month = new ActionItem();
 		month.setTitle(getString(R.string.month));
@@ -912,5 +891,5 @@ public class NavbarActivity extends FragmentActivity {
 			newMessageBadge();
 		}
 	};
-	
+
 }
