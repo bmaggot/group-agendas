@@ -80,7 +80,7 @@ public class InviteDialog extends Dialog {
 			Invited i = (Invited) params[0];
 			ContactManagement.requestContactCopy(getContext(), i.getGuid(), i.getGcid(), InviteDialog.this.req);
 			DataManagement.synchronizeWithServer(getContext(), null, new Account(getContext()).getLatestUpdateUnixTimestamp());
-			EventManagement.getEventByIdFromRemoteDb(getContext(), event_id + "");
+			EventManagement.updateEventByIdFromRemoteDb(getContext(), event_id + "");
 			return null;
 		}
 		
