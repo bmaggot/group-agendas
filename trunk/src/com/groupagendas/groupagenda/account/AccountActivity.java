@@ -368,8 +368,6 @@ public class AccountActivity extends Activity implements OnClickListener {
 			mYear = c.get(Calendar.YEAR);
 			mMonth = c.get(Calendar.MONTH);
 			mDay = c.get(Calendar.DAY_OF_MONTH);
-
-			updateBirthdate();
 		}
 
 		// sex
