@@ -44,17 +44,17 @@ public class InvitedAdapter extends AbstractAdapter<Invited> {
 		TextView statusView = (TextView) view.findViewById(R.id.invited_status);
 		TextView emailView = (TextView) view.findViewById(R.id.invited_available_email);
 		TextView addToContactView = (TextView) view.findViewById(R.id.add_to_contact);
-		
-		int statusBackground = 0; 
+
+		int statusBackground = 0;
 
 		invited = list.get(i);
 		if (invited != null) {
 			temp = invited.getName();
 			nameView.setText(temp);
-			if(invited.getMy_contact_id() == 1){
+			if (invited.getMy_contact_id() == 1) {
 				emailView.setText(getContext().getResources().getString(R.string.adding));
-			} 
-			if(invited.getMy_contact_id() > 1 && ContactManagement.getContactFromLocalDb(context, invited.getMy_contact_id(), 0) != null){
+			}
+			if (invited.getMy_contact_id() > 1 && ContactManagement.getContactFromLocalDb(context, invited.getMy_contact_id(), 0) != null) {
 				emailView.setText(ContactManagement.getContactFromLocalDb(context, invited.getMy_contact_id(), 0).email);
 			}
 
@@ -62,34 +62,35 @@ public class InvitedAdapter extends AbstractAdapter<Invited> {
 				view.setTag(Invited.OWN_INVITATION_ENTRY);
 
 			switch (invited.getStatus()) {
-				case Invited.REJECTED:
-					temp = getContext().getResources().getString(R.string.status_not_attending);
-					statusBackground = getContext().getResources().getColor(R.color.darker_gray);
-					break;
-				case Invited.ACCEPTED:
-					temp = getContext().getResources().getString(R.string.status_attending);
-					statusBackground = Color.parseColor("#26b2d8");
-					break;
-				case Invited.MAYBE:
-					temp = getContext().getResources().getString(R.string.status_maybe);
-					statusBackground = getContext().getResources().getColor(R.color.lighter_gray);
-					break;
-				case Invited.PENDING:
-					temp = getContext().getResources().getString(R.string.status_pending);
-					statusBackground = getContext().getResources().getColor(R.color.lighter_gray);
-					break;
-				default:
-					temp = "";
-					break;
+			case Invited.REJECTED:
+				temp = getContext().getResources().getString(R.string.status_not_attending);
+				statusBackground = getContext().getResources().getColor(R.color.darker_gray);
+				break;
+			case Invited.ACCEPTED:
+				temp = getContext().getResources().getString(R.string.status_attending);
+				statusBackground = Color.parseColor("#26b2d8");
+				break;
+			case Invited.MAYBE:
+				temp = getContext().getResources().getString(R.string.status_maybe);
+				statusBackground = getContext().getResources().getColor(R.color.lighter_gray);
+				break;
+			case Invited.PENDING:
+				temp = getContext().getResources().getString(R.string.status_pending);
+				statusBackground = getContext().getResources().getColor(R.color.lighter_gray);
+				break;
+			default:
+				temp = "";
+				break;
 			}
 			statusView.setText(temp);
 			statusView.setBackgroundColor(statusBackground);
 		}
-		
+
 		if (i == listSize - 1)
 			view.setBackgroundResource(R.drawable.event_invited_entry_last_background);
-		
-		if (((invited.getGuid() != myID) && (invited.getMy_contact_id() < 1)) || ((invited.getGcid() > 0) && invited.getMy_contact_id() < 1)) {
+
+		if ((((invited.getGuid() != myID) && (invited.getMy_contact_id() < 1)) || ((invited.getGcid() > 0) && invited.getMy_contact_id() < 1))
+				&& ContactManagement.getContactFromLocalDb(context, invited.getMy_contact_id(), 0) == null) {
 			addToContactView.setVisibility(View.VISIBLE);
 			view.setOnClickListener(new OnClickListener() {
 				@Override
