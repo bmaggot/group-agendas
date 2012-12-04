@@ -270,5 +270,6 @@
     <string name="no_internet_conn">There is no internet connection.</string>
     <string name="agenda_visibility">Agenda visibility</string>
     <string name="adding">Adding..</string>
+    <string name="notify_contact">Inform contact</string>
     
 </resources>
