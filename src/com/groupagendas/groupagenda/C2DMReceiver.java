@@ -42,6 +42,7 @@ public class C2DMReceiver extends C2DMBaseReceiver {
 	public static String REFRESH_MESSAGES_LIST = "refreshMessagesList";
 	public static String REFRESH_CHAT_THREAD_LIST = "refreshChatThreadList";
 	public static String REFRESH_CHAT_MESSAGES_BADGE = "refreshChatMessagesBadge";
+	public static String REFRESH_INVITE_BADGE = "refreshInviteBadge";
 	public static String REFRESH_EVENT_EDIT_ACTIVITY = "refreshEventEditActivity";
 
 	public C2DMReceiver() {
@@ -129,6 +130,8 @@ public class C2DMReceiver extends C2DMBaseReceiver {
 								&& (receiveIntent.getStringExtra(REL_OBJ).equals(EVENT) || receiveIntent.getStringExtra(REL_OBJ).equals(
 										CONTACT))) {
 							isChatMessage = false;
+							Intent intent = new Intent(REFRESH_INVITE_BADGE);
+							LocalBroadcastManager.getInstance(context).sendBroadcast(intent);
 						}
 						showNotification(context, data, rel_id);
 					}
