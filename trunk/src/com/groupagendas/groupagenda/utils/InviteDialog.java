@@ -6,7 +6,6 @@ import android.content.Intent;
 import android.os.AsyncTask;
 import android.support.v4.content.LocalBroadcastManager;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.Button;
 
 import com.groupagendas.groupagenda.C2DMReceiver;
