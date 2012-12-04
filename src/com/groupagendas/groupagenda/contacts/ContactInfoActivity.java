@@ -124,7 +124,7 @@ public class ContactInfoActivity extends Activity {
 				}
 				setTableRow(getString(R.string.phone), phone_full);
 				// Birth date
-				if (contact.birthdate != null && !contact.birthdate.equals("null")) {
+				if (contact.birthdate != null && !contact.birthdate.equals("")) {
 					Calendar birthdateCalendar = Utils.stringToCalendar(getApplicationContext(), contact.birthdate,
 							DataManagement.ACCOUNT_BIRTHDATE_TIMESTAMP_FORMAT);
 					if (birthdateCalendar.get(Calendar.YEAR) < LEAST_YEAR_VALUE) {
