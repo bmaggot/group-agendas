@@ -50,9 +50,11 @@ import android.widget.ListView;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
+import android.widget.ToggleButton;
 
 import com.groupagendas.groupagenda.R;
 import com.groupagendas.groupagenda.account.Account;
+import com.groupagendas.groupagenda.data.CalendarSettings;
 import com.groupagendas.groupagenda.data.ContactManagement;
 import com.groupagendas.groupagenda.data.Data;
 import com.groupagendas.groupagenda.data.DataManagement;
@@ -120,6 +122,8 @@ public class ContactEditActivity extends Activity implements OnClickListener, On
 	private Account account;
 
 	public static ArrayList<Group> selectedGroups;
+	
+	private ToggleButton notifyContactToggle;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -298,6 +302,9 @@ public class ContactEditActivity extends Activity implements OnClickListener, On
 		});
 		
 		displaySelectedGroups();
+		
+		notifyContactToggle = (ToggleButton) findViewById(R.id.notifyContactToggleButton);
+		notifyContactToggle.setChecked(true);
 	}
 
 	public void onClick(View v) {
@@ -768,6 +775,9 @@ public class ContactEditActivity extends Activity implements OnClickListener, On
 			}
 
 			if (check) {
+				if(notifyContactToggle.isChecked()){
+					Log.e("huj", "implement ble");
+				}
 				check = ContactManagement.insertContact(ContactEditActivity.this, editedContact);
 			}
 
