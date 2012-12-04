@@ -2,7 +2,6 @@ package com.groupagendas.groupagenda.events;
 
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.HashMap;
 
 import android.app.AlertDialog;
 import android.app.Dialog;
@@ -33,7 +32,6 @@ import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
-import android.widget.SlidingDrawer;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -99,6 +97,7 @@ public class EventEditActivity extends EventActivity {
 	private EditText alarm3;
 
 	private long event_internal_id;
+	private long event_external_id;
 
 	protected final static int DELETE_DIALOG = 1;
 	private boolean remindersShown = false;
@@ -231,9 +230,12 @@ public class EventEditActivity extends EventActivity {
 
 		// TODO implement offline
 		    event_internal_id = intent.getLongExtra("event_id", 0);
+		    if(event_external_id == 0){
+		    	event_external_id = EventManagement.getEventFromLocalDb(getApplicationContext(), event_internal_id, EventManagement.ID_INTERNAL).getEvent_id();
+		    }
 		// mode event Edit
 		if (event_internal_id > 0) {
-			new GetEventTask().execute(event_internal_id);
+			new GetEventTask().execute(new Long[] {event_internal_id, event_external_id});
 		}
 	}
 
@@ -725,7 +727,11 @@ public class EventEditActivity extends EventActivity {
 			if (intent.getBooleanExtra("isNative", false)) {
 				return NativeCalendarReader.getNativeEventFromLocalDbById(getApplicationContext(), ids[0]);
 			} else {
-				return EventManagement.getEventFromLocalDb(EventEditActivity.this, ids[0], EventManagement.ID_INTERNAL);
+				if(EventManagement.getEventFromLocalDb(EventEditActivity.this, ids[0], EventManagement.ID_INTERNAL) != null){
+					return EventManagement.getEventFromLocalDb(EventEditActivity.this, ids[0], EventManagement.ID_INTERNAL);
+				} else {
+					return EventManagement.getEventFromLocalDb(EventEditActivity.this, ids[1], EventManagement.ID_EXTERNAL);
+				}
 			}
 		}
 
