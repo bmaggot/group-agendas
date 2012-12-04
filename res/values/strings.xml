@@ -279,5 +279,6 @@
     <string name="responses_type_7">has confirmed note</string>
     <string name="responses_type_8">has rejected note</string>
     <string name="adding">Adding..</string>
+    <string name="notify_contact">Inform contact</string>
     
 </resources>
