@@ -54,7 +54,7 @@ public class InvitedAdapter extends AbstractAdapter<Invited> {
 			if(invited.getMy_contact_id() == 1){
 				emailView.setText(getContext().getResources().getString(R.string.adding));
 			} 
-			if(invited.getMy_contact_id() > 1 ){
+			if(invited.getMy_contact_id() > 1 && ContactManagement.getContactFromLocalDb(context, invited.getMy_contact_id(), 0) != null){
 				emailView.setText(ContactManagement.getContactFromLocalDb(context, invited.getMy_contact_id(), 0).email);
 			}
 
