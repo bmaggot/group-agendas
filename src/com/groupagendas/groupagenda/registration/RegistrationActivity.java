@@ -1,7 +1,11 @@
 package com.groupagendas.groupagenda.registration;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Locale;
+
+import org.xml.sax.DTDHandler;
 
 import android.accounts.AccountManager;
 import android.app.Activity;
@@ -16,6 +20,8 @@ import android.os.Bundle;
 import android.telephony.TelephonyManager;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.text.format.DateFormat;
+import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.Window;
@@ -30,6 +36,7 @@ import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.Spinner;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.groupagendas.groupagenda.R;
 import com.groupagendas.groupagenda.data.DataManagement;
@@ -79,6 +86,9 @@ public class RegistrationActivity extends Activity {
 	private View countrySpinnerBlock;
 	private String localLanguage;
 	private CheckBox chkStatement;
+	
+	private String dateFormat;
+	private boolean ampm;
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -124,15 +134,39 @@ public class RegistrationActivity extends Activity {
 
 		Locale usersLocale = getApplicationContext().getResources().getConfiguration().locale;
 		TelephonyManager tm = (TelephonyManager) getSystemService(Context.TELEPHONY_SERVICE);
+		Locale simLocale = new Locale(tm.getSimCountryIso(), tm.getSimCountryIso());
+		
+		//dateformat
+		SimpleDateFormat simpleDateFormat = (SimpleDateFormat) DateFormat.getDateFormat(getApplicationContext());
+		dateFormat = simpleDateFormat.toLocalizedPattern();
+		simpleDateFormat.getCalendar().get(Calendar.AM_PM);
+		
+		//ampm
+		if(DateFormat.is24HourFormat(getApplicationContext())){
+			ampm = false;
+		} else {
+			ampm = true;
+		}
 
-		localCountry = usersLocale.getISO3Country();
+		//locallanguage
+		if(simLocale.getDisplayLanguage() != null && !simLocale.getDisplayLanguage().equals("")){
+			localLanguage = simLocale.getDisplayLanguage();
+		} else {
+			localLanguage = usersLocale.getDisplayLanguage(usersLocale).toString();
+		}
+		
+		//localcountry
+		if(simLocale.getISO3Country() != null && !simLocale.getISO3Country().equals("")){
+			localCountry = simLocale.getISO3Country();
+		} else {
+			localCountry = usersLocale.getISO3Country();
+		}
 
+		//phonenumber
 		if (tm.getLine1Number() != null)
 			userPhoneNo = tm.getLine1Number().toString();
 		else
 			userPhoneNo = "";
-
-		localLanguage = usersLocale.getDisplayLanguage(usersLocale).toString();
 
 		pb = (ProgressBar) findViewById(R.id.progress);
 		phoneView = (EditText) findViewById(R.id.phoneView);
@@ -354,6 +388,7 @@ public class RegistrationActivity extends Activity {
 				}
 			}
 		});
+		Log.e("Registerationas",  "Default dateformat: " + dateFormat + " AmPm setting: " + ampm);
 	}
 
 	private int getMyLanguage(String[] countryList, String myLanguage) {
