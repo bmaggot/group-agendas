@@ -3,6 +3,7 @@ package com.groupagendas.groupagenda.events;
 import java.util.List;
 
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Color;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -11,7 +12,9 @@ import android.widget.TextView;
 
 import com.groupagendas.groupagenda.R;
 import com.groupagendas.groupagenda.account.Account;
+import com.groupagendas.groupagenda.account.AccountActivity;
 import com.groupagendas.groupagenda.calendar.adapters.AbstractAdapter;
+import com.groupagendas.groupagenda.contacts.ContactInfoActivity;
 import com.groupagendas.groupagenda.data.ContactManagement;
 import com.groupagendas.groupagenda.utils.InviteDialog;
 
@@ -50,7 +53,11 @@ public class InvitedAdapter extends AbstractAdapter<Invited> {
 		invited = list.get(i);
 		if (invited != null) {
 			temp = invited.getName();
-			nameView.setText(temp);
+			if (invited.getGuid() != new Account(context).getUser_id()) {
+				nameView.setText(temp);
+			} else {
+				nameView.setText(context.getResources().getString(R.string.you));
+			}
 			if (invited.getMy_contact_id() == 1) {
 				emailView.setText(getContext().getResources().getString(R.string.adding));
 			}
@@ -97,6 +104,27 @@ public class InvitedAdapter extends AbstractAdapter<Invited> {
 				public void onClick(View v) {
 					InviteDialog dia = new InviteDialog(context, 0, invited, event_id);
 					dia.show();
+				}
+			});
+		} else if (ContactManagement.getContactFromLocalDb(context, invited.getMy_contact_id(), 0) != null){
+			view.setOnClickListener(new OnClickListener() {
+				
+				@Override
+				public void onClick(View v) {
+					Intent contactIntent = new Intent(context, ContactInfoActivity.class);
+					contactIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+					contactIntent.putExtra("contactId", invited.getMy_contact_id());
+					context.startActivity(contactIntent);
+				}
+			});
+		} else if (invited.getGuid() == new Account(context).getUser_id()) {
+			view.setOnClickListener(new OnClickListener() {
+				
+				@Override
+				public void onClick(View v) {
+					Intent contactIntent = new Intent(context, AccountActivity.class);
+					contactIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+					context.startActivity(contactIntent);
 				}
 			});
 		}
