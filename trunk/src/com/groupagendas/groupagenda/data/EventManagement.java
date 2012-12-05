@@ -446,7 +446,7 @@ public class EventManagement {
 	public static final String IS_SPORTS_EVENT = "is_sports_event";
 	public static final String IS_ALL_DAY = "all_day";
 	public static final String CREATOR_FULLNAME = "creator_fullname";
-	public static final String CREATOR_CONTACT_ID = "is_sports_event";
+	public static final String CREATOR_CONTACT_ID = "creator_contact_id";
 	public static final String INVITED = "invited";
 	public static final String MESSAGE_COUNT = "message_count";
 	public static final String NEW_MESSAGE_COUNT = "nmc";
