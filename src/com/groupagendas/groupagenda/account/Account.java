@@ -91,6 +91,7 @@ public class Account {
 		public static final String LAST_TIME_CONNECTED_IN_MS = "last_time_connected_in_ms"; 
 		
 		public static final String RESPONSES = "responses"; 
+		public static final String RESPONSES_BADGE = "responsesBadge"; 
 	}
 
 
@@ -100,6 +101,15 @@ public class Account {
 	
 	public void setResponses(String responses){
 		prefsEditor.putString(Account.AccountMetaData.RESPONSES, responses);
+		prefsEditor.commit();
+	}
+	
+	public String getResponsesBadge(){
+		return prefs.getString(Account.AccountMetaData.RESPONSES_BADGE, "");
+	}
+	
+	public void setResponsesBadge(String responsesBadge){
+		prefsEditor.putString(Account.AccountMetaData.RESPONSES_BADGE, responsesBadge);
 		prefsEditor.commit();
 	}
 
