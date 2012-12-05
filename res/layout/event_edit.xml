@@ -174,6 +174,28 @@
                     android:layout_height="wrap_content"
                     android:inputType="textMultiLine" />
             </LinearLayout>
+            
+            <LinearLayout
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:visibility="visible" >
+
+                <TextView
+                    android:layout_width="80dp"
+                    android:layout_height="wrap_content"
+                    android:text="@string/created_by"
+                    android:textColor="@android:color/black" />
+                
+                <TextView
+                    android:id="@+id/EventEditCreatorName"
+                    android:layout_width="match_parent"
+                    android:singleLine="true"
+                    android:textStyle="bold"
+                    android:layout_height="wrap_content"
+                    android:textColor="@android:color/black" />
+                                
+            </LinearLayout>
 
             <RelativeLayout
                 android:id="@+id/addressDetailsLine"

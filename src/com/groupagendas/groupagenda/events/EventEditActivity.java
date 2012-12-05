@@ -3,6 +3,8 @@ package com.groupagendas.groupagenda.events;
 import java.util.ArrayList;
 import java.util.Calendar;
 
+import org.json.JSONException;
+
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.BroadcastReceiver;
@@ -16,6 +18,7 @@ import android.os.Bundle;
 import android.support.v4.content.LocalBroadcastManager;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -38,8 +41,10 @@ import android.widget.Toast;
 import com.groupagendas.groupagenda.C2DMReceiver;
 import com.groupagendas.groupagenda.R;
 import com.groupagendas.groupagenda.account.Account;
+import com.groupagendas.groupagenda.account.AccountActivity;
 import com.groupagendas.groupagenda.chat.ChatMessageActivity;
 import com.groupagendas.groupagenda.contacts.Contact;
+import com.groupagendas.groupagenda.contacts.ContactInfoActivity;
 import com.groupagendas.groupagenda.contacts.ContactsActivity;
 import com.groupagendas.groupagenda.contacts.Group;
 import com.groupagendas.groupagenda.data.CalendarSettings;
@@ -89,6 +94,7 @@ public class EventEditActivity extends EventActivity {
 
 	private LinearLayout alarmBlock;
 	private TextView setAlarmTrigger;
+	private TextView creatorNameTextView;
 	private LinearLayout alarm1container;
 	private LinearLayout alarm2container;
 	private LinearLayout alarm3container;
@@ -290,6 +296,8 @@ public class EventEditActivity extends EventActivity {
 
 		// Description
 		descView = (EditText) findViewById(R.id.descView);
+		//Creator
+		creatorNameTextView = (TextView) findViewById(R.id.EventEditCreatorName);
 		// Addres and details panel
 		addressDetailsPanel = (RelativeLayout) findViewById(R.id.addressDetailsLine);
 
@@ -915,6 +923,32 @@ public class EventEditActivity extends EventActivity {
 				descView.setText(result.getDescription());
 			}
 			descView.addTextChangedListener(watcher);
+			if(ContactManagement.getContactFromLocalDb(getApplicationContext(), result.getCreator_contact_id(), 0) != null){
+				creatorNameTextView.setText(result.getCreator_fullname());
+				creatorNameTextView.setOnClickListener(new OnClickListener() {
+					
+					@Override
+					public void onClick(View v) {
+						Intent contactIntent = new Intent(getApplicationContext(), ContactInfoActivity.class);
+						contactIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+						contactIntent.putExtra("contactId", result.getCreator_contact_id());
+						startActivity(contactIntent);
+					}
+				});
+			} else if(result.getCreator_contact_id() == 0 && !result.is_owner()){
+				creatorNameTextView.setText(result.getCreator_fullname());
+			} else if(result.is_owner()) {
+				creatorNameTextView.setText(getResources().getString(R.string.you));
+				creatorNameTextView.setOnClickListener(new OnClickListener() {
+					
+					@Override
+					public void onClick(View v) {
+						Intent contactIntent = new Intent(getApplicationContext(), AccountActivity.class);
+						contactIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+						startActivity(contactIntent);
+					}
+				});
+			}
 			if (result.getTimezone().length() > 0) {
 				for (StaticTimezones entry : countriesList) {
 					if (entry.timezone.equalsIgnoreCase(result.getTimezone()))
