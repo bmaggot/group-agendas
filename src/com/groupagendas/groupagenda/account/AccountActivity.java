@@ -38,6 +38,8 @@ import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.CheckBox;
+import android.widget.CompoundButton;
+import android.widget.CompoundButton.OnCheckedChangeListener;
 import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -47,6 +49,7 @@ import android.widget.ProgressBar;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
+import android.widget.ToggleButton;
 
 import com.groupagendas.groupagenda.R;
 import com.groupagendas.groupagenda.data.DataManagement;
@@ -117,6 +120,9 @@ public class AccountActivity extends Activity implements OnClickListener {
 	private Spinner languageSpinner;
 	private String[] languageArray;
 	private TextView emailView;
+	
+	private ToggleButton notifyByEmail;
+	private ToggleButton notifyByPush;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -323,6 +329,32 @@ public class AccountActivity extends Activity implements OnClickListener {
 			}
 		});
 
+		notifyByEmail = (ToggleButton) findViewById(R.id.notificationsByEmail);
+		notifyByEmail.setChecked(true);
+		
+		notifyByPush = (ToggleButton) findViewById(R.id.notificationsByPush);
+		notifyByPush.setChecked(true);
+		
+		
+		notifyByEmail.setOnCheckedChangeListener(new OnCheckedChangeListener() {
+			
+			@Override
+			public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+				if(!isChecked && !notifyByPush.isChecked()) {
+					notifyByPush.setChecked(true);
+				}
+			}
+		});
+		
+		notifyByPush.setOnCheckedChangeListener(new OnCheckedChangeListener() {
+			
+			@Override
+			public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+				if(!isChecked && !notifyByEmail.isChecked()) {
+					notifyByEmail.setChecked(true);
+				}
+			}
+		});
 		fillActivityFields(account);
 	}
 

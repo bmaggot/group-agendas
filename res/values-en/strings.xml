@@ -271,5 +271,7 @@
     <string name="agenda_visibility">Agenda visibility</string>
     <string name="adding">Adding..</string>
     <string name="notify_contact">Inform contact</string>
+    <string name="notify_by_email">Notifications by Email</string>
+    <string name="notify_by_push">Notifications by Push</string>
     
 </resources>
