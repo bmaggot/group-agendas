@@ -230,7 +230,7 @@ public class EventEditActivity extends EventActivity {
 
 		// TODO implement offline
 		    event_internal_id = intent.getLongExtra("event_id", 0);
-		    if(event_external_id == 0){
+		    if(event_external_id == 0 && EventManagement.getEventFromLocalDb(getApplicationContext(), event_internal_id, EventManagement.ID_INTERNAL) != null){
 		    	event_external_id = EventManagement.getEventFromLocalDb(getApplicationContext(), event_internal_id, EventManagement.ID_INTERNAL).getEvent_id();
 		    }
 		// mode event Edit
