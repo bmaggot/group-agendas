@@ -799,7 +799,11 @@ public class AccountActivity extends Activity implements OnClickListener {
 		if(!account.getPhone3().equals(phone3View.getText().toString())){
 			chagesMade = true;
 		}
-		if(!birthdateView.getText().toString().equals("") && account.getBirthdate().getTimeInMillis() != Utils.millisToUnixTimestamp(Utils.stringToCalendar(getApplicationContext(), birthdateView.getText().toString(), account.getTimezone(), account.getSetting_date_format()).getTimeInMillis())){
+		if(!birthdateView.getText().toString().equals("")){
+			String[] birthdate = birthdateView.getText().toString().split("-");
+			birthdateView.setText(birthdate[0] + "-" + Integer.valueOf(birthdate[1]) + "-" + Integer.valueOf(birthdate[2]));
+		}
+		if(!birthdateView.getText().toString().equals("") && account.getBirthdate().getTimeInMillis() != Utils.stringToCalendar(getApplicationContext(), birthdateView.getText().toString(), account.getTimezone(), account.getSetting_date_format()).getTimeInMillis()){
 			chagesMade = true;
 		}
 		if(!account.getSex().equals(sexArray[(int) sexSpinner.getSelectedItemId()].toString())){
