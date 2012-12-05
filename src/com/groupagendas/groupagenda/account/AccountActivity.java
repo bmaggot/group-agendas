@@ -25,7 +25,6 @@ import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.os.Debug;
 import android.os.Environment;
 import android.provider.MediaStore;
 import android.text.Editable;
@@ -53,7 +52,6 @@ import android.widget.Toast;
 import android.widget.ToggleButton;
 
 import com.groupagendas.groupagenda.R;
-import com.groupagendas.groupagenda.ViewState;
 import com.groupagendas.groupagenda.data.DataManagement;
 import com.groupagendas.groupagenda.error.report.Reporter;
 import com.groupagendas.groupagenda.events.EventActivity;
@@ -398,10 +396,12 @@ public class AccountActivity extends Activity implements OnClickListener {
 			phone3View.setText(account.getPhone3());
 
 		if (account.getBirthdate() != null) {
-			final Calendar c = Utils.stringToCalendar(getApplicationContext(), account.getBirthdate().toString(), DataManagement.ACCOUNT_BIRTHDATE_TIMESTAMP_FORMAT);
-			mYear = c.get(Calendar.YEAR);
-			mMonth = c.get(Calendar.MONTH);
-			mDay = c.get(Calendar.DAY_OF_MONTH);
+//			final Calendar c = Utils.stringToCalendar(getApplicationContext(), account.getBirthdate().toString(), DataManagement.ACCOUNT_BIRTHDATE_TIMESTAMP_FORMAT);
+			mYear = account.getBirthdate().get(Calendar.YEAR);
+			mMonth = account.getBirthdate().get(Calendar.MONTH);
+			mDay = account.getBirthdate().get(Calendar.DAY_OF_MONTH);
+			
+			updateBirthdate();
 		}
 
 		// sex
@@ -616,7 +616,7 @@ public class AccountActivity extends Activity implements OnClickListener {
 	};
 
 	private void updateBirthdate() {
-		birthdateView.setText(new StringBuilder().append(mYear).append("-").append(mMonth + 1).append("-").append(mDay));
+		birthdateView.setText(new StringBuilder().append(mYear).append("-").append(mMonth < 10 ? "0" + mMonth + 1 : mMonth + 1).append("-").append(mDay < 10 ? "0" + mDay : mDay));
 	}
 
 	class EditAccountTask extends AsyncTask<Void, Boolean, Boolean> {
@@ -754,6 +754,7 @@ public class AccountActivity extends Activity implements OnClickListener {
 	
 	@Override
 	public void onBackPressed() {
+		if(checkIfChangesMade()){
 		new AlertDialog.Builder(this).setIcon(android.R.drawable.ic_dialog_alert).setTitle(this.getResources().getString(R.string.save_your_changes))
 				.setMessage(this.getResources().getString(R.string.do_you_want_to_save_your_changes))
 				.setPositiveButton(this.getResources().getString(R.string.yes), new DialogInterface.OnClickListener() {
@@ -771,5 +772,61 @@ public class AccountActivity extends Activity implements OnClickListener {
 					}
 
 				}).setCancelable(false).show();
+		} else {
+			super.onBackPressed();
+		}
+	}
+	
+	public boolean checkIfChangesMade(){
+		boolean chagesMade = false;
+		Account account = new Account(this);
+		if(!account.getName().equals(nameView.getText().toString())){
+			chagesMade = true;
+		}
+		if(!account.getLastname().equals(lastnameView.getText().toString())){
+			chagesMade = true;
+		}
+		if(!account.getEmail().equals(emailView.getText().toString())){
+			chagesMade = true;
+		}
+		//TODO email 2 3
+		if(!account.getPhone1().equals(phone1View.getText().toString())){
+			chagesMade = true;
+		}
+		if(!account.getPhone2().equals(phone2View.getText().toString())){
+			chagesMade = true;
+		}
+		if(!account.getPhone3().equals(phone3View.getText().toString())){
+			chagesMade = true;
+		}
+		if(!birthdateView.getText().toString().equals("") && account.getBirthdate().getTimeInMillis() != Utils.millisToUnixTimestamp(Utils.stringToCalendar(getApplicationContext(), birthdateView.getText().toString(), account.getTimezone(), account.getSetting_date_format()).getTimeInMillis())){
+			chagesMade = true;
+		}
+		if(!account.getSex().equals(sexArray[(int) sexSpinner.getSelectedItemId()].toString())){
+			chagesMade = true;
+		}
+		if(!account.getCountry().equals(countriesList.get(timezoneInUse).country_code)){
+			chagesMade = true;
+		}
+		if(!account.getTimezone().equals(countriesList.get(timezoneInUse).timezone)){
+			chagesMade = true;
+		}
+		if(!account.getCity().equals(cityView.getText().toString())){
+			chagesMade = true;
+		}
+		if(!account.getStreet().equals(streetView.getText().toString())){
+			chagesMade = true;
+		}
+		if(!account.getZip().equals(zipView.getText().toString())){
+			chagesMade = true;
+		}
+		if(!account.getLanguage().equals(getResources().getStringArray(R.array.language_values)[(int) languageSpinner.getSelectedItemId()])){
+			chagesMade = true;
+		}
+		if(account.getImage() != !removeImage.isChecked()){
+			chagesMade = true;
+		}
+		//TODO notifications implement
+		return chagesMade;
 	}
 }
