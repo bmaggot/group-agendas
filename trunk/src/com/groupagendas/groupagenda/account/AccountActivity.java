@@ -25,6 +25,7 @@ import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.Debug;
 import android.os.Environment;
 import android.provider.MediaStore;
 import android.text.Editable;
@@ -52,6 +53,7 @@ import android.widget.Toast;
 import android.widget.ToggleButton;
 
 import com.groupagendas.groupagenda.R;
+import com.groupagendas.groupagenda.ViewState;
 import com.groupagendas.groupagenda.data.DataManagement;
 import com.groupagendas.groupagenda.error.report.Reporter;
 import com.groupagendas.groupagenda.events.EventActivity;
@@ -748,5 +750,26 @@ public class AccountActivity extends Activity implements OnClickListener {
 				alert.show();
 			}
 		}
+	}
+	
+	@Override
+	public void onBackPressed() {
+		new AlertDialog.Builder(this).setIcon(android.R.drawable.ic_dialog_alert).setTitle(this.getResources().getString(R.string.save_your_changes))
+				.setMessage(this.getResources().getString(R.string.do_you_want_to_save_your_changes))
+				.setPositiveButton(this.getResources().getString(R.string.yes), new DialogInterface.OnClickListener() {
+					@Override
+					public void onClick(DialogInterface dialog, int which) {
+						saveAccount(null);
+						dialog.dismiss();
+					}
+
+				}).setNegativeButton(this.getResources().getString(R.string.no), new DialogInterface.OnClickListener() {
+					@Override
+					public void onClick(DialogInterface dialog, int which) {
+		                dialog.dismiss();
+		                finish();
+					}
+
+				}).setCancelable(false).show();
 	}
 }

@@ -282,5 +282,7 @@
     <string name="notify_contact">Inform contact</string>
     <string name="notify_by_email">Notifications by Email</string>
     <string name="notify_by_push">Notifications by Push</string>
+    <string name="do_you_want_to_save_your_changes">Do You want to save Your changes?</string>
+    <string name="save_your_changes">Save changes?</string>
     
 </resources>
