@@ -101,6 +101,7 @@ public class EventsActivity extends ListActivity {
 				changeTitle(getString(R.string.status_new_invites_count, eventsAdapter.getNewInvitesCount()));
 			}
 		}
+		newResponsesBadge();
 	}
 
 	@Override
@@ -118,7 +119,12 @@ public class EventsActivity extends ListActivity {
 				if (new_invites != null)
 					new_invites.setTitle(getString(R.string.status_new_invites_count, eventsAdapter.getNewInvitesCount()));
                 if (filterState != FilterState.ALL){
-                	if (filterState == FilterState.NEW_INVITES) changeTitle(getString(R.string.status_new_invites_count, eventsAdapter.getNewInvitesCount()));			
+                	if(NavbarActivity.notResponses){
+                		if (filterState == FilterState.NEW_INVITES) changeTitle(getString(R.string.status_new_invites_count, eventsAdapter.getNewInvitesCount()));
+                	} else {
+                		changeTitle(getString(R.string.responses));
+            			createResponsesList();
+                	}
     				
 //        			switch (filterState){
 //        			case ACCEPTED:
@@ -159,6 +165,19 @@ public class EventsActivity extends ListActivity {
 	
 	
 	}
+	
+	private void newResponsesBadge(){
+		TextView btnType = (TextView) findViewById(R.id.textBtnType);
+		
+		int responsesBadge = NavbarActivity.newResponsesBadges;
+		if(responsesBadge > 0){
+			btnType.setVisibility(View.VISIBLE);
+			btnType.setText(""+NavbarActivity.newResponsesBadges);
+		} else {
+			btnType.setVisibility(View.GONE);
+		}
+	}
+	
 	private void filterEventsByType(String type) {
 		eventsAdapter.getFilter().filter(type);
 		eventsAdapter.setFilter(type);
@@ -230,6 +249,7 @@ public class EventsActivity extends ListActivity {
 						@Override
 						public void onClick(View v) {
 							setListAdapter(eventsAdapter);
+							NavbarActivity.notResponses = true;
 //							EventManagement.loadEvents(EventsActivity.this, eventsAdapter);
 							changeTitle(getString(R.string.status_new_invites_count, eventsAdapter.getNewInvitesCount()));
 							qa.dismiss();
@@ -248,6 +268,7 @@ public class EventsActivity extends ListActivity {
 						@Override
 						public void onClick(View v) {
 							setListAdapter(eventsAdapter);
+							NavbarActivity.notResponses = true;
 //							EventManagement.loadEvents(EventsActivity.this, eventsAdapter);
 							changeTitle(getString(R.string.status_not_attending));
 							qa.dismiss();
@@ -263,6 +284,7 @@ public class EventsActivity extends ListActivity {
 						@Override
 						public void onClick(View v) {
 							setListAdapter(eventsAdapter);
+							NavbarActivity.notResponses = true;
 //							EventManagement.loadEvents(EventsActivity.this, eventsAdapter);
 							changeTitle(getString(R.string.status_attending));
 							qa.dismiss();
@@ -279,6 +301,7 @@ public class EventsActivity extends ListActivity {
 						@Override
 						public void onClick(View v) {
 							setListAdapter(eventsAdapter);
+							NavbarActivity.notResponses = true;
 //							EventManagement.loadEvents(EventsActivity.this, eventsAdapter);
 							changeTitle(getString(R.string.status_maybe));
 							qa.dismiss();
@@ -313,6 +336,10 @@ public class EventsActivity extends ListActivity {
 
 						@Override
 						public void onClick(View v) {
+							//Account acc = new Account(getApplicationContext());
+							//acc.setResponsesBadge(""+0);
+							NavbarActivity.newResponsesBadges = 0;
+							newResponsesBadge();
 							NavbarActivity.notResponses = false;
 							changeTitle(getString(R.string.responses));
 							qa.dismiss();
