@@ -708,6 +708,7 @@ public class EventManagement {
 				if (resp != null) {
 					JSONObject object = new JSONObject(resp);
 					success = object.getBoolean("success");
+					account.setResponsesBadge(""+object.getInt("count"));
 
 					if (success == false) {
 						error = object.getString("error");
@@ -726,7 +727,7 @@ public class EventManagement {
 
 			}
 		} catch (Exception ex) {
-			Log.e("getResponsesFromRemoteDb", ex.getMessage());
+			Log.e("getResponsesFromRemoteDb", "er");
 		}
 		return resp;
 	}
