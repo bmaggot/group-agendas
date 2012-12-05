@@ -150,9 +150,13 @@ public class Account {
 
 	public Calendar getBirthdate() {
 		long birthdate = prefs.getLong(Account.AccountMetaData.BIRTHDATE, 0);
-		Calendar birthdateCalendar = Utils.createCalendar(birthdate, getTimezone());
-
-		return birthdateCalendar;
+		if(birthdate != 0){
+			Calendar birthdateCalendar = Calendar.getInstance();
+			birthdateCalendar.setTimeInMillis(Utils.unixTimestampToMilis(birthdate));
+			return birthdateCalendar;
+		} else {
+			return null;
+		}
 	}
 
 	public String getSex() {
