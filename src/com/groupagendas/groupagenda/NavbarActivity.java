@@ -4,6 +4,8 @@ import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Locale;
 
+import org.json.JSONObject;
+
 import android.annotation.SuppressLint;
 import android.app.Dialog;
 import android.app.ProgressDialog;
@@ -22,6 +24,7 @@ import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.content.LocalBroadcastManager;
 import android.util.DisplayMetrics;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
@@ -103,6 +106,8 @@ public class NavbarActivity extends FragmentActivity {
 
 	public static boolean showInvites = false;
 	public static boolean notResponses = true;
+	public static boolean uptadeResponresBadge = true;
+	public static int newResponsesBadges = 0;
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -127,7 +132,6 @@ public class NavbarActivity extends FragmentActivity {
 		// maybe...)
 		if (acc.getLatestUpdateUnixTimestamp() > 0) {
 			new DataSyncTask().execute();
-			acc.setResponses(""+EventManagement.getResponsesFromRemoteDb(getApplicationContext()));
 		} else {
 			if (!dataLoaded && (progressDialog == null)){
 				new DownLoadAllDataTask().execute();
@@ -139,6 +143,8 @@ public class NavbarActivity extends FragmentActivity {
 	public void onResume() {
 		LocalBroadcastManager.getInstance(this).registerReceiver(mMessageReceiver,
 				new IntentFilter(C2DMReceiver.REFRESH_CHAT_MESSAGES_BADGE));
+		LocalBroadcastManager.getInstance(this).registerReceiver(mMessageReceiver,
+				new IntentFilter(C2DMReceiver.REFRESH_INVITE_BADGE));
 		calendarContainer = (FrameLayout) findViewById(R.id.calendarContainer);
 
 		super.onResume();
@@ -168,6 +174,7 @@ public class NavbarActivity extends FragmentActivity {
 
 		// badges
 		newEventBadge();
+		new ResponsesBadgeSyncTask().execute();
 		newMessageBadge();
 		// end badges
 
@@ -183,7 +190,7 @@ public class NavbarActivity extends FragmentActivity {
 		String where = EventsProvider.EMetaData.EventsMetaData.STATUS + " = " + Invited.PENDING + " AND "
 				+ EventsProvider.EMetaData.EventsMetaData.TIME_END_UTC_MILLISECONDS + " > strftime('%s000', 'now')";
 		Cursor cur = cr.query(EventsProvider.EMetaData.EventsMetaData.CONTENT_URI, null, where, null, null);
-		int new_invites = cur.getCount();
+		int new_invites = cur.getCount() + newResponsesBadges;
 
 		if (new_invites > 0) {
 			logo.setVisibility(View.VISIBLE);
@@ -213,6 +220,32 @@ public class NavbarActivity extends FragmentActivity {
 		}
 
 		cur2.close();
+	}
+	
+	public void newResponsesBadge(){		
+		Account acc = new Account(getApplicationContext());
+		int newResponses = 0;
+		String tempResponses = "";
+		if (DataManagement.networkAvailable){
+			tempResponses = ""+EventManagement.getResponsesFromRemoteDb(getApplicationContext());
+			acc.setResponses(tempResponses);
+		} else{
+			tempResponses = acc.getResponses();
+		}
+		try {
+			JSONObject object = new JSONObject(tempResponses);
+			newResponses = object.getInt("count");
+			if(uptadeResponresBadge){
+				acc.setResponsesBadge(""+newResponses);
+				newResponsesBadges = newResponses;
+			} else {
+				newResponsesBadges += newResponses;
+			}
+			uptadeResponresBadge = false;
+		} catch (Exception ex) {
+			Log.e("Badge JSON err", ex.getMessage());
+		}
+		
 	}
 
 	@Override
@@ -756,9 +789,9 @@ public class NavbarActivity extends FragmentActivity {
 		@Override
 		protected Void doInBackground(Void... params) {
 			DataManagement.synchronizeWithServer(NavbarActivity.this, this, acc.getLatestUpdateUnixTimestamp());
-			if (DataManagement.networkAvailable){
-				acc.setResponses(""+EventManagement.getResponsesFromRemoteDb(getApplicationContext()));
-			}
+//			if (DataManagement.networkAvailable){
+//				acc.setResponses(""+EventManagement.getResponsesFromRemoteDb(getApplicationContext()));
+//			}
 			return null;
 		}
 
@@ -770,6 +803,22 @@ public class NavbarActivity extends FragmentActivity {
 			switchToView();
 
 			setAlarmsToAllEvents();
+		}
+
+	}
+	
+	private class ResponsesBadgeSyncTask extends AsyncTask<Void, Integer, Void> {
+
+		@Override
+		protected Void doInBackground(Void... params) {
+			newResponsesBadge();
+			return null;
+		}
+
+		@Override
+		protected void onPostExecute(Void result) {
+
+			
 		}
 
 	}
@@ -895,6 +944,8 @@ public class NavbarActivity extends FragmentActivity {
 	private BroadcastReceiver mMessageReceiver = new BroadcastReceiver() {
 		@Override
 		public void onReceive(Context context, Intent intent) {
+			//acc.setResponses(""+EventManagement.getResponsesFromRemoteDb(getApplicationContext()));
+			new ResponsesBadgeSyncTask().execute();
 			newEventBadge();
 			newMessageBadge();
 		}
