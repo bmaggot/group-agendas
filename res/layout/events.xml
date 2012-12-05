@@ -60,11 +60,33 @@
             style="@style/navbar_button"
             android:drawableTop="@drawable/navbar_category" />
 
-        <RadioButton
-            android:id="@+id/btnType"
-            style="@style/navbar_button"
-            android:layout_marginLeft="5dp"
-            android:drawableTop="@drawable/navbar_type" />
+        <RelativeLayout 
+	        android:layout_width="0dp"
+	    	android:layout_height="45dp"
+	    	android:layout_weight="1">
+	        <RadioButton
+	            android:layout_width="fill_parent"
+    			android:layout_height="45dp"
+    			android:gravity="center_horizontal"
+	            android:id="@+id/btnType"
+	            style="@style/navbar_button"
+	            android:layout_marginLeft="5dp"
+	            android:drawableTop="@drawable/navbar_type" />
+	        
+	        <TextView
+		        android:id="@+id/textBtnType"
+		        android:layout_width="wrap_content"
+		        android:layout_height="wrap_content"
+		        android:layout_alignParentRight="true"
+		        android:layout_alignParentTop="true"
+		        android:background="@drawable/circle"
+		        android:paddingLeft="5dp"
+		        android:paddingRight="5dp"
+		        android:paddingBottom="1dp"
+		        android:textColor="@color/white"
+		        android:layout_marginRight="10dp"
+		        android:visibility="gone" />
+	    </RelativeLayout>
         
         <RadioButton
             android:id="@+id/btnContacts"
