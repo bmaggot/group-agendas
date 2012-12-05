@@ -283,10 +283,10 @@
 
                 <EditText
                     android:id="@+id/cityView"
-                    android:inputType="text"
-                    android:singleLine="true"
                     android:layout_width="fill_parent"
-                    android:layout_height="wrap_content" />
+                    android:layout_height="wrap_content"
+                    android:inputType="text"
+                    android:singleLine="true" />
             </LinearLayout>
 
             <LinearLayout
@@ -376,6 +376,52 @@
                 <Spinner
                     android:id="@+id/languageSpinner"
                     android:layout_width="fill_parent"
+                    android:layout_height="wrap_content" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="10dp"
+                android:layout_marginLeft="10dp"
+                android:gravity="center_horizontal" >
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical"
+                    android:layout_marginRight="5dp"
+                    android:singleLine="true"
+                    android:text="@string/notify_by_email"
+                    android:textColor="@color/black"
+                    android:textStyle="bold" />
+
+                <ToggleButton
+                    android:id="@+id/notificationsByEmail"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="10dp"
+                android:layout_marginLeft="10dp"
+                android:gravity="center_horizontal" >
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical"
+                    android:layout_marginRight="5dp"
+                    android:singleLine="true"
+                    android:text="@string/notify_by_push"
+                    android:textColor="@color/black"
+                    android:textStyle="bold" />
+
+                <ToggleButton
+                    android:id="@+id/notificationsByPush"
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content" />
             </LinearLayout>
 
