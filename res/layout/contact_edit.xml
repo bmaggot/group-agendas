@@ -95,7 +95,7 @@
                         android:layout_height="wrap_content"
                         android:background="@drawable/transparent"
                         android:hint="@string/name"
-                        android:inputType="text"
+                        android:inputType="textCapWords"
                         android:singleLine="true"
                         android:textColor="#000000"
                         android:textSize="18dp" />
@@ -107,7 +107,7 @@
                         android:layout_marginTop="5dp"
                         android:background="@drawable/transparent"
                         android:hint="@string/lastname"
-                        android:inputType="text"
+                        android:inputType="textCapWords"
                         android:singleLine="true"
                         android:textColor="#000000"
                         android:textSize="18dp" />
