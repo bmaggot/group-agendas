@@ -6,6 +6,7 @@ import java.util.Calendar;
 import android.app.Activity;
 import android.content.ContentValues;
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.view.View;
@@ -420,6 +421,42 @@ public class EventActivity extends Activity {
 			if (event.getTitle().contains(autoColor.keyword)) {
 				event.setColor(autoColor.color);
 				break;
+			}
+		}
+	}
+	
+	public void sendSms(){
+		if(selectedContacts != null && selectedContacts.size() > 0){
+			Account acc = new Account(getApplicationContext());
+			Intent smsIntent = new Intent(Intent.ACTION_VIEW);
+			smsIntent.setType("vnd.android-dir/mms-sms");
+			String tempNumber = "";
+			DateTimeUtils dateTimeUtils = new DateTimeUtils(getApplicationContext());
+			for(Contact con : selectedContacts){
+				//if(!con.getColor().contentEquals("00a759")){
+				if(con.registered != null){
+					if(!con.registered.contentEquals("true")){
+						if(con.email != null || !con.email.contentEquals("")){
+							tempNumber += con.phone1_code + con.phone1 + ",";
+						}
+					}
+				} else {
+					if(con.email != null || !con.email.contentEquals("")){
+						tempNumber += con.phone1_code + con.phone1 + ",";
+					}
+				}
+			}
+			if(!tempNumber.contentEquals("")){
+				String smsBody = acc.getFullname() + " " + getString(R.string.sms_invited) + "\n\n"
+						+ event.getTitle() + "\n\n"
+						+ getString(R.string.sms_begins) + " " +dateTimeUtils.formatDate(event.getStartCalendar()) + " " 
+						+ dateTimeUtils.formatTime(event.getStartCalendar()) + " "
+						+ getString(R.string.sms_till) + " " + dateTimeUtils.formatDate(event.getEndCalendar()) + " "
+						+ dateTimeUtils.formatTime(event.getEndCalendar()) + "\n\n"
+						+ getString(R.string.sms_end_1) + " " + acc.getFullname() + " " + getString(R.string.sms_end_2);
+				smsIntent.putExtra("address", tempNumber);
+				smsIntent.putExtra("sms_body", smsBody);
+				startActivity(smsIntent);
 			}
 		}
 	}
