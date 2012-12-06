@@ -6,6 +6,7 @@ import java.util.Calendar;
 import android.content.Context;
 import android.database.Cursor;
 import android.util.AttributeSet;
+import android.view.Gravity;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
@@ -27,7 +28,7 @@ import com.groupagendas.groupagenda.utils.Utils;
 
 public class MonthView extends AbstractCalendarView {
 
-	private static final int WEEK_TITLE_WIDTH_DP = 0;
+//	private static final int WEEK_TITLE_WIDTH_DP = 0;
 	private final int TABLE_ROW_HEIGHT = Math.round(50 * densityFactor);
 	private Calendar firstShownDate;
 	ArrayList<MonthDayFrame> daysList = new ArrayList<MonthDayFrame>();
@@ -63,6 +64,9 @@ public class MonthView extends AbstractCalendarView {
 
 	@Override
 	protected void setTopPanel() {
+		int FRAMES_PER_ROW = selectedDate.getMaximum(Calendar.DAY_OF_WEEK);
+		int FRAME_WIDTH = VIEW_WIDTH / FRAMES_PER_ROW;
+		
 		String title = MonthNames[selectedDate.get(Calendar.MONTH)];
 		title += " ";
 		title += selectedDate.get(Calendar.YEAR);
@@ -72,20 +76,24 @@ public class MonthView extends AbstractCalendarView {
 		bottomBar.removeAllViews();
 
 		TextView entry = (TextView) mInflater.inflate(R.layout.calendar_top_bar_bottomline_entry, null);
-		int weekTitleWidthPx = Math.round(WEEK_TITLE_WIDTH_DP * densityFactor);
 		entry.setText(R.string.week_title);
+		entry.setEms(2);
 		bottomBar.addView(entry);
 
 		Calendar tmp = (Calendar) firstShownDate.clone();
+
 		// add view for every day
 		int daysPerWeek = firstShownDate.getActualMaximum(Calendar.DAY_OF_WEEK);
 		for (int i = 0; i < daysPerWeek; i++) {
 			entry = (TextView) mInflater.inflate(R.layout.calendar_top_bar_bottomline_entry, null);
 
+			LayoutParams cellP = new LayoutParams(FRAME_WIDTH, LayoutParams.WRAP_CONTENT, 1.0f);
+			entry.setLayoutParams(cellP);
+			
 			String text = WeekDayNames[tmp.get(Calendar.DAY_OF_WEEK) - 1];
 			tmp.add(Calendar.DATE, 1);
 			entry.setText(text);
-			entry.setWidth(Math.round((DISPLAY_WIDTH - weekTitleWidthPx) / (float) daysPerWeek));
+			entry.setGravity(Gravity.CENTER);
 			bottomBar.addView(entry);
 		}
 	}
@@ -94,13 +102,10 @@ public class MonthView extends AbstractCalendarView {
 	public void goPrev() {
 		if (!stillLoading) {
 			redrawBubbles = true;
-//			int LastMonthWeeksCount = selectedDate.getActualMaximum(Calendar.WEEK_OF_MONTH);
 			selectedDate.add(Calendar.MONTH, -1);
 			updateShownDate();
 			setTopPanel();
-//			if (LastMonthWeeksCount != selectedDate.getActualMaximum(Calendar.WEEK_OF_MONTH)) {
-				paintTable(selectedDate);
-//			}
+			paintTable(selectedDate);
 			setDayFrames();
 			updateEventLists();
 		}
@@ -110,13 +115,10 @@ public class MonthView extends AbstractCalendarView {
 	public void goNext() {
 		if (!stillLoading) {
 			redrawBubbles = true;
-//			int LastMonthWeeksCount = selectedDate.getActualMaximum(Calendar.WEEK_OF_MONTH);
 			selectedDate.add(Calendar.MONTH, 1);
 			updateShownDate();
 			setTopPanel();
-//			if (LastMonthWeeksCount != selectedDate.getActualMaximum(Calendar.WEEK_OF_MONTH)) {
-				paintTable(selectedDate);
-//			}
+			paintTable(selectedDate);
 
 			setDayFrames();
 			updateEventLists();
@@ -232,28 +234,19 @@ public class MonthView extends AbstractCalendarView {
 				Calendar clickedDate = (Calendar) firstShownDate.clone();
 				clickedDate.add(Calendar.DATE, clickedDayPos);
 
-//				int LastMonthWeeksCount = selectedDate.getActualMaximum(Calendar.WEEK_OF_MONTH);
-
 				if (!frame.isSelected()) {
-
 					selectedDate = clickedDate;
 					updateShownDate();
 
 					if (frame.isOtherMonth()) {
-
 						redrawBubbles = true;
+
 						setTopPanel();
-
-//						if (LastMonthWeeksCount != selectedDate.getActualMaximum(Calendar.WEEK_OF_MONTH)) {
-							paintTable(selectedDate);
-//						}
-
+						paintTable(selectedDate);
 					}
 
-					setDayFrames(); // TODO optimize: now all day frames are
-									// redrawn
+					setDayFrames(); // TODO optimize: now all day frames are redrawn
 					updateEventLists();
-
 				}
 			}
 		});
@@ -265,7 +258,6 @@ public class MonthView extends AbstractCalendarView {
 
 		Utils.setCalendarToFirstDayOfMonth(firstShownDate);
 		Utils.setCalendarToFirstDayOfWeek(firstShownDate);
-
 	}
 
 	private class UpdateEventsInfoTask extends AbstractCalendarView.UpdateEventsInfoTask {
@@ -304,7 +296,5 @@ public class MonthView extends AbstractCalendarView {
 			cal.add(Calendar.DAY_OF_YEAR, -1);
 			return BirthdayManagement.readBirthdayEventsForTimeInterval(context, selectedDate.getTimeInMillis(), cal.getTimeInMillis());
 		}
-
 	}
-
 }
