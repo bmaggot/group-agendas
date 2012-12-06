@@ -31,6 +31,7 @@ import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
+import android.widget.ToggleButton;
 
 import com.groupagendas.groupagenda.R;
 import com.groupagendas.groupagenda.account.Account;
@@ -200,6 +201,9 @@ public class NewEventActivity extends EventActivity {
 			}
 		});
 
+		//allday
+		allDayToggleButton = (ToggleButton) findViewById(R.id.allDayToggleButton);
+		allDayToggleButton.setChecked(false);
 		// Description
 		descView = (EditText) findViewById(R.id.descView);
 
