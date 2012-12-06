@@ -83,7 +83,7 @@ public class ContactEditActivity extends Activity implements OnClickListener, On
 
 	private Button groupsButton;
 	private ImageView imageView;
-//	private CheckBox removeImage;
+	// private CheckBox removeImage;
 
 	private TextView titleView;
 	private EditText nameView;
@@ -123,7 +123,7 @@ public class ContactEditActivity extends Activity implements OnClickListener, On
 	private Account account;
 
 	public static ArrayList<Group> selectedGroups;
-	
+
 	private ToggleButton notifyContactToggle;
 
 	@Override
@@ -168,7 +168,7 @@ public class ContactEditActivity extends Activity implements OnClickListener, On
 				continue;
 			}
 		}
-		
+
 		dtUtils = new DateTimeUtils(this);
 
 	}
@@ -179,11 +179,11 @@ public class ContactEditActivity extends Activity implements OnClickListener, On
 
 		// setContentView(R.layout.contact_edit);
 		Intent intent = getIntent();
-		
+
 		if (editedContact == null) {
 			editedContact = new Contact();
 		}
-		
+
 		// GET ACTION
 		ACTION_EDIT = intent.getBooleanExtra("action", true);
 		if (ACTION_EDIT && !DATA_LOADED) {
@@ -195,8 +195,9 @@ public class ContactEditActivity extends Activity implements OnClickListener, On
 				Log.e("onResume()", "Failed getting contact's data. " + e.getMessage());
 			}
 		} else {
-//			LinearLayout ll = (LinearLayout) findViewById(R.id.remove_image_ll);
-//			ll.setVisibility(View.GONE);
+			// LinearLayout ll = (LinearLayout)
+			// findViewById(R.id.remove_image_ll);
+			// ll.setVisibility(View.GONE);
 		}
 
 		nameView = (EditText) findViewById(R.id.name);
@@ -251,7 +252,7 @@ public class ContactEditActivity extends Activity implements OnClickListener, On
 
 			countriesList.add(temp);
 		}
-		
+
 		if (countriesList != null) {
 			countriesAdapter = new CountriesAdapter(ContactEditActivity.this, R.layout.search_dialog_item, countriesList);
 		}
@@ -304,9 +305,9 @@ public class ContactEditActivity extends Activity implements OnClickListener, On
 				dia1.show();
 			}
 		});
-		
+
 		displaySelectedGroups();
-		
+
 		notifyContactToggle = (ToggleButton) findViewById(R.id.notifyContactToggleButton);
 		notifyContactToggle.setChecked(true);
 	}
@@ -335,7 +336,7 @@ public class ContactEditActivity extends Activity implements OnClickListener, On
 			}
 			break;
 		case R.id.contact_image:
-//			showDialog(CROP_IMAGE_DIALOG);
+			// showDialog(CROP_IMAGE_DIALOG);
 			break;
 		case R.id.groupsButton:
 			Intent i = new Intent(ContactEditActivity.this, ContactsActivity.class);
@@ -373,7 +374,7 @@ public class ContactEditActivity extends Activity implements OnClickListener, On
 			} else {
 				birthdateCalendar = Calendar.getInstance();
 			}
-			
+
 			if (birthdateCalendar.get(Calendar.YEAR) < LEAST_YEAR_VALUE) {
 				birthdateCalendar.set(Calendar.YEAR, LEAST_YEAR_VALUE);
 			}
@@ -438,7 +439,6 @@ public class ContactEditActivity extends Activity implements OnClickListener, On
 		protected void onPreExecute() {
 			pb.setVisibility(View.VISIBLE);
 		}
-
 
 		@Override
 		protected Contact doInBackground(Integer... id) {
@@ -506,16 +506,14 @@ public class ContactEditActivity extends Activity implements OnClickListener, On
 				else if (result.visibility.equalsIgnoreCase("l"))
 					visibilitySpinner.setSelection(2, true);
 			}
-			if(result.can_add_note != null && !result.can_add_note.equals("null")){
-				if(result.can_add_note.equalsIgnoreCase("y")){
-					canAddNotesSpinner.setSelection(0, true);
-				} else {
-					canAddNotesSpinner.setSelection(1, true);
-				}
+			if (result.can_add_note != null && !result.can_add_note.equals("null") && result.can_add_note.equalsIgnoreCase("y")) {
+				canAddNotesSpinner.setSelection(0, true);
+			} else {
+				canAddNotesSpinner.setSelection(1, true);
 			}
-			
+
 			DATA_LOADED = true;
-			
+
 			pb.setVisibility(View.GONE);
 
 			super.onPostExecute(result);
@@ -528,7 +526,7 @@ public class ContactEditActivity extends Activity implements OnClickListener, On
 		@Override
 		protected void onPreExecute() {
 			TextView saveButton = (TextView) findViewById(R.id.sendbutton);
-			
+
 			pb.setVisibility(View.VISIBLE);
 			saveButton.setText(getString(R.string.saving));
 			super.onPreExecute();
@@ -592,7 +590,7 @@ public class ContactEditActivity extends Activity implements OnClickListener, On
 			temp = visibilityValues[visibilitySpinner.getSelectedItemPosition()];
 			editedContact.visibility = temp;
 			cv.put(ContactsProvider.CMetaData.ContactsMetaData.VISIBILITY, editedContact.visibility);
-			
+
 			temp = canAddNotesValues[canAddNotesSpinner.getSelectedItemPosition()];
 			editedContact.can_add_note = temp;
 			cv.put(ContactsProvider.CMetaData.ContactsMetaData.CAN_ADD_NOTE, editedContact.can_add_note);
@@ -649,16 +647,21 @@ public class ContactEditActivity extends Activity implements OnClickListener, On
 			cv.put(ContactsProvider.CMetaData.ContactsMetaData.GROUPS, MapUtils.mapToString(getApplicationContext(), editedContact.groups));
 
 			// image
-//			editedContact.remove_image = removeImage.isChecked();
-//			if (removeImage.isChecked()) {
-//				cv.put(ContactsProvider.CMetaData.ContactsMetaData.IMAGE, false);
-//				cv.put(ContactsProvider.CMetaData.ContactsMetaData.IMAGE_URL, "");
-//				cv.put(ContactsProvider.CMetaData.ContactsMetaData.IMAGE_THUMB_URL, "");
-//				cv.put(ContactsProvider.CMetaData.ContactsMetaData.IMAGE_BYTES, "");
-//				cv.put(ContactsProvider.CMetaData.ContactsMetaData.REMOVE_IMAGE, removeImage.isChecked());
-//			} else {
-//				cv.put(ContactsProvider.CMetaData.ContactsMetaData.IMAGE_BYTES, editedContact.image_bytes);
-//			}
+			// editedContact.remove_image = removeImage.isChecked();
+			// if (removeImage.isChecked()) {
+			// cv.put(ContactsProvider.CMetaData.ContactsMetaData.IMAGE, false);
+			// cv.put(ContactsProvider.CMetaData.ContactsMetaData.IMAGE_URL,
+			// "");
+			// cv.put(ContactsProvider.CMetaData.ContactsMetaData.IMAGE_THUMB_URL,
+			// "");
+			// cv.put(ContactsProvider.CMetaData.ContactsMetaData.IMAGE_BYTES,
+			// "");
+			// cv.put(ContactsProvider.CMetaData.ContactsMetaData.REMOVE_IMAGE,
+			// removeImage.isChecked());
+			// } else {
+			// cv.put(ContactsProvider.CMetaData.ContactsMetaData.IMAGE_BYTES,
+			// editedContact.image_bytes);
+			// }
 
 			if (check) {
 				Uri uri = Uri.parse(ContactsProvider.CMetaData.ContactsMetaData.CONTENT_URI + "/" + editedContact.contact_id);
@@ -697,7 +700,7 @@ public class ContactEditActivity extends Activity implements OnClickListener, On
 		@Override
 		protected void onPreExecute() {
 			TextView saveButton = (TextView) findViewById(R.id.sendbutton);
-			
+
 			pb.setVisibility(View.VISIBLE);
 			saveButton.setText(getString(R.string.saving));
 			super.onPreExecute();
@@ -762,7 +765,7 @@ public class ContactEditActivity extends Activity implements OnClickListener, On
 			temp = visibilityValues[visibilitySpinner.getSelectedItemPosition()];
 			editedContact.visibility = temp;
 			cv.put(ContactsProvider.CMetaData.ContactsMetaData.VISIBILITY, editedContact.visibility);
-			
+
 			temp = canAddNotesValues[canAddNotesSpinner.getSelectedItemPosition()];
 			editedContact.can_add_note = temp;
 			cv.put(ContactsProvider.CMetaData.ContactsMetaData.CAN_ADD_NOTE, editedContact.can_add_note);
@@ -793,7 +796,7 @@ public class ContactEditActivity extends Activity implements OnClickListener, On
 			}
 
 			if (check) {
-				if(notifyContactToggle.isChecked()){
+				if (notifyContactToggle.isChecked()) {
 					Log.e("huj", "implement ble");
 				}
 				check = ContactManagement.insertContact(ContactEditActivity.this, editedContact);
@@ -1003,32 +1006,32 @@ public class ContactEditActivity extends Activity implements OnClickListener, On
 	@Override
 	public void onNothingSelected(AdapterView<?> arg0) {
 	}
-	
+
 	private void displaySelectedGroups() {
 		LayoutInflater mInflater = LayoutInflater.from(ContactEditActivity.this);
 		LinearLayout groupsList = (LinearLayout) findViewById(R.id.groupsList);
-		
+
 		groupsButton = (Button) findViewById(R.id.groupsButton);
-		
+
 		if (groupsList.getChildCount() > 0) {
 			groupsList.removeAllViews();
 		}
-		
+
 		if (selectedGroups != null) {
 			int groupAmount = selectedGroups.size();
-			
+
 			if (groupAmount > 0) {
 				groupsButton.setBackgroundResource(R.drawable.contact_edit_invitegroup_button_notalone);
-				
+
 				for (int iterator = 0; iterator < groupAmount; iterator++) {
-					String groupTitle = selectedGroups.get(iterator).title; 
+					String groupTitle = selectedGroups.get(iterator).title;
 					TextView entry = (TextView) mInflater.inflate(R.layout.contact_edit_invited_entry, null);
 					entry.setText(groupTitle);
-					
+
 					if (iterator == (groupAmount - 1)) {
 						entry.setBackgroundResource(R.drawable.contact_edit_invitegroup_entry_last_background);
 					}
-					
+
 					groupsList.addView(entry);
 				}
 			}
