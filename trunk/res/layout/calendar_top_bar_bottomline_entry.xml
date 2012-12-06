@@ -12,6 +12,6 @@
     android:paddingRight="2dp"
     android:gravity="center"
     android:shadowColor="@color/white"
-    android:shadowRadius="1.5"
+    android:shadowRadius="1"
     android:shadowDx="0"
-    android:shadowDy="2" />
+    android:shadowDy="0" />
