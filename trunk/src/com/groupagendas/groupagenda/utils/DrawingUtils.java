@@ -26,6 +26,46 @@ public static int convertDPtoPX(int DP) {
 	return Math.round(DP * screenDensity);
 }
 
+/**
+ * Draws a circle based on given color.
+ * 
+ * It is accessed via other methods which set various size parameters.
+ * 
+ * @author meska.lt@gmail.com
+ * @param context - method context.
+ * @param widthPX - rectangle width.
+ * @param heightPX - rectangle height.
+ * @param roundRadius - corners round radius for round rectangle.
+ * @param color - string that represents color in RGB e.g. FFFFFF
+ * @param shadow  - indicates whether to draw shadow for this rectangle.
+ * @return Bitmap that represents this rectangle.
+ */
+public static Bitmap getCircleBitmap(Context context, int widthPX, int heightPX, String color, boolean shadow){
+	
+	int shadowRadius = 1;
+	int shadowOffset = Math.round(heightPX * 0.05f); 
+
+	Bitmap bmp = Bitmap.createBitmap(widthPX + shadowOffset, heightPX + shadowOffset,
+			Bitmap.Config.ARGB_8888);
+	Canvas c = new Canvas(bmp);
+	Paint p = new Paint();
+
+	p.setColor(Color.parseColor("#" + color));
+	
+	if (shadow){
+		p.setShadowLayer(shadowRadius, shadowOffset, shadowOffset, context.getResources().getColor(R.color.darker_gray));
+	}
+//	c.drawRoundRect(rect, roundRadius, roundRadius, p);
+//	p.setColor(context.getResources().getColor(R.color.darker_gray));
+	p.setStrokeWidth(0);
+	p.setStyle(Paint.Style.FILL_AND_STROKE);
+	p.setAntiAlias(true);
+	p.setShadowLayer(0, 0, 0, 0);
+	
+	c.drawCircle(widthPX/2, heightPX/2, heightPX/2, p);
+	
+	return bmp;
+}
 	/**
 	 * Draws an round rectangle based on event color. It is accessed via other methods which set various size parameters.
 	 * @author justinas.marcinka@gmail.com
