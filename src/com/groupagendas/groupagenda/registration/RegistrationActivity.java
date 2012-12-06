@@ -5,8 +5,6 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Locale;
 
-import org.xml.sax.DTDHandler;
-
 import android.accounts.AccountManager;
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -36,7 +34,6 @@ import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.Spinner;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.groupagendas.groupagenda.R;
 import com.groupagendas.groupagenda.data.DataManagement;
