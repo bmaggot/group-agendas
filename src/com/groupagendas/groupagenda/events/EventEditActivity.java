@@ -301,6 +301,13 @@ public class EventEditActivity extends EventActivity {
 		creatorNameTextView = (TextView) findViewById(R.id.EventEditCreatorName);
 		//allday
 		allDayToggleButton = (ToggleButton) findViewById(R.id.allDayToggleButton);
+		allDayToggleButton.setOnClickListener(new OnClickListener() {
+			
+			@Override
+			public void onClick(View v) {
+				changesMade = true;
+			}
+		});
 		// Addres and details panel
 		addressDetailsPanel = (RelativeLayout) findViewById(R.id.addressDetailsLine);
 
