@@ -114,19 +114,17 @@ public class MonthAdapter extends AbstractAdapter<Event> {
 				}
 			}
 			
-			if (isYesterday && isTomorrow || event.isBirthday()) {
+			if (isYesterday && isTomorrow || event.isBirthday() || event.is_all_day()) {
 				startTime.setText(R.string.all_day);
 				endTime.setText("");
 				
 				endTime.setVisibility(View.GONE);
+//			} else if (!(isYesterday && isTomorrow) && event.is_all_day()) {
+//				startTime.setText(R.string.all_day);
+//				endTime.setText("");
+//				
+//				endTime.setVisibility(View.GONE);
 			} else {
-//				if (event.isBirthday()) {
-//					startTime.setVisibility(View.INVISIBLE);
-//					endTime.setVisibility(View.INVISIBLE);
-//				} else {
-//					startTime.setVisibility(View.VISIBLE);
-//					endTime.setVisibility(View.VISIBLE);
-//				}
 				if (isYesterday) {
 					startTime.setText(R.string.three_dots);
 				} else {
@@ -140,14 +138,17 @@ public class MonthAdapter extends AbstractAdapter<Event> {
 				}
 			}
 			
-//			startTime.setText(timeFormat.format(event.getStartCalendar().getTime()));
-//			endTime.setText(timeFormat.format(event.getEndCalendar().getTime()));
-			
 			if (event.getIcon().length() <= 0) {
 				icon.setVisibility(View.GONE);
 			}else{
-				icon.setVisibility(View.VISIBLE);
-				icon.setImageResource(event.getIconId(getContext()));
+				int iconIdValue = event.getIconId(getContext());
+				
+				if (iconIdValue > 0) {
+					icon.setVisibility(View.VISIBLE);
+					icon.setImageResource(event.getIconId(getContext()));
+				} else {
+					icon.setVisibility(View.GONE);
+				}
 			}
 			
 			TextView title = (TextView) view.findViewById(R.id.month_entry_title);
