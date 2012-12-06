@@ -832,6 +832,7 @@ public class NavbarActivity extends FragmentActivity {
 
 			@Override
 			public void onClick(View v) {
+				viewState = ViewState.LIST_SEARCH;
 				qa.dismiss();
 				showListSearchView();
 			}
