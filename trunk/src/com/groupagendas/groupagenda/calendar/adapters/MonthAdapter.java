@@ -119,11 +119,6 @@ public class MonthAdapter extends AbstractAdapter<Event> {
 				endTime.setText("");
 				
 				endTime.setVisibility(View.GONE);
-//			} else if (!(isYesterday && isTomorrow) && event.is_all_day()) {
-//				startTime.setText(R.string.all_day);
-//				endTime.setText("");
-//				
-//				endTime.setVisibility(View.GONE);
 			} else {
 				if (isYesterday) {
 					startTime.setText(R.string.three_dots);
@@ -132,8 +127,10 @@ public class MonthAdapter extends AbstractAdapter<Event> {
 				}
 				
 				if (isTomorrow) {
+					endTime.setVisibility(View.VISIBLE);
 					endTime.setText(R.string.three_dots);
 				} else {
+					endTime.setVisibility(View.VISIBLE);
 					endTime.setText(timeFormat.format(event.getEndCalendar().getTime()));
 				}
 			}
