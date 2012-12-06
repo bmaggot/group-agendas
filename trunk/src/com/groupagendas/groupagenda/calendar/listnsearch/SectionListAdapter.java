@@ -142,9 +142,10 @@ public class SectionListAdapter extends BaseAdapter implements ListAdapter,
         return theView;
     }
 
-    protected void setSectionText(final String section, final View sectionView) {
-    	final TextView textView = (TextView) sectionView.findViewById(R.id.listTextView);
-        textView.setText(section);
+    protected void setSectionText(String section, View sectionView) {
+    	TextView textView = (TextView) sectionView.findViewById(R.id.listTextView);
+    	String sectionTitle = section.substring(0, 1).toUpperCase() + section.substring(1);
+        textView.setText(sectionTitle);
     }
 
     protected synchronized void replaceSectionViewsInMaps(final String section,
