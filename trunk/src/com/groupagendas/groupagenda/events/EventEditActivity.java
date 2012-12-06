@@ -261,6 +261,7 @@ public class EventEditActivity extends EventActivity {
 				} else {
 					Toast.makeText(EventEditActivity.this, R.string.wait, Toast.LENGTH_SHORT);
 				}
+				sendSms();
 			}
 		});
 
