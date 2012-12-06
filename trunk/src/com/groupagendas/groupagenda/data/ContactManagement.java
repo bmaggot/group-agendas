@@ -115,6 +115,12 @@ public class ContactManagement {
 								} catch (JSONException e) {
 									Log.e("getContactsFromRemoteDb(contactIds)", "Failed getting id.");
 								}
+								
+								try {
+									contact.lid = c.getString(ContactsProvider.CMetaData.ContactsMetaData.LID);
+								} catch (JSONException e) {
+									Log.e("getContactsFromRemoteDb(contactIds)", "Failed getting lid.");
+								}
 
 								try {
 									temp = c.getString(ContactsProvider.CMetaData.ContactsMetaData.NAME);
@@ -134,6 +140,12 @@ public class ContactManagement {
 										contact.lastname = "";
 								} catch (JSONException e) {
 									Log.e("getContactsFromRemoteDb(contactIds)", "Failed getting lastname.");
+								}
+								
+								try {
+									contact.fullname = c.getString(ContactsProvider.CMetaData.ContactsMetaData.FULLNAME);
+								} catch (JSONException e) {
+									Log.e("getContactsFromRemoteDb(contactIds)", "Failed getting id.");
 								}
 
 								try {
@@ -225,6 +237,16 @@ public class ContactManagement {
 								} catch (JSONException e) {
 									Log.e("getContactsFromRemoteDb(contactIds)", "Failed getting visibility.");
 								}
+								
+								try {
+									temp = c.getString(ContactsProvider.CMetaData.ContactsMetaData.VISIBILITY2);
+									if (temp != null && !temp.equals("null"))
+										contact.visibility2 = temp;
+									else
+										contact.visibility2 = "";
+								} catch (JSONException e) {
+									Log.e("getContactsFromRemoteDb(contactIds)", "Failed getting visibility2.");
+								}
 
 								try {
 									contact.image = c.getBoolean(ContactsProvider.CMetaData.ContactsMetaData.IMAGE);
@@ -269,6 +291,12 @@ public class ContactManagement {
 								} catch (JSONException e) {
 									Log.e("getContactsFromRemoteDb(contactIds)", "Failed getting modified.");
 								}
+								
+								try {
+									contact.reg_user_id = c.getInt(ContactsProvider.CMetaData.ContactsMetaData.REG_USER_ID);
+								} catch (JSONException e) {
+									Log.e("getContactsFromRemoteDb(contactIds)", "Failed getting reg_user_id.");
+								}
 
 								try {
 									temp = c.getString(ContactsProvider.CMetaData.ContactsMetaData.AGENDA_VIEW);
@@ -279,19 +307,71 @@ public class ContactManagement {
 								} catch (JSONException e) {
 									Log.e("getContactsFromRemoteDb(contactIds)", "Failed getting agenda_view.");
 								}
+								
+								try {
+									temp = c.getString(ContactsProvider.CMetaData.ContactsMetaData.AGENDA_VIEW2);
+									if (temp != null && !temp.equals("null"))
+										contact.agenda_view2 = temp;
+									else
+										contact.agenda_view2 = "";
+								} catch (JSONException e) {
+									Log.e("getContactsFromRemoteDb(contactIds)", "Failed getting agenda_view2.");
+								}
+								
+								try {
+									contact.can_add_note = c.getString(ContactsProvider.CMetaData.ContactsMetaData.CAN_ADD_NOTE);
+								} catch (JSONException e) {
+									Log.e("getContactsFromRemoteDb(contactIds)", "Failed getting can_add_note.");
+								}
+								
+								try {
+									contact.time_start = c.getString(ContactsProvider.CMetaData.ContactsMetaData.TIME_START);
+								} catch (JSONException e) {
+									Log.e("getContactsFromRemoteDb(contactIds)", "Failed getting time_start.");
+								}
+								
+								try {
+									contact.time_end = c.getString(ContactsProvider.CMetaData.ContactsMetaData.TIME_END);
+								} catch (JSONException e) {
+									Log.e("getContactsFromRemoteDb(contactIds)", "Failed getting time_end.");
+								}
+								
+								try {
+									contact.all_day = c.getString(ContactsProvider.CMetaData.ContactsMetaData.ALL_DAY);
+								} catch (JSONException e) {
+									Log.e("getContactsFromRemoteDb(contactIds)", "Failed getting all_day.");
+								}
+								
+								try {
+									contact.display_time_end = c.getString(ContactsProvider.CMetaData.ContactsMetaData.DISPLAY_TIME_END);
+								} catch (JSONException e) {
+									Log.e("getContactsFromRemoteDb(contactIds)", "Failed getting display_time_end.");
+								}
+								
+								try {
+									contact.type = c.getString(ContactsProvider.CMetaData.ContactsMetaData.TYPE);
+								} catch (JSONException e) {
+									Log.e("getContactsFromRemoteDb(contactIds)", "Failed getting type.");
+								}
+								
+								try {
+									contact.title = c.getString(ContactsProvider.CMetaData.ContactsMetaData.TITLE);
+								} catch (JSONException e) {
+									Log.e("getContactsFromRemoteDb(contactIds)", "Failed getting title.");
+								}
 
 								// TODO investigate REGISTERED meaning.
-								// try {
-								// temp =
-								// c.getString(ContactsProvider.CMetaData.ContactsMetaData.REGISTERED);
-								// if (temp != null && !temp.equals("null"))
-								// contact.registered = temp;
-								// else
-								// contact.registered = "";
-								// } catch (JSONException e) {
-								// Log.e("getContactsFromRemoteDb(contactIds)",
-								// "Failed getting registered.");
-								// }
+								 try {
+								 temp =
+								 c.getString("is_reg");
+								 if (temp != null && !temp.equals("null"))
+								 contact.registered = temp;
+								 else
+								 contact.registered = "";
+								 } catch (JSONException e) {
+								 Log.e("getContactsFromRemoteDb(contactIds)",
+								 "Failed getting registered.");
+								 }
 
 								try {
 									temp = c.getString(ContactsProvider.CMetaData.ContactsMetaData.COLOR);
@@ -365,8 +445,10 @@ public class ContactManagement {
 				temp = new Contact();
 
 				temp.contact_id = cur.getInt(cur.getColumnIndex(ContactsProvider.CMetaData.ContactsMetaData.C_ID));
+				temp.lid = cur.getString(cur.getColumnIndex(ContactsProvider.CMetaData.ContactsMetaData.LID));
 				temp.name = cur.getString(cur.getColumnIndex(ContactsProvider.CMetaData.ContactsMetaData.NAME));
 				temp.lastname = cur.getString(cur.getColumnIndex(ContactsProvider.CMetaData.ContactsMetaData.LASTNAME));
+				temp.fullname = cur.getString(cur.getColumnIndex(ContactsProvider.CMetaData.ContactsMetaData.FULLNAME));
 
 				temp.email = cur.getString(cur.getColumnIndex(ContactsProvider.CMetaData.ContactsMetaData.EMAIL));
 				temp.phone1 = cur.getString(cur.getColumnIndex(ContactsProvider.CMetaData.ContactsMetaData.PHONE));
@@ -380,6 +462,7 @@ public class ContactManagement {
 				temp.zip = cur.getString(cur.getColumnIndex(ContactsProvider.CMetaData.ContactsMetaData.ZIP));
 
 				temp.visibility = cur.getString(cur.getColumnIndex(ContactsProvider.CMetaData.ContactsMetaData.VISIBILITY));
+				temp.visibility2 = cur.getString(cur.getColumnIndex(ContactsProvider.CMetaData.ContactsMetaData.VISIBILITY2));
 
 				String resp = cur.getString(cur.getColumnIndex(ContactsProvider.CMetaData.ContactsMetaData.IMAGE));
 				if (resp != null) {
@@ -400,7 +483,16 @@ public class ContactManagement {
 					temp.remove_image = false;
 				}
 
+				temp.reg_user_id = cur.getInt(cur.getColumnIndex(ContactsProvider.CMetaData.ContactsMetaData.REG_USER_ID));
 				temp.agenda_view = cur.getString(cur.getColumnIndex(ContactsProvider.CMetaData.ContactsMetaData.AGENDA_VIEW));
+				temp.agenda_view2= cur.getString(cur.getColumnIndex(ContactsProvider.CMetaData.ContactsMetaData.AGENDA_VIEW2));
+				temp.can_add_note= cur.getString(cur.getColumnIndex(ContactsProvider.CMetaData.ContactsMetaData.CAN_ADD_NOTE));
+				temp.time_start= cur.getString(cur.getColumnIndex(ContactsProvider.CMetaData.ContactsMetaData.TIME_START));
+				temp.time_end= cur.getString(cur.getColumnIndex(ContactsProvider.CMetaData.ContactsMetaData.TIME_END));
+				temp.all_day= cur.getString(cur.getColumnIndex(ContactsProvider.CMetaData.ContactsMetaData.ALL_DAY));
+				temp.display_time_end= cur.getString(cur.getColumnIndex(ContactsProvider.CMetaData.ContactsMetaData.DISPLAY_TIME_END));
+				temp.type= cur.getString(cur.getColumnIndex(ContactsProvider.CMetaData.ContactsMetaData.TYPE));
+				temp.title= cur.getString(cur.getColumnIndex(ContactsProvider.CMetaData.ContactsMetaData.TITLE));
 				temp.registered = cur.getString(cur.getColumnIndex(ContactsProvider.CMetaData.ContactsMetaData.REGISTERED));
 
 				temp.created = cur.getLong(cur.getColumnIndex(ContactsProvider.CMetaData.ContactsMetaData.CREATED));
@@ -713,8 +805,10 @@ public class ContactManagement {
 			cv.put(ContactsProvider.CMetaData.ContactsMetaData.C_ID, contact.contact_id);
 		}
 
+		cv.put(ContactsProvider.CMetaData.ContactsMetaData.LID, contact.lid);
 		cv.put(ContactsProvider.CMetaData.ContactsMetaData.NAME, contact.name);
 		cv.put(ContactsProvider.CMetaData.ContactsMetaData.LASTNAME, contact.lastname);
+		cv.put(ContactsProvider.CMetaData.ContactsMetaData.FULLNAME, contact.fullname);
 
 		cv.put(ContactsProvider.CMetaData.ContactsMetaData.EMAIL, contact.email);
 		cv.put(ContactsProvider.CMetaData.ContactsMetaData.PHONE, contact.phone1);
@@ -728,6 +822,7 @@ public class ContactManagement {
 		cv.put(ContactsProvider.CMetaData.ContactsMetaData.ZIP, contact.zip);
 
 		cv.put(ContactsProvider.CMetaData.ContactsMetaData.VISIBILITY, contact.visibility);
+		cv.put(ContactsProvider.CMetaData.ContactsMetaData.VISIBILITY2, contact.visibility2);
 
 		if (contact.image) {
 			cv.put(ContactsProvider.CMetaData.ContactsMetaData.IMAGE, "1");
@@ -744,7 +839,18 @@ public class ContactManagement {
 			cv.put(ContactsProvider.CMetaData.ContactsMetaData.REMOVE_IMAGE, "0");
 		}
 
+		cv.put(ContactsProvider.CMetaData.ContactsMetaData.REG_USER_ID, contact.reg_user_id);
 		cv.put(ContactsProvider.CMetaData.ContactsMetaData.AGENDA_VIEW, contact.agenda_view);
+		
+		cv.put(ContactsProvider.CMetaData.ContactsMetaData.AGENDA_VIEW2, contact.agenda_view2);
+		cv.put(ContactsProvider.CMetaData.ContactsMetaData.CAN_ADD_NOTE, contact.can_add_note);
+		cv.put(ContactsProvider.CMetaData.ContactsMetaData.TIME_START, contact.time_start);
+		cv.put(ContactsProvider.CMetaData.ContactsMetaData.TIME_END, contact.time_end);
+		cv.put(ContactsProvider.CMetaData.ContactsMetaData.ALL_DAY, contact.all_day);
+		cv.put(ContactsProvider.CMetaData.ContactsMetaData.DISPLAY_TIME_END, contact.display_time_end);
+		cv.put(ContactsProvider.CMetaData.ContactsMetaData.TYPE, contact.type);
+		cv.put(ContactsProvider.CMetaData.ContactsMetaData.TITLE, contact.title);
+		
 		cv.put(ContactsProvider.CMetaData.ContactsMetaData.REGISTERED, contact.registered);
 
 		cv.put(ContactsProvider.CMetaData.ContactsMetaData.CREATED, contact.created);
