@@ -34,8 +34,10 @@ public class ContactsProvider extends ContentProvider{
 			public static final String CONTENT_ITEM_TYPE = "vnd.android.cursor.item/vnd.formula.contact_item";
             
 			public static final String C_ID = "contact_id";
+			public static final String LID = "lid";
 			public static final String NAME = "name";
 			public static final String LASTNAME = "lastname";
+			public static final String FULLNAME = "fullname";
 			public static final String EMAIL = "email";
 			public static final String PHONE = "phone1";
 			public static final String PHONE_CODE = "phone1_code";
@@ -45,6 +47,7 @@ public class ContactsProvider extends ContentProvider{
 			public static final String STREET = "street";
 			public static final String ZIP = "zip";
 			public static final String VISIBILITY = "visibility";
+			public static final String VISIBILITY2 = "visibility2";
 			public static final String COLOR = "contact_color";
 			
 			public static final String IMAGE = "image";
@@ -55,7 +58,16 @@ public class ContactsProvider extends ContentProvider{
 			
 			public static final String CREATED = "timestamp_created";
 			public static final String MODIFIED = "timestamp_modified";
+			public static final String REG_USER_ID = "reg_user_id";
 			public static final String AGENDA_VIEW = "agenda_view";
+			public static final String AGENDA_VIEW2 = "agenda_view2";
+			public static final String CAN_ADD_NOTE = "can_add_note";
+			public static final String TIME_START = "time_start";
+			public static final String TIME_END = "time_end";
+			public static final String ALL_DAY = "all_day";
+			public static final String DISPLAY_TIME_END = "display_time_end";
+			public static final String TYPE = "type";
+			public static final String TITLE = "title";
 			public static final String REGISTERED = "registered";
 			public static final String GROUPS = "groups";
 
@@ -110,8 +122,10 @@ public class ContactsProvider extends ContentProvider{
 		CM = new HashMap<String, String>();
 		CM.put(CMetaData.ContactsMetaData._ID, CMetaData.ContactsMetaData._ID);
 		CM.put(CMetaData.ContactsMetaData.C_ID, CMetaData.ContactsMetaData.C_ID);
+		CM.put(CMetaData.ContactsMetaData.LID, CMetaData.ContactsMetaData.LID);
 		CM.put(CMetaData.ContactsMetaData.NAME, CMetaData.ContactsMetaData.NAME);
 		CM.put(CMetaData.ContactsMetaData.LASTNAME, CMetaData.ContactsMetaData.LASTNAME);
+		CM.put(CMetaData.ContactsMetaData.FULLNAME, CMetaData.ContactsMetaData.FULLNAME);
 		CM.put(CMetaData.ContactsMetaData.EMAIL, CMetaData.ContactsMetaData.EMAIL);
 		CM.put(CMetaData.ContactsMetaData.PHONE, CMetaData.ContactsMetaData.PHONE);
 		CM.put(CMetaData.ContactsMetaData.PHONE_CODE, CMetaData.ContactsMetaData.PHONE_CODE);
@@ -121,6 +135,7 @@ public class ContactsProvider extends ContentProvider{
 		CM.put(CMetaData.ContactsMetaData.STREET, CMetaData.ContactsMetaData.STREET);
 		CM.put(CMetaData.ContactsMetaData.ZIP, CMetaData.ContactsMetaData.ZIP);
 		CM.put(CMetaData.ContactsMetaData.VISIBILITY, CMetaData.ContactsMetaData.VISIBILITY);
+		CM.put(CMetaData.ContactsMetaData.VISIBILITY2, CMetaData.ContactsMetaData.VISIBILITY2);
 		CM.put(CMetaData.ContactsMetaData.COLOR, CMetaData.ContactsMetaData.COLOR);
 		
 		CM.put(CMetaData.ContactsMetaData.IMAGE, CMetaData.ContactsMetaData.IMAGE);
@@ -131,7 +146,16 @@ public class ContactsProvider extends ContentProvider{
 		
 		CM.put(CMetaData.ContactsMetaData.CREATED, CMetaData.ContactsMetaData.CREATED);
 		CM.put(CMetaData.ContactsMetaData.MODIFIED, CMetaData.ContactsMetaData.MODIFIED);
+		CM.put(CMetaData.ContactsMetaData.REG_USER_ID, CMetaData.ContactsMetaData.REG_USER_ID);
 		CM.put(CMetaData.ContactsMetaData.AGENDA_VIEW, CMetaData.ContactsMetaData.AGENDA_VIEW);
+		CM.put(CMetaData.ContactsMetaData.AGENDA_VIEW2, CMetaData.ContactsMetaData.AGENDA_VIEW2);
+		CM.put(CMetaData.ContactsMetaData.CAN_ADD_NOTE, CMetaData.ContactsMetaData.CAN_ADD_NOTE);
+		CM.put(CMetaData.ContactsMetaData.TIME_START, CMetaData.ContactsMetaData.TIME_START);
+		CM.put(CMetaData.ContactsMetaData.TIME_END, CMetaData.ContactsMetaData.TIME_END);
+		CM.put(CMetaData.ContactsMetaData.ALL_DAY, CMetaData.ContactsMetaData.ALL_DAY);
+		CM.put(CMetaData.ContactsMetaData.DISPLAY_TIME_END, CMetaData.ContactsMetaData.DISPLAY_TIME_END);
+		CM.put(CMetaData.ContactsMetaData.TYPE, CMetaData.ContactsMetaData.TYPE);
+		CM.put(CMetaData.ContactsMetaData.TITLE, CMetaData.ContactsMetaData.TITLE);
 		CM.put(CMetaData.ContactsMetaData.REGISTERED, CMetaData.ContactsMetaData.REGISTERED);
 		CM.put(CMetaData.ContactsMetaData.GROUPS, CMetaData.ContactsMetaData.GROUPS);
 	}
@@ -429,8 +453,10 @@ private static class DatabaseHelper extends SQLiteOpenHelper {
 				+CMetaData.CONTACTS_TABLE+" ("
 				+CMetaData.ContactsMetaData._ID+" INTEGER PRIMARY KEY AUTOINCREMENT,"
 				+CMetaData.ContactsMetaData.C_ID+" INTEGER UNIQUE  ON CONFLICT REPLACE,"
+				+CMetaData.ContactsMetaData.LID+" TEXT ,"
 				+CMetaData.ContactsMetaData.NAME+" TEXT ,"
 				+CMetaData.ContactsMetaData.LASTNAME+" TEXT ,"
+				+CMetaData.ContactsMetaData.FULLNAME+" TEXT ,"
 				+CMetaData.ContactsMetaData.EMAIL+" TEXT ,"
 				+CMetaData.ContactsMetaData.PHONE+" TEXT ,"
 				+CMetaData.ContactsMetaData.PHONE_CODE+" TEXT ,"
@@ -440,6 +466,7 @@ private static class DatabaseHelper extends SQLiteOpenHelper {
 				+CMetaData.ContactsMetaData.STREET+" TEXT ,"
 				+CMetaData.ContactsMetaData.ZIP+" TEXT ,"
 				+CMetaData.ContactsMetaData.VISIBILITY+" TEXT ,"
+				+CMetaData.ContactsMetaData.VISIBILITY2+" TEXT ,"
 				+CMetaData.ContactsMetaData.COLOR+" TEXT ,"
 				
 				+CMetaData.ContactsMetaData.IMAGE+" TEXT ,"
@@ -450,7 +477,16 @@ private static class DatabaseHelper extends SQLiteOpenHelper {
 				
 				+CMetaData.ContactsMetaData.CREATED+" INT ,"
 				+CMetaData.ContactsMetaData.MODIFIED+" INT ,"
+				+CMetaData.ContactsMetaData.REG_USER_ID+" INT ,"
 				+CMetaData.ContactsMetaData.AGENDA_VIEW+" TEXT ,"
+				+CMetaData.ContactsMetaData.AGENDA_VIEW2+" TEXT ,"
+				+CMetaData.ContactsMetaData.CAN_ADD_NOTE+" TEXT ,"
+				+CMetaData.ContactsMetaData.TIME_START+" TEXT ,"
+				+CMetaData.ContactsMetaData.TIME_END+" TEXT ,"
+				+CMetaData.ContactsMetaData.ALL_DAY+" TEXT ,"
+				+CMetaData.ContactsMetaData.DISPLAY_TIME_END+" TEXT ,"
+				+CMetaData.ContactsMetaData.TYPE+" TEXT ,"
+				+CMetaData.ContactsMetaData.TITLE+" TEXT ,"
 				+CMetaData.ContactsMetaData.GROUPS+" TEXT ,"
 				+CMetaData.ContactsMetaData.REGISTERED+" TEXT)";
 			db.execSQL(query);
