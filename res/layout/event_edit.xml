@@ -205,19 +205,16 @@
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginLeft="10dp"
-                android:layout_marginBottom="10dp" 
-                android:gravity="center_horizontal">
+                android:layout_marginTop="5dp"
+                android:layout_marginBottom="10dp" >
 
                 <TextView
-                    android:layout_width="wrap_content"
+                    android:layout_width="80dp"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_vertical"
-                    android:layout_marginRight="5dp"
                     android:singleLine="true"
                     android:text="@string/calendar_dayView_allDayEvents_holder"
-                    android:textColor="@color/black"
-                    android:textStyle="bold" />
+                    android:textColor="@color/black" />
 
                 <ToggleButton
                     android:id="@+id/notifyContactToggleButton"
