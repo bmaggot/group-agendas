@@ -994,6 +994,7 @@ public class NewEventActivity extends EventActivity {
 		@Override
 		protected void onPostExecute(Boolean result) {
 			if (result) {
+				sendSms();
 				Toast.makeText(NewEventActivity.this, R.string.new_event_saved, Toast.LENGTH_SHORT).show();
 				finish();
 			} else {
