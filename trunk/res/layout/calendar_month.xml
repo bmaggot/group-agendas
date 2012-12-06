@@ -45,7 +45,6 @@
         android:background="@color/white"
         android:cacheColorHint="#00000000"
         android:divider="@color/lighter_gray"
-        android:dividerHeight="1dp" >
-    </ListView>
+        android:dividerHeight="1dp" />
 
 </com.groupagendas.groupagenda.calendar.month.MonthView>
