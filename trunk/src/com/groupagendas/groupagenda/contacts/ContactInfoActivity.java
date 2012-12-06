@@ -122,7 +122,9 @@ public class ContactInfoActivity extends Activity {
 				if (contact.phone1 != null && !contact.phone1.equals("null")) {
 					phone_full += contact.phone1;
 				}
-				setTableRow(getString(R.string.phone), phone_full);
+				if (phone_full != null && phone_full.length() > 0) {
+					setTableRow(getString(R.string.phone), phone_full);
+				}
 				// Birth date
 				if (contact.birthdate != null && !contact.birthdate.equals("")) {
 					Calendar birthdateCalendar = Utils.stringToCalendar(getApplicationContext(), contact.birthdate,
@@ -147,15 +149,15 @@ public class ContactInfoActivity extends Activity {
 					setTableRow(getString(R.string.country), country_titles[timezoneInUse]);
 				}
 				// City
-				if (contact.city != null && !contact.city.equals("null")) {
+				if (contact.city != null && !contact.city.equals("null") && contact.city.length() > 0) {
 					setTableRow(getString(R.string.city), contact.city);
 				}
 				// Street
-				if (contact.street != null && !contact.street.equals("null")) {
+				if (contact.street != null && !contact.street.equals("null") && contact.street.length() > 0) {
 					setTableRow(getString(R.string.street), contact.street);
 				}
 				// ZIP code
-				if (contact.zip != null && !contact.zip.equals("null")) {
+				if (contact.zip != null && !contact.zip.equals("null") && contact.zip.length() > 0) {
 					setTableRow(getString(R.string.zip), contact.zip);
 				}
 				// agenda visibility
@@ -165,7 +167,7 @@ public class ContactInfoActivity extends Activity {
 									.getStringArray(R.array.visibility_labels)[2]);
 				}
 
-				if (contact.can_add_note != null && !contact.can_add_note.equals("null")) {
+				if (contact.can_add_note != null && contact.can_add_note.length() > 0) {
 					setTableRow(getString(R.string.allow_to_add_note_in_agenda), contact.can_add_note.equals("y") ? getResources()
 							.getString(R.string.yes) : getResources().getString(R.string.no));
 				}
