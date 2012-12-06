@@ -1999,8 +1999,8 @@ public class EventManagement {
 			editEvent(context, e);
 			}
 		}
+		result.moveToNext();
 	}
-	result.moveToNext();
 	SaveDeletedData offlineDeletedEvents = new SaveDeletedData(context);
 	String offlineDeleted = offlineDeletedEvents.getDELETED_EVENTS();
     String[] ids = offlineDeleted.split(SDMetaData.SEPARATOR);
