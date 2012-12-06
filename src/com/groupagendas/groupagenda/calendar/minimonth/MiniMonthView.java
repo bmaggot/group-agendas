@@ -179,7 +179,6 @@ public class MiniMonthView extends AbstractCalendarView {
 		daysList.add(new AgendaFrame(dayFrame, getContext(), false));
 
 		addEventLikeIphone(v, titleTime, dayTitle);
-
 	}
 
 	private void addEventLikeIphone(View v, final TextView titleTime, final TextView dayTitle) {

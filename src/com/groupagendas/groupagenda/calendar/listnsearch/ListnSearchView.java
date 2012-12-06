@@ -206,17 +206,16 @@ public class ListnSearchView extends LinearLayout {
 						}
 						
 						if (isTomorrow) {
+							timeEndText.setVisibility(View.VISIBLE);
 							timeEndText.setText(R.string.three_dots);
 						} else {
+							timeEndText.setVisibility(View.VISIBLE);
 							timeEndText.setText(df.format(event.getEndCalendar().getTime()));
 						}
 					}
 
 					eventTitle.setText(event.getTitle());
 					
-					Log.i("List 'n Search GetView()", event.getTitle() + "\n" + eventTitle.getLineCount() + " eil.");
-					
-
 					bubble.setBackgroundDrawable(new BitmapDrawable(
 						DrawingUtils.getCircleBitmap(getContext(), 15, 15, event.getColor(), true)));
 
