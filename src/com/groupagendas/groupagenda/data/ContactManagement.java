@@ -2018,6 +2018,12 @@ public class ContactManagement {
 		} catch (UnsupportedEncodingException e) {
 			Log.e("editContactOnRemoteDb(contact[contact_id=" + c.contact_id + "])", "Failed adding contact_id to entity.");
 		}
+		
+		try {
+			reqEntity.addPart(ContactsProvider.CMetaData.ContactsMetaData.LID, new StringBody(c.lid, Charset.forName("UTF-8")));
+		} catch (UnsupportedEncodingException e) {
+			Log.e("editContactOnRemoteDb(contact[contact_id=" + c.contact_id + "])", "Failed adding lid to entity.");
+		}
 
 		try {
 			reqEntity.addPart(ContactsProvider.CMetaData.ContactsMetaData.NAME, new StringBody(c.name, Charset.forName("UTF-8")));
@@ -2029,6 +2035,12 @@ public class ContactManagement {
 			reqEntity.addPart(ContactsProvider.CMetaData.ContactsMetaData.LASTNAME, new StringBody(c.lastname, Charset.forName("UTF-8")));
 		} catch (UnsupportedEncodingException e) {
 			Log.e("editContactOnRemoteDb(contact[contact_id=" + c.contact_id + "])", "Failed adding lastname to entity.");
+		}
+		
+		try {
+			reqEntity.addPart(ContactsProvider.CMetaData.ContactsMetaData.FULLNAME, new StringBody(c.fullname, Charset.forName("UTF-8")));
+		} catch (UnsupportedEncodingException e) {
+			Log.e("editContactOnRemoteDb(contact[contact_id=" + c.contact_id + "])", "Failed adding fullname to entity.");
 		}
 
 		try {
@@ -2085,6 +2097,20 @@ public class ContactManagement {
 					new StringBody(c.visibility, Charset.forName("UTF-8")));
 		} catch (UnsupportedEncodingException e) {
 			Log.e("editContactOnRemoteDb(contact[contact_id=" + c.contact_id + "])", "Failed adding visibility to entity.");
+		}
+		
+		try {
+			reqEntity.addPart(ContactsProvider.CMetaData.ContactsMetaData.VISIBILITY2,
+					new StringBody(c.visibility2, Charset.forName("UTF-8")));
+		} catch (UnsupportedEncodingException e) {
+			Log.e("editContactOnRemoteDb(contact[contact_id=" + c.contact_id + "])", "Failed adding visibility2 to entity.");
+		}
+		
+		try {
+			reqEntity.addPart(ContactsProvider.CMetaData.ContactsMetaData.CAN_ADD_NOTE,
+					new StringBody(c.can_add_note, Charset.forName("UTF-8")));
+		} catch (UnsupportedEncodingException e) {
+			Log.e("editContactOnRemoteDb(contact[contact_id=" + c.contact_id + "])", "Failed adding can_add_note to entity.");
 		}
 
 		Map<String, String> groups = c.groups;
@@ -2158,8 +2184,10 @@ public class ContactManagement {
 		if (contact.contact_id > 0)
 			cv.put(ContactsProvider.CMetaData.ContactsMetaData.C_ID, contact.contact_id);
 
+		cv.put(ContactsProvider.CMetaData.ContactsMetaData.LID, contact.lid);
 		cv.put(ContactsProvider.CMetaData.ContactsMetaData.NAME, contact.name);
 		cv.put(ContactsProvider.CMetaData.ContactsMetaData.LASTNAME, contact.lastname);
+		cv.put(ContactsProvider.CMetaData.ContactsMetaData.FULLNAME, contact.fullname);
 
 		cv.put(ContactsProvider.CMetaData.ContactsMetaData.EMAIL, contact.email);
 		cv.put(ContactsProvider.CMetaData.ContactsMetaData.PHONE, contact.phone1);
@@ -2173,6 +2201,7 @@ public class ContactManagement {
 		cv.put(ContactsProvider.CMetaData.ContactsMetaData.ZIP, contact.zip);
 
 		cv.put(ContactsProvider.CMetaData.ContactsMetaData.VISIBILITY, contact.visibility);
+		cv.put(ContactsProvider.CMetaData.ContactsMetaData.VISIBILITY2, contact.visibility2);
 
 		if (contact.image) {
 			cv.put(ContactsProvider.CMetaData.ContactsMetaData.IMAGE, "1");
@@ -2189,7 +2218,18 @@ public class ContactManagement {
 			cv.put(ContactsProvider.CMetaData.ContactsMetaData.REMOVE_IMAGE, "0");
 		}
 
+		cv.put(ContactsProvider.CMetaData.ContactsMetaData.REG_USER_ID, contact.reg_user_id);
 		cv.put(ContactsProvider.CMetaData.ContactsMetaData.AGENDA_VIEW, contact.agenda_view);
+		
+		cv.put(ContactsProvider.CMetaData.ContactsMetaData.AGENDA_VIEW2, contact.agenda_view2);
+		cv.put(ContactsProvider.CMetaData.ContactsMetaData.CAN_ADD_NOTE, contact.can_add_note);
+		cv.put(ContactsProvider.CMetaData.ContactsMetaData.TIME_START, contact.time_start);
+		cv.put(ContactsProvider.CMetaData.ContactsMetaData.TIME_END, contact.time_end);
+		cv.put(ContactsProvider.CMetaData.ContactsMetaData.ALL_DAY, contact.all_day);
+		cv.put(ContactsProvider.CMetaData.ContactsMetaData.DISPLAY_TIME_END, contact.display_time_end);
+		cv.put(ContactsProvider.CMetaData.ContactsMetaData.TYPE, contact.type);
+		cv.put(ContactsProvider.CMetaData.ContactsMetaData.TITLE, contact.title);
+		
 		cv.put(ContactsProvider.CMetaData.ContactsMetaData.REGISTERED, contact.registered);
 
 		cv.put(ContactsProvider.CMetaData.ContactsMetaData.CREATED, contact.created);
