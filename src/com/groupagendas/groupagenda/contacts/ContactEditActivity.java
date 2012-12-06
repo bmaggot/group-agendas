@@ -102,6 +102,7 @@ public class ContactEditActivity extends Activity implements OnClickListener, On
 	private EditText streetView;
 	private EditText zipView;
 	private Spinner visibilitySpinner;
+	private Spinner canAddNotesSpinner;
 
 	private CharSequence[] titles;
 	private int[] ids;
@@ -111,6 +112,7 @@ public class ContactEditActivity extends Activity implements OnClickListener, On
 	private boolean DATA_LOADED = false;
 
 	private String[] visibilityValues;
+	private String[] canAddNotesValues;
 
 	private DateTimeUtils dtUtils;
 	private ArrayList<StaticTimezones> countriesList;
@@ -207,6 +209,9 @@ public class ContactEditActivity extends Activity implements OnClickListener, On
 		visibilityValues = getResources().getStringArray(R.array.visibility_values);
 		visibilitySpinner = (Spinner) findViewById(R.id.visibility);
 		visibilitySpinner.setOnItemSelectedListener(this);
+		canAddNotesValues = getResources().getStringArray(R.array.yes_no_values);
+		canAddNotesSpinner = (Spinner) findViewById(R.id.can_add_note_response);
+		canAddNotesSpinner.setOnItemSelectedListener(this);
 		groupsButton = (Button) findViewById(R.id.groupsButton);
 		imageView = (ImageView) findViewById(R.id.contact_image);
 
@@ -501,6 +506,13 @@ public class ContactEditActivity extends Activity implements OnClickListener, On
 				else if (result.visibility.equalsIgnoreCase("l"))
 					visibilitySpinner.setSelection(2, true);
 			}
+			if(result.can_add_note != null && !result.can_add_note.equals("null")){
+				if(result.can_add_note.equalsIgnoreCase("y")){
+					canAddNotesSpinner.setSelection(0, true);
+				} else {
+					canAddNotesSpinner.setSelection(1, true);
+				}
+			}
 			
 			DATA_LOADED = true;
 			
@@ -580,7 +592,10 @@ public class ContactEditActivity extends Activity implements OnClickListener, On
 			temp = visibilityValues[visibilitySpinner.getSelectedItemPosition()];
 			editedContact.visibility = temp;
 			cv.put(ContactsProvider.CMetaData.ContactsMetaData.VISIBILITY, editedContact.visibility);
-
+			
+			temp = canAddNotesValues[canAddNotesSpinner.getSelectedItemPosition()];
+			editedContact.can_add_note = temp;
+			cv.put(ContactsProvider.CMetaData.ContactsMetaData.CAN_ADD_NOTE, editedContact.can_add_note);
 			// groups
 			Map<String, String> contactGroupsMap = new HashMap<String, String>();
 			if (editedContact.groups == null) {
@@ -747,6 +762,10 @@ public class ContactEditActivity extends Activity implements OnClickListener, On
 			temp = visibilityValues[visibilitySpinner.getSelectedItemPosition()];
 			editedContact.visibility = temp;
 			cv.put(ContactsProvider.CMetaData.ContactsMetaData.VISIBILITY, editedContact.visibility);
+			
+			temp = canAddNotesValues[canAddNotesSpinner.getSelectedItemPosition()];
+			editedContact.can_add_note = temp;
+			cv.put(ContactsProvider.CMetaData.ContactsMetaData.CAN_ADD_NOTE, editedContact.can_add_note);
 
 			// created modified times
 			editedContact.created = Calendar.getInstance().getTimeInMillis();
@@ -976,6 +995,8 @@ public class ContactEditActivity extends Activity implements OnClickListener, On
 		case R.id.visibility:
 			editedContact.visibility = visibilityValues[pos];
 			break;
+		case R.id.can_add_note_response:
+			editedContact.can_add_note = canAddNotesValues[pos];
 		}
 	}
 

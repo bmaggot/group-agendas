@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string-array name="yes_no_labels">
+        <item>Yes</item>
+        <item>No</item>
+    </string-array>
+    <string-array name="yes_no_values">
+        <item>y</item>
+        <item>n</item>
+    </string-array>
+
+</resources>
