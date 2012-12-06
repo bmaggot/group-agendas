@@ -165,8 +165,8 @@ public class ContactInfoActivity extends Activity {
 									.getStringArray(R.array.visibility_labels)[2]);
 				}
 
-				if (contact.can_add_note != null && !contact.can_add_note.equals("")) {
-					setTableRow(getString(R.string.allow_to_add_not_in_agenda), contact.can_add_note.equals("y") ? getResources()
+				if (contact.can_add_note != null && !contact.can_add_note.equals("null")) {
+					setTableRow(getString(R.string.allow_to_add_note_in_agenda), contact.can_add_note.equals("y") ? getResources()
 							.getString(R.string.yes) : getResources().getString(R.string.no));
 				}
 

@@ -340,7 +340,7 @@
                     android:layout_marginBottom="5dp"
                     android:text="@string/agenda_visibility"
                     android:textColor="@android:color/black"
-                    android:textSize="15dp" />
+                    android:textSize="15sp" />
 
                 <Spinner
                     android:id="@+id/visibility"
@@ -348,6 +348,23 @@
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_vertical"
                     android:entries="@array/visibility_labels" />
+                
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_horizontal"
+                    android:layout_marginBottom="5dp"
+                    android:singleLine="true"
+                    android:text="@string/allow_to_add_note_in_agenda"
+                    android:textColor="@android:color/black"
+                    android:textSize="15sp" />
+
+                <Spinner
+                    android:id="@+id/can_add_note_response"
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical"
+                    android:entries="@array/yes_no_labels" />
             </LinearLayout>
 
             <Button

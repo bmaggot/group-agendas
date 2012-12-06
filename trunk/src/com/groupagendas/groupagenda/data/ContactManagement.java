@@ -115,7 +115,7 @@ public class ContactManagement {
 								} catch (JSONException e) {
 									Log.e("getContactsFromRemoteDb(contactIds)", "Failed getting id.");
 								}
-								
+
 								try {
 									contact.lid = c.getString(ContactsProvider.CMetaData.ContactsMetaData.LID);
 								} catch (JSONException e) {
@@ -141,7 +141,7 @@ public class ContactManagement {
 								} catch (JSONException e) {
 									Log.e("getContactsFromRemoteDb(contactIds)", "Failed getting lastname.");
 								}
-								
+
 								try {
 									contact.fullname = c.getString(ContactsProvider.CMetaData.ContactsMetaData.FULLNAME);
 								} catch (JSONException e) {
@@ -237,7 +237,7 @@ public class ContactManagement {
 								} catch (JSONException e) {
 									Log.e("getContactsFromRemoteDb(contactIds)", "Failed getting visibility.");
 								}
-								
+
 								try {
 									temp = c.getString(ContactsProvider.CMetaData.ContactsMetaData.VISIBILITY2);
 									if (temp != null && !temp.equals("null"))
@@ -291,7 +291,7 @@ public class ContactManagement {
 								} catch (JSONException e) {
 									Log.e("getContactsFromRemoteDb(contactIds)", "Failed getting modified.");
 								}
-								
+
 								try {
 									contact.reg_user_id = c.getInt(ContactsProvider.CMetaData.ContactsMetaData.REG_USER_ID);
 								} catch (JSONException e) {
@@ -307,7 +307,7 @@ public class ContactManagement {
 								} catch (JSONException e) {
 									Log.e("getContactsFromRemoteDb(contactIds)", "Failed getting agenda_view.");
 								}
-								
+
 								try {
 									temp = c.getString(ContactsProvider.CMetaData.ContactsMetaData.AGENDA_VIEW2);
 									if (temp != null && !temp.equals("null"))
@@ -317,43 +317,43 @@ public class ContactManagement {
 								} catch (JSONException e) {
 									Log.e("getContactsFromRemoteDb(contactIds)", "Failed getting agenda_view2.");
 								}
-								
+
 								try {
 									contact.can_add_note = c.getString(ContactsProvider.CMetaData.ContactsMetaData.CAN_ADD_NOTE);
 								} catch (JSONException e) {
 									Log.e("getContactsFromRemoteDb(contactIds)", "Failed getting can_add_note.");
 								}
-								
+
 								try {
 									contact.time_start = c.getString(ContactsProvider.CMetaData.ContactsMetaData.TIME_START);
 								} catch (JSONException e) {
 									Log.e("getContactsFromRemoteDb(contactIds)", "Failed getting time_start.");
 								}
-								
+
 								try {
 									contact.time_end = c.getString(ContactsProvider.CMetaData.ContactsMetaData.TIME_END);
 								} catch (JSONException e) {
 									Log.e("getContactsFromRemoteDb(contactIds)", "Failed getting time_end.");
 								}
-								
+
 								try {
 									contact.all_day = c.getString(ContactsProvider.CMetaData.ContactsMetaData.ALL_DAY);
 								} catch (JSONException e) {
 									Log.e("getContactsFromRemoteDb(contactIds)", "Failed getting all_day.");
 								}
-								
+
 								try {
 									contact.display_time_end = c.getString(ContactsProvider.CMetaData.ContactsMetaData.DISPLAY_TIME_END);
 								} catch (JSONException e) {
 									Log.e("getContactsFromRemoteDb(contactIds)", "Failed getting display_time_end.");
 								}
-								
+
 								try {
 									contact.type = c.getString(ContactsProvider.CMetaData.ContactsMetaData.TYPE);
 								} catch (JSONException e) {
 									Log.e("getContactsFromRemoteDb(contactIds)", "Failed getting type.");
 								}
-								
+
 								try {
 									contact.title = c.getString(ContactsProvider.CMetaData.ContactsMetaData.TITLE);
 								} catch (JSONException e) {
@@ -361,17 +361,15 @@ public class ContactManagement {
 								}
 
 								// TODO investigate REGISTERED meaning.
-								 try {
-								 temp =
-								 c.getString("is_reg");
-								 if (temp != null && !temp.equals("null"))
-								 contact.registered = temp;
-								 else
-								 contact.registered = "";
-								 } catch (JSONException e) {
-								 Log.e("getContactsFromRemoteDb(contactIds)",
-								 "Failed getting registered.");
-								 }
+								try {
+									temp = c.getString("is_reg");
+									if (temp != null && !temp.equals("null"))
+										contact.registered = temp;
+									else
+										contact.registered = "";
+								} catch (JSONException e) {
+									Log.e("getContactsFromRemoteDb(contactIds)", "Failed getting registered.");
+								}
 
 								try {
 									temp = c.getString(ContactsProvider.CMetaData.ContactsMetaData.COLOR);
@@ -485,14 +483,14 @@ public class ContactManagement {
 
 				temp.reg_user_id = cur.getInt(cur.getColumnIndex(ContactsProvider.CMetaData.ContactsMetaData.REG_USER_ID));
 				temp.agenda_view = cur.getString(cur.getColumnIndex(ContactsProvider.CMetaData.ContactsMetaData.AGENDA_VIEW));
-				temp.agenda_view2= cur.getString(cur.getColumnIndex(ContactsProvider.CMetaData.ContactsMetaData.AGENDA_VIEW2));
-				temp.can_add_note= cur.getString(cur.getColumnIndex(ContactsProvider.CMetaData.ContactsMetaData.CAN_ADD_NOTE));
-				temp.time_start= cur.getString(cur.getColumnIndex(ContactsProvider.CMetaData.ContactsMetaData.TIME_START));
-				temp.time_end= cur.getString(cur.getColumnIndex(ContactsProvider.CMetaData.ContactsMetaData.TIME_END));
-				temp.all_day= cur.getString(cur.getColumnIndex(ContactsProvider.CMetaData.ContactsMetaData.ALL_DAY));
-				temp.display_time_end= cur.getString(cur.getColumnIndex(ContactsProvider.CMetaData.ContactsMetaData.DISPLAY_TIME_END));
-				temp.type= cur.getString(cur.getColumnIndex(ContactsProvider.CMetaData.ContactsMetaData.TYPE));
-				temp.title= cur.getString(cur.getColumnIndex(ContactsProvider.CMetaData.ContactsMetaData.TITLE));
+				temp.agenda_view2 = cur.getString(cur.getColumnIndex(ContactsProvider.CMetaData.ContactsMetaData.AGENDA_VIEW2));
+				temp.can_add_note = cur.getString(cur.getColumnIndex(ContactsProvider.CMetaData.ContactsMetaData.CAN_ADD_NOTE));
+				temp.time_start = cur.getString(cur.getColumnIndex(ContactsProvider.CMetaData.ContactsMetaData.TIME_START));
+				temp.time_end = cur.getString(cur.getColumnIndex(ContactsProvider.CMetaData.ContactsMetaData.TIME_END));
+				temp.all_day = cur.getString(cur.getColumnIndex(ContactsProvider.CMetaData.ContactsMetaData.ALL_DAY));
+				temp.display_time_end = cur.getString(cur.getColumnIndex(ContactsProvider.CMetaData.ContactsMetaData.DISPLAY_TIME_END));
+				temp.type = cur.getString(cur.getColumnIndex(ContactsProvider.CMetaData.ContactsMetaData.TYPE));
+				temp.title = cur.getString(cur.getColumnIndex(ContactsProvider.CMetaData.ContactsMetaData.TITLE));
 				temp.registered = cur.getString(cur.getColumnIndex(ContactsProvider.CMetaData.ContactsMetaData.REGISTERED));
 
 				temp.created = cur.getLong(cur.getColumnIndex(ContactsProvider.CMetaData.ContactsMetaData.CREATED));
@@ -715,16 +713,18 @@ public class ContactManagement {
 				Log.e("insertContactToRemoteDb(group, " + id + ")", "Failed adding modified to entity.");
 			}
 		}
-		
-		if (contact.visibility != null){
+
+		if (contact.visibility != null) {
 			try {
-				reqEntity.addPart(ContactsProvider.CMetaData.ContactsMetaData.VISIBILITY, new StringBody(contact.visibility + "", Charset.forName("UTF-8")));
+				reqEntity.addPart(ContactsProvider.CMetaData.ContactsMetaData.VISIBILITY,
+						new StringBody(contact.visibility + "", Charset.forName("UTF-8")));
 			} catch (UnsupportedEncodingException e) {
 				Log.e("insertContactToRemoteDb(group, " + id + ")", "Failed adding modified to entity.");
 			}
 		} else {
 			try {
-				reqEntity.addPart(ContactsProvider.CMetaData.ContactsMetaData.VISIBILITY, new StringBody(context.getResources().getStringArray(R.array.visibility_values)[0], Charset.forName("UTF-8")));
+				reqEntity.addPart(ContactsProvider.CMetaData.ContactsMetaData.VISIBILITY, new StringBody(context.getResources()
+						.getStringArray(R.array.visibility_values)[0], Charset.forName("UTF-8")));
 			} catch (UnsupportedEncodingException e) {
 				Log.e("insertContactToRemoteDb(group, " + id + ")", "Failed adding modified to entity.");
 			}
@@ -841,7 +841,7 @@ public class ContactManagement {
 
 		cv.put(ContactsProvider.CMetaData.ContactsMetaData.REG_USER_ID, contact.reg_user_id);
 		cv.put(ContactsProvider.CMetaData.ContactsMetaData.AGENDA_VIEW, contact.agenda_view);
-		
+
 		cv.put(ContactsProvider.CMetaData.ContactsMetaData.AGENDA_VIEW2, contact.agenda_view2);
 		cv.put(ContactsProvider.CMetaData.ContactsMetaData.CAN_ADD_NOTE, contact.can_add_note);
 		cv.put(ContactsProvider.CMetaData.ContactsMetaData.TIME_START, contact.time_start);
@@ -850,7 +850,7 @@ public class ContactManagement {
 		cv.put(ContactsProvider.CMetaData.ContactsMetaData.DISPLAY_TIME_END, contact.display_time_end);
 		cv.put(ContactsProvider.CMetaData.ContactsMetaData.TYPE, contact.type);
 		cv.put(ContactsProvider.CMetaData.ContactsMetaData.TITLE, contact.title);
-		
+
 		cv.put(ContactsProvider.CMetaData.ContactsMetaData.REGISTERED, contact.registered);
 
 		cv.put(ContactsProvider.CMetaData.ContactsMetaData.CREATED, contact.created);
@@ -2018,99 +2018,132 @@ public class ContactManagement {
 		} catch (UnsupportedEncodingException e) {
 			Log.e("editContactOnRemoteDb(contact[contact_id=" + c.contact_id + "])", "Failed adding contact_id to entity.");
 		}
-		
-		try {
-			reqEntity.addPart(ContactsProvider.CMetaData.ContactsMetaData.LID, new StringBody(c.lid, Charset.forName("UTF-8")));
-		} catch (UnsupportedEncodingException e) {
-			Log.e("editContactOnRemoteDb(contact[contact_id=" + c.contact_id + "])", "Failed adding lid to entity.");
+
+		if (c.lid != null) {
+			try {
+				reqEntity.addPart(ContactsProvider.CMetaData.ContactsMetaData.LID, new StringBody(c.lid, Charset.forName("UTF-8")));
+			} catch (UnsupportedEncodingException e) {
+				Log.e("editContactOnRemoteDb(contact[contact_id=" + c.contact_id + "])", "Failed adding lid to entity.");
+			}
 		}
 
-		try {
-			reqEntity.addPart(ContactsProvider.CMetaData.ContactsMetaData.NAME, new StringBody(c.name, Charset.forName("UTF-8")));
-		} catch (UnsupportedEncodingException e) {
-			Log.e("editContactOnRemoteDb(contact[contact_id=" + c.contact_id + "])", "Failed adding name to entity.");
+		if (c.name != null) {
+			try {
+				reqEntity.addPart(ContactsProvider.CMetaData.ContactsMetaData.NAME, new StringBody(c.name, Charset.forName("UTF-8")));
+			} catch (UnsupportedEncodingException e) {
+				Log.e("editContactOnRemoteDb(contact[contact_id=" + c.contact_id + "])", "Failed adding name to entity.");
+			}
 		}
 
-		try {
-			reqEntity.addPart(ContactsProvider.CMetaData.ContactsMetaData.LASTNAME, new StringBody(c.lastname, Charset.forName("UTF-8")));
-		} catch (UnsupportedEncodingException e) {
-			Log.e("editContactOnRemoteDb(contact[contact_id=" + c.contact_id + "])", "Failed adding lastname to entity.");
-		}
-		
-		try {
-			reqEntity.addPart(ContactsProvider.CMetaData.ContactsMetaData.FULLNAME, new StringBody(c.fullname, Charset.forName("UTF-8")));
-		} catch (UnsupportedEncodingException e) {
-			Log.e("editContactOnRemoteDb(contact[contact_id=" + c.contact_id + "])", "Failed adding fullname to entity.");
+		if (c.lastname != null) {
+			try {
+				reqEntity.addPart(ContactsProvider.CMetaData.ContactsMetaData.LASTNAME,
+						new StringBody(c.lastname, Charset.forName("UTF-8")));
+			} catch (UnsupportedEncodingException e) {
+				Log.e("editContactOnRemoteDb(contact[contact_id=" + c.contact_id + "])", "Failed adding lastname to entity.");
+			}
 		}
 
-		try {
-			reqEntity.addPart(ContactsProvider.CMetaData.ContactsMetaData.EMAIL, new StringBody(c.email, Charset.forName("UTF-8")));
-		} catch (UnsupportedEncodingException e) {
-			Log.e("editContactOnRemoteDb(contact[contact_id=" + c.contact_id + "])", "Failed adding email to entity.");
+		if (c.fullname != null) {
+			try {
+				reqEntity.addPart(ContactsProvider.CMetaData.ContactsMetaData.FULLNAME,
+						new StringBody(c.fullname, Charset.forName("UTF-8")));
+			} catch (UnsupportedEncodingException e) {
+				Log.e("editContactOnRemoteDb(contact[contact_id=" + c.contact_id + "])", "Failed adding fullname to entity.");
+			}
 		}
 
-		try {
-			reqEntity.addPart(ContactsProvider.CMetaData.ContactsMetaData.PHONE, new StringBody(c.phone1, Charset.forName("UTF-8")));
-		} catch (UnsupportedEncodingException e) {
-			Log.e("editContactOnRemoteDb(contact[contact_id=" + c.contact_id + "])", "Failed adding phone1 to entity.");
+		if (c.email != null) {
+			try {
+				reqEntity.addPart(ContactsProvider.CMetaData.ContactsMetaData.EMAIL, new StringBody(c.email, Charset.forName("UTF-8")));
+			} catch (UnsupportedEncodingException e) {
+				Log.e("editContactOnRemoteDb(contact[contact_id=" + c.contact_id + "])", "Failed adding email to entity.");
+			}
 		}
 
-		try {
-			reqEntity.addPart(ContactsProvider.CMetaData.ContactsMetaData.PHONE_CODE,
-					new StringBody(c.phone1_code, Charset.forName("UTF-8")));
-		} catch (UnsupportedEncodingException e) {
-			Log.e("editContactOnRemoteDb(contact[contact_id=" + c.contact_id + "])", "Failed adding phone1 to entity.");
+		if (c.phone1 != null) {
+			try {
+				reqEntity.addPart(ContactsProvider.CMetaData.ContactsMetaData.PHONE, new StringBody(c.phone1, Charset.forName("UTF-8")));
+			} catch (UnsupportedEncodingException e) {
+				Log.e("editContactOnRemoteDb(contact[contact_id=" + c.contact_id + "])", "Failed adding phone1 to entity.");
+			}
 		}
 
-		try {
-			reqEntity.addPart(ContactsProvider.CMetaData.ContactsMetaData.BIRTHDATE, new StringBody(c.birthdate, Charset.forName("UTF-8")));
-		} catch (UnsupportedEncodingException e) {
-			Log.e("editContactOnRemoteDb(contact[contact_id=" + c.contact_id + "])", "Failed adding birthdate to entity.");
+		if (c.phone1_code != null) {
+			try {
+				reqEntity.addPart(ContactsProvider.CMetaData.ContactsMetaData.PHONE_CODE,
+						new StringBody(c.phone1_code, Charset.forName("UTF-8")));
+			} catch (UnsupportedEncodingException e) {
+				Log.e("editContactOnRemoteDb(contact[contact_id=" + c.contact_id + "])", "Failed adding phone1 to entity.");
+			}
 		}
 
-		try {
-			reqEntity.addPart(ContactsProvider.CMetaData.ContactsMetaData.COUNTRY, new StringBody(c.country, Charset.forName("UTF-8")));
-		} catch (UnsupportedEncodingException e) {
-			Log.e("editContactOnRemoteDb(contact[contact_id=" + c.contact_id + "])", "Failed adding country to entity.");
+		if (c.birthdate != null) {
+			try {
+				reqEntity.addPart(ContactsProvider.CMetaData.ContactsMetaData.BIRTHDATE,
+						new StringBody(c.birthdate, Charset.forName("UTF-8")));
+			} catch (UnsupportedEncodingException e) {
+				Log.e("editContactOnRemoteDb(contact[contact_id=" + c.contact_id + "])", "Failed adding birthdate to entity.");
+			}
 		}
 
-		try {
-			reqEntity.addPart(ContactsProvider.CMetaData.ContactsMetaData.CITY, new StringBody(c.city, Charset.forName("UTF-8")));
-		} catch (UnsupportedEncodingException e) {
-			Log.e("editContactOnRemoteDb(contact[contact_id=" + c.contact_id + "])", "Failed adding city to entity.");
+		if (c.country != null) {
+			try {
+				reqEntity.addPart(ContactsProvider.CMetaData.ContactsMetaData.COUNTRY, new StringBody(c.country, Charset.forName("UTF-8")));
+			} catch (UnsupportedEncodingException e) {
+				Log.e("editContactOnRemoteDb(contact[contact_id=" + c.contact_id + "])", "Failed adding country to entity.");
+			}
 		}
 
-		try {
-			reqEntity.addPart(ContactsProvider.CMetaData.ContactsMetaData.STREET, new StringBody(c.street, Charset.forName("UTF-8")));
-		} catch (UnsupportedEncodingException e) {
-			Log.e("editContactOnRemoteDb(contact[contact_id=" + c.contact_id + "])", "Failed adding street to entity.");
+		if (c.city != null) {
+			try {
+				reqEntity.addPart(ContactsProvider.CMetaData.ContactsMetaData.CITY, new StringBody(c.city, Charset.forName("UTF-8")));
+			} catch (UnsupportedEncodingException e) {
+				Log.e("editContactOnRemoteDb(contact[contact_id=" + c.contact_id + "])", "Failed adding city to entity.");
+			}
 		}
 
-		try {
-			reqEntity.addPart(ContactsProvider.CMetaData.ContactsMetaData.ZIP, new StringBody(c.zip, Charset.forName("UTF-8")));
-		} catch (UnsupportedEncodingException e) {
-			Log.e("editContactOnRemoteDb(contact[contact_id=" + c.contact_id + "])", "Failed adding zip to entity.");
+		if (c.street != null) {
+			try {
+				reqEntity.addPart(ContactsProvider.CMetaData.ContactsMetaData.STREET, new StringBody(c.street, Charset.forName("UTF-8")));
+			} catch (UnsupportedEncodingException e) {
+				Log.e("editContactOnRemoteDb(contact[contact_id=" + c.contact_id + "])", "Failed adding street to entity.");
+			}
 		}
 
-		try {
-			reqEntity.addPart(ContactsProvider.CMetaData.ContactsMetaData.VISIBILITY,
-					new StringBody(c.visibility, Charset.forName("UTF-8")));
-		} catch (UnsupportedEncodingException e) {
-			Log.e("editContactOnRemoteDb(contact[contact_id=" + c.contact_id + "])", "Failed adding visibility to entity.");
+		if (c.zip != null) {
+			try {
+				reqEntity.addPart(ContactsProvider.CMetaData.ContactsMetaData.ZIP, new StringBody(c.zip, Charset.forName("UTF-8")));
+			} catch (UnsupportedEncodingException e) {
+				Log.e("editContactOnRemoteDb(contact[contact_id=" + c.contact_id + "])", "Failed adding zip to entity.");
+			}
 		}
-		
-		try {
-			reqEntity.addPart(ContactsProvider.CMetaData.ContactsMetaData.VISIBILITY2,
-					new StringBody(c.visibility2, Charset.forName("UTF-8")));
-		} catch (UnsupportedEncodingException e) {
-			Log.e("editContactOnRemoteDb(contact[contact_id=" + c.contact_id + "])", "Failed adding visibility2 to entity.");
+
+		if (c.visibility != null) {
+			try {
+				reqEntity.addPart(ContactsProvider.CMetaData.ContactsMetaData.VISIBILITY,
+						new StringBody(c.visibility, Charset.forName("UTF-8")));
+			} catch (UnsupportedEncodingException e) {
+				Log.e("editContactOnRemoteDb(contact[contact_id=" + c.contact_id + "])", "Failed adding visibility to entity.");
+			}
 		}
-		
-		try {
-			reqEntity.addPart(ContactsProvider.CMetaData.ContactsMetaData.CAN_ADD_NOTE,
-					new StringBody(c.can_add_note, Charset.forName("UTF-8")));
-		} catch (UnsupportedEncodingException e) {
-			Log.e("editContactOnRemoteDb(contact[contact_id=" + c.contact_id + "])", "Failed adding can_add_note to entity.");
+
+		if (c.visibility2 != null) {
+			try {
+				reqEntity.addPart(ContactsProvider.CMetaData.ContactsMetaData.VISIBILITY2,
+						new StringBody(c.visibility2, Charset.forName("UTF-8")));
+			} catch (UnsupportedEncodingException e) {
+				Log.e("editContactOnRemoteDb(contact[contact_id=" + c.contact_id + "])", "Failed adding visibility2 to entity.");
+			}
+		}
+
+		if (c.can_add_note != null) {
+			try {
+				reqEntity.addPart(ContactsProvider.CMetaData.ContactsMetaData.CAN_ADD_NOTE,
+						new StringBody(c.can_add_note, Charset.forName("UTF-8")));
+			} catch (UnsupportedEncodingException e) {
+				Log.e("editContactOnRemoteDb(contact[contact_id=" + c.contact_id + "])", "Failed adding can_add_note to entity.");
+			}
 		}
 
 		Map<String, String> groups = c.groups;
@@ -2220,7 +2253,7 @@ public class ContactManagement {
 
 		cv.put(ContactsProvider.CMetaData.ContactsMetaData.REG_USER_ID, contact.reg_user_id);
 		cv.put(ContactsProvider.CMetaData.ContactsMetaData.AGENDA_VIEW, contact.agenda_view);
-		
+
 		cv.put(ContactsProvider.CMetaData.ContactsMetaData.AGENDA_VIEW2, contact.agenda_view2);
 		cv.put(ContactsProvider.CMetaData.ContactsMetaData.CAN_ADD_NOTE, contact.can_add_note);
 		cv.put(ContactsProvider.CMetaData.ContactsMetaData.TIME_START, contact.time_start);
@@ -2229,7 +2262,7 @@ public class ContactManagement {
 		cv.put(ContactsProvider.CMetaData.ContactsMetaData.DISPLAY_TIME_END, contact.display_time_end);
 		cv.put(ContactsProvider.CMetaData.ContactsMetaData.TYPE, contact.type);
 		cv.put(ContactsProvider.CMetaData.ContactsMetaData.TITLE, contact.title);
-		
+
 		cv.put(ContactsProvider.CMetaData.ContactsMetaData.REGISTERED, contact.registered);
 
 		cv.put(ContactsProvider.CMetaData.ContactsMetaData.CREATED, contact.created);
@@ -2346,68 +2379,73 @@ public class ContactManagement {
 		// e.printStackTrace();
 		// }
 	}
-	
-	public static void bulkInsertContactsToRemoteDb(Context context, ArrayList<Contact> contactChanges){
+
+	public static void bulkInsertContactsToRemoteDb(Context context, ArrayList<Contact> contactChanges) {
 		Account account = new Account(context);
 		WebService webService = new WebService();
 		HttpPost post = new HttpPost(Data.getServerUrl() + "mobile/contact_create_batch");
 
 		MultipartEntity reqEntity = new MultipartEntity(HttpMultipartMode.BROWSER_COMPATIBLE);
-	    
-	    try {
+
+		try {
 			reqEntity.addPart("session", new StringBody(account.getSessionId(), Charset.forName("UTF-8")));
 		} catch (UnsupportedEncodingException e2) {
 			e2.printStackTrace();
 		}
 
-	    try {
+		try {
 			reqEntity.addPart("token", new StringBody(Data.getToken(context), Charset.forName("UTF-8")));
 		} catch (UnsupportedEncodingException e) {
 			e.printStackTrace();
 		}
-	    int i = 0;
-		for(Contact c : contactChanges){
-			if(c.name != null){
+		int i = 0;
+		for (Contact c : contactChanges) {
+			if (c.name != null) {
 				try {
-					reqEntity.addPart("contacts["+ i +"][" + ContactsProvider.CMetaData.ContactsMetaData.NAME +"]", new StringBody(c.name, Charset.forName("UTF-8")));
+					reqEntity.addPart("contacts[" + i + "][" + ContactsProvider.CMetaData.ContactsMetaData.NAME + "]", new StringBody(
+							c.name, Charset.forName("UTF-8")));
 				} catch (UnsupportedEncodingException e) {
 					e.printStackTrace();
 				}
 			}
-			if(c.email != null){
+			if (c.email != null) {
 				try {
-					reqEntity.addPart("contacts["+ i +"][" + ContactsProvider.CMetaData.ContactsMetaData.EMAIL +"]", new StringBody(c.email, Charset.forName("UTF-8")));
+					reqEntity.addPart("contacts[" + i + "][" + ContactsProvider.CMetaData.ContactsMetaData.EMAIL + "]", new StringBody(
+							c.email, Charset.forName("UTF-8")));
 				} catch (UnsupportedEncodingException e) {
 					e.printStackTrace();
 				}
 			}
-			if(c.country != null){
+			if (c.country != null) {
 				try {
-					reqEntity.addPart("contacts["+ i +"][" + ContactsProvider.CMetaData.ContactsMetaData.COUNTRY +"]", new StringBody(c.country, Charset.forName("UTF-8")));
+					reqEntity.addPart("contacts[" + i + "][" + ContactsProvider.CMetaData.ContactsMetaData.COUNTRY + "]", new StringBody(
+							c.country, Charset.forName("UTF-8")));
 				} catch (UnsupportedEncodingException e) {
 					e.printStackTrace();
 				}
 			}
-			if(c.phone1 != null){
+			if (c.phone1 != null) {
 				try {
-					reqEntity.addPart("contacts["+ i +"][" + ContactsProvider.CMetaData.ContactsMetaData.PHONE +"]", new StringBody(c.phone1, Charset.forName("UTF-8")));
+					reqEntity.addPart("contacts[" + i + "][" + ContactsProvider.CMetaData.ContactsMetaData.PHONE + "]", new StringBody(
+							c.phone1, Charset.forName("UTF-8")));
 				} catch (UnsupportedEncodingException e) {
 					e.printStackTrace();
 				}
 			}
-			if(c.birthdate != null){
+			if (c.birthdate != null) {
 				try {
-					reqEntity.addPart("contacts["+ i +"][" + ContactsProvider.CMetaData.ContactsMetaData.BIRTHDATE +"]", new StringBody(c.birthdate, Charset.forName("UTF-8")));
+					reqEntity.addPart("contacts[" + i + "][" + ContactsProvider.CMetaData.ContactsMetaData.BIRTHDATE + "]", new StringBody(
+							c.birthdate, Charset.forName("UTF-8")));
 				} catch (UnsupportedEncodingException e) {
 					e.printStackTrace();
 				}
 			}
 			try {
-				reqEntity.addPart("contacts["+ i +"][local_id]", new StringBody(c.getInternal_id()+"", Charset.forName("UTF-8")));
+				reqEntity.addPart("contacts[" + i + "][local_id]", new StringBody(c.getInternal_id() + "", Charset.forName("UTF-8")));
 			} catch (UnsupportedEncodingException e) {
 				e.printStackTrace();
 			}
-			
+
 			i++;
 		}
 		try {
@@ -2569,9 +2607,9 @@ public class ContactManagement {
 			}
 
 			reqEntity.addPart("token", new StringBody(Data.getToken(context), Charset.forName("UTF-8")));
-			if(guid > 0){
+			if (guid > 0) {
 				reqEntity.addPart("guid", new StringBody("" + guid, Charset.forName("UTF-8")));
-			} else if(gcid > 0){
+			} else if (gcid > 0) {
 				reqEntity.addPart("gcid", new StringBody("" + gcid, Charset.forName("UTF-8")));
 			}
 			if (req) {

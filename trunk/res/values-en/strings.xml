@@ -275,6 +275,6 @@
     <string name="notify_by_push">Notifications by Push</string>
     <string name="do_you_want_to_save_your_changes">Do You want to save Your changes?</string>
     <string name="save_your_changes">Save changes?</string>
-    <string name="allow_to_add_not_in_agenda">Allow to add note\n in agenda</string>
+    <string name="allow_to_add_note_in_agenda">Allow to add note\n in agenda</string>
     
 </resources>
