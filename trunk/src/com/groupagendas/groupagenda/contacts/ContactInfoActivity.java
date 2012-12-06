@@ -158,13 +158,19 @@ public class ContactInfoActivity extends Activity {
 				if (contact.zip != null && !contact.zip.equals("null")) {
 					setTableRow(getString(R.string.zip), contact.zip);
 				}
+				// agenda visibility
+				if (contact.visibility != null && !contact.visibility.equals("n")) {
+					setTableRow(getString(R.string.agenda_visibility),
+							contact.visibility.equals("f") ? getResources().getStringArray(R.array.visibility_labels)[1] : getResources()
+									.getStringArray(R.array.visibility_labels)[2]);
+				}
 
 				// Groups
 				String groupsList = "";
 				if (contact.groups != null) {
 					if (contact.groups.size() > 0) {
 						String groupsIds = "";
-						
+
 						for (String id : contact.groups.values()) {
 							if (groupsIds.length() < 1) {
 								groupsIds += id;
@@ -172,7 +178,7 @@ public class ContactInfoActivity extends Activity {
 								groupsIds += ", " + id;
 							}
 						}
-						
+
 						groupsList = getGroupTitles(groupsIds);
 					}
 				}
@@ -275,7 +281,7 @@ public class ContactInfoActivity extends Activity {
 			return super.onOptionsItemSelected(item);
 		}
 	}
-	
+
 	private String getGroupTitles(String ids) {
 		Cursor cur;
 		String result = "";
