@@ -1137,6 +1137,9 @@ public class EventManagement {
 							+ Utils.millisToUnixTimestamp(e.getEndCalendar()
 									.getTimeInMillis()), Charset
 							.forName("UTF-8")));
+			
+			reqEntity.addPart("all_day_event", new StringBody(e.is_all_day() + "",
+					Charset.forName("UTF-8")));
 
 			reqEntity.addPart("description", new StringBody(e.getDescription(),
 					Charset.forName("UTF-8")));
@@ -1331,10 +1334,13 @@ public class EventManagement {
 							+ Utils.millisToUnixTimestamp(e.getEndCalendar()
 									.getTimeInMillis()), Charset
 							.forName("UTF-8")));
-
+			
 			reqEntity.addPart("timezone", new StringBody(e.getTimezone(),
 					Charset.forName("UTF-8")));
 
+			reqEntity.addPart("all_day_event", new StringBody(e.is_all_day() + "",
+					Charset.forName("UTF-8")));
+			
 			reqEntity.addPart("description", new StringBody(e.getDescription(),
 					Charset.forName("UTF-8")));
 

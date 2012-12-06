@@ -25,6 +25,8 @@ import android.view.Window;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.Button;
+import android.widget.CompoundButton;
+import android.widget.CompoundButton.OnCheckedChangeListener;
 import android.widget.EditText;
 import android.widget.GridView;
 import android.widget.ImageView;
@@ -34,6 +36,7 @@ import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
+import android.widget.ToggleButton;
 
 import com.groupagendas.groupagenda.C2DMReceiver;
 import com.groupagendas.groupagenda.R;
@@ -296,6 +299,8 @@ public class EventEditActivity extends EventActivity {
 		descView = (EditText) findViewById(R.id.descView);
 		//Creator
 		creatorNameTextView = (TextView) findViewById(R.id.EventEditCreatorName);
+		//allday
+		allDayToggleButton = (ToggleButton) findViewById(R.id.allDayToggleButton);
 		// Addres and details panel
 		addressDetailsPanel = (RelativeLayout) findViewById(R.id.addressDetailsLine);
 
@@ -752,6 +757,14 @@ public class EventEditActivity extends EventActivity {
 			account = new Account(EventEditActivity.this);
 			event = result;
 			selectedIcon = event.getIcon();
+			allDayToggleButton.setChecked(event.is_all_day());
+			allDayToggleButton.setOnCheckedChangeListener(new OnCheckedChangeListener() {
+				
+				@Override
+				public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+					event.setIs_all_day(isChecked);
+				}
+			});
 			// toptext
 			String tmpTopText = event.getType();
 			if (tmpTopText.equalsIgnoreCase("t")) {
@@ -882,6 +895,7 @@ public class EventEditActivity extends EventActivity {
 				costView.setEnabled(false);
 				accomodationView.setEnabled(false);
 				saveButton.setVisibility(View.GONE);
+				allDayToggleButton.setEnabled(false);
 
 			}
 			if(event.isNative()){
@@ -891,6 +905,7 @@ public class EventEditActivity extends EventActivity {
 				reminder1container.setEnabled(false);
 				reminder2container.setEnabled(false);
 				reminder3container.setEnabled(false);
+				allDayToggleButton.setEnabled(false);
 				deleteButton.setVisibility(View.INVISIBLE);
 			}
 

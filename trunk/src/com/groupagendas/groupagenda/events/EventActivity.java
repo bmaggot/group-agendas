@@ -17,6 +17,7 @@ import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.ToggleButton;
 
 import com.groupagendas.groupagenda.R;
 import com.groupagendas.groupagenda.account.Account;
@@ -41,6 +42,7 @@ public class EventActivity extends Activity {
 	public static ArrayList<Group> selectedGroups;
 
 	protected DateTimeUtils dtUtils;
+	protected ToggleButton allDayToggleButton;
 	protected EditText descView;
 
 	protected TextView countryView;
@@ -155,7 +157,7 @@ public class EventActivity extends Activity {
 		if (timezoneInUse > 0) {
 			event.setTimezone(countriesList.get(timezoneInUse).timezone);
 		}
-
+		event.setIs_all_day(allDayToggleButton.isChecked());
 		event.setDescription(descView.getText().toString());
 		// title
 		event.setTitle(titleView.getText().toString());
