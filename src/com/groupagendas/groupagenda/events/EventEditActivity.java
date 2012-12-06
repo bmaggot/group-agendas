@@ -758,13 +758,6 @@ public class EventEditActivity extends EventActivity {
 			event = result;
 			selectedIcon = event.getIcon();
 			allDayToggleButton.setChecked(event.is_all_day());
-			allDayToggleButton.setOnCheckedChangeListener(new OnCheckedChangeListener() {
-				
-				@Override
-				public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-					event.setIs_all_day(isChecked);
-				}
-			});
 			// toptext
 			String tmpTopText = event.getType();
 			if (tmpTopText.equalsIgnoreCase("t")) {
