@@ -161,10 +161,14 @@ public class ContactInfoActivity extends Activity {
 					setTableRow(getString(R.string.zip), contact.zip);
 				}
 				// agenda visibility
-				if (contact.visibility != null && !contact.visibility.equals("n")) {
-					setTableRow(getString(R.string.agenda_visibility),
-							contact.visibility.equals("f") ? getResources().getStringArray(R.array.visibility_labels)[1] : getResources()
-									.getStringArray(R.array.visibility_labels)[2]);
+				if (contact.visibility != null && !contact.visibility.equals("null")) {
+					if(contact.visibility.equals("n")){
+						setTableRow(getString(R.string.agenda_visibility), getResources().getStringArray(R.array.visibility_labels)[0]);
+					} else if(contact.visibility.equals("f")){
+						setTableRow(getString(R.string.agenda_visibility), getResources().getStringArray(R.array.visibility_labels)[1]);
+					} else if(contact.visibility.equals("l")){
+						setTableRow(getString(R.string.agenda_visibility), getResources().getStringArray(R.array.visibility_labels)[2]);
+					}
 				}
 
 				if (contact.can_add_note != null && contact.can_add_note.length() > 0) {
