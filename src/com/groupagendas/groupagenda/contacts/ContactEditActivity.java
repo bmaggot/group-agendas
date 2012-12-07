@@ -213,6 +213,7 @@ public class ContactEditActivity extends Activity implements OnClickListener, On
 		visibilitySpinner.setOnItemSelectedListener(this);
 		canAddNotesValues = getResources().getStringArray(R.array.yes_no_values);
 		canAddNotesSpinner = (Spinner) findViewById(R.id.can_add_note_response);
+		canAddNotesSpinner.setSelection(1);
 		canAddNotesSpinner.setOnItemSelectedListener(this);
 		groupsButton = (Button) findViewById(R.id.groupsButton);
 		imageView = (ImageView) findViewById(R.id.contact_image);
