@@ -105,7 +105,7 @@
     <string name="go_by">Go by</string>
     <string name="take_with_you">Take with you</string>
     <string name="cost">Cost</string>
-    <string name="accomodation">Accomodation</string>
+    <string name="accomodation">Accommodation</string>
     <string name="invite_people">Invite people</string>
     <string name="loading_data">Loading data…</string>
     <string name="loading_account">Loading Account info…</string>
@@ -163,7 +163,7 @@
     <string name="add_auto_color">Add auto color</string>
     <string name="delete_auto_color">Delete auto color</string>
     <string name="timezone_required">The Timezone field is required.</string>
-    <string name="phone_code">Internation \ncalling code</string>
+    <string name="phone_code">International \ncalling code</string>
     <string name="show_calendar">Show calendar</string>
     <string name="native_calendars">Native calendars</string>
     <string name="select_calendars_to_display">Select calendars to display</string>
@@ -171,8 +171,8 @@
     <string name="no_icon">No icon</string>
     <string name="title_desc">Title description</string>
     <string name="add_color">Add color</string>
-    <string name="add_color_text">This color will be automaticly be displayed based on the keywords mentioned in the title</string>
-    <string name="add_icon_text">This icon will be automaticly be displayed based on the keywords mentioned in the title</string>
+    <string name="add_color_text">This color will be automatically be displayed based on the keywords mentioned in the title</string>
+    <string name="add_icon_text">This icon will be automatically be displayed based on the keywords mentioned in the title</string>
     <string name="privacy_statement">Privacy statement</string>
     <string name="chk_statement"> I agree with\n privacy statement</string>
     <string name="forgot_pass">Forgot password</string>
