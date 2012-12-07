@@ -659,20 +659,25 @@ public class EventEditActivity extends EventActivity {
 
 		invitedPersonList = (LinearLayout) findViewById(R.id.invited_person_list);
 		super.inviteButton = (Button) findViewById(R.id.invite_button);
-		super.inviteButton.setOnClickListener(new OnClickListener() {
-
-			@Override
-			public void onClick(View v) {
-				Intent i = new Intent(EventEditActivity.this, ContactsActivity.class);
-				i.putExtra(ContactsActivity.TASK_MODE_KEY, ContactsActivity.TASK_MODE_SELECTION); 
-				i.putExtra(ContactsActivity.LIST_MODE_KEY, ContactsActivity.LIST_MODE_CONTACTS);								
-				i.putExtra(ContactsActivity.DESTINATION_KEY, ContactsActivity.DEST_EVENT_ACTIVITY);								
-				Data.showSaveButtonInContactsForm = true;
-				// TODO Data.eventForSavingNewInvitedPersons = event;
-				startActivity(i);
-			}
-		});
-
+		
+			super.inviteButton.setOnClickListener(new OnClickListener() {
+		
+				@Override
+				public void onClick(View v) {
+					if(Calendar.getInstance().getTimeInMillis() < event.getEndCalendar().getTimeInMillis()){
+						Intent i = new Intent(EventEditActivity.this, ContactsActivity.class);
+						i.putExtra(ContactsActivity.TASK_MODE_KEY, ContactsActivity.TASK_MODE_SELECTION); 
+						i.putExtra(ContactsActivity.LIST_MODE_KEY, ContactsActivity.LIST_MODE_CONTACTS);								
+						i.putExtra(ContactsActivity.DESTINATION_KEY, ContactsActivity.DEST_EVENT_ACTIVITY);								
+						Data.showSaveButtonInContactsForm = true;
+						// TODO Data.eventForSavingNewInvitedPersons = event;
+						startActivity(i);
+					} else {
+						System.out.println(Calendar.getInstance().getTimeInMillis() +" ?< "+ event.getEndCalendar().getTimeInMillis());
+					}
+				}
+			});
+		
 		invitationResponseLine = (RelativeLayout) findViewById(R.id.response_to_invitation);
 		invitationResponseLine.setVisibility(View.GONE);
 		invitationResponseStatus = (TextView) findViewById(R.id.status);
