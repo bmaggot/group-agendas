@@ -250,6 +250,7 @@ public class EventsActivity extends ListActivity {
 						public void onClick(View v) {
 							setListAdapter(eventsAdapter);
 							NavbarActivity.notResponses = true;
+							NavbarActivity.ifResponsesFirstTime = true;
 //							EventManagement.loadEvents(EventsActivity.this, eventsAdapter);
 							changeTitle(getString(R.string.status_new_invites_count, eventsAdapter.getNewInvitesCount()));
 							qa.dismiss();
@@ -269,6 +270,7 @@ public class EventsActivity extends ListActivity {
 						public void onClick(View v) {
 							setListAdapter(eventsAdapter);
 							NavbarActivity.notResponses = true;
+							NavbarActivity.ifResponsesFirstTime = true;
 //							EventManagement.loadEvents(EventsActivity.this, eventsAdapter);
 							changeTitle(getString(R.string.status_not_attending));
 							qa.dismiss();
@@ -285,6 +287,7 @@ public class EventsActivity extends ListActivity {
 						public void onClick(View v) {
 							setListAdapter(eventsAdapter);
 							NavbarActivity.notResponses = true;
+							NavbarActivity.ifResponsesFirstTime = true;
 //							EventManagement.loadEvents(EventsActivity.this, eventsAdapter);
 							changeTitle(getString(R.string.status_attending));
 							qa.dismiss();
@@ -302,6 +305,7 @@ public class EventsActivity extends ListActivity {
 						public void onClick(View v) {
 							setListAdapter(eventsAdapter);
 							NavbarActivity.notResponses = true;
+							NavbarActivity.ifResponsesFirstTime = true;
 //							EventManagement.loadEvents(EventsActivity.this, eventsAdapter);
 							changeTitle(getString(R.string.status_maybe));
 							qa.dismiss();
@@ -321,119 +325,132 @@ public class EventsActivity extends ListActivity {
 					
 				case R.id.btnContacts:
 					NavbarActivity.notResponses = true;
+					NavbarActivity.ifResponsesFirstTime = true;
 					Data.newEventPar = false;
 					startActivity(new Intent(EventsActivity.this,
 							ContactsActivity.class));
 					break;
 					
 				case R.id.btnType:
-
-					NavbarActivity.notResponses = true;
-					// responses
-					responses = new ActionItem();
-					responses.setTitle(getString(R.string.responses));
-					responses.setOnClickListener(new OnClickListener() {
-
-						@Override
-						public void onClick(View v) {
-							//Account acc = new Account(getApplicationContext());
-							//acc.setResponsesBadge(""+0);
-							NavbarActivity.newResponsesBadges = 0;
-							newResponsesBadge();
-							NavbarActivity.notResponses = false;
-							changeTitle(getString(R.string.responses));
-							qa.dismiss();
-							createResponsesList();
-//							Intent i = new Intent(EventsActivity.this, ResponsesActivity.class);
-//							startActivity(i);
-
-						}
-					});
 					
-					// types
-					shared_event = new ActionItem();
-					shared_event.setTitle(getString(R.string.r_type));
-					shared_event.setOnClickListener(new OnClickListener() {
+					if(NavbarActivity.ifResponsesFirstTime){ // if star presed first time open responses
+					//if(NavbarActivity.newResponsesBadges > 0){ // if is new responses then open responses
+						NavbarActivity.newResponsesBadges = 0;
+						newResponsesBadge();
+						NavbarActivity.notResponses = false;
+						changeTitle(getString(R.string.responses));
+						//qa.dismiss();
+						createResponsesList();
+						NavbarActivity.ifResponsesFirstTime = false;
+					} else {
 
-						@Override
-						public void onClick(View v) {
-							setListAdapter(eventsAdapter);
-							NavbarActivity.notResponses = true;
-							changeTitle(getString(R.string.r_type));
-							qa.dismiss();
-							filterEventsByType(getString(R.string.r_type));
-							filterState = FilterState.SHARED_EVENTS;
-
-						}
-					});
-
-					
-//					telephone = new ActionItem();
-//					telephone.setTitle(getString(R.string.t_type));
-//					telephone.setOnClickListener(new OnClickListener() {
-//
-//						@Override
-//						public void onClick(View v) {
-//							changeTitle(getString(R.string.t_type));
-//							qa.dismiss();
-//							eventsAdapter.getFilter().filter(getString(R.string.t_type));
-//							eventsAdapter.setFilter(getString(R.string.t_type));
-//						}
-//					});
-
-					open_event = new ActionItem();
-					open_event.setTitle(getString(R.string.o_type));
-					open_event.setOnClickListener(new OnClickListener() {
-
-						@Override
-						public void onClick(View v) {
-							setListAdapter(eventsAdapter);
-							NavbarActivity.notResponses = true;
-							changeTitle(getString(R.string.o_type));
-							qa.dismiss();
-							filterState = FilterState.OPEN_EVENTS;
-							filterEventsByType(getString(R.string.o_type));
-						}
-					});
-
-//					shared_note = new ActionItem();
-//					shared_note.setTitle(getString(R.string.n_type));
-//					shared_note.setOnClickListener(new OnClickListener() {
-//
-//						@Override
-//						public void onClick(View v) {
-//							changeTitle(getString(R.string.n_type));
-//							qa.dismiss();
-//							eventsAdapter.getFilter().filter(getString(R.string.n_type));
-//							eventsAdapter.setFilter(getString(R.string.n_type));
-//						}
-//					});
-
-					private_note = new ActionItem();
-					private_note.setTitle(getString(R.string.p_type));
-					private_note.setOnClickListener(new OnClickListener() {
-
-						@Override
-						public void onClick(View v) {
-							setListAdapter(eventsAdapter);
-							NavbarActivity.notResponses = true;
-							filterState = FilterState.PRIVATE_NOTES;
-							changeTitle(getString(R.string.p_type));
-							qa.dismiss();
-							filterEventsByType(getString(R.string.p_type));
-						}
-					});
-
-					qa = new QuickAction(buttonView);
-					qa.addActionItem(shared_event);
-					qa.addActionItem(telephone);
-					qa.addActionItem(open_event);
-					qa.addActionItem(shared_note);
-					qa.addActionItem(private_note);
-					qa.addActionItem(responses);
-					qa.show();
-					buttonView.setChecked(false);
-					break;
+						NavbarActivity.notResponses = true;
+						// responses
+						responses = new ActionItem();
+						responses.setTitle(getString(R.string.responses));
+						responses.setOnClickListener(new OnClickListener() {
+	
+							@Override
+							public void onClick(View v) {
+								//Account acc = new Account(getApplicationContext());
+								//acc.setResponsesBadge(""+0);
+								NavbarActivity.newResponsesBadges = 0;
+								newResponsesBadge();
+								NavbarActivity.notResponses = false;
+								changeTitle(getString(R.string.responses));
+								qa.dismiss();
+								createResponsesList();
+	//							Intent i = new Intent(EventsActivity.this, ResponsesActivity.class);
+	//							startActivity(i);
+	
+							}
+						});
+						
+						// types
+						shared_event = new ActionItem();
+						shared_event.setTitle(getString(R.string.r_type));
+						shared_event.setOnClickListener(new OnClickListener() {
+	
+							@Override
+							public void onClick(View v) {
+								setListAdapter(eventsAdapter);
+								NavbarActivity.notResponses = true;
+								changeTitle(getString(R.string.r_type));
+								qa.dismiss();
+								filterEventsByType(getString(R.string.r_type));
+								filterState = FilterState.SHARED_EVENTS;
+	
+							}
+						});
+	
+						
+	//					telephone = new ActionItem();
+	//					telephone.setTitle(getString(R.string.t_type));
+	//					telephone.setOnClickListener(new OnClickListener() {
+	//
+	//						@Override
+	//						public void onClick(View v) {
+	//							changeTitle(getString(R.string.t_type));
+	//							qa.dismiss();
+	//							eventsAdapter.getFilter().filter(getString(R.string.t_type));
+	//							eventsAdapter.setFilter(getString(R.string.t_type));
+	//						}
+	//					});
+	
+						open_event = new ActionItem();
+						open_event.setTitle(getString(R.string.o_type));
+						open_event.setOnClickListener(new OnClickListener() {
+	
+							@Override
+							public void onClick(View v) {
+								setListAdapter(eventsAdapter);
+								NavbarActivity.notResponses = true;
+								changeTitle(getString(R.string.o_type));
+								qa.dismiss();
+								filterState = FilterState.OPEN_EVENTS;
+								filterEventsByType(getString(R.string.o_type));
+							}
+						});
+	
+	//					shared_note = new ActionItem();
+	//					shared_note.setTitle(getString(R.string.n_type));
+	//					shared_note.setOnClickListener(new OnClickListener() {
+	//
+	//						@Override
+	//						public void onClick(View v) {
+	//							changeTitle(getString(R.string.n_type));
+	//							qa.dismiss();
+	//							eventsAdapter.getFilter().filter(getString(R.string.n_type));
+	//							eventsAdapter.setFilter(getString(R.string.n_type));
+	//						}
+	//					});
+	
+						private_note = new ActionItem();
+						private_note.setTitle(getString(R.string.p_type));
+						private_note.setOnClickListener(new OnClickListener() {
+	
+							@Override
+							public void onClick(View v) {
+								setListAdapter(eventsAdapter);
+								NavbarActivity.notResponses = true;
+								filterState = FilterState.PRIVATE_NOTES;
+								changeTitle(getString(R.string.p_type));
+								qa.dismiss();
+								filterEventsByType(getString(R.string.p_type));
+							}
+						});
+	
+						qa = new QuickAction(buttonView);
+						qa.addActionItem(shared_event);
+						qa.addActionItem(telephone);
+						qa.addActionItem(open_event);
+						qa.addActionItem(shared_note);
+						qa.addActionItem(private_note);
+						qa.addActionItem(responses);
+						qa.show();
+					}
+						buttonView.setChecked(false);
+						break;
 				case R.id.btnSettings:
 					startActivity(new Intent(EventsActivity.this, SettingsActivity.class));
 					break;
