@@ -76,6 +76,9 @@ public class MiniMonthView extends AbstractCalendarView {
 
 	@Override
 	protected void setTopPanel() {
+		int FRAMES_PER_ROW = selectedDate.getMaximum(Calendar.DAY_OF_WEEK);
+		int FRAME_WIDTH = VIEW_WIDTH / FRAMES_PER_ROW;
+		
 		String title = MonthNames[selectedDate.get(Calendar.MONTH)];
 		title += " ";
 		title += selectedDate.get(Calendar.YEAR);
@@ -85,25 +88,36 @@ public class MiniMonthView extends AbstractCalendarView {
 		bottomBar.removeAllViews();
 
 		TextView entry;
-		if (showWeekTitle) {
-			entry = (TextView) mInflater.inflate(R.layout.calendar_top_bar_bottomline_entry, null);
-			entry.setText(R.string.week_title);
-			entry.setPadding(DrawingUtils.convertDPtoPX(1), 0, 0, 0);
-			bottomBar.addView(entry);
-		}
 		Calendar tmp = (Calendar) firstShownDate.clone();
 		// add view for every day
 
 		for (int i = 0; i < FRAMES_PER_ROW; i++) {
-			entry = (TextView) mInflater.inflate(R.layout.calendar_top_bar_bottomline_entry, null);
+			LayoutParams cellP = new LayoutParams(FRAME_WIDTH, LayoutParams.WRAP_CONTENT, 1.0f);
 
-			String text = WeekDayNames[tmp.get(Calendar.DAY_OF_WEEK) - 1];
-			tmp.add(Calendar.DATE, 1);
-			entry.setText(text);
-			entry.setWidth(Math.round((DISPLAY_WIDTH) / (float) FRAMES_PER_ROW));
-			bottomBar.addView(entry);
+			switch (i) {
+			case 0:
+				if (showWeekTitle) {
+					LinearLayout wrapper = (LinearLayout) mInflater.inflate(R.layout.calendar_topbar_bottomline_mm_entry, null);
+					wrapper.setLayoutParams(cellP);
+					TextView weekTitle = (TextView) wrapper.findViewById(R.id.mm_top_week_title);
+					weekTitle.setText(R.string.week_title);
+					entry = (TextView) wrapper.findViewById(R.id.mm_top_day_title);
+					String text = WeekDayNames[tmp.get(Calendar.DAY_OF_WEEK) - 1];
+					tmp.add(Calendar.DATE, 1);
+					entry.setText(text);
+					bottomBar.addView(wrapper);
+				}
+				break;
+			default:
+				entry = (TextView) mInflater.inflate(R.layout.calendar_top_bar_bottomline_entry, null);
+				String text = WeekDayNames[tmp.get(Calendar.DAY_OF_WEEK) - 1];
+				tmp.add(Calendar.DATE, 1);
+				entry.setText(text);
+				entry.setLayoutParams(cellP);
+				bottomBar.addView(entry);
+				break;
+			}
 		}
-
 	}
 
 	@Override
@@ -166,7 +180,7 @@ public class MiniMonthView extends AbstractCalendarView {
 		}
 	}
 
-	private void addDay(TableRow row, android.widget.TableRow.LayoutParams cellLp) {
+	private void addDay(TableRow row, TableRow.LayoutParams cellLp) {
 		LinearLayout dayFrame = (LinearLayout) mInflater.inflate(R.layout.calendar_mm_day_container, null);
 		row.addView(dayFrame, cellLp);
 
