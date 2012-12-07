@@ -1138,7 +1138,7 @@ public class EventManagement {
 									.getTimeInMillis()), Charset
 							.forName("UTF-8")));
 			
-			reqEntity.addPart("all_day_event", new StringBody(e.is_all_day() + "",
+			reqEntity.addPart("all_day_event", new StringBody(e.is_all_day() ? "1" : "0",
 					Charset.forName("UTF-8")));
 
 			reqEntity.addPart("description", new StringBody(e.getDescription(),
@@ -1338,7 +1338,7 @@ public class EventManagement {
 			reqEntity.addPart("timezone", new StringBody(e.getTimezone(),
 					Charset.forName("UTF-8")));
 
-			reqEntity.addPart("all_day_event", new StringBody(e.is_all_day() + "",
+			reqEntity.addPart("all_day_event", new StringBody(e.is_all_day() ? "1" : "0",
 					Charset.forName("UTF-8")));
 			
 			reqEntity.addPart("description", new StringBody(e.getDescription(),
