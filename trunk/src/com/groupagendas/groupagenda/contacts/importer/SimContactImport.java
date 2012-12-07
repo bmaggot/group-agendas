@@ -60,7 +60,7 @@ public class SimContactImport {
 				Log.i("SimContacts", simPhoneName);
 				Log.i("SimContactsNo", simPhoneNo);
 				
-				if(ContactManagement.insertContact(context, simContact)){
+				if(ContactManagement.insertContact(context, simContact, false)){
 					importedContactAmount++;
 				} else {
 					unimportedContactAmount++;
