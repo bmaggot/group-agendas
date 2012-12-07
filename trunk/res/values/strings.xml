@@ -269,7 +269,7 @@
     <string name="new_group">New group</string>
     <string name="failed_getting_error">Failed getting error message.</string>
     <string name="no_internet_conn">There is no internet connection.</string>
-    <string name="agenda_visibility">Agenda visibility</string>
+    <string name="agenda_visibility">Agenda\n visibility</string>
     <string name="responses">Responses</string>
     <string name="responses_type_0">has rejected</string>
     <string name="responses_type_1">joined</string>
@@ -289,6 +289,6 @@
     <string name="sms_end_2">know if you are able to join or not. For iPhone or Android users check out our App to have GroupAgendas on the go.</string>
     <string name="do_you_want_to_save_your_changes">Do You want to save Your changes?</string>
     <string name="save_your_changes">Save changes?</string>
-    <string name="allow_to_add_note_in_agenda">Allow to add note\n in agenda</string>
+    <string name="allow_to_add_note_in_agenda">Allow to add\nnote in\nagenda</string>
     <string name="invite_contact_in_the_past">It is not possible to add or delete contacts for events in the past</string>
 </resources>
