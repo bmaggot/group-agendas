@@ -21,7 +21,7 @@
             android:layout_centerInParent="true"
             android:text="@string/events"
             android:textColor="@android:color/white"
-            android:textSize="20dp"
+            android:textSize="20sp"
             android:textStyle="bold" />
 
         <ProgressBar
@@ -53,7 +53,7 @@
             android:shadowRadius="1.5"
             android:text="@string/save"
             android:textColor="@color/white"
-            android:textSize="14dp"
+            android:textSize="14sp"
             android:textStyle="bold" />
     </RelativeLayout>
 
@@ -295,7 +295,7 @@
                     android:singleLine="true"
                     android:text="@string/country"
                     android:textColor="@color/black"
-                    android:textSize="15dp"
+                    android:textSize="15sp"
                     android:textStyle="bold" />
 
 				<TextView
@@ -307,7 +307,7 @@
                     android:paddingTop="4dp"
                     android:singleLine="true"
                     android:textColor="@color/black"
-                    android:textSize="15dp" />
+                    android:textSize="15sp" />
 
             </LinearLayout>
 
@@ -332,7 +332,7 @@
                     android:singleLine="true"
                     android:text="@string/city"
                     android:textColor="@color/black"
-                    android:textSize="15dp"
+                    android:textSize="15sp"
                     android:textStyle="bold" />
 
                 <EditText
@@ -345,7 +345,7 @@
                     android:paddingTop="4dp"
                     android:singleLine="true"
                     android:textColor="@color/black"
-                    android:textSize="15dp" />
+                    android:textSize="15sp" />
             </LinearLayout>
 
             <LinearLayout
@@ -369,7 +369,7 @@
                     android:singleLine="true"
                     android:text="@string/street"
                     android:textColor="@color/black"
-                    android:textSize="15dp"
+                    android:textSize="15sp"
                     android:textStyle="bold" />
 
                 <EditText
@@ -382,7 +382,7 @@
                     android:paddingTop="4dp"
                     android:singleLine="true"
                     android:textColor="@color/black"
-                    android:textSize="15dp" />
+                    android:textSize="15sp" />
             </LinearLayout>
 
             <LinearLayout
@@ -406,7 +406,7 @@
                     android:singleLine="true"
                     android:text="@string/zip"
                     android:textColor="@color/black"
-                    android:textSize="15dp"
+                    android:textSize="15sp"
                     android:textStyle="bold" />
 
                 <EditText
@@ -419,7 +419,7 @@
                     android:paddingTop="4dp"
                     android:singleLine="true"
                     android:textColor="@color/black"
-                    android:textSize="15dp" />
+                    android:textSize="15sp" />
             </LinearLayout>
 
             <LinearLayout
@@ -443,7 +443,7 @@
                     android:singleLine="true"
                     android:text="@string/timezone"
                     android:textColor="@color/black"
-                    android:textSize="15dp"
+                    android:textSize="15sp"
                     android:textStyle="bold" />
 
 				<TextView
@@ -455,7 +455,7 @@
                     android:paddingTop="4dp"
                     android:singleLine="true"
                     android:textColor="@color/black"
-                    android:textSize="15dp" />
+                    android:textSize="15sp" />
             </LinearLayout>
 
             <LinearLayout
@@ -635,7 +635,7 @@
                         android:layout_marginTop="10dp"
                         android:text="@string/new_event_reminder1"
                         android:textColor="@android:color/black"
-                        android:textSize="15dp"
+                        android:textSize="15sp"
                         android:textStyle="bold" />
 
                     <EditText
@@ -649,7 +649,7 @@
                         android:gravity="center"
                         android:inputType="date"
                         android:textColor="@android:color/darker_gray"
-                        android:textSize="15dp"
+                        android:textSize="15sp"
                         android:textStyle="bold" />
                 </LinearLayout>
 
@@ -671,7 +671,7 @@
                         android:layout_marginTop="10dp"
                         android:text="@string/new_event_reminder2"
                         android:textColor="@android:color/black"
-                        android:textSize="15dp"
+                        android:textSize="15sp"
                         android:textStyle="bold" />
 
                     <EditText
@@ -685,7 +685,7 @@
                         android:gravity="center"
                         android:inputType="date"
                         android:textColor="@android:color/darker_gray"
-                        android:textSize="15dp"
+                        android:textSize="15sp"
                         android:textStyle="bold" />
                 </LinearLayout>
 
@@ -708,7 +708,7 @@
                         android:layout_marginTop="10dp"
                         android:text="@string/new_event_reminder3"
                         android:textColor="@android:color/black"
-                        android:textSize="15dp"
+                        android:textSize="15sp"
                         android:textStyle="bold" />
 
                     <EditText
@@ -722,7 +722,7 @@
                         android:gravity="center"
                         android:inputType="date"
                         android:textColor="@color/darker_gray"
-                        android:textSize="15dp"
+                        android:textSize="15sp"
                         android:textStyle="bold" />
                 </LinearLayout>
             </LinearLayout>
@@ -752,7 +752,7 @@
                         android:layout_marginTop="10dp"
                         android:text="@string/event_alarm1"
                         android:textColor="@android:color/black"
-                        android:textSize="15dp"
+                        android:textSize="15sp"
                         android:textStyle="bold" />
 
                     <EditText
@@ -766,7 +766,7 @@
                         android:gravity="center"
                         android:inputType="date"
                         android:textColor="@android:color/darker_gray"
-                        android:textSize="15dp"
+                        android:textSize="15sp"
                         android:textStyle="bold" />
                 </LinearLayout>
 
@@ -788,7 +788,7 @@
                         android:layout_marginTop="10dp"
                         android:text="@string/event_alarm2"
                         android:textColor="@android:color/black"
-                        android:textSize="15dp"
+                        android:textSize="15sp"
                         android:textStyle="bold" />
 
                     <EditText
@@ -802,7 +802,7 @@
                         android:gravity="center"
                         android:inputType="date"
                         android:textColor="@android:color/darker_gray"
-                        android:textSize="15dp"
+                        android:textSize="15sp"
                         android:textStyle="bold" />
                 </LinearLayout>
 
@@ -825,7 +825,7 @@
                         android:layout_marginTop="10dp"
                         android:text="@string/event_alarm3"
                         android:textColor="@android:color/black"
-                        android:textSize="15dp"
+                        android:textSize="15sp"
                         android:textStyle="bold" />
 
                     <EditText
@@ -839,7 +839,7 @@
                         android:gravity="center"
                         android:inputType="date"
                         android:textColor="@color/darker_gray"
-                        android:textSize="15dp"
+                        android:textSize="15sp"
                         android:textStyle="bold" />
                 </LinearLayout>
             </LinearLayout>
@@ -851,7 +851,7 @@
                 android:layout_margin="10dp"
                 android:background="@drawable/event_invite_people_button_standalone"
                 android:text="@string/messenger"
-                android:textSize="16dp"
+                android:textSize="16sp"
                 android:textStyle="bold" />
 
             <Button
@@ -861,7 +861,7 @@
                 android:layout_margin="10dp"
                 android:background="@drawable/event_invite_people_button_standalone"
                 android:text="@string/share"
-                android:textSize="16dp"
+                android:textSize="16sp"
                 android:textStyle="bold"
                 android:visibility="gone" />
 
@@ -883,7 +883,7 @@
                     android:layout_height="40dp"
                     android:background="@drawable/event_invite_people_button_standalone"
                     android:text="@string/invite_people"
-                    android:textSize="16dp"
+                    android:textSize="16sp"
                     android:textStyle="bold" />
 
                 <include
@@ -899,7 +899,7 @@
                 android:background="@drawable/event_invite_people_button_standalone"
                 android:text="@string/delete_event"
                 android:textColor="@color/red"
-                android:textSize="16dp"
+                android:textSize="16sp"
                 android:textStyle="bold"
                 android:visibility="gone" />
         </LinearLayout>
