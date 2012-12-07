@@ -4,18 +4,18 @@ import java.text.SimpleDateFormat;
 import java.util.List;
 
 import android.content.Context;
+import android.graphics.Color;
 import android.graphics.drawable.BitmapDrawable;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.ViewGroup.LayoutParams;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.groupagendas.groupagenda.EventActivityOnClickListener;
 import com.groupagendas.groupagenda.R;
 import com.groupagendas.groupagenda.data.CalendarSettings;
 import com.groupagendas.groupagenda.events.Event;
+import com.groupagendas.groupagenda.events.Invited;
 import com.groupagendas.groupagenda.utils.DrawingUtils;
 
 public class AgendaDayAdapter extends AbstractAdapter<Event> {
@@ -23,7 +23,7 @@ public class AgendaDayAdapter extends AbstractAdapter<Event> {
 	SimpleDateFormat hoursFormatter;
 	
 	private int bubbleHeightDP = 15;
-	private int colouredRectangleMarginsDP = 2;
+//	private int colouredRectangleMarginsDP = 2;
 	
 	public AgendaDayAdapter(Context context, List<Event> list) {
 		this(context, list, true);
@@ -48,27 +48,29 @@ public class AgendaDayAdapter extends AbstractAdapter<Event> {
 		final Event event = list.get(i);
 		TextView text = (TextView) (view.findViewById(R.id.agenda_entry_title_placeholder));	
 		text.setText(event.getTitle());
+		text.setTextColor(Color.parseColor("#" + event.getDisplayColor()));
 		
 		TextView timeText = (TextView) (view.findViewById(R.id.agenda_entry_time_placeholder));
 		if (showTime) {
 			timeText.setVisibility(View.VISIBLE);
 			timeText.setText(hoursFormatter.format(event.getStartCalendar().getTime()));
-			
 		}else{
 			timeText.setVisibility(View.GONE);
-		}
-		
+		}		
 		
 		view.setOnClickListener(new EventActivityOnClickListener(context, event));
 		
-		ImageView bubble = (ImageView) view.findViewById(R.id.agenda_entry_color_placeholder);
-		
-		bubble.setBackgroundDrawable(new BitmapDrawable(DrawingUtils.getColoredRoundRectangle(getContext(), bubbleHeightDP, event.getDisplayColor(), true)));
-		LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
-		int margins = DrawingUtils.convertDPtoPX(colouredRectangleMarginsDP );
-		params.setMargins(margins, margins, 0, 0);
-		bubble.setLayoutParams(params);
-		
+//		if ((event.getStatus() == Invited.MAYBE) || (event.getStatus() == Invited.PENDING)) {
+		if (event.getStatus() == Invited.PENDING) {
+			ImageView bubble = (ImageView) view.findViewById(R.id.agenda_entry_color_placeholder);
+			bubble.setVisibility(View.VISIBLE);
+			
+			bubble.setBackgroundDrawable(new BitmapDrawable(DrawingUtils.getColoredRoundRectangle(getContext(), bubbleHeightDP, event.getDisplayColor(), true)));
+//			LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
+//			int margins = DrawingUtils.convertDPtoPX(colouredRectangleMarginsDP );
+//			params.setMargins(margins, margins, 0, 0);
+//			bubble.setLayoutParams(params);
+		}
 		
 		ImageView icon = (ImageView) view.findViewById(R.id.agenda_entry_icon_placeholder);
 		if (event.hasIcon()){
