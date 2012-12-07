@@ -5,6 +5,8 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Locale;
 
+import org.xml.sax.DTDHandler;
+
 import android.accounts.AccountManager;
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -478,7 +480,7 @@ public class RegistrationActivity extends Activity {
 			String city = cityField.getText().toString();
 
 			return DataManagement.registerAccount(language, country, timezone, sex, name, lastname, email, phonecode, phone, password,
-					city, street, streetNo, zipCode);
+					city, street, streetNo, zipCode, ampm, dateFormat);
 		}
 
 		@Override
