@@ -194,7 +194,7 @@ public abstract class AbstractCalendarView extends LinearLayout {
 	}
 
 	private void setupDelegates() {
-//		Debug.waitForDebugger();
+		// Debug.waitForDebugger();
 		int[] tmpCoords = new int[2];
 		int screenWidth = getResources().getDisplayMetrics().widthPixels;
 		View calNavbar = findViewById(R.id.calendar_navbar);
@@ -216,7 +216,7 @@ public abstract class AbstractCalendarView extends LinearLayout {
 		touchDelegates = new TouchDelegateGroup(calNavbar);
 		touchDelegates.addTouchDelegate(prevButtonDelegate);
 		touchDelegates.addTouchDelegate(nextButtonDelegate);
-		
+
 		if (View.class.isInstance(prevButton.getParent())) {
 			((View) prevButton.getParent()).setTouchDelegate(touchDelegates);
 		}
@@ -225,12 +225,14 @@ public abstract class AbstractCalendarView extends LinearLayout {
 
 	protected void setUpSwipeGestureListener() {
 		if (swipeGestureDetector == null) {
-			swipeGestureDetector = new GestureDetector(new SwipeOnGestureListener(this));
+			swipeGestureDetector = new GestureDetector(
+					new SwipeOnGestureListener(this));
 			this.setOnTouchListener(createListener(swipeGestureDetector));
 		}
 	}
 
-	protected OnTouchListener createListener(final GestureDetector swipeGestureDetector) {
+	protected OnTouchListener createListener(
+			final GestureDetector swipeGestureDetector) {
 		return new OnTouchListener() {
 
 			@Override
@@ -363,6 +365,9 @@ public abstract class AbstractCalendarView extends LinearLayout {
 					eventProjection
 							.setIs_all_day(result.getInt(result
 									.getColumnIndexOrThrow(EventsProvider.EMetaData.EventsMetaData.IS_ALL_DAY)) == 1);
+					eventProjection
+							.setStatus(result.getInt(result
+									.getColumnIndexOrThrow(EventsProvider.EMetaData.EventsMetaData.STATUS)));
 
 					list.add(eventProjection);
 					result.moveToNext();
