@@ -107,6 +107,7 @@ public class NavbarActivity extends FragmentActivity {
 	public static boolean showInvites = false;
 	public static boolean notResponses = true;
 	public static boolean uptadeResponresBadge = true;
+	public static boolean ifResponsesFirstTime = true;
 	public static int newResponsesBadges = 0;
 
 	@Override
@@ -117,6 +118,9 @@ public class NavbarActivity extends FragmentActivity {
 
 		setContentView(R.layout.actnavbar);
 
+		ifResponsesFirstTime = true;
+		notResponses = true;
+		
 		RadioGroup radiogroup = (RadioGroup) this.findViewById(R.id.radiogroup);
 		android.widget.RelativeLayout.LayoutParams params = (android.widget.RelativeLayout.LayoutParams) radiogroup.getLayoutParams();
 		params.height = Math.round(getResources().getInteger(R.integer.NAVBAR_HEIGHT) * getResources().getDisplayMetrics().density);
@@ -141,6 +145,8 @@ public class NavbarActivity extends FragmentActivity {
 
 	@Override
 	public void onResume() {
+		ifResponsesFirstTime = true;
+		notResponses = true;
 		LocalBroadcastManager.getInstance(this).registerReceiver(mMessageReceiver,
 				new IntentFilter(C2DMReceiver.REFRESH_CHAT_MESSAGES_BADGE));
 		LocalBroadcastManager.getInstance(this).registerReceiver(mMessageReceiver,
@@ -245,6 +251,7 @@ public class NavbarActivity extends FragmentActivity {
 		} catch (Exception ex) {
 			Log.e("Badge JSON err", ex.getMessage());
 		}
+		
 		
 	}
 
@@ -719,7 +726,7 @@ public class NavbarActivity extends FragmentActivity {
 				case 5: // Load events
 					if (DataManagement.networkAvailable){
 						EventManagement.getEventsFromRemoteDb(NavbarActivity.this, "");
-						acc.setResponses(""+EventManagement.getResponsesFromRemoteDb(getApplicationContext()));
+						//acc.setResponses(""+EventManagement.getResponsesFromRemoteDb(getApplicationContext()));
 					}
 					loadPhase++;
 					total = 80;
@@ -781,6 +788,7 @@ public class NavbarActivity extends FragmentActivity {
 			switchToView();
 
 			setAlarmsToAllEvents();
+			new ResponsesBadgeSyncTask().execute();
 		}
 	}
 
@@ -817,7 +825,7 @@ public class NavbarActivity extends FragmentActivity {
 
 		@Override
 		protected void onPostExecute(Void result) {
-
+			newEventBadge();
 			
 		}
 
