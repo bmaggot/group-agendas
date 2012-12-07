@@ -251,7 +251,7 @@ public class EventEditActivity extends EventActivity {
 		topText = (TextView) findViewById(R.id.topText);
 
 		saveButton = (Button) findViewById(R.id.save_button);
-			saveButton.setEnabled(changesMade);
+		saveButton.setEnabled(changesMade);
 		saveButton.setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View v) {
@@ -303,7 +303,7 @@ public class EventEditActivity extends EventActivity {
 			
 			@Override
 			public void onClick(View v) {
-				changesMade = true;
+				saveButton.setEnabled(true);
 			}
 		});
 		// Addres and details panel
