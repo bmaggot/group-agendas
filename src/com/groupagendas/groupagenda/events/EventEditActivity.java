@@ -242,6 +242,10 @@ public class EventEditActivity extends EventActivity {
 			new GetEventTask().execute(new Long[] {event_internal_id, event_external_id});
 		}
 	}
+	
+	private void makeToastWarning(String text, int length){
+		Toast.makeText(this, text, length).show();
+	}
 
 	private void initViewItems() {
 
@@ -673,7 +677,7 @@ public class EventEditActivity extends EventActivity {
 						// TODO Data.eventForSavingNewInvitedPersons = event;
 						startActivity(i);
 					} else {
-						System.out.println(Calendar.getInstance().getTimeInMillis() +" ?< "+ event.getEndCalendar().getTimeInMillis());
+						makeToastWarning(getResources().getString(R.string.invite_contact_in_the_past), Toast.LENGTH_LONG);
 					}
 				}
 			});
