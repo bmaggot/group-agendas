@@ -387,7 +387,6 @@ public class RegistrationActivity extends Activity {
 				}
 			}
 		});
-		Log.e("Registerationas",  "Default dateformat: " + dateFormat + " AmPm setting: " + ampm);
 	}
 
 	private int getMyLanguage(String[] countryList, String myLanguage) {
