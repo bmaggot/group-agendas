@@ -55,9 +55,9 @@ public class ConnectReceiver extends BroadcastReceiver {
 		protected Void doInBackground(Void... params) {
 			Account account = new Account(context);
 			DataManagement.synchronizeWithServer(context, null, account.getLatestUpdateUnixTimestamp());
-			EventManagement.uploadOfflineEvents(context);
 			ContactManagement.uploadOfflineContact(context);
 			ContactManagement.uploadOfflineCreatedGroups(context);
+			EventManagement.uploadOfflineEvents(context);
 			ChatManagement.uploadUnploaded(context, ChatManagement.getChatMessagesCreatedOffline(context));
 			return null;
 		}
