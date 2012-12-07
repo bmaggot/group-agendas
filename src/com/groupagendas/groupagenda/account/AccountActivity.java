@@ -791,44 +791,47 @@ public class AccountActivity extends Activity implements OnClickListener {
 			chagesMade = true;
 		}
 		//TODO email 2 3
-		if(!account.getPhone1().equals(phone1View.getText().toString())){
+		if(!account.getPhone1().equals("null") && !account.getPhone1().equals(phone1View.getText().toString())){
 			chagesMade = true;
 		}
-		if(!account.getPhone2().equals(phone2View.getText().toString())){
+		if(!account.getPhone2().equals("null") && !account.getPhone2().equals(phone2View.getText().toString())){
 			chagesMade = true;
 		}
-		if(!account.getPhone3().equals(phone3View.getText().toString())){
+		if(!account.getPhone3().equals("null") && !account.getPhone3().equals(phone3View.getText().toString())){
 			chagesMade = true;
 		}
 		if(!birthdateView.getText().toString().equals("")){
 			String[] birthdate = birthdateView.getText().toString().split("-");
 			birthdateView.setText(birthdate[0] + "-" + Integer.valueOf(birthdate[1]) + "-" + Integer.valueOf(birthdate[2]));
 		}
-		if(!birthdateView.getText().toString().equals("") && account.getBirthdate().getTimeInMillis() != Utils.stringToCalendar(getApplicationContext(), birthdateView.getText().toString(), account.getTimezone(), account.getSetting_date_format()).getTimeInMillis()){
+		if(!birthdateView.getText().toString().equals("")){
+			Calendar tmp = Utils.stringToCalendar(getApplicationContext(), birthdateView.getText().toString(), account.getTimezone(), account.getSetting_date_format());
+			if(account.getBirthdate().get(Calendar.YEAR) != tmp.get(Calendar.YEAR) && account.getBirthdate().get(Calendar.MONTH) != tmp.get(Calendar.MONTH) && account.getBirthdate().get(Calendar.DAY_OF_MONTH) != tmp.get(Calendar.DAY_OF_MONTH)){
+				chagesMade = true;
+			}
+		}
+		if(!account.getSex().equals("null") && !account.getSex().equals(sexArray[(int) sexSpinner.getSelectedItemId()].toString())){
 			chagesMade = true;
 		}
-		if(!account.getSex().equals(sexArray[(int) sexSpinner.getSelectedItemId()].toString())){
+		if(!account.getCountry().equals("null") && !account.getCountry().equals(countriesList.get(timezoneInUse).country_code)){
 			chagesMade = true;
 		}
-		if(!account.getCountry().equals(countriesList.get(timezoneInUse).country_code)){
+		if(!account.getTimezone().equals("null") && !account.getTimezone().equals(countriesList.get(timezoneInUse).timezone)){
 			chagesMade = true;
 		}
-		if(!account.getTimezone().equals(countriesList.get(timezoneInUse).timezone)){
+		if(!account.getCity().equals("null") && !account.getCity().equals(cityView.getText().toString())){
 			chagesMade = true;
 		}
-		if(!account.getCity().equals(cityView.getText().toString())){
+		if(!account.getStreet().equals("null") && !account.getStreet().equals(streetView.getText().toString())){
 			chagesMade = true;
 		}
-		if(!account.getStreet().equals(streetView.getText().toString())){
+		if(!account.getZip().equals("null") && !account.getZip().equals(zipView.getText().toString())){
 			chagesMade = true;
 		}
-		if(!account.getZip().equals(zipView.getText().toString())){
+		if(!account.getLanguage().equals("null") && !account.getLanguage().equals(getResources().getStringArray(R.array.language_values)[(int) languageSpinner.getSelectedItemId()])){
 			chagesMade = true;
 		}
-		if(!account.getLanguage().equals(getResources().getStringArray(R.array.language_values)[(int) languageSpinner.getSelectedItemId()])){
-			chagesMade = true;
-		}
-		if(account.getImage() != !removeImage.isChecked()){
+		if(removeImage.isChecked()){
 			chagesMade = true;
 		}
 		//TODO notifications implement
