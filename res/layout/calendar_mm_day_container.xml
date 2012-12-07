@@ -1,54 +1,59 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-	android:background="@drawable/calendar_agenda_day_container"
-	android:layout_height="fill_parent"
-	android:layout_width="fill_parent"
-	android:orientation="vertical">
-	
-    <LinearLayout android:layout_gravity="top"
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content" >
-        
-    <TextView android:id="@+id/agenda_week_title"
-        android:background="@color/lighter_gray"
-        android:gravity="center"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="left|center_vertical"
-        android:paddingTop="3dp"
-        android:paddingLeft="3dp"
-        android:paddingRight="3dp"
-        android:paddingBottom="3dp"
-        android:textStyle="bold"
-        android:textColor="@color/black"
-        android:textSize="10dp"
-        android:visibility="visible" />
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:background="@drawable/calendar_agenda_day_container"
+    android:orientation="vertical" >
 
-    <TextView android:id="@+id/agenda_day_title"
-        android:background="@color/lighter_gray"
-        android:gravity="center"
-        android:layout_gravity="right"
+    <LinearLayout
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:paddingTop="2dp"
-        android:paddingBottom="2dp"
-        android:shadowColor="@color/white"
-        android:shadowRadius="1.5"
-        android:shadowDx="0"
-        android:shadowDy="2"
-        android:textStyle="bold"
-        android:textColor="#3B4959"
-        android:textSize="12dp" />
+        android:layout_gravity="top" >
+
+        <TextView
+            android:id="@+id/agenda_week_title"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_gravity="left|center_vertical"
+            android:background="@color/lighter_gray"
+            android:gravity="center"
+            android:paddingBottom="3dp"
+            android:paddingLeft="3dp"
+            android:paddingRight="3dp"
+            android:paddingTop="3dp"
+            android:textColor="@color/black"
+            android:textSize="10dp"
+            android:textStyle="bold"
+            android:visibility="visible" />
+
+        <TextView
+            android:id="@+id/agenda_day_title"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="right"
+            android:background="@color/lighter_gray"
+            android:gravity="center"
+            android:paddingBottom="2dp"
+            android:paddingTop="2dp"
+            android:shadowColor="@color/white"
+            android:shadowDx="0"
+            android:shadowDy="0"
+            android:shadowRadius="1"
+            android:textColor="#3B4959"
+            android:textSize="12dp"
+            android:textStyle="bold" />
     </LinearLayout>
 
-    <ListView android:id="@+id/agenda_day_entries"
-        android:gravity="left"
-        android:orientation="vertical"
+    <ListView
+        android:id="@+id/agenda_day_entries"
         android:layout_width="fill_parent"
-        android:layout_height="fill_parent" 
+        android:layout_height="fill_parent"
+        android:cacheColorHint="#00000000"
         android:divider="@null"
         android:dividerHeight="0dp"
-        android:cacheColorHint="#00000000"
         android:fadingEdgeLength="0dp"
+        android:gravity="left"
+        android:orientation="vertical"
         android:paddingBottom="7dp" />
+
 </LinearLayout>
