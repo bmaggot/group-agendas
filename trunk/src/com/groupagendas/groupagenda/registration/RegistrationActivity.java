@@ -8,6 +8,7 @@ import java.util.Locale;
 import android.accounts.AccountManager;
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.app.DatePickerDialog;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -27,6 +28,7 @@ import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.CheckBox;
+import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.ListView;
@@ -85,6 +87,14 @@ public class RegistrationActivity extends Activity {
 	
 	private String dateFormat;
 	private boolean ampm;
+	
+	private EditText birthdateView;
+	private Button birthdateButton;
+	private final int BIRTHDATE_DIALOG = 3;
+	private int mYear = 1970;
+	private int mMonth = 0;
+	private int mDay = 1;
+
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -326,6 +336,17 @@ public class RegistrationActivity extends Activity {
 			}
 		});
 
+		// Birthdate
+		birthdateView = (EditText) findViewById(R.id.birthdateView);
+		birthdateButton = (Button) findViewById(R.id.birthdateButton);
+
+		birthdateButton.setOnClickListener(new OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				showDialog(BIRTHDATE_DIALOG);
+			}
+		});
+		
 		sexSpinner = (Spinner) findViewById(R.id.sexSpinner);
 		ArrayAdapter<CharSequence> adapterSex = ArrayAdapter.createFromResource(this, R.array.sex_labels,
 				android.R.layout.simple_spinner_item);
@@ -476,7 +497,7 @@ public class RegistrationActivity extends Activity {
 			String city = cityField.getText().toString();
 
 			return DataManagement.registerAccount(language, country, timezone, sex, name, lastname, email, phonecode, phone, password,
-					city, street, streetNo, zipCode, ampm, dateFormat);
+					city, street, streetNo, zipCode, ampm, dateFormat, birthdateView.getText().toString());
 		}
 
 		@Override
@@ -518,7 +539,25 @@ public class RegistrationActivity extends Activity {
 						}
 					});
 			break;
+		case BIRTHDATE_DIALOG:
+			return new DatePickerDialog(this, mDateSetListener, mYear, mMonth, mDay);
 		}
 		return builder.create();
+	}
+	
+	private DatePickerDialog.OnDateSetListener mDateSetListener = new DatePickerDialog.OnDateSetListener() {
+
+		@Override
+		public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
+			mYear = year;
+			mMonth = monthOfYear;
+			mDay = dayOfMonth;
+			updateBirthdate();
+		}
+	};
+
+	private void updateBirthdate() {
+		mMonth++;
+		birthdateView.setText(new StringBuilder().append(mYear).append("-").append(mMonth < 10 ? "0" + mMonth : mMonth).append("-").append(mDay < 10 ? "0" + mDay : mDay));
 	}
 }

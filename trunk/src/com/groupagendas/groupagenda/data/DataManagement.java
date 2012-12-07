@@ -9,6 +9,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.concurrent.ExecutionException;
 
@@ -118,10 +119,11 @@ public class DataManagement {
 
 			reqEntity.addPart(Account.AccountMetaData.LASTNAME, new StringBody(account.getLastname(), Charset.forName("UTF-8")));
 			reqEntity.addPart(Account.AccountMetaData.NAME, new StringBody(account.getName(), Charset.forName("UTF-8")));
-			// TODO disabled sending account's birthdate.
-			// reqEntity.addPart(Account.AccountMetaData.BIRTHDATE, new
-			// StringBody(account.getBirthdate().toString(),
-			// Charset.forName("UTF-8")));
+
+			if(account.getBirthdate() != null){
+				SimpleDateFormat sdf = new SimpleDateFormat(ACCOUNT_BIRTHDATE_TIMESTAMP_FORMAT, Locale.getDefault());
+				reqEntity.addPart(Account.AccountMetaData.BIRTHDATE, new StringBody(sdf.format(account.getBirthdate().getTime()), Charset.forName("UTF-8")));
+			}
 			reqEntity.addPart(Account.AccountMetaData.SEX, new StringBody(account.getSex(), Charset.forName("UTF-8")));
 
 			reqEntity.addPart(Account.AccountMetaData.COUNTRY, new StringBody(account.getCountry(), Charset.forName("UTF-8")));
@@ -465,7 +467,7 @@ public class DataManagement {
 
 	public static boolean registerAccount(String language, String country, String timezone, String sex, String name, String lastname,
 			String email, String phonecode, String phone, String password, String city, String street, String streetNo, String zip,
-			boolean ampm, String dateFormat) {
+			boolean ampm, String dateFormat, String birthdate) {
 		boolean success = false;
 
 		WebService webService = new WebService();
@@ -490,6 +492,7 @@ public class DataManagement {
 			reqEntity.addPart("zip", new StringBody(zip, Charset.forName("UTF-8")));
 			reqEntity.addPart("ampm", new StringBody(ampm ? "1" : "0", Charset.forName("UTF-8")));
 			reqEntity.addPart("date_format", new StringBody(dateFormat, Charset.forName("UTF-8")));
+			reqEntity.addPart("birthdate", new StringBody(birthdate, Charset.forName("UTF-8")));
 
 			post.setEntity(reqEntity);
 

@@ -616,7 +616,8 @@ public class AccountActivity extends Activity implements OnClickListener {
 	};
 
 	private void updateBirthdate() {
-		birthdateView.setText(new StringBuilder().append(mYear).append("-").append(mMonth < 10 ? "0" + mMonth + 1 : mMonth + 1).append("-").append(mDay < 10 ? "0" + mDay : mDay));
+		mMonth++;
+		birthdateView.setText(new StringBuilder().append(mYear).append("-").append(mMonth < 10 ? "0" + mMonth : mMonth).append("-").append(mDay < 10 ? "0" + mDay : mDay));
 	}
 
 	class EditAccountTask extends AsyncTask<Void, Boolean, Boolean> {
