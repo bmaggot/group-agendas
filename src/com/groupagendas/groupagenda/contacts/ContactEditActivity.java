@@ -7,6 +7,7 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.concurrent.ExecutionException;
 
@@ -564,7 +565,7 @@ public class ContactEditActivity extends Activity implements OnClickListener, On
 			cv.put(ContactsProvider.CMetaData.ContactsMetaData.PHONE_CODE, temp);
 
 			if (birthdateCalendar != null) {
-				SimpleDateFormat sdf = new SimpleDateFormat(DataManagement.ACCOUNT_BIRTHDATE_TIMESTAMP_FORMAT);
+				SimpleDateFormat sdf = new SimpleDateFormat(DataManagement.ACCOUNT_BIRTHDATE_TIMESTAMP_FORMAT, Locale.getDefault());
 				editedContact.birthdate = sdf.format(birthdateCalendar.getTime());
 				cv.put(ContactsProvider.CMetaData.ContactsMetaData.BIRTHDATE, editedContact.birthdate);
 			} else {
@@ -740,7 +741,7 @@ public class ContactEditActivity extends Activity implements OnClickListener, On
 			cv.put(ContactsProvider.CMetaData.ContactsMetaData.PHONE_CODE, temp);
 
 			if (birthdateCalendar != null) {
-				SimpleDateFormat sdf = new SimpleDateFormat(DataManagement.ACCOUNT_BIRTHDATE_TIMESTAMP_FORMAT);
+				SimpleDateFormat sdf = new SimpleDateFormat(DataManagement.ACCOUNT_BIRTHDATE_TIMESTAMP_FORMAT, Locale.getDefault());
 				editedContact.birthdate = sdf.format(birthdateCalendar.getTime());
 				cv.put(ContactsProvider.CMetaData.ContactsMetaData.BIRTHDATE, editedContact.birthdate);
 			} else {
@@ -796,10 +797,7 @@ public class ContactEditActivity extends Activity implements OnClickListener, On
 			}
 
 			if (check) {
-				if (notifyContactToggle.isChecked()) {
-					Log.e("huj", "implement ble");
-				}
-				check = ContactManagement.insertContact(ContactEditActivity.this, editedContact);
+				check = ContactManagement.insertContact(ContactEditActivity.this, editedContact, notifyContactToggle.isChecked());
 			}
 
 			return check;

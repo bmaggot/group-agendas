@@ -516,7 +516,7 @@ public class ContactManagement {
 		return contacts;
 	}
 
-	public static int insertContactToRemoteDb(Context context, Contact contact, int id) {
+	public static int insertContactToRemoteDb(Context context, Contact contact, int id, boolean notifyContact) {
 		int destination_id = 0;
 		boolean success = false;
 		Account account = new Account(context);
@@ -737,6 +737,13 @@ public class ContactManagement {
 			Log.e("insertContactToRemoteDb(group, " + id + ")", "Failed adding color to entity.");
 		}
 
+		try {
+			reqEntity.addPart("inform_contact ",
+					new StringBody(notifyContact ? "1" : "0", Charset.forName("UTF-8")));
+		} catch (UnsupportedEncodingException e1) {
+			e1.printStackTrace();
+		}
+		
 		Map<String, String> groups = contact.groups;
 		if (groups != null) {
 			for (int i = 0, l = groups.size(); i < l; i++) {
@@ -867,12 +874,12 @@ public class ContactManagement {
 		}
 	}
 
-	public static boolean insertContact(Context context, Contact contact) {
+	public static boolean insertContact(Context context, Contact contact, boolean notifyContact) {
 		boolean success = false;
 		int destination_id = 0;
 
 		if (DataManagement.networkAvailable) {
-			destination_id = insertContactToRemoteDb(context, contact, 0);
+			destination_id = insertContactToRemoteDb(context, contact, 0, notifyContact);
 		}
 
 		if (destination_id > 0) {
@@ -2672,7 +2679,7 @@ public class ContactManagement {
 				Contact c = new Contact(context, result);
 
 				if (c.contact_id != 0) {
-					int destination_id = insertContactToRemoteDb(context, c, 0);
+					int destination_id = insertContactToRemoteDb(context, c, 0, false);
 					if (destination_id >= 0) {
 						updateContactIdInLocalDb(context, c.getInternal_id(), destination_id);
 

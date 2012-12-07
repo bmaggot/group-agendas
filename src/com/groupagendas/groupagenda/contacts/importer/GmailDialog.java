@@ -333,7 +333,7 @@ public class GmailDialog extends Dialog {
 	private class createContactTask extends AsyncTask<Object, Void, Boolean> {
 		@Override
 		protected Boolean doInBackground(Object... params) {
-			return ContactManagement.insertContact(context, (Contact) params[1]);
+			return ContactManagement.insertContact(context, (Contact) params[1], false);
 		}
 	}
 	
