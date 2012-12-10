@@ -45,7 +45,7 @@ public class TimezonesAdapter extends AbstractAdapter<StaticTimezones> implement
 			convertView = View.inflate(getContext(), textViewResourceId, null);
 		}
 
-		temp = list.get(position).timezone;
+		temp = list.get(position).altname;
 		if (position >= 0) {
 			TextView view = (TextView) convertView;
 			view.setText(temp);
@@ -81,7 +81,7 @@ public class TimezonesAdapter extends AbstractAdapter<StaticTimezones> implement
 				List<StaticTimezones> filteredItems = new ArrayList<StaticTimezones>();
 
 				for (int i = 0; i < items.size() - 1; i++) {
-					if (items.get(i).timezone.toLowerCase().contains(constraint.toString().toLowerCase())) {
+					if (items.get(i).altname.toLowerCase().contains(constraint.toString().toLowerCase())) {
 						filteredItems.add(items.get(i));
 					}
 				}
