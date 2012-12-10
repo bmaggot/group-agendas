@@ -2654,7 +2654,7 @@ public class ContactManagement {
 			insertedIntoQueue = offlineDeletedContacts.addContactForLaterDelete(contact.contact_id);
 		}
 
-		if (insertedIntoQueue) {
+		if (insertedIntoQueue || deletedFromRemote) {
 			removeContactFromLocalDbByInternalId(context, contact.getInternal_id());
 			Map<String, String> map = new HashMap<String, String>();
 			map = contact.groups;
