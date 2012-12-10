@@ -42,7 +42,7 @@ public class EventActivity extends Activity {
 	public static ArrayList<Group> selectedGroups;
 
 	protected DateTimeUtils dtUtils;
-	protected ToggleButton allDayToggleButton;
+	public static ToggleButton allDayToggleButton;
 	protected EditText descView;
 
 	protected TextView countryView;
