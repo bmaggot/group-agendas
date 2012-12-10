@@ -291,6 +291,12 @@ public class JSONUtils {
 		}
 
 		try {
+			contact.lid = c.getString(ContactsProvider.CMetaData.ContactsMetaData.LID);
+		} catch (JSONException e) {
+			Log.e("getContactsFromRemoteDb(contactIds)", "Failed getting lid.");
+		}
+		
+		try {
 			temp = c.getString(ContactsProvider.CMetaData.ContactsMetaData.NAME);
 			if (temp != null && !temp.equals("null"))
 				contact.name = temp;
@@ -308,6 +314,16 @@ public class JSONUtils {
 				contact.lastname = "";
 		} catch (JSONException e) {
 			Log.e("getContactsFromRemoteDb(contactIds)", "Failed getting lastname.");
+		}
+		
+		try {
+			temp = c.getString(ContactsProvider.CMetaData.ContactsMetaData.FULLNAME);
+			if (temp != null && !temp.equals("null"))
+				contact.fullname = temp;
+			else
+				contact.fullname = "";
+		} catch (JSONException e) {
+			Log.e("getContactsFromRemoteDb(contactIds)", "Failed getting fulname.");
 		}
 
 		try {
@@ -399,6 +415,16 @@ public class JSONUtils {
 		} catch (JSONException e) {
 			Log.e("getContactsFromRemoteDb(contactIds)", "Failed getting visibility.");
 		}
+		
+		try {
+			temp = c.getString(ContactsProvider.CMetaData.ContactsMetaData.VISIBILITY2);
+			if (temp != null && !temp.equals("null"))
+				contact.visibility2 = temp;
+			else
+				contact.visibility2 = "";
+		} catch (JSONException e) {
+			Log.e("getContactsFromRemoteDb(contactIds)", "Failed getting visibility2.");
+		}
 
 		try {
 			contact.image = c.getBoolean(ContactsProvider.CMetaData.ContactsMetaData.IMAGE);
@@ -443,6 +469,12 @@ public class JSONUtils {
 		} catch (JSONException e) {
 			Log.e("getContactsFromRemoteDb(contactIds)", "Failed getting modified.");
 		}
+		
+		try {
+			contact.reg_user_id = c.getInt(ContactsProvider.CMetaData.ContactsMetaData.REG_USER_ID);
+		} catch (JSONException e) {
+			Log.e("getContactsFromRemoteDb(contactIds)", "Failed getting reg_user_id.");
+		}
 
 		try {
 			temp = c.getString(ContactsProvider.CMetaData.ContactsMetaData.AGENDA_VIEW);
@@ -454,18 +486,68 @@ public class JSONUtils {
 			Log.e("getContactsFromRemoteDb(contactIds)", "Failed getting agenda_view.");
 		}
 
+		try {
+			temp = c.getString(ContactsProvider.CMetaData.ContactsMetaData.AGENDA_VIEW2);
+			if (temp != null && !temp.equals("null"))
+				contact.agenda_view2 = temp;
+			else
+				contact.agenda_view2 = "";
+		} catch (JSONException e) {
+			Log.e("getContactsFromRemoteDb(contactIds)", "Failed getting agenda_view2.");
+		}
+
+		try {
+			contact.can_add_note = c.getString(ContactsProvider.CMetaData.ContactsMetaData.CAN_ADD_NOTE);
+		} catch (JSONException e) {
+			Log.e("getContactsFromRemoteDb(contactIds)", "Failed getting can_add_note.");
+		}
+
+		try {
+			contact.time_start = c.getString(ContactsProvider.CMetaData.ContactsMetaData.TIME_START);
+		} catch (JSONException e) {
+			Log.e("getContactsFromRemoteDb(contactIds)", "Failed getting time_start.");
+		}
+
+		try {
+			contact.time_end = c.getString(ContactsProvider.CMetaData.ContactsMetaData.TIME_END);
+		} catch (JSONException e) {
+			Log.e("getContactsFromRemoteDb(contactIds)", "Failed getting time_end.");
+		}
+
+		try {
+			contact.all_day = c.getString(ContactsProvider.CMetaData.ContactsMetaData.ALL_DAY);
+		} catch (JSONException e) {
+			Log.e("getContactsFromRemoteDb(contactIds)", "Failed getting all_day.");
+		}
+
+		try {
+			contact.display_time_end = c.getString(ContactsProvider.CMetaData.ContactsMetaData.DISPLAY_TIME_END);
+		} catch (JSONException e) {
+			Log.e("getContactsFromRemoteDb(contactIds)", "Failed getting display_time_end.");
+		}
+
+		try {
+			contact.type = c.getString(ContactsProvider.CMetaData.ContactsMetaData.TYPE);
+		} catch (JSONException e) {
+			Log.e("getContactsFromRemoteDb(contactIds)", "Failed getting type.");
+		}
+
+		try {
+			contact.title = c.getString(ContactsProvider.CMetaData.ContactsMetaData.TITLE);
+		} catch (JSONException e) {
+			Log.e("getContactsFromRemoteDb(contactIds)", "Failed getting title.");
+		}
+
 		// TODO investigate REGISTERED meaning.
-		// try {
-		// temp =
-		// c.getString(ContactsProvider.CMetaData.ContactsMetaData.REGISTERED);
-		// if (temp != null && !temp.equals("null"))
-		// contact.registered = temp;
-		// else
-		// contact.registered = "";
-		// } catch (JSONException e) {
-		// Log.e("getContactsFromRemoteDb(contactIds)",
-		// "Failed getting registered.");
-		// }
+		try {
+			temp = c.getString("is_reg");
+			if (temp != null && !temp.equals("null"))
+				contact.registered = temp;
+			else
+				contact.registered = "";
+		} catch (JSONException e) {
+			Log.e("getContactsFromRemoteDb(contactIds)", "Failed getting registered.");
+		}
 
 		try {
 			temp = c.getString(ContactsProvider.CMetaData.ContactsMetaData.COLOR);
