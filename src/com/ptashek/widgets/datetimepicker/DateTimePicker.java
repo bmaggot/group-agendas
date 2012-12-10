@@ -32,6 +32,7 @@ import android.widget.TimePicker.OnTimeChangedListener;
 import android.widget.ViewSwitcher;
 
 import com.groupagendas.groupagenda.R;
+import com.groupagendas.groupagenda.events.EventActivity;
 
 // TODO 2012-09-29 paspaudus ivedinet Reminder1 kuriant eventa 2x issoko timepickeris
 //		ir tik po antrojo ivedimo nusistate reminderio laikas. Problems?
@@ -83,10 +84,14 @@ public class DateTimePicker extends RelativeLayout implements View.OnClickListen
 		timePicker = (TimePicker) timePickerView.findViewById(R.id.TimePicker);
 		timePicker.setOnTimeChangedListener(this);
 
-
-		// Handle button clicks
-		((Button) findViewById(R.id.SwitchToTime)).setOnClickListener(this); // shows the time picker
-		((Button) findViewById(R.id.SwitchToDate)).setOnClickListener(this); // shows the date picker
+		if(!EventActivity.allDayToggleButton.isChecked()){
+			// Handle button clicks
+			((Button) findViewById(R.id.SwitchToTime)).setOnClickListener(this); // shows the time picker
+			((Button) findViewById(R.id.SwitchToDate)).setOnClickListener(this); // shows the date picker
+		} else {
+			((Button) findViewById(R.id.SwitchToTime)).setVisibility(GONE);
+			((Button) findViewById(R.id.SwitchToDate)).setVisibility(GONE);
+		}
 
 		// Populate ViewSwitcher
 		viewSwitcher.addView(datePickerView, 0);
