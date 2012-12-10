@@ -2415,6 +2415,16 @@ public class ContactManagement {
 					e.printStackTrace();
 				}
 			}
+			
+			if (c.lastname != null) {
+				try {
+					reqEntity.addPart("contacts[" + i + "][" + ContactsProvider.CMetaData.ContactsMetaData.LASTNAME + "]", new StringBody(
+							c.lastname, Charset.forName("UTF-8")));
+				} catch (UnsupportedEncodingException e) {
+					e.printStackTrace();
+				}
+			}
+			
 			if (c.email != null) {
 				try {
 					reqEntity.addPart("contacts[" + i + "][" + ContactsProvider.CMetaData.ContactsMetaData.EMAIL + "]", new StringBody(
