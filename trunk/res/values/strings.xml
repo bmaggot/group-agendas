@@ -291,5 +291,12 @@
     <string name="save_your_changes">Save changes?</string>
     <string name="allow_to_add_note_in_agenda">Allow to add\nnote in\nagenda</string>
     <string name="invite_contact_in_the_past">It is not possible to add or delete contacts for events in the past</string>
+    <string name="sms_verification_setup">Setup</string>
+    <string name="sms_verification_enter_phone_number">Enter your phone number</string>
+    <string name="sms_verification_continue">Continue</string>
+    <string name="sms_verification_info_text">An accses code will be sent to you by the SMS</string>
+    <string name="sms_verification_phone_number_confirm">Phone number confirmation</string>
+    <string name="sms_verification_confirm_code_hint">Please enter the code you received by sms</string>
+    <string name="sms_verification_confirm_code">Confirm code</string>
     <string name="internet_connection_required">This functionality is only available with internet connection.</string>
 </resources>
