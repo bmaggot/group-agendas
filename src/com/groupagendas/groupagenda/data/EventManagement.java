@@ -1559,6 +1559,7 @@ public class EventManagement {
 //			sb = new StringBuilder();
 			for (Event e : eventChanges) {
 				if(getEventFromLocalDb(context, e.getEvent_id(), ID_EXTERNAL) == null){
+					insertEventToLocalDB(context, e);
 //					sb.append(e.getEvent_id());
 //					sb.append(',');
 				}else{
@@ -1567,9 +1568,8 @@ public class EventManagement {
 			}
 //			sb.deleteCharAt(sb.length() - 1);
 //			EventManagement.bulkDeleteEvents(context, sb.toString(), EventManagement.ID_EXTERNAL);
-			for (Event e : eventChanges) {
-				insertEventToLocalDB(context, e);
-			}
+//			for (Event e : eventChanges) {
+//			}
 		}
 
 		if (deletedEventsIDs.length > 0) {

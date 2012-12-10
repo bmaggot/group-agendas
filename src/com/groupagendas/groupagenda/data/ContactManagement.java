@@ -2339,14 +2339,19 @@ public class ContactManagement {
 		StringBuilder sb;
 
 		if (!contactChanges.isEmpty()) {
-			sb = new StringBuilder();
+//			sb = new StringBuilder();
 			for (Contact e : contactChanges) {
-				sb.append(e.contact_id);
-				sb.append(',');
+				if(getContactFromLocalDb(context, e.contact_id, 0) == null){
+					insertContactToLocalDb(context, e, 0);
+				} else {
+					updateContactOnLocalDb(context, e);
+				}
+//				sb.append(e.contact_id);
+//				sb.append(',');
 			}
-			sb.deleteCharAt(sb.length() - 1);
-			bulkDeleteContacts(context, sb.toString());
-			bulkInsertContactsToLocalDb(context, contactChanges);
+//			sb.deleteCharAt(sb.length() - 1);
+//			bulkDeleteContacts(context, sb.toString());
+//			bulkInsertContactsToLocalDb(context, contactChanges);
 
 		}
 
@@ -2362,11 +2367,11 @@ public class ContactManagement {
 
 	}
 
-	private static void bulkInsertContactsToLocalDb(Context context, ArrayList<Contact> contactChanges) {
-
-		for (Contact c : contactChanges) {
-			insertContactToLocalDb(context, c, 0);
-		}
+//	private static void bulkInsertContactsToLocalDb(Context context, ArrayList<Contact> contactChanges) {
+//
+//		for (Contact c : contactChanges) {
+//			insertContactToLocalDb(context, c, 0);
+//		}
 		// TODO implement batch
 		// ArrayList<ContentProviderOperation> operations = new
 		// ArrayList<ContentProviderOperation>();
@@ -2385,7 +2390,7 @@ public class ContactManagement {
 		// // TODO Auto-generated catch block
 		// e.printStackTrace();
 		// }
-	}
+//	}
 
 	public static void bulkInsertContactsToRemoteDb(Context context, ArrayList<Contact> contactChanges) {
 		Account account = new Account(context);

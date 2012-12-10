@@ -2604,15 +2604,15 @@ public class DataManagement {
 			Log.e("synchronizeWithServer", "reason: " + response.optString("reason"));
 			return;
 		}
-		JSONArray eventChanges = response.optJSONArray(EVENTS);
-		JSONArray deletedEvents = response.optJSONArray(EVENTS_REMOVED);
-		EventManagement.syncEvents(context, JSONUtils.JSONArrayToEventArray(context, eventChanges),
-				JSONUtils.JSONArrayToLongArray(deletedEvents));
-
 		JSONArray contactChanges = response.optJSONArray(CONTACTS);
 		JSONArray deletedContacts = response.optJSONArray(CONTACTS_REMOVED);
 		ContactManagement.syncContacts(context, JSONUtils.JSONArrayToContactsArray(contactChanges),
 				JSONUtils.JSONArrayToLongArray(deletedContacts));
+		
+		JSONArray eventChanges = response.optJSONArray(EVENTS);
+		JSONArray deletedEvents = response.optJSONArray(EVENTS_REMOVED);
+		EventManagement.syncEvents(context, JSONUtils.JSONArrayToEventArray(context, eventChanges),
+				JSONUtils.JSONArrayToLongArray(deletedEvents));
 
 		JSONArray groupChanges = response.optJSONArray(GROUPS);
 		JSONArray deletedGroups = response.optJSONArray(GROUPS_REMOVED);
