@@ -34,6 +34,7 @@ import com.groupagendas.groupagenda.R;
 import com.groupagendas.groupagenda.contacts.importer.ImportActivity;
 import com.groupagendas.groupagenda.data.ContactManagement;
 import com.groupagendas.groupagenda.data.Data;
+import com.groupagendas.groupagenda.data.DataManagement;
 import com.groupagendas.groupagenda.events.EventActivity;
 import com.makeramen.segmented.SegmentedRadioGroup;
 
@@ -259,8 +260,8 @@ public class ContactsActivity extends ListActivity implements OnCheckedChangeLis
 						}
 						ContactsActivity.this.finish();
 					}
-
-//					finish();
+	
+	//					finish();
 				}
 			});
 
@@ -273,7 +274,11 @@ public class ContactsActivity extends ListActivity implements OnCheckedChangeLis
 
 				@Override
 				public void onClick(View v) {
-					startActivity(new Intent(ContactsActivity.this, ImportActivity.class));
+					if(DataManagement.networkAvailable){
+						startActivity(new Intent(ContactsActivity.this, ImportActivity.class));
+					} else {
+						showToast(getResources().getString(R.string.internet_connection_required), Toast.LENGTH_LONG);
+					}
 				}
 			});
 			break;
@@ -599,5 +604,9 @@ public class ContactsActivity extends ListActivity implements OnCheckedChangeLis
 
 			Data.returnedFromContactImport = false;
 		}
+	}
+	
+	public void showToast(String msg, int length){
+		Toast.makeText(this, msg, length).show();
 	}
 }

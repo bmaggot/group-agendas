@@ -291,4 +291,5 @@
     <string name="save_your_changes">Save changes?</string>
     <string name="allow_to_add_note_in_agenda">Allow to add\nnote in\nagenda</string>
     <string name="invite_contact_in_the_past">It is not possible to add or delete contacts for events in the past</string>
+    <string name="internet_connection_required">This functionality is only available with internet connection.</string>
 </resources>
