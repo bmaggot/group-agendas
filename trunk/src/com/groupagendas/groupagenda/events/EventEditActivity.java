@@ -399,7 +399,7 @@ public class EventEditActivity extends EventActivity {
 						timezonesAdapter = new TimezonesAdapter(EventEditActivity.this, R.layout.search_dialog_item, filteredCountriesList);
 						timezonesAdapter.notifyDataSetChanged();
 
-						timezoneView.setText(countriesList.get(timezoneInUse).timezone);
+						timezoneView.setText(countriesList.get(timezoneInUse).altname);
 						event.setTimezone(countriesList.get(timezoneInUse).timezone);
 						dia1.dismiss();
 					}
@@ -456,7 +456,7 @@ public class EventEditActivity extends EventActivity {
 						timezoneInUse = Integer.parseInt(view.getTag().toString());
 						countryView.setText(countriesList.get(timezoneInUse).country2);
 						event.setCountry(countriesList.get(timezoneInUse).country_code);
-						timezoneView.setText(countriesList.get(timezoneInUse).timezone);
+						timezoneView.setText(countriesList.get(timezoneInUse).altname);
 						event.setTimezone(countriesList.get(timezoneInUse).timezone);
 						dia1.dismiss();
 					}
@@ -997,7 +997,7 @@ public class EventEditActivity extends EventActivity {
 					timezonesAdapter = new TimezonesAdapter(EventEditActivity.this, R.layout.search_dialog_item, filteredCountriesList);
 					timezonesAdapter.notifyDataSetChanged();
 
-					timezoneView.setText(result.getTimezone());
+					timezoneView.setText(countriesList.get(timezoneInUse).altname);
 					countryView.setText(countriesList.get(timezoneInUse).country2);
 					
 

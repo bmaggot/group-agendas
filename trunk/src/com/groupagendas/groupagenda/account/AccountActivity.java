@@ -269,7 +269,7 @@ public class AccountActivity extends Activity implements OnClickListener {
 						timezonesAdapter = new TimezonesAdapter(AccountActivity.this, R.layout.search_dialog_item, filteredCountriesList);
 						timezonesAdapter.notifyDataSetChanged();
 
-						timezoneView.setText(countriesList.get(timezoneInUse).timezone);
+						timezoneView.setText(countriesList.get(timezoneInUse).altname);
 						account.setTimezone(countriesList.get(timezoneInUse).timezone);
 						dia1.dismiss();
 					}
@@ -320,7 +320,7 @@ public class AccountActivity extends Activity implements OnClickListener {
 						timezoneInUse = Integer.parseInt(view.getTag().toString());
 						countryView.setText(countriesList.get(timezoneInUse).country2);
 						account.setCountry(countriesList.get(timezoneInUse).country_code);
-						timezoneView.setText(countriesList.get(timezoneInUse).timezone);
+						timezoneView.setText(countriesList.get(timezoneInUse).altname);
 						account.setTimezone(countriesList.get(timezoneInUse).timezone);
 						dia1.dismiss();
 					}
