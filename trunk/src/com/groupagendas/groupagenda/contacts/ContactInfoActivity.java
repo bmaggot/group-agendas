@@ -174,6 +174,8 @@ public class ContactInfoActivity extends Activity {
 				if (contact.can_add_note != null && contact.can_add_note.length() > 0) {
 					setTableRow(getString(R.string.allow_to_add_note_in_agenda), contact.can_add_note.equals("y") ? getResources()
 							.getString(R.string.yes) : getResources().getString(R.string.no));
+				} else {
+					setTableRow(getString(R.string.allow_to_add_note_in_agenda), getResources().getString(R.string.no));
 				}
 
 				// Groups
