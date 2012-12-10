@@ -307,6 +307,13 @@ public class EventEditActivity extends EventActivity {
 			
 			@Override
 			public void onClick(View v) {
+				if(!allDayToggleButton.isChecked()){
+					startView.setText(dtUtils.formatDateTime(event.getStartCalendar().getTime()));
+					endView.setText(dtUtils.formatDateTime(event.getEndCalendar().getTime()));
+				} else {
+					startView.setText(dtUtils.formatDate(event.getStartCalendar()));
+					endView.setText(dtUtils.formatDate(event.getStartCalendar()));
+				}
 				saveButton.setEnabled(true);
 			}
 		});
@@ -929,7 +936,11 @@ public class EventEditActivity extends EventActivity {
 
 			// START AND END TIME
 			if (result.getStartCalendar() != null) {
-				startView.setText(dtUtils.formatDateTime(result.getStartCalendar()));
+				if(!allDayToggleButton.isChecked()){
+					startView.setText(dtUtils.formatDateTime(result.getStartCalendar()));
+				} else {
+					startView.setText(dtUtils.formatDate(result.getStartCalendar()));
+				}
 				startCalendar = (Calendar) result.getStartCalendar().clone();
 			}
 			if (result.getEndCalendar() != null) {
@@ -1292,11 +1303,19 @@ public class EventEditActivity extends EventActivity {
 				switch (id) {
 				case DIALOG_START:
 					startCalendar = mDateTimePicker.getCalendar();
-					startView.setText(dtUtils.formatDateTime(startCalendar.getTime()));
+					if(!allDayToggleButton.isChecked()){
+						startView.setText(dtUtils.formatDateTime(startCalendar.getTime()));
+					} else {
+						startView.setText(dtUtils.formatDate(startCalendar));
+					}
 					endCalendar = Calendar.getInstance();
 					endCalendar.setTime(mDateTimePicker.getCalendar().getTime());
 					endCalendar.add(Calendar.MINUTE, NewEventActivity.DEFAULT_EVENT_DURATION_IN_MINS);
-					endView.setText(dtUtils.formatDateTime(endCalendar.getTime()));
+					if(!allDayToggleButton.isChecked()){
+						endView.setText(dtUtils.formatDateTime(endCalendar.getTime()));
+					} else {
+						endView.setText(dtUtils.formatDate(endCalendar));
+					}
 					break;
 				case DIALOG_END:
 					endCalendar = mDateTimePicker.getCalendar();
@@ -1320,7 +1339,11 @@ public class EventEditActivity extends EventActivity {
 					reminder3time = mDateTimePicker.getCalendar();
 					break;
 				}
-				view.setText(dtUtils.formatDateTime(mDateTimePicker.getCalendar()));
+				if(!allDayToggleButton.isChecked()){
+					view.setText(dtUtils.formatDateTime(mDateTimePicker.getCalendar()));
+				} else {
+					view.setText(dtUtils.formatDate(mDateTimePicker.getCalendar()));
+				}
 				saveButton.setEnabled(true);
 				mDateTimeDialog.dismiss();
 			}
