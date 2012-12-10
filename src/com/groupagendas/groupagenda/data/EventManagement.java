@@ -1556,13 +1556,17 @@ public class EventManagement {
 		StringBuilder sb;
 		initUserTimezone(context);
 		if (!eventChanges.isEmpty()) {
-			sb = new StringBuilder();
+//			sb = new StringBuilder();
 			for (Event e : eventChanges) {
-				sb.append(e.getEvent_id());
-				sb.append(',');
+				if(getEventFromLocalDb(context, e.getEvent_id(), ID_EXTERNAL) == null){
+//					sb.append(e.getEvent_id());
+//					sb.append(',');
+				}else{
+					updateEventInLocalDb(context, e);
+				}
 			}
-			sb.deleteCharAt(sb.length() - 1);
-			EventManagement.bulkDeleteEvents(context, sb.toString(), EventManagement.ID_EXTERNAL);
+//			sb.deleteCharAt(sb.length() - 1);
+//			EventManagement.bulkDeleteEvents(context, sb.toString(), EventManagement.ID_EXTERNAL);
 			for (Event e : eventChanges) {
 				insertEventToLocalDB(context, e);
 			}
