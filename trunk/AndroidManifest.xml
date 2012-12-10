@@ -199,7 +199,7 @@
         </activity>
         <activity
             android:name=".registration.RegistrationActivity"
-            android:configChanges="keyboardHidden|orientation"
+            android:configChanges="keyboardHidden|orientation|locale"
             android:screenOrientation="portrait"
             android:theme="@android:style/Theme.NoTitleBar" >
         </activity>
