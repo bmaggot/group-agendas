@@ -92,6 +92,15 @@ public class Account {
 		
 		public static final String RESPONSES = "responses"; 
 		public static final String RESPONSES_BADGE = "responsesBadge"; 
+		
+		public static final String PHONE1_NEW = "phone1_new"; 
+		public static final String PHONE2_NEW = "phone2_new"; 
+		public static final String PHONE3_NEW = "phone3_new";
+		public static final String EMAIL1_NEW = "email1_new"; 
+		public static final String EMAIL2_NEW = "email2_new"; 
+		public static final String EMAIL3_NEW = "email3_new"; 
+		public static final String EMAIL4_NEW = "email4_new"; 
+		
 	}
 
 
@@ -531,6 +540,68 @@ public class Account {
 		prefsEditor.commit();
 	}
 	
+	public String getPhone1_new(){
+		return prefs.getString(Account.AccountMetaData.PHONE1_NEW, "");
+	}
+	
+	public void setPhone1_new(String phone1_new){
+		prefsEditor.putString(Account.AccountMetaData.PHONE1_NEW, phone1_new);
+		prefsEditor.commit();
+	}
+	
+	public String getPhone2_new(){
+		return prefs.getString(Account.AccountMetaData.PHONE2_NEW, "");
+	}
+	
+	public void setPhone2_new(String phone2_new){
+		prefsEditor.putString(Account.AccountMetaData.PHONE2_NEW, phone2_new);
+		prefsEditor.commit();
+	}
+	
+	public String getPhone3_new(){
+		return prefs.getString(Account.AccountMetaData.PHONE3_NEW, "");
+	}
+	
+	public void setPhone3_new(String phone3_new){
+		prefsEditor.putString(Account.AccountMetaData.PHONE3_NEW, phone3_new);
+		prefsEditor.commit();
+	}
+	
+	public String getEmail1_new(){
+		return prefs.getString(Account.AccountMetaData.EMAIL1_NEW, "");
+	}
+	
+	public void setEmail1_new(String email1_new){
+		prefsEditor.putString(Account.AccountMetaData.EMAIL1_NEW, email1_new);
+		prefsEditor.commit();
+	}
+	
+	public String getEmail2_new(){
+		return prefs.getString(Account.AccountMetaData.EMAIL2_NEW, "");
+	}
+	
+	public void setEmail2_new(String email2_new){
+		prefsEditor.putString(Account.AccountMetaData.EMAIL2_NEW, email2_new);
+		prefsEditor.commit();
+	}
+	
+	public String getEmail3_new(){
+		return prefs.getString(Account.AccountMetaData.EMAIL3_NEW, "");
+	}
+	
+	public void setEmail3_new(String email3_new){
+		prefsEditor.putString(Account.AccountMetaData.EMAIL3_NEW, email3_new);
+		prefsEditor.commit();
+	}
+	
+	public String getEmail4_new(){
+		return prefs.getString(Account.AccountMetaData.EMAIL4_NEW, "");
+	}
+	
+	public void setEmail4_new(String email4_new){
+		prefsEditor.putString(Account.AccountMetaData.EMAIL4_NEW, email4_new);
+		prefsEditor.commit();
+	}
 	
 }
 
