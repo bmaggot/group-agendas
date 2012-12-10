@@ -512,7 +512,8 @@ public class ChatManagement {
 		Uri uri = ChatProvider.CMMetaData.ChatMetaData.CONTENT_URI;
 		String projection[] = null;
 		Account account = new Account(context);
-		String selection = (ChatProvider.CMMetaData.ChatMetaData.MODIFIED +">"+ account.getLastTimeConnectedToWeb());
+		String selection = (ChatProvider.CMMetaData.ChatMetaData.MODIFIED +">"+ account.getLastTimeConnectedToWeb() + " AND " +
+		ChatProvider.CMMetaData.ChatMetaData.USER_ID + "=" + account.getUser_id());
 		Cursor cur = context.getContentResolver().query(uri, projection, selection, null, null);
 		if(cur.moveToFirst()){
 			do{
