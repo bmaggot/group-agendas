@@ -438,12 +438,12 @@ public class EventActivity extends Activity {
 				//if(!con.getColor().contentEquals("00a759")){
 				if(con.registered != null){
 					if(!con.registered.contentEquals("true")){
-						if(con.email != null || !con.email.contentEquals("")){
+						if(con.email != null && con.email.contentEquals("")){
 							tempNumber += con.phone1_code + con.phone1 + ",";
 						}
 					}
 				} else {
-					if(con.email != null || !con.email.contentEquals("")){
+					if(con.email != null && con.email.contentEquals("")){
 						tempNumber += con.phone1_code + con.phone1 + ",";
 					}
 				}
