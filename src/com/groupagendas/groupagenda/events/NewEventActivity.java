@@ -265,7 +265,7 @@ public class NewEventActivity extends EventActivity {
 						timezoneInUse = Integer.parseInt(view.getTag().toString());
 						countryView.setText(countriesList.get(timezoneInUse).country2);
 						event.setCountry(countriesList.get(timezoneInUse).country_code);
-						timezoneView.setText(countriesList.get(timezoneInUse).timezone);
+						timezoneView.setText(countriesList.get(timezoneInUse).altname);
 						event.setTimezone(countriesList.get(timezoneInUse).timezone);
 						dia1.dismiss();
 					}
@@ -329,7 +329,7 @@ public class NewEventActivity extends EventActivity {
 						timezonesAdapter = new TimezonesAdapter(NewEventActivity.this, R.layout.search_dialog_item, filteredCountriesList);
 						timezonesAdapter.notifyDataSetChanged();
 
-						timezoneView.setText(countriesList.get(timezoneInUse).timezone);
+						timezoneView.setText(countriesList.get(timezoneInUse).altname);
 						event.setTimezone(countriesList.get(timezoneInUse).timezone);
 						dia1.dismiss();
 					}
