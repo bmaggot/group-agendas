@@ -57,7 +57,6 @@ import com.ptashek.widgets.datetimepicker.DateTimePicker;
 
 public class NewEventActivity extends EventActivity {
 
-
 	@SuppressWarnings("unused")
 	private Button templatesButton;
 
@@ -173,7 +172,7 @@ public class NewEventActivity extends EventActivity {
 			endCalendar.add(Calendar.MINUTE, DEFAULT_EVENT_DURATION_IN_MINS);
 
 		}
-		
+
 		String strEndTime = getIntent().getStringExtra(EXTRA_STRING_FOR_END_CALENDAR);
 		if (strEndTime != null) {
 			endCalendar = Utils.stringToCalendar(getApplicationContext(), strEndTime, DataManagement.SERVER_TIMESTAMP_FORMAT);
@@ -201,9 +200,23 @@ public class NewEventActivity extends EventActivity {
 			}
 		});
 
-		//allday
+		// allday
 		allDayToggleButton = (ToggleButton) findViewById(R.id.allDayToggleButton);
 		allDayToggleButton.setChecked(false);
+		allDayToggleButton.setOnClickListener(new OnClickListener() {
+
+			@Override
+			public void onClick(View v) {
+				if (!allDayToggleButton.isChecked()) {
+					startView.setText(dtUtils.formatDateTime(startCalendar.getTime()));
+					endView.setText(dtUtils.formatDateTime(endCalendar.getTime()));
+				} else {
+					startView.setText(dtUtils.formatDate(startCalendar));
+					endView.setText(dtUtils.formatDate(endCalendar));
+				}
+				saveButton.setEnabled(true);
+			}
+		});
 		// Description
 		descView = (EditText) findViewById(R.id.descView);
 
@@ -557,9 +570,9 @@ public class NewEventActivity extends EventActivity {
 			@Override
 			public void onClick(View v) {
 				Intent i = new Intent(NewEventActivity.this, ContactsActivity.class);
-				i.putExtra(ContactsActivity.TASK_MODE_KEY, ContactsActivity.TASK_MODE_SELECTION); 
-				i.putExtra(ContactsActivity.LIST_MODE_KEY, ContactsActivity.LIST_MODE_CONTACTS);								
-				i.putExtra(ContactsActivity.DESTINATION_KEY, ContactsActivity.DEST_EVENT_ACTIVITY);								
+				i.putExtra(ContactsActivity.TASK_MODE_KEY, ContactsActivity.TASK_MODE_SELECTION);
+				i.putExtra(ContactsActivity.LIST_MODE_KEY, ContactsActivity.LIST_MODE_CONTACTS);
+				i.putExtra(ContactsActivity.DESTINATION_KEY, ContactsActivity.DEST_EVENT_ACTIVITY);
 				Data.showSaveButtonInContactsForm = true;
 				// TODO Data.eventForSavingNewInvitedPersons = event;
 				startActivity(i);
@@ -661,7 +674,7 @@ public class NewEventActivity extends EventActivity {
 
 		if (selectedContacts == null)
 			selectedContacts = new ArrayList<Contact>();
-		
+
 		if (selectedGroups == null)
 			selectedGroups = new ArrayList<Group>();
 
@@ -676,10 +689,10 @@ public class NewEventActivity extends EventActivity {
 
 			EventActivity.newInvites.add(nu);
 		}
-		
+
 		ArrayList<Contact> selectedContactsFromGroups = new ArrayList<Contact>();
-		for(Group group : EventActivity.selectedGroups){
-			for(String id : group.contacts.values()){
+		for (Group group : EventActivity.selectedGroups) {
+			for (String id : group.contacts.values()) {
 				selectedContactsFromGroups.add(ContactManagement.getContactFromLocalDb(this, Integer.valueOf(id), 0));
 			}
 		}
@@ -689,14 +702,14 @@ public class NewEventActivity extends EventActivity {
 			nu.setName(temp.name + " " + temp.lastname);
 			nu.setStatus(Invited.PENDING);
 			boolean contains = false;
-			for(Invited tmp : EventActivity.newInvites){
-				if(nu.getMy_contact_id() == tmp.getMy_contact_id()){
+			for (Invited tmp : EventActivity.newInvites) {
+				if (nu.getMy_contact_id() == tmp.getMy_contact_id()) {
 					contains = true;
 				}
 			}
-			if(!contains){
+			if (!contains) {
 				EventActivity.newInvites.add(nu);
-			}			
+			}
 		}
 
 		event.setInvited(new ArrayList<Invited>());
@@ -976,7 +989,7 @@ public class NewEventActivity extends EventActivity {
 		@Override
 		protected Boolean doInBackground(Event... events) {
 			event = NewEventActivity.this.setEventData(event);
-			
+
 			if (event.getColor().equals(Event.DEFAULT_COLOR)) {
 				NewEventActivity.this.setAutoColor(NewEventActivity.this);
 			}
@@ -1155,15 +1168,27 @@ public class NewEventActivity extends EventActivity {
 				switch (id) {
 				case DIALOG_START:
 					startCalendar = mDateTimePicker.getCalendar();
-					startView.setText(dtUtils.formatDateTime(startCalendar));
+					if (!allDayToggleButton.isChecked()) {
+						startView.setText(dtUtils.formatDateTime(startCalendar.getTime()));
+					} else {
+						startView.setText(dtUtils.formatDate(startCalendar));
+					}
 					endCalendar = Calendar.getInstance();
 					endCalendar.setTime(mDateTimePicker.getCalendar().getTime());
 					endCalendar.add(Calendar.MINUTE, DEFAULT_EVENT_DURATION_IN_MINS);
-					endView.setText(dtUtils.formatDateTime(endCalendar));
+					if (!allDayToggleButton.isChecked()) {
+						endView.setText(dtUtils.formatDateTime(endCalendar.getTime()));
+					} else {
+						endView.setText(dtUtils.formatDate(endCalendar));
+					}
 					break;
 				case DIALOG_END:
 					endCalendar = mDateTimePicker.getCalendar();
-					endView.setText(dtUtils.formatDateTime(endCalendar));
+					if (!allDayToggleButton.isChecked()) {
+						endView.setText(dtUtils.formatDateTime(endCalendar.getTime()));
+					} else {
+						endView.setText(dtUtils.formatDate(endCalendar));
+					}
 					break;
 				case ALARM1:
 					alarm1time = mDateTimePicker.getCalendar();
