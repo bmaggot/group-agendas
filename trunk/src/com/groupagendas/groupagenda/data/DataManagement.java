@@ -126,7 +126,7 @@ public class DataManagement {
 			}
 			reqEntity.addPart(Account.AccountMetaData.SEX, new StringBody(account.getSex(), Charset.forName("UTF-8")));
 
-			reqEntity.addPart(Account.AccountMetaData.COUNTRY, new StringBody(account.getCountry(), Charset.forName("UTF-8")));
+			reqEntity.addPart(Account.AccountMetaData.COUNTRY, new StringBody(account.getCountry(context), Charset.forName("UTF-8")));
 			reqEntity.addPart(Account.AccountMetaData.CITY, new StringBody(account.getCity(), Charset.forName("UTF-8")));
 			reqEntity.addPart(Account.AccountMetaData.STREET, new StringBody(account.getStreet(), Charset.forName("UTF-8")));
 			reqEntity.addPart(Account.AccountMetaData.ZIP, new StringBody(account.getZip(), Charset.forName("UTF-8")));

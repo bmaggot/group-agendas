@@ -222,9 +222,9 @@ public class Account {
 		return prefs.getInt(Account.AccountMetaData.REMOVE_IMAGE, 0);
 	}
 
-	public String getCountry() {
+	public String getCountry(Context context) {
 		return prefs.getString(Account.AccountMetaData.COUNTRY,
-				Data.getmContext().getResources().getStringArray(R.array.countries)[275]);
+				context.getResources().getStringArray(R.array.countries)[275]);
 	}
 
 	public String getCity() {
