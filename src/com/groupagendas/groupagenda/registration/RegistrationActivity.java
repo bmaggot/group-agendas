@@ -669,6 +669,7 @@ public class RegistrationActivity extends Activity {
 			chkStatement.setChecked(prefs.getBoolean("agreement", false));
 			
 			editor.clear();
+			editor.commit();
 			return true;
 		} else {
 			return false;
