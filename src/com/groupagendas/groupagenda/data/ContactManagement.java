@@ -2367,8 +2367,6 @@ public class ContactManagement {
 			sb.deleteCharAt(sb.length() - 1);
 			bulkDeleteContacts(context, sb.toString());
 		}
-		Intent intent = new Intent(C2DMReceiver.REFRESH_CONTACT_LIST);
-		LocalBroadcastManager.getInstance(context).sendBroadcast(intent);
 
 	}
 
