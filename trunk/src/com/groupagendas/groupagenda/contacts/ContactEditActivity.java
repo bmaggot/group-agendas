@@ -31,6 +31,7 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
+import android.support.v4.content.LocalBroadcastManager;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
@@ -53,6 +54,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.ToggleButton;
 
+import com.groupagendas.groupagenda.C2DMReceiver;
 import com.groupagendas.groupagenda.R;
 import com.groupagendas.groupagenda.account.Account;
 import com.groupagendas.groupagenda.data.ContactManagement;
@@ -800,6 +802,7 @@ public class ContactEditActivity extends Activity implements OnClickListener, On
 			if (check) {
 				check = ContactManagement.insertContact(ContactEditActivity.this, editedContact, notifyContactToggle.isChecked());
 			}
+			DataManagement.synchronizeWithServer(getApplicationContext(), null, new Account(getApplicationContext()).getLatestUpdateUnixTimestamp());
 
 			return check;
 		}
@@ -807,6 +810,8 @@ public class ContactEditActivity extends Activity implements OnClickListener, On
 		@Override
 		protected void onPostExecute(Boolean result) {
 			pb.setVisibility(View.GONE);
+			Intent intent = new Intent(C2DMReceiver.REFRESH_CONTACT_LIST);
+			LocalBroadcastManager.getInstance(getApplicationContext()).sendBroadcast(intent);
 			if (result) {
 				onBackPressed();
 			} else {

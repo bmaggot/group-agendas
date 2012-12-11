@@ -30,12 +30,14 @@ import org.json.JSONObject;
 import android.app.Activity;
 import android.content.ContentValues;
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Build;
+import android.support.v4.content.LocalBroadcastManager;
 import android.telephony.TelephonyManager;
 import android.util.Log;
 
@@ -43,6 +45,7 @@ import com.bog.calendar.app.model.CEvent;
 import com.bog.calendar.app.model.EventsHelper;
 import com.google.android.c2dm.C2DMessaging;
 import com.google.android.gcm.GCMRegistrar;
+import com.groupagendas.groupagenda.C2DMReceiver;
 import com.groupagendas.groupagenda.R;
 import com.groupagendas.groupagenda.account.Account;
 import com.groupagendas.groupagenda.account.AccountProvider;
@@ -2629,6 +2632,8 @@ public class DataManagement {
 		JSONArray deletedContacts = response.optJSONArray(CONTACTS_REMOVED);
 		ContactManagement.syncContacts(context, JSONUtils.JSONArrayToContactsArray(contactChanges),
 				JSONUtils.JSONArrayToLongArray(deletedContacts));
+		Intent intent = new Intent(C2DMReceiver.REFRESH_CONTACT_LIST);
+		LocalBroadcastManager.getInstance(context).sendBroadcast(intent);
 		
 		JSONArray eventChanges = response.optJSONArray(EVENTS);
 		JSONArray deletedEvents = response.optJSONArray(EVENTS_REMOVED);
