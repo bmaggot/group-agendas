@@ -550,6 +550,8 @@ public class EventManagement {
 		boolean success = false;
 		Event event = null;
 		ContentValues[] values;
+		ContentValues[] values2;
+		int value = 0;
 
 		try {
 			WebService webService = new WebService();
@@ -575,24 +577,31 @@ public class EventManagement {
 						JSONArray es = object.getJSONArray(EVENTS);
 						Calendar start = Calendar.getInstance();
 						values = new ContentValues[es.length()];
-						int value = 0;
+						
 						for (int i = 0; i < es.length(); i++) {
 							try {
 								JSONObject e = es.getJSONObject(i);
-								event = JSONUtils.createEventFromJSON(context, e);
-								if (event != null && !event.isNative()) {
-									event.setUploadedToServer(true);
-									values[value] = createCVforEventsTable(event);
-									value++;
-									// insertEventToLocalDB(context, event);
+								if(!e.getString("type").contentEquals("v")){
+									event = JSONUtils.createEventFromJSON(context, e);
+									if (event != null && !event.isNative()) {
+										event.setUploadedToServer(true);
+										values[value] = createCVforEventsTable(event);
+										value++;
+										// insertEventToLocalDB(context, event);
+									}
 								}
 
 							} catch (JSONException ex) {
 								Log.e(CLASS_NAME, "JSON");
 							}
 						}
-						if (values != null)
-							context.getContentResolver().bulkInsert(EventsProvider.EMetaData.INDEXED_EVENTS_URI, values);
+						if (values != null){
+							values2 = new ContentValues[value];
+							for (int i = 0; i < value; i++) {
+								values2[i] = values[i];
+							}
+							context.getContentResolver().bulkInsert(EventsProvider.EMetaData.INDEXED_EVENTS_URI, values2);
+						}
 						Calendar end = Calendar.getInstance();
 						System.out.println("insert time:" + (end.getTimeInMillis() - start.getTimeInMillis()));
 					}
