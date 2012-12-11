@@ -213,7 +213,7 @@ public class NavbarActivity extends FragmentActivity {
 
 		ContentResolver cr = getApplicationContext().getContentResolver();
 		String[] projection = { "SUM(" + EventsProvider.EMetaData.EventsMetaData.NEW_MESSAGES_COUNT + ") AS `sum`" };
-		String where2 = EMetaData.EventsMetaData.MESSAGES_COUNT + " > 0 AND " + EMetaData.EventsMetaData.STATUS + " = " + Invited.ACCEPTED;
+		String where2 = EMetaData.EventsMetaData.MESSAGES_COUNT + " > 0 AND " + EMetaData.EventsMetaData.STATUS + " != " + Invited.REJECTED;
 		Cursor cur2 = cr.query(EventsProvider.EMetaData.EventsMetaData.CONTENT_URI, projection, where2, null, null);
 		cur2.moveToFirst();
 		int new_messages = cur2.getInt(cur2.getColumnIndex("sum"));

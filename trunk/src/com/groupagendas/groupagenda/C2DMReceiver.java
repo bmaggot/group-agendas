@@ -44,6 +44,7 @@ public class C2DMReceiver extends C2DMBaseReceiver {
 	public static String REFRESH_CHAT_MESSAGES_BADGE = "refreshChatMessagesBadge";
 	public static String REFRESH_INVITE_BADGE = "refreshInviteBadge";
 	public static String REFRESH_EVENT_EDIT_ACTIVITY = "refreshEventEditActivity";
+	public static String REFRESH_CONTACT_LIST = "refreshContactList";
 
 	public C2DMReceiver() {
 		super(DataManagement.PROJECT_ID);

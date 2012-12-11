@@ -4,10 +4,14 @@ import java.util.ArrayList;
 import java.util.TreeMap;
 
 import android.app.ListActivity;
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
+import android.support.v4.content.LocalBroadcastManager;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.TypedValue;
@@ -30,6 +34,7 @@ import android.widget.RadioGroup.OnCheckedChangeListener;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.groupagendas.groupagenda.C2DMReceiver;
 import com.groupagendas.groupagenda.R;
 import com.groupagendas.groupagenda.contacts.importer.ImportActivity;
 import com.groupagendas.groupagenda.data.ContactManagement;
@@ -170,6 +175,7 @@ public class ContactsActivity extends ListActivity implements OnCheckedChangeLis
 	@Override
 	public void onResume() {
 		super.onResume();
+		LocalBroadcastManager.getInstance(this).registerReceiver(mMessageReceiver, new IntentFilter(C2DMReceiver.REFRESH_CONTACT_LIST));
 		initUI();
 
 		LIST_MODE = preferences.getInt(LIST_MODE_KEY, LIST_MODE);
@@ -609,4 +615,11 @@ public class ContactsActivity extends ListActivity implements OnCheckedChangeLis
 	public void showToast(String msg, int length){
 		Toast.makeText(this, msg, length).show();
 	}
+	
+	private BroadcastReceiver mMessageReceiver = new BroadcastReceiver() {
+		@Override
+		public void onReceive(Context context, Intent intent) {
+			onResume();
+		}
+	};
 }

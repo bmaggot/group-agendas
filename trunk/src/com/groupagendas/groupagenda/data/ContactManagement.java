@@ -25,11 +25,14 @@ import org.json.JSONObject;
 
 import android.content.ContentValues;
 import android.content.Context;
+import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteException;
 import android.net.Uri;
+import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 
+import com.groupagendas.groupagenda.C2DMReceiver;
 import com.groupagendas.groupagenda.R;
 import com.groupagendas.groupagenda.SaveDeletedData;
 import com.groupagendas.groupagenda.SaveDeletedData.SDMetaData;
@@ -2364,6 +2367,8 @@ public class ContactManagement {
 			sb.deleteCharAt(sb.length() - 1);
 			bulkDeleteContacts(context, sb.toString());
 		}
+		Intent intent = new Intent(C2DMReceiver.REFRESH_CONTACT_LIST);
+		LocalBroadcastManager.getInstance(context).sendBroadcast(intent);
 
 	}
 
