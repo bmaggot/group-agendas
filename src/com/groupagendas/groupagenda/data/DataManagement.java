@@ -295,6 +295,27 @@ public class DataManagement {
 									.getMethodName().toString(), e.getMessage());
 						}
 						try {
+							u.setPhone1_new(profile.getString(Account.AccountMetaData.PHONE1_NEW));
+							Log.e("phone1_new",""+profile.getString(Account.AccountMetaData.PHONE1_NEW));
+						} catch (JSONException e) {
+							Reporter.reportError(context, this.getClass().toString(), Thread.currentThread().getStackTrace()[2]
+									.getMethodName().toString(), e.getMessage());
+						}
+						try {
+							u.setPhone2_new(profile.getString(Account.AccountMetaData.PHONE2_NEW));
+							Log.e("phone2_new",""+profile.getString(Account.AccountMetaData.PHONE2_NEW));
+						} catch (JSONException e) {
+							Reporter.reportError(context, this.getClass().toString(), Thread.currentThread().getStackTrace()[2]
+									.getMethodName().toString(), e.getMessage());
+						}
+						try {
+							u.setPhone3_new(profile.getString(Account.AccountMetaData.PHONE3_NEW));
+							Log.e("phone3_new",""+profile.getString(Account.AccountMetaData.PHONE3_NEW));
+						} catch (JSONException e) {
+							Reporter.reportError(context, this.getClass().toString(), Thread.currentThread().getStackTrace()[2]
+									.getMethodName().toString(), e.getMessage());
+						}
+						try {
 							u.setPhone(profile.getString(Account.AccountMetaData.PHONE1), 1);
 						} catch (JSONException e) {
 							Reporter.reportError(context, this.getClass().toString(), Thread.currentThread().getStackTrace()[2]
