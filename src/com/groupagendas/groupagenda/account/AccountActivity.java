@@ -800,13 +800,13 @@ public class AccountActivity extends Activity implements OnClickListener {
 			chagesMade = true;
 		}
 		//TODO email 2 3
-		if(!account.getPhone1().equals("") && !account.getPhone1().equals(phone1View.getText().toString())){
+		if(!account.getPhone1().equals("null") && !account.getPhone1().equals(phone1View.getText().toString())){
 			chagesMade = true;
 		}
-		if(!account.getPhone2().equals("") && !account.getPhone2().equals(phone2View.getText().toString())){
+		if(!account.getPhone2().equals("null") && !account.getPhone2().equals(phone2View.getText().toString())){
 			chagesMade = true;
 		}
-		if(!account.getPhone3().equals("") && !account.getPhone3().equals(phone3View.getText().toString())){
+		if(!account.getPhone3().equals("null") && !account.getPhone3().equals(phone3View.getText().toString())){
 			chagesMade = true;
 		}
 		if(!birthdateView.getText().toString().equals("")){
