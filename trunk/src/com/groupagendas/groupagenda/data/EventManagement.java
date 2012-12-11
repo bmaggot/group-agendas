@@ -257,8 +257,8 @@ public class EventManagement {
 		Uri uri = EMetaData.EventsMetaData.CONTENT_URI;
 		String[] projection = { EMetaData.EventsMetaData.TITLE, EMetaData.EventsMetaData.LAST_MESSAGE_DATE_TIME_UTC_MILISECONDS,
 				EMetaData.EventsMetaData.NEW_MESSAGES_COUNT, EMetaData.EventsMetaData.MESSAGES_COUNT, EMetaData.EventsMetaData.E_ID };
-		String selection = EMetaData.EventsMetaData.MESSAGES_COUNT + ">0" + " AND " + EMetaData.EventsMetaData.STATUS + "="
-				+ Invited.ACCEPTED;
+		String selection = EMetaData.EventsMetaData.MESSAGES_COUNT + ">0" + " AND " + EMetaData.EventsMetaData.STATUS + "!="
+				+ Invited.REJECTED;
 		String sortOrder = EMetaData.EventsMetaData.LAST_MESSAGE_DATE_TIME_UTC_MILISECONDS + " DESC ";
 		Cursor result = context.getContentResolver().query(uri, projection, selection, null, sortOrder);
 		ArrayList<ChatThreadObject> resultList = new ArrayList<ChatThreadObject>();
