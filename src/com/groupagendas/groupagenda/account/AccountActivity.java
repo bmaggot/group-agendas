@@ -411,7 +411,7 @@ public class AccountActivity extends Activity implements OnClickListener {
 		}
 
 		// country
-		String country = account.getCountry();
+		String country = account.getCountry(AccountActivity.this);
 		if (country.length() > 0) {
 			for (StaticTimezones entry : countriesList) {
 				if (entry.country2.equalsIgnoreCase(country) || entry.country.equalsIgnoreCase(country)) {
@@ -822,7 +822,7 @@ public class AccountActivity extends Activity implements OnClickListener {
 		if(!account.getSex().equals("null") && !account.getSex().equals(sexArray[(int) sexSpinner.getSelectedItemId()].toString())){
 			chagesMade = true;
 		}
-		if(!account.getCountry().equals("null") && !account.getCountry().equals(countriesList.get(timezoneInUse).country_code)){
+		if(!account.getCountry(AccountActivity.this).equals("null") && !account.getCountry(AccountActivity.this).equals(countriesList.get(timezoneInUse).country_code)){
 			chagesMade = true;
 		}
 		if(!account.getTimezone().equals("null") && !account.getTimezone().equals(countriesList.get(timezoneInUse).timezone)){
