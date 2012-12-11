@@ -2,7 +2,6 @@ package com.groupagendas.groupagenda.registration;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.Locale;
 
 import android.accounts.AccountManager;
@@ -169,7 +168,6 @@ public class RegistrationActivity extends Activity {
 		tm = (TelephonyManager) getSystemService(Context.TELEPHONY_SERVICE);
 		usersLocale = getApplicationContext().getResources().getConfiguration().locale;
 		simLocale = new Locale(tm.getSimCountryIso(), tm.getSimCountryIso());
-		simpleDateFormat = (SimpleDateFormat) DateFormat.getDateFormat(getApplicationContext());
 		
 		ArrayAdapter<CharSequence> adapterLanguage = ArrayAdapter.createFromResource(this, R.array.language_labels,
 				android.R.layout.simple_spinner_item);
@@ -563,6 +561,7 @@ public class RegistrationActivity extends Activity {
 	
 	private void prefillFields() {
 		String userPhoneNo;
+		simpleDateFormat = (SimpleDateFormat) DateFormat.getDateFormat(getApplicationContext());
 		
 		// local language
 		if(simLocale.getDisplayLanguage() != null && !simLocale.getDisplayLanguage().equals("")){
@@ -598,7 +597,6 @@ public class RegistrationActivity extends Activity {
 
 		//dateformat
 		dateFormat = simpleDateFormat.toLocalizedPattern();
-		simpleDateFormat.getCalendar().get(Calendar.AM_PM);
 		
 		//ampm
 		if(DateFormat.is24HourFormat(getApplicationContext())){
@@ -611,7 +609,7 @@ public class RegistrationActivity extends Activity {
 	private boolean saveFieldValues() {
 		SharedPreferences prefs = getBaseContext().getSharedPreferences(SPREFS_TOKEN, 0);
 		Editor editor = prefs.edit();
-		
+
 		editor.putString(Account.AccountMetaData.NAME, nameView.getText().toString());
 		editor.putString(Account.AccountMetaData.LASTNAME, lastnameView.getText().toString());
 		editor.putString(Account.AccountMetaData.EMAIL, emailView.getText().toString());
@@ -628,8 +626,8 @@ public class RegistrationActivity extends Activity {
 		editor.putString(Account.AccountMetaData.CITY, cityField.getText().toString());
 		editor.putString(Account.AccountMetaData.BIRTHDATE, birthdateView.getText().toString());
 		editor.putBoolean("agreement", chkStatement.isChecked());
-		editor.putString("date_format", dateFormat);
-		editor.putBoolean("am_pm", ampm);
+//		editor.putString("date_format", dateFormat);
+//		editor.putBoolean("am_pm", ampm);
 		editor.putBoolean("saved", true);
 		
 		return editor.commit();
@@ -640,8 +638,8 @@ public class RegistrationActivity extends Activity {
 		Editor editor = prefs.edit();
 		
 		if (prefs.getBoolean("saved", false)) {
-			ampm = prefs.getBoolean("am_pm", false);
-			dateFormat = prefs.getString("date_format", DataManagement.SERVER_TIMESTAMP_FORMAT);
+//			ampm = prefs.getBoolean("am_pm", false);
+//			dateFormat = prefs.getString("date_format", DataManagement.ACCOUNT_BIRTHDATE_TIMESTAMP_FORMAT);
 			nameView.setText(prefs.getString(Account.AccountMetaData.NAME, ""));
 			lastnameView.setText(prefs.getString(Account.AccountMetaData.LASTNAME, ""));
 			emailView.setText(prefs.getString(Account.AccountMetaData.EMAIL, ""));
