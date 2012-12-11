@@ -269,5 +269,10 @@
     <string name="failed_getting_error">Failed getting error message.</string>
     <string name="no_internet_conn">There is no internet connection.</string>
     <string name="agenda_visibility">Agenda visibility</string>
+    <string name="email_unverified">Email need to be verified by link send to this email</string>
+    <string name="email2_unverified">Email #2 need to be verified by link send to this email</string>
+    <string name="email3_unverified">Email #3 need to be verified by link send to this email</string>
+    <string name="email4_unverified">Email #4 need to be verified by link send to this email</string>
+    <string name="email4">Email #4</string>
     
 </resources>
