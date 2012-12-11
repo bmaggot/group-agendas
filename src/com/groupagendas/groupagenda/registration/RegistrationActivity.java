@@ -19,7 +19,6 @@ import android.content.res.Configuration;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.os.Debug;
 import android.telephony.TelephonyManager;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -477,7 +476,6 @@ public class RegistrationActivity extends Activity {
 
 		@Override
 		protected void onPostExecute(Boolean result) {
-			Debug.waitForDebugger(); // TODO remove debugger call
 			pb.setVisibility(View.INVISIBLE);
 			if (result) {
 				showDialog(DIALOG_SUCCESS);
