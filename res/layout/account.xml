@@ -147,6 +147,7 @@
                     android:id="@+id/emailView"
                     android:layout_width="fill_parent"
                     android:layout_height="wrap_content"
+                    android:maxLines="2"
                     android:inputType="text" />
             </LinearLayout>
 
@@ -173,6 +174,7 @@
                     android:id="@+id/email2View"
                     android:layout_width="fill_parent"
                     android:layout_height="wrap_content"
+                    android:maxLines="2"
                     android:inputType="text" />
             </LinearLayout>
 
@@ -193,6 +195,7 @@
                     android:layout_width="100dp"
                     android:layout_height="wrap_content"
                     android:text="@string/email3"
+                    android:maxLines="2"
                     android:textColor="@android:color/black" />
 
                 <EditText
@@ -225,6 +228,7 @@
                     android:id="@+id/emai4View"
                     android:layout_width="fill_parent"
                     android:layout_height="wrap_content"
+                    android:maxLines="2"
                     android:inputType="text" />
             </LinearLayout>
 
