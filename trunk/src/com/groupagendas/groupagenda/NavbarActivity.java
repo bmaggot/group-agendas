@@ -7,11 +7,13 @@ import java.util.Locale;
 import org.json.JSONObject;
 
 import android.annotation.SuppressLint;
+import android.app.AlertDialog;
 import android.app.Dialog;
 import android.app.ProgressDialog;
 import android.content.BroadcastReceiver;
 import android.content.ContentResolver;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.res.Configuration;
@@ -41,6 +43,7 @@ import az.mecid.android.ActionItem;
 import az.mecid.android.QuickAction;
 
 import com.groupagendas.groupagenda.account.Account;
+import com.groupagendas.groupagenda.account.verification.SmsVerificationCodeActivity;
 import com.groupagendas.groupagenda.calendar.AbstractCalendarView;
 import com.groupagendas.groupagenda.calendar.agenda.AgendaView;
 import com.groupagendas.groupagenda.calendar.dayandweek.DayWeekView;
@@ -109,6 +112,8 @@ public class NavbarActivity extends FragmentActivity {
 	public static boolean uptadeResponresBadge = true;
 	public static boolean ifResponsesFirstTime = true;
 	public static int newResponsesBadges = 0;
+	public static String newPhoneNumber = "newphonenumber";
+	public static boolean showVerificationDialog = false;
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -782,6 +787,15 @@ public class NavbarActivity extends FragmentActivity {
 		@Override
 		protected void onPostExecute(Void result) {
 
+			if(!acc.getPhone1_new().contentEquals("") && !acc.getPhone1_new().contentEquals("null")){
+				showDialogForPhoneVerification(NavbarActivity.this, acc.getPhone1_new(), "1");
+			}
+			if(!acc.getPhone2_new().contentEquals("") && !acc.getPhone2_new().contentEquals("null")){
+				showDialogForPhoneVerification(NavbarActivity.this, acc.getPhone2_new(), "2");
+			}
+			if(!acc.getPhone3_new().contentEquals("") && !acc.getPhone3_new().contentEquals("null")){
+				showDialogForPhoneVerification(NavbarActivity.this, acc.getPhone3_new(), "3");
+			}
 			acc.setLatestUpdateTime(Calendar.getInstance());
 			progressDialog.dismiss();
 			dataLoaded = true;
@@ -805,7 +819,16 @@ public class NavbarActivity extends FragmentActivity {
 
 		@Override
 		protected void onPostExecute(Void result) {
-
+			
+			if(!acc.getPhone1_new().contentEquals("") && !acc.getPhone1_new().contentEquals("null")){
+				showDialogForPhoneVerification(NavbarActivity.this, acc.getPhone1_new(), "1");
+			}
+			if(!acc.getPhone2_new().contentEquals("") && !acc.getPhone2_new().contentEquals("null")){
+				showDialogForPhoneVerification(NavbarActivity.this, acc.getPhone2_new(), "2");
+			}
+			if(!acc.getPhone3_new().contentEquals("") && !acc.getPhone3_new().contentEquals("null")){
+				showDialogForPhoneVerification(NavbarActivity.this, acc.getPhone3_new(), "3");
+			}
 			acc.setLatestUpdateTime(Calendar.getInstance());
 			dataLoaded = true;
 			switchToView();
@@ -959,5 +982,30 @@ public class NavbarActivity extends FragmentActivity {
 			newMessageBadge();
 		}
 	};
+	
+	public static void showDialogForPhoneVerification(final Context context, String number, final String number_id){
+		AlertDialog.Builder builder = new AlertDialog.Builder(context);
+		builder.setTitle(R.string.phone_number_verification);
+		builder.setMessage(context.getString(R.string.verification_dialog) + " " + number);
+		builder.setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
+			
+			@Override
+			public void onClick(DialogInterface dialog, int which) {
+				dialog.cancel();
+			}
+		});
+		builder.setPositiveButton(R.string.approve, new DialogInterface.OnClickListener() {
+			
+			@Override
+			public void onClick(DialogInterface dialog, int which) {
+				Intent intent = new Intent(context, SmsVerificationCodeActivity.class);
+				intent.putExtra(newPhoneNumber, number_id);
+				context.startActivity(intent);
+				
+			}
+		});
+		AlertDialog dialog = builder.create();
+		dialog.show();
+	}
 
 }
