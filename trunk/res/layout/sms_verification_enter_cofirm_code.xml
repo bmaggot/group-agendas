@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/white"
+    android:orientation="vertical" >
+
+    <ImageView
+        android:layout_width="30dp"
+        android:layout_height="30dp"
+        android:layout_gravity="center"
+        android:layout_marginTop="22dp"
+        android:src="@drawable/sms_verification_confirm" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:layout_marginTop="18dp"
+        android:text="@string/sms_verification_phone_number_confirm"
+        android:textSize="16dp"
+        android:textColor="#929293"
+        android:textStyle="bold" />
+    
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="45dp"
+        android:layout_marginBottom="10dp"
+        android:layout_marginLeft="10dp"
+        android:layout_marginRight="10dp"
+        android:background="@drawable/event_icon_placeholder"
+        android:orientation="horizontal" >
+
+        <EditText
+            android:id="@+id/confirm_code"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="10dp"
+            android:layout_marginLeft="10dp"
+            android:layout_marginRight="10dp"
+            android:layout_marginTop="10dp"
+            android:background="@drawable/transparent"
+            android:hint="@string/sms_verification_confirm_code_hint"
+            android:textColor="#5c5b5b"
+            android:textSize="12dp"
+            android:textStyle="bold"
+            android:inputType="phone" />
+    </LinearLayout>
+    
+    <Button
+        android:id="@+id/confirmButton"
+        android:layout_width="fill_parent"
+        android:layout_height="40dp"
+        android:layout_marginLeft="10dp"
+        android:layout_marginRight="10dp"
+        android:background="@drawable/sms_verification_continue_button"
+        android:text="@string/sms_verification_confirm_code"
+        android:textColor="@color/white"
+        android:textSize="18dp"
+        android:textStyle="bold" />
+
+</LinearLayout>
