@@ -332,6 +332,7 @@ public class DataManagement {
 									.getMethodName().toString(), e.getMessage());
 						}
 						/* PHONE1 */
+//						Debug.waitForDebugger(); // TODO remove debugger call
 						try {
 							u.setPhone(profile.getString(Account.AccountMetaData.PHONE1), 1);
 						} catch (JSONException e) {
@@ -364,7 +365,7 @@ public class DataManagement {
 									.getMethodName().toString(), e.getMessage());
 						}
 						try {
-							u.setPhone_verified(profile.getString(Account.AccountMetaData.PHONE1_VERIFIED).equalsIgnoreCase("1"), 1);
+							u.setPhone_verified(profile.getString(Account.AccountMetaData.PHONE2_VERIFIED).equalsIgnoreCase("1"), 2);
 						} catch (JSONException e) {
 							Reporter.reportError(context, this.getClass().toString(), Thread.currentThread().getStackTrace()[2]
 									.getMethodName().toString(), e.getMessage());
@@ -383,7 +384,7 @@ public class DataManagement {
 									.getMethodName().toString(), e.getMessage());
 						}
 						try {
-							u.setPhone_verified(profile.getString(Account.AccountMetaData.PHONE1_VERIFIED).equalsIgnoreCase("1"), 1);
+							u.setPhone_verified(profile.getString(Account.AccountMetaData.PHONE3_VERIFIED).equalsIgnoreCase("1"), 3);
 						} catch (JSONException e) {
 							Reporter.reportError(context, this.getClass().toString(), Thread.currentThread().getStackTrace()[2]
 									.getMethodName().toString(), e.getMessage());
