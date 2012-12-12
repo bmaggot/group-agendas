@@ -2690,4 +2690,63 @@ public class DataManagement {
 		context.getContentResolver().getType(EventsProvider.EMetaData.EventsMetaData.CONTENT_URI);
 
 	}
+	
+	public static JSONObject confirmPhoneNumber(Context context, String number_id, String verify_code) {
+		JSONObject object = null;
+		try {
+			WebService webService = new WebService();
+			HttpPost post = new HttpPost(Data.getServerUrl() + "mobile/phone/confirm");
+
+			MultipartEntity reqEntity = new MultipartEntity(HttpMultipartMode.BROWSER_COMPATIBLE);
+
+			reqEntity.addPart(TOKEN, new StringBody(Data.getToken(context), Charset.forName("UTF-8")));
+			reqEntity.addPart("phone_id", new StringBody(number_id, Charset.forName("UTF-8")));
+			reqEntity.addPart("verify_code", new StringBody(verify_code, Charset.forName("UTF-8")));
+			post.setEntity(reqEntity);
+
+			HttpResponse rp = webService.getResponseFromHttpPost(post);
+
+			if (rp.getStatusLine().getStatusCode() == HttpStatus.SC_OK) {
+				String resp = EntityUtils.toString(rp.getEntity());
+				if (resp != null) {
+					object = new JSONObject(resp);
+					
+				}
+			}
+		} catch (Exception ex) {
+			Reporter.reportError(context, context.getClass().toString(), Thread.currentThread().getStackTrace()[2].getMethodName().toString(),
+					ex.getMessage());
+		}
+		
+		return object;
+	}
+	
+	public static JSONObject resendConfirmPhoneNumberCode(Context context, String number_id) {
+		JSONObject object = null;
+		
+		try {
+			WebService webService = new WebService();
+			HttpPost post = new HttpPost(Data.getServerUrl() + "mobile/phone/resend");
+
+			MultipartEntity reqEntity = new MultipartEntity(HttpMultipartMode.BROWSER_COMPATIBLE);
+
+			reqEntity.addPart(TOKEN, new StringBody(Data.getToken(context), Charset.forName("UTF-8")));
+			reqEntity.addPart("phone_id", new StringBody(number_id, Charset.forName("UTF-8")));
+			post.setEntity(reqEntity);
+
+			HttpResponse rp = webService.getResponseFromHttpPost(post);
+
+			if (rp.getStatusLine().getStatusCode() == HttpStatus.SC_OK) {
+				String resp = EntityUtils.toString(rp.getEntity());
+				if (resp != null) {
+					object = new JSONObject(resp);
+				}
+			}
+		} catch (Exception ex) {
+			Reporter.reportError(context, context.getClass().toString(), Thread.currentThread().getStackTrace()[2].getMethodName().toString(),
+					ex.getMessage());
+		}
+		
+		return object;
+	}
 }
