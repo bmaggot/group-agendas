@@ -440,11 +440,23 @@ public class AccountActivity extends Activity implements OnClickListener {
 			phone1View.setText(account.getPhone1());
 		}
 
+		if (!account.getPhone1_code().equals("null")) {
+			phone1CodeView.setText(account.getPhone1_code());
+		}
+
 		if (!account.getPhone2().equals("null"))
 			phone2View.setText(account.getPhone2());
 
+		if (!account.getPhone2_code().equals("null")) {
+			phone2CodeView.setText(account.getPhone2_code());
+		}
+
 		if (!account.getPhone3().equals("null"))
 			phone3View.setText(account.getPhone3());
+
+		if (!account.getPhone3_code().equals("null")) {
+			phone3CodeView.setText(account.getPhone3_code());
+		}
 
 		if (account.getBirthdate() != null) {
 //			final Calendar c = Utils.stringToCalendar(getApplicationContext(), account.getBirthdate().toString(), DataManagement.ACCOUNT_BIRTHDATE_TIMESTAMP_FORMAT);
@@ -472,9 +484,9 @@ public class AccountActivity extends Activity implements OnClickListener {
 
 			if (timezoneInUse > 0) {
 				countryView.setText(countriesList.get(timezoneInUse).country2);
-				phone1CodeView.setText("+" + countriesList.get(timezoneInUse).call_code);
-				phone2CodeView.setText("+" + countriesList.get(timezoneInUse).call_code);
-				phone3CodeView.setText("+" + countriesList.get(timezoneInUse).call_code);
+//				phone1CodeView.setText("+" + countriesList.get(timezoneInUse).call_code);
+//				phone2CodeView.setText("+" + countriesList.get(timezoneInUse).call_code);
+//				phone3CodeView.setText("+" + countriesList.get(timezoneInUse).call_code);
 			}
 		}
 
