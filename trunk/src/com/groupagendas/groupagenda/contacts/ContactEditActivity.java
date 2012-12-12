@@ -815,7 +815,8 @@ public class ContactEditActivity extends Activity implements OnClickListener, On
 			if (result) {
 				onBackPressed();
 			} else {
-				ContactEditActivity.this.finish();
+				TextView saveButton = (TextView) findViewById(R.id.sendbutton);
+				saveButton.setText(getString(R.string.save));
 				showDialog(ERROR_DIALOG);
 			}
 			super.onPostExecute(result);
