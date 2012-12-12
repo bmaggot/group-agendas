@@ -405,14 +405,19 @@ public class Account {
 		switch (fieldNo) {
 		case 0:
 			column_name = Account.AccountMetaData.EMAIL;
+			break;
 		case 1:
 			column_name = Account.AccountMetaData.EMAIL1;
+			break;
 		case 2:
 			column_name = Account.AccountMetaData.EMAIL2;
+			break;
 		case 3:
 			column_name = Account.AccountMetaData.EMAIL3;
+			break;
 		case 4:
 			column_name = Account.AccountMetaData.EMAIL4;
+			break;
 		}
 		
 		prefsEditor.putString(column_name, email);
@@ -425,12 +430,16 @@ public class Account {
 		switch (fieldNo) {
 		case 1:
 			column_name = Account.AccountMetaData.EMAIL1_VERIFIED;
+			break;
 		case 2:
 			column_name = Account.AccountMetaData.EMAIL2_VERIFIED;
+			break;
 		case 3:
 			column_name = Account.AccountMetaData.EMAIL3_VERIFIED;
+			break;
 		case 4:
 			column_name = Account.AccountMetaData.EMAIL4_VERIFIED;
+			break;
 		}
 		
 		prefsEditor.putBoolean(column_name, verified);
@@ -443,10 +452,13 @@ public class Account {
 		switch (fieldNo) {
 		case 1:
 			column_name = Account.AccountMetaData.PHONE1;
+			break;
 		case 2:
 			column_name = Account.AccountMetaData.PHONE2;
+			break;
 		case 3:
 			column_name = Account.AccountMetaData.PHONE3;
+			break;
 		}
 		
 		prefsEditor.putString(column_name, phone);
@@ -458,10 +470,13 @@ public class Account {
 		switch (fieldNo) {
 		case 1:
 			column_name = Account.AccountMetaData.PHONE1_CODE;
+			break;
 		case 2:
 			column_name = Account.AccountMetaData.PHONE2_CODE;
+			break;
 		case 3:
 			column_name = Account.AccountMetaData.PHONE3_CODE;
+			break;
 		}
 		
 		prefsEditor.putString(column_name, phone_code);
@@ -474,10 +489,13 @@ public class Account {
 		switch (fieldNo) {
 		case 1:
 			column_name = Account.AccountMetaData.PHONE1_VERIFIED;
+			break;
 		case 2:
 			column_name = Account.AccountMetaData.PHONE2_VERIFIED;
+			break;
 		case 3:
 			column_name = Account.AccountMetaData.PHONE3_VERIFIED;
+			break;
 		}
 		
 		prefsEditor.putBoolean(column_name, verified);
