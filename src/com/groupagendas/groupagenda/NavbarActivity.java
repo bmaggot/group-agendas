@@ -787,15 +787,16 @@ public class NavbarActivity extends FragmentActivity {
 		@Override
 		protected void onPostExecute(Void result) {
 
-			if(!acc.getPhone1_new().contentEquals("") && !acc.getPhone1_new().contentEquals("null")){
-				showDialogForPhoneVerification(NavbarActivity.this, acc.getPhone1_new(), "1");
+			if(!acc.getPhone1().contentEquals("") && !acc.getPhone1().contentEquals("null") && !acc.getPhone1_verified()){
+				showDialogForPhoneVerification(NavbarActivity.this, acc.getPhone1(), "1");
 			}
-			if(!acc.getPhone2_new().contentEquals("") && !acc.getPhone2_new().contentEquals("null")){
-				showDialogForPhoneVerification(NavbarActivity.this, acc.getPhone2_new(), "2");
+			if(!acc.getPhone2().contentEquals("") && !acc.getPhone2().contentEquals("null") && !acc.getPhone2_verified()){
+				showDialogForPhoneVerification(NavbarActivity.this, acc.getPhone2(), "2");
 			}
-			if(!acc.getPhone3_new().contentEquals("") && !acc.getPhone3_new().contentEquals("null")){
-				showDialogForPhoneVerification(NavbarActivity.this, acc.getPhone3_new(), "3");
+			if(!acc.getPhone3().contentEquals("") && !acc.getPhone3().contentEquals("null") && !acc.getPhone3_verified()){
+				showDialogForPhoneVerification(NavbarActivity.this, acc.getPhone3(), "3");
 			}
+			
 			acc.setLatestUpdateTime(Calendar.getInstance());
 			progressDialog.dismiss();
 			dataLoaded = true;
@@ -820,15 +821,16 @@ public class NavbarActivity extends FragmentActivity {
 		@Override
 		protected void onPostExecute(Void result) {
 			
-			if(!acc.getPhone1_new().contentEquals("") && !acc.getPhone1_new().contentEquals("null")){
-				showDialogForPhoneVerification(NavbarActivity.this, acc.getPhone1_new(), "1");
+			if(!acc.getPhone1().contentEquals("") && !acc.getPhone1().contentEquals("null") && !acc.getPhone1_verified()){
+				showDialogForPhoneVerification(NavbarActivity.this, acc.getPhone1(), "1");
 			}
-			if(!acc.getPhone2_new().contentEquals("") && !acc.getPhone2_new().contentEquals("null")){
-				showDialogForPhoneVerification(NavbarActivity.this, acc.getPhone2_new(), "2");
+			if(!acc.getPhone2().contentEquals("") && !acc.getPhone2().contentEquals("null") && !acc.getPhone2_verified()){
+				showDialogForPhoneVerification(NavbarActivity.this, acc.getPhone2(), "2");
 			}
-			if(!acc.getPhone3_new().contentEquals("") && !acc.getPhone3_new().contentEquals("null")){
-				showDialogForPhoneVerification(NavbarActivity.this, acc.getPhone3_new(), "3");
+			if(!acc.getPhone3().contentEquals("") && !acc.getPhone3().contentEquals("null") && !acc.getPhone3_verified()){
+				showDialogForPhoneVerification(NavbarActivity.this, acc.getPhone3(), "3");
 			}
+			
 			acc.setLatestUpdateTime(Calendar.getInstance());
 			dataLoaded = true;
 			switchToView();
