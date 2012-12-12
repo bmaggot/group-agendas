@@ -144,7 +144,7 @@
                     android:textColor="@android:color/black" />
 
                 <EditText
-                    android:id="@+id/emailView"
+                    android:id="@+id/email1View"
                     android:layout_width="fill_parent"
                     android:layout_height="wrap_content"
                     android:maxLines="2"
@@ -152,6 +152,7 @@
             </LinearLayout>
 
             <TextView
+                android:id="@+id/email1_unverified"
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
                 android:text="@string/email_unverified"
@@ -179,6 +180,7 @@
             </LinearLayout>
 
             <TextView
+                android:id="@+id/email2_unverified"
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
                 android:text="@string/email2_unverified"
@@ -199,13 +201,14 @@
                     android:textColor="@android:color/black" />
 
                 <EditText
-                    android:id="@+id/emai3View"
+                    android:id="@+id/email3View"
                     android:layout_width="fill_parent"
                     android:layout_height="wrap_content"
                     android:inputType="text" />
             </LinearLayout>
 
             <TextView
+                android:id="@+id/email3_unverified"
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
                 android:text="@string/email3_unverified"
@@ -225,7 +228,7 @@
                     android:textColor="@android:color/black" />
 
                 <EditText
-                    android:id="@+id/emai4View"
+                    android:id="@+id/email4View"
                     android:layout_width="fill_parent"
                     android:layout_height="wrap_content"
                     android:maxLines="2"
@@ -233,6 +236,7 @@
             </LinearLayout>
 
             <TextView
+                android:id="@+id/email4_unverified"
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
                 android:text="@string/email4_unverified"
