@@ -25,6 +25,7 @@ import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.Debug;
 import android.os.Environment;
 import android.provider.MediaStore;
 import android.text.Editable;
@@ -557,6 +558,7 @@ public class AccountActivity extends Activity implements OnClickListener {
 		// mAccount.setEmail(temp, 0);
 
 		// Phones
+		Debug.waitForDebugger(); // TODO remove debugger call
 		temp1 = phone1View.getText().toString();
 		if(!mAccount.getPhone1().contentEquals(temp1)){
 			mAccount.setPhone(temp1, 1);
@@ -587,7 +589,7 @@ public class AccountActivity extends Activity implements OnClickListener {
 
 		temp1 = phone3View.getText().toString();
 		if(!mAccount.getPhone3().contentEquals(temp1)){
-			mAccount.setPhone(temp1, 1);
+			mAccount.setPhone(temp1, 3);
 		}
 		
 		temp2 = phone3CodeView.getText().toString();
