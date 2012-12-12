@@ -558,7 +558,7 @@ public class AccountActivity extends Activity implements OnClickListener {
 		// mAccount.setEmail(temp, 0);
 
 		// Phones
-		Debug.waitForDebugger(); // TODO remove debugger call
+//		Debug.waitForDebugger(); // TODO remove debugger call
 		temp1 = phone1View.getText().toString();
 		if(!mAccount.getPhone1().contentEquals(temp1)){
 			mAccount.setPhone(temp1, 1);
