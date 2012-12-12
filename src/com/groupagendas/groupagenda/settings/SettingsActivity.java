@@ -60,14 +60,15 @@ public class SettingsActivity extends ListActivity{
 		
 		if(NavbarActivity.showVerificationDialog){
 			Account mAccount = new Account(this);
-			if(!mAccount.getPhone1_new().contentEquals("") && !mAccount.getPhone1_new().contentEquals("null")){
-				NavbarActivity.showDialogForPhoneVerification(SettingsActivity.this, mAccount.getPhone1_new(), "1");
+			
+			if(!mAccount.getPhone1().contentEquals("") && !mAccount.getPhone1().contentEquals("null") && !mAccount.getPhone1_verified()){
+				NavbarActivity.showDialogForPhoneVerification(SettingsActivity.this, mAccount.getPhone1(), "1");
 			}
-			if(!mAccount.getPhone2_new().contentEquals("") && !mAccount.getPhone2_new().contentEquals("null")){
-				NavbarActivity.showDialogForPhoneVerification(SettingsActivity.this, mAccount.getPhone2_new(), "2");
+			if(!mAccount.getPhone2().contentEquals("") && !mAccount.getPhone2().contentEquals("null") && !mAccount.getPhone2_verified()){
+				NavbarActivity.showDialogForPhoneVerification(SettingsActivity.this, mAccount.getPhone2(), "2");
 			}
-			if(!mAccount.getPhone3_new().contentEquals("") && !mAccount.getPhone3_new().contentEquals("null")){
-				NavbarActivity.showDialogForPhoneVerification(SettingsActivity.this, mAccount.getPhone3_new(), "3");
+			if(!mAccount.getPhone3().contentEquals("") && !mAccount.getPhone3().contentEquals("null") && !mAccount.getPhone3_verified()){
+				NavbarActivity.showDialogForPhoneVerification(SettingsActivity.this, mAccount.getPhone3(), "3");
 			}
 			NavbarActivity.showVerificationDialog = false;
 		}
