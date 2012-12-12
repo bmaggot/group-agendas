@@ -136,11 +136,11 @@ public class DataManagement {
 
 			reqEntity.addPart(Account.AccountMetaData.TIMEZONE, new StringBody(account.getTimezone(), Charset.forName("UTF-8")));
 			reqEntity.addPart(Account.AccountMetaData.PHONE1, new StringBody(account.getPhone1(), Charset.forName("UTF-8")));
-//			reqEntity.addPart(Account.AccountMetaData.PHONE1_CODE, new StringBody(account.getPhone1_code(), Charset.forName("UTF-8")));
+			reqEntity.addPart(Account.AccountMetaData.PHONE1_CODE, new StringBody(account.getPhone1_code(), Charset.forName("UTF-8")));
 			reqEntity.addPart(Account.AccountMetaData.PHONE2, new StringBody(account.getPhone2(), Charset.forName("UTF-8")));
-//			reqEntity.addPart(Account.AccountMetaData.PHONE2_CODE, new StringBody(account.getPhone2_code(), Charset.forName("UTF-8")));
+			reqEntity.addPart(Account.AccountMetaData.PHONE2_CODE, new StringBody(account.getPhone2_code(), Charset.forName("UTF-8")));
 			reqEntity.addPart(Account.AccountMetaData.PHONE3, new StringBody(account.getPhone3(), Charset.forName("UTF-8")));
-//			reqEntity.addPart(Account.AccountMetaData.PHONE3_CODE, new StringBody(account.getPhone3_code(), Charset.forName("UTF-8")));
+			reqEntity.addPart(Account.AccountMetaData.PHONE3_CODE, new StringBody(account.getPhone3_code(), Charset.forName("UTF-8")));
 			
 			reqEntity.addPart(Account.AccountMetaData.EMAIL, new StringBody(account.getEmail(), Charset.forName("UTF-8")));
 
