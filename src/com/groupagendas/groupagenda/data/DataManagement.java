@@ -136,8 +136,12 @@ public class DataManagement {
 
 			reqEntity.addPart(Account.AccountMetaData.TIMEZONE, new StringBody(account.getTimezone(), Charset.forName("UTF-8")));
 			reqEntity.addPart(Account.AccountMetaData.PHONE1, new StringBody(account.getPhone1(), Charset.forName("UTF-8")));
+//			reqEntity.addPart(Account.AccountMetaData.PHONE1_CODE, new StringBody(account.getPhone1_code(), Charset.forName("UTF-8")));
 			reqEntity.addPart(Account.AccountMetaData.PHONE2, new StringBody(account.getPhone2(), Charset.forName("UTF-8")));
+//			reqEntity.addPart(Account.AccountMetaData.PHONE2_CODE, new StringBody(account.getPhone2_code(), Charset.forName("UTF-8")));
 			reqEntity.addPart(Account.AccountMetaData.PHONE3, new StringBody(account.getPhone3(), Charset.forName("UTF-8")));
+//			reqEntity.addPart(Account.AccountMetaData.PHONE3_CODE, new StringBody(account.getPhone3_code(), Charset.forName("UTF-8")));
+			
 			reqEntity.addPart(Account.AccountMetaData.EMAIL, new StringBody(account.getEmail(), Charset.forName("UTF-8")));
 
 			reqEntity.addPart("language", new StringBody(account.getLanguage(), Charset.forName("UTF-8")));
@@ -280,7 +284,25 @@ public class DataManagement {
 									.getMethodName().toString(), e.getMessage());
 						}
 						try {
+							u.setEmail(profile.getString(Account.AccountMetaData.EMAIL1), 0);
+						} catch (JSONException e) {
+							Reporter.reportError(context, this.getClass().toString(), Thread.currentThread().getStackTrace()[2]
+									.getMethodName().toString(), e.getMessage());
+						}
+						try {
+							u.setEmail_verified(profile.getString(Account.AccountMetaData.EMAIL1_VERIFIED).equalsIgnoreCase("1"), 1);
+						} catch (JSONException e) {
+							Reporter.reportError(context, this.getClass().toString(), Thread.currentThread().getStackTrace()[2]
+									.getMethodName().toString(), e.getMessage());
+						}
+						try {
 							u.setEmail(profile.getString(Account.AccountMetaData.EMAIL2), 2);
+						} catch (JSONException e) {
+							Reporter.reportError(context, this.getClass().toString(), Thread.currentThread().getStackTrace()[2]
+									.getMethodName().toString(), e.getMessage());
+						}
+						try {
+							u.setEmail_verified(profile.getString(Account.AccountMetaData.EMAIL2_VERIFIED).equalsIgnoreCase("1"), 2);
 						} catch (JSONException e) {
 							Reporter.reportError(context, this.getClass().toString(), Thread.currentThread().getStackTrace()[2]
 									.getMethodName().toString(), e.getMessage());
@@ -292,32 +314,24 @@ public class DataManagement {
 									.getMethodName().toString(), e.getMessage());
 						}
 						try {
+							u.setEmail_verified(profile.getString(Account.AccountMetaData.EMAIL3_VERIFIED).equalsIgnoreCase("1"), 1);
+						} catch (JSONException e) {
+							Reporter.reportError(context, this.getClass().toString(), Thread.currentThread().getStackTrace()[2]
+									.getMethodName().toString(), e.getMessage());
+						}
+						try {
 							u.setEmail(profile.getString(Account.AccountMetaData.EMAIL4), 4);
 						} catch (JSONException e) {
 							Reporter.reportError(context, this.getClass().toString(), Thread.currentThread().getStackTrace()[2]
 									.getMethodName().toString(), e.getMessage());
 						}
 						try {
-							u.setPhone1_new(profile.getString(Account.AccountMetaData.PHONE1_NEW));
-							Log.e("phone1_new",""+profile.getString(Account.AccountMetaData.PHONE1_NEW));
+							u.setEmail_verified(profile.getString(Account.AccountMetaData.EMAIL4_VERIFIED).equalsIgnoreCase("1"), 1);
 						} catch (JSONException e) {
 							Reporter.reportError(context, this.getClass().toString(), Thread.currentThread().getStackTrace()[2]
 									.getMethodName().toString(), e.getMessage());
 						}
-						try {
-							u.setPhone2_new(profile.getString(Account.AccountMetaData.PHONE2_NEW));
-							Log.e("phone2_new",""+profile.getString(Account.AccountMetaData.PHONE2_NEW));
-						} catch (JSONException e) {
-							Reporter.reportError(context, this.getClass().toString(), Thread.currentThread().getStackTrace()[2]
-									.getMethodName().toString(), e.getMessage());
-						}
-						try {
-							u.setPhone3_new(profile.getString(Account.AccountMetaData.PHONE3_NEW));
-							Log.e("phone3_new",""+profile.getString(Account.AccountMetaData.PHONE3_NEW));
-						} catch (JSONException e) {
-							Reporter.reportError(context, this.getClass().toString(), Thread.currentThread().getStackTrace()[2]
-									.getMethodName().toString(), e.getMessage());
-						}
+						/* PHONE1 */
 						try {
 							u.setPhone(profile.getString(Account.AccountMetaData.PHONE1), 1);
 						} catch (JSONException e) {
@@ -325,18 +339,57 @@ public class DataManagement {
 									.getMethodName().toString(), e.getMessage());
 						}
 						try {
+							u.setPhone_code(profile.getString(Account.AccountMetaData.PHONE1_CODE), 1);
+						} catch (JSONException e) {
+							Reporter.reportError(context, this.getClass().toString(), Thread.currentThread().getStackTrace()[2]
+									.getMethodName().toString(), e.getMessage());
+						}
+						try {
+							u.setPhone_verified(profile.getString(Account.AccountMetaData.PHONE1_VERIFIED).equalsIgnoreCase("1"), 1);
+						} catch (JSONException e) {
+							Reporter.reportError(context, this.getClass().toString(), Thread.currentThread().getStackTrace()[2]
+									.getMethodName().toString(), e.getMessage());
+						}
+						/* PHONE2 */
+						try {
 							u.setPhone(profile.getString(Account.AccountMetaData.PHONE2), 2);
 						} catch (JSONException e) {
 							Reporter.reportError(context, this.getClass().toString(), Thread.currentThread().getStackTrace()[2]
 									.getMethodName().toString(), e.getMessage());
 						}
 						try {
+							u.setPhone_code(profile.getString(Account.AccountMetaData.PHONE2_CODE), 2);
+						} catch (JSONException e) {
+							Reporter.reportError(context, this.getClass().toString(), Thread.currentThread().getStackTrace()[2]
+									.getMethodName().toString(), e.getMessage());
+						}
+						try {
+							u.setPhone_verified(profile.getString(Account.AccountMetaData.PHONE1_VERIFIED).equalsIgnoreCase("1"), 1);
+						} catch (JSONException e) {
+							Reporter.reportError(context, this.getClass().toString(), Thread.currentThread().getStackTrace()[2]
+									.getMethodName().toString(), e.getMessage());
+						}
+						/* PHONE3 */
+						try {
 							u.setPhone(profile.getString(Account.AccountMetaData.PHONE3), 3);
 						} catch (JSONException e) {
 							Reporter.reportError(context, this.getClass().toString(), Thread.currentThread().getStackTrace()[2]
 									.getMethodName().toString(), e.getMessage());
 						}
+						try {
+							u.setPhone_code(profile.getString(Account.AccountMetaData.PHONE3_CODE), 3);
+						} catch (JSONException e) {
+							Reporter.reportError(context, this.getClass().toString(), Thread.currentThread().getStackTrace()[2]
+									.getMethodName().toString(), e.getMessage());
+						}
+						try {
+							u.setPhone_verified(profile.getString(Account.AccountMetaData.PHONE1_VERIFIED).equalsIgnoreCase("1"), 1);
+						} catch (JSONException e) {
+							Reporter.reportError(context, this.getClass().toString(), Thread.currentThread().getStackTrace()[2]
+									.getMethodName().toString(), e.getMessage());
+						}
 
+						/* IMAGE */
 						try {
 							u.setImage(profile.getBoolean(Account.AccountMetaData.IMAGE));
 						} catch (JSONException e) {
