@@ -80,8 +80,11 @@ public class AccountActivity extends Activity implements OnClickListener {
 	// TODO implement ability tu change primary email.
 	// private EditText emailView;
 	private EditText phone1View;
+	private EditText phone1CodeView;
 	private EditText phone2View;
+	private EditText phone2CodeView;
 	private EditText phone3View;
+	private EditText phone3CodeView;
 
 	// Birthdate
 	private EditText birthdateView;
@@ -120,7 +123,16 @@ public class AccountActivity extends Activity implements OnClickListener {
 	private LinearLayout timezoneSpinnerBlock;
 	private Spinner languageSpinner;
 	private String[] languageArray;
-	private TextView emailView;
+
+	private EditText email1View;
+	private EditText email2View;
+	private EditText email3View;
+	private EditText email4View;
+	
+	private TextView email1_verifiedView;
+	private TextView email2_verifiedView;
+	private TextView email3_verifiedView;
+	private TextView email4_verifiedView;
 	
 	private ToggleButton notifyByEmail;
 	private ToggleButton notifyByPush;
@@ -169,7 +181,16 @@ public class AccountActivity extends Activity implements OnClickListener {
 			timezonesAdapter = new TimezonesAdapter(AccountActivity.this, R.layout.search_dialog_item, countriesList);
 		}
 
-		emailView = (EditText) findViewById(R.id.emailView);
+		email1View = (EditText) findViewById(R.id.email1View);
+		email2View = (EditText) findViewById(R.id.email2View);
+		email3View = (EditText) findViewById(R.id.email3View);
+		email4View = (EditText) findViewById(R.id.email4View);
+		
+		email1_verifiedView = (TextView) findViewById(R.id.email1_unverified);
+		email2_verifiedView = (TextView) findViewById(R.id.email2_unverified);
+		email3_verifiedView = (TextView) findViewById(R.id.email3_unverified);
+		email4_verifiedView = (TextView) findViewById(R.id.email4_unverified);
+		
 		languageSpinner = (Spinner) findViewById(R.id.languageSpinner);
 		ArrayAdapter<CharSequence> adapterLanguage = ArrayAdapter.createFromResource(this, R.array.language_labels,
 				android.R.layout.simple_spinner_item);
@@ -185,8 +206,11 @@ public class AccountActivity extends Activity implements OnClickListener {
 
 		// emailView = (EditText) findViewById(R.id.emailView);
 		phone1View = (EditText) findViewById(R.id.phone1View);
+		phone1CodeView = (EditText) findViewById(R.id.phonecode1View);
 		phone2View = (EditText) findViewById(R.id.phone2View);
+		phone2CodeView = (EditText) findViewById(R.id.phonecode2View);
 		phone3View = (EditText) findViewById(R.id.phone3View);
+		phone3CodeView = (EditText) findViewById(R.id.phonecode3View);
 
 		// Birthdate
 		birthdateView = (EditText) findViewById(R.id.birthdateView);
@@ -384,11 +408,14 @@ public class AccountActivity extends Activity implements OnClickListener {
 			lastnameView.setText("");
 		}
 
-		if (!account.getEmail().equals("null"))
-			emailView.setText(account.getEmail());
+		if (!account.getEmail1().equals("null"))
+			email1View.setText(account.getEmail());
+		
+//		if (!account.getE)
 
-		if (!account.getPhone1().equals("null"))
+		if (!account.getPhone1().equals("null")) {
 			phone1View.setText(account.getPhone1());
+		}
 
 		if (!account.getPhone2().equals("null"))
 			phone2View.setText(account.getPhone2());
@@ -422,6 +449,9 @@ public class AccountActivity extends Activity implements OnClickListener {
 
 			if (timezoneInUse > 0) {
 				countryView.setText(countriesList.get(timezoneInUse).country2);
+				phone1CodeView.setText("+" + countriesList.get(timezoneInUse).call_code);
+				phone2CodeView.setText("+" + countriesList.get(timezoneInUse).call_code);
+				phone3CodeView.setText("+" + countriesList.get(timezoneInUse).call_code);
 			}
 		}
 
@@ -491,20 +521,22 @@ public class AccountActivity extends Activity implements OnClickListener {
 
 		// Phones
 		temp = phone1View.getText().toString();
-		if(!mAccount.getPhone1_new().contentEquals(temp)){
-			mAccount.setPhone1_new(temp);
+		if(!mAccount.getPhone1().contentEquals(temp)){
+			mAccount.setPhone(temp, 1);
+			mAccount.setPhone_verified(false, 1);
 		}
-		mAccount.setPhone(temp, 1);
+
 		temp = phone2View.getText().toString();
-		if(!mAccount.getPhone2_new().contentEquals(temp)){
-			mAccount.setPhone2_new(temp);
+		if(!mAccount.getPhone2().contentEquals(temp)){
+			mAccount.setPhone(temp, 2);
+			mAccount.setPhone_verified(false, 2);
 		}
-		mAccount.setPhone(temp, 2);
+
 		temp = phone3View.getText().toString();
-		if(!mAccount.getPhone3_new().contentEquals(temp)){
-			mAccount.setPhone3_new(temp);
+		if(!mAccount.getPhone3().contentEquals(temp)){
+			mAccount.setPhone(temp, 3);
+			mAccount.setPhone_verified(false, 3);
 		}
-		mAccount.setPhone(temp, 3);
 
 		// Date
 		temp = birthdateView.getText().toString();
@@ -800,7 +832,7 @@ public class AccountActivity extends Activity implements OnClickListener {
 		if(!account.getLastname().equals(lastnameView.getText().toString())){
 			chagesMade = true;
 		}
-		if(!account.getEmail().equals(emailView.getText().toString())){
+		if(!account.getEmail().equals(email1View.getText().toString())){
 			chagesMade = true;
 		}
 		//TODO email 2 3
