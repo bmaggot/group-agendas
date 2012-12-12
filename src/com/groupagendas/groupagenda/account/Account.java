@@ -93,9 +93,9 @@ public class Account {
 		public static final String RESPONSES = "responses"; 
 		public static final String RESPONSES_BADGE = "responsesBadge"; 
 		
-		public static final String PHONE1_NEW = "phone1_new"; 
-		public static final String PHONE2_NEW = "phone2_new"; 
-		public static final String PHONE3_NEW = "phone3_new";
+		public static final String PHONE1_NEW = "phone1"; 
+		public static final String PHONE2_NEW = "phone2"; 
+		public static final String PHONE3_NEW = "phone3";
 		public static final String EMAIL1_NEW = "email1_new"; 
 		public static final String EMAIL2_NEW = "email2_new"; 
 		public static final String EMAIL3_NEW = "email3_new"; 
