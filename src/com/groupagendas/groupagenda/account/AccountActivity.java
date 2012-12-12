@@ -409,9 +409,32 @@ public class AccountActivity extends Activity implements OnClickListener {
 		}
 
 		if (!account.getEmail1().equals("null"))
-			email1View.setText(account.getEmail());
+			email1View.setText(account.getEmail1());
 		
-//		if (!account.getE)
+		if (!account.getEmail1().equals("null") && (account.getEmail1().length() > 0) && !account.getEmail1_verified()) {
+			email1_verifiedView.setVisibility(View.VISIBLE);
+		}
+
+		if (!account.getEmail2().equals("null"))
+			email2View.setText(account.getEmail2());
+		
+		if (!account.getEmail2().equals("null") && (account.getEmail2().length() > 0) && !account.getEmail2_verified()) {
+			email2_verifiedView.setVisibility(View.VISIBLE);
+		}
+
+		if (!account.getEmail3().equals("null"))
+			email3View.setText(account.getEmail3());
+		
+		if (!account.getEmail3().equals("null") && (account.getEmail3().length() > 0) && !account.getEmail3_verified()) {
+			email3_verifiedView.setVisibility(View.VISIBLE);
+		}
+
+		if (!account.getEmail4().equals("null"))
+			email4View.setText(account.getEmail4());
+		
+		if (!account.getEmail4().equals("null") && (account.getEmail4().length() > 0) && !account.getEmail4_verified()) {
+			email4_verifiedView.setVisibility(View.VISIBLE);
+		}
 
 		if (!account.getPhone1().equals("null")) {
 			phone1View.setText(account.getPhone1());
@@ -507,6 +530,8 @@ public class AccountActivity extends Activity implements OnClickListener {
 	public void saveAccount(View view) {
 		Account mAccount = new Account(this);
 		String temp;
+		String temp1; // TODO OPTIMIZE DAT!
+		String temp2;
 
 		// name, fullname
 		String name = nameView.getText().toString();
@@ -520,21 +545,45 @@ public class AccountActivity extends Activity implements OnClickListener {
 		// mAccount.setEmail(temp, 0);
 
 		// Phones
-		temp = phone1View.getText().toString();
-		if(!mAccount.getPhone1().contentEquals(temp)){
-			mAccount.setPhone(temp, 1);
+		temp1 = phone1View.getText().toString();
+		if(!mAccount.getPhone1().contentEquals(temp1)){
+			mAccount.setPhone(temp1, 1);
+		}
+		
+		temp2 = phone1CodeView.getText().toString();
+		if(!mAccount.getPhone1_code().contentEquals(temp2)) {
+			mAccount.setPhone_code(temp2, 1);
+		}
+		
+		if(!mAccount.getPhone1().contentEquals(temp1) || !mAccount.getPhone1_code().contentEquals(temp2)) {
 			mAccount.setPhone_verified(false, 1);
 		}
 
-		temp = phone2View.getText().toString();
-		if(!mAccount.getPhone2().contentEquals(temp)){
-			mAccount.setPhone(temp, 2);
+		temp1 = phone2View.getText().toString();
+		if(!mAccount.getPhone2().contentEquals(temp1)){
+			mAccount.setPhone(temp1, 2);
+		}
+		
+		temp2 = phone2CodeView.getText().toString();
+		if(!mAccount.getPhone2_code().contentEquals(temp2)) {
+			mAccount.setPhone_code(temp2, 2);
+		}
+		
+		if(!mAccount.getPhone2().contentEquals(temp1) || !mAccount.getPhone2_code().contentEquals(temp2)) {
 			mAccount.setPhone_verified(false, 2);
 		}
 
-		temp = phone3View.getText().toString();
-		if(!mAccount.getPhone3().contentEquals(temp)){
-			mAccount.setPhone(temp, 3);
+		temp1 = phone3View.getText().toString();
+		if(!mAccount.getPhone3().contentEquals(temp1)){
+			mAccount.setPhone(temp1, 1);
+		}
+		
+		temp2 = phone3CodeView.getText().toString();
+		if(!mAccount.getPhone3_code().contentEquals(temp2)) {
+			mAccount.setPhone_code(temp2, 3);
+		}
+		
+		if(!mAccount.getPhone3().contentEquals(temp1) || !mAccount.getPhone3_code().contentEquals(temp2)) {
 			mAccount.setPhone_verified(false, 3);
 		}
 
