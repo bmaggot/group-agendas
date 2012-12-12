@@ -260,7 +260,8 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:ems="4"
-                    android:inputType="textNoSuggestions"
+                    android:maxLength="5"
+                    android:inputType="phone"
                     android:singleLine="true" />
 
                 <EditText
@@ -287,7 +288,8 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:ems="4"
-                    android:inputType="textNoSuggestions"
+                    android:maxLength="5"
+                    android:inputType="phone"
                     android:singleLine="true" />
 
                 <EditText
@@ -314,7 +316,8 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:ems="4"
-                    android:inputType="textNoSuggestions"
+                    android:maxLength="5"
+                    android:inputType="phone"
                     android:singleLine="true" />
 
                 <EditText
