@@ -31,6 +31,7 @@ public class SmsVerificationCodeActivity extends Activity {
 		pd = new ProgressDialog(SmsVerificationCodeActivity.this);
 		Button confirmBut = (Button) findViewById(R.id.confirmButton);
 		confirmCode = (EditText) findViewById(R.id.confirm_code);
+		new ResendConfirmationSyncTask().execute();
 		confirmBut.setOnClickListener(new OnClickListener() {
 
 			@Override
