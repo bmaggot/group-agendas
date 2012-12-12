@@ -23,6 +23,7 @@ import android.widget.ListView;
 
 import com.google.android.c2dm.C2DMessaging;
 import com.groupagendas.groupagenda.GroupAgendasActivity;
+import com.groupagendas.groupagenda.NavbarActivity;
 import com.groupagendas.groupagenda.R;
 import com.groupagendas.groupagenda.account.Account;
 import com.groupagendas.groupagenda.account.AccountActivity;
@@ -32,6 +33,7 @@ import com.groupagendas.groupagenda.error.report.Reporter;
 import com.groupagendas.groupagenda.https.WebService;
 
 public class SettingsActivity extends ListActivity{
+	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -49,8 +51,27 @@ public class SettingsActivity extends ListActivity{
 		};
 		
 		setListAdapter(new SettingsAdapter(this, settings));
+		
 	}
 
+	@Override
+	protected void onResume() {
+		super.onResume();
+		
+		if(NavbarActivity.showVerificationDialog){
+			Account mAccount = new Account(this);
+			if(!mAccount.getPhone1_new().contentEquals("") && !mAccount.getPhone1_new().contentEquals("null")){
+				NavbarActivity.showDialogForPhoneVerification(SettingsActivity.this, mAccount.getPhone1_new(), "1");
+			}
+			if(!mAccount.getPhone2_new().contentEquals("") && !mAccount.getPhone2_new().contentEquals("null")){
+				NavbarActivity.showDialogForPhoneVerification(SettingsActivity.this, mAccount.getPhone2_new(), "2");
+			}
+			if(!mAccount.getPhone3_new().contentEquals("") && !mAccount.getPhone3_new().contentEquals("null")){
+				NavbarActivity.showDialogForPhoneVerification(SettingsActivity.this, mAccount.getPhone3_new(), "3");
+			}
+			NavbarActivity.showVerificationDialog = false;
+		}
+	}
 	
 	@Override
 	protected void onListItemClick(ListView l, View v, int position, long id) {
