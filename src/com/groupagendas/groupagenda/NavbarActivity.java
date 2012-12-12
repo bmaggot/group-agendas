@@ -120,7 +120,6 @@ public class NavbarActivity extends FragmentActivity {
 		super.onCreate(savedInstanceState);
 
 		dm = DataManagement.getInstance(this);
-
 		setContentView(R.layout.actnavbar);
 
 		ifResponsesFirstTime = true;
@@ -1009,5 +1008,6 @@ public class NavbarActivity extends FragmentActivity {
 		AlertDialog dialog = builder.create();
 		dialog.show();
 	}
-
+	
+	
 }
