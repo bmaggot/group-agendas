@@ -51,6 +51,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.ToggleButton;
 
+import com.groupagendas.groupagenda.NavbarActivity;
 import com.groupagendas.groupagenda.R;
 import com.groupagendas.groupagenda.data.DataManagement;
 import com.groupagendas.groupagenda.error.report.Reporter;
@@ -490,17 +491,17 @@ public class AccountActivity extends Activity implements OnClickListener {
 
 		// Phones
 		temp = phone1View.getText().toString();
-		if(mAccount.getPhone1_new().contentEquals(temp)){
+		if(!mAccount.getPhone1_new().contentEquals(temp)){
 			mAccount.setPhone1_new(temp);
 		}
 		mAccount.setPhone(temp, 1);
 		temp = phone2View.getText().toString();
-		if(mAccount.getPhone2_new().contentEquals(temp)){
+		if(!mAccount.getPhone2_new().contentEquals(temp)){
 			mAccount.setPhone2_new(temp);
 		}
 		mAccount.setPhone(temp, 2);
 		temp = phone3View.getText().toString();
-		if(mAccount.getPhone3_new().contentEquals(temp)){
+		if(!mAccount.getPhone3_new().contentEquals(temp)){
 			mAccount.setPhone3_new(temp);
 		}
 		mAccount.setPhone(temp, 3);
@@ -553,7 +554,9 @@ public class AccountActivity extends Activity implements OnClickListener {
 		}
 
 		new EditAccountTask().execute();
-
+		
+		NavbarActivity.showVerificationDialog = true;
+		
 		finish();
 	}
 
@@ -643,8 +646,9 @@ public class AccountActivity extends Activity implements OnClickListener {
 
 		@Override
 		protected void onPostExecute(Boolean result) {
+			
 			pb.setVisibility(View.GONE);
-			finish();
+			//finish();
 		}
 	}
 
