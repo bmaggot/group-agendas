@@ -41,13 +41,28 @@ public class Account {
 		public static final String SEX = "sex";
 
 		public static final String EMAIL = "email";
+		public static final String EMAIL1 = "email1";
 		public static final String EMAIL2 = "email2";
 		public static final String EMAIL3 = "email3";
 		public static final String EMAIL4 = "email4";
+		
+		public static final String EMAIL1_VERIFIED = "email1_verified";
+		public static final String EMAIL2_VERIFIED = "email2_verified";
+		public static final String EMAIL3_VERIFIED = "email3_verified";
+		public static final String EMAIL4_VERIFIED = "email4_verified";
+		
 		public static final String PHONE1 = "phone1";
 		public static final String PHONE2 = "phone2";
 		public static final String PHONE3 = "phone3";
 
+		public static final String PHONE1_CODE = "phone1_code";
+		public static final String PHONE2_CODE = "phone2_code";
+		public static final String PHONE3_CODE = "phone3_code";
+		
+		public static final String PHONE1_VERIFIED = "phone1_verified";
+		public static final String PHONE2_VERIFIED = "phone2_verified";
+		public static final String PHONE3_VERIFIED = "phone3_verified";
+		
 		public static final String IMAGE = "image";
 		public static final String IMAGE_BYTES = "image_bytes";
 		public static final String IMAGE_URL = "image_url";
@@ -92,15 +107,6 @@ public class Account {
 		
 		public static final String RESPONSES = "responses"; 
 		public static final String RESPONSES_BADGE = "responsesBadge"; 
-		
-		public static final String PHONE1_NEW = "phone1"; 
-		public static final String PHONE2_NEW = "phone2"; 
-		public static final String PHONE3_NEW = "phone3";
-		public static final String EMAIL1_NEW = "email1_new"; 
-		public static final String EMAIL2_NEW = "email2_new"; 
-		public static final String EMAIL3_NEW = "email3_new"; 
-		public static final String EMAIL4_NEW = "email4_new"; 
-		
 	}
 
 
@@ -176,6 +182,10 @@ public class Account {
 		return prefs.getString(Account.AccountMetaData.EMAIL, "");
 	}
 
+	public String getEmail1() {
+		return prefs.getString(Account.AccountMetaData.EMAIL1, "");
+	}
+
 	public String getEmail2() {
 		return prefs.getString(Account.AccountMetaData.EMAIL2, "");
 	}
@@ -188,18 +198,58 @@ public class Account {
 		return prefs.getString(Account.AccountMetaData.EMAIL4, "");
 	}
 
+	public boolean getEmail1_verified() {
+		return prefs.getBoolean(Account.AccountMetaData.EMAIL1_VERIFIED, true);
+	}
+
+	public boolean getEmail2_verified() {
+		return prefs.getBoolean(Account.AccountMetaData.EMAIL2_VERIFIED, false);
+	}
+
+	public boolean getEmail3_verified() {
+		return prefs.getBoolean(Account.AccountMetaData.EMAIL3_VERIFIED, false);
+	}
+
+	public boolean getEmail4_verified() {
+		return prefs.getBoolean(Account.AccountMetaData.EMAIL4_VERIFIED, false);
+	}
+
 	public String getPhone1() {
 		return prefs.getString(Account.AccountMetaData.PHONE1, "");
+	}
+
+	public String getPhone1_code() {
+		return prefs.getString(Account.AccountMetaData.PHONE1_CODE, "");
+	}
+	
+	public boolean getPhone1_verified() {
+		return prefs.getBoolean(Account.AccountMetaData.PHONE1_VERIFIED, true);
 	}
 
 	public String getPhone2() {
 		return prefs.getString(Account.AccountMetaData.PHONE2, "");
 	}
 
+	public String getPhone2_code() {
+		return prefs.getString(Account.AccountMetaData.PHONE2_CODE, "");
+	}
+
+	public boolean getPhone2_verified() {
+		return prefs.getBoolean(Account.AccountMetaData.PHONE2_VERIFIED, false);
+	}
+
 	public String getPhone3() {
 		return prefs.getString(Account.AccountMetaData.PHONE3, "");
 	}
 	
+	public String getPhone3_code() {
+		return prefs.getString(Account.AccountMetaData.PHONE3_CODE, "");
+	}
+
+	public boolean getPhone3_verified() {
+		return prefs.getBoolean(Account.AccountMetaData.PHONE3_VERIFIED, false);
+	}
+
 	public String getPushId() {
 		return prefs.getString(Account.AccountMetaData.PUSH_ID, "");
 	}
@@ -350,28 +400,87 @@ public class Account {
 	}
 
 	public void setEmail(String email, int fieldNo) {
+		String column_name = null;
+		
 		switch (fieldNo) {
 		case 0:
-			prefsEditor.putString(Account.AccountMetaData.EMAIL, email);
+			column_name = Account.AccountMetaData.EMAIL;
+		case 1:
+			column_name = Account.AccountMetaData.EMAIL1;
 		case 2:
-			prefsEditor.putString(Account.AccountMetaData.EMAIL2, email);
+			column_name = Account.AccountMetaData.EMAIL2;
 		case 3:
-			prefsEditor.putString(Account.AccountMetaData.EMAIL3, email);
+			column_name = Account.AccountMetaData.EMAIL3;
 		case 4:
-			prefsEditor.putString(Account.AccountMetaData.EMAIL4, email);
+			column_name = Account.AccountMetaData.EMAIL4;
 		}
+		
+		prefsEditor.putString(column_name, email);
+		prefsEditor.commit();
+	}
+
+	public void setEmail_verified(boolean verified, int fieldNo) {
+		String column_name = null;
+		
+		switch (fieldNo) {
+		case 1:
+			column_name = Account.AccountMetaData.EMAIL1_VERIFIED;
+		case 2:
+			column_name = Account.AccountMetaData.EMAIL2_VERIFIED;
+		case 3:
+			column_name = Account.AccountMetaData.EMAIL3_VERIFIED;
+		case 4:
+			column_name = Account.AccountMetaData.EMAIL4_VERIFIED;
+		}
+		
+		prefsEditor.putBoolean(column_name, verified);
 		prefsEditor.commit();
 	}
 
 	public void setPhone(String phone, int fieldNo) {
+		String column_name = null;
+		
 		switch (fieldNo) {
 		case 1:
-			prefsEditor.putString(Account.AccountMetaData.PHONE1, phone);
+			column_name = Account.AccountMetaData.PHONE1;
 		case 2:
-			prefsEditor.putString(Account.AccountMetaData.PHONE2, phone);
+			column_name = Account.AccountMetaData.PHONE2;
 		case 3:
-			prefsEditor.putString(Account.AccountMetaData.PHONE3, phone);
+			column_name = Account.AccountMetaData.PHONE3;
 		}
+		
+		prefsEditor.putString(column_name, phone);
+		prefsEditor.commit();
+	}
+
+	public void setPhone_code(String phone_code, int fieldNo) {
+		String column_name = null;
+		switch (fieldNo) {
+		case 1:
+			column_name = Account.AccountMetaData.PHONE1_CODE;
+		case 2:
+			column_name = Account.AccountMetaData.PHONE2_CODE;
+		case 3:
+			column_name = Account.AccountMetaData.PHONE3_CODE;
+		}
+		
+		prefsEditor.putString(column_name, phone_code);
+		prefsEditor.commit();
+	}
+	
+	public void setPhone_verified(boolean verified, int fieldNo) {
+		String column_name = null;
+		
+		switch (fieldNo) {
+		case 1:
+			column_name = Account.AccountMetaData.PHONE1_VERIFIED;
+		case 2:
+			column_name = Account.AccountMetaData.PHONE2_VERIFIED;
+		case 3:
+			column_name = Account.AccountMetaData.PHONE3_VERIFIED;
+		}
+		
+		prefsEditor.putBoolean(column_name, verified);
 		prefsEditor.commit();
 	}
 
@@ -539,69 +648,4 @@ public class Account {
 		prefsEditor.remove(AccountMetaData.LAST_TIME_CONNECTED_IN_MS);
 		prefsEditor.commit();
 	}
-	
-	public String getPhone1_new(){
-		return prefs.getString(Account.AccountMetaData.PHONE1_NEW, "");
-	}
-	
-	public void setPhone1_new(String phone1_new){
-		prefsEditor.putString(Account.AccountMetaData.PHONE1_NEW, phone1_new);
-		prefsEditor.commit();
-	}
-	
-	public String getPhone2_new(){
-		return prefs.getString(Account.AccountMetaData.PHONE2_NEW, "");
-	}
-	
-	public void setPhone2_new(String phone2_new){
-		prefsEditor.putString(Account.AccountMetaData.PHONE2_NEW, phone2_new);
-		prefsEditor.commit();
-	}
-	
-	public String getPhone3_new(){
-		return prefs.getString(Account.AccountMetaData.PHONE3_NEW, "");
-	}
-	
-	public void setPhone3_new(String phone3_new){
-		prefsEditor.putString(Account.AccountMetaData.PHONE3_NEW, phone3_new);
-		prefsEditor.commit();
-	}
-	
-	public String getEmail1_new(){
-		return prefs.getString(Account.AccountMetaData.EMAIL1_NEW, "");
-	}
-	
-	public void setEmail1_new(String email1_new){
-		prefsEditor.putString(Account.AccountMetaData.EMAIL1_NEW, email1_new);
-		prefsEditor.commit();
-	}
-	
-	public String getEmail2_new(){
-		return prefs.getString(Account.AccountMetaData.EMAIL2_NEW, "");
-	}
-	
-	public void setEmail2_new(String email2_new){
-		prefsEditor.putString(Account.AccountMetaData.EMAIL2_NEW, email2_new);
-		prefsEditor.commit();
-	}
-	
-	public String getEmail3_new(){
-		return prefs.getString(Account.AccountMetaData.EMAIL3_NEW, "");
-	}
-	
-	public void setEmail3_new(String email3_new){
-		prefsEditor.putString(Account.AccountMetaData.EMAIL3_NEW, email3_new);
-		prefsEditor.commit();
-	}
-	
-	public String getEmail4_new(){
-		return prefs.getString(Account.AccountMetaData.EMAIL4_NEW, "");
-	}
-	
-	public void setEmail4_new(String email4_new){
-		prefsEditor.putString(Account.AccountMetaData.EMAIL4_NEW, email4_new);
-		prefsEditor.commit();
-	}
-	
 }
-
