@@ -88,7 +88,7 @@ public class EventsProvider extends ContentProvider{
 			public static final String TYPE 	= "type";
 			
 			public static final String CREATOR_FULLNAME		= "creator_fullname";
-			public static final String CREATOR_CONTACT_ID	= "creator_contact_id";
+			public static final String CREATOR_CONTACT_ID	= "author_contact_id";
 			
 			
 			public static final String TITLE	= "title";
