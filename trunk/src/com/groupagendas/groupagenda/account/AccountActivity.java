@@ -59,6 +59,7 @@ import com.groupagendas.groupagenda.events.EventActivity;
 import com.groupagendas.groupagenda.events.EventActivity.StaticTimezones;
 import com.groupagendas.groupagenda.timezone.CountriesAdapter;
 import com.groupagendas.groupagenda.timezone.TimezonesAdapter;
+import com.groupagendas.groupagenda.utils.DateTimeUtils;
 import com.groupagendas.groupagenda.utils.LanguageCodeGetter;
 import com.groupagendas.groupagenda.utils.Utils;
 
@@ -408,22 +409,25 @@ public class AccountActivity extends Activity implements OnClickListener {
 			lastnameView.setText("");
 		}
 
-		if (!account.getEmail1().equals("null"))
+		if (!account.getEmail1().equals("null")) {
 			email1View.setText(account.getEmail1());
+		}
 		
 		if (!account.getEmail1().equals("null") && (account.getEmail1().length() > 0) && !account.getEmail1_verified()) {
 			email1_verifiedView.setVisibility(View.VISIBLE);
 		}
 
-		if (!account.getEmail2().equals("null"))
+		if (!account.getEmail2().equals("null")) {
 			email2View.setText(account.getEmail2());
+		}
 		
 		if (!account.getEmail2().equals("null") && (account.getEmail2().length() > 0) && !account.getEmail2_verified()) {
 			email2_verifiedView.setVisibility(View.VISIBLE);
 		}
 
-		if (!account.getEmail3().equals("null"))
+		if (!account.getEmail3().equals("null")) {
 			email3View.setText(account.getEmail3());
+		}
 		
 		if (!account.getEmail3().equals("null") && (account.getEmail3().length() > 0) && !account.getEmail3_verified()) {
 			email3_verifiedView.setVisibility(View.VISIBLE);
@@ -460,11 +464,18 @@ public class AccountActivity extends Activity implements OnClickListener {
 
 		if (account.getBirthdate() != null) {
 //			final Calendar c = Utils.stringToCalendar(getApplicationContext(), account.getBirthdate().toString(), DataManagement.ACCOUNT_BIRTHDATE_TIMESTAMP_FORMAT);
-			mYear = account.getBirthdate().get(Calendar.YEAR);
-			mMonth = account.getBirthdate().get(Calendar.MONTH);
-			mDay = account.getBirthdate().get(Calendar.DAY_OF_MONTH);
+//			mYear = account.getBirthdate().get(Calendar.YEAR);
+//			mMonth = account.getBirthdate().get(Calendar.MONTH);
+//			mDay = account.getBirthdate().get(Calendar.DAY_OF_MONTH);
+//			
+//			updateBirthdate();
+			DateTimeUtils dtUtils = new DateTimeUtils(AccountActivity.this);
+			Calendar birthdateCalendar = account.getBirthdate();
+			mYear = birthdateCalendar.get(Calendar.YEAR);
+			mMonth = birthdateCalendar.get(Calendar.MONTH);
+			mDay = birthdateCalendar.get(Calendar.DAY_OF_MONTH);
 			
-			updateBirthdate();
+			birthdateView.setText(dtUtils.formatDate(birthdateCalendar));
 		}
 
 		// sex
@@ -553,49 +564,82 @@ public class AccountActivity extends Activity implements OnClickListener {
 		mAccount.setLastname(lastnameView.getText().toString());
 
 		// Email
-		// temp = emailView.getText().toString();
-		// mAccount.setEmail(temp, 0);
+		temp = email1View.getText().toString();
+		if (!mAccount.getEmail1().contentEquals(temp)) {
+			mAccount.setEmail(temp, 1);
+		}
+		
+		if (!mAccount.getEmail1().contentEquals(temp)) {
+			mAccount.setEmail_verified(false, 1);
+		}
+
+		temp = email2View.getText().toString();
+		if (!mAccount.getEmail2().contentEquals(temp)) {
+			mAccount.setEmail(temp, 2);
+		}
+		
+		if (!mAccount.getEmail2().contentEquals(temp)) {
+			mAccount.setEmail_verified(false, 2);
+		}
+
+		temp = email3View.getText().toString();
+		if (!mAccount.getEmail3().contentEquals(temp)) {
+			mAccount.setEmail(temp, 3);
+		}
+		
+		if (!mAccount.getEmail3().contentEquals(temp)) {
+			mAccount.setEmail_verified(false, 3);
+		}
+
+		temp = email4View.getText().toString();
+		if (!mAccount.getEmail4().contentEquals(temp)) {
+			mAccount.setEmail(temp, 4);
+		}
+		
+		if (!mAccount.getEmail4().contentEquals(temp)) {
+			mAccount.setEmail_verified(false, 4);
+		}
 
 		// Phones
 		temp1 = phone1View.getText().toString();
-		if(!mAccount.getPhone1().contentEquals(temp1)){
+		if (!mAccount.getPhone1().contentEquals(temp1)) {
 			mAccount.setPhone(temp1, 1);
 		}
 		
 		temp2 = phone1CodeView.getText().toString();
-		if(!mAccount.getPhone1_code().contentEquals(temp2)) {
+		if (!mAccount.getPhone1_code().contentEquals(temp2)) {
 			mAccount.setPhone_code(temp2, 1);
 		}
 		
-		if(!mAccount.getPhone1().contentEquals(temp1) || !mAccount.getPhone1_code().contentEquals(temp2)) {
+		if (!mAccount.getPhone1().contentEquals(temp1) || !mAccount.getPhone1_code().contentEquals(temp2)) {
 			mAccount.setPhone_verified(false, 1);
 		}
 
 		temp1 = phone2View.getText().toString();
-		if(!mAccount.getPhone2().contentEquals(temp1)){
+		if (!mAccount.getPhone2().contentEquals(temp1)) {
 			mAccount.setPhone(temp1, 2);
 		}
 		
 		temp2 = phone2CodeView.getText().toString();
-		if(!mAccount.getPhone2_code().contentEquals(temp2)) {
+		if (!mAccount.getPhone2_code().contentEquals(temp2)) {
 			mAccount.setPhone_code(temp2, 2);
 		}
 		
-		if(!mAccount.getPhone2().contentEquals(temp1) || !mAccount.getPhone2_code().contentEquals(temp2)) {
+		if (!mAccount.getPhone2().contentEquals(temp1) || !mAccount.getPhone2_code().contentEquals(temp2)) {
 			mAccount.setPhone_verified(false, 2);
 		}
 
 		temp1 = phone3View.getText().toString();
-		if(!mAccount.getPhone3().contentEquals(temp1)){
+		if (!mAccount.getPhone3().contentEquals(temp1)) {
 			mAccount.setPhone(temp1, 3);
 		}
 		
 		temp2 = phone3CodeView.getText().toString();
-		if(!mAccount.getPhone3_code().contentEquals(temp2)) {
+		if (!mAccount.getPhone3_code().contentEquals(temp2)) {
 			mAccount.setPhone_code(temp2, 3);
 		}
 		
-		if(!mAccount.getPhone3().contentEquals(temp1) || !mAccount.getPhone3_code().contentEquals(temp2)) {
+		if (!mAccount.getPhone3().contentEquals(temp1) || !mAccount.getPhone3_code().contentEquals(temp2)) {
 			mAccount.setPhone_verified(false, 3);
 		}
 
@@ -721,8 +765,8 @@ public class AccountActivity extends Activity implements OnClickListener {
 	};
 
 	private void updateBirthdate() {
-		mMonth++;
-		birthdateView.setText(new StringBuilder().append(mYear).append("-").append(mMonth < 10 ? "0" + mMonth : mMonth).append("-").append(mDay < 10 ? "0" + mDay : mDay));
+//		mMonth++;
+		birthdateView.setText(new StringBuilder().append(mYear).append("-").append(mMonth < 10 ? "0" + (mMonth + 1) : (mMonth + 1)).append("-").append(mDay < 10 ? "0" + mDay : mDay));
 	}
 
 	class EditAccountTask extends AsyncTask<Void, Boolean, Boolean> {
@@ -893,10 +937,18 @@ public class AccountActivity extends Activity implements OnClickListener {
 		if(!account.getLastname().equals(lastnameView.getText().toString())){
 			chagesMade = true;
 		}
-		if(!account.getEmail().equals(email1View.getText().toString())){
+		if(!account.getEmail1().equals(email1View.getText().toString())){
 			chagesMade = true;
 		}
-		//TODO email 2 3
+		if(!account.getEmail2().equals(email2View.getText().toString())){
+			chagesMade = true;
+		}
+		if(!account.getEmail3().equals(email3View.getText().toString())){
+			chagesMade = true;
+		}
+		if(!account.getEmail4().equals(email4View.getText().toString())){
+			chagesMade = true;
+		}
 		if(!account.getPhone1().equals("null") && !account.getPhone1().equals(phone1View.getText().toString())){
 			chagesMade = true;
 		}
@@ -906,10 +958,10 @@ public class AccountActivity extends Activity implements OnClickListener {
 		if(!account.getPhone3().equals("null") && !account.getPhone3().equals(phone3View.getText().toString())){
 			chagesMade = true;
 		}
-		if(!birthdateView.getText().toString().equals("")){
-			String[] birthdate = birthdateView.getText().toString().split("-");
-			birthdateView.setText(birthdate[0] + "-" + Integer.valueOf(birthdate[1]) + "-" + Integer.valueOf(birthdate[2]));
-		}
+//		if(!birthdateView.getText().toString().equals("")){
+//			String[] birthdate = birthdateView.getText().toString().split("-");
+//			birthdateView.setText(birthdate[0] + "-" + Integer.valueOf(birthdate[1]) + "-" + Integer.valueOf(birthdate[2]));
+//		}
 		if(!birthdateView.getText().toString().equals("")){
 			Calendar tmp = Utils.stringToCalendar(getApplicationContext(), birthdateView.getText().toString(), account.getTimezone(), account.getSetting_date_format());
 			if(account.getBirthdate().get(Calendar.YEAR) != tmp.get(Calendar.YEAR) && account.getBirthdate().get(Calendar.MONTH) != tmp.get(Calendar.MONTH) && account.getBirthdate().get(Calendar.DAY_OF_MONTH) != tmp.get(Calendar.DAY_OF_MONTH)){
