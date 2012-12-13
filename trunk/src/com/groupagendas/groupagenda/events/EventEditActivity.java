@@ -505,6 +505,8 @@ public class EventEditActivity extends EventActivity {
 		// REMINDERS PANEL
 		reminderBlock = (LinearLayout) findViewById(R.id.reminder_block);
 		setReminderTrigger = (TextView) findViewById(R.id.setReminderTrigger);
+		//TODO alarms eventedit turn on when ready.
+		setReminderTrigger.setVisibility(View.GONE);
 		setReminderTrigger.setOnClickListener(new OnClickListener() {
 
 			@Override
@@ -573,6 +575,8 @@ public class EventEditActivity extends EventActivity {
 		// ALARMS
 		alarmBlock = (LinearLayout) findViewById(R.id.alarm_block);
 		setAlarmTrigger = (TextView) findViewById(R.id.setAlarmTrigger);
+		//TODO alarms eventedit turn on when ready.
+		setAlarmTrigger.setVisibility(View.GONE);
 		setAlarmTrigger.setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View v) {
