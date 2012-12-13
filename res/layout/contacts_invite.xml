@@ -11,6 +11,7 @@
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:layout_gravity="center_horizontal"
+        android:layout_marginBottom="5dp"
         android:layout_marginLeft="10dp"
         android:layout_marginRight="10dp"
         android:layout_marginTop="5dp"
@@ -18,7 +19,7 @@
         android:padding="5dp"
         android:text="@string/invite_and_request_details"
         android:textColor="@color/black"
-        android:textSize="15dp"
+        android:textSize="15sp"
         android:textStyle="bold" />
 
     <Button
@@ -26,6 +27,7 @@
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:layout_gravity="center_horizontal"
+        android:layout_marginBottom="5dp"
         android:layout_marginLeft="10dp"
         android:layout_marginRight="10dp"
         android:layout_marginTop="5dp"
@@ -33,7 +35,7 @@
         android:padding="5dp"
         android:text="@string/invite_and_dont_request_details"
         android:textColor="@color/black"
-        android:textSize="15dp"
+        android:textSize="15sp"
         android:textStyle="bold" />
 
     <Button
@@ -41,6 +43,7 @@
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:layout_gravity="center_horizontal"
+        android:layout_marginBottom="15dp"
         android:layout_marginLeft="10dp"
         android:layout_marginRight="10dp"
         android:layout_marginTop="5dp"
@@ -48,7 +51,7 @@
         android:padding="5dp"
         android:text="@string/dont_invite"
         android:textColor="@color/black"
-        android:textSize="15dp"
+        android:textSize="15sp"
         android:textStyle="bold" />
 
 </LinearLayout>

@@ -1,6 +1,7 @@
 package com.groupagendas.groupagenda.utils;
 
 import android.app.Dialog;
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.os.AsyncTask;
@@ -23,9 +24,10 @@ public class InviteDialog extends Dialog {
 	private Button inviteAndRequest;
 	private Button justInvite;
 	private Button dontInvite;
-//	private View view;
+	// private View view;
 	private boolean req = false;
 	int event_id = 0;
+	private ProgressDialog pd;
 
 	public InviteDialog(Context context, int styleResId, final Invited invited, int event_id) {
 		super(context, styleResId);
@@ -34,6 +36,9 @@ public class InviteDialog extends Dialog {
 		this.event_id = event_id;
 		this.setTitle(context.getResources().getString(R.string.do_you_want_to_save_contact) + " " + invited.getName() + " "
 				+ context.getResources().getString(R.string.to_your_list));
+		if (pd == null) {
+			pd = new ProgressDialog(context);
+		}
 		inviteAndRequest = (Button) findViewById(R.id.contact_invite_and_request);
 		inviteAndRequest.setOnClickListener(new View.OnClickListener() {
 			@Override
@@ -54,7 +59,6 @@ public class InviteDialog extends Dialog {
 			}
 		});
 		dontInvite = (Button) findViewById(R.id.contact_dont_invite);
-
 		dontInvite.setOnClickListener(new View.OnClickListener() {
 
 			@Override
@@ -63,15 +67,23 @@ public class InviteDialog extends Dialog {
 			}
 		});
 	}
-	
+
 	public class Invite extends AsyncTask<Object, Void, Void> {
+
+		@Override
+		protected void onPreExecute() {
+			super.onPreExecute();
+			pd.setMessage(getContext().getResources().getString(R.string.loading));
+			pd.setCancelable(false);
+			pd.show();
+		}
 
 		@Override
 		protected Void doInBackground(Object... params) {
 			Invited i = (Invited) params[0];
 			Event event = EventManagement.getEventFromLocalDb(getContext(), event_id, EventManagement.ID_EXTERNAL);
-			for(Invited invited : event.getInvited()){
-				if(i.getName().equals(invited.getName()) && i.getGcid() == invited.getGcid() && i.getGuid() == invited.getGuid()){
+			for (Invited invited : event.getInvited()) {
+				if (i.getName().equals(invited.getName()) && i.getGcid() == invited.getGcid() && i.getGuid() == invited.getGuid()) {
 					invited.setMy_contact_id(1);
 					EventManagement.updateEventInLocalDb(getContext(), event);
 					Intent intent = new Intent(C2DMReceiver.REFRESH_EVENT_EDIT_ACTIVITY);
@@ -84,12 +96,13 @@ public class InviteDialog extends Dialog {
 			EventManagement.updateEventByIdFromRemoteDb(getContext(), event_id + "");
 			return null;
 		}
-		
+
 		@Override
-		protected void onPostExecute(Void result){
+		protected void onPostExecute(Void result) {
+			pd.dismiss();
 			Intent intent = new Intent(C2DMReceiver.REFRESH_EVENT_EDIT_ACTIVITY);
 			LocalBroadcastManager.getInstance(getContext()).sendBroadcast(intent);
 		}
-		
+
 	}
 }
