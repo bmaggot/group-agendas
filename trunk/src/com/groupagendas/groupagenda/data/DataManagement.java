@@ -267,7 +267,10 @@ public class DataManagement {
 						}
 
 						try {
-							u.setBirthdate(Utils.stringToCalendar(context, profile.getString(Account.AccountMetaData.BIRTHDATE), ACCOUNT_BIRTHDATE_TIMESTAMP_FORMAT));
+							String temp = profile.getString(Account.AccountMetaData.BIRTHDATE);
+							if (temp != null && (temp.length() == ACCOUNT_BIRTHDATE_TIMESTAMP_FORMAT.length())) {
+								u.setBirthdate(Utils.stringToCalendar(context, temp, ACCOUNT_BIRTHDATE_TIMESTAMP_FORMAT));
+							}
 						} catch (JSONException e) {
 							Reporter.reportError(context, this.getClass().toString(), Thread.currentThread().getStackTrace()[2]
 									.getMethodName().toString(), e.getMessage());
