@@ -244,7 +244,7 @@
     <string name="alarm_sleep">Sleep</string>
     <string name="alarm_dismiss">Dismiss</string>
     <string name="alarm_dismiss_all_alarms">You gave dismissed all alarms in the past!</string>
-    <string name="login_ga_logo_placeholder">GroupAgendas logo</string>    
+    <string name="login_ga_logo_placeholder">GroupAgendas logo</string>
     <string name="import_phone_contacts">Importing phone contacts which have phone number or email.</string>
     <string name="import_phone_contacts_done">Importing phone contacts is done!</string>
     <string name="group_icon_placeholder">Group\'s icon placeholder</string>
@@ -283,5 +283,6 @@
     <string name="email3_unverified">Email #3 need to be verified by link send to this email</string>
     <string name="email4_unverified">Email #4 need to be verified by link send to this email</string>
     <string name="email4">Email #4</string>
-    
+    <string name="clear">clear</string>
+
 </resources>
