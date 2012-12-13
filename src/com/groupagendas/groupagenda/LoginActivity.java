@@ -43,6 +43,7 @@ public class LoginActivity extends Activity {
 	private CheckBox stayCheck;
 	private ProgressBar pb;
 	private String error;
+	private Button loginButton;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -95,10 +96,11 @@ public class LoginActivity extends Activity {
 			}
 		});
 		
-		Button loginButton = (Button) findViewById(R.id.loginButton);
+		loginButton = (Button) findViewById(R.id.loginButton);
 		loginButton.setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View v) {
+				loginButton.setEnabled(false);
 				new LoginTask().execute();
 			}
 		});
@@ -181,7 +183,7 @@ public class LoginActivity extends Activity {
 				finish();
 			} else {
 				error = DataManagement.getError();
-				
+				loginButton.setEnabled(true);
 				if ((error.equals("Failed getting error message.")) && (!DataManagement.networkAvailable)) {
 					error = getResources().getString(R.string.no_internet_conn);
 				}
