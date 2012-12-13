@@ -46,7 +46,7 @@ public class SmsVerificationCodeActivity extends Activity {
 
 	}
 
-	public void dialog(Context context, String message, boolean success) {
+	public void dialog(Context context, String message, boolean success, final boolean finishActivity) {
 		AlertDialog.Builder builder = new AlertDialog.Builder(context);
 		builder.setTitle(R.string.phone_number_verification);
 		builder.setMessage(message);
@@ -55,6 +55,9 @@ public class SmsVerificationCodeActivity extends Activity {
 
 				@Override
 				public void onClick(DialogInterface dialog, int which) {
+					if(finishActivity){
+						finish();
+					}
 					dialog.cancel();
 				}
 			});
@@ -66,7 +69,7 @@ public class SmsVerificationCodeActivity extends Activity {
 					dialog.cancel();
 				}
 			});
-			builder.setPositiveButton(R.string.resend, new DialogInterface.OnClickListener() {
+			builder.setPositiveButton(R.string.send, new DialogInterface.OnClickListener() {
 
 				@Override
 				public void onClick(DialogInterface dialog, int which) {
@@ -103,11 +106,11 @@ public class SmsVerificationCodeActivity extends Activity {
 				try {
 					boolean success = object.getBoolean("success");
 					if (success) {
-						dialog(SmsVerificationCodeActivity.this, getString(R.string.verification_success), success);
+						dialog(SmsVerificationCodeActivity.this, getString(R.string.verification_success), success, true);
 					} else {
 						dialog(SmsVerificationCodeActivity.this, getString(R.string.verification_unsuccess) + "\n\n"
 								+ getString(R.string.reason) + " " + object.getString("reason") + "\n\n"
-								+ getString(R.string.resend_question), success);
+								+ getString(R.string.send_question), success, false);
 					}
 				} catch (Exception ex) {
 					Log.e("SMS", "exception");
@@ -139,10 +142,10 @@ public class SmsVerificationCodeActivity extends Activity {
 				try {
 					boolean success = object.getBoolean("success");
 					if (success) {
-						dialog(SmsVerificationCodeActivity.this, getString(R.string.resend_success), success);
+						dialog(SmsVerificationCodeActivity.this, getString(R.string.send_success), success, false);
 					} else {
-						dialog(SmsVerificationCodeActivity.this, getString(R.string.resend_unsuccess) + "\n\n" + getString(R.string.reason)
-								+ " " + object.getString("reason") + "\n\n" + getString(R.string.resend_question), success);
+						dialog(SmsVerificationCodeActivity.this, getString(R.string.send_unsuccess) + "\n\n" + getString(R.string.reason)
+								+ " " + object.getString("reason") + "\n\n" + getString(R.string.send_question), success, false);
 					}
 				} catch (Exception ex) {
 					Log.e("SMS", "exception");
