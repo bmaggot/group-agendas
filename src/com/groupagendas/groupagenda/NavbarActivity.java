@@ -693,14 +693,18 @@ public class NavbarActivity extends FragmentActivity {
 					total = 10;
 					publishProgress(total);
 				case 1: // Load account
-					if (DataManagement.networkAvailable)
+					Account acc = new Account(NavbarActivity.this);
+	
+					if (DataManagement.networkAvailable) {
+						String ssid = acc.getSessionId();
+						acc.clearRemoteAccountData();
+						acc.setSessionId(ssid);
 						dm.getAccountFromRemoteDb(NavbarActivity.this);
-					else
-						new Account(NavbarActivity.this);
+						loadPhase++;
+						total = 20;
+						publishProgress(total);
+					} 
 					// NativeCalendarImporter.readCalendar(dm.getmContext());
-					loadPhase++;
-					total = 20;
-					publishProgress(total);
 				case 2:// Load contacts
 					if (DataManagement.networkAvailable)
 						ContactManagement.getContactsFromRemoteDb(NavbarActivity.this, null);
