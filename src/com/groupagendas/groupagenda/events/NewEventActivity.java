@@ -412,6 +412,8 @@ public class NewEventActivity extends EventActivity {
 		// reminders
 		final LinearLayout reminderBlock = (LinearLayout) findViewById(R.id.reminder_block);
 		TextView setReminderTrigger = (TextView) findViewById(R.id.setReminderTrigger);
+		//TODO reminders new event on when ready
+		setReminderTrigger.setVisibility(View.GONE);
 		setReminderTrigger.setOnClickListener(new OnClickListener() {
 
 			@Override
@@ -481,6 +483,8 @@ public class NewEventActivity extends EventActivity {
 		// alarms
 		final LinearLayout alarmBlock = (LinearLayout) findViewById(R.id.alarm_block);
 		TextView setAlarmTrigger = (TextView) findViewById(R.id.setAlarmTrigger);
+		//TODO alarms new event turn on when ready.
+		setAlarmTrigger.setVisibility(View.GONE);
 		setAlarmTrigger.setOnClickListener(new OnClickListener() {
 
 			@Override
