@@ -173,6 +173,10 @@ public class Account {
 			return null;
 		}
 	}
+	
+	public String getBirthdateString() {
+		return prefs.getString(Account.AccountMetaData.BIRTHDATE, "");
+	}
 
 	public String getSex() {
 		return prefs.getString(Account.AccountMetaData.SEX, "null");
@@ -391,6 +395,11 @@ public class Account {
 	public void setBirthdate(Calendar birthdate) {
 		long millis = Utils.millisToUnixTimestamp(birthdate.getTimeInMillis());
 		prefsEditor.putLong(Account.AccountMetaData.BIRTHDATE, millis);
+		prefsEditor.commit();
+	}
+	
+	public void setBirthdate(String birthdate_timestamp) {
+		prefsEditor.putString(Account.AccountMetaData.BIRTHDATE, birthdate_timestamp);
 		prefsEditor.commit();
 	}
 
