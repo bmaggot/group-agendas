@@ -74,6 +74,7 @@ public class ContactsActivity extends ListActivity implements OnCheckedChangeLis
 	private GroupsAdapter gAdapter;
 
 	private Button importButton;
+	private Button clearButton;
 	
 	private TextView listTitle;
 
@@ -177,6 +178,13 @@ public class ContactsActivity extends ListActivity implements OnCheckedChangeLis
 		super.onResume();
 		LocalBroadcastManager.getInstance(this).registerReceiver(mMessageReceiver, new IntentFilter(C2DMReceiver.REFRESH_CONTACT_LIST));
 		initUI();
+		clearButton.setOnClickListener(new OnClickListener() {
+			
+			@Override
+			public void onClick(View v) {
+				searchView.setText("");
+			}
+		});
 
 		LIST_MODE = preferences.getInt(LIST_MODE_KEY, LIST_MODE);
 		TASK_MODE = preferences.getInt(TASK_MODE_KEY, TASK_MODE);
@@ -590,6 +598,7 @@ public class ContactsActivity extends ListActivity implements OnCheckedChangeLis
 	public void initUI() {
 		contactList = (ListView) findViewById(android.R.id.list);
 		importButton = (Button) findViewById(R.id.import_button);
+		clearButton = (Button) findViewById(R.id.clear_button);
 		sideIndex = (LinearLayout) findViewById(R.id.sideIndex);
 		segmentedButtons = (SegmentedRadioGroup) findViewById(R.id.segmentedButtons);
 		listTitle = (TextView) findViewById(R.id.listTitle);

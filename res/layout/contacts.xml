@@ -43,7 +43,7 @@
                 android:textAppearance="?android:attr/textAppearanceSmall"
                 android:textColor="@color/radio_colors" />
         </com.makeramen.segmented.SegmentedRadioGroup>
-        
+
         <TextView
             android:id="@+id/listTitle"
             android:layout_width="wrap_content"
@@ -51,9 +51,9 @@
             android:layout_centerInParent="true"
             android:layout_margin="7dip"
             android:textColor="@android:color/white"
-            android:textSize="20dp"
+            android:textSize="20sp"
             android:textStyle="bold"
-            android:visibility="invisible"/>
+            android:visibility="invisible" />
 
         <ProgressBar
             android:id="@+id/progress"
@@ -67,26 +67,25 @@
 
         <Button
             android:id="@+id/import_button"
-            android:background="@drawable/contacts_save_import_button"
             android:layout_width="wrap_content"
             android:layout_height="33dp"
-            android:layout_marginTop="8dp"
+            android:layout_alignParentRight="true"
             android:layout_marginRight="5dp"
-			android:gravity="center"
-			android:paddingTop="5dp"
-			android:paddingRight="4dp"
-			android:paddingBottom="5dp"
-			android:paddingLeft="4dp"
-			android:layout_alignParentRight="true"
-	        android:text="@string/contact_import_button"
-	        android:textColor="@color/white"
-	        android:textStyle="bold"
-	        android:textSize="14dp"
-	        android:shadowColor="@color/black"
-	        android:shadowDx="0"
-	        android:shadowDy="2"
-	        android:shadowRadius="1.5" />
-        
+            android:layout_marginTop="8dp"
+            android:background="@drawable/contacts_save_import_button"
+            android:gravity="center"
+            android:paddingBottom="5dp"
+            android:paddingLeft="4dp"
+            android:paddingRight="4dp"
+            android:paddingTop="5dp"
+            android:shadowColor="@color/black"
+            android:shadowDx="0"
+            android:shadowDy="2"
+            android:shadowRadius="1.5"
+            android:text="@string/contact_import_button"
+            android:textColor="@color/white"
+            android:textSize="14sp"
+            android:textStyle="bold" />
     </RelativeLayout>
 
     <RelativeLayout
@@ -96,13 +95,36 @@
 
         <EditText
             android:id="@+id/search"
-            android:layout_width="fill_parent"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="10dp"
-            android:layout_marginRight="10dp"
+            android:layout_alignParentLeft="true"
             android:layout_marginTop="4dp"
+            android:layout_marginRight="5dp"
+            android:layout_toLeftOf="@+id/clear_button"
             android:hint="@string/search"
             android:singleLine="true" />
+
+        <Button
+            android:id="@+id/clear_button"
+            android:layout_width="wrap_content"
+            android:layout_height="33dp"
+            android:layout_alignParentRight="true"
+            android:layout_marginRight="5dp"
+            android:layout_marginTop="8dp"
+            android:background="@drawable/contacts_save_import_button"
+            android:gravity="center"
+            android:paddingBottom="5dp"
+            android:paddingLeft="4dp"
+            android:paddingRight="4dp"
+            android:paddingTop="5dp"
+            android:shadowColor="@color/black"
+            android:shadowDx="0"
+            android:shadowDy="2"
+            android:shadowRadius="1.5"
+            android:text="@string/clear"
+            android:textColor="@color/white"
+            android:textSize="14sp"
+            android:textStyle="bold" />
     </RelativeLayout>
 
     <LinearLayout
