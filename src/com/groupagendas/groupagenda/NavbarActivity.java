@@ -787,13 +787,13 @@ public class NavbarActivity extends FragmentActivity {
 		protected void onPostExecute(Void result) {
 
 			if(!acc.getPhone1().contentEquals("") && !acc.getPhone1().contentEquals("null") && !acc.getPhone1_verified()){
-				showDialogForPhoneVerification(NavbarActivity.this, acc.getPhone1(), "1");
+				showDialogForPhoneVerification(NavbarActivity.this, acc.getPhone1_code()+acc.getPhone1(), "1");
 			}
 			if(!acc.getPhone2().contentEquals("") && !acc.getPhone2().contentEquals("null") && !acc.getPhone2_verified()){
-				showDialogForPhoneVerification(NavbarActivity.this, acc.getPhone2(), "2");
+				showDialogForPhoneVerification(NavbarActivity.this, acc.getPhone2_code()+acc.getPhone2(), "2");
 			}
 			if(!acc.getPhone3().contentEquals("") && !acc.getPhone3().contentEquals("null") && !acc.getPhone3_verified()){
-				showDialogForPhoneVerification(NavbarActivity.this, acc.getPhone3(), "3");
+				showDialogForPhoneVerification(NavbarActivity.this, acc.getPhone3_code()+acc.getPhone3(), "3");
 			}
 			
 			acc.setLatestUpdateTime(Calendar.getInstance());
@@ -811,6 +811,8 @@ public class NavbarActivity extends FragmentActivity {
 		@Override
 		protected Void doInBackground(Void... params) {
 			DataManagement.synchronizeWithServer(NavbarActivity.this, this, acc.getLatestUpdateUnixTimestamp());
+			if (DataManagement.networkAvailable)
+				dm.getAccountFromRemoteDb(NavbarActivity.this);
 //			if (DataManagement.networkAvailable){
 //				acc.setResponses(""+EventManagement.getResponsesFromRemoteDb(getApplicationContext()));
 //			}
@@ -821,13 +823,13 @@ public class NavbarActivity extends FragmentActivity {
 		protected void onPostExecute(Void result) {
 			
 			if(!acc.getPhone1().contentEquals("") && !acc.getPhone1().contentEquals("null") && !acc.getPhone1_verified()){
-				showDialogForPhoneVerification(NavbarActivity.this, acc.getPhone1(), "1");
+				showDialogForPhoneVerification(NavbarActivity.this, acc.getPhone1_code()+acc.getPhone1(), "1");
 			}
 			if(!acc.getPhone2().contentEquals("") && !acc.getPhone2().contentEquals("null") && !acc.getPhone2_verified()){
-				showDialogForPhoneVerification(NavbarActivity.this, acc.getPhone2(), "2");
+				showDialogForPhoneVerification(NavbarActivity.this, acc.getPhone2_code()+acc.getPhone2(), "2");
 			}
 			if(!acc.getPhone3().contentEquals("") && !acc.getPhone3().contentEquals("null") && !acc.getPhone3_verified()){
-				showDialogForPhoneVerification(NavbarActivity.this, acc.getPhone3(), "3");
+				showDialogForPhoneVerification(NavbarActivity.this, acc.getPhone3_code()+acc.getPhone3(), "3");
 			}
 			
 			acc.setLatestUpdateTime(Calendar.getInstance());
