@@ -62,13 +62,13 @@ public class SettingsActivity extends ListActivity{
 			Account mAccount = new Account(this);
 			
 			if(!mAccount.getPhone1().contentEquals("") && !mAccount.getPhone1().contentEquals("null") && !mAccount.getPhone1_verified()){
-				NavbarActivity.showDialogForPhoneVerification(SettingsActivity.this, mAccount.getPhone1(), "1");
+				NavbarActivity.showDialogForPhoneVerification(SettingsActivity.this, mAccount.getPhone1_code()+mAccount.getPhone1(), "1");
 			}
 			if(!mAccount.getPhone2().contentEquals("") && !mAccount.getPhone2().contentEquals("null") && !mAccount.getPhone2_verified()){
-				NavbarActivity.showDialogForPhoneVerification(SettingsActivity.this, mAccount.getPhone2(), "2");
+				NavbarActivity.showDialogForPhoneVerification(SettingsActivity.this, mAccount.getPhone2_code()+mAccount.getPhone2(), "2");
 			}
 			if(!mAccount.getPhone3().contentEquals("") && !mAccount.getPhone3().contentEquals("null") && !mAccount.getPhone3_verified()){
-				NavbarActivity.showDialogForPhoneVerification(SettingsActivity.this, mAccount.getPhone3(), "3");
+				NavbarActivity.showDialogForPhoneVerification(SettingsActivity.this, mAccount.getPhone3_code()+mAccount.getPhone3(), "3");
 			}
 			NavbarActivity.showVerificationDialog = false;
 		}
