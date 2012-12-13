@@ -675,4 +675,45 @@ public class Account {
 		prefsEditor.remove(AccountMetaData.LAST_TIME_CONNECTED_IN_MS);
 		prefsEditor.commit();
 	}
+	
+	public void clearAllAccountData() {
+		prefsEditor.clear();
+		prefsEditor.commit();
+	}
+	
+	public void clearRemoteAccountData() {
+		prefsEditor.remove(Account.AccountMetaData.NAME);
+		prefsEditor.remove(Account.AccountMetaData.LASTNAME);
+		
+		prefsEditor.remove(Account.AccountMetaData.COUNTRY);
+		prefsEditor.remove(Account.AccountMetaData.TIMEZONE);
+
+		prefsEditor.remove(Account.AccountMetaData.EMAIL1);
+		prefsEditor.remove(Account.AccountMetaData.EMAIL1_VERIFIED);
+		prefsEditor.remove(Account.AccountMetaData.EMAIL2);
+		prefsEditor.remove(Account.AccountMetaData.EMAIL2_VERIFIED);
+		prefsEditor.remove(Account.AccountMetaData.EMAIL3);
+		prefsEditor.remove(Account.AccountMetaData.EMAIL3_VERIFIED);
+		prefsEditor.remove(Account.AccountMetaData.EMAIL4);
+		prefsEditor.remove(Account.AccountMetaData.EMAIL4_VERIFIED);
+		
+		prefsEditor.remove(Account.AccountMetaData.PHONE1);
+		prefsEditor.remove(Account.AccountMetaData.PHONE1_CODE);
+		prefsEditor.remove(Account.AccountMetaData.PHONE1_VERIFIED);
+		prefsEditor.remove(Account.AccountMetaData.PHONE2);
+		prefsEditor.remove(Account.AccountMetaData.PHONE2_CODE);
+		prefsEditor.remove(Account.AccountMetaData.PHONE2_VERIFIED);
+		prefsEditor.remove(Account.AccountMetaData.PHONE3);
+		prefsEditor.remove(Account.AccountMetaData.PHONE3_CODE);
+		prefsEditor.remove(Account.AccountMetaData.PHONE3_VERIFIED);
+		
+		prefsEditor.remove(Account.AccountMetaData.BIRTHDATE);
+		prefsEditor.remove(Account.AccountMetaData.SEX);
+
+		prefsEditor.remove(Account.AccountMetaData.CITY);
+		prefsEditor.remove(Account.AccountMetaData.STREET);
+		prefsEditor.remove(Account.AccountMetaData.ZIP);
+
+		prefsEditor.commit();
+	}
 }
