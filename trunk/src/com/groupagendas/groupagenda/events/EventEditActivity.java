@@ -5,6 +5,7 @@ import java.util.Calendar;
 
 import android.app.AlertDialog;
 import android.app.Dialog;
+import android.app.ProgressDialog;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -114,6 +115,8 @@ public class EventEditActivity extends EventActivity {
 
 	private Button chatMessengerButton;
 	
+	private ProgressDialog pd;
+	
 
 	public void enableDisableButtons(Boolean state){
 	    saveButton.setEnabled(state);
@@ -122,6 +125,7 @@ public class EventEditActivity extends EventActivity {
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+		pd = new ProgressDialog(this);
 		setContentView(R.layout.event_edit);
 		selectedContacts = null;
 		selectedGroups = null;
@@ -752,7 +756,9 @@ public class EventEditActivity extends EventActivity {
 		@Override
 		protected void onPreExecute() {
 			super.onPreExecute();
-			pb.setVisibility(View.VISIBLE);
+			pd.setMessage(getResources().getString(R.string.loading));
+			pd.setCancelable(false);
+			pd.show();
 		}
 
 		@Override
@@ -1113,7 +1119,7 @@ public class EventEditActivity extends EventActivity {
 				inviteButton.setVisibility(View.INVISIBLE);
 			}
 
-			pb.setVisibility(View.INVISIBLE);
+			pd.dismiss();
 		}
 	}
 
