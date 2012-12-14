@@ -1122,6 +1122,7 @@ public class ContactEditActivity extends Activity implements OnClickListener, On
 				}).setNegativeButton(this.getResources().getString(R.string.no), new DialogInterface.OnClickListener() {
 					@Override
 					public void onClick(DialogInterface dialog, int which) {
+						selectedGroups = null;
 		                dialog.dismiss();
 		                finish();
 					}
