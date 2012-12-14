@@ -1403,6 +1403,31 @@ public class EventEditActivity extends EventActivity {
 		}
 	}
 	
+	@Override
+	public void onBackPressed() {
+		if(changesMade){
+		new AlertDialog.Builder(this).setIcon(android.R.drawable.ic_dialog_alert).setTitle(this.getResources().getString(R.string.save_your_changes))
+				.setMessage(this.getResources().getString(R.string.do_you_want_to_save_your_changes))
+				.setPositiveButton(this.getResources().getString(R.string.yes), new DialogInterface.OnClickListener() {
+					@Override
+					public void onClick(DialogInterface dialog, int which) {
+						new UpdateEventTask().execute();
+						dialog.dismiss();
+					}
+
+				}).setNegativeButton(this.getResources().getString(R.string.no), new DialogInterface.OnClickListener() {
+					@Override
+					public void onClick(DialogInterface dialog, int which) {
+		                dialog.dismiss();
+		                finish();
+					}
+
+				}).setCancelable(false).show();
+		} else {
+			super.onBackPressed();
+		}
+	}
+	
 	private BroadcastReceiver mMessageReceiver = new BroadcastReceiver() {
 		@Override
 		public void onReceive(Context context, Intent intent) {
