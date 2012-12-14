@@ -30,7 +30,6 @@ import android.os.Environment;
 import android.provider.MediaStore;
 import android.text.Editable;
 import android.text.TextWatcher;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -43,8 +42,6 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.groupagendas.groupagenda.R;
-import com.groupagendas.groupagenda.contacts.ContactEditActivity.CreateContactTask;
-import com.groupagendas.groupagenda.contacts.ContactEditActivity.EditContactTask;
 import com.groupagendas.groupagenda.data.ContactManagement;
 import com.groupagendas.groupagenda.data.Data;
 import com.groupagendas.groupagenda.data.DataManagement;
@@ -132,7 +129,7 @@ public class GroupEditActivity extends Activity implements OnClickListener {
 
 				@Override
 				public void onTextChanged(CharSequence s, int start, int before, int count) {
-					
+
 				}
 
 				@Override
@@ -698,26 +695,28 @@ public class GroupEditActivity extends Activity implements OnClickListener {
 			contactsButton.setBackgroundResource(R.drawable.event_icon_placeholder);
 		}
 	}
-	
+
 	@Override
 	public void onBackPressed() {
-		if(changesMade){
-		new AlertDialog.Builder(this).setIcon(android.R.drawable.ic_dialog_alert).setTitle(this.getResources().getString(R.string.save_your_changes))
-				.setMessage(this.getResources().getString(R.string.do_you_want_to_save_your_changes))
-				.setPositiveButton(this.getResources().getString(R.string.yes), new DialogInterface.OnClickListener() {
-					@Override
-					public void onClick(DialogInterface dialog, int which) {
+		if (changesMade) {
+			changesMade = false;
+			new AlertDialog.Builder(this).setIcon(android.R.drawable.ic_dialog_alert)
+					.setTitle(this.getResources().getString(R.string.save_your_changes))
+					.setMessage(this.getResources().getString(R.string.do_you_want_to_save_your_changes))
+					.setPositiveButton(this.getResources().getString(R.string.yes), new DialogInterface.OnClickListener() {
+						@Override
+						public void onClick(DialogInterface dialog, int which) {
 
-					}
+						}
 
-				}).setNegativeButton(this.getResources().getString(R.string.no), new DialogInterface.OnClickListener() {
-					@Override
-					public void onClick(DialogInterface dialog, int which) {
-		                dialog.dismiss();
-		                finish();
-					}
+					}).setNegativeButton(this.getResources().getString(R.string.no), new DialogInterface.OnClickListener() {
+						@Override
+						public void onClick(DialogInterface dialog, int which) {
+							dialog.dismiss();
+							finish();
+						}
 
-				}).setCancelable(false).show();
+					}).setCancelable(false).show();
 		} else {
 			super.onBackPressed();
 		}
