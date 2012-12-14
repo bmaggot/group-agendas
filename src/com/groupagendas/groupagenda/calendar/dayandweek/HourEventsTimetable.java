@@ -72,8 +72,8 @@ public class HourEventsTimetable {
 }
 
 	private void put (int hour, Event event){
-		if (eventsTimetable[hour] == null) eventsTimetable[hour] =  new ArrayList<Event>();
-		eventsTimetable[hour].add(event);
+		if(eventsTimetable.length > hour && eventsTimetable[hour] == null) eventsTimetable[hour] =  new ArrayList<Event>();
+		if(eventsTimetable.length > hour) eventsTimetable[hour].add(event);
 		
 	}
 	
@@ -90,10 +90,11 @@ public class HourEventsTimetable {
 		int ret = 1;
 		ArrayList<Event> hourList;
 		
-		
-		for (int i = startIndex; i < endIndex; i++){	
-			hourList = eventsTimetable[i];
-			if (hourList.size() > ret) ret = hourList.size();
+		if(eventsTimetable.length > endIndex){
+			for (int i = startIndex; i < endIndex; i++){	
+				hourList = eventsTimetable[i];
+				if (hourList.size() > ret) ret = hourList.size();
+			}
 		}
 			
 		
