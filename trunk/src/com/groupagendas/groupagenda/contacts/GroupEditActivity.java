@@ -706,7 +706,11 @@ public class GroupEditActivity extends Activity implements OnClickListener {
 					.setPositiveButton(this.getResources().getString(R.string.yes), new DialogInterface.OnClickListener() {
 						@Override
 						public void onClick(DialogInterface dialog, int which) {
-
+							if (ACTION_EDIT) {
+								new EditGroupTask().execute();
+							} else {
+								new CreateGroupTask().execute(editedGroup);
+							}
 						}
 
 					}).setNegativeButton(this.getResources().getString(R.string.no), new DialogInterface.OnClickListener() {
