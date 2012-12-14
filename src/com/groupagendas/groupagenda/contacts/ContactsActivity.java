@@ -267,6 +267,7 @@ public class ContactsActivity extends ListActivity implements OnCheckedChangeLis
 								break;
 							case DEST_CONTACT_EDIT:
 								ContactEditActivity.selectedGroups = selectedGroup;
+								ContactEditActivity.changesMade = true;
 								break;
 							default:
 								break;

@@ -44,6 +44,8 @@ import android.widget.AdapterView.OnItemClickListener;
 import android.widget.AdapterView.OnItemSelectedListener;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.CompoundButton;
+import android.widget.CompoundButton.OnCheckedChangeListener;
 import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -69,6 +71,24 @@ import com.groupagendas.groupagenda.utils.MapUtils;
 import com.groupagendas.groupagenda.utils.Utils;
 
 public class ContactEditActivity extends Activity implements OnClickListener, OnItemSelectedListener {
+	
+	private class GenericTextWatcher implements TextWatcher{
+
+		private String oldText = null;
+		
+	    public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+	    	oldText = charSequence.toString();
+	    }
+	    public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {}
+	    
+	    public void afterTextChanged(Editable editable) {
+	    	if(!editable.toString().equalsIgnoreCase(oldText)){
+	    		changesMade = true;
+//	    		saveButton.setEnabled(changesMade);
+	    		}
+	        }
+	}
+	private TextWatcher watcher;
 
 	private String ERROR_STRING = "";
 	private final int ERROR_DIALOG = 0;
@@ -128,6 +148,8 @@ public class ContactEditActivity extends Activity implements OnClickListener, On
 	public static ArrayList<Group> selectedGroups;
 
 	private ToggleButton notifyContactToggle;
+	
+	public static boolean changesMade = false;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -179,6 +201,9 @@ public class ContactEditActivity extends Activity implements OnClickListener, On
 	@Override
 	public void onResume() {
 		super.onResume();
+		if (watcher == null) {
+			watcher = new GenericTextWatcher();
+		}
 
 		// setContentView(R.layout.contact_edit);
 		Intent intent = getIntent();
@@ -204,23 +229,29 @@ public class ContactEditActivity extends Activity implements OnClickListener, On
 		}
 
 		nameView = (EditText) findViewById(R.id.name);
+		
 		pb = findViewById(R.id.progress);
 		lastnameView = (EditText) findViewById(R.id.lastname);
+		
 		titleView = (TextView) findViewById(R.id.title);
 		emailView = (EditText) findViewById(R.id.email);
+		
 		phoneView = (EditText) findViewById(R.id.phone);
+		
 		phonecodeView = (EditText) findViewById(R.id.phone_code);
+		
 		visibilityValues = getResources().getStringArray(R.array.visibility_values);
 		visibilitySpinner = (Spinner) findViewById(R.id.visibility);
-		visibilitySpinner.setOnItemSelectedListener(this);
+//		visibilitySpinner.setOnItemSelectedListener(this);
 		canAddNotesValues = getResources().getStringArray(R.array.yes_no_values);
 		canAddNotesSpinner = (Spinner) findViewById(R.id.can_add_note_response);
 		canAddNotesSpinner.setSelection(1);
-		canAddNotesSpinner.setOnItemSelectedListener(this);
+//		canAddNotesSpinner.setOnItemSelectedListener(this);
 		groupsButton = (Button) findViewById(R.id.groupsButton);
 		imageView = (ImageView) findViewById(R.id.contact_image);
 
 		birthdateView = (TextView) findViewById(R.id.birthdate);
+		
 		birthdateButton = (LinearLayout) findViewById(R.id.birthdateLayout);
 		birthdateButton.setOnClickListener(new OnClickListener() {
 
@@ -231,8 +262,11 @@ public class ContactEditActivity extends Activity implements OnClickListener, On
 		});
 
 		cityView = (EditText) findViewById(R.id.city);
+		
 		streetView = (EditText) findViewById(R.id.street);
+		
 		zipView = (EditText) findViewById(R.id.zip);
+		
 
 		String[] countries;
 		String[] timezones;
@@ -263,6 +297,7 @@ public class ContactEditActivity extends Activity implements OnClickListener, On
 
 		countrySpinnerBlock = (LinearLayout) findViewById(R.id.countrySpinnerBlock);
 		countryView = (TextView) findViewById(R.id.countryView);
+		
 		countrySpinnerBlock.setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View arg0) {
@@ -314,6 +349,13 @@ public class ContactEditActivity extends Activity implements OnClickListener, On
 
 		notifyContactToggle = (ToggleButton) findViewById(R.id.notifyContactToggleButton);
 		notifyContactToggle.setChecked(true);
+		notifyContactToggle.setOnCheckedChangeListener(new OnCheckedChangeListener() {
+			
+			@Override
+			public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+				changesMade = true;
+			}
+		});
 	}
 
 	public void onClick(View v) {
@@ -510,16 +552,17 @@ public class ContactEditActivity extends Activity implements OnClickListener, On
 				else if (result.visibility.equalsIgnoreCase("l"))
 					visibilitySpinner.setSelection(2, true);
 			}
+			visibilitySpinner.setOnItemSelectedListener(ContactEditActivity.this);
 			if (result.can_add_note != null && !result.can_add_note.equals("null") && result.can_add_note.equalsIgnoreCase("y")) {
 				canAddNotesSpinner.setSelection(0, true);
 			} else {
 				canAddNotesSpinner.setSelection(1, true);
 			}
-
+			canAddNotesSpinner.setOnItemSelectedListener(ContactEditActivity.this);
 			DATA_LOADED = true;
 
 			pb.setVisibility(View.GONE);
-
+			setWatchersToAllFields();
 			super.onPostExecute(result);
 		}
 
@@ -999,6 +1042,7 @@ public class ContactEditActivity extends Activity implements OnClickListener, On
 
 	@Override
 	public void onItemSelected(AdapterView<?> parent, View view, int pos, long id) {
+		changesMade = true;
 		switch (parent.getId()) {
 		case R.id.visibility:
 			editedContact.visibility = visibilityValues[pos];
@@ -1044,4 +1088,62 @@ public class ContactEditActivity extends Activity implements OnClickListener, On
 			groupsButton.setBackgroundResource(R.drawable.event_icon_placeholder);
 		}
 	}
+	
+	@Override
+	public void onBackPressed() {
+		if(changesMade){
+		new AlertDialog.Builder(this).setIcon(android.R.drawable.ic_dialog_alert).setTitle(this.getResources().getString(R.string.save_your_changes))
+				.setMessage(this.getResources().getString(R.string.do_you_want_to_save_your_changes))
+				.setPositiveButton(this.getResources().getString(R.string.yes), new DialogInterface.OnClickListener() {
+					@Override
+					public void onClick(DialogInterface dialog, int which) {
+						if(ACTION_EDIT){
+							try {
+								if (new EditContactTask().execute(editedContact).get())
+									finish();
+							} catch (InterruptedException e) {
+								Log.e("edit contact", "failed executing edit contact" + e.getMessage());
+							} catch (ExecutionException e) {
+								Log.e("edit contact", "failed executing edit contact" + e.getMessage());
+							}
+						} else {
+							try {
+								if (new CreateContactTask().execute(editedContact).get())
+									finish();
+							} catch (InterruptedException e) {
+								Log.e("create contact", "failed executing create contact" + e.getMessage());
+							} catch (ExecutionException e) {
+								Log.e("create contact", "failed executing create contact" + e.getMessage());
+							}
+						}
+						dialog.dismiss();
+					}
+
+				}).setNegativeButton(this.getResources().getString(R.string.no), new DialogInterface.OnClickListener() {
+					@Override
+					public void onClick(DialogInterface dialog, int which) {
+		                dialog.dismiss();
+		                finish();
+					}
+
+				}).setCancelable(false).show();
+		} else {
+			selectedGroups = null;
+			super.onBackPressed();
+		}
+	}
+	
+	public void setWatchersToAllFields(){
+		nameView.addTextChangedListener(watcher);
+		lastnameView.addTextChangedListener(watcher);
+		emailView.addTextChangedListener(watcher);
+		phoneView.addTextChangedListener(watcher);
+		phonecodeView.addTextChangedListener(watcher);
+		birthdateView.addTextChangedListener(watcher);
+		cityView.addTextChangedListener(watcher);
+		streetView.addTextChangedListener(watcher);
+		zipView.addTextChangedListener(watcher);
+		countryView.addTextChangedListener(watcher);
+	}
+	
 }
