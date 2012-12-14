@@ -108,7 +108,15 @@ public class GroupEditActivity extends Activity implements OnClickListener {
 		
 		if(ACTION_EDIT){
 			group_name = intent.getStringExtra("group_name");
-			new GetGroupTask().execute(intent.getIntExtra("group_id", 0));
+			try {
+				new GetGroupTask().execute(intent.getIntExtra("group_id", 0)).get();
+			} catch (InterruptedException e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+			} catch (ExecutionException e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+			}
 			
 			titleView.setText(group_name);
 			groupNameView.setText(group_name);
