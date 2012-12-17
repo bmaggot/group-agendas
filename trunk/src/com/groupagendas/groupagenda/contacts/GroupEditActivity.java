@@ -252,6 +252,7 @@ public class GroupEditActivity extends Activity implements OnClickListener {
 		@Override
 		protected void onPostExecute(Boolean result) {
 			if (result) {
+				changesMade = false;
 				onBackPressed();
 			} else {
 				ERROR_STRING = DataManagement.getError();
@@ -265,6 +266,7 @@ public class GroupEditActivity extends Activity implements OnClickListener {
 	class EditGroupTask extends AsyncTask<Void, Boolean, Boolean> {
 		@Override
 		protected void onPreExecute() {
+			changesMade = false;
 			pb.setVisibility(View.VISIBLE);
 			super.onPreExecute();
 		}
