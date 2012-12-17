@@ -77,7 +77,7 @@ public class GroupsAdapter extends AbstractAdapter<Group> implements Filterable 
 		if (selection.contains(group.group_id)) {
 			convertView.setSelected(true);
 			convertView.setPressed(true);
-			convertView.setBackgroundColor(R.color.mainBackgroundBlue);
+			convertView.setBackgroundColor(Color.parseColor("#21C0DB"));
 		} else {
 			convertView.setSelected(false);
 			convertView.setPressed(false);

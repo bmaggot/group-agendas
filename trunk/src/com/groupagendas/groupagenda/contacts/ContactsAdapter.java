@@ -96,7 +96,7 @@ public class ContactsAdapter extends AbstractAdapter<Contact> implements Filtera
 		if (selection.contains(contact.contact_id)) {
 			convertView.setSelected(true);
 			convertView.setPressed(true);
-			convertView.setBackgroundColor(R.color.mainBackgroundBlue);
+			convertView.setBackgroundColor(Color.parseColor("#21C0DB"));
 		} else {
 			convertView.setSelected(false);
 			convertView.setPressed(false);
