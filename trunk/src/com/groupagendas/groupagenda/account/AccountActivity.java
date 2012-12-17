@@ -937,16 +937,16 @@ public class AccountActivity extends Activity implements OnClickListener {
 		if(!account.getLastname().equals(lastnameView.getText().toString())){
 			chagesMade = true;
 		}
-		if(!account.getEmail1().equals(email1View.getText().toString())){
+		if(!account.getEmail1().equals("null") && !account.getEmail1().equals(email1View.getText().toString())){
 			chagesMade = true;
 		}
-		if(!account.getEmail2().equals(email2View.getText().toString())){
+		if(!account.getEmail2().equals("null") && !account.getEmail2().equals(email2View.getText().toString())){
 			chagesMade = true;
 		}
-		if(!account.getEmail3().equals(email3View.getText().toString())){
+		if(!account.getEmail3().equals("null") && !account.getEmail3().equals(email3View.getText().toString())){
 			chagesMade = true;
 		}
-		if(!account.getEmail4().equals(email4View.getText().toString())){
+		if(!account.getEmail4().equals("null") && !account.getEmail4().equals(email4View.getText().toString())){
 			chagesMade = true;
 		}
 		if(!account.getPhone1().equals("null") && !account.getPhone1().equals(phone1View.getText().toString())){
@@ -958,10 +958,6 @@ public class AccountActivity extends Activity implements OnClickListener {
 		if(!account.getPhone3().equals("null") && !account.getPhone3().equals(phone3View.getText().toString())){
 			chagesMade = true;
 		}
-//		if(!birthdateView.getText().toString().equals("")){
-//			String[] birthdate = birthdateView.getText().toString().split("-");
-//			birthdateView.setText(birthdate[0] + "-" + Integer.valueOf(birthdate[1]) + "-" + Integer.valueOf(birthdate[2]));
-//		}
 		if(!birthdateView.getText().toString().equals("")){
 			Calendar tmp = Utils.stringToCalendar(getApplicationContext(), birthdateView.getText().toString(), account.getTimezone(), account.getSetting_date_format());
 			if(account.getBirthdate().get(Calendar.YEAR) != tmp.get(Calendar.YEAR) && account.getBirthdate().get(Calendar.MONTH) != tmp.get(Calendar.MONTH) && account.getBirthdate().get(Calendar.DAY_OF_MONTH) != tmp.get(Calendar.DAY_OF_MONTH)){
