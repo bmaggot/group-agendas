@@ -83,7 +83,6 @@ public class GroupsAdapter extends AbstractAdapter<Group> implements Filterable 
 			convertView.setPressed(false);
 			convertView.setBackgroundColor(Color.WHITE);
 		}
-		convertView.setClickable(true);
 		return convertView;
 	}
 
