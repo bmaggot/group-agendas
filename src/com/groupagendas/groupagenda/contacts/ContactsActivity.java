@@ -462,8 +462,10 @@ public class ContactsActivity extends ListActivity implements OnCheckedChangeLis
 		case TASK_MODE_SELECTION:
 			if (LIST_MODE == LIST_MODE_CONTACTS) {
 				cAdapter.toggleSelected(Integer.parseInt(v.getTag().toString()));
+				v = cAdapter.getView(position, v, parent);
 			} else if (LIST_MODE == LIST_MODE_GROUPS) {
 				gAdapter.toggleSelected(Integer.parseInt(v.getTag().toString()));
+				v = gAdapter.getView(position, v, parent);
 			}
 			break;
 		case TASK_MODE_LISTING:
