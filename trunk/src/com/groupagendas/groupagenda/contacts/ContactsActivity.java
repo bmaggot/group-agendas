@@ -186,9 +186,6 @@ public class ContactsActivity extends ListActivity implements OnCheckedChangeLis
 			}
 		});
 
-		LIST_MODE = preferences.getInt(LIST_MODE_KEY, LIST_MODE);
-		TASK_MODE = preferences.getInt(TASK_MODE_KEY, TASK_MODE);
-
 		sideIndex.setVisibility(View.GONE);
 
 		searchView.addTextChangedListener(filterTextWatcher);
@@ -197,7 +194,10 @@ public class ContactsActivity extends ListActivity implements OnCheckedChangeLis
 			TASK_MODE = getIntent().getExtras().getInt(TASK_MODE_KEY);
 			LIST_MODE = getIntent().getExtras().getInt(LIST_MODE_KEY);
 			DESTINATION = getIntent().getExtras().getInt(DESTINATION_KEY);
-		} 
+		} else {
+			LIST_MODE = preferences.getInt(LIST_MODE_KEY, LIST_MODE);
+			TASK_MODE = preferences.getInt(TASK_MODE_KEY, TASK_MODE);
+		}
 		
 		switch (TASK_MODE) {
 		case TASK_MODE_SELECTION:
@@ -337,10 +337,12 @@ public class ContactsActivity extends ListActivity implements OnCheckedChangeLis
 	@Override
 	public void onPause() {
 		super.onPause();
-		editor.putInt(LIST_MODE_KEY, LIST_MODE);
-		editor.putInt(TASK_MODE_KEY, TASK_MODE);
-		editor.commit();
-		searchView.removeTextChangedListener(filterTextWatcher);
+		if(TASK_MODE != TASK_MODE_SELECTION){
+			editor.putInt(LIST_MODE_KEY, LIST_MODE);
+			editor.putInt(TASK_MODE_KEY, TASK_MODE);
+			editor.commit();
+			searchView.removeTextChangedListener(filterTextWatcher);
+		}
 	}
 
 	@Override
@@ -432,9 +434,12 @@ public class ContactsActivity extends ListActivity implements OnCheckedChangeLis
 	@Override
 	protected void onDestroy() {
 		super.onDestroy();
-		editor.putInt(TASK_MODE_KEY, TASK_MODE_LISTING);
-		editor.putInt(LIST_MODE_KEY, LIST_MODE_CONTACTS);
-		editor.commit();
+		if(TASK_MODE != TASK_MODE_SELECTION){
+			editor.putInt(LIST_MODE_KEY, LIST_MODE);
+			editor.putInt(TASK_MODE_KEY, TASK_MODE);
+			editor.commit();
+			searchView.removeTextChangedListener(filterTextWatcher);
+		}
 		searchView.removeTextChangedListener(filterTextWatcher);
 	}
 
