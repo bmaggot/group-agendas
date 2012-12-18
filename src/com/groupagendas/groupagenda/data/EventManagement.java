@@ -1302,7 +1302,12 @@ public class EventManagement {
 	 */
 	protected static ContentValues createCVforEventsTable(Event event) {
 		ContentValues cv = new ContentValues();
-		cv.put(EventsProvider.EMetaData.EventsMetaData.E_ID, event.getEvent_id());
+		if(event.getEvent_id() != 0){
+			cv.put(EventsProvider.EMetaData.EventsMetaData.E_ID, event.getEvent_id());
+		} else {
+			event.setEvent_id((int)Calendar.getInstance().getTimeInMillis());
+			cv.put(EventsProvider.EMetaData.EventsMetaData.E_ID, event.getEvent_id());
+		}
 
 		cv.put(EventsProvider.EMetaData.EventsMetaData.USER_ID, event.getUser_id());
 		cv.put(EventsProvider.EMetaData.EventsMetaData.UPLOADED_SUCCESSFULLY, event.isUploadedToServer() ? 1 : 0);
@@ -1650,7 +1655,7 @@ public class EventManagement {
 			while (!result.isAfterLast()) {
 				Event e = createEventFromCursor(context, result);
 
-				if (e.getEvent_id() == 0) {
+				if (!editEvent(context, e)) {
 					int externalId = createEventInRemoteDb(context, e);
 					ContentValues values = new ContentValues();
 					values.put(EventsProvider.EMetaData.EventsMetaData.E_ID, externalId);
@@ -1658,7 +1663,6 @@ public class EventManagement {
 					context.getContentResolver().update(EventsProvider.EMetaData.EventsMetaData.CONTENT_URI, values, where, null);
 					result.moveToNext();
 				} else {
-					editEvent(context, e);
 					result.moveToNext();
 				}
 			}
