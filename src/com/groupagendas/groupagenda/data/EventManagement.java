@@ -686,7 +686,10 @@ public class EventManagement {
 		ContentValues cv = createCVforEventsTable(event);
 		Uri eventUri = context.getContentResolver().insert(EventsProvider.EMetaData.INDEXED_EVENTS_URI, cv);
 
-		long internalID = ContentUris.parseId(eventUri);
+		long internalID = 0;
+		if(eventUri != null){
+			internalID = ContentUris.parseId(eventUri);
+		}
 		return internalID;
 		// if (internalID >= 0){
 		// event.setInternalID(internalID);
@@ -1122,121 +1125,121 @@ public class EventManagement {
 
 	private static boolean editEvent(Context context, Event e) {
 		boolean success = false;
-
-		try {
-			WebService webService = new WebService();
-			HttpPost post = new HttpPost(Data.getServerUrl() + "mobile/events_edit");
-
-			MultipartEntity reqEntity = new MultipartEntity(HttpMultipartMode.BROWSER_COMPATIBLE);
-
-			reqEntity.addPart(TOKEN, new StringBody(Data.getToken(context), Charset.forName("UTF-8")));
-			reqEntity.addPart("event_id", new StringBody(String.valueOf(e.getEvent_id()), Charset.forName("UTF-8")));
-
-			reqEntity.addPart("event_type", new StringBody(e.getType(), Charset.forName("UTF-8")));
-
-			reqEntity.addPart("icon", new StringBody(e.getIcon(), Charset.forName("UTF-8")));
-			reqEntity.addPart("color", new StringBody(e.getColor(), Charset.forName("UTF-8")));
-
-			reqEntity.addPart("title", new StringBody(e.getTitle(), Charset.forName("UTF-8")));
-
-			reqEntity.addPart("timestamp_start_utc",
-					new StringBody("" + Utils.millisToUnixTimestamp(e.getStartCalendar().getTimeInMillis()), Charset.forName("UTF-8")));
-			reqEntity.addPart("timestamp_end_utc", new StringBody("" + Utils.millisToUnixTimestamp(e.getEndCalendar().getTimeInMillis()),
-					Charset.forName("UTF-8")));
-
-			reqEntity.addPart("timezone", new StringBody(e.getTimezone(), Charset.forName("UTF-8")));
-
-			reqEntity.addPart("all_day_event", new StringBody(e.is_all_day() ? "1" : "0", Charset.forName("UTF-8")));
-
-			reqEntity.addPart("description", new StringBody(e.getDescription(), Charset.forName("UTF-8")));
-
-			reqEntity.addPart("country", new StringBody(e.getCountry(), Charset.forName("UTF-8")));
-			reqEntity.addPart("zip", new StringBody(e.getZip(), Charset.forName("UTF-8")));
-			reqEntity.addPart("city", new StringBody(e.getCity(), Charset.forName("UTF-8")));
-			reqEntity.addPart("street", new StringBody(e.getStreet(), Charset.forName("UTF-8")));
-			reqEntity.addPart("location", new StringBody(e.getLocation(), Charset.forName("UTF-8")));
-
-			reqEntity.addPart("go_by", new StringBody(e.getGo_by(), Charset.forName("UTF-8")));
-			reqEntity.addPart("take_with_you", new StringBody(e.getTake_with_you(), Charset.forName("UTF-8")));
-			reqEntity.addPart("cost", new StringBody(e.getCost(), Charset.forName("UTF-8")));
-			reqEntity.addPart("accomodation", new StringBody(e.getAccomodation(), Charset.forName("UTF-8")));
-
-			if (e.getAlarm1() != null) {
-				reqEntity.addPart("a1",
-						new StringBody("" + Utils.millisToUnixTimestamp(e.getAlarm1().getTimeInMillis()), Charset.forName("UTF-8")));
-			}
-			if (e.getAlarm2() != null) {
-				reqEntity.addPart("a2",
-						new StringBody("" + Utils.millisToUnixTimestamp(e.getAlarm2().getTimeInMillis()), Charset.forName("UTF-8")));
-			}
-			if (e.getAlarm3() != null) {
-				reqEntity.addPart("a3",
-						new StringBody("" + Utils.millisToUnixTimestamp(e.getAlarm3().getTimeInMillis()), Charset.forName("UTF-8")));
-			}
-
-			if (e.getReminder1() != null) {
-				reqEntity.addPart("r1",
-						new StringBody("" + Utils.millisToUnixTimestamp(e.getReminder1().getTimeInMillis()), Charset.forName("UTF-8")));
-			}
-			if (e.getReminder2() != null) {
-				reqEntity.addPart("r2",
-						new StringBody("" + Utils.millisToUnixTimestamp(e.getReminder2().getTimeInMillis()), Charset.forName("UTF-8")));
-			}
-			if (e.getReminder3() != null) {
-				reqEntity.addPart("r3",
-						new StringBody("" + Utils.millisToUnixTimestamp(e.getReminder3().getTimeInMillis()), Charset.forName("UTF-8")));
-			}
-
-			// if (Data.selectedContacts != null &&
-			// !Data.selectedContacts.isEmpty()) {
-			// e.assigned_contacts = new int[Data.selectedContacts.size()];
-			// int i = 0;
-			// for (Contact contact : Data.selectedContacts) {
-			// e.assigned_contacts[i] = contact.contact_id;
-			// i++;
-			// }
-			// }
-			if (e.getAssigned_contacts() != null) {
-				for (int i = 0, l = e.getAssigned_contacts().length; i < l; i++) {
-					reqEntity.addPart("contacts[]", new StringBody(String.valueOf(e.getAssigned_contacts()[i]), Charset.forName("UTF-8")));
+		if(e.getEvent_id() > 0){
+			try {
+				WebService webService = new WebService();
+				HttpPost post = new HttpPost(Data.getServerUrl() + "mobile/events_edit");
+	
+				MultipartEntity reqEntity = new MultipartEntity(HttpMultipartMode.BROWSER_COMPATIBLE);
+	
+				reqEntity.addPart(TOKEN, new StringBody(Data.getToken(context), Charset.forName("UTF-8")));
+				reqEntity.addPart("event_id", new StringBody(String.valueOf(e.getEvent_id()), Charset.forName("UTF-8")));
+	
+				reqEntity.addPart("event_type", new StringBody(e.getType(), Charset.forName("UTF-8")));
+	
+				reqEntity.addPart("icon", new StringBody(e.getIcon(), Charset.forName("UTF-8")));
+				reqEntity.addPart("color", new StringBody(e.getColor(), Charset.forName("UTF-8")));
+	
+				reqEntity.addPart("title", new StringBody(e.getTitle(), Charset.forName("UTF-8")));
+	
+				reqEntity.addPart("timestamp_start_utc",
+						new StringBody("" + Utils.millisToUnixTimestamp(e.getStartCalendar().getTimeInMillis()), Charset.forName("UTF-8")));
+				reqEntity.addPart("timestamp_end_utc", new StringBody("" + Utils.millisToUnixTimestamp(e.getEndCalendar().getTimeInMillis()),
+						Charset.forName("UTF-8")));
+	
+				reqEntity.addPart("timezone", new StringBody(e.getTimezone(), Charset.forName("UTF-8")));
+	
+				reqEntity.addPart("all_day_event", new StringBody(e.is_all_day() ? "1" : "0", Charset.forName("UTF-8")));
+	
+				reqEntity.addPart("description", new StringBody(e.getDescription(), Charset.forName("UTF-8")));
+	
+				reqEntity.addPart("country", new StringBody(e.getCountry(), Charset.forName("UTF-8")));
+				reqEntity.addPart("zip", new StringBody(e.getZip(), Charset.forName("UTF-8")));
+				reqEntity.addPart("city", new StringBody(e.getCity(), Charset.forName("UTF-8")));
+				reqEntity.addPart("street", new StringBody(e.getStreet(), Charset.forName("UTF-8")));
+				reqEntity.addPart("location", new StringBody(e.getLocation(), Charset.forName("UTF-8")));
+	
+				reqEntity.addPart("go_by", new StringBody(e.getGo_by(), Charset.forName("UTF-8")));
+				reqEntity.addPart("take_with_you", new StringBody(e.getTake_with_you(), Charset.forName("UTF-8")));
+				reqEntity.addPart("cost", new StringBody(e.getCost(), Charset.forName("UTF-8")));
+				reqEntity.addPart("accomodation", new StringBody(e.getAccomodation(), Charset.forName("UTF-8")));
+	
+				if (e.getAlarm1() != null) {
+					reqEntity.addPart("a1",
+							new StringBody("" + Utils.millisToUnixTimestamp(e.getAlarm1().getTimeInMillis()), Charset.forName("UTF-8")));
 				}
-			} else {
-				reqEntity.addPart("contacts[]", new StringBody("", Charset.forName("UTF-8")));
-			}
-
-			Account account = new Account(context);
-			// if (e.assigned_groups != null) {
-			// for (int i = 0, l = e.assigned_groups.length; i < l; i++) {
-			// reqEntity.addPart("groups[]", new
-			// StringBody(String.valueOf(e.assigned_groups[i])),
-			// Charset.forName("UTF-8"));
-			// }
-			// } else {
-			// reqEntity.addPart("groups[]", new StringBody("",
-			// Charset.forName("UTF-8")));
-			// }
-			reqEntity.addPart("session", new StringBody(account.getSessionId(), Charset.forName("UTF-8")));
-			post.setEntity(reqEntity);
-
-			if (DataManagement.networkAvailable) {
-				HttpResponse rp = webService.getResponseFromHttpPost(post);
-
-				if (rp.getStatusLine().getStatusCode() == HttpStatus.SC_OK) {
-					String resp = EntityUtils.toString(rp.getEntity());
-					if (resp != null) {
-						JSONObject object = new JSONObject(resp);
-						success = object.getBoolean("success");
-						if (!success) {
-							Log.e("Edit event ERROR", object.getJSONObject("error").getString("reason"));
+				if (e.getAlarm2() != null) {
+					reqEntity.addPart("a2",
+							new StringBody("" + Utils.millisToUnixTimestamp(e.getAlarm2().getTimeInMillis()), Charset.forName("UTF-8")));
+				}
+				if (e.getAlarm3() != null) {
+					reqEntity.addPart("a3",
+							new StringBody("" + Utils.millisToUnixTimestamp(e.getAlarm3().getTimeInMillis()), Charset.forName("UTF-8")));
+				}
+	
+				if (e.getReminder1() != null) {
+					reqEntity.addPart("r1",
+							new StringBody("" + Utils.millisToUnixTimestamp(e.getReminder1().getTimeInMillis()), Charset.forName("UTF-8")));
+				}
+				if (e.getReminder2() != null) {
+					reqEntity.addPart("r2",
+							new StringBody("" + Utils.millisToUnixTimestamp(e.getReminder2().getTimeInMillis()), Charset.forName("UTF-8")));
+				}
+				if (e.getReminder3() != null) {
+					reqEntity.addPart("r3",
+							new StringBody("" + Utils.millisToUnixTimestamp(e.getReminder3().getTimeInMillis()), Charset.forName("UTF-8")));
+				}
+	
+				// if (Data.selectedContacts != null &&
+				// !Data.selectedContacts.isEmpty()) {
+				// e.assigned_contacts = new int[Data.selectedContacts.size()];
+				// int i = 0;
+				// for (Contact contact : Data.selectedContacts) {
+				// e.assigned_contacts[i] = contact.contact_id;
+				// i++;
+				// }
+				// }
+				if (e.getAssigned_contacts() != null) {
+					for (int i = 0, l = e.getAssigned_contacts().length; i < l; i++) {
+						reqEntity.addPart("contacts[]", new StringBody(String.valueOf(e.getAssigned_contacts()[i]), Charset.forName("UTF-8")));
+					}
+				} else {
+					reqEntity.addPart("contacts[]", new StringBody("", Charset.forName("UTF-8")));
+				}
+	
+				Account account = new Account(context);
+				// if (e.assigned_groups != null) {
+				// for (int i = 0, l = e.assigned_groups.length; i < l; i++) {
+				// reqEntity.addPart("groups[]", new
+				// StringBody(String.valueOf(e.assigned_groups[i])),
+				// Charset.forName("UTF-8"));
+				// }
+				// } else {
+				// reqEntity.addPart("groups[]", new StringBody("",
+				// Charset.forName("UTF-8")));
+				// }
+				reqEntity.addPart("session", new StringBody(account.getSessionId(), Charset.forName("UTF-8")));
+				post.setEntity(reqEntity);
+	
+				if (DataManagement.networkAvailable) {
+					HttpResponse rp = webService.getResponseFromHttpPost(post);
+	
+					if (rp.getStatusLine().getStatusCode() == HttpStatus.SC_OK) {
+						String resp = EntityUtils.toString(rp.getEntity());
+						if (resp != null) {
+							JSONObject object = new JSONObject(resp);
+							success = object.getBoolean("success");
+							if (!success) {
+								Log.e("Edit event ERROR", object.getJSONObject("error").getString("reason"));
+							}
 						}
 					}
 				}
+			} catch (Exception ex) {
+				Reporter.reportError(context, CLASS_NAME, Thread.currentThread().getStackTrace()[2].getMethodName().toString(), ex.getMessage());
+				success = false;
 			}
-		} catch (Exception ex) {
-			Reporter.reportError(context, CLASS_NAME, Thread.currentThread().getStackTrace()[2].getMethodName().toString(), ex.getMessage());
-			success = false;
 		}
-
 		return success;
 	}
 
