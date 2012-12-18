@@ -98,7 +98,8 @@ public class DayWeekView extends AbstractCalendarView {
 		int startTimeMinutes = 0; 
 		String startTimeToShow;
 		if (day.getSelectedDate().before(event.getStartCalendar())) {
-			startTimeMinutes = (event.getStartCalendar().get(Calendar.HOUR_OF_DAY) + 1) * 60;
+			event.getStartCalendar().setTimeZone(Calendar.getInstance().getTimeZone());
+			startTimeMinutes = (event.getStartCalendar().get(Calendar.HOUR_OF_DAY)) * 60;
 			startTimeMinutes += event.getStartCalendar().get(Calendar.MINUTE);
 			startTimeToShow = dtUtils.formatTime(event.getStartCalendar());
 		} else startTimeToShow = dtUtils.formatTime(day.getSelectedDate());

@@ -381,8 +381,9 @@ public class EventsProvider extends ContentProvider{
 		default:
 			throw new IllegalArgumentException("Unknow URI " + uri);
 		}
-		
-		getContext().getContentResolver().notifyChange(insUri, null);
+		if(insUri != null){
+			getContext().getContentResolver().notifyChange(insUri, null);
+		}
 		return insUri;
 	}
 	

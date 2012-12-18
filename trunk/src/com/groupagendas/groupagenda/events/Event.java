@@ -278,9 +278,11 @@ private static final String TIMESTAMP_FORMAT = DataManagement.SERVER_TIMESTAMP_F
 	 * @param startCalendar
 	 */
 	public void setStartCalendar(Calendar startCalendar) {
-		this.startCalendar = startCalendar;
-		this.startCalendar.clear(Calendar.SECOND);
-		this.startCalendar.clear(Calendar.MILLISECOND);
+		if(startCalendar != null){
+			this.startCalendar = startCalendar;
+			this.startCalendar.clear(Calendar.SECOND);
+			this.startCalendar.clear(Calendar.MILLISECOND);
+		}
 	}
 
 	public Calendar getEndCalendar() {
@@ -293,9 +295,11 @@ private static final String TIMESTAMP_FORMAT = DataManagement.SERVER_TIMESTAMP_F
 	 * @param endCalendar
 	 */
 	public void setEndCalendar(Calendar endCalendar) {
-		this.endCalendar = endCalendar;
-		this.endCalendar.clear(Calendar.SECOND);
-		this.endCalendar.clear(Calendar.MILLISECOND);
+		if(startCalendar != null){
+			this.endCalendar = endCalendar;
+			this.endCalendar.clear(Calendar.SECOND);
+			this.endCalendar.clear(Calendar.MILLISECOND);
+		}
 	}
 	
 	/**
