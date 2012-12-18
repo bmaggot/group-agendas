@@ -43,6 +43,8 @@ public class DayInstance  {
 
 		
 		private void updateEventLists(TreeMap<Calendar, ArrayList<Event>> tm) {
+			selectedDate.clear(Calendar.ZONE_OFFSET);
+			selectedDate.setTimeZone(Calendar.getInstance().getTimeZone());
 			ArrayList<Event> events = TreeMapUtils.getEventsFromTreemap(selectedDate, tm);
 			allDayEvents = new ArrayList<Event>();
 			hourEventsList = new ArrayList<Event>();
