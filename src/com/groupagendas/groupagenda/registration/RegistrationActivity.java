@@ -2,6 +2,7 @@ package com.groupagendas.groupagenda.registration;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Locale;
 
 import android.accounts.AccountManager;
@@ -91,23 +92,24 @@ public class RegistrationActivity extends Activity {
 	private View countrySpinnerBlock;
 	private String localLanguage;
 	private CheckBox chkStatement;
-	
+
 	private String dateFormat;
 	private boolean ampm;
-	
+
 	private EditText birthdateView;
 	private Button birthdateButton;
 	private final int BIRTHDATE_DIALOG = 3;
 	private int mYear = 1970;
 	private int mMonth = 0;
 	private int mDay = 1;
-	
+
 	private Locale locale = null;
 	private TelephonyManager tm;
 	private Locale usersLocale;
 	private Locale simLocale;
 	private SimpleDateFormat simpleDateFormat;
 
+	public boolean timezoneSelected = false;
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -147,19 +149,19 @@ public class RegistrationActivity extends Activity {
 		}
 		if (countriesList != null) {
 			countriesAdapter = new CountriesAdapter(RegistrationActivity.this, R.layout.search_dialog_item, countriesList);
-		}		
+		}
 	}
 
 	@Override
 	public void onConfigurationChanged(Configuration newConfig) {
 		super.onConfigurationChanged(newConfig);
-		if(locale != null) {
+		if (locale != null) {
 			newConfig.locale = locale;
 			Locale.setDefault(locale);
 			getBaseContext().getResources().updateConfiguration(newConfig, getBaseContext().getResources().getDisplayMetrics());
 		}
 	}
-	
+
 	@Override
 	public void onResume() {
 		super.onResume();
@@ -168,7 +170,7 @@ public class RegistrationActivity extends Activity {
 		tm = (TelephonyManager) getSystemService(Context.TELEPHONY_SERVICE);
 		usersLocale = getApplicationContext().getResources().getConfiguration().locale;
 		simLocale = new Locale(tm.getSimCountryIso(), tm.getSimCountryIso());
-		
+
 		ArrayAdapter<CharSequence> adapterLanguage = ArrayAdapter.createFromResource(this, R.array.language_labels,
 				android.R.layout.simple_spinner_item);
 		adapterLanguage.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
@@ -180,7 +182,7 @@ public class RegistrationActivity extends Activity {
 			public void onItemSelected(AdapterView<?> arg0, View arg1, int arg2, long arg3) {
 				Configuration config = getBaseContext().getResources().getConfiguration();
 				String lang = LanguageCodeGetter.getLanguageCode(languageArray[languageSpinner.getSelectedItemPosition()]);
-				
+
 				if (!lang.equals("") && !lang.equals(config.locale.getLanguage())) {
 					locale = new Locale(lang);
 					Locale.setDefault(locale);
@@ -194,7 +196,7 @@ public class RegistrationActivity extends Activity {
 
 			@Override
 			public void onNothingSelected(AdapterView<?> arg0) {
-			}			
+			}
 		});
 
 		countrySpinnerBlock.setOnClickListener(new OnClickListener() {
@@ -237,18 +239,19 @@ public class RegistrationActivity extends Activity {
 						timezoneInUse = Integer.parseInt(view.getTag().toString());
 						countryView.setText(countriesList.get(timezoneInUse).country2);
 						String countryCode = countriesList.get(timezoneInUse).country_code;
-						
+
 						filteredCountriesList = new ArrayList<StaticTimezones>();
-						
+
 						for (StaticTimezones tz : countriesList) {
 							if (tz.country_code.equalsIgnoreCase(countryCode)) {
 								filteredCountriesList.add(tz);
 							}
 						}
-						
-						timezonesAdapter = new TimezonesAdapter(RegistrationActivity.this, R.layout.search_dialog_item, filteredCountriesList);
+
+						timezonesAdapter = new TimezonesAdapter(RegistrationActivity.this, R.layout.search_dialog_item,
+								filteredCountriesList);
 						timezonesAdapter.notifyDataSetChanged();
-						
+
 						timezoneView.setText(countriesList.get(timezoneInUse).altname);
 						phonecodeView.setText("+" + countriesList.get(timezoneInUse).call_code);
 						dia1.dismiss();
@@ -261,6 +264,7 @@ public class RegistrationActivity extends Activity {
 		timezoneSpinnerBlock.setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View arg0) {
+				timezoneSelected = true;
 				final Dialog dia1 = new Dialog(RegistrationActivity.this);
 				dia1.requestWindowFeature(Window.FEATURE_NO_TITLE);
 				dia1.setContentView(R.layout.search_dialog);
@@ -313,7 +317,7 @@ public class RegistrationActivity extends Activity {
 				showDialog(BIRTHDATE_DIALOG);
 			}
 		});
-		
+
 		ArrayAdapter<CharSequence> adapterSex = ArrayAdapter.createFromResource(this, R.array.sex_labels,
 				android.R.layout.simple_spinner_item);
 		adapterSex.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
@@ -350,34 +354,51 @@ public class RegistrationActivity extends Activity {
 				}
 			}
 		});
-		
+
 		prefillFields();
 		String countryCode = "";
 
 		for (StaticTimezones temp : countriesList) {
 			if (temp.country_code.equalsIgnoreCase(localCountry)) {
 				timezoneInUse = Integer.parseInt(temp.id);
-				countryView.setText(countriesList.get(timezoneInUse).country2);
-				timezoneView.setText(countriesList.get(timezoneInUse).altname);
-				phonecodeView.setText("+" + countriesList.get(timezoneInUse).call_code);
+				if (confirmView.getText().toString().length() == 0) {
+					countryView.setText(countriesList.get(timezoneInUse).country2);
+				}
+				if (timezoneView.getText().toString().length() == 0) {
+					timezoneView.setText(countriesList.get(timezoneInUse).altname);
+				}
+				if (phonecodeView.getText().toString().length() == 0) {
+					phonecodeView.setText("+" + countriesList.get(timezoneInUse).call_code);
+				}
 				countryCode = countriesList.get(timezoneInUse).country_code;
 				continue;
 			}
 		}
 
-		restoreFieldValues();
-		
 		filteredCountriesList = new ArrayList<StaticTimezones>();
-		
+
 		for (StaticTimezones tz : countriesList) {
 			if (tz.country_code.equalsIgnoreCase(countryCode)) {
 				filteredCountriesList.add(tz);
 			}
 		}
-		
+
 		timezonesAdapter = new TimezonesAdapter(RegistrationActivity.this, R.layout.search_dialog_item, filteredCountriesList);
 		timezonesAdapter.notifyDataSetChanged();
-}
+		int i = 0;
+		for (String tmp : getResources().getStringArray(R.array.timezones)) {
+			if (Calendar.getInstance().getTimeZone().getID().equals(tmp)) {
+				if (timezoneView == null) {
+					timezoneView = (TextView) findViewById(R.id.timezoneView);
+				}
+				timezoneView.setText(countriesList.get(i).altname);
+			} else {
+				i++;
+			}
+		}
+		
+		restoreFieldValues();
+	}
 
 	private int getMyLanguage(String[] countryList, String myLanguage) {
 		int countryPosition = 0;
@@ -455,7 +476,7 @@ public class RegistrationActivity extends Activity {
 
 			String language = languageArray[languageSpinner.getSelectedItemPosition()];
 			String country = countriesList.get(timezoneInUse).country_code;
-			String timezone = countriesList.get(timezoneInUse).timezone;
+			// String timezone = countriesList.get(timezoneInUse).timezone;
 			String sex = sexArray[sexSpinner.getSelectedItemPosition()];
 			String name = nameView.getText().toString();
 			String lastname = lastnameView.getText().toString();
@@ -467,6 +488,20 @@ public class RegistrationActivity extends Activity {
 			String streetNo = streetNoField.getText().toString();
 			String zipCode = zipCodeField.getText().toString();
 			String city = cityField.getText().toString();
+
+			String timezone = "";
+			if (timezoneSelected) {
+				timezone = countriesList.get(timezoneInUse).timezone;
+			} else {
+				int i = 0;
+				for (String tmp : getResources().getStringArray(R.array.timezones)) {
+					if (Calendar.getInstance().getTimeZone().getID().equals(tmp)) {
+						timezone = countriesList.get(i).timezone;
+					} else {
+						i++;
+					}
+				}
+			}
 
 			return DataManagement.registerAccount(language, country, timezone, sex, name, lastname, email, phonecode, phone, password,
 					city, street, streetNo, zipCode, ampm, dateFormat, birthdateView.getText().toString());
@@ -516,7 +551,7 @@ public class RegistrationActivity extends Activity {
 		}
 		return builder.create();
 	}
-	
+
 	private DatePickerDialog.OnDateSetListener mDateSetListener = new DatePickerDialog.OnDateSetListener() {
 
 		@Override
@@ -530,9 +565,10 @@ public class RegistrationActivity extends Activity {
 
 	private void updateBirthdate() {
 		mMonth++;
-		birthdateView.setText(new StringBuilder().append(mYear).append("-").append(mMonth < 10 ? "0" + mMonth : mMonth).append("-").append(mDay < 10 ? "0" + mDay : mDay));
+		birthdateView.setText(new StringBuilder().append(mYear).append("-").append(mMonth < 10 ? "0" + mMonth : mMonth).append("-")
+				.append(mDay < 10 ? "0" + mDay : mDay));
 	}
-	
+
 	private void initActivityFields() {
 		chkStatement = (CheckBox) findViewById(R.id.chk_statement);
 		languageSpinner = (Spinner) findViewById(R.id.languageSpinner);
@@ -558,54 +594,59 @@ public class RegistrationActivity extends Activity {
 		statementsButton = (Button) findViewById(R.id.statementButton);
 		registerButton = (Button) findViewById(R.id.registerButton);
 	}
-	
+
 	private void prefillFields() {
 		String userPhoneNo;
 		simpleDateFormat = (SimpleDateFormat) DateFormat.getDateFormat(getApplicationContext());
-		
+
 		// local language
-		if(simLocale.getDisplayLanguage() != null && !simLocale.getDisplayLanguage().equals("")){
-			localLanguage = simLocale.getDisplayLanguage();
-		} else {
-			localLanguage = usersLocale.getDisplayLanguage(usersLocale).toString();
+		if (localLanguage == null || localLanguage.length() == 0) {
+			if (simLocale.getDisplayLanguage() != null && !simLocale.getDisplayLanguage().equals("")) {
+				localLanguage = simLocale.getDisplayLanguage();
+			} else {
+				localLanguage = usersLocale.getDisplayLanguage(usersLocale).toString();
+			}
 		}
-		
+
 		languageSpinner.setSelection(getMyLanguage(languageArray, localLanguage));
-		
+
 		// local country
-		if(simLocale.getISO3Country() != null && !simLocale.getISO3Country().equals("")){
-			localCountry = simLocale.getISO3Country();
-		} else {
-			localCountry = usersLocale.getISO3Country();
+		if (localCountry == null || localCountry.length() == 0) {
+			if (simLocale.getISO3Country() != null && !simLocale.getISO3Country().equals("")) {
+				localCountry = simLocale.getISO3Country();
+			} else {
+				localCountry = usersLocale.getISO3Country();
+			}
 		}
-		
+
 		// phone number
 		if (tm.getLine1Number() != null)
 			userPhoneNo = tm.getLine1Number().toString();
 		else
 			userPhoneNo = "";
 
-		if (!userPhoneNo.equalsIgnoreCase(""))
+		if (phoneView.getText().toString().length() == 0 && !userPhoneNo.equalsIgnoreCase(""))
 			phoneView.setText(userPhoneNo);
-		
+
 		// email address
-		if (AccountManager.get(getApplicationContext()).getAccountsByType("com.google").length > 0) {
+		if (emailView.getText().toString().length() == 0
+				&& AccountManager.get(getApplicationContext()).getAccountsByType("com.google").length > 0) {
 			defaultEmailAddress = AccountManager.get(getApplicationContext()).getAccountsByType("com.google")[0].name;
 			if ((defaultEmailAddress != null) && (!defaultEmailAddress.equals("")))
 				emailView.setText(defaultEmailAddress);
 		}
 
-		//dateformat
+		// dateformat
 		dateFormat = simpleDateFormat.toLocalizedPattern();
-		
-		//ampm
-		if(DateFormat.is24HourFormat(getApplicationContext())){
+
+		// ampm
+		if (DateFormat.is24HourFormat(getApplicationContext())) {
 			ampm = false;
 		} else {
 			ampm = true;
 		}
 	}
-	
+
 	private boolean saveFieldValues() {
 		SharedPreferences prefs = getBaseContext().getSharedPreferences(SPREFS_TOKEN, 0);
 		Editor editor = prefs.edit();
@@ -626,34 +667,36 @@ public class RegistrationActivity extends Activity {
 		editor.putString(Account.AccountMetaData.CITY, cityField.getText().toString());
 		editor.putString(Account.AccountMetaData.BIRTHDATE, birthdateView.getText().toString());
 		editor.putBoolean("agreement", chkStatement.isChecked());
-//		editor.putString("date_format", dateFormat);
-//		editor.putBoolean("am_pm", ampm);
+		// editor.putString("date_format", dateFormat);
+		// editor.putBoolean("am_pm", ampm);
 		editor.putBoolean("saved", true);
-		
+
 		return editor.commit();
 	}
-	
+
 	private boolean restoreFieldValues() {
 		SharedPreferences prefs = getBaseContext().getSharedPreferences(SPREFS_TOKEN, 0);
 		Editor editor = prefs.edit();
-		
+
 		if (prefs.getBoolean("saved", false)) {
-//			ampm = prefs.getBoolean("am_pm", false);
-//			dateFormat = prefs.getString("date_format", DataManagement.ACCOUNT_BIRTHDATE_TIMESTAMP_FORMAT);
+			// ampm = prefs.getBoolean("am_pm", false);
+			// dateFormat = prefs.getString("date_format",
+			// DataManagement.ACCOUNT_BIRTHDATE_TIMESTAMP_FORMAT);
 			nameView.setText(prefs.getString(Account.AccountMetaData.NAME, ""));
 			lastnameView.setText(prefs.getString(Account.AccountMetaData.LASTNAME, ""));
 			emailView.setText(prefs.getString(Account.AccountMetaData.EMAIL, ""));
 			passwordView.setText(prefs.getString("password", ""));
 			confirmView.setText(prefs.getString("confirm", ""));
 			languageSpinner.setSelection(prefs.getInt(Account.AccountMetaData.LANGUAGE, 0));
-			
+
 			timezoneInUse = prefs.getInt(Account.AccountMetaData.TIMEZONE, 0);
 			if (timezoneInUse > 0) {
 				countryView.setText(countriesList.get(timezoneInUse).country2);
 				timezoneView.setText(countriesList.get(timezoneInUse).altname);
-//				phonecodeView.setText("+" + countriesList.get(timezoneInUse).call_code);
+				// phonecodeView.setText("+" +
+				// countriesList.get(timezoneInUse).call_code);
 			}
-			
+
 			sexSpinner.setSelection(prefs.getInt(Account.AccountMetaData.SEX, 0));
 			phonecodeView.setText(prefs.getString("phonecode", "+"));
 			phoneView.setText(prefs.getString(Account.AccountMetaData.PHONE1, ""));
@@ -663,12 +706,32 @@ public class RegistrationActivity extends Activity {
 			cityField.setText(prefs.getString(Account.AccountMetaData.CITY, ""));
 			birthdateView.setText(prefs.getString(Account.AccountMetaData.BIRTHDATE, ""));
 			chkStatement.setChecked(prefs.getBoolean("agreement", false));
-			
+
 			editor.clear();
 			editor.commit();
+			
+			if(!timezoneSelected){
+				int i = 0;
+				for (String tmp : getResources().getStringArray(R.array.timezones)) {
+					if (Calendar.getInstance().getTimeZone().getID().equals(tmp)) {
+						if (timezoneView == null) {
+							timezoneView = (TextView) findViewById(R.id.timezoneView);
+						}
+						timezoneView.setText(countriesList.get(i).altname);
+					} else {
+						i++;
+					}
+				}
+			}
 			return true;
 		} else {
 			return false;
 		}
+	}
+
+	@Override
+	public void onPause() {
+		super.onPause();
+		saveFieldValues();
 	}
 }

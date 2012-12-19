@@ -68,7 +68,7 @@ public class PhoneContactImport {
 					phone.close();
 				}
 
-				if (cur1.moveToFirst()) {
+				if (cur1 != null && cur1.moveToFirst()) {
 					while (!cur1.isAfterLast()) {
 
 						phoneContact2.email = cur1.getString(cur1.getColumnIndex(ContactsContract.CommonDataKinds.Email.DATA));
@@ -79,7 +79,7 @@ public class PhoneContactImport {
 
 				cur1 = context.getContentResolver().query(ContactsContract.CommonDataKinds.StructuredPostal.CONTENT_URI, null,
 						ContactsContract.CommonDataKinds.StructuredPostal.CONTACT_ID + " = " + id, null, null);
-				if (cur1.moveToFirst()) {
+				if (cur1 != null && cur1.moveToFirst()) {
 					while (!cur1.isAfterLast()) {
 						phoneContact2.city = cur1.getString(cur1.getColumnIndex(ContactsContract.CommonDataKinds.StructuredPostal.CITY));
 						phoneContact2.street = cur1

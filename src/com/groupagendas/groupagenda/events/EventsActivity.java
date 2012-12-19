@@ -452,7 +452,12 @@ public class EventsActivity extends ListActivity {
 						buttonView.setChecked(false);
 						break;
 				case R.id.btnSettings:
-					startActivity(new Intent(EventsActivity.this, SettingsActivity.class));
+					if(!NavbarActivity.smthClicked){
+						Log.e("huj", "jest");
+						startActivity(new Intent(EventsActivity.this, SettingsActivity.class));
+					} else {
+						Log.e("huj", "net");
+					}
 					break;
 				case R.id.btnNewevent:
 					startActivity(new Intent(EventsActivity.this, NewEventActivity.class));
