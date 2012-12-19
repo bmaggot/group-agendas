@@ -1,6 +1,7 @@
 package com.groupagendas.groupagenda;
 
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Locale;
 
@@ -57,6 +58,7 @@ import com.groupagendas.groupagenda.data.ChatManagement;
 import com.groupagendas.groupagenda.data.ContactManagement;
 import com.groupagendas.groupagenda.data.DataManagement;
 import com.groupagendas.groupagenda.data.EventManagement;
+import com.groupagendas.groupagenda.events.Event;
 import com.groupagendas.groupagenda.events.EventsActivity;
 import com.groupagendas.groupagenda.events.EventsProvider;
 import com.groupagendas.groupagenda.events.EventsProvider.EMetaData;
@@ -114,6 +116,10 @@ public class NavbarActivity extends FragmentActivity {
 	public static int newResponsesBadges = 0;
 	public static String newPhoneNumber = "newphonenumber";
 	public static boolean showVerificationDialog = false;
+	public static ArrayList<Event> pollsList;
+	public static ArrayList<Event> pollsListToShow = new ArrayList<Event>();
+	public static ArrayList<JSONObject> selectedPollTime = new ArrayList<JSONObject>();
+	public static ArrayList<Event> pollsListToDelete = new ArrayList<Event>();
 	
 	public static ProgressDialog loadingProgressDialog;
 	public static boolean smthClicked = false;
@@ -808,6 +814,7 @@ public class NavbarActivity extends FragmentActivity {
 				case 5: // Load events
 					if (DataManagement.networkAvailable){
 						EventManagement.getEventsFromRemoteDb(NavbarActivity.this, "");
+						pollsList = EventManagement.getPollEventsFromLocalDb(NavbarActivity.this);
 						//acc.setResponses(""+EventManagement.getResponsesFromRemoteDb(getApplicationContext()));
 					}
 					loadPhase++;
@@ -865,13 +872,13 @@ public class NavbarActivity extends FragmentActivity {
 		protected void onPostExecute(Void result) {
 
 			if(!acc.getPhone1().contentEquals("") && !acc.getPhone1().contentEquals("null") && !acc.getPhone1_verified()){
-				showDialogForPhoneVerification(NavbarActivity.this, acc.getPhone1_code()+acc.getPhone1(), "1");
+				showDialogForPhoneVerification(NavbarActivity.this, acc.getPhone1_code()+acc.getPhone1(), "1", "true");
 			}
 			if(!acc.getPhone2().contentEquals("") && !acc.getPhone2().contentEquals("null") && !acc.getPhone2_verified()){
-				showDialogForPhoneVerification(NavbarActivity.this, acc.getPhone2_code()+acc.getPhone2(), "2");
+				showDialogForPhoneVerification(NavbarActivity.this, acc.getPhone2_code()+acc.getPhone2(), "2", "true");
 			}
 			if(!acc.getPhone3().contentEquals("") && !acc.getPhone3().contentEquals("null") && !acc.getPhone3_verified()){
-				showDialogForPhoneVerification(NavbarActivity.this, acc.getPhone3_code()+acc.getPhone3(), "3");
+				showDialogForPhoneVerification(NavbarActivity.this, acc.getPhone3_code()+acc.getPhone3(), "3", "true");
 			}
 			
 			acc.setLatestUpdateTime(Calendar.getInstance());
@@ -891,6 +898,7 @@ public class NavbarActivity extends FragmentActivity {
 			DataManagement.synchronizeWithServer(NavbarActivity.this, this, acc.getLatestUpdateUnixTimestamp());
 			if (DataManagement.networkAvailable)
 				dm.getAccountFromRemoteDb(NavbarActivity.this);
+			pollsList = EventManagement.getPollEventsFromLocalDb(NavbarActivity.this);
 //			if (DataManagement.networkAvailable){
 //				acc.setResponses(""+EventManagement.getResponsesFromRemoteDb(getApplicationContext()));
 //			}
@@ -901,13 +909,13 @@ public class NavbarActivity extends FragmentActivity {
 		protected void onPostExecute(Void result) {
 			
 			if(!acc.getPhone1().contentEquals("") && !acc.getPhone1().contentEquals("null") && !acc.getPhone1_verified()){
-				showDialogForPhoneVerification(NavbarActivity.this, acc.getPhone1_code()+acc.getPhone1(), "1");
+				showDialogForPhoneVerification(NavbarActivity.this, acc.getPhone1_code()+acc.getPhone1(), "1", "true");
 			}
 			if(!acc.getPhone2().contentEquals("") && !acc.getPhone2().contentEquals("null") && !acc.getPhone2_verified()){
-				showDialogForPhoneVerification(NavbarActivity.this, acc.getPhone2_code()+acc.getPhone2(), "2");
+				showDialogForPhoneVerification(NavbarActivity.this, acc.getPhone2_code()+acc.getPhone2(), "2", "true");
 			}
 			if(!acc.getPhone3().contentEquals("") && !acc.getPhone3().contentEquals("null") && !acc.getPhone3_verified()){
-				showDialogForPhoneVerification(NavbarActivity.this, acc.getPhone3_code()+acc.getPhone3(), "3");
+				showDialogForPhoneVerification(NavbarActivity.this, acc.getPhone3_code()+acc.getPhone3(), "3", "true");
 			}
 			
 			acc.setLatestUpdateTime(Calendar.getInstance());
@@ -1064,7 +1072,7 @@ public class NavbarActivity extends FragmentActivity {
 		}
 	};
 	
-	public static void showDialogForPhoneVerification(final Context context, String number, final String number_id){
+	public static void showDialogForPhoneVerification(final Context context, String number, final String number_id, final String sendConfirmationCode){
 		AlertDialog.Builder builder = new AlertDialog.Builder(context);
 		builder.setTitle(R.string.phone_number_verification);
 		builder.setMessage(context.getString(R.string.verification_dialog) + " " + number);
@@ -1081,6 +1089,7 @@ public class NavbarActivity extends FragmentActivity {
 			public void onClick(DialogInterface dialog, int which) {
 				Intent intent = new Intent(context, SmsVerificationCodeActivity.class);
 				intent.putExtra(newPhoneNumber, number_id);
+				intent.putExtra("send_confirmation_code", sendConfirmationCode);
 				context.startActivity(intent);
 				
 			}
