@@ -556,7 +556,8 @@ public class NavbarActivity extends FragmentActivity {
 					showCalendarSettingsFragment();
 					break;
 				case R.id.btnChatThreads:
-					new StartChatThreadsFragment().execute();
+					viewState = ViewState.CHAT_THREADS;
+					showChatFragment();
 					break;
 				case R.id.btnEvents:
 					new StartEventsActivity().execute();
