@@ -142,6 +142,7 @@ public class EventsProvider extends ContentProvider{
 			public static final String NEW_MESSAGES_COUNT = "nmc";
 			public static final String LAST_MESSAGE_DATE_TIME_UTC_MILISECONDS = "last_message_date_time";
 			public static final String INVITED = "invited";
+			public static final String POLL = "poll";
 			
 		}
 	}
@@ -213,6 +214,7 @@ public class EventsProvider extends ContentProvider{
 		EM.put(EMetaData.EventsMetaData.LAST_MESSAGE_DATE_TIME_UTC_MILISECONDS, EMetaData.EventsMetaData.LAST_MESSAGE_DATE_TIME_UTC_MILISECONDS);
 		
 		EM.put(EMetaData.EventsMetaData.UPLOADED_SUCCESSFULLY, EMetaData.EventsMetaData.UPLOADED_SUCCESSFULLY);
+		EM.put(EMetaData.EventsMetaData.POLL, EMetaData.EventsMetaData.POLL);
 		
 	}
 	// END Table Projection Map
@@ -578,7 +580,8 @@ public class EventsProvider extends ContentProvider{
 				+EMetaData.EventsMetaData.UPLOADED_SUCCESSFULLY+" INTEGER DEFAULT 0, "
 				+EMetaData.EventsMetaData.MESSAGES_COUNT+" INTEGER DEFAULT 0,"
 				+EMetaData.EventsMetaData.NEW_MESSAGES_COUNT+" INTEGER DEFAULT 0,"
-				+EMetaData.EventsMetaData.LAST_MESSAGE_DATE_TIME_UTC_MILISECONDS+" INTEGER "
+				+EMetaData.EventsMetaData.LAST_MESSAGE_DATE_TIME_UTC_MILISECONDS+" INTEGER, "
+				+EMetaData.EventsMetaData.POLL+" TEXT "
 				+")";
 			db.execSQL(query);
 			
