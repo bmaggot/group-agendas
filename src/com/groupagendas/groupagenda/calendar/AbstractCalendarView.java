@@ -24,6 +24,7 @@ import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.groupagendas.groupagenda.NavbarActivity;
 import com.groupagendas.groupagenda.R;
 import com.groupagendas.groupagenda.account.Account;
 import com.groupagendas.groupagenda.data.CalendarSettings;
@@ -293,6 +294,11 @@ public abstract class AbstractCalendarView extends LinearLayout {
 			sortedEvents = new TreeMap<Calendar, ArrayList<Event>>();
 			if (account.getShow_ga_calendars()) {
 				ArrayList<Event> events = getEventProjectionsForDisplay(selectedDate);
+				ArrayList<Event> pollEvents = NavbarActivity.pollsList;
+				for (Event event : pollEvents) {
+					TreeMapUtils.putNewEventIntoTreeMap(context, sortedEvents,
+							event);
+				}
 				for (Event event : events) {
 					TreeMapUtils.putNewEventIntoTreeMap(context, sortedEvents,
 							event);
