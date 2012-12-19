@@ -101,65 +101,95 @@
             </LinearLayout>
 
             <LinearLayout
+                android:id="@+id/eventStartEndTime"
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
-                android:orientation="vertical" >
-	            <LinearLayout
-	                android:layout_width="fill_parent"
-	                android:layout_height="wrap_content"
-	                android:orientation="horizontal" >
-	
-	                <TextView
-	                    android:layout_width="80dp"
-	                    android:layout_height="wrap_content"
-	                    android:text="@string/start_time"
-	                    android:textColor="@android:color/black" />
-	
-	                <Button
-	                    android:id="@+id/startButton"
-	                    android:layout_width="wrap_content"
-	                    android:layout_height="wrap_content"
-	                    android:layout_margin="0dp"
-	                    android:paddingBottom="0dp"
-	                    android:paddingTop="0dp"
-	                    android:text="@string/date" />
-	
-	                <EditText
-	                    android:id="@+id/startView"
-	                    android:layout_width="fill_parent"
-	                    android:layout_height="wrap_content"
-	                    android:enabled="false"
-	                    android:inputType="date" />
-	            </LinearLayout>
+                android:orientation="vertical"
+                android:visibility="visible" >
 
-	            <LinearLayout
-	                android:layout_width="fill_parent"
-	                android:layout_height="wrap_content"
-	                android:orientation="horizontal" >
-	
-	                <TextView
-	                    android:layout_width="80dp"
-	                    android:layout_height="wrap_content"
-	                    android:text="@string/end_time"
-	                    android:textColor="@android:color/black" />
-	
-	                <Button
-	                    android:id="@+id/endButton"
-	                    android:layout_width="wrap_content"
-	                    android:layout_height="wrap_content"
-	                    android:layout_margin="0dp"
-	                    android:paddingBottom="0dp"
-	                    android:paddingTop="0dp"
-	                    android:text="@string/date" />
-	
-	                <EditText
-	                    android:id="@+id/endView"
-	                    android:layout_width="fill_parent"
-	                    android:layout_height="wrap_content"
-	                    android:enabled="false"
-	                    android:inputType="date" />
-	            </LinearLayout>
-	        </LinearLayout>
+                <LinearLayout
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal" >
+
+                    <TextView
+                        android:layout_width="80dp"
+                        android:layout_height="wrap_content"
+                        android:text="@string/start_time"
+                        android:textColor="@android:color/black" />
+
+                    <Button
+                        android:id="@+id/startButton"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_margin="0dp"
+                        android:paddingBottom="0dp"
+                        android:paddingTop="0dp"
+                        android:text="@string/date" />
+
+                    <EditText
+                        android:id="@+id/startView"
+                        android:layout_width="fill_parent"
+                        android:layout_height="wrap_content"
+                        android:enabled="false"
+                        android:inputType="date" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal" >
+
+                    <TextView
+                        android:layout_width="80dp"
+                        android:layout_height="wrap_content"
+                        android:text="@string/end_time"
+                        android:textColor="@android:color/black" />
+
+                    <Button
+                        android:id="@+id/endButton"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_margin="0dp"
+                        android:paddingBottom="0dp"
+                        android:paddingTop="0dp"
+                        android:text="@string/date" />
+
+                    <EditText
+                        android:id="@+id/endView"
+                        android:layout_width="fill_parent"
+                        android:layout_height="wrap_content"
+                        android:enabled="false"
+                        android:inputType="date" />
+                </LinearLayout>
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/pollStartEndTime"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:layout_marginRight="10dp"
+                android:layout_marginLeft="10dp"
+                android:layout_marginBottom="10dp"
+                android:visibility="gone" />
+
+                <!-- <ListView
+                    android:id="@+id/pollStartEndTime_list"
+                    android:layout_width="fill_parent"
+                    android:layout_height="0dp"
+                    android:layout_gravity="top"
+                    android:layout_weight="1"
+                    android:background="@color/white"
+                    android:cacheColorHint="#00000000"
+                    android:fadingEdge="none"
+                    android:divider="@null"
+                    android:dividerHeight="0dp"
+                    android:fitsSystemWindows="true"
+                    android:paddingLeft="10dp"
+                    android:paddingRight="10dp" />
+
+            </LinearLayout> -->
 
             <LinearLayout
                 android:layout_width="fill_parent"
@@ -179,7 +209,7 @@
                     android:layout_height="wrap_content"
                     android:inputType="textMultiLine" />
             </LinearLayout>
-            
+
             <LinearLayout
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
@@ -191,22 +221,21 @@
                     android:layout_height="wrap_content"
                     android:text="@string/created_by"
                     android:textColor="@android:color/black" />
-                
+
                 <TextView
                     android:id="@+id/EventEditCreatorName"
                     android:layout_width="match_parent"
-                    android:singleLine="true"
-                    android:textStyle="bold"
                     android:layout_height="wrap_content"
-                    android:textColor="@android:color/black" />
-                                
+                    android:singleLine="true"
+                    android:textColor="@android:color/black"
+                    android:textStyle="bold" />
             </LinearLayout>
-            
+
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="5dp"
-                android:layout_marginBottom="10dp" >
+                android:layout_marginBottom="10dp"
+                android:layout_marginTop="5dp" >
 
                 <TextView
                     android:layout_width="80dp"
@@ -220,7 +249,6 @@
                     android:id="@+id/allDayToggleButton"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content" />
-                
             </LinearLayout>
 
             <RelativeLayout
@@ -298,7 +326,7 @@
                     android:textSize="15sp"
                     android:textStyle="bold" />
 
-				<TextView
+                <TextView
                     android:id="@+id/countryView"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -308,7 +336,6 @@
                     android:singleLine="true"
                     android:textColor="@color/black"
                     android:textSize="15sp" />
-
             </LinearLayout>
 
             <LinearLayout
@@ -446,7 +473,7 @@
                     android:textSize="15sp"
                     android:textStyle="bold" />
 
-				<TextView
+                <TextView
                     android:id="@+id/timezoneView"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
