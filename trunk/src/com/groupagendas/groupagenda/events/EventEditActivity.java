@@ -3,6 +3,10 @@ package com.groupagendas.groupagenda.events;
 import java.util.ArrayList;
 import java.util.Calendar;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.app.ProgressDialog;
@@ -17,6 +21,8 @@ import android.os.Bundle;
 import android.support.v4.content.LocalBroadcastManager;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -26,6 +32,7 @@ import android.view.Window;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.Button;
+import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.GridView;
 import android.widget.ImageView;
@@ -38,6 +45,7 @@ import android.widget.Toast;
 import android.widget.ToggleButton;
 
 import com.groupagendas.groupagenda.C2DMReceiver;
+import com.groupagendas.groupagenda.NavbarActivity;
 import com.groupagendas.groupagenda.R;
 import com.groupagendas.groupagenda.account.Account;
 import com.groupagendas.groupagenda.account.AccountActivity;
@@ -49,11 +57,13 @@ import com.groupagendas.groupagenda.contacts.Group;
 import com.groupagendas.groupagenda.data.CalendarSettings;
 import com.groupagendas.groupagenda.data.ContactManagement;
 import com.groupagendas.groupagenda.data.Data;
+import com.groupagendas.groupagenda.data.DataManagement;
 import com.groupagendas.groupagenda.data.EventManagement;
 import com.groupagendas.groupagenda.timezone.CountriesAdapter;
 import com.groupagendas.groupagenda.timezone.TimezonesAdapter;
 import com.groupagendas.groupagenda.utils.DateTimeUtils;
 import com.groupagendas.groupagenda.utils.DrawingUtils;
+import com.groupagendas.groupagenda.utils.Utils;
 import com.ptashek.widgets.datetimepicker.DateTimePicker;
 
 
@@ -115,7 +125,11 @@ public class EventEditActivity extends EventActivity {
 
 	private Button chatMessengerButton;
 	
+	private LinearLayout eventStartEndTime;
+	private LinearLayout pollStartEndTime;
 	private ProgressDialog pd;
+	private int eventPollSize;
+	ArrayList<JSONObject> allEventPolls;
 	
 
 	public void enableDisableButtons(Boolean state){
@@ -257,6 +271,10 @@ public class EventEditActivity extends EventActivity {
 		intent = getIntent();
 		// Top text and SAVE Button
 		topText = (TextView) findViewById(R.id.topText);
+		
+		eventStartEndTime = (LinearLayout) findViewById(R.id.eventStartEndTime);
+		//pollStartEndTime_list = (ListView) findViewById(R.id.pollStartEndTime_list);
+		pollStartEndTime = (LinearLayout) findViewById(R.id.pollStartEndTime);
 
 		saveButton = (Button) findViewById(R.id.save_button);
 		saveButton.setEnabled(changesMade);
@@ -789,6 +807,108 @@ public class EventEditActivity extends EventActivity {
 			event = result;
 			selectedIcon = event.getIcon();
 			allDayToggleButton.setChecked(event.is_all_day());
+			
+			if(event.getType().contentEquals("v")){
+				eventStartEndTime.setVisibility(View.GONE);
+				pollStartEndTime.setVisibility(View.VISIBLE);
+				pollStartEndTime.removeAllViews();
+				
+				LayoutInflater mInflater = LayoutInflater.from(EventEditActivity.this);
+				String jsonArrayString = event.getPoll();
+				try {
+					if(jsonArrayString != null && !jsonArrayString.contentEquals("null")){
+						final JSONArray jsonArray= new JSONArray(jsonArrayString);
+						eventPollSize = jsonArray.length();
+						allEventPolls = new ArrayList<JSONObject>();
+						for (int i = 0; i < jsonArray.length(); i++) {
+							final JSONObject pollThread = jsonArray.getJSONObject(i);							
+							allEventPolls.add(pollThread);
+							final View view = mInflater.inflate(R.layout.poll_thread, null);
+							final CheckBox selectedTime = (CheckBox) view.findViewById(R.id.selectedTime);
+							
+							
+							LinearLayout backgr = (LinearLayout) view.findViewById(R.id.pollTimeBlock);
+							
+							if(i == 0){
+								backgr.setBackgroundResource(R.drawable.event_invite_people_button_notalone_i);
+							} else {
+								if((i+1) == jsonArray.length()){
+									backgr.setBackgroundResource(R.drawable.event_invited_entry_last_background);
+								} else {
+									backgr.setBackgroundResource(R.drawable.event_invited_entry_notalone_background);
+								}
+							}
+							
+							TextView startTime = (TextView) view.findViewById(R.id.pollStartTime);
+							TextView endTime = (TextView) view.findViewById(R.id.pollEndTime);
+							DateTimeUtils dateTimeUtils = new DateTimeUtils(EventEditActivity.this);
+							
+							String temp ="";
+							try {
+								temp = pollThread.getString("start");
+							} catch (JSONException e) {
+								Log.e("PollAdapter", "Failed getting poll time.");
+							}
+							
+							final Calendar tempCal = Utils.stringToCalendar(EventEditActivity.this, temp, DataManagement.SERVER_TIMESTAMP_FORMAT);
+							startTime.setText(dateTimeUtils.formatDate(tempCal)+" "+dateTimeUtils.formatTime(tempCal));
+							
+							try {
+								temp = pollThread.getString("end");
+							} catch (JSONException e) {
+								Log.e("PollAdapter", "Failed getting poll time.");
+							}
+							
+							final Calendar tempCal2 = Utils.stringToCalendar(EventEditActivity.this, temp, DataManagement.SERVER_TIMESTAMP_FORMAT);
+							endTime.setText(dateTimeUtils.formatDate(tempCal2)+" "+dateTimeUtils.formatTime(tempCal2));
+							
+							selectedTime.setOnClickListener(new OnClickListener() {
+								
+								@Override
+								public void onClick(View v) {
+									if(selectedTime.isChecked()){
+										NavbarActivity.selectedPollTime.add(pollThread);										
+										saveButton.setEnabled(true);										
+									} else {
+										saveButton.setEnabled(true);
+										for (int i = 0 ; i< eventPollSize ; i++){
+											int size = NavbarActivity.selectedPollTime.size();
+											for (int y = 0; y < size; y++) {
+												try {
+													if(NavbarActivity.selectedPollTime.get(y).getString("id").equals(pollThread.getString("id"))){
+														NavbarActivity.selectedPollTime.remove(y);
+														break;
+														
+													}
+												} catch (JSONException e) {
+													e.printStackTrace();
+												}
+											}
+										}
+									}
+								}
+							});
+							
+							if(NavbarActivity.selectedPollTime != null){
+								int size = NavbarActivity.selectedPollTime.size();
+								for (int y = 0; y < size; y++) {
+									final JSONObject pollThread2 = NavbarActivity.selectedPollTime.get(y);
+									if(pollThread.getString("timestamp_start_utc").contentEquals(pollThread2.getString("timestamp_start_utc"))
+											&& pollThread.getString("id").contentEquals(pollThread2.getString("id"))){
+										selectedTime.setChecked(true);
+									}
+								}
+							}
+							
+							pollStartEndTime.addView(view);
+							
+						}
+					}
+				} catch (JSONException e) {
+					e.printStackTrace();
+				}
+			}
+			
 			// toptext
 			String tmpTopText = event.getType();
 			if (tmpTopText.equalsIgnoreCase("t")) {
@@ -1165,31 +1285,75 @@ public class EventEditActivity extends EventActivity {
 
 		@Override
 		protected Boolean doInBackground(Event... events) {
-			if (isInvited) {
-				if (EventManagement.inviteExtraContacts(EventEditActivity.this, "" + event.getEvent_id(), selectedContacts)) {
-					return true;
-				} else {
-					errorStr = "Invite wasn't successfull.";
-					return false;
-				}
-			} else {
-				event = setEventData(event);
+			if(event.getType().contentEquals("v")){
 				
-				if (event.getColor().equals(Event.DEFAULT_COLOR)) {
-					EventEditActivity.this.setAutoColor(EventEditActivity.this);
-				}
-
-				if (event.getIcon().equals(Event.DEFAULT_ICON)) {
-					EventEditActivity.this.setAutoIcon(EventEditActivity.this);
-				}
-
-				int testEvent = event.isValid();
-				if (testEvent == 0) {
-					EventManagement.updateEvent(EventEditActivity.this, event);
-					return true;
+					for(int i=0; i < eventPollSize; i++ ){
+						ArrayList<Event> list2 = NavbarActivity.pollsList;
+						for (Event tempEvent : list2) {
+							if(tempEvent.getEvent_id() == event.getEvent_id()){
+									NavbarActivity.pollsList.remove(tempEvent);
+									break;
+							}
+						}
+					}
+					
+					try {
+						ArrayList<JSONObject> listToAdd = NavbarActivity.selectedPollTime;
+						if(!listToAdd.isEmpty()){
+							for (JSONObject e : listToAdd) {
+								event = EventManagement.getEventFromLocalDb(EventEditActivity.this, event.getEvent_id(), EventManagement.ID_EXTERNAL);
+								event.setStartCalendar(Utils.stringToCalendar(EventEditActivity.this, e.getString("start"), DataManagement.SERVER_TIMESTAMP_FORMAT));
+								event.setEndCalendar(Utils.stringToCalendar(EventEditActivity.this, e.getString("end"), DataManagement.SERVER_TIMESTAMP_FORMAT));
+								NavbarActivity.pollsList.add(event);
+							}
+						} else {
+							String jsonArrayString = event.getPoll();
+								if(jsonArrayString != null && !jsonArrayString.contentEquals("null")){
+									JSONArray jsonArray= new JSONArray(jsonArrayString);
+									for (int i = 0; i < jsonArray.length(); i++) {
+										JSONObject e = jsonArray.getJSONObject(i);
+										event = EventManagement.getEventFromLocalDb(EventEditActivity.this, event.getEvent_id(), EventManagement.ID_EXTERNAL);
+										event.setStartCalendar(Utils.stringToCalendar(EventEditActivity.this, e.getString("start"), DataManagement.SERVER_TIMESTAMP_FORMAT));
+										event.setEndCalendar(Utils.stringToCalendar(EventEditActivity.this, e.getString("end"), DataManagement.SERVER_TIMESTAMP_FORMAT));
+										NavbarActivity.pollsList.add(event);
+									}
+								}
+						}
+						
+					} catch (JSONException e) {
+						e.printStackTrace();
+					}
+					EventManagement.votePoll(getApplicationContext(), ""+event.getEvent_id(), allEventPolls, "0");
+					EventManagement.votePoll(getApplicationContext(), ""+event.getEvent_id(), NavbarActivity.selectedPollTime, "1");
+				
+				return true;
+			} else {
+				if (isInvited) {
+					if (EventManagement.inviteExtraContacts(EventEditActivity.this,  "" + event.getEvent_id(), selectedContacts)) {
+						return true;
+					} else {
+						errorStr = "Invite wasn't successfull.";
+						return false;
+					}
 				} else {
-					errorStr = setErrorStr(testEvent);
-					return false;
+					event = setEventData(event);
+					
+					if (event.getColor().equals(Event.DEFAULT_COLOR)) {
+						EventEditActivity.this.setAutoColor(EventEditActivity.this);
+					}
+	
+					if (event.getIcon().equals(Event.DEFAULT_ICON)) {
+						EventEditActivity.this.setAutoIcon(EventEditActivity.this);
+					}
+	
+					int testEvent = event.isValid();
+					if (testEvent == 0) {
+						EventManagement.updateEvent(EventEditActivity.this, event);
+						return true;
+					} else {
+						errorStr = setErrorStr(testEvent);
+						return false;
+					}
 				}
 			}
 		}
