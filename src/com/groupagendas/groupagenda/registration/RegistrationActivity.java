@@ -40,6 +40,7 @@ import android.widget.ProgressBar;
 import android.widget.Spinner;
 import android.widget.TextView;
 
+import com.groupagendas.groupagenda.NavbarActivity;
 import com.groupagendas.groupagenda.R;
 import com.groupagendas.groupagenda.account.Account;
 import com.groupagendas.groupagenda.data.DataManagement;
@@ -509,6 +510,7 @@ public class RegistrationActivity extends Activity {
 
 		@Override
 		protected void onPostExecute(Boolean result) {
+			
 			pb.setVisibility(View.INVISIBLE);
 			if (result) {
 				showDialog(DIALOG_SUCCESS);
@@ -518,6 +520,9 @@ public class RegistrationActivity extends Activity {
 
 				errorStr = getResources().getStringArray(R.array.registration_msgs)[9] + DataManagement.getError();
 				showDialog(DIALOG_ERROR);
+			}
+			if(!phoneView.getText().toString().contentEquals("")){
+				NavbarActivity.showDialogForPhoneVerification(RegistrationActivity.this, phonecodeView.getText().toString()+phoneView.getText().toString(), "1", "false");
 			}
 			// super.onPostExecute(result);
 		}
