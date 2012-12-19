@@ -114,6 +114,9 @@ public class NavbarActivity extends FragmentActivity {
 	public static int newResponsesBadges = 0;
 	public static String newPhoneNumber = "newphonenumber";
 	public static boolean showVerificationDialog = false;
+	
+	public static ProgressDialog loadingProgressDialog;
+	public static boolean smthClicked = false;
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -158,6 +161,9 @@ public class NavbarActivity extends FragmentActivity {
 		calendarContainer = (FrameLayout) findViewById(R.id.calendarContainer);
 
 		super.onResume();
+		if (progressDialog == null) {
+			progressDialog = new ProgressDialog(NavbarActivity.this);
+		}
 		RadioButton radioButton;
 		radioButton = (RadioButton) findViewById(R.id.btnCalendar);
 		radioButton.setChecked(false);
@@ -550,32 +556,99 @@ public class NavbarActivity extends FragmentActivity {
 					showCalendarSettingsFragment();
 					break;
 				case R.id.btnChatThreads:
-					viewState = ViewState.CHAT_THREADS;
-					showChatFragment();
+					new StartChatThreadsFragment().execute();
 					break;
-				// case R.id.btnContacts:
-				// Data.newEventPar = false;
-				// startActivity(new Intent(NavbarActivity.this,
-				// ContactsActivity.class));
-				// break;
 				case R.id.btnEvents:
-					showInvites = true;
-					startActivity(new Intent(NavbarActivity.this, EventsActivity.class));
+					new StartEventsActivity().execute();
 					break;
 				case R.id.btnNewevent:
-					Intent intent = new Intent(NavbarActivity.this, NewEventActivity.class);
-					View view = calendarContainer.getChildAt(0);
-					if (view instanceof AbstractCalendarView) {
-						Calendar cal = ((AbstractCalendarView) view).getDateToResume();
-						intent.putExtra(NewEventActivity.EXTRA_STRING_FOR_START_CALENDAR,
-								Utils.formatCalendar(cal, DataManagement.SERVER_TIMESTAMP_FORMAT));
-					}
-					startActivity(intent);
+					new StartNewEventActivity().execute();
 					break;
 				}
 			}
 		}
 	};
+	
+	private class StartChatThreadsFragment extends AsyncTask<Void, Void, Void>{
+
+		@Override
+		protected void onPreExecute() {
+			smthClicked = true;
+			progressDialog.setMessage(getApplicationContext().getResources().getString(R.string.loading));
+			progressDialog.setCancelable(false);
+			progressDialog.show();
+		}
+		
+		@Override
+		protected Void doInBackground(Void... params) {
+			viewState = ViewState.CHAT_THREADS;
+			showChatFragment();
+			return null;
+		}
+		
+		@Override
+		protected void onPostExecute(Void result){
+			progressDialog.dismiss();
+			smthClicked = false;
+		}
+		
+	}
+	
+	private class StartEventsActivity extends AsyncTask<Void, Void, Void>{
+
+		@Override
+		protected void onPreExecute() {
+			smthClicked = true;
+			progressDialog.setMessage(getApplicationContext().getResources().getString(R.string.loading));
+			progressDialog.setCancelable(false);
+			progressDialog.show();
+		}
+		
+		@Override
+		protected Void doInBackground(Void... params) {
+			showInvites = true;
+			startActivity(new Intent(NavbarActivity.this, EventsActivity.class));
+			return null;
+		}
+		
+		@Override
+		protected void onPostExecute(Void result){
+			progressDialog.dismiss();
+			smthClicked = false;
+		}
+		
+	}
+	
+	private class StartNewEventActivity extends AsyncTask<Void, Void, Void>{
+
+		@Override
+		protected void onPreExecute() {
+			smthClicked = true;
+			progressDialog.setMessage(getApplicationContext().getResources().getString(R.string.loading));
+			progressDialog.setCancelable(false);
+			progressDialog.show();
+		}
+		
+		@Override
+		protected Void doInBackground(Void... params) {
+			Intent intent = new Intent(NavbarActivity.this, NewEventActivity.class);
+			View view = calendarContainer.getChildAt(0);
+			if (view instanceof AbstractCalendarView) {
+				Calendar cal = ((AbstractCalendarView) view).getDateToResume();
+				intent.putExtra(NewEventActivity.EXTRA_STRING_FOR_START_CALENDAR,
+						Utils.formatCalendar(cal, DataManagement.SERVER_TIMESTAMP_FORMAT));
+			}
+			startActivity(intent);
+			return null;
+		}
+		
+		@Override
+		protected void onPostExecute(Void result){
+			progressDialog.dismiss();
+			smthClicked = false;
+		}
+		
+	}
 
 	public void showChatFragment() {
 		Fragment chatFragment = ChatThreadFragment.newInstance();

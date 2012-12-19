@@ -1580,6 +1580,7 @@ public class EventManagement {
 //					sb.append(e.getEvent_id());
 //					sb.append(',');
 				}else{
+					e.setInternalID(getEventFromLocalDb(context, e.getEvent_id(), ID_EXTERNAL).getInternalID());
 					updateEventInLocalDb(context, e);
 				}
 			}

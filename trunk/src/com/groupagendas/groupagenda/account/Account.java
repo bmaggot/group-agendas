@@ -361,7 +361,7 @@ public class Account {
 	}
 
 	public boolean getShow_native_calendars() {
-		return prefs.getBoolean(Account.AccountMetaData.SHOW_NATIVE_CALENDARS, false);
+		return prefs.getBoolean(Account.AccountMetaData.SHOW_NATIVE_CALENDARS, true);
 	}
 	
 	public boolean getShow_ga_calendars(){
