@@ -74,8 +74,13 @@ public class JSONUtils {
 //				if (unixTimestamp == 0) return null;
 //				event.setStartCalendar(Utils.createCalendar(Utils.unixTimestampToMilis(unixTimestamp), EventManagement.user_timezone));
 				try {
-					event.setStartCalendar(Utils.stringToCalendar(context, e.getString("time_start"), DataManagement.SERVER_TIMESTAMP_FORMAT));
-					event.setEndCalendar(Utils.stringToCalendar(context, e.getString("time_end"), DataManagement.SERVER_TIMESTAMP_FORMAT));
+					if(e.getString(EventManagement.TYPE).contentEquals("v")){
+						event.setStartCalendar(Utils.stringToCalendar(context, "0", DataManagement.SERVER_TIMESTAMP_FORMAT));
+						event.setEndCalendar(Utils.stringToCalendar(context, "0", DataManagement.SERVER_TIMESTAMP_FORMAT));
+					} else {
+						event.setStartCalendar(Utils.stringToCalendar(context, e.getString("time_start"), DataManagement.SERVER_TIMESTAMP_FORMAT));
+						event.setEndCalendar(Utils.stringToCalendar(context, e.getString("time_end"), DataManagement.SERVER_TIMESTAMP_FORMAT));
+					}
 				} catch (JSONException e2) {
 					// TODO Auto-generated catch block
 					e2.printStackTrace();
@@ -227,7 +232,14 @@ public class JSONUtils {
 				event.setMessage_count(e.optInt(EventManagement.MESSAGE_COUNT));
 				event.setNew_message_count(e.optInt(EventManagement.NEW_MESSAGE_COUNT));
 				event.setLast_message_date_time(e.optLong(EventManagement.MESSAGE_LAST_TIMESTAMP));
-	
+				
+				try {
+					event.setPoll(e.getString(EventManagement.POLL));
+				} catch (JSONException e1) {
+					Reporter.reportError(context, EventManagement.CLASS_NAME, Thread.currentThread().getStackTrace()[2].getMethodName().toString(),
+							e1.getMessage());
+				}
+				
 			return event;
 		}
 
