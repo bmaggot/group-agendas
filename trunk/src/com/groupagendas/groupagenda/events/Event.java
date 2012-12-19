@@ -97,6 +97,7 @@ private static final String TIMESTAMP_FORMAT = DataManagement.SERVER_TIMESTAMP_F
 	private int new_message_count = 0;
 	private long last_message_date_time = 0;
 	private Invited myInvite;
+	private String poll;
 	
 	//TODO implement event missing attributes 
 	/* public String confirmed;
@@ -920,4 +921,10 @@ public void setMyInvite(Invited myInvite) {
 public Invited getMyInvite() {
 	return this.myInvite;
 }	
+public String getPoll() {
+	return poll;
+}
+public void setPoll(String poll) {
+	this.poll = poll;
+}
 }
