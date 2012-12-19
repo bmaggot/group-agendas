@@ -65,6 +65,7 @@ public class EventManagement {
 	public static final String DATA_ENCODING = "UTF-8";
 
 	private static final String GET_EVENTS_FROM_REMOTE_DB_URL = "mobile/events_list";
+	
 
 	// //////////////////////////METHODS THAT ARE USED BY
 	// UI////////////////////////////////////////////////////////////////////
@@ -414,6 +415,7 @@ public class EventManagement {
 	public static final String MESSAGE_LAST_TIMESTAMP = "message_last_timestamp";
 	// private static final String ASSIGNED_CONTACTS = "assigned_contacts";
 	private static final String EVENTS = "events";
+	public static final String POLL = "poll";
 
 	/**
 	 * @author justinas.marcinka@gmail.com Gets events projections from local
@@ -581,7 +583,15 @@ public class EventManagement {
 						for (int i = 0; i < es.length(); i++) {
 							try {
 								JSONObject e = es.getJSONObject(i);
-								if(!e.getString("type").contentEquals("v")){
+								//if(!e.getString("type").contentEquals("v")){
+								if(e.getString("type").contentEquals("v")){
+									//pollTimeArray = e.getString("poll");
+//									if(pollTimeArray != null &&!pollTimeArray.contentEquals("null")){
+//										JSONArray jsonPollTimeArray = new JSONArray(pollTimeArray);
+//									}
+								} else {
+									//pollTimeArray = "null";
+								}
 									event = JSONUtils.createEventFromJSON(context, e);
 									if (event != null && !event.isNative()) {
 										event.setUploadedToServer(true);
@@ -589,7 +599,7 @@ public class EventManagement {
 										value++;
 										// insertEventToLocalDB(context, event);
 									}
-								}
+								//}
 
 							} catch (JSONException ex) {
 								Log.e(CLASS_NAME, "JSON");
@@ -666,6 +676,79 @@ public class EventManagement {
 			Log.e("getResponsesFromRemoteDb", "er");
 		}
 		return resp;
+	}
+	
+	public static boolean votePoll(Context context, String event_id, ArrayList<JSONObject> selectedEventPolls, String status) {
+		boolean success = false;
+		String error = null;
+		Account account = new Account(context);
+		WebService webService = new WebService();
+		HttpPost post = new HttpPost(Data.getServerUrl() + "mobile/polls/vote");
+		MultipartEntity reqEntity = new MultipartEntity(HttpMultipartMode.BROWSER_COMPATIBLE);
+
+		try {
+			reqEntity.addPart("session", new StringBody(account.getSessionId(), Charset.forName("UTF-8")));
+		} catch (UnsupportedEncodingException e2) {
+			e2.printStackTrace();
+		}
+
+		try {
+			reqEntity.addPart("token", new StringBody(Data.getToken(context), Charset.forName("UTF-8")));
+		} catch (UnsupportedEncodingException e1) {
+			Log.e("votePoll", "Failed adding token to entity");
+		}
+		
+		try {
+			reqEntity.addPart("event_id", new StringBody(event_id, Charset.forName("UTF-8")));
+		} catch (UnsupportedEncodingException e1) {
+			Log.e("votePoll", "Failed adding token to entity");
+		}
+		
+		int selectedEventPollsSize = selectedEventPolls.size();
+		for(int i = 0; i < selectedEventPollsSize; i++){
+			String selectedEventPollTimeId = "";
+			try {
+				selectedEventPollTimeId = selectedEventPolls.get(i).getString("id");
+			} catch (JSONException e) {
+				e.printStackTrace();
+			}
+			if(!selectedEventPollTimeId.contentEquals("")){
+				try {
+					reqEntity.addPart("votes["+i+"][id]", new StringBody(selectedEventPollTimeId, Charset.forName("UTF-8")));
+				} catch (UnsupportedEncodingException e1) {
+					Log.e("votePoll", "Failed adding votes id to entity");
+				}		
+				
+				try {
+					reqEntity.addPart("votes["+i+"][status]", new StringBody(status, Charset.forName("UTF-8")));
+				} catch (UnsupportedEncodingException e1) {
+					Log.e("votePoll", "Failed adding votes status to entity");
+				}	
+			}
+		}
+
+		post.setEntity(reqEntity);
+		String resp = "";
+		try {
+			HttpResponse rp = webService.getResponseFromHttpPost(post);
+
+			if (rp.getStatusLine().getStatusCode() == HttpStatus.SC_OK) {
+				resp = EntityUtils.toString(rp.getEntity());
+				if (resp != null) {
+					JSONObject object = new JSONObject(resp);
+					success = object.getBoolean("success");
+
+					if (success == false) {
+						error = object.getString("error");
+						Log.e("votePoll - error: ", error);
+					}
+				}
+
+			}
+		} catch (Exception ex) {
+			Log.e("votePoll", "er");
+		}
+		return success;
 	}
 
 	// ///////////////////////////////////////////////////METHODS THAT WORK WITH
@@ -1383,6 +1466,7 @@ public class EventManagement {
 		cv.put(EventsProvider.EMetaData.EventsMetaData.MESSAGES_COUNT, event.getMessage_count());
 		cv.put(EventsProvider.EMetaData.EventsMetaData.NEW_MESSAGES_COUNT, event.getNew_message_count());
 		cv.put(EventsProvider.EMetaData.EventsMetaData.LAST_MESSAGE_DATE_TIME_UTC_MILISECONDS, event.getLast_message_date_time());
+		cv.put(EventsProvider.EMetaData.EventsMetaData.POLL, event.getPoll());
 		return cv;
 	}
 
@@ -1488,6 +1572,8 @@ public class EventManagement {
 		item.setNew_message_count(result.getInt(result.getColumnIndex(EventsProvider.EMetaData.EventsMetaData.NEW_MESSAGES_COUNT)));
 		item.setLast_message_date_time(result.getLong(result
 				.getColumnIndex(EventsProvider.EMetaData.EventsMetaData.LAST_MESSAGE_DATE_TIME_UTC_MILISECONDS)));
+		item.setPoll(result.getString(result
+				.getColumnIndex(EventsProvider.EMetaData.EventsMetaData.POLL)));
 		return item;
 	}
 
@@ -1683,5 +1769,42 @@ public class EventManagement {
 		}
 		offlineDeletedEvents.clear(3);
 		result.close();
+	}
+	
+	public static ArrayList<Event> getPollEventsFromLocalDb(Context context) {
+		Event item;
+		String where = null;
+		
+		where = (EventsProvider.EMetaData.EventsMetaData.TYPE + " = 'v'");
+
+		ArrayList<Event> items = new ArrayList<Event>();
+
+		Cursor result = context.getContentResolver().query(EventsProvider.EMetaData.EventsMetaData.CONTENT_URI, null, where, null, null);
+
+		if (result.moveToFirst()) {
+			while (!result.isAfterLast()) {
+				item = EventManagement.createEventFromCursor(context, result);
+				String jsonArrayString = item.getPoll();
+				try {
+					if(jsonArrayString != null && !jsonArrayString.contentEquals("null")){
+						JSONArray jsonArray= new JSONArray(jsonArrayString);
+						for (int i = 0; i < jsonArray.length(); i++) {
+							JSONObject e = jsonArray.getJSONObject(i);
+							item = EventManagement.createEventFromCursor(context, result);
+							item.setStartCalendar(Utils.stringToCalendar(context, e.getString("start"), DataManagement.SERVER_TIMESTAMP_FORMAT));
+							item.setEndCalendar(Utils.stringToCalendar(context, e.getString("end"), DataManagement.SERVER_TIMESTAMP_FORMAT));
+							items.add(item);
+						}
+					}
+				} catch (JSONException e) {
+					e.printStackTrace();
+				}
+				
+				result.moveToNext();
+			}
+		}
+		result.close();
+
+		return (items);
 	}
 }
