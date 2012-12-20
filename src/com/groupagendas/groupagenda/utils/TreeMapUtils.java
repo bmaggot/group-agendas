@@ -68,8 +68,10 @@ public class TreeMapUtils {
 		}
 		if (tm.containsKey(eventDay)) {
 			ArrayList<Event> tmpArrayList = tm.get(eventDay);
-			tmpArrayList.add(event);
-			tm.put(eventDay, tmpArrayList);
+			if(tmpArrayList != null){
+				tmpArrayList.add(event);
+				tm.put(eventDay, tmpArrayList);
+			}
 		} else {
 			ArrayList<Event> tmpArrayList = new ArrayList<Event>();
 			tmpArrayList.add(event);

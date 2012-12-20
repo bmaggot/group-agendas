@@ -230,7 +230,7 @@ public class NativeCalendarReader {
 			event.setStatus(1);
 			event.setNative(true);
 		} catch (Exception e) {
-			System.out.println("Exception");
+			System.out.println("NativeCalendarReader makeNativeEventFromCursor");
 		}
 		return event;
 	}

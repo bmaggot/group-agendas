@@ -1188,10 +1188,12 @@ public class EventEditActivity extends EventActivity {
 
 					@Override
 					public void onClick(View arg0) {
-						if (event_internal_id > 0) {
+						if (event_internal_id > 0 && event.getEvent_id() > 1) {
 							Intent intent = new Intent(EventEditActivity.this, ChatMessageActivity.class);
 							intent.putExtra("event_id", event.getEvent_id());
 							startActivity(intent);
+						} else {
+							showToast(getResources().getString(R.string.internet_connection_required), Toast.LENGTH_LONG);
 						}
 					}
 				});
@@ -1590,6 +1592,10 @@ public class EventEditActivity extends EventActivity {
 		} else {
 			super.onBackPressed();
 		}
+	}
+	
+	public void showToast(String msg, int length){
+		Toast.makeText(this, msg, length).show();
 	}
 	
 	private BroadcastReceiver mMessageReceiver = new BroadcastReceiver() {
