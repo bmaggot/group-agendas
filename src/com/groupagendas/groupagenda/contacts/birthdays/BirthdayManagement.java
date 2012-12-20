@@ -20,11 +20,16 @@ public class BirthdayManagement {
 		ArrayList<Event> birthdayEvents = new ArrayList<Event>();
 		String form = "MM";
 		SimpleDateFormat sdf= new SimpleDateFormat(form);
-		String selection = "";
+		SimpleDateFormat sdfy= new SimpleDateFormat(form);
+		String selection = generateInForBirthdayMonths(Integer.parseInt(sdf.format(startTime)), 1);
+		System.out.println(selection);
 
-		if (startTime > 0) {
-			selection = ContactsProvider.CMetaData.BirthdaysMetaData.BIRTHDATE_MM +" == '" + sdf.format(startTime) + "'";
-		}
+//		if (startTime > 0) {
+//			selection = ContactsProvider.CMetaData.BirthdaysMetaData.BIRTHDATE_MM +" >= '" + sdf.format(startTime) + "'";
+//		}
+//		if (endTime > 0){
+//			selection += " OR " + ContactsProvider.CMetaData.BirthdaysMetaData.BIRTHDATE_MM +" <= '" + sdf.format(endTime) + "'";
+//		}
 		
 		cursor = context.getContentResolver()
 				.query(ContactsProvider.CMetaData.BirthdaysMetaData.CONTENT_URI,
@@ -46,7 +51,7 @@ public class BirthdayManagement {
 					Calendar calendar = Calendar.getInstance();
 					String age="";
 					String yearForm = "yyyy";
-					sdf = new SimpleDateFormat(yearForm);
+					sdfy = new SimpleDateFormat(yearForm);
 					
 					event.setInternalID(Long.valueOf(cursor.getString(5)));
 					event.setCountry(cursor.getString(3));
@@ -54,7 +59,11 @@ public class BirthdayManagement {
 					String[] date = cursor.getString(2).split("-");
 					age=""+(Integer.parseInt(sdf.format(startTime))-Integer.parseInt(date[0]));
 					event.setTitle(cursor.getString(1)+" (Age: "+ age +")");
-					calendar.set(Integer.parseInt(sdf.format(startTime)), Integer.parseInt(date[1])-1,Integer.parseInt(date[2]));
+					if(Integer.parseInt(sdf.format(startTime)) == 12 && Integer.parseInt(date[1]) == 1){
+						calendar.set(Integer.parseInt(sdfy.format(startTime)) + 1, Integer.parseInt(date[1])-1,Integer.parseInt(date[2]));
+					} else {
+						calendar.set(Integer.parseInt(sdfy.format(startTime)), Integer.parseInt(date[1])-1,Integer.parseInt(date[2]));
+					}
 					calendar.clear(Calendar.HOUR);
 					calendar.clear(Calendar.HOUR_OF_DAY);
 					calendar.clear(Calendar.MINUTE);
@@ -73,5 +82,13 @@ public class BirthdayManagement {
 			cursor.close();
 		}
 		return birthdayEvents;
+	}
+	
+	public static String generateInForBirthdayMonths(int month, int radius){
+		if(month > 11){
+			return ContactsProvider.CMetaData.BirthdaysMetaData.BIRTHDATE_MM + " IN ('11', '12', '01')";
+		} else {
+			return ContactsProvider.CMetaData.BirthdaysMetaData.BIRTHDATE_MM +" IN ('" + ((month-radius) < 10 ?  "0" + (month-radius) : (month-radius)) + "', '" + (month < 10 ?  "0" + month : month) +"', '" + ((month+radius) < 10 ?  "0" + (month+radius) : (month+radius)) + "')";
+		}
 	}
 }
