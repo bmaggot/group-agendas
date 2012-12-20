@@ -185,7 +185,7 @@
     <string name="update_events_list">Updating Your events list</string>
     <string name="waiting_for_contacts_load">Loading contacts… wait</string>
     <string name="waiting_for_groups_load">Loading groups… wait</string>
-    <string name="week_title">w</string>
+    <string name="week_title">W</string>
     <string name="calendar_dayView_allDayEvents_holder">All day</string>
     <string name="calendar_dayView_navigateLeft">Navigate backwards</string>
     <string name="calendar_dayView_navigateRight">Navigate forward</string>
@@ -284,6 +284,8 @@
     <string name="email4_unverified">Email #4 need to be verified by link send to this email</string>
     <string name="email4">Email #4</string>
     <string name="clear">clear</string>
+    <string name="sex_male">Male</string>
+    <string name="sex_female">Female</string>
+    <string name="sex_none">None</string>
     <string name="chat_on_event_not_created_online">You can\'t chat on event created only offline</string>
-
 </resources>
