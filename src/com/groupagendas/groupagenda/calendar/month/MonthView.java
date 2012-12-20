@@ -6,7 +6,6 @@ import java.util.Calendar;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.database.Cursor;
-import android.os.AsyncTask;
 import android.util.AttributeSet;
 import android.view.Gravity;
 import android.view.View;
