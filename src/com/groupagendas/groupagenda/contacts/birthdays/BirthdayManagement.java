@@ -85,8 +85,10 @@ public class BirthdayManagement {
 	}
 	
 	public static String generateInForBirthdayMonths(int month, int radius){
-		if(month > 11){
+		if(month == 12){
 			return ContactsProvider.CMetaData.BirthdaysMetaData.BIRTHDATE_MM + " IN ('11', '12', '01')";
+		} else if(month == 1){
+			return ContactsProvider.CMetaData.BirthdaysMetaData.BIRTHDATE_MM + " IN ('12', '01', '02')";
 		} else {
 			return ContactsProvider.CMetaData.BirthdaysMetaData.BIRTHDATE_MM +" IN ('" + ((month-radius) < 10 ?  "0" + (month-radius) : (month-radius)) + "', '" + (month < 10 ?  "0" + month : month) +"', '" + ((month+radius) < 10 ?  "0" + (month+radius) : (month+radius)) + "')";
 		}
