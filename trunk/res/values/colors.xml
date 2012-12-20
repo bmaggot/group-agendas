@@ -4,6 +4,7 @@
     <color name="white">#FFFFFF</color>
     <color name="lighter_gray">#ddd</color>
     <color name="darker_gray">#aaa</color>
+    <color name="dark_gray_semitransp">#88aaaaaa</color>
     <color name="black">#000000</color>
     <color name="event_color_start">#676F7F</color>
     <color name="event_color_center">#687392</color>
