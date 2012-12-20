@@ -295,10 +295,10 @@ public class MonthView extends AbstractCalendarView {
 
 		@Override
 		protected ArrayList<Event> queryBirthdayEvents() {
-			Calendar cal = (Calendar) selectedDate.clone();
-			cal.add(Calendar.MONTH, 1);
-			cal.add(Calendar.DAY_OF_YEAR, -1);
-			return BirthdayManagement.readBirthdayEventsForTimeInterval(context, selectedDate.getTimeInMillis(), cal.getTimeInMillis());
+			Calendar endTime = (Calendar) selectedDate.clone();
+			endTime.add(Calendar.MONTH, 1);
+			endTime.add(Calendar.DAY_OF_YEAR, -1);
+			return BirthdayManagement.readBirthdayEventsForTimeInterval(context, selectedDate.getTimeInMillis(), endTime.getTimeInMillis());
 		}
 	}
 }

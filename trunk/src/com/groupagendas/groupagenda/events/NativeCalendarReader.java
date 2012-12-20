@@ -94,11 +94,11 @@ public class NativeCalendarReader {
 	public static ArrayList<Event> readNativeCalendarEventsForAMonth(Context context, Calendar day) {
 		Calendar firstDayOfAMonth = Calendar.getInstance();
 		firstDayOfAMonth.setTimeInMillis(day.getTimeInMillis());
-		firstDayOfAMonth.set(Calendar.DAY_OF_MONTH, day.getMinimum(Calendar.DAY_OF_MONTH));
+		firstDayOfAMonth.set(Calendar.DAY_OF_MONTH, day.getMinimum(Calendar.DAY_OF_MONTH) - 7);
 
 		Calendar lastDayOfAMonth = Calendar.getInstance();
 		lastDayOfAMonth.setTimeInMillis(day.getTimeInMillis());
-		lastDayOfAMonth.set(Calendar.DAY_OF_MONTH, day.getMaximum(Calendar.DAY_OF_MONTH));
+		lastDayOfAMonth.set(Calendar.DAY_OF_MONTH, day.getMaximum(Calendar.DAY_OF_MONTH) + 7);
 
 		return readNativeCalendarEventsForTimeInterval(context, firstDayOfAMonth.getTimeInMillis(), lastDayOfAMonth.getTimeInMillis());
 	}
