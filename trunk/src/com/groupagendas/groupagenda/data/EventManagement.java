@@ -490,6 +490,12 @@ public class EventManagement {
 			case TM_EVENTS_ON_GIVEN_MONTH:
 				uri = EventsProvider.EMetaData.EVENTS_ON_DATE_URI;
 				where = EventsProvider.EMetaData.EventsIndexesMetaData.MONTH + " = '" + month_index_formatter.format(date.getTime()) + "'";
+				Calendar tmp1 = (Calendar) date.clone();
+				tmp1.set(Calendar.DAY_OF_MONTH, tmp1.getMinimum(Calendar.DAY_OF_MONTH) - 7);
+				where += " OR " + EventsProvider.EMetaData.EventsIndexesMetaData.DAY + " > '" + day_index_formatter.format(tmp1.getTime()) + "'";
+				tmp1.set(Calendar.MONTH, tmp1.get(Calendar.MONTH) + 1);
+				tmp1.set(Calendar.DAY_OF_MONTH, tmp1.getMaximum(Calendar.DAY_OF_MONTH) + 7);
+				where += " OR " + EventsProvider.EMetaData.EventsIndexesMetaData.DAY + " < '" + day_index_formatter.format(tmp1.getTime()) + "'";
 				break;
 			case TM_EVENTS_ON_GIVEN_YEAR:
 				uri = EventsProvider.EMetaData.EVENTS_ON_DATE_URI;
@@ -533,6 +539,14 @@ public class EventManagement {
 			where += rejectedFilter;
 			where += pendingFilter;
 		}
+		
+//		if(eventTimeMode == TM_EVENTS_ON_GIVEN_MONTH){
+//			date.set(Calendar.MONTH, date.get(Calendar.MONTH) - 1);
+//			where += " AND " + EventsProvider.EMetaData.EventsIndexesMetaData.MONTH + " = '" + month_index_formatter.format(date.getTime()) + "'";
+//			date.set(Calendar.MONTH, date.get(Calendar.MONTH) + 2);
+//			where += " AND " + EventsProvider.EMetaData.EventsIndexesMetaData.MONTH + " = '" + month_index_formatter.format(date.getTime()) + "'";
+////			EventsProvider.EMetaData.EventsIndexesMetaData.MONTH + " = '" + month_index_formatter.format(date.getTime()) + "'";
+//		}
 
 		return context.getContentResolver().query(uri, projection, where, null, sortOrder);
 
