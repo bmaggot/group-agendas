@@ -284,5 +284,6 @@
     <string name="email4_unverified">Email #4 need to be verified by link send to this email</string>
     <string name="email4">Email #4</string>
     <string name="clear">clear</string>
+    <string name="chat_on_event_not_created_online">You can\'t chat on event created only offline</string>
 
 </resources>

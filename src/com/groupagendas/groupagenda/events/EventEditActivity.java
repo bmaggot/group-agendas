@@ -1193,7 +1193,7 @@ public class EventEditActivity extends EventActivity {
 							intent.putExtra("event_id", event.getEvent_id());
 							startActivity(intent);
 						} else {
-							showToast(getResources().getString(R.string.internet_connection_required), Toast.LENGTH_LONG);
+							showToast(getResources().getString(R.string.chat_on_event_not_created_online), Toast.LENGTH_LONG);
 						}
 					}
 				});
