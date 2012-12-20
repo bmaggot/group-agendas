@@ -3,8 +3,10 @@ package com.groupagendas.groupagenda.calendar.month;
 import java.util.ArrayList;
 import java.util.Calendar;
 
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.database.Cursor;
+import android.os.AsyncTask;
 import android.util.AttributeSet;
 import android.view.Gravity;
 import android.view.View;
@@ -28,7 +30,7 @@ import com.groupagendas.groupagenda.utils.Utils;
 
 public class MonthView extends AbstractCalendarView {
 
-//	private static final int WEEK_TITLE_WIDTH_DP = 0;
+	// private static final int WEEK_TITLE_WIDTH_DP = 0;
 	private final int TABLE_ROW_HEIGHT = Math.round(50 * densityFactor);
 	private Calendar firstShownDate;
 	ArrayList<MonthDayFrame> daysList = new ArrayList<MonthDayFrame>();
@@ -39,6 +41,7 @@ public class MonthView extends AbstractCalendarView {
 	protected boolean redrawBubbles = true; // indicates whether to redraw color
 											// bubbles
 	public boolean stillLoading = true;
+	private ProgressDialog progressDialog;
 
 	public MonthView(Context context) {
 		this(context, null);
@@ -66,7 +69,7 @@ public class MonthView extends AbstractCalendarView {
 	protected void setTopPanel() {
 		int FRAMES_PER_ROW = selectedDate.getMaximum(Calendar.DAY_OF_WEEK);
 		int FRAME_WIDTH = VIEW_WIDTH / FRAMES_PER_ROW;
-		
+
 		String title = MonthNames[selectedDate.get(Calendar.MONTH)];
 		title += " ";
 		title += selectedDate.get(Calendar.YEAR);
@@ -89,7 +92,7 @@ public class MonthView extends AbstractCalendarView {
 
 			LayoutParams cellP = new LayoutParams(FRAME_WIDTH, LayoutParams.WRAP_CONTENT, 1.0f);
 			entry.setLayoutParams(cellP);
-			
+
 			String text = WeekDayNames[tmp.get(Calendar.DAY_OF_WEEK) - 1];
 			tmp.add(Calendar.DATE, 1);
 			entry.setText(text);
@@ -227,26 +230,28 @@ public class MonthView extends AbstractCalendarView {
 
 			@Override
 			public void onClick(View v) {
+				if (!stillLoading) {
+					MonthDayFrame frame = (MonthDayFrame) v;
+					int clickedDayPos = daysList.indexOf(frame);
 
-				MonthDayFrame frame = (MonthDayFrame) v;
-				int clickedDayPos = daysList.indexOf(frame);
+					Calendar clickedDate = (Calendar) firstShownDate.clone();
+					clickedDate.add(Calendar.DATE, clickedDayPos);
 
-				Calendar clickedDate = (Calendar) firstShownDate.clone();
-				clickedDate.add(Calendar.DATE, clickedDayPos);
+					if (!frame.isSelected()) {
+						selectedDate = clickedDate;
+						updateShownDate();
 
-				if (!frame.isSelected()) {
-					selectedDate = clickedDate;
-					updateShownDate();
+						if (frame.isOtherMonth()) {
+							redrawBubbles = true;
 
-					if (frame.isOtherMonth()) {
-						redrawBubbles = true;
+							setTopPanel();
+							paintTable(selectedDate);
+						}
 
-						setTopPanel();
-						paintTable(selectedDate);
+						setDayFrames(); // TODO optimize: now all day frames are
+										// redrawn
+						updateEventLists();
 					}
-
-					setDayFrames(); // TODO optimize: now all day frames are redrawn
-					updateEventLists();
 				}
 			}
 		});
