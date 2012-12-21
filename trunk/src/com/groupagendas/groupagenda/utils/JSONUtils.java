@@ -235,6 +235,18 @@ public class JSONUtils {
 				
 				try {
 					event.setPoll(e.getString(EventManagement.POLL));
+					String jsonArraySelectedTime = e.getString(EventManagement.POLL);
+					ArrayList<JSONObject> selectedPollTime = new ArrayList<JSONObject>();
+					if(jsonArraySelectedTime != null && !jsonArraySelectedTime.contentEquals("null")){
+						final JSONArray jsonArray= new JSONArray(jsonArraySelectedTime);
+						for (int i = 0; i < jsonArray.length(); i++) {
+							JSONObject pollThread = jsonArray.getJSONObject(i);
+							if(pollThread.getString("response").contentEquals("1")){
+								selectedPollTime.add(pollThread);
+							}
+						}
+					}
+					event.setSelectedEventPollsTime(""+selectedPollTime);
 				} catch (JSONException e1) {
 					Reporter.reportError(context, EventManagement.CLASS_NAME, Thread.currentThread().getStackTrace()[2].getMethodName().toString(),
 							e1.getMessage());
