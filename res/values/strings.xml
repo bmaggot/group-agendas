@@ -317,6 +317,8 @@
     <string name="email4_unverified">Email #4 need to be verified by link send to this email</string>
     <string name="email4">Email #4</string>
     <string name="clear">clear</string>
+    <string name="from">From:</string>
+    <string name="to">To:</string>
     <string name="sex_male">Male</string>
     <string name="sex_female">Female</string>
     <string name="sex_none">None</string>
