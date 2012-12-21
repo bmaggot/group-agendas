@@ -540,6 +540,9 @@ public class EventManagement {
 			where += pendingFilter;
 		}
 		
+		//for don't get pool
+		where += " AND " + (EventsProvider.EMetaData.EventsMetaData.TYPE + " != 'v'");
+		
 //		if(eventTimeMode == TM_EVENTS_ON_GIVEN_MONTH){
 //			date.set(Calendar.MONTH, date.get(Calendar.MONTH) - 1);
 //			where += " AND " + EventsProvider.EMetaData.EventsIndexesMetaData.MONTH + " = '" + month_index_formatter.format(date.getTime()) + "'";
@@ -1481,6 +1484,7 @@ public class EventManagement {
 		cv.put(EventsProvider.EMetaData.EventsMetaData.NEW_MESSAGES_COUNT, event.getNew_message_count());
 		cv.put(EventsProvider.EMetaData.EventsMetaData.LAST_MESSAGE_DATE_TIME_UTC_MILISECONDS, event.getLast_message_date_time());
 		cv.put(EventsProvider.EMetaData.EventsMetaData.POLL, event.getPoll());
+		cv.put(EventsProvider.EMetaData.EventsMetaData.SELECTED_EVENT_POLLS_TIME, event.getSelectedEventPollsTime());
 		return cv;
 	}
 
@@ -1588,6 +1592,8 @@ public class EventManagement {
 				.getColumnIndex(EventsProvider.EMetaData.EventsMetaData.LAST_MESSAGE_DATE_TIME_UTC_MILISECONDS)));
 		item.setPoll(result.getString(result
 				.getColumnIndex(EventsProvider.EMetaData.EventsMetaData.POLL)));
+		item.setSelectedEventPollsTime(result.getString(result
+				.getColumnIndex(EventsProvider.EMetaData.EventsMetaData.SELECTED_EVENT_POLLS_TIME)));
 		return item;
 	}
 
@@ -1798,21 +1804,54 @@ public class EventManagement {
 		if (result.moveToFirst()) {
 			while (!result.isAfterLast()) {
 				item = EventManagement.createEventFromCursor(context, result);
-				String jsonArrayString = item.getPoll();
+				
+				String jsonArraySelectedTime = item.getSelectedEventPollsTime();
 				try {
-					if(jsonArrayString != null && !jsonArrayString.contentEquals("null")){
-						JSONArray jsonArray= new JSONArray(jsonArrayString);
+					if(jsonArraySelectedTime != null && !jsonArraySelectedTime.contentEquals("null") && !jsonArraySelectedTime.contentEquals("")){
+						final JSONArray jsonArray= new JSONArray(jsonArraySelectedTime);
 						for (int i = 0; i < jsonArray.length(); i++) {
-							JSONObject e = jsonArray.getJSONObject(i);
+							JSONObject pollThread = jsonArray.getJSONObject(i);
 							item = EventManagement.createEventFromCursor(context, result);
-							item.setStartCalendar(Utils.stringToCalendar(context, e.getString("start"), DataManagement.SERVER_TIMESTAMP_FORMAT));
-							item.setEndCalendar(Utils.stringToCalendar(context, e.getString("end"), DataManagement.SERVER_TIMESTAMP_FORMAT));
+							item.setStartCalendar(Utils.stringToCalendar(context, pollThread.getString("start"), DataManagement.SERVER_TIMESTAMP_FORMAT));
+							item.setEndCalendar(Utils.stringToCalendar(context, pollThread.getString("end"), DataManagement.SERVER_TIMESTAMP_FORMAT));
 							items.add(item);
+						}
+					} else {
+						String jsonArrayString = item.getPoll();
+						if(jsonArrayString != null && !jsonArrayString.contentEquals("null")){
+							JSONArray jsonArray= new JSONArray(jsonArrayString);
+							for (int i = 0; i < jsonArray.length(); i++) {
+								JSONObject e = jsonArray.getJSONObject(i);
+								//if(e.getString("response").contentEquals("1")){
+									item = EventManagement.createEventFromCursor(context, result);
+									item.setStartCalendar(Utils.stringToCalendar(context, e.getString("start"), DataManagement.SERVER_TIMESTAMP_FORMAT));
+									item.setEndCalendar(Utils.stringToCalendar(context, e.getString("end"), DataManagement.SERVER_TIMESTAMP_FORMAT));
+									items.add(item);
+								//}
+							}
 						}
 					}
 				} catch (JSONException e) {
 					e.printStackTrace();
 				}
+				
+//				String jsonArrayString = item.getPoll();
+//				try {
+//					if(jsonArrayString != null && !jsonArrayString.contentEquals("null")){
+//						JSONArray jsonArray= new JSONArray(jsonArrayString);
+//						for (int i = 0; i < jsonArray.length(); i++) {
+//							JSONObject e = jsonArray.getJSONObject(i);
+//							//if(e.getString("response").contentEquals("1")){
+//								item = EventManagement.createEventFromCursor(context, result);
+//								item.setStartCalendar(Utils.stringToCalendar(context, e.getString("start"), DataManagement.SERVER_TIMESTAMP_FORMAT));
+//								item.setEndCalendar(Utils.stringToCalendar(context, e.getString("end"), DataManagement.SERVER_TIMESTAMP_FORMAT));
+//								items.add(item);
+//							//}
+//						}
+//					}
+//				} catch (JSONException e) {
+//					e.printStackTrace();
+//				}
 				
 				result.moveToNext();
 			}
