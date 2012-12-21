@@ -223,6 +223,7 @@ public class EventActivity extends Activity {
 				event.setDisplayColor(event.getColor());
 			}
 		}
+		event.setSelectedEventPollsTime(event.getSelectedEventPollsTime());
 
 		return event;
 
