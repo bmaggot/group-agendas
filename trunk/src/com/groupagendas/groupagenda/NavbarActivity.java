@@ -118,7 +118,7 @@ public class NavbarActivity extends FragmentActivity {
 	public static boolean showVerificationDialog = false;
 	public static ArrayList<Event> pollsList;
 	public static ArrayList<Event> pollsListToShow = new ArrayList<Event>();
-	public static ArrayList<JSONObject> selectedPollTime = new ArrayList<JSONObject>();
+	//public static ArrayList<JSONObject> selectedPollTime = new ArrayList<JSONObject>();
 	public static ArrayList<Event> pollsListToDelete = new ArrayList<Event>();
 	
 	public static ProgressDialog loadingProgressDialog;
