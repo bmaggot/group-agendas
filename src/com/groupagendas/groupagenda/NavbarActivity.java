@@ -271,6 +271,7 @@ public class NavbarActivity extends FragmentActivity {
 		
 	}
 
+	@SuppressLint("SimpleDateFormat")
 	@Override
 	protected void onSaveInstanceState(Bundle outState) {
 		super.onSaveInstanceState(outState);
@@ -364,6 +365,7 @@ public class NavbarActivity extends FragmentActivity {
 
 		((Button) mDateTimeDialogView.findViewById(R.id.SetDateTime)).setOnClickListener(new OnClickListener() {
 
+			@SuppressLint("SimpleDateFormat")
 			@Override
 			public void onClick(View v) {
 				mDateTimePicker.clearFocus();
@@ -575,31 +577,6 @@ public class NavbarActivity extends FragmentActivity {
 			}
 		}
 	};
-	
-	private class StartChatThreadsFragment extends AsyncTask<Void, Void, Void>{
-
-		@Override
-		protected void onPreExecute() {
-			smthClicked = true;
-			progressDialog.setMessage(getApplicationContext().getResources().getString(R.string.loading));
-			progressDialog.setCancelable(false);
-			progressDialog.show();
-		}
-		
-		@Override
-		protected Void doInBackground(Void... params) {
-			viewState = ViewState.CHAT_THREADS;
-			showChatFragment();
-			return null;
-		}
-		
-		@Override
-		protected void onPostExecute(Void result){
-			progressDialog.dismiss();
-			smthClicked = false;
-		}
-		
-	}
 	
 	private class StartEventsActivity extends AsyncTask<Void, Void, Void>{
 
