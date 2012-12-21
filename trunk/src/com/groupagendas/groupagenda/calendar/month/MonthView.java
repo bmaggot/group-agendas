@@ -3,7 +3,6 @@ package com.groupagendas.groupagenda.calendar.month;
 import java.util.ArrayList;
 import java.util.Calendar;
 
-import android.app.ProgressDialog;
 import android.content.Context;
 import android.database.Cursor;
 import android.util.AttributeSet;
@@ -40,7 +39,6 @@ public class MonthView extends AbstractCalendarView {
 	protected boolean redrawBubbles = true; // indicates whether to redraw color
 											// bubbles
 	public boolean stillLoading = true;
-	private ProgressDialog progressDialog;
 
 	public MonthView(Context context) {
 		this(context, null);
