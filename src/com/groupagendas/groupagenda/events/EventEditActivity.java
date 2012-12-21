@@ -43,7 +43,6 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.ToggleButton;
-
 import com.groupagendas.groupagenda.C2DMReceiver;
 import com.groupagendas.groupagenda.NavbarActivity;
 import com.groupagendas.groupagenda.R;
@@ -130,6 +129,9 @@ public class EventEditActivity extends EventActivity {
 	private ProgressDialog pd;
 	private int eventPollSize;
 	ArrayList<JSONObject> allEventPolls;
+	private LinearLayout allDayLayout;
+	private LinearLayout attending_line;
+	private static ArrayList<JSONObject> selectedPollTime;
 	
 
 	public void enableDisableButtons(Boolean state){
@@ -275,6 +277,8 @@ public class EventEditActivity extends EventActivity {
 		eventStartEndTime = (LinearLayout) findViewById(R.id.eventStartEndTime);
 		//pollStartEndTime_list = (ListView) findViewById(R.id.pollStartEndTime_list);
 		pollStartEndTime = (LinearLayout) findViewById(R.id.pollStartEndTime);
+		allDayLayout = (LinearLayout) findViewById(R.id.allDayLayout);
+		attending_line = (LinearLayout) findViewById(R.id.attending_line);
 
 		saveButton = (Button) findViewById(R.id.save_button);
 		saveButton.setEnabled(changesMade);
@@ -811,9 +815,27 @@ public class EventEditActivity extends EventActivity {
 			if(event.getType().contentEquals("v")){
 				eventStartEndTime.setVisibility(View.GONE);
 				pollStartEndTime.setVisibility(View.VISIBLE);
+				allDayLayout.setVisibility(View.GONE);
+				invitationResponseLine.setVisibility(View.GONE);
+				attending_line.setVisibility(View.GONE);
 				pollStartEndTime.removeAllViews();
 				
 				LayoutInflater mInflater = LayoutInflater.from(EventEditActivity.this);
+				
+				String jsonArraySelectedTime = event.getSelectedEventPollsTime();
+				selectedPollTime = new ArrayList<JSONObject>();
+				try {
+					if(jsonArraySelectedTime != null && !jsonArraySelectedTime.contentEquals("null")){
+						final JSONArray jsonArray= new JSONArray(jsonArraySelectedTime);
+						for (int i = 0; i < jsonArray.length(); i++) {
+							JSONObject pollThread = jsonArray.getJSONObject(i);
+							selectedPollTime.add(pollThread);
+						}
+					}
+				} catch (JSONException e) {
+					e.printStackTrace();
+				}
+				
 				String jsonArrayString = event.getPoll();
 				try {
 					if(jsonArrayString != null && !jsonArrayString.contentEquals("null")){
@@ -826,6 +848,10 @@ public class EventEditActivity extends EventActivity {
 							final View view = mInflater.inflate(R.layout.poll_thread, null);
 							final CheckBox selectedTime = (CheckBox) view.findViewById(R.id.selectedTime);
 							
+//							if(pollThread.getString("response").contentEquals("1")){
+//								NavbarActivity.selectedPollTime.add(pollThread);
+//								//selectedTime.setChecked(true);
+//							}
 							
 							LinearLayout backgr = (LinearLayout) view.findViewById(R.id.pollTimeBlock);
 							
@@ -858,7 +884,7 @@ public class EventEditActivity extends EventActivity {
 							} catch (JSONException e) {
 								Log.e("PollAdapter", "Failed getting poll time.");
 							}
-							
+														
 							final Calendar tempCal2 = Utils.stringToCalendar(EventEditActivity.this, temp, DataManagement.SERVER_TIMESTAMP_FORMAT);
 							endTime.setText(dateTimeUtils.formatDate(tempCal2)+" "+dateTimeUtils.formatTime(tempCal2));
 							
@@ -867,16 +893,16 @@ public class EventEditActivity extends EventActivity {
 								@Override
 								public void onClick(View v) {
 									if(selectedTime.isChecked()){
-										NavbarActivity.selectedPollTime.add(pollThread);										
+										selectedPollTime.add(pollThread);										
 										saveButton.setEnabled(true);										
 									} else {
 										saveButton.setEnabled(true);
 										for (int i = 0 ; i< eventPollSize ; i++){
-											int size = NavbarActivity.selectedPollTime.size();
+											int size = selectedPollTime.size();
 											for (int y = 0; y < size; y++) {
 												try {
-													if(NavbarActivity.selectedPollTime.get(y).getString("id").equals(pollThread.getString("id"))){
-														NavbarActivity.selectedPollTime.remove(y);
+													if(selectedPollTime.get(y).getString("id").equals(pollThread.getString("id"))){
+														selectedPollTime.remove(y);
 														break;
 														
 													}
@@ -889,10 +915,10 @@ public class EventEditActivity extends EventActivity {
 								}
 							});
 							
-							if(NavbarActivity.selectedPollTime != null){
-								int size = NavbarActivity.selectedPollTime.size();
+							if(selectedPollTime != null){
+								int size = selectedPollTime.size();
 								for (int y = 0; y < size; y++) {
-									final JSONObject pollThread2 = NavbarActivity.selectedPollTime.get(y);
+									final JSONObject pollThread2 = selectedPollTime.get(y);
 									if(pollThread.getString("timestamp_start_utc").contentEquals(pollThread2.getString("timestamp_start_utc"))
 											&& pollThread.getString("id").contentEquals(pollThread2.getString("id"))){
 										selectedTime.setChecked(true);
@@ -1300,13 +1326,24 @@ public class EventEditActivity extends EventActivity {
 					}
 					
 					try {
-						ArrayList<JSONObject> listToAdd = NavbarActivity.selectedPollTime;
+						ArrayList<JSONObject> listToAdd = selectedPollTime;
 						if(!listToAdd.isEmpty()){
 							for (JSONObject e : listToAdd) {
 								event = EventManagement.getEventFromLocalDb(EventEditActivity.this, event.getEvent_id(), EventManagement.ID_EXTERNAL);
 								event.setStartCalendar(Utils.stringToCalendar(EventEditActivity.this, e.getString("start"), DataManagement.SERVER_TIMESTAMP_FORMAT));
 								event.setEndCalendar(Utils.stringToCalendar(EventEditActivity.this, e.getString("end"), DataManagement.SERVER_TIMESTAMP_FORMAT));
-								NavbarActivity.pollsList.add(event);
+								String jsonArrayString = event.getPoll();
+								if(jsonArrayString != null && !jsonArrayString.contentEquals("null")){
+									JSONArray jsonArray= new JSONArray(jsonArrayString);
+									for (int i = 0; i < jsonArray.length(); i++) {
+										JSONObject e2 = jsonArray.getJSONObject(i);
+										if(e.getString("timestamp_start_utc").contentEquals(e2.getString("timestamp_start_utc"))
+												&& e.getString("id").contentEquals(e2.getString("id"))){
+											NavbarActivity.pollsList.add(event);
+											break;
+										}
+									}
+								}
 							}
 						} else {
 							String jsonArrayString = event.getPoll();
@@ -1325,8 +1362,13 @@ public class EventEditActivity extends EventActivity {
 					} catch (JSONException e) {
 						e.printStackTrace();
 					}
+					
+					
+					
+					event.setSelectedEventPollsTime(""+selectedPollTime);
+					EventManagement.updateEventInLocalDb(EventEditActivity.this, event);
 					EventManagement.votePoll(getApplicationContext(), ""+event.getEvent_id(), allEventPolls, "0");
-					EventManagement.votePoll(getApplicationContext(), ""+event.getEvent_id(), NavbarActivity.selectedPollTime, "1");
+					EventManagement.votePoll(getApplicationContext(), ""+event.getEvent_id(), selectedPollTime, "1");
 				
 				return true;
 			} else {
