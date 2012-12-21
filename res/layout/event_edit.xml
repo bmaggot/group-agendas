@@ -232,6 +232,7 @@
             </LinearLayout>
 
             <LinearLayout
+                android:id="@+id/allDayLayout"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="10dp"
@@ -900,9 +901,15 @@
                 android:orientation="vertical"
                 android:visibility="visible" >
 
+                <LinearLayout 
+                    android:id="@+id/attending_line"
+                	android:layout_width="fill_parent"
+                	android:layout_height="wrap_content"
+                	android:orientation="vertical">
                 <include
                     android:id="@+id/response_to_invitation"
                     layout="@layout/response_to_invite_panel" />
+                </LinearLayout>
 
                 <Button
                     android:id="@+id/invite_button"
