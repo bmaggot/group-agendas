@@ -30,16 +30,28 @@ import org.apache.http.protocol.BasicHttpContext;
 import org.apache.http.protocol.HTTP;
 import org.apache.http.protocol.HttpContext;
 
+import android.content.Context;
+import android.content.pm.PackageInfo;
+import android.content.pm.PackageManager;
+import android.util.Log;
+
 import com.groupagendas.groupagenda.data.Data;
 
 public class WebService {
 	private ClientConnectionManager clientConnectionManager;
+	private Context appContext;
 	private HttpContext context;
 	private HttpParams params;
 	private HttpClient client;
 	
+	@Deprecated
 	public WebService(){
 		setup();
+	}
+	
+	public WebService(Context context){
+		setup();
+		this.appContext = context;
 	}
 	
 	private void setup(){
@@ -67,6 +79,8 @@ public class WebService {
 	public HttpResponse getResponseFromHttpPost(HttpPost httpPost) throws ClientProtocolException, IOException{
 		MultipartEntity entity = (MultipartEntity) httpPost.getEntity();
 		entity.addPart("app_version", new StringBody("1001", Charset.forName("UTF-8")));
+		httpPost.setHeader("User-Agent", "Linux; GroupAgendas version: " + getApplicationVersion() + "; AndroidPhone " + android.os.Build.VERSION.RELEASE);
+		httpPost.setHeader("Accept", "*/*");
 		httpPost.setEntity(entity);
 		client = new DefaultHttpClient(clientConnectionManager, params);
 		HttpResponse response = client.execute(httpPost, context);
@@ -84,5 +98,21 @@ public class WebService {
 		HttpGet get = new HttpGet(url);
 		HttpResponse response = client.execute(get, context);
 		return response;
+	}
+	
+	public String getApplicationVersion() {
+		PackageManager pacMan;
+		PackageInfo info;
+		String version = "";
+		
+		try {
+			pacMan = appContext.getPackageManager();
+			info = pacMan.getPackageInfo(appContext.getPackageName(), 0);
+			version = info.versionName;
+		} catch (Exception e) {
+			Log.e("WebService.getApplicationVersion()", e.getMessage());
 		}
+		
+		return version;
+	}
 }
