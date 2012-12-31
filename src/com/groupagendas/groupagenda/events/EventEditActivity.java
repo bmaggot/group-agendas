@@ -65,28 +65,29 @@ import com.groupagendas.groupagenda.utils.DrawingUtils;
 import com.groupagendas.groupagenda.utils.Utils;
 import com.ptashek.widgets.datetimepicker.DateTimePicker;
 
-
 public class EventEditActivity extends EventActivity {
 
-	private class GenericTextWatcher implements TextWatcher{
+	private class GenericTextWatcher implements TextWatcher {
 
 		private String oldText = null;
-		
-	    public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-	    	oldText = charSequence.toString();
-	    }
-	    public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {}
-	    
-	    public void afterTextChanged(Editable editable) {
-	    	if(!editable.toString().equalsIgnoreCase(oldText)){
-	    		changesMade = true;
-	    		saveButton.setEnabled(changesMade);
-	    		}
-	        }
-	    }
+
+		public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+			oldText = charSequence.toString();
+		}
+
+		public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+		}
+
+		public void afterTextChanged(Editable editable) {
+			if (!editable.toString().equalsIgnoreCase(oldText)) {
+				changesMade = true;
+				saveButton.setEnabled(changesMade);
+			}
+		}
+	}
 
 	private TextWatcher watcher;
-	
+
 	private TextView topText;
 	private Button deleteButton;
 
@@ -117,13 +118,13 @@ public class EventEditActivity extends EventActivity {
 	private boolean remindersShown = false;
 	private boolean alarmsShown = false;
 	private boolean isInvited = false;
-	//private boolean eventEdited = false;
+	// private boolean eventEdited = false;
 	private boolean changesMade = false;
-	
+
 	private Intent intent;
 
 	private Button chatMessengerButton;
-	
+
 	private LinearLayout eventStartEndTime;
 	private LinearLayout pollStartEndTime;
 	private ProgressDialog pd;
@@ -132,10 +133,16 @@ public class EventEditActivity extends EventActivity {
 	private LinearLayout allDayLayout;
 	private LinearLayout attending_line;
 	private static ArrayList<JSONObject> selectedPollTime;
-	
+	private RelativeLayout poll_status_line;
+	private TextView reject_poll;
+	private TextView rejoin_poll;
+	private TextView poll_status_text;
+	private int poll_status;
+	private boolean to_rejoin_poll;
+	private boolean to_reject_poll;
 
-	public void enableDisableButtons(Boolean state){
-	    saveButton.setEnabled(state);
+	public void enableDisableButtons(Boolean state) {
+		saveButton.setEnabled(state);
 	}
 
 	@Override
@@ -146,10 +153,11 @@ public class EventEditActivity extends EventActivity {
 		selectedContacts = null;
 		selectedGroups = null;
 	}
-	
+
 	@Override
 	public void onResume() {
-		LocalBroadcastManager.getInstance(this).registerReceiver(mMessageReceiver, new IntentFilter(C2DMReceiver.REFRESH_EVENT_EDIT_ACTIVITY));
+		LocalBroadcastManager.getInstance(this).registerReceiver(mMessageReceiver,
+				new IntentFilter(C2DMReceiver.REFRESH_EVENT_EDIT_ACTIVITY));
 		super.onResume();
 		if (watcher == null) {
 			watcher = new GenericTextWatcher();
@@ -198,15 +206,15 @@ public class EventEditActivity extends EventActivity {
 		if (selectedContacts == null)
 			selectedContacts = new ArrayList<Contact>();
 
-		if (!selectedContacts.isEmpty()){
+		if (!selectedContacts.isEmpty()) {
 			changesMade = true;
 			saveButton.setEnabled(changesMade);
 		}
-		
+
 		if (selectedGroups == null)
 			selectedGroups = new ArrayList<Group>();
 
-		if (!selectedGroups.isEmpty()){
+		if (!selectedGroups.isEmpty()) {
 			changesMade = true;
 			saveButton.setEnabled(changesMade);
 		}
@@ -222,10 +230,10 @@ public class EventEditActivity extends EventActivity {
 
 			EventActivity.newInvites.add(nu);
 		}
-		
+
 		ArrayList<Contact> selectedContactsFromGroups = new ArrayList<Contact>();
-		for(Group group : EventActivity.selectedGroups){
-			for(String id : group.contacts.values()){
+		for (Group group : EventActivity.selectedGroups) {
+			for (String id : group.contacts.values()) {
 				selectedContactsFromGroups.add(ContactManagement.getContactFromLocalDb(this, Integer.valueOf(id), 0));
 			}
 		}
@@ -235,35 +243,37 @@ public class EventEditActivity extends EventActivity {
 			nu.setName(temp.name + " " + temp.lastname);
 			nu.setStatus(Invited.PENDING);
 			boolean contains = false;
-			for(Invited tmp : EventActivity.newInvites){
-				if(nu.getMy_contact_id() == tmp.getMy_contact_id()){
+			for (Invited tmp : EventActivity.newInvites) {
+				if (nu.getMy_contact_id() == tmp.getMy_contact_id()) {
 					contains = true;
 				}
 			}
-			if(EventManagement.getEventFromLocalDb(this, event_internal_id, EventManagement.ID_INTERNAL) != null){
-				for(Invited tmp : EventManagement.getEventFromLocalDb(this, event_internal_id, EventManagement.ID_INTERNAL).getInvited()){
-					if(nu.getMy_contact_id() == tmp.getMy_contact_id()){
+			if (EventManagement.getEventFromLocalDb(this, event_internal_id, EventManagement.ID_INTERNAL) != null) {
+				for (Invited tmp : EventManagement.getEventFromLocalDb(this, event_internal_id, EventManagement.ID_INTERNAL).getInvited()) {
+					if (nu.getMy_contact_id() == tmp.getMy_contact_id()) {
 						contains = true;
 					}
 				}
 			}
-			if(!contains){
+			if (!contains) {
 				EventActivity.newInvites.add(nu);
 			}
 		}
 
 		// TODO implement offline
-		    event_internal_id = intent.getLongExtra("event_id", 0);
-		    if(event_external_id == 0 && EventManagement.getEventFromLocalDb(getApplicationContext(), event_internal_id, EventManagement.ID_INTERNAL) != null){
-		    	event_external_id = EventManagement.getEventFromLocalDb(getApplicationContext(), event_internal_id, EventManagement.ID_INTERNAL).getEvent_id();
-		    }
+		event_internal_id = intent.getLongExtra("event_id", 0);
+		if (event_external_id == 0
+				&& EventManagement.getEventFromLocalDb(getApplicationContext(), event_internal_id, EventManagement.ID_INTERNAL) != null) {
+			event_external_id = EventManagement
+					.getEventFromLocalDb(getApplicationContext(), event_internal_id, EventManagement.ID_INTERNAL).getEvent_id();
+		}
 		// mode event Edit
 		if (event_internal_id > 0) {
-			new GetEventTask().execute(new Long[] {event_internal_id, event_external_id});
+			new GetEventTask().execute(new Long[] { event_internal_id, event_external_id });
 		}
 	}
-	
-	private void makeToastWarning(String text, int length){
+
+	private void makeToastWarning(String text, int length) {
 		Toast.makeText(this, text, length).show();
 	}
 
@@ -273,21 +283,26 @@ public class EventEditActivity extends EventActivity {
 		intent = getIntent();
 		// Top text and SAVE Button
 		topText = (TextView) findViewById(R.id.topText);
-		
+
 		eventStartEndTime = (LinearLayout) findViewById(R.id.eventStartEndTime);
-		//pollStartEndTime_list = (ListView) findViewById(R.id.pollStartEndTime_list);
+		// pollStartEndTime_list = (ListView)
+		// findViewById(R.id.pollStartEndTime_list);
 		pollStartEndTime = (LinearLayout) findViewById(R.id.pollStartEndTime);
 		allDayLayout = (LinearLayout) findViewById(R.id.allDayLayout);
 		attending_line = (LinearLayout) findViewById(R.id.attending_line);
+		poll_status_line = (RelativeLayout) findViewById(R.id.poll_status_line);
+		reject_poll = (TextView) findViewById(R.id.button_reject);
+		rejoin_poll = (TextView) findViewById(R.id.button_rejoin);
+		poll_status_text = (TextView) findViewById(R.id.poll_status);
 
 		saveButton = (Button) findViewById(R.id.save_button);
 		saveButton.setEnabled(changesMade);
 		saveButton.setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View v) {
-				//enableDisableButtons(false);
+				// enableDisableButtons(false);
 				if (!saveButton.getText().toString().equalsIgnoreCase(getResources().getString(R.string.saving))) {
-				
+
 					new UpdateEventTask().execute();
 				} else {
 					Toast.makeText(EventEditActivity.this, R.string.wait, Toast.LENGTH_SHORT);
@@ -300,7 +315,6 @@ public class EventEditActivity extends EventActivity {
 		iconView = (ImageView) findViewById(R.id.iconView);
 		colorView = (ImageView) findViewById(R.id.colorView);
 		titleView = (EditText) findViewById(R.id.title);
-		
 
 		// Start and end time buttons
 		startButton = (Button) findViewById(R.id.startButton);
@@ -325,15 +339,15 @@ public class EventEditActivity extends EventActivity {
 
 		// Description
 		descView = (EditText) findViewById(R.id.descView);
-		//Creator
+		// Creator
 		creatorNameTextView = (TextView) findViewById(R.id.EventEditCreatorName);
-		//allday
+		// allday
 		allDayToggleButton = (ToggleButton) findViewById(R.id.allDayToggleButton);
 		allDayToggleButton.setOnClickListener(new OnClickListener() {
-			
+
 			@Override
 			public void onClick(View v) {
-				if(!allDayToggleButton.isChecked()){
+				if (!allDayToggleButton.isChecked()) {
 					startView.setText(dtUtils.formatDateTime(event.getStartCalendar().getTime()));
 					endView.setText(dtUtils.formatDateTime(event.getEndCalendar().getTime()));
 				} else {
@@ -531,7 +545,7 @@ public class EventEditActivity extends EventActivity {
 		// REMINDERS PANEL
 		reminderBlock = (LinearLayout) findViewById(R.id.reminder_block);
 		setReminderTrigger = (TextView) findViewById(R.id.setReminderTrigger);
-		//TODO alarms eventedit turn on when ready.
+		// TODO alarms eventedit turn on when ready.
 		setReminderTrigger.setVisibility(View.GONE);
 		setReminderTrigger.setOnClickListener(new OnClickListener() {
 
@@ -601,7 +615,7 @@ public class EventEditActivity extends EventActivity {
 		// ALARMS
 		alarmBlock = (LinearLayout) findViewById(R.id.alarm_block);
 		setAlarmTrigger = (TextView) findViewById(R.id.setAlarmTrigger);
-		//TODO alarms eventedit turn on when ready.
+		// TODO alarms eventedit turn on when ready.
 		setAlarmTrigger.setVisibility(View.GONE);
 		setAlarmTrigger.setOnClickListener(new OnClickListener() {
 			@Override
@@ -700,25 +714,25 @@ public class EventEditActivity extends EventActivity {
 
 		invitedPersonList = (LinearLayout) findViewById(R.id.invited_person_list);
 		super.inviteButton = (Button) findViewById(R.id.invite_button);
-		
-			super.inviteButton.setOnClickListener(new OnClickListener() {
-		
-				@Override
-				public void onClick(View v) {
-					if(Calendar.getInstance().getTimeInMillis() < event.getEndCalendar().getTimeInMillis()){
-						Intent i = new Intent(EventEditActivity.this, ContactsActivity.class);
-						i.putExtra(ContactsActivity.TASK_MODE_KEY, ContactsActivity.TASK_MODE_SELECTION); 
-						i.putExtra(ContactsActivity.LIST_MODE_KEY, ContactsActivity.LIST_MODE_CONTACTS);								
-						i.putExtra(ContactsActivity.DESTINATION_KEY, ContactsActivity.DEST_EVENT_ACTIVITY);								
-						Data.showSaveButtonInContactsForm = true;
-						// TODO Data.eventForSavingNewInvitedPersons = event;
-						startActivity(i);
-					} else {
-						makeToastWarning(getResources().getString(R.string.invite_contact_in_the_past), Toast.LENGTH_LONG);
-					}
+
+		super.inviteButton.setOnClickListener(new OnClickListener() {
+
+			@Override
+			public void onClick(View v) {
+				if (Calendar.getInstance().getTimeInMillis() < event.getEndCalendar().getTimeInMillis()) {
+					Intent i = new Intent(EventEditActivity.this, ContactsActivity.class);
+					i.putExtra(ContactsActivity.TASK_MODE_KEY, ContactsActivity.TASK_MODE_SELECTION);
+					i.putExtra(ContactsActivity.LIST_MODE_KEY, ContactsActivity.LIST_MODE_CONTACTS);
+					i.putExtra(ContactsActivity.DESTINATION_KEY, ContactsActivity.DEST_EVENT_ACTIVITY);
+					Data.showSaveButtonInContactsForm = true;
+					// TODO Data.eventForSavingNewInvitedPersons = event;
+					startActivity(i);
+				} else {
+					makeToastWarning(getResources().getString(R.string.invite_contact_in_the_past), Toast.LENGTH_LONG);
 				}
-			});
-		
+			}
+		});
+
 		invitationResponseLine = (RelativeLayout) findViewById(R.id.response_to_invitation);
 		invitationResponseLine.setVisibility(View.GONE);
 		invitationResponseStatus = (TextView) findViewById(R.id.status);
@@ -771,7 +785,7 @@ public class EventEditActivity extends EventActivity {
 	// }
 
 	class GetEventTask extends AsyncTask<Long, Event, Event> {
-//		final DataManagement dm = DataManagement.getInstance(getParent());
+		// final DataManagement dm = DataManagement.getInstance(getParent());
 		final String[] iconsValues = getResources().getStringArray(R.array.icons_values);
 		final SharedPreferences prefs = getSharedPreferences("LATEST_CREDENTIALS", MODE_PRIVATE);
 
@@ -791,7 +805,7 @@ public class EventEditActivity extends EventActivity {
 			if (intent.getBooleanExtra("isNative", false)) {
 				return NativeCalendarReader.getNativeEventFromLocalDbById(getApplicationContext(), ids[0]);
 			} else {
-				if(EventManagement.getEventFromLocalDb(EventEditActivity.this, ids[0], EventManagement.ID_INTERNAL) != null){
+				if (EventManagement.getEventFromLocalDb(EventEditActivity.this, ids[0], EventManagement.ID_INTERNAL) != null) {
 					return EventManagement.getEventFromLocalDb(EventEditActivity.this, ids[0], EventManagement.ID_INTERNAL);
 				} else {
 					return EventManagement.getEventFromLocalDb(EventEditActivity.this, ids[1], EventManagement.ID_EXTERNAL);
@@ -802,7 +816,7 @@ public class EventEditActivity extends EventActivity {
 		@Override
 		protected void onPostExecute(final Event result) {
 			super.onPostExecute(result);
-			
+
 			if (result == null) {
 				throw new IllegalStateException("EVENT NOT FOUND IN LOCAL DB!!!!!!");
 			}
@@ -811,22 +825,62 @@ public class EventEditActivity extends EventActivity {
 			event = result;
 			selectedIcon = event.getIcon();
 			allDayToggleButton.setChecked(event.is_all_day());
-			
-			if(event.getType().contentEquals("v")){
+
+			if (event.getType().contentEquals("v")) {
 				eventStartEndTime.setVisibility(View.GONE);
 				pollStartEndTime.setVisibility(View.VISIBLE);
 				allDayLayout.setVisibility(View.GONE);
 				invitationResponseLine.setVisibility(View.GONE);
 				attending_line.setVisibility(View.GONE);
+				poll_status_line.setVisibility(View.VISIBLE);
 				pollStartEndTime.removeAllViews();
-				
+				to_reject_poll = false;
+				to_rejoin_poll = false;
+
+				if (event.getStatus() == Invited.REJECTED) {
+					reject_poll.setVisibility(View.INVISIBLE);
+					poll_status_text.setText(getString(R.string.rejected));
+				} else {
+					rejoin_poll.setVisibility(View.INVISIBLE);
+					poll_status_text.setText(getString(R.string.joined));					
+				}
+
+				reject_poll.setOnClickListener(new OnClickListener() {
+
+					@Override
+					public void onClick(View v) {
+						saveButton.setEnabled(true);
+						reject_poll.setVisibility(View.INVISIBLE);
+						rejoin_poll.setVisibility(View.VISIBLE);
+						poll_status_text.setText(getString(R.string.rejected));
+						poll_status = Invited.REJECTED;
+						to_reject_poll = true;
+						selectedPollTime = new ArrayList<JSONObject>();
+
+					}
+				});
+
+				rejoin_poll.setOnClickListener(new OnClickListener() {
+
+					@Override
+					public void onClick(View v) {
+						saveButton.setEnabled(true);
+						rejoin_poll.setVisibility(View.INVISIBLE);
+						reject_poll.setVisibility(View.VISIBLE);
+						poll_status_text.setText(getString(R.string.joined));
+						poll_status = Invited.ACCEPTED;
+						to_rejoin_poll = true;
+
+					}
+				});
+
 				LayoutInflater mInflater = LayoutInflater.from(EventEditActivity.this);
-				
+
 				String jsonArraySelectedTime = event.getSelectedEventPollsTime();
 				selectedPollTime = new ArrayList<JSONObject>();
 				try {
-					if(jsonArraySelectedTime != null && !jsonArraySelectedTime.contentEquals("null")){
-						final JSONArray jsonArray= new JSONArray(jsonArraySelectedTime);
+					if (jsonArraySelectedTime != null && !jsonArraySelectedTime.contentEquals("null")) {
+						final JSONArray jsonArray = new JSONArray(jsonArraySelectedTime);
 						for (int i = 0; i < jsonArray.length(); i++) {
 							JSONObject pollThread = jsonArray.getJSONObject(i);
 							selectedPollTime.add(pollThread);
@@ -835,76 +889,80 @@ public class EventEditActivity extends EventActivity {
 				} catch (JSONException e) {
 					e.printStackTrace();
 				}
-				
+
 				String jsonArrayString = event.getPoll();
 				try {
-					if(jsonArrayString != null && !jsonArrayString.contentEquals("null")){
-						final JSONArray jsonArray= new JSONArray(jsonArrayString);
+					if (jsonArrayString != null && !jsonArrayString.contentEquals("null")) {
+						final JSONArray jsonArray = new JSONArray(jsonArrayString);
 						eventPollSize = jsonArray.length();
 						allEventPolls = new ArrayList<JSONObject>();
 						for (int i = 0; i < jsonArray.length(); i++) {
-							final JSONObject pollThread = jsonArray.getJSONObject(i);							
+							final JSONObject pollThread = jsonArray.getJSONObject(i);
 							allEventPolls.add(pollThread);
 							final View view = mInflater.inflate(R.layout.poll_thread, null);
 							final CheckBox selectedTime = (CheckBox) view.findViewById(R.id.selectedTime);
-							
-//							if(pollThread.getString("response").contentEquals("1")){
-//								NavbarActivity.selectedPollTime.add(pollThread);
-//								//selectedTime.setChecked(true);
-//							}
-							
+
+							// if(pollThread.getString("response").contentEquals("1")){
+							// NavbarActivity.selectedPollTime.add(pollThread);
+							// //selectedTime.setChecked(true);
+							// }
+
 							LinearLayout backgr = (LinearLayout) view.findViewById(R.id.pollTimeBlock);
-							
-							if(i == 0){
+
+							if (i == 0) {
 								backgr.setBackgroundResource(R.drawable.event_invite_people_button_notalone_i);
 							} else {
-								if((i+1) == jsonArray.length()){
+								if ((i + 1) == jsonArray.length()) {
 									backgr.setBackgroundResource(R.drawable.event_invited_entry_last_background);
 								} else {
 									backgr.setBackgroundResource(R.drawable.event_invited_entry_notalone_background);
 								}
 							}
-							
+
 							TextView startTime = (TextView) view.findViewById(R.id.pollStartTime);
 							TextView endTime = (TextView) view.findViewById(R.id.pollEndTime);
 							DateTimeUtils dateTimeUtils = new DateTimeUtils(EventEditActivity.this);
-							
-							String temp ="";
+
+							String temp = "";
 							try {
 								temp = pollThread.getString("start");
 							} catch (JSONException e) {
 								Log.e("PollAdapter", "Failed getting poll time.");
 							}
-							
-							final Calendar tempCal = Utils.stringToCalendar(EventEditActivity.this, temp, DataManagement.SERVER_TIMESTAMP_FORMAT);
-							startTime.setText(dateTimeUtils.formatDate(tempCal)+" "+dateTimeUtils.formatTime(tempCal));
-							
+
+							final Calendar tempCal = Utils.stringToCalendar(EventEditActivity.this, temp,
+									DataManagement.SERVER_TIMESTAMP_FORMAT);
+							startTime.setText(dateTimeUtils.formatDate(tempCal) + " " + dateTimeUtils.formatTime(tempCal));
+
 							try {
 								temp = pollThread.getString("end");
 							} catch (JSONException e) {
 								Log.e("PollAdapter", "Failed getting poll time.");
 							}
-														
-							final Calendar tempCal2 = Utils.stringToCalendar(EventEditActivity.this, temp, DataManagement.SERVER_TIMESTAMP_FORMAT);
-							endTime.setText(dateTimeUtils.formatDate(tempCal2)+" "+dateTimeUtils.formatTime(tempCal2));
-							
+
+							final Calendar tempCal2 = Utils.stringToCalendar(EventEditActivity.this, temp,
+									DataManagement.SERVER_TIMESTAMP_FORMAT);
+							endTime.setText(dateTimeUtils.formatDate(tempCal2) + " " + dateTimeUtils.formatTime(tempCal2));
+
 							selectedTime.setOnClickListener(new OnClickListener() {
-								
+
 								@Override
 								public void onClick(View v) {
-									if(selectedTime.isChecked()){
-										selectedPollTime.add(pollThread);										
-										saveButton.setEnabled(true);										
+									if (selectedTime.isChecked()) {
+										selectedPollTime.add(pollThread);
+										saveButton.setEnabled(true);
+										poll_status = Invited.ACCEPTED;
 									} else {
 										saveButton.setEnabled(true);
-										for (int i = 0 ; i< eventPollSize ; i++){
+										for (int i = 0; i < eventPollSize; i++) {
 											int size = selectedPollTime.size();
 											for (int y = 0; y < size; y++) {
 												try {
-													if(selectedPollTime.get(y).getString("id").equals(pollThread.getString("id"))){
+													if (selectedPollTime.get(y).getString("id").equals(pollThread.getString("id"))) {
 														selectedPollTime.remove(y);
+														poll_status = Invited.ACCEPTED;
 														break;
-														
+
 													}
 												} catch (JSONException e) {
 													e.printStackTrace();
@@ -914,27 +972,28 @@ public class EventEditActivity extends EventActivity {
 									}
 								}
 							});
-							
-							if(selectedPollTime != null){
+
+							if (selectedPollTime != null) {
 								int size = selectedPollTime.size();
 								for (int y = 0; y < size; y++) {
 									final JSONObject pollThread2 = selectedPollTime.get(y);
-									if(pollThread.getString("timestamp_start_utc").contentEquals(pollThread2.getString("timestamp_start_utc"))
-											&& pollThread.getString("id").contentEquals(pollThread2.getString("id"))){
+									if (pollThread.getString("timestamp_start_utc").contentEquals(
+											pollThread2.getString("timestamp_start_utc"))
+											&& pollThread.getString("id").contentEquals(pollThread2.getString("id"))) {
 										selectedTime.setChecked(true);
 									}
 								}
 							}
-							
+
 							pollStartEndTime.addView(view);
-							
+
 						}
 					}
 				} catch (JSONException e) {
 					e.printStackTrace();
 				}
 			}
-			
+
 			// toptext
 			String tmpTopText = event.getType();
 			if (tmpTopText.equalsIgnoreCase("t")) {
@@ -949,7 +1008,7 @@ public class EventEditActivity extends EventActivity {
 				topText.setText(getResources().getStringArray(R.array.type_labels)[4]);
 			} else if (tmpTopText.equalsIgnoreCase("v")) {
 				topText.setText(getResources().getStringArray(R.array.type_labels)[5]);
-			}else if (tmpTopText.equalsIgnoreCase("native event")) {
+			} else if (tmpTopText.equalsIgnoreCase("native event")) {
 				topText.setText(getResources().getStringArray(R.array.type_labels)[6]);
 			}
 
@@ -977,7 +1036,7 @@ public class EventEditActivity extends EventActivity {
 
 							@Override
 							public void onItemClick(AdapterView<?> parent, View v, int position, long id) {
-								
+
 								String testSelectedIcon = selectedIcon;
 								if (iconsValues[position].equals("noicon")) {
 									selectedIcon = Event.DEFAULT_ICON;
@@ -988,11 +1047,11 @@ public class EventEditActivity extends EventActivity {
 											"com.groupagendas.groupagenda");
 									iconView.setImageResource(iconId);
 								}
-								if (!changesMade){
+								if (!changesMade) {
 									changesMade = !testSelectedIcon.equalsIgnoreCase(selectedIcon);
 									saveButton.setEnabled(changesMade);
 								}
-								
+
 								dialog.dismiss();
 							}
 						});
@@ -1023,12 +1082,12 @@ public class EventEditActivity extends EventActivity {
 								selectedColor = colorsValues[position];
 								colorView.setImageBitmap(DrawingUtils.getColoredRoundRectangle(EventEditActivity.this,
 										COLOURED_BUBBLE_SIZE, colorsValues[position], true));
-								if (!changesMade){
-									
-									changesMade = testColorsValues.equalsIgnoreCase(colorsValues[position]) ;
-									
-								saveButton.setEnabled(changesMade);
-							}
+								if (!changesMade) {
+
+									changesMade = testColorsValues.equalsIgnoreCase(colorsValues[position]);
+
+									saveButton.setEnabled(changesMade);
+								}
 								dialog.dismiss();
 							}
 						});
@@ -1048,7 +1107,7 @@ public class EventEditActivity extends EventActivity {
 				showView(accomodationView, detailsLine);
 
 			} else {
-				
+
 				descView.setEnabled(false);
 				titleView.setEnabled(false);
 				endView.setEnabled(false);
@@ -1068,7 +1127,7 @@ public class EventEditActivity extends EventActivity {
 				allDayToggleButton.setEnabled(false);
 
 			}
-			if(event.isNative()){
+			if (event.isNative()) {
 				alarm1container.setEnabled(false);
 				alarm2container.setEnabled(false);
 				alarm3container.setEnabled(false);
@@ -1092,7 +1151,7 @@ public class EventEditActivity extends EventActivity {
 
 			// START AND END TIME
 			if (result.getStartCalendar() != null) {
-				if(!allDayToggleButton.isChecked()){
+				if (!allDayToggleButton.isChecked()) {
 					startView.setText(dtUtils.formatDateTime(result.getStartCalendar()));
 				} else {
 					startView.setText(dtUtils.formatDate(result.getStartCalendar()));
@@ -1110,10 +1169,10 @@ public class EventEditActivity extends EventActivity {
 				descView.setText(result.getDescription());
 			}
 			descView.addTextChangedListener(watcher);
-			if(ContactManagement.getContactFromLocalDb(getApplicationContext(), result.getCreator_contact_id(), 0) != null){
+			if (ContactManagement.getContactFromLocalDb(getApplicationContext(), result.getCreator_contact_id(), 0) != null) {
 				creatorNameTextView.setText(result.getCreator_fullname());
 				creatorNameTextView.setOnClickListener(new OnClickListener() {
-					
+
 					@Override
 					public void onClick(View v) {
 						Intent contactIntent = new Intent(getApplicationContext(), ContactInfoActivity.class);
@@ -1122,12 +1181,12 @@ public class EventEditActivity extends EventActivity {
 						startActivity(contactIntent);
 					}
 				});
-			} else if(result.getCreator_contact_id() == 0 && !result.is_owner()){
+			} else if (result.getCreator_contact_id() == 0 && !result.is_owner()) {
 				creatorNameTextView.setText(result.getCreator_fullname());
-			} else if(result.is_owner()) {
+			} else if (result.is_owner()) {
 				creatorNameTextView.setText(getResources().getString(R.string.you));
 				creatorNameTextView.setOnClickListener(new OnClickListener() {
-					
+
 					@Override
 					public void onClick(View v) {
 						Intent contactIntent = new Intent(getApplicationContext(), AccountActivity.class);
@@ -1155,19 +1214,16 @@ public class EventEditActivity extends EventActivity {
 
 					timezoneView.setText(countriesList.get(timezoneInUse).altname);
 					countryView.setText(countriesList.get(timezoneInUse).country2);
-					
 
-					
 					showView(timezoneView, addressLine);
 					showView(countryView, addressLine);
 				}
-				
+
 			}
-			
+
 			timezoneView.addTextChangedListener(watcher);
 			countryView.addTextChangedListener(watcher);
-			
-			
+
 			if (result.getCity().length() > 0) {
 				cityView.setText(result.getCity());
 				showView(cityView, addressLine);
@@ -1209,7 +1265,7 @@ public class EventEditActivity extends EventActivity {
 				accomodationView.addTextChangedListener(watcher);
 			}
 
-			if(!event.isNative()){
+			if (!event.isNative()) {
 				chatMessengerButton.setOnClickListener(new OnClickListener() {
 
 					@Override
@@ -1257,7 +1313,7 @@ public class EventEditActivity extends EventActivity {
 				alarm3.setText("");
 			}
 
-			if(!event.isNative()){
+			if (!event.isNative()) {
 				showInvitesView(EventEditActivity.this);
 				if (result.getInvited().size() > 0) {
 					invitationResponseLine.setVisibility(View.VISIBLE);
@@ -1313,32 +1369,37 @@ public class EventEditActivity extends EventActivity {
 
 		@Override
 		protected Boolean doInBackground(Event... events) {
-			if(event.getType().contentEquals("v")){
-				
-					for(int i=0; i < eventPollSize; i++ ){
-						ArrayList<Event> list2 = NavbarActivity.pollsList;
-						for (Event tempEvent : list2) {
-							if(tempEvent.getEvent_id() == event.getEvent_id()){
-									NavbarActivity.pollsList.remove(tempEvent);
-									break;
-							}
-						}
-					}
-					
+			if (event.getType().contentEquals("v")) {
+
+//				for (int i = 0; i < eventPollSize; i++) {
+//					ArrayList<Event> list2 = NavbarActivity.pollsList;
+//					for (Event tempEvent : list2) {
+//						if (tempEvent.getEvent_id() == event.getEvent_id()) {
+//							NavbarActivity.pollsList.remove(tempEvent);
+//							break;
+//						}
+//					}
+//				}
+				deleteEventFromPollList(event);
+
+				if(poll_status != Invited.REJECTED){
 					try {
 						ArrayList<JSONObject> listToAdd = selectedPollTime;
-						if(!listToAdd.isEmpty()){
+						if (!listToAdd.isEmpty()) {
 							for (JSONObject e : listToAdd) {
-								event = EventManagement.getEventFromLocalDb(EventEditActivity.this, event.getEvent_id(), EventManagement.ID_EXTERNAL);
-								event.setStartCalendar(Utils.stringToCalendar(EventEditActivity.this, e.getString("start"), DataManagement.SERVER_TIMESTAMP_FORMAT));
-								event.setEndCalendar(Utils.stringToCalendar(EventEditActivity.this, e.getString("end"), DataManagement.SERVER_TIMESTAMP_FORMAT));
+								event = EventManagement.getEventFromLocalDb(EventEditActivity.this, event.getEvent_id(),
+										EventManagement.ID_EXTERNAL);
+								event.setStartCalendar(Utils.stringToCalendar(EventEditActivity.this, e.getString("start"),
+										DataManagement.SERVER_TIMESTAMP_FORMAT));
+								event.setEndCalendar(Utils.stringToCalendar(EventEditActivity.this, e.getString("end"),
+										DataManagement.SERVER_TIMESTAMP_FORMAT));
 								String jsonArrayString = event.getPoll();
-								if(jsonArrayString != null && !jsonArrayString.contentEquals("null")){
-									JSONArray jsonArray= new JSONArray(jsonArrayString);
+								if (jsonArrayString != null && !jsonArrayString.contentEquals("null")) {
+									JSONArray jsonArray = new JSONArray(jsonArrayString);
 									for (int i = 0; i < jsonArray.length(); i++) {
 										JSONObject e2 = jsonArray.getJSONObject(i);
-										if(e.getString("timestamp_start_utc").contentEquals(e2.getString("timestamp_start_utc"))
-												&& e.getString("id").contentEquals(e2.getString("id"))){
+										if (e.getString("timestamp_start_utc").contentEquals(e2.getString("timestamp_start_utc"))
+												&& e.getString("id").contentEquals(e2.getString("id"))) {
 											NavbarActivity.pollsList.add(event);
 											break;
 										}
@@ -1346,34 +1407,47 @@ public class EventEditActivity extends EventActivity {
 								}
 							}
 						} else {
-							String jsonArrayString = event.getPoll();
-								if(jsonArrayString != null && !jsonArrayString.contentEquals("null")){
-									JSONArray jsonArray= new JSONArray(jsonArrayString);
-									for (int i = 0; i < jsonArray.length(); i++) {
-										JSONObject e = jsonArray.getJSONObject(i);
-										event = EventManagement.getEventFromLocalDb(EventEditActivity.this, event.getEvent_id(), EventManagement.ID_EXTERNAL);
-										event.setStartCalendar(Utils.stringToCalendar(EventEditActivity.this, e.getString("start"), DataManagement.SERVER_TIMESTAMP_FORMAT));
-										event.setEndCalendar(Utils.stringToCalendar(EventEditActivity.this, e.getString("end"), DataManagement.SERVER_TIMESTAMP_FORMAT));
-										NavbarActivity.pollsList.add(event);
-									}
-								}
+//							String jsonArrayString = event.getPoll();
+//							if (jsonArrayString != null && !jsonArrayString.contentEquals("null")) {
+//								JSONArray jsonArray = new JSONArray(jsonArrayString);
+//								for (int i = 0; i < jsonArray.length(); i++) {
+//									JSONObject e = jsonArray.getJSONObject(i);
+//									event = EventManagement.getEventFromLocalDb(EventEditActivity.this, event.getEvent_id(),
+//											EventManagement.ID_EXTERNAL);
+//									event.setStartCalendar(Utils.stringToCalendar(EventEditActivity.this, e.getString("start"),
+//											DataManagement.SERVER_TIMESTAMP_FORMAT));
+//									event.setEndCalendar(Utils.stringToCalendar(EventEditActivity.this, e.getString("end"),
+//											DataManagement.SERVER_TIMESTAMP_FORMAT));
+//									NavbarActivity.pollsList.add(event);
+//								}
+//							}
+							addEventToPollList(EventEditActivity.this, event);
 						}
-						
+	
 					} catch (JSONException e) {
 						e.printStackTrace();
 					}
-					
-					
-					
-					event.setSelectedEventPollsTime(""+selectedPollTime);
-					EventManagement.updateEventInLocalDb(EventEditActivity.this, event);
-					EventManagement.votePoll(getApplicationContext(), ""+event.getEvent_id(), allEventPolls, "0");
-					EventManagement.votePoll(getApplicationContext(), ""+event.getEvent_id(), selectedPollTime, "1");
-				
+				}				
+
+				event.setStatus(poll_status);
+				event.setSelectedEventPollsTime("" + selectedPollTime);
+				EventManagement.updateEventInLocalDb(EventEditActivity.this, event);
+				if(!to_reject_poll && !to_rejoin_poll){
+					EventManagement.votePoll(getApplicationContext(), "" + event.getEvent_id(), allEventPolls, "0");
+					EventManagement.votePoll(getApplicationContext(), "" + event.getEvent_id(), selectedPollTime, "1");
+				} else {
+					if(to_reject_poll){
+						EventManagement.rejectPoll(EventEditActivity.this, ""+event.getEvent_id());
+					}
+					if(to_rejoin_poll){
+						EventManagement.rejoinPoll(EventEditActivity.this, ""+event.getEvent_id());
+					}
+				}
+
 				return true;
 			} else {
 				if (isInvited) {
-					if (EventManagement.inviteExtraContacts(EventEditActivity.this,  "" + event.getEvent_id(), selectedContacts)) {
+					if (EventManagement.inviteExtraContacts(EventEditActivity.this, "" + event.getEvent_id(), selectedContacts)) {
 						return true;
 					} else {
 						errorStr = "Invite wasn't successfull.";
@@ -1381,15 +1455,15 @@ public class EventEditActivity extends EventActivity {
 					}
 				} else {
 					event = setEventData(event);
-					
+
 					if (event.getColor().equals(Event.DEFAULT_COLOR)) {
 						EventEditActivity.this.setAutoColor(EventEditActivity.this);
 					}
-	
+
 					if (event.getIcon().equals(Event.DEFAULT_ICON)) {
 						EventEditActivity.this.setAutoIcon(EventEditActivity.this);
 					}
-	
+
 					int testEvent = event.isValid();
 					if (testEvent == 0) {
 						EventManagement.updateEvent(EventEditActivity.this, event);
@@ -1521,7 +1595,7 @@ public class EventEditActivity extends EventActivity {
 				switch (id) {
 				case DIALOG_START:
 					startCalendar = mDateTimePicker.getCalendar();
-					if(!allDayToggleButton.isChecked()){
+					if (!allDayToggleButton.isChecked()) {
 						startView.setText(dtUtils.formatDateTime(startCalendar.getTime()));
 					} else {
 						startView.setText(dtUtils.formatDate(startCalendar));
@@ -1529,7 +1603,7 @@ public class EventEditActivity extends EventActivity {
 					endCalendar = Calendar.getInstance();
 					endCalendar.setTime(mDateTimePicker.getCalendar().getTime());
 					endCalendar.add(Calendar.MINUTE, NewEventActivity.DEFAULT_EVENT_DURATION_IN_MINS);
-					if(!allDayToggleButton.isChecked()){
+					if (!allDayToggleButton.isChecked()) {
 						endView.setText(dtUtils.formatDateTime(endCalendar.getTime()));
 					} else {
 						endView.setText(dtUtils.formatDate(endCalendar));
@@ -1557,7 +1631,7 @@ public class EventEditActivity extends EventActivity {
 					reminder3time = mDateTimePicker.getCalendar();
 					break;
 				}
-				if(!allDayToggleButton.isChecked()){
+				if (!allDayToggleButton.isChecked()) {
 					view.setText(dtUtils.formatDateTime(mDateTimePicker.getCalendar()));
 				} else {
 					view.setText(dtUtils.formatDate(mDateTimePicker.getCalendar()));
@@ -1610,36 +1684,79 @@ public class EventEditActivity extends EventActivity {
 			return super.onOptionsItemSelected(item);
 		}
 	}
-	
+
 	@Override
 	public void onBackPressed() {
-		if(changesMade){
-		new AlertDialog.Builder(this).setIcon(android.R.drawable.ic_dialog_alert).setTitle(this.getResources().getString(R.string.save_your_changes))
-				.setMessage(this.getResources().getString(R.string.do_you_want_to_save_your_changes))
-				.setPositiveButton(this.getResources().getString(R.string.yes), new DialogInterface.OnClickListener() {
-					@Override
-					public void onClick(DialogInterface dialog, int which) {
-						new UpdateEventTask().execute();
-						dialog.dismiss();
-					}
+		if (changesMade) {
+			new AlertDialog.Builder(this).setIcon(android.R.drawable.ic_dialog_alert)
+					.setTitle(this.getResources().getString(R.string.save_your_changes))
+					.setMessage(this.getResources().getString(R.string.do_you_want_to_save_your_changes))
+					.setPositiveButton(this.getResources().getString(R.string.yes), new DialogInterface.OnClickListener() {
+						@Override
+						public void onClick(DialogInterface dialog, int which) {
+							new UpdateEventTask().execute();
+							dialog.dismiss();
+						}
 
-				}).setNegativeButton(this.getResources().getString(R.string.no), new DialogInterface.OnClickListener() {
-					@Override
-					public void onClick(DialogInterface dialog, int which) {
-		                dialog.dismiss();
-		                finish();
-					}
+					}).setNegativeButton(this.getResources().getString(R.string.no), new DialogInterface.OnClickListener() {
+						@Override
+						public void onClick(DialogInterface dialog, int which) {
+							dialog.dismiss();
+							finish();
+						}
 
-				}).setCancelable(false).show();
+					}).setCancelable(false).show();
 		} else {
 			super.onBackPressed();
 		}
 	}
-	
-	public void showToast(String msg, int length){
+
+	public void showToast(String msg, int length) {
 		Toast.makeText(this, msg, length).show();
 	}
 	
+	public static void deleteEventFromPollList(Event event){
+		String jsonArrayString = event.getPoll();
+		try {
+			if (jsonArrayString != null && !jsonArrayString.contentEquals("null")) {
+				final JSONArray jsonArray = new JSONArray(jsonArrayString);
+				int eventPollSize = jsonArray.length();
+				for (int i = 0; i < eventPollSize; i++) {
+					ArrayList<Event> list2 = NavbarActivity.pollsList;
+					for (Event tempEvent : list2) {
+						if (tempEvent.getEvent_id() == event.getEvent_id()) {
+							NavbarActivity.pollsList.remove(tempEvent);
+							break;
+						}
+					}
+				}
+			}
+		} catch (JSONException e) {
+			e.printStackTrace();
+		}
+	}
+	
+	public static void addEventToPollList(Context context, Event event){
+		String jsonArrayString = event.getPoll();
+		try {
+			if (jsonArrayString != null && !jsonArrayString.contentEquals("null")) {
+				JSONArray jsonArray = new JSONArray(jsonArrayString);
+				for (int i = 0; i < jsonArray.length(); i++) {
+					JSONObject e = jsonArray.getJSONObject(i);
+					event = EventManagement.getEventFromLocalDb(context, event.getEvent_id(),
+							EventManagement.ID_EXTERNAL);
+					event.setStartCalendar(Utils.stringToCalendar(context, e.getString("start"),
+							DataManagement.SERVER_TIMESTAMP_FORMAT));
+					event.setEndCalendar(Utils.stringToCalendar(context, e.getString("end"),
+							DataManagement.SERVER_TIMESTAMP_FORMAT));
+					NavbarActivity.pollsList.add(event);
+				}
+			}
+		} catch (JSONException e) {
+			e.printStackTrace();
+		}
+	}
+
 	private BroadcastReceiver mMessageReceiver = new BroadcastReceiver() {
 		@Override
 		public void onReceive(Context context, Intent intent) {
