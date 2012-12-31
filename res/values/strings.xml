@@ -323,4 +323,8 @@
     <string name="sex_female">Female</string>
     <string name="sex_none">None</string>
     <string name="chat_on_event_not_created_online">You can\'t chat on event created only offline</string>
+    <string name="reject">Reject</string>
+    <string name="rejoin">Rejoin</string>
+    <string name="joined">Joined</string>
+    <string name="rejected">Rejected</string>
 </resources>
