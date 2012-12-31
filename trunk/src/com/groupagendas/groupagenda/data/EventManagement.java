@@ -492,13 +492,13 @@ public class EventManagement {
 				break;
 			case TM_EVENTS_ON_GIVEN_MONTH:
 				uri = EventsProvider.EMetaData.EVENTS_ON_DATE_URI;
-				where = EventsProvider.EMetaData.EventsIndexesMetaData.MONTH + " = '" + month_index_formatter.format(date.getTime()) + "'";
+				where = "("+EventsProvider.EMetaData.EventsIndexesMetaData.MONTH + " = '" + month_index_formatter.format(date.getTime()) + "'";
 				Calendar tmp1 = (Calendar) date.clone();
 				tmp1.set(Calendar.DAY_OF_MONTH, tmp1.getMinimum(Calendar.DAY_OF_MONTH) - 7);
 				where += " OR " + EventsProvider.EMetaData.EventsIndexesMetaData.DAY + " > '" + day_index_formatter.format(tmp1.getTime()) + "'";
 				tmp1.set(Calendar.MONTH, tmp1.get(Calendar.MONTH) + 1);
 				tmp1.set(Calendar.DAY_OF_MONTH, tmp1.getMaximum(Calendar.DAY_OF_MONTH) + 7);
-				where += " OR " + EventsProvider.EMetaData.EventsIndexesMetaData.DAY + " < '" + day_index_formatter.format(tmp1.getTime()) + "'";
+				where += " OR " + EventsProvider.EMetaData.EventsIndexesMetaData.DAY + " < '" + day_index_formatter.format(tmp1.getTime()) + "')";
 				break;
 			case TM_EVENTS_ON_GIVEN_YEAR:
 				uri = EventsProvider.EMetaData.EVENTS_ON_DATE_URI;
@@ -662,6 +662,12 @@ public class EventManagement {
 		} catch (UnsupportedEncodingException e1) {
 			Log.e("getResponsesFromRemoteDb(contactIds)", "Failed adding token to entity");
 		}
+		
+		try {
+			reqEntity.addPart("update_lastview", new StringBody(""+1, Charset.forName("UTF-8")));
+		} catch (UnsupportedEncodingException e1) {
+			Log.e("getResponsesFromRemoteDb(contactIds)", "Failed adding token to entity");
+		}
 
 		post.setEntity(reqEntity);
 		String resp = "";
@@ -767,6 +773,106 @@ public class EventManagement {
 			}
 		} catch (Exception ex) {
 			Log.e("votePoll", "er");
+		}
+		return success;
+	}
+	
+	public static boolean rejectPoll(Context context, String event_id) {
+		boolean success = false;
+		String error = null;
+		Account account = new Account(context);
+		WebService webService = new WebService();
+		HttpPost post = new HttpPost(Data.getServerUrl() + "mobile/polls/reject");
+		MultipartEntity reqEntity = new MultipartEntity(HttpMultipartMode.BROWSER_COMPATIBLE);
+
+		try {
+			reqEntity.addPart("session", new StringBody(account.getSessionId(), Charset.forName("UTF-8")));
+		} catch (UnsupportedEncodingException e2) {
+			e2.printStackTrace();
+		}
+
+		try {
+			reqEntity.addPart("token", new StringBody(Data.getToken(context), Charset.forName("UTF-8")));
+		} catch (UnsupportedEncodingException e1) {
+			Log.e("rejectPoll", "Failed adding token to entity");
+		}
+		
+		try {
+			reqEntity.addPart("event_id", new StringBody(event_id, Charset.forName("UTF-8")));
+		} catch (UnsupportedEncodingException e1) {
+			Log.e("rejectPoll", "Failed adding token to entity");
+		}
+
+		post.setEntity(reqEntity);
+		String resp = "";
+		try {
+			HttpResponse rp = webService.getResponseFromHttpPost(post);
+
+			if (rp.getStatusLine().getStatusCode() == HttpStatus.SC_OK) {
+				resp = EntityUtils.toString(rp.getEntity());
+				if (resp != null) {
+					JSONObject object = new JSONObject(resp);
+					success = object.getBoolean("success");
+
+					if (success == false) {
+						error = object.getString("error");
+						Log.e("rejectPoll - error: ", error);
+					}
+				}
+
+			}
+		} catch (Exception ex) {
+			Log.e("rejectPoll", "er");
+		}
+		return success;
+	}
+	
+	public static boolean rejoinPoll(Context context, String event_id) {
+		boolean success = false;
+		String error = null;
+		Account account = new Account(context);
+		WebService webService = new WebService();
+		HttpPost post = new HttpPost(Data.getServerUrl() + "mobile/polls/rejoin");
+		MultipartEntity reqEntity = new MultipartEntity(HttpMultipartMode.BROWSER_COMPATIBLE);
+
+		try {
+			reqEntity.addPart("session", new StringBody(account.getSessionId(), Charset.forName("UTF-8")));
+		} catch (UnsupportedEncodingException e2) {
+			e2.printStackTrace();
+		}
+
+		try {
+			reqEntity.addPart("token", new StringBody(Data.getToken(context), Charset.forName("UTF-8")));
+		} catch (UnsupportedEncodingException e1) {
+			Log.e("rejoinPoll", "Failed adding token to entity");
+		}
+		
+		try {
+			reqEntity.addPart("event_id", new StringBody(event_id, Charset.forName("UTF-8")));
+		} catch (UnsupportedEncodingException e1) {
+			Log.e("rejoinPoll", "Failed adding token to entity");
+		}
+
+		post.setEntity(reqEntity);
+		String resp = "";
+		try {
+			HttpResponse rp = webService.getResponseFromHttpPost(post);
+
+			if (rp.getStatusLine().getStatusCode() == HttpStatus.SC_OK) {
+				resp = EntityUtils.toString(rp.getEntity());
+				if (resp != null) {
+					JSONObject object = new JSONObject(resp);
+					success = object.getBoolean("success");
+
+					if (success == false) {
+						error = object.getString("error");
+						Log.e("rejoinPoll - error: ", error);
+					}
+				}
+
+			}
+		} catch (Exception ex) {
+			Log.e("rejoinPoll", "er");
 		}
 		return success;
 	}
@@ -1013,6 +1119,14 @@ public class EventManagement {
 		cv.put(EventsProvider.EMetaData.EventsMetaData.EVENT_DISPLAY_COLOR, event.getDisplayColor());
 		cv.put(EventsProvider.EMetaData.EventsMetaData.MODIFIED_UTC_MILLISECONDS, Calendar.getInstance().getTimeInMillis()); // veliau
 		cv.put(EventsProvider.EMetaData.EventsMetaData.INVITED, parseInvitedListToJSONArray(event.getInvited()));
+		Uri uri = EventsProvider.EMetaData.EventsMetaData.CONTENT_URI;
+		String where = EventsProvider.EMetaData.EventsMetaData._ID + "=" + event.getInternalID();
+		context.getContentResolver().update(uri, cv, where, null);
+	}
+	
+	public static void updateEventSelectedPollsTimeInLocalDb(Context context, Event event) {
+		ContentValues cv = new ContentValues();
+		cv.put(EventsProvider.EMetaData.EventsMetaData.SELECTED_EVENT_POLLS_TIME, event.getSelectedEventPollsTime());
 		Uri uri = EventsProvider.EMetaData.EventsMetaData.CONTENT_URI;
 		String where = EventsProvider.EMetaData.EventsMetaData._ID + "=" + event.getInternalID();
 		context.getContentResolver().update(uri, cv, where, null);
