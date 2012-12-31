@@ -707,7 +707,7 @@ public class DataManagement {
 
 		if (networkAvailable) {
 			try {
-				WebService webService = new WebService();
+				WebService webService = new WebService(context);
 				HttpPost post = new HttpPost(Data.getServerUrl() + "mobile/login");
 				post.setHeader("User-Agent", "Linux; AndroidPhone " + android.os.Build.VERSION.RELEASE);
 				post.setHeader("Accept", "*/*");
