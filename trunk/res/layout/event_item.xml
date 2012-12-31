@@ -121,7 +121,64 @@
                     android:textStyle="bold" />
             </LinearLayout>
 
-            <include layout="@layout/response_to_invite_panel" />
+            <LinearLayout
+                    android:id="@+id/events_status_line"
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical" >
+            	<include layout="@layout/response_to_invite_panel" />
+            </LinearLayout>
+            
+            <RelativeLayout
+                    android:id="@+id/poll_status_line"
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:visibility="gone" >
+
+                    <TextView
+                        android:id="@+id/poll_status"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:padding="5dp"
+                        android:textColor="@android:color/black"
+                        android:textStyle="bold" />
+
+                    <LinearLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentRight="true" >
+
+                        <TextView
+                            android:id="@+id/button_rejoin"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginLeft="10dp"
+                            android:layout_marginRight="5dp"
+                            android:background="#26b2d8"
+                            android:paddingBottom="2dp"
+                            android:paddingLeft="10dp"
+                            android:paddingRight="10dp"
+                            android:paddingTop="2dp"
+                            android:text="@string/rejoin"
+                            android:textColor="@android:color/white"
+                            android:textStyle="bold" />
+
+                        <TextView
+                            android:id="@+id/button_reject"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginLeft="10dp"
+                            android:layout_marginRight="5dp"
+                            android:background="#5d5d5d"
+                            android:paddingBottom="2dp"
+                            android:paddingLeft="10dp"
+                            android:paddingRight="10dp"
+                            android:paddingTop="2dp"
+                            android:text="@string/reject"
+                            android:textColor="@android:color/white"
+                            android:textStyle="bold" />
+                    </LinearLayout>
+                </RelativeLayout>
         </LinearLayout>
     </RelativeLayout>
 
