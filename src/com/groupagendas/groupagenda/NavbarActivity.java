@@ -885,15 +885,15 @@ public class NavbarActivity extends FragmentActivity {
 		@Override
 		protected void onPostExecute(Void result) {
 			
-			if(!acc.getPhone1().contentEquals("") && !acc.getPhone1().contentEquals("null") && !acc.getPhone1_verified()){
-				showDialogForPhoneVerification(NavbarActivity.this, acc.getPhone1_code()+acc.getPhone1(), "1", "true");
-			}
-			if(!acc.getPhone2().contentEquals("") && !acc.getPhone2().contentEquals("null") && !acc.getPhone2_verified()){
-				showDialogForPhoneVerification(NavbarActivity.this, acc.getPhone2_code()+acc.getPhone2(), "2", "true");
-			}
-			if(!acc.getPhone3().contentEquals("") && !acc.getPhone3().contentEquals("null") && !acc.getPhone3_verified()){
-				showDialogForPhoneVerification(NavbarActivity.this, acc.getPhone3_code()+acc.getPhone3(), "3", "true");
-			}
+//			if(!acc.getPhone1().contentEquals("") && !acc.getPhone1().contentEquals("null") && !acc.getPhone1_verified()){
+//				showDialogForPhoneVerification(NavbarActivity.this, acc.getPhone1_code()+acc.getPhone1(), "1", "true");
+//			}
+//			if(!acc.getPhone2().contentEquals("") && !acc.getPhone2().contentEquals("null") && !acc.getPhone2_verified()){
+//				showDialogForPhoneVerification(NavbarActivity.this, acc.getPhone2_code()+acc.getPhone2(), "2", "true");
+//			}
+//			if(!acc.getPhone3().contentEquals("") && !acc.getPhone3().contentEquals("null") && !acc.getPhone3_verified()){
+//				showDialogForPhoneVerification(NavbarActivity.this, acc.getPhone3_code()+acc.getPhone3(), "3", "true");
+//			}
 			
 			acc.setLatestUpdateTime(Calendar.getInstance());
 			dataLoaded = true;
