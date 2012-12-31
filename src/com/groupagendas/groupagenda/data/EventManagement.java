@@ -180,8 +180,11 @@ public class EventManagement {
 				event.setEvent_id(id);
 				event.setUploadedToServer(true);
 			} else {
+				event.setUploadedToServer(false);
 				// TODO report error
 			}
+		} else {
+			event.setUploadedToServer(false);
 		}
 
 		insertEventToLocalDB(context, event);
@@ -1756,10 +1759,9 @@ public class EventManagement {
 	// }
 
 	public static void uploadOfflineEvents(Context context) {
-		Account account = new Account(context);
 		String projection[] = null;
 		Uri uri = EventsProvider.EMetaData.EventsMetaData.CONTENT_URI;
-		String where = (EventsProvider.EMetaData.EventsMetaData.MODIFIED_UTC_MILLISECONDS + ">" + account.getLastTimeConnectedToWeb());
+		String where = EventsProvider.EMetaData.EventsMetaData.UPLOADED_SUCCESSFULLY + " = '0'";
 		Cursor result = context.getContentResolver().query(uri, projection, where, null, null);
 		if (result.moveToFirst()) {
 			while (!result.isAfterLast()) {
