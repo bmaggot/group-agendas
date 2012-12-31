@@ -5,6 +5,7 @@ import java.util.List;
 
 import android.app.Activity;
 import android.content.Context;
+import android.os.AsyncTask;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -14,6 +15,7 @@ import android.widget.BaseAdapter;
 import android.widget.Filter;
 import android.widget.Filterable;
 import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.groupagendas.groupagenda.R;
@@ -31,6 +33,8 @@ public class EventsAdapter extends BaseAdapter implements Filterable{
 	private int newInvitesCount;
 	private LinearLayout status1block;
 	private LinearLayout status2block;
+	private LinearLayout events_status_line;
+	private RelativeLayout poll_status_line;
 	public EventsAdapter(List<Event> objects, Activity activity){
 		events = objects;
 		eventsAll = objects;
@@ -71,8 +75,13 @@ public class EventsAdapter extends BaseAdapter implements Filterable{
 			holder.button_yes = (TextView) convertView.findViewById(R.id.button_yes);
 			holder.button_maybe = (TextView) convertView.findViewById(R.id.button_maybe);
 			holder.button_no = (TextView) convertView.findViewById(R.id.button_no);
+			holder.reject_poll = (TextView) convertView.findViewById(R.id.button_reject);
+			holder.rejoin_poll = (TextView) convertView.findViewById(R.id.button_rejoin);
+			holder.poll_status = (TextView) convertView.findViewById(R.id.poll_status);
 			status1block = (LinearLayout) convertView.findViewById(R.id.status_1_linearBlock);
 			status2block = (LinearLayout) convertView.findViewById(R.id.status_2_linearBlock);
+			events_status_line = (LinearLayout) convertView.findViewById(R.id.events_status_line);
+			poll_status_line = (RelativeLayout) convertView.findViewById(R.id.poll_status_line);
 
 			convertView.setTag(holder);
 		} else {
@@ -108,6 +117,8 @@ public class EventsAdapter extends BaseAdapter implements Filterable{
 		
 		status1block = (LinearLayout) convertView.findViewById(R.id.status_1_linearBlock);
 		status2block = (LinearLayout) convertView.findViewById(R.id.status_2_linearBlock);
+		events_status_line = (LinearLayout) convertView.findViewById(R.id.events_status_line);
+		poll_status_line = (RelativeLayout) convertView.findViewById(R.id.poll_status_line);
 		
 		// status
 		if(!event.isNative()){
@@ -192,6 +203,63 @@ public class EventsAdapter extends BaseAdapter implements Filterable{
 			});
 		}
 		
+		if(event.getType().contentEquals("v")){
+			poll_status_line.setVisibility(View.VISIBLE);
+			events_status_line.setVisibility(View.GONE);
+			holder.date.setVisibility(View.INVISIBLE);
+			
+			if (event.getStatus() == Invited.REJECTED) {
+				holder.reject_poll.setVisibility(View.INVISIBLE);
+				holder.rejoin_poll.setVisibility(View.VISIBLE);
+				holder.poll_status.setText(R.string.rejected);
+			} else {
+				holder.rejoin_poll.setVisibility(View.INVISIBLE);
+				holder.reject_poll.setVisibility(View.VISIBLE);
+				holder.poll_status.setText(R.string.joined);
+			}
+			
+			holder.reject_poll.setOnClickListener(new OnClickListener() {
+
+				@Override
+				public void onClick(View v) {
+					//saveButton.setEnabled(true);
+					holder.poll_status.setText(R.string.rejected);
+					holder.reject_poll.setVisibility(View.INVISIBLE);
+					holder.rejoin_poll.setVisibility(View.VISIBLE);
+					event.setStatus(Invited.REJECTED);
+					respondToInvite(event);
+					EventEditActivity.deleteEventFromPollList(event);
+					new RejectPollTask().execute(event);
+					event.setSelectedEventPollsTime("[]");
+					EventManagement.updateEventSelectedPollsTimeInLocalDb(mContext, event);
+					//poll_status = Invited.REJECTED;
+
+				}
+			});
+
+			holder.rejoin_poll.setOnClickListener(new OnClickListener() {
+
+				@Override
+				public void onClick(View v) {
+					//saveButton.setEnabled(true);
+					holder.poll_status.setText(R.string.joined);
+					holder.rejoin_poll.setVisibility(View.INVISIBLE);
+					holder.reject_poll.setVisibility(View.VISIBLE);
+					event.setStatus(Invited.ACCEPTED);
+					respondToInvite(event);
+					EventEditActivity.addEventToPollList(mContext, event);
+					new RejoinPollTask().execute(event);
+					//poll_status = Invited.ACCEPTED;
+
+				}
+			});
+			
+		} else {
+			poll_status_line.setVisibility(View.GONE);
+			events_status_line.setVisibility(View.VISIBLE);
+			holder.date.setVisibility(View.VISIBLE);
+		}
+		
 		return convertView;
 	}
 	
@@ -217,6 +285,9 @@ public class EventsAdapter extends BaseAdapter implements Filterable{
 		TextView button_yes;
 		TextView button_maybe;
 		TextView button_no;
+		TextView reject_poll;
+		TextView rejoin_poll;
+		TextView poll_status;
 	}
 	
 	@Override
@@ -239,6 +310,40 @@ public class EventsAdapter extends BaseAdapter implements Filterable{
 		eventsAll = items;
 		setNewInvitesCount(items);
 		if(mFilter != null) getFilter().filter(mFilter);
+	}
+	
+	class RejectPollTask extends AsyncTask<Event, Void, Boolean> {
+		@Override
+		protected void onPreExecute() {
+			super.onPreExecute();
+		}
+
+		@Override
+		protected Boolean doInBackground(Event... voids) {
+			EventManagement.rejectPoll(mContext, ""+voids[0].getEvent_id());
+			return true;
+		}
+
+		@Override
+		protected void onPostExecute(Boolean result) {
+		}
+	}
+	
+	class RejoinPollTask extends AsyncTask<Event, Void, Boolean> {
+		@Override
+		protected void onPreExecute() {
+			super.onPreExecute();
+		}
+
+		@Override
+		protected Boolean doInBackground(Event... voids) {
+			EventManagement.rejoinPoll(mContext, ""+voids[0].getEvent_id());
+			return true;
+		}
+
+		@Override
+		protected void onPostExecute(Boolean result) {
+		}
 	}
 	
 	public void setFilter(String filter){
