@@ -168,13 +168,14 @@
                 android:id="@+id/pollStartEndTime"
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:layout_marginRight="10dp"
-                android:layout_marginLeft="10dp"
                 android:layout_marginBottom="10dp"
+                android:layout_marginLeft="10dp"
+                android:layout_marginRight="10dp"
+                android:orientation="vertical"
                 android:visibility="gone" />
-
-                <!-- <ListView
+
+            <!--
+            <ListView
                     android:id="@+id/pollStartEndTime_list"
                     android:layout_width="fill_parent"
                     android:layout_height="0dp"
@@ -189,7 +190,8 @@
                     android:paddingLeft="10dp"
                     android:paddingRight="10dp" />
 
-            </LinearLayout> -->
+            </LinearLayout>
+            -->
 
             <LinearLayout
                 android:layout_width="fill_parent"
@@ -901,15 +903,67 @@
                 android:orientation="vertical"
                 android:visibility="visible" >
 
-                <LinearLayout 
+                <LinearLayout
                     android:id="@+id/attending_line"
-                	android:layout_width="fill_parent"
-                	android:layout_height="wrap_content"
-                	android:orientation="vertical">
-                <include
-                    android:id="@+id/response_to_invitation"
-                    layout="@layout/response_to_invite_panel" />
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical" >
+
+                    <include
+                        android:id="@+id/response_to_invitation"
+                        layout="@layout/response_to_invite_panel" />
                 </LinearLayout>
+
+                <RelativeLayout
+                    android:id="@+id/poll_status_line"
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:visibility="gone" >
+
+                    <TextView
+                        android:id="@+id/poll_status"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:padding="5dp"
+                        android:textColor="@android:color/black"
+                        android:textStyle="bold" />
+
+                    <LinearLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentRight="true" >
+
+                        <TextView
+                            android:id="@+id/button_rejoin"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginLeft="10dp"
+                            android:layout_marginRight="5dp"
+                            android:background="#26b2d8"
+                            android:paddingBottom="2dp"
+                            android:paddingLeft="10dp"
+                            android:paddingRight="10dp"
+                            android:paddingTop="2dp"
+                            android:text="@string/rejoin"
+                            android:textColor="@android:color/white"
+                            android:textStyle="bold" />
+
+                        <TextView
+                            android:id="@+id/button_reject"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginLeft="10dp"
+                            android:layout_marginRight="5dp"
+                            android:background="#5d5d5d"
+                            android:paddingBottom="2dp"
+                            android:paddingLeft="10dp"
+                            android:paddingRight="10dp"
+                            android:paddingTop="2dp"
+                            android:text="@string/reject"
+                            android:textColor="@android:color/white"
+                            android:textStyle="bold" />
+                    </LinearLayout>
+                </RelativeLayout>
 
                 <Button
                     android:id="@+id/invite_button"
