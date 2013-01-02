@@ -884,6 +884,7 @@ public class ContactManagement {
 
 		if (destination_id > 0) {
 			success = true;
+			contact.setUploadedToServer(success);
 			insertContactToLocalDb(context, contact, destination_id);
 			if (contact.birthdate != null && contact.birthdate.length() == 10) {
 				Birthday birthday = new Birthday(context, contact);
@@ -900,6 +901,7 @@ public class ContactManagement {
 
 		if (destination_id == 0) {
 			success = true;
+			contact.setUploadedToServer(false);
 			insertContactToLocalDb(context, contact, 0);
 			if (contact.birthdate != null && contact.birthdate.length() == 10) {
 				Birthday birthday = new Birthday(context, contact);
@@ -2278,6 +2280,7 @@ public class ContactManagement {
 		cv.put(ContactsProvider.CMetaData.ContactsMetaData.GROUPS, MapUtils.mapToString(context, contact.groups));
 
 		cv.put(ContactsProvider.CMetaData.ContactsMetaData.COLOR, contact.getColor());
+		cv.put(ContactsProvider.CMetaData.ContactsMetaData.UPLOADED_SUCCESSFULLY, contact.isUploadedToServer() ? 1 : 0);
 
 		String where = ContactsProvider.CMetaData.ContactsMetaData.C_ID + "=" + contact.contact_id;
 		try {
@@ -2527,6 +2530,7 @@ public class ContactManagement {
 		cv.put(ContactsProvider.CMetaData.ContactsMetaData.GROUPS, MapUtils.mapToString(context, contact.groups));
 
 		cv.put(ContactsProvider.CMetaData.ContactsMetaData.COLOR, contact.getColor());
+		cv.put(ContactsProvider.CMetaData.ContactsMetaData.UPLOADED_SUCCESSFULLY, contact.isUploadedToServer() ? 1 : 0);
 		return cv;
 	}
 
@@ -2682,10 +2686,9 @@ public class ContactManagement {
 	}
 
 	public static void uploadOfflineContact(Context context) {
-		Account account = new Account(context);
 		String projection[] = null;
 		Uri uri = ContactsProvider.CMetaData.ContactsMetaData.CONTENT_URI;
-		String where = (ContactsProvider.CMetaData.ContactsMetaData.MODIFIED + ">" + account.getLastTimeConnectedToWeb());
+		String where = (ContactsProvider.CMetaData.ContactsMetaData.UPLOADED_SUCCESSFULLY + " = '0'");
 		Cursor result = context.getContentResolver().query(uri, projection, where, null, null);// result
 																								// nieko
 																								// neismeta

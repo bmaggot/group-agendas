@@ -45,6 +45,7 @@ public class Contact extends Object implements Colored {
 	public String title;
 	public String registered;
 	public Map<String, String> groups = null;
+	private boolean uploadedToServer = true;
 
 	private String color;
 	private int internal_id;
@@ -132,5 +133,14 @@ public class Contact extends Object implements Colored {
 		}
 		
 		this.setColor(cur.getString(cur.getColumnIndex(ContactsProvider.CMetaData.ContactsMetaData.COLOR)));
+		this.setUploadedToServer(1 == cur.getInt(cur.getColumnIndex(ContactsProvider.CMetaData.ContactsMetaData.UPLOADED_SUCCESSFULLY)));
+	}
+
+	public boolean isUploadedToServer() {
+		return uploadedToServer;
+	}
+
+	public void setUploadedToServer(boolean uploadedToServer) {
+		this.uploadedToServer = uploadedToServer;
 	}
 }

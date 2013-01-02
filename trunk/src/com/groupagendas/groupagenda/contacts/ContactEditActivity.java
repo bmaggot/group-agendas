@@ -717,12 +717,15 @@ public class ContactEditActivity extends Activity implements OnClickListener, On
 
 				check = ContactManagement.editContactOnRemoteDb(getApplicationContext(), editedContact);
 
-				// if (check) {
+				if(check){
+					editedContact.setUploadedToServer(true);
+				} else {
+					editedContact.setUploadedToServer(false);
+				}
 				ContactManagement.updateContactOnLocalDb(ContactEditActivity.this, editedContact);
 				if (!editedContact.birthdate.contentEquals("")) {
 					ContactManagement.updateBirthdayOnLocalDb(ContactEditActivity.this, editedContact);
 				}
-				// }
 			}
 
 			return check;
