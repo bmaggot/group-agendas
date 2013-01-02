@@ -7,11 +7,11 @@
     android:background="@drawable/calendar_agenda_entry" >
     
     <ImageView android:id="@+id/month_entry_color_placeholder"
+        android:layout_marginLeft="5dp"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center_vertical|left"
         android:contentDescription="@string/event_color_placeholder"
-        android:layout_marginLeft="5dp"
         android:src="@null" />
     
     <LinearLayout android:orientation="vertical"
@@ -24,30 +24,28 @@
 		    android:layout_marginTop="2dp"
 		    android:layout_width="fill_parent"
 		    android:layout_height="wrap_content"
-		    android:paddingLeft="5dp"
 		    android:paddingTop="2dp"
-		    android:paddingBottom="2dp"
+		    android:paddingBottom="0dp"
 		    android:gravity="center"
 		    android:text=""
 		    android:textStyle="normal"
 		    android:textColor="@color/black"
-		    android:textSize="10dp" />
+		    android:textSize="13sp" />
 	   	
 	   	<TextView android:id="@+id/month_entry_end"
-		    android:layout_marginTop="2dp"
+		    android:layout_marginTop="0dp"
 		    android:layout_width="fill_parent"
 		    android:layout_height="wrap_content"
-		    android:paddingLeft="5dp"
-		    android:paddingTop="2dp"
-		    android:paddingBottom="2dp"
+		    android:paddingBottom="3dp"
 		    android:gravity="center"
 		    android:text=""
 		    android:textStyle="normal"
 		    android:textColor="@color/black"
-		    android:textSize="10dp" />	   	
+		    android:textSize="13sp" />	   	
     </LinearLayout>
 
     <ImageView android:id="@+id/month_entry_icon_placeholder"
+        android:layout_marginLeft="5dp"
         android:layout_width="25dp"
         android:layout_height="25dp"
         android:layout_gravity="center_vertical"
@@ -65,6 +63,6 @@
 		android:text=""
 		android:textStyle="bold"
 		android:textColor="@color/black"
-		android:textSize="14dp"/>
+		android:textSize="16sp"/>
    	
 </LinearLayout>

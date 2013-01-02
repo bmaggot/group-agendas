@@ -572,7 +572,7 @@
                 android:visibility="visible" >
             </LinearLayout>
 
-            <RelativeLayout
+<!--            <RelativeLayout
                 android:id="@+id/setAlarmTimerLine"
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
@@ -840,7 +840,7 @@
                         android:textSize="15dp"
                         android:textStyle="bold" />
                 </LinearLayout>
-            </LinearLayout>
+            </LinearLayout>  -->
 
             <Button
                 android:id="@+id/messenger_button"

@@ -9,13 +9,13 @@
     <RadioButton
         android:id="@+id/btnCalendar"
         style="@style/navbar_button"
-        android:background="@drawable/nav_backgroud"
+        android:background="@null"
         android:drawableTop="@drawable/different_white" />
 
     <RadioButton
         android:id="@+id/btnCalendarSetings"
         style="@style/navbar_button"
-        android:background="@drawable/nav_backgroud"
+        android:background="@null"
         android:drawableTop="@drawable/filter_white" />
 
     <RelativeLayout 
@@ -28,7 +28,7 @@
     		android:gravity="center_horizontal"
 	        android:id="@+id/btnChatThreads"
 	        style="@style/navbar_button"
-	        android:background="@drawable/nav_backgroud"
+	        android:background="@null"
 	        android:drawableTop="@drawable/envelope_white" />
 	    
 	    <TextView
@@ -58,7 +58,7 @@
     		android:gravity="center_horizontal"
 	        android:id="@+id/btnEvents"
 	        style="@style/navbar_button"
-	        android:background="@drawable/nav_backgroud"
+	        android:background="@null"
 	        android:drawableTop="@drawable/logo_white" />
 
 	    <TextView
@@ -80,7 +80,7 @@
     <RadioButton
         android:id="@+id/btnNewevent"
         style="@style/navbar_button"
-        android:background="@drawable/nav_backgroud"
+        android:background="@null"
         android:drawableTop="@drawable/add_white" />
 
 </RadioGroup>
