@@ -134,7 +134,7 @@ public class SettingsActivity extends ListActivity{
 		protected Void doInBackground(Void... params) {
 			try {
 				C2DMessaging.unregister(SettingsActivity.this);
-				WebService webService = new WebService();
+				WebService webService = new WebService(getApplicationContext());
 				HttpPost post = new HttpPost(Data.getServerUrl() + "mobile/push/unsubscribe");
 
 				MultipartEntity reqEntity = new MultipartEntity(HttpMultipartMode.BROWSER_COMPATIBLE);

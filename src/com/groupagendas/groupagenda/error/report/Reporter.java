@@ -56,7 +56,7 @@ public class Reporter {
 		@Override
 		protected Void doInBackground(String... params) {
 			String error = params[0];
-			WebService webService = new WebService();
+			WebService webService = new WebService(context);
 			try {
 				if (Data.getToken(context) != null) {
 					reqEntity.addPart("token", new StringBody(Data.getToken(context), Charset.forName("UTF-8")));

@@ -83,7 +83,7 @@ public class EventManagement {
 
 		boolean success = false;
 		try {
-			WebService webService = new WebService();
+			WebService webService = new WebService(context);
 			HttpPost post = new HttpPost(Data.getServerUrl() + "mobile/events_get");
 
 			MultipartEntity reqEntity = new MultipartEntity(HttpMultipartMode.BROWSER_COMPATIBLE);
@@ -124,7 +124,7 @@ public class EventManagement {
 
 		boolean success = false;
 		try {
-			WebService webService = new WebService();
+			WebService webService = new WebService(context);
 			HttpPost post = new HttpPost(Data.getServerUrl() + "mobile/events_get");
 
 			MultipartEntity reqEntity = new MultipartEntity(HttpMultipartMode.BROWSER_COMPATIBLE);
@@ -308,7 +308,7 @@ public class EventManagement {
 		initUserTimezone(context);
 		boolean success = false;
 		Account account = new Account(context);
-		WebService webService = new WebService();
+		WebService webService = new WebService(context);
 		HttpPost post = new HttpPost(Data.getServerUrl() + "mobile/events_invite_extra");
 		// Charset charset = Charset.forName(DATA_ENCODING);
 
@@ -576,7 +576,7 @@ public class EventManagement {
 		int value = 0;
 
 		try {
-			WebService webService = new WebService();
+			WebService webService = new WebService(context);
 			HttpPost post = new HttpPost(Data.getServerUrl() + GET_EVENTS_FROM_REMOTE_DB_URL);
 
 			MultipartEntity reqEntity = new MultipartEntity(HttpMultipartMode.BROWSER_COMPATIBLE);
@@ -647,7 +647,7 @@ public class EventManagement {
 		String error = null;
 		ArrayList<JSONObject> list = new ArrayList<JSONObject>();
 		Account account = new Account(context);
-		WebService webService = new WebService();
+		WebService webService = new WebService(context);
 		HttpPost post = new HttpPost(Data.getServerUrl() + "mobile/latest_changes");
 		MultipartEntity reqEntity = new MultipartEntity(HttpMultipartMode.BROWSER_COMPATIBLE);
 
@@ -708,7 +708,7 @@ public class EventManagement {
 		boolean success = false;
 		String error = null;
 		Account account = new Account(context);
-		WebService webService = new WebService();
+		WebService webService = new WebService(context);
 		HttpPost post = new HttpPost(Data.getServerUrl() + "mobile/polls/vote");
 		MultipartEntity reqEntity = new MultipartEntity(HttpMultipartMode.BROWSER_COMPATIBLE);
 
@@ -781,7 +781,7 @@ public class EventManagement {
 		boolean success = false;
 		String error = null;
 		Account account = new Account(context);
-		WebService webService = new WebService();
+		WebService webService = new WebService(context);
 		HttpPost post = new HttpPost(Data.getServerUrl() + "mobile/polls/reject");
 		MultipartEntity reqEntity = new MultipartEntity(HttpMultipartMode.BROWSER_COMPATIBLE);
 
@@ -831,7 +831,7 @@ public class EventManagement {
 		boolean success = false;
 		String error = null;
 		Account account = new Account(context);
-		WebService webService = new WebService();
+		WebService webService = new WebService(context);
 		HttpPost post = new HttpPost(Data.getServerUrl() + "mobile/polls/rejoin");
 		MultipartEntity reqEntity = new MultipartEntity(HttpMultipartMode.BROWSER_COMPATIBLE);
 
@@ -1168,7 +1168,7 @@ public class EventManagement {
 
 		try {
 			Account account = new Account(context);
-			WebService webService = new WebService();
+			WebService webService = new WebService(context);
 			HttpPost post = new HttpPost(Data.getServerUrl() + "mobile/set_event_status");
 
 			MultipartEntity reqEntity = new MultipartEntity(HttpMultipartMode.BROWSER_COMPATIBLE);
@@ -1217,7 +1217,7 @@ public class EventManagement {
 		boolean success = false;
 
 		try {
-			WebService webService = new WebService();
+			WebService webService = new WebService(context);
 			HttpPost post = new HttpPost(Data.getServerUrl() + "mobile/events_create");
 
 			MultipartEntity reqEntity = new MultipartEntity(HttpMultipartMode.BROWSER_COMPATIBLE);
@@ -1344,7 +1344,7 @@ public class EventManagement {
 		boolean success = false;
 		if(e.getEvent_id() > 0){
 			try {
-				WebService webService = new WebService();
+				WebService webService = new WebService(context);
 				HttpPost post = new HttpPost(Data.getServerUrl() + "mobile/events_edit");
 	
 				MultipartEntity reqEntity = new MultipartEntity(HttpMultipartMode.BROWSER_COMPATIBLE);
@@ -1465,7 +1465,7 @@ public class EventManagement {
 
 		try {
 			Account account = new Account(context);
-			WebService webService = new WebService();
+			WebService webService = new WebService(context);
 			HttpPost post = new HttpPost(Data.getServerUrl() + "mobile/events_remove");
 
 			MultipartEntity reqEntity = new MultipartEntity(HttpMultipartMode.BROWSER_COMPATIBLE);
