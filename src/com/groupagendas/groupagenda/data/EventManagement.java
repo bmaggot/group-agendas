@@ -663,10 +663,18 @@ public class EventManagement {
 			Log.e("getResponsesFromRemoteDb(contactIds)", "Failed adding token to entity");
 		}
 		
-		try {
-			reqEntity.addPart("update_lastview", new StringBody(""+1, Charset.forName("UTF-8")));
-		} catch (UnsupportedEncodingException e1) {
-			Log.e("getResponsesFromRemoteDb(contactIds)", "Failed adding token to entity");
+		if(!account.getResponsesBadge().equalsIgnoreCase("") && Integer.parseInt(account.getResponsesBadge()) > 0){
+			try {
+				reqEntity.addPart("update_lastview", new StringBody(""+1, Charset.forName("UTF-8")));
+			} catch (UnsupportedEncodingException e1) {
+				Log.e("getResponsesFromRemoteDb(contactIds)", "Failed adding token to entity");
+			}
+		} else {
+			try {
+				reqEntity.addPart("update_lastview", new StringBody(""+0, Charset.forName("UTF-8")));
+			} catch (UnsupportedEncodingException e1) {
+				Log.e("getResponsesFromRemoteDb(contactIds)", "Failed adding token to entity");
+			}
 		}
 
 		post.setEntity(reqEntity);
