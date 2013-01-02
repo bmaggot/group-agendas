@@ -786,7 +786,7 @@ public class DataManagement {
 							}
 							registerPhone();
 						} else {
-							Data.setERROR(object.getJSONObject("error").getString("reason"));
+							Data.setERROR(object.getString("reason"));
 							Reporter.reportError(context, DataManagement.class.toString(), "login", Data.getERROR());
 						}
 					}
