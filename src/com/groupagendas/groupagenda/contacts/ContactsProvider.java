@@ -70,6 +70,8 @@ public class ContactsProvider extends ContentProvider{
 			public static final String TITLE = "title";
 			public static final String REGISTERED = "registered";
 			public static final String GROUPS = "groups";
+			
+			public static final String UPLOADED_SUCCESSFULLY = "uploaded";
 
 			public static final String DEFAULT_SORT_ORDER = NAME+" COLLATE NOCASE ASC";
 		}
@@ -158,6 +160,7 @@ public class ContactsProvider extends ContentProvider{
 		CM.put(CMetaData.ContactsMetaData.TITLE, CMetaData.ContactsMetaData.TITLE);
 		CM.put(CMetaData.ContactsMetaData.REGISTERED, CMetaData.ContactsMetaData.REGISTERED);
 		CM.put(CMetaData.ContactsMetaData.GROUPS, CMetaData.ContactsMetaData.GROUPS);
+		CM.put(CMetaData.ContactsMetaData.UPLOADED_SUCCESSFULLY, CMetaData.ContactsMetaData.UPLOADED_SUCCESSFULLY);
 	}
 	// END Table Projection Map
 	
@@ -488,6 +491,7 @@ private static class DatabaseHelper extends SQLiteOpenHelper {
 				+CMetaData.ContactsMetaData.TYPE+" TEXT ,"
 				+CMetaData.ContactsMetaData.TITLE+" TEXT ,"
 				+CMetaData.ContactsMetaData.GROUPS+" TEXT ,"
+				+CMetaData.ContactsMetaData.UPLOADED_SUCCESSFULLY+" INTEGER DEFAULT 0, "
 				+CMetaData.ContactsMetaData.REGISTERED+" TEXT)";
 			db.execSQL(query);
 			
