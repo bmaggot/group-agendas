@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <layer-list xmlns:android="http://schemas.android.com/apk/res/android">
-	<item android:drawable="@drawable/border_black"/>
-	<item android:drawable="@drawable/calendar_month_day_selected_bg"
-		android:top="0dp"
-		android:right="0dp"
+	<item android:drawable="@drawable/border_darker_gray"/>
+	<item android:drawable="@drawable/calendar_month_day_sel_bg"
+ 		android:top="0dp"
+		android:right="1dp"
 		android:bottom="1dp"
-		android:left="1dp" />
+		android:left="0dp" />
 </layer-list>
