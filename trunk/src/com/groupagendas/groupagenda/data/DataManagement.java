@@ -114,7 +114,7 @@ public class DataManagement {
 		boolean success = false;
 
 		try {
-			WebService webService = new WebService();
+			WebService webService = new WebService(context);
 			HttpPost post = new HttpPost(Data.getServerUrl() + "mobile/account_edit");
 
 			MultipartEntity reqEntity = new MultipartEntity(HttpMultipartMode.BROWSER_COMPATIBLE);
@@ -176,7 +176,7 @@ public class DataManagement {
 
 		// image
 		try {
-			WebService webService = new WebService();
+			WebService webService = new WebService(context);
 			HttpPost post = new HttpPost(Data.getServerUrl() + "mobile/account_image");
 
 			MultipartEntity reqEntity = new MultipartEntity(HttpMultipartMode.BROWSER_COMPATIBLE);
@@ -220,7 +220,7 @@ public class DataManagement {
 		Account u = null;
 
 		try {
-			WebService webService = new WebService();
+			WebService webService = new WebService(context);
 			HttpPost post = new HttpPost(Data.getServerUrl() + "mobile/account_get");
 
 			MultipartEntity reqEntity = new MultipartEntity(HttpMultipartMode.BROWSER_COMPATIBLE);
@@ -416,7 +416,7 @@ public class DataManagement {
 						}
 						try {
 							u.setImage_url(profile.getString(Account.AccountMetaData.IMAGE_URL));
-							u.image_bytes = Utils.imageToBytes(u.getImage_url());
+							u.image_bytes = Utils.imageToBytes(u.getImage_url(), context);
 						} catch (JSONException e) {
 							Reporter.reportError(context, this.getClass().toString(), Thread.currentThread().getStackTrace()[2]
 									.getMethodName().toString(), e.getMessage());
@@ -562,10 +562,10 @@ public class DataManagement {
 
 	public static boolean registerAccount(String language, String country, String timezone, String sex, String name, String lastname,
 			String email, String phonecode, String phone, String password, String city, String street, String streetNo, String zip,
-			boolean ampm, String dateFormat, String birthdate) {
+			boolean ampm, String dateFormat, String birthdate, Context context) {
 		boolean success = false;
 
-		WebService webService = new WebService();
+		WebService webService = new WebService(context);
 		HttpPost post = new HttpPost(Data.getServerUrl() + "mobile/account_register");
 
 		MultipartEntity reqEntity = new MultipartEntity(HttpMultipartMode.BROWSER_COMPATIBLE);
@@ -615,7 +615,7 @@ public class DataManagement {
 		boolean success = false;
 
 		try {
-			WebService webService = new WebService();
+			WebService webService = new WebService(context);
 			HttpPost post = new HttpPost(Data.getServerUrl() + "mobile/account_email_change");
 
 			MultipartEntity reqEntity = new MultipartEntity(HttpMultipartMode.BROWSER_COMPATIBLE);
@@ -659,7 +659,7 @@ public class DataManagement {
 		boolean success = false;
 
 		try {
-			WebService webService = new WebService();
+			WebService webService = new WebService(context);
 			HttpPost post = new HttpPost(Data.getServerUrl() + "mobile/settings_update");
 
 			MultipartEntity reqEntity = new MultipartEntity(HttpMultipartMode.BROWSER_COMPATIBLE);
@@ -920,7 +920,7 @@ public class DataManagement {
 
 		try {
 
-			WebService webService = new WebService();
+			WebService webService = new WebService(context);
 			HttpPost post = new HttpPost(Data.getServerUrl() + "mobile/push/subscribe");
 
 			MultipartEntity reqEntity = new MultipartEntity(HttpMultipartMode.BROWSER_COMPATIBLE);
@@ -944,7 +944,7 @@ public class DataManagement {
 		boolean success = false;
 
 		try {
-			WebService webService = new WebService();
+			WebService webService = new WebService(context);
 			HttpPost post = new HttpPost(Data.getServerUrl() + "mobile/settings_set_autoicons");
 
 			MultipartEntity reqEntity = new MultipartEntity(HttpMultipartMode.BROWSER_COMPATIBLE);
@@ -1027,7 +1027,7 @@ public class DataManagement {
 		boolean success = false;
 
 		try {
-			WebService webService = new WebService();
+			WebService webService = new WebService(context);
 			HttpPost post = new HttpPost(Data.getServerUrl() + "mobile/settings_set_autocolors");
 
 			MultipartEntity reqEntity = new MultipartEntity(HttpMultipartMode.BROWSER_COMPATIBLE);
@@ -1111,7 +1111,7 @@ public class DataManagement {
 
 		try {
 			Account account = new Account(context);
-			WebService webService = new WebService();
+			WebService webService = new WebService(context);
 			HttpPost post = new HttpPost(Data.getServerUrl() + "mobile/group_remove");
 
 			MultipartEntity reqEntity = new MultipartEntity(HttpMultipartMode.BROWSER_COMPATIBLE);
@@ -1156,7 +1156,7 @@ public class DataManagement {
 
 		try {
 			Account account = new Account(context);
-			WebService webService = new WebService();
+			WebService webService = new WebService(context);
 			HttpPost post = new HttpPost(Data.getServerUrl() + "mobile/groups_edit");
 
 			MultipartEntity reqEntity = new MultipartEntity(HttpMultipartMode.BROWSER_COMPATIBLE);
@@ -1356,7 +1356,7 @@ public class DataManagement {
 			try {
 				int event_id = (Integer) params[0];
 				String status = (String) params[1];
-				WebService webService = new WebService();
+				WebService webService = new WebService(getContext());
 				HttpPost post = new HttpPost(Data.getServerUrl() + "mobile/set_event_status");
 
 				MultipartEntity reqEntity = new MultipartEntity(HttpMultipartMode.BROWSER_COMPATIBLE);
@@ -1531,7 +1531,7 @@ public class DataManagement {
 	public int uploadTemplateToRemoteDb(Context context, Event event) {
 		int response = 0;
 		try {
-			WebService webService = new WebService();
+			WebService webService = new WebService(context);
 			HttpPost post = new HttpPost(Data.getServerUrl() + "mobile/templates_set");
 
 			MultipartEntity reqEntity = new MultipartEntity(HttpMultipartMode.BROWSER_COMPATIBLE);
@@ -1898,7 +1898,7 @@ public class DataManagement {
 		Event template = null;
 
 		try {
-			WebService webService = new WebService();
+			WebService webService = new WebService(getContext());
 			HttpPost post = new HttpPost(Data.getServerUrl() + "mobile/templates_get");
 
 			MultipartEntity reqEntity = new MultipartEntity(HttpMultipartMode.BROWSER_COMPATIBLE);
@@ -2451,7 +2451,7 @@ public class DataManagement {
 		Address address = null;
 
 		try {
-			WebService webService = new WebService();
+			WebService webService = new WebService(context);
 			HttpPost post = new HttpPost(Data.getServerUrl() + "mobile/adressbook_get");
 
 			MultipartEntity reqEntity = new MultipartEntity(HttpMultipartMode.BROWSER_COMPATIBLE);
@@ -2578,7 +2578,7 @@ public class DataManagement {
 		int response = 0;
 		boolean check = true;
 		try {
-			WebService webService = new WebService();
+			WebService webService = new WebService(getContext());
 			HttpPost post = new HttpPost(Data.getServerUrl() + "mobile/adressbook_set");
 
 			MultipartEntity reqEntity = new MultipartEntity(HttpMultipartMode.BROWSER_COMPATIBLE);
@@ -2701,7 +2701,7 @@ public class DataManagement {
 		}
 		JSONArray contactChanges = response.optJSONArray(CONTACTS);
 		JSONArray deletedContacts = response.optJSONArray(CONTACTS_REMOVED);
-		ContactManagement.syncContacts(context, JSONUtils.JSONArrayToContactsArray(contactChanges),
+		ContactManagement.syncContacts(context, JSONUtils.JSONArrayToContactsArray(contactChanges, context),
 				JSONUtils.JSONArrayToLongArray(deletedContacts));
 		Intent intent = new Intent(C2DMReceiver.REFRESH_CONTACT_LIST);
 		LocalBroadcastManager.getInstance(context).sendBroadcast(intent);
@@ -2714,13 +2714,13 @@ public class DataManagement {
 		JSONArray groupChanges = response.optJSONArray(GROUPS);
 		JSONArray deletedGroups = response.optJSONArray(GROUPS_REMOVED);
 		ContactManagement
-				.syncGroups(context, JSONUtils.JSONArrayToGroupsArray(groupChanges), JSONUtils.JSONArrayToLongArray(deletedGroups));
+				.syncGroups(context, JSONUtils.JSONArrayToGroupsArray(groupChanges, context), JSONUtils.JSONArrayToLongArray(deletedGroups));
 
 	}
 
 	private static JSONObject getDataChangesJSON(Context context, long latestUpdateUnixTimestamp) {
 		try {
-			WebService webService = new WebService();
+			WebService webService = new WebService(context);
 			HttpPost post = new HttpPost(Data.getServerUrl() + DATA_DELTA_URL);
 
 			MultipartEntity reqEntity = new MultipartEntity(HttpMultipartMode.BROWSER_COMPATIBLE);
@@ -2765,7 +2765,7 @@ public class DataManagement {
 	public static JSONObject confirmPhoneNumber(Context context, String number_id, String verify_code) {
 		JSONObject object = null;
 		try {
-			WebService webService = new WebService();
+			WebService webService = new WebService(context);
 			HttpPost post = new HttpPost(Data.getServerUrl() + "mobile/phone/confirm");
 
 			MultipartEntity reqEntity = new MultipartEntity(HttpMultipartMode.BROWSER_COMPATIBLE);
@@ -2796,7 +2796,7 @@ public class DataManagement {
 		JSONObject object = null;
 		
 		try {
-			WebService webService = new WebService();
+			WebService webService = new WebService(context);
 			HttpPost post = new HttpPost(Data.getServerUrl() + "mobile/phone/resend");
 
 			MultipartEntity reqEntity = new MultipartEntity(HttpMultipartMode.BROWSER_COMPATIBLE);

@@ -61,7 +61,7 @@ public class ContactManagement {
 		boolean success = false;
 		String error = null;
 		Account account = new Account(context);
-		WebService webService = new WebService();
+		WebService webService = new WebService(context);
 		HttpPost post = new HttpPost(Data.getServerUrl() + "mobile/contact_list");
 		MultipartEntity reqEntity = new MultipartEntity(HttpMultipartMode.BROWSER_COMPATIBLE);
 
@@ -269,7 +269,7 @@ public class ContactManagement {
 									if (temp != null && !temp.equals("null")) {
 										contact.image_url = temp;
 										try {
-											contact.image_bytes = Utils.imageToBytes(contact.image_url);
+											contact.image_bytes = Utils.imageToBytes(contact.image_url, context);
 										} catch (Exception e) {
 											Log.e("getContactsFromRemoteDb(contactIds)", "Failed getting image_bytes.");
 										}
@@ -520,7 +520,7 @@ public class ContactManagement {
 		int destination_id = 0;
 		boolean success = false;
 		Account account = new Account(context);
-		WebService webService = new WebService();
+		WebService webService = new WebService(context);
 		HttpPost post = new HttpPost(Data.getServerUrl() + "mobile/contact_create");
 		MultipartEntity reqEntity = new MultipartEntity(HttpMultipartMode.BROWSER_COMPATIBLE);
 
@@ -1353,7 +1353,7 @@ public class ContactManagement {
 		int destination_id = 0;
 		boolean success = false;
 		Account account = new Account(context);
-		WebService webService = new WebService();
+		WebService webService = new WebService(context);
 		HttpPost post = new HttpPost(Data.getServerUrl() + "mobile/groups_create");
 		MultipartEntity reqEntity = new MultipartEntity(HttpMultipartMode.BROWSER_COMPATIBLE);
 
@@ -1507,7 +1507,7 @@ public class ContactManagement {
 		String temp;
 		boolean success = false;
 		Account account = new Account(context);
-		WebService webService = new WebService();
+		WebService webService = new WebService(context);
 		HttpPost post = new HttpPost(Data.getServerUrl() + "mobile/groups_edit");
 		MultipartEntity reqEntity = new MultipartEntity(HttpMultipartMode.BROWSER_COMPATIBLE);
 
@@ -1729,7 +1729,7 @@ public class ContactManagement {
 		boolean success = false;
 		String error = null;
 		Account account = new Account(context);
-		WebService webService = new WebService();
+		WebService webService = new WebService(context);
 		HttpPost post = new HttpPost(Data.getServerUrl() + "mobile/groups_list");
 		MultipartEntity reqEntity = new MultipartEntity(HttpMultipartMode.BROWSER_COMPATIBLE);
 
@@ -1837,7 +1837,7 @@ public class ContactManagement {
 									if (temp != null && !temp.equals("null")) {
 										group.image_url = temp;
 										try {
-											group.image_bytes = Utils.imageToBytes(group.image_url);
+											group.image_bytes = Utils.imageToBytes(group.image_url, context);
 										} catch (Exception e) {
 											Log.e("getContactsFromRemoteDb(contactIds)", "Failed getting image_bytes.");
 										}
@@ -1892,7 +1892,7 @@ public class ContactManagement {
 		boolean success = false;
 		String error = null;
 		Account account = new Account(context);
-		WebService webService = new WebService();
+		WebService webService = new WebService(context);
 		HttpPost post = new HttpPost(Data.getServerUrl() + "mobile/contact_remove");
 		MultipartEntity reqEntity = new MultipartEntity(HttpMultipartMode.BROWSER_COMPATIBLE);
 
@@ -1983,7 +1983,7 @@ public class ContactManagement {
 	public static boolean editContactOnRemoteDb(Context context, Contact c) {
 		boolean success = false;
 		Account account = new Account(context);
-		WebService webService = new WebService();
+		WebService webService = new WebService(context);
 		HttpPost post = new HttpPost(Data.getServerUrl() + "mobile/contact_edit");
 		MultipartEntity reqEntity = new MultipartEntity(HttpMultipartMode.BROWSER_COMPATIBLE);
 
@@ -2394,7 +2394,7 @@ public class ContactManagement {
 
 	public static void bulkInsertContactsToRemoteDb(Context context, ArrayList<Contact> contactChanges) {
 		Account account = new Account(context);
-		WebService webService = new WebService();
+		WebService webService = new WebService(context);
 		HttpPost post = new HttpPost(Data.getServerUrl() + "mobile/contact_create_batch");
 
 		MultipartEntity reqEntity = new MultipartEntity(HttpMultipartMode.BROWSER_COMPATIBLE);
@@ -2617,7 +2617,7 @@ public class ContactManagement {
 	public static void requestContactCopy(Context context, int guid, int gcid, boolean req) {
 		try {
 			Account account = new Account(context);
-			WebService webService = new WebService();
+			WebService webService = new WebService(context);
 			HttpPost post = new HttpPost(Data.getServerUrl() + "mobile/contact_copy");
 
 			MultipartEntity reqEntity = new MultipartEntity(HttpMultipartMode.BROWSER_COMPATIBLE);
@@ -2740,7 +2740,7 @@ public class ContactManagement {
 	public static boolean removeGroupFromRemoteDb(Context context, int groupId) {
 		boolean success = false;
 		Account account = new Account(context);
-		WebService webService = new WebService();
+		WebService webService = new WebService(context);
 		HttpPost post = new HttpPost(Data.getServerUrl() + "mobile/group_remove");
 
 		MultipartEntity reqEntity = new MultipartEntity(HttpMultipartMode.BROWSER_COMPATIBLE);
@@ -2842,7 +2842,7 @@ public class ContactManagement {
 	public static boolean updateGroupInRemoteDb(Context context, Group group) {
 		boolean success = false;
 		Account account = new Account(context);
-		WebService webService = new WebService();
+		WebService webService = new WebService(context);
 		HttpPost post = new HttpPost(Data.getServerUrl() + "mobile/groups_edit");
 
 		MultipartEntity reqEntity = new MultipartEntity(HttpMultipartMode.BROWSER_COMPATIBLE);

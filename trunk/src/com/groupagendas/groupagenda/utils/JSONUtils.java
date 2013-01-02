@@ -293,18 +293,18 @@ public class JSONUtils {
 			return item;
 		}
 
-	public static ArrayList<Contact> JSONArrayToContactsArray(JSONArray contactChanges) {
+	public static ArrayList<Contact> JSONArrayToContactsArray(JSONArray contactChanges, Context context) {
 		ArrayList<Contact> result =  new ArrayList<Contact>();
 		if (contactChanges != null){
 			for (int i = 0; i < contactChanges.length(); i++){
 				JSONObject o = contactChanges.optJSONObject(i);
-				if (o != null) result.add(createContactFromJSONObject(o));
+				if (o != null) result.add(createContactFromJSONObject(o, context));
 			}
 		}
 		return result ;
 	}
 
-	private static Contact createContactFromJSONObject(JSONObject c) {
+	private static Contact createContactFromJSONObject(JSONObject c, Context context) {
 		Contact contact = new Contact();
 		String temp;
 
@@ -471,7 +471,7 @@ public class JSONUtils {
 			if (temp != null && !temp.equals("null")) {
 				contact.image_url = temp;
 				try {
-					contact.image_bytes = Utils.imageToBytes(contact.image_url);
+					contact.image_bytes = Utils.imageToBytes(contact.image_url, context);
 				} catch(Exception e) {
 					Log.e("getContactsFromRemoteDb(contactIds)", "Failed getting image_bytes.");
 				}
@@ -604,18 +604,18 @@ public class JSONUtils {
 		return contact;
 	}
 
-	public static ArrayList<Group> JSONArrayToGroupsArray(JSONArray groupChanges) {
+	public static ArrayList<Group> JSONArrayToGroupsArray(JSONArray groupChanges, Context context) {
 		ArrayList<Group> result =  new ArrayList<Group>();
 		if (groupChanges != null){
 			for (int i = 0; i < groupChanges.length(); i++){
 				JSONObject o = groupChanges.optJSONObject(i);
-				if (o != null) result.add(createGroupFromJSONObject(o));
+				if (o != null) result.add(createGroupFromJSONObject(o, context));
 			}
 		}
 		return result ;
 	}
 
-	private static Group createGroupFromJSONObject(JSONObject g) {
+	private static Group createGroupFromJSONObject(JSONObject g, Context context) {
 		Group group = new Group();
 		String temp;
 
@@ -678,7 +678,7 @@ public class JSONUtils {
 			if (temp != null && !temp.equals("null")) {
 				group.image_url = temp;
 				try {
-					group.image_bytes = Utils.imageToBytes(group.image_url);
+					group.image_bytes = Utils.imageToBytes(group.image_url, context);
 				} catch (Exception e) {
 					Log.e("getContactsFromRemoteDb(contactIds)", "Failed getting image_bytes.");
 				}

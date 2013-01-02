@@ -505,7 +505,7 @@ public class RegistrationActivity extends Activity {
 			}
 
 			return DataManagement.registerAccount(language, country, timezone, sex, name, lastname, email, phonecode, phone, password,
-					city, street, streetNo, zipCode, ampm, dateFormat, birthdateView.getText().toString());
+					city, street, streetNo, zipCode, ampm, dateFormat, birthdateView.getText().toString(), getApplicationContext());
 		}
 
 		@Override

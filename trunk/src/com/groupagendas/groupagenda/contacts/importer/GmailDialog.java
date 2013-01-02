@@ -278,7 +278,7 @@ public class GmailDialog extends Dialog {
 	}
 
 	private String makeSecuredReq(String url, OAuthConsumer consumer) throws Exception {
-		WebService webService = new WebService();
+		WebService webService = new WebService(context);
 		HttpGet request = new HttpGet(url);
 		Log.i(C.TAG, "Requesting URL : " + url);
 		consumer.sign(request);

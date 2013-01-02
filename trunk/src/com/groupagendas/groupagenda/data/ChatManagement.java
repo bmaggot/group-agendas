@@ -227,7 +227,7 @@ public class ChatManagement {
 	public static boolean removeChatMessageFromRemoteDb(Context context, int messageId) {
 		boolean success = false;
 		try {
-			WebService webService = new WebService();
+			WebService webService = new WebService(context);
 			HttpPost post = new HttpPost(Data.getServerUrl() + "mobile/chat_remove");
 
 			MultipartEntity reqEntity = new MultipartEntity(HttpMultipartMode.BROWSER_COMPATIBLE);
@@ -313,7 +313,7 @@ public class ChatManagement {
 	public static ChatMessageObject postChatMessage(int eventId, String message, Context context) {
 		ChatMessageObject chatMessageObject = new ChatMessageObject();
 		try {
-			WebService webService = new WebService();
+			WebService webService = new WebService(context);
 			HttpPost post = new HttpPost(Data.getServerUrl() + "mobile/chat_post");
 
 			MultipartEntity reqEntity = new MultipartEntity(HttpMultipartMode.BROWSER_COMPATIBLE);
@@ -365,7 +365,7 @@ public class ChatManagement {
 	public static ArrayList<ChatMessageObject> getChatMessagesForEventFromRemoteDb(int eventId, Context context, boolean resetMessageCount,
 			long lastMessageTimeStamp) {
 		boolean success = false;
-		WebService webService = new WebService();
+		WebService webService = new WebService(context);
 		ArrayList<ChatMessageObject> chatMessages = new ArrayList<ChatMessageObject>();
 		HttpPost post = new HttpPost(Data.getServerUrl() + "mobile/chat_get");
 		Log.e("ChatManagement", "");
@@ -417,7 +417,7 @@ public class ChatManagement {
 
 	public static void getAllChatMessagesFromRemoteDb(Context context) {
 		boolean success = false;
-		WebService webService = new WebService();
+		WebService webService = new WebService(context);
 		HttpPost post = new HttpPost(Data.getServerUrl() + "mobile/chat_get_all");
 		MultipartEntity reqEntity = new MultipartEntity(HttpMultipartMode.BROWSER_COMPATIBLE);
 

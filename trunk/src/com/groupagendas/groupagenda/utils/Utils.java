@@ -7,6 +7,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.Locale;
 import java.util.TimeZone;
 import java.util.regex.Pattern;
 
@@ -23,6 +24,7 @@ import android.graphics.Bitmap;
 import android.text.format.DateFormat;
 import android.util.Log;
 
+import com.groupagendas.groupagenda.account.Account;
 import com.groupagendas.groupagenda.data.CalendarSettings;
 import com.groupagendas.groupagenda.data.DataManagement;
 import com.groupagendas.groupagenda.error.report.Reporter;
@@ -55,7 +57,7 @@ public class Utils {
 	
 	public static String formatDateTime(Context context, String date_str, String startPattern, String endPattern){
 		Calendar calendar = stringToCalendar(context, date_str, startPattern);
-		SimpleDateFormat formatter = new SimpleDateFormat(endPattern);
+		SimpleDateFormat formatter = new SimpleDateFormat(endPattern , new Locale(new Account(context).getLanguage()));
 		return formatter.format(calendar.getTime());
 	}
 	
@@ -63,7 +65,7 @@ public class Utils {
 		TimeZone timezone = TimeZone.getTimeZone(tz);
 		Calendar calendar = Calendar.getInstance(timezone);
 		try {
-			SimpleDateFormat formatter = new SimpleDateFormat(pattern);
+			SimpleDateFormat formatter = new SimpleDateFormat(pattern , new Locale(new Account(context).getLanguage()));
 			Date date = formatter.parse(date_str);
 			calendar.setTime(date);
 		} catch (ParseException e) {
@@ -76,7 +78,7 @@ public class Utils {
 		if(!date_str.equalsIgnoreCase("null")){
 			Calendar calendar = Calendar.getInstance();
 			try {
-				SimpleDateFormat formatter = new SimpleDateFormat(pattern);
+				SimpleDateFormat formatter = new SimpleDateFormat(pattern , new Locale(new Account(context).getLanguage()));
 				Date date = formatter.parse(date_str);
 				calendar.setTime(date);
 			} catch (ParseException e) {
@@ -150,7 +152,7 @@ public class Utils {
 						calendarInUserLocale.get(Calendar.MINUTE), 
 						calendarInUserLocale.get(Calendar.SECOND));
 
-		SimpleDateFormat dateFormat = new SimpleDateFormat(CalendarSettings.getDateFormat(context));
+		SimpleDateFormat dateFormat = new SimpleDateFormat(CalendarSettings.getDateFormat(context) , new Locale(new Account(context).getLanguage()));
 		dateFormat.setTimeZone(TimeZone.getTimeZone(timezone));
 		return dateFormat.format(tmpCalendar.getTime());
 	}
@@ -319,9 +321,9 @@ public static Calendar createCalendar(long timeInMilis, String timezone) {
 
 
 
-public static byte[] imageToBytes(String image_url) {
+public static byte[] imageToBytes(String image_url, Context context) {
 	if (image_url != null && !image_url.equals("null")) {
-		WebService webService = new WebService();
+		WebService webService = new WebService(context);
 		HttpResponse mHttpResponse;
 
 		try {

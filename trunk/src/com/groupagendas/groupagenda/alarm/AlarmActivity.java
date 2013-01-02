@@ -92,7 +92,7 @@ public class AlarmActivity extends Activity {
 		@Override
 		protected Void doInBackground(Void... params) {
 			try {
-				WebService webService = new WebService();
+				WebService webService = new WebService(getApplicationContext());
 				HttpPost post = new HttpPost(Data.getServerUrl() + "mobile/alarms_dismiss");
 
 				MultipartEntity reqEntity = new MultipartEntity(HttpMultipartMode.BROWSER_COMPATIBLE);
