@@ -35,6 +35,7 @@ import android.view.View.OnClickListener;
 import android.view.Window;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
+import android.widget.AdapterView.OnItemSelectedListener;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.CheckBox;
@@ -57,6 +58,7 @@ import com.groupagendas.groupagenda.data.DataManagement;
 import com.groupagendas.groupagenda.error.report.Reporter;
 import com.groupagendas.groupagenda.events.EventActivity;
 import com.groupagendas.groupagenda.events.EventActivity.StaticTimezones;
+import com.groupagendas.groupagenda.timezone.CallCodeAdapter;
 import com.groupagendas.groupagenda.timezone.CountriesAdapter;
 import com.groupagendas.groupagenda.timezone.TimezonesAdapter;
 import com.groupagendas.groupagenda.utils.DateTimeUtils;
@@ -81,22 +83,24 @@ public class AccountActivity extends Activity implements OnClickListener {
 	// TODO implement ability tu change primary email.
 	// private EditText emailView;
 	private EditText phone1View;
-	private EditText phone1CodeView;
+	private TextView phone1CodeView;
 	private EditText phone2View;
-	private EditText phone2CodeView;
+	private TextView phone2CodeView;
 	private EditText phone3View;
-	private EditText phone3CodeView;
+	private TextView phone3CodeView;
 
 	// Birthdate
-	private EditText birthdateView;
-	private Button birthdateButton;
+	private TextView birthdateView;
+//	private Button birthdateButton;
 	private final int BIRTHDATE_DIALOG = 0;
 	private int mYear = 1970;
 	private int mMonth = 0;
 	private int mDay = 1;
 
 	// Sex
+	@SuppressWarnings("unused")
 	private Spinner sexSpinner;
+	@SuppressWarnings("unused")
 	private String[] sexArray;
 
 	// Country
@@ -137,6 +141,11 @@ public class AccountActivity extends Activity implements OnClickListener {
 	
 	private ToggleButton notifyByEmail;
 	private ToggleButton notifyByPush;
+	private Button sex_button_male;
+	private Button sex_button_female;
+	private Button sex_button_none;
+	private String sex = "";
+	private CallCodeAdapter callcodesAdapter;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -154,6 +163,8 @@ public class AccountActivity extends Activity implements OnClickListener {
 		String[] country_codes;
 		String[] timezones;
 		String[] altnames;
+		String[] call_codes;
+		
 		countriesList = new ArrayList<StaticTimezones>();
 
 		cities = getResources().getStringArray(R.array.city);
@@ -162,6 +173,7 @@ public class AccountActivity extends Activity implements OnClickListener {
 		country_codes = getResources().getStringArray(R.array.country_codes);
 		timezones = getResources().getStringArray(R.array.timezones);
 		altnames = getResources().getStringArray(R.array.timezone_altnames);
+		call_codes = getResources().getStringArray(R.array.call_codes);
 
 		for (int i = 0; i < cities.length; i++) {
 			// TODO what have I done?!
@@ -174,12 +186,14 @@ public class AccountActivity extends Activity implements OnClickListener {
 			temp.country_code = country_codes[i];
 			temp.timezone = timezones[i];
 			temp.altname = altnames[i];
+			temp.call_code = call_codes[i];
 
 			countriesList.add(temp);
 		}
 		if (countriesList != null) {
 			countriesAdapter = new CountriesAdapter(AccountActivity.this, R.layout.search_dialog_item, countriesList);
 			timezonesAdapter = new TimezonesAdapter(AccountActivity.this, R.layout.search_dialog_item, countriesList);
+			callcodesAdapter = new CallCodeAdapter(AccountActivity.this, R.layout.search_dialog_item, countriesList);
 		}
 
 		email1View = (EditText) findViewById(R.id.email1View);
@@ -199,6 +213,25 @@ public class AccountActivity extends Activity implements OnClickListener {
 		languageSpinner.setAdapter(adapterLanguage);
 		languageArray = getResources().getStringArray(R.array.language_values);
 		languageSpinner.setSelection(getMyLanguage(languageArray, account.getLanguage()));
+		languageSpinner.setOnItemSelectedListener(new OnItemSelectedListener() {
+
+			@Override
+			public void onItemSelected(AdapterView<?> arg0, View arg1,
+					int arg2, long arg3) {
+				try {
+					int color = getResources().getColor(R.color.darker_gray); 
+					((TextView) arg1).setTextColor(color);
+				} catch (Exception e) {
+					
+				}
+				
+			}
+
+			@Override
+			public void onNothingSelected(AdapterView<?> arg0) {
+		
+			}
+		});
 
 		pb = (ProgressBar) findViewById(R.id.progress);
 
@@ -207,17 +240,152 @@ public class AccountActivity extends Activity implements OnClickListener {
 
 		// emailView = (EditText) findViewById(R.id.emailView);
 		phone1View = (EditText) findViewById(R.id.phone1View);
-		phone1CodeView = (EditText) findViewById(R.id.phonecode1View);
+		phone1CodeView = (TextView) findViewById(R.id.phonecode1View);
 		phone2View = (EditText) findViewById(R.id.phone2View);
-		phone2CodeView = (EditText) findViewById(R.id.phonecode2View);
+		phone2CodeView = (TextView) findViewById(R.id.phonecode2View);
 		phone3View = (EditText) findViewById(R.id.phone3View);
-		phone3CodeView = (EditText) findViewById(R.id.phonecode3View);
+		phone3CodeView = (TextView) findViewById(R.id.phonecode3View);
 
+		phone1CodeView.setOnClickListener(new OnClickListener() {
+			@Override
+			public void onClick(View arg0) {
+				final Dialog dia1 = new Dialog(AccountActivity.this);
+				dia1.requestWindowFeature(Window.FEATURE_NO_TITLE);
+				dia1.setContentView(R.layout.search_dialog);
+
+				ListView diaList = (ListView) dia1.findViewById(R.id.dialog_list);
+				diaList.setAdapter(callcodesAdapter);
+				callcodesAdapter.notifyDataSetChanged();
+
+				EditText searchView = (EditText) dia1.findViewById(R.id.dialog_search);
+
+				TextWatcher filterTextWatcher = new TextWatcher() {
+					@Override
+					public void afterTextChanged(Editable s) {
+					}
+
+					@Override
+					public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+					}
+
+					@Override
+					public void onTextChanged(CharSequence s, int start, int before, int count) {
+						if (s != null) {
+							if (callcodesAdapter != null)
+								callcodesAdapter.getFilter().filter(s);
+						}
+					}
+				};
+
+				searchView.addTextChangedListener(filterTextWatcher);
+
+				diaList.setOnItemClickListener(new OnItemClickListener() {
+
+					@Override
+					public void onItemClick(AdapterView<?> parent, View view, int pos, long arg3) {
+						phone1CodeView.setText(((TextView) view).getText());
+						dia1.dismiss();
+					}
+				});
+				dia1.show();
+			}
+		});
+		
+		phone2CodeView.setOnClickListener(new OnClickListener() {
+			@Override
+			public void onClick(View arg0) {
+				final Dialog dia1 = new Dialog(AccountActivity.this);
+				dia1.requestWindowFeature(Window.FEATURE_NO_TITLE);
+				dia1.setContentView(R.layout.search_dialog);
+
+				ListView diaList = (ListView) dia1.findViewById(R.id.dialog_list);
+				diaList.setAdapter(callcodesAdapter);
+				callcodesAdapter.notifyDataSetChanged();
+
+				EditText searchView = (EditText) dia1.findViewById(R.id.dialog_search);
+
+				TextWatcher filterTextWatcher = new TextWatcher() {
+					@Override
+					public void afterTextChanged(Editable s) {
+					}
+
+					@Override
+					public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+					}
+
+					@Override
+					public void onTextChanged(CharSequence s, int start, int before, int count) {
+						if (s != null) {
+							if (callcodesAdapter != null)
+								callcodesAdapter.getFilter().filter(s);
+						}
+					}
+				};
+
+				searchView.addTextChangedListener(filterTextWatcher);
+
+				diaList.setOnItemClickListener(new OnItemClickListener() {
+
+					@Override
+					public void onItemClick(AdapterView<?> parent, View view, int pos, long arg3) {
+						phone2CodeView.setText(((TextView) view).getText());
+						dia1.dismiss();
+					}
+				});
+				dia1.show();
+			}
+		});
+		
+		phone3CodeView.setOnClickListener(new OnClickListener() {
+			@Override
+			public void onClick(View arg0) {
+				final Dialog dia1 = new Dialog(AccountActivity.this);
+				dia1.requestWindowFeature(Window.FEATURE_NO_TITLE);
+				dia1.setContentView(R.layout.search_dialog);
+
+				ListView diaList = (ListView) dia1.findViewById(R.id.dialog_list);
+				diaList.setAdapter(callcodesAdapter);
+				callcodesAdapter.notifyDataSetChanged();
+
+				EditText searchView = (EditText) dia1.findViewById(R.id.dialog_search);
+
+				TextWatcher filterTextWatcher = new TextWatcher() {
+					@Override
+					public void afterTextChanged(Editable s) {
+					}
+
+					@Override
+					public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+					}
+
+					@Override
+					public void onTextChanged(CharSequence s, int start, int before, int count) {
+						if (s != null) {
+							if (callcodesAdapter != null)
+								callcodesAdapter.getFilter().filter(s);
+						}
+					}
+				};
+
+				searchView.addTextChangedListener(filterTextWatcher);
+
+				diaList.setOnItemClickListener(new OnItemClickListener() {
+
+					@Override
+					public void onItemClick(AdapterView<?> parent, View view, int pos, long arg3) {
+						phone3CodeView.setText(((TextView) view).getText());
+						dia1.dismiss();
+					}
+				});
+				dia1.show();
+			}
+		});
+		
 		// Birthdate
-		birthdateView = (EditText) findViewById(R.id.birthdateView);
-		birthdateButton = (Button) findViewById(R.id.birthdateButton);
+		birthdateView = (TextView) findViewById(R.id.birthdateView);
+//		birthdateButton = (Button) findViewById(R.id.birthdateButton);
 
-		birthdateButton.setOnClickListener(new OnClickListener() {
+		birthdateView.setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View v) {
 				showDialog(BIRTHDATE_DIALOG);
@@ -225,12 +393,19 @@ public class AccountActivity extends Activity implements OnClickListener {
 		});
 
 		// Sex
-		sexSpinner = (Spinner) findViewById(R.id.sexSpinner);
-		ArrayAdapter<CharSequence> adapterSex = ArrayAdapter.createFromResource(this, R.array.sex_labels,
-				android.R.layout.simple_spinner_item);
-		adapterSex.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-		sexSpinner.setAdapter(adapterSex);
+//		sexSpinner = (Spinner) findViewById(R.id.sexSpinner);
+//		ArrayAdapter<CharSequence> adapterSex = ArrayAdapter.createFromResource(this, R.array.sex_labels,
+//				android.R.layout.simple_spinner_item);
+//		adapterSex.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+//		sexSpinner.setAdapter(adapterSex);
 		sexArray = getResources().getStringArray(R.array.sex_values);
+		sex_button_male = (Button) findViewById(R.id.sex_button_male);
+		sex_button_female = (Button) findViewById(R.id.sex_button_female);
+		sex_button_none = (Button) findViewById(R.id.sex_button_none);
+		
+		sex_button_male.setOnClickListener(this);
+		sex_button_female.setOnClickListener(this);
+		sex_button_none.setOnClickListener(this);
 
 		cityView = (EditText) findViewById(R.id.cityView);
 		streetView = (EditText) findViewById(R.id.streetView);
@@ -296,6 +471,7 @@ public class AccountActivity extends Activity implements OnClickListener {
 						timezonesAdapter.notifyDataSetChanged();
 
 						timezoneView.setText(countriesList.get(timezoneInUse).altname);
+						phone1CodeView.setText(countriesList.get(timezoneInUse).call_code);
 						account.setTimezone(countriesList.get(timezoneInUse).timezone);
 						dia1.dismiss();
 					}
@@ -479,9 +655,18 @@ public class AccountActivity extends Activity implements OnClickListener {
 		}
 
 		// sex
-		if (!account.getSex().equals("null")) {
-			int pos = Utils.getArrayIndex(sexArray, account.getSex());
-			sexSpinner.setSelection(pos);
+//			int pos = Utils.getArrayIndex(sexArray, account.getSex());
+//			sexSpinner.setSelection(pos);
+		sex = account.getSex();
+		if (sex.equals("m")) {
+			sex_button_male.setPressed(true);
+			sex_button_male.setBackgroundResource(R.drawable.sex_button_left_c);
+		} else if (sex.equals("f")) {
+			sex_button_female.setPressed(true);
+			sex_button_female.setBackgroundResource(R.drawable.sex_button_middle_c);
+		} else {
+			sex_button_none.setPressed(true);
+			sex_button_none.setBackgroundResource(R.drawable.sex_button_right_c);
 		}
 
 		// country
@@ -546,6 +731,40 @@ public class AccountActivity extends Activity implements OnClickListener {
 		switch (v.getId()) {
 		case R.id.accountImage:
 			showDialog(CROP_IMAGE_DIALOG);
+			break;
+		case R.id.sex_button_male:
+			sex = "m";
+			sex_button_male.setBackgroundResource(R.drawable.sex_button_left_c);
+			sex_button_male.setPressed(true);
+			sex_button_female.setBackgroundResource(R.drawable.sex_button_middle_i);
+			sex_button_female.setPressed(false);
+			sex_button_none.setBackgroundResource(R.drawable.sex_button_right_i);
+			sex_button_none.setPressed(false);
+			break;
+		case R.id.sex_button_female:
+			sex = "f";
+			sex_button_male.setBackgroundResource(R.drawable.sex_button_left_i);
+			sex_button_male.setPressed(false);
+			sex_button_female.setBackgroundResource(R.drawable.sex_button_middle_c);
+			sex_button_female.setPressed(true);
+			sex_button_none.setBackgroundResource(R.drawable.sex_button_right_i);
+			sex_button_none.setPressed(false);
+			break;
+		case R.id.sex_button_none:
+			sex = "";
+			sex_button_male.setBackgroundResource(R.drawable.sex_button_left_i);
+			sex_button_male.setPressed(false);
+			sex_button_female.setBackgroundResource(R.drawable.sex_button_middle_i);
+			sex_button_female.setPressed(false);
+			sex_button_none.setBackgroundResource(R.drawable.sex_button_right_c);
+			sex_button_none.setPressed(true);
+			break;
+		case R.id.saveButton:
+			if(checkIfChangesMade()){
+				saveAccount(null);
+			} else {
+                finish();
+			}
 			break;
 		}
 	}
@@ -645,12 +864,13 @@ public class AccountActivity extends Activity implements OnClickListener {
 
 		// Date
 		temp = birthdateView.getText().toString();
-		Calendar birthdate = Utils.stringToCalendar(getApplicationContext(), temp, mAccount.getTimezone(), mAccount.getSetting_date_format());
-		mAccount.setBirthdate(birthdate);
+		if (temp.length() > 0) {
+			Calendar birthdate = Utils.stringToCalendar(getApplicationContext(), temp, mAccount.getTimezone(), mAccount.getSetting_date_format());
+			mAccount.setBirthdate(birthdate);
+		}
 
 		// Sex
-		int pos = (int) sexSpinner.getSelectedItemId();
-		mAccount.setSex(sexArray[pos]);
+		mAccount.setSex(sex);
 
 		// Country
 		mAccount.setCountry(countriesList.get(timezoneInUse).country_code);
@@ -903,6 +1123,10 @@ public class AccountActivity extends Activity implements OnClickListener {
 		}
 	}
 	
+	public void clickLang(View v) {
+		languageSpinner.performClick();
+	}
+	
 	@Override
 	public void onBackPressed() {
 		if(checkIfChangesMade()){
@@ -964,7 +1188,7 @@ public class AccountActivity extends Activity implements OnClickListener {
 				chagesMade = true;
 			}
 		}
-		if(!account.getSex().equals("null") && !account.getSex().equals(sexArray[(int) sexSpinner.getSelectedItemId()].toString())){
+		if(!account.getSex().equals(sex)){
 			chagesMade = true;
 		}
 		if(!account.getCountry(AccountActivity.this).equals("null") && !account.getCountry(AccountActivity.this).equals(countriesList.get(timezoneInUse).country_code)){
