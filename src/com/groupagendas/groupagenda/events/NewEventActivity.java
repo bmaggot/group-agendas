@@ -71,8 +71,8 @@ public class NewEventActivity extends EventActivity {
 	boolean detailsPanelVisible = false;
 	int templateInUse = 0;
 
-	private boolean remindersShown = false;
-	private boolean alarmsShown = false;
+//	private boolean remindersShown = false;
+//	private boolean alarmsShown = false;
 	private CheckBox templateTrigger;
 
 	@Override
@@ -409,7 +409,7 @@ public class NewEventActivity extends EventActivity {
 			}
 		});
 
-		// reminders
+/*		// reminders
 		final LinearLayout reminderBlock = (LinearLayout) findViewById(R.id.reminder_block);
 		TextView setReminderTrigger = (TextView) findViewById(R.id.setReminderTrigger);
 		//TODO reminders new event on when ready
@@ -478,9 +478,9 @@ public class NewEventActivity extends EventActivity {
 			public void onClick(View v) {
 				showDateTimeDialog(reminder3, REMINDER3);
 			}
-		});
+		}); */
 
-		// alarms
+/*		// alarms
 		final LinearLayout alarmBlock = (LinearLayout) findViewById(R.id.alarm_block);
 		TextView setAlarmTrigger = (TextView) findViewById(R.id.setAlarmTrigger);
 		//TODO alarms new event turn on when ready.
@@ -563,7 +563,7 @@ public class NewEventActivity extends EventActivity {
 			public void onClick(View v) {
 				showDateTimeDialog(alarm3, ALARM3);
 			}
-		});
+		}); */
 
 		// INVITES SECTION
 		invitesColumn = (LinearLayout) findViewById(R.id.invitesLine);
