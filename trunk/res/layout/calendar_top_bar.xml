@@ -1,18 +1,19 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="fill_parent"
-    android:layout_height="50dp"
+    android:layout_height="45dp"
     android:background="@drawable/calendar_navbar_background"
     android:gravity="center_vertical" >
 	
 	    <ImageButton android:id="@+id/prevView"
-	        android:layout_width="wrap_content"
-	        android:layout_height="wrap_content"
+	        android:layout_width="22dp"
+	        android:layout_height="22dp"
+	        android:scaleType="fitCenter"
 	        android:layout_alignParentLeft="true"
 	        android:background="@null"
 	        android:contentDescription="@string/calendar_dayView_navigateLeft"
-	        android:paddingTop="10dp"
-	        android:paddingLeft="10dp"
+	        android:layout_marginTop="7dp"
+	        android:layout_marginLeft="10dp"
 	        android:paddingRight="10dp"
 	        android:paddingBottom="0dp"
 	        android:src="@drawable/left" />
@@ -20,7 +21,7 @@
 	    <LinearLayout android:layout_width="wrap_content"
 	        android:layout_height="wrap_content"
 	        android:layout_centerHorizontal="true"
-	        android:layout_marginTop="10dp"
+	        android:layout_marginTop="0dp"
 	        android:layout_marginBottom="0dp"
 	        android:orientation="vertical" >
 	
@@ -28,8 +29,10 @@
 	            android:layout_width="wrap_content"
 				android:layout_height="wrap_content"
 	            android:gravity="top"
+	            android:text=""
 	            android:textColor="#3B4959"
-	            android:textSize="16dp"
+	            android:paddingTop="5dp"
+	            android:textSize="16sp"
 	            android:textStyle="bold"
 	            android:shadowColor="@color/white"
 	            android:shadowRadius="1"
@@ -38,15 +41,16 @@
 	    </LinearLayout>
 	
 	    <ImageButton android:id="@+id/nextView"
-	        android:layout_width="wrap_content"
-	        android:layout_height="wrap_content"
+	        android:layout_width="22dp"
+	        android:layout_height="22dp"
+	        android:scaleType="fitCenter"
 	        android:layout_alignParentRight="true"
 	        android:layout_gravity="center_vertical"
 	        android:background="@null"
 	        android:contentDescription="@string/calendar_dayView_navigateRight"
-	        android:paddingTop="10dp"
+	        android:layout_marginTop="7dp"
 	        android:paddingLeft="10dp"
-	        android:paddingRight="10dp"
+	        android:layout_marginRight="10dp"
 	        android:paddingBottom="0dp"
 	        android:gravity="center_vertical"
 	        android:src="@drawable/right" />
@@ -56,6 +60,6 @@
         android:layout_alignParentBottom="true"
         android:orientation="horizontal"
         android:layout_width="fill_parent"
-    	android:layout_height="17dp" />
+    	android:layout_height="13dp" />
 
 </RelativeLayout>

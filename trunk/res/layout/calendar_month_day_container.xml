@@ -11,18 +11,19 @@
     <TextView android:id="@+id/month_day_title"
         android:layout_alignParentBottom="true"
         android:layout_alignParentRight="true"
-        android:layout_marginBottom="5dp"
-        android:layout_marginRight="5dp"
+        android:layout_marginBottom="-1dp"
+        android:layout_marginRight="2dp"
         android:background="@drawable/transparent"
         android:gravity="center"
+        android:includeFontPadding="false"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:shadowColor="@color/white"
         android:shadowRadius="1"
         android:shadowDx="0"
-        android:shadowDy="0"
+        android:shadowDy="2"
         android:text=""
         android:textStyle="bold"
         android:textColor="#3B4959"
-        android:textSize="16dp" />
+        android:textSize="20sp" />
 </com.groupagendas.groupagenda.calendar.month.MonthDayFrame>

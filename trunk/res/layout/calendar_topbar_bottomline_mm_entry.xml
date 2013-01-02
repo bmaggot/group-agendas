@@ -8,7 +8,7 @@
     <TextView
         android:id="@+id/mm_top_week_title"
         android:layout_width="wrap_content"
-        android:layout_height="17dp"
+        android:layout_height="13dp"
         android:background="@drawable/transparent"
         android:gravity="center"
         android:ems="2"
@@ -27,7 +27,7 @@
     <TextView
         android:id="@+id/mm_top_day_title"
         android:layout_width="wrap_content"
-        android:layout_height="17dp"
+        android:layout_height="13dp"
         android:background="@drawable/transparent"
         android:gravity="center"
         android:paddingBottom="2dp"
