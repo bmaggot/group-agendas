@@ -88,7 +88,8 @@ public class MonthAdapter extends AbstractAdapter<Event> {
 			String dayStr = new SimpleDateFormat("yyyy-MM-dd").format(selectedDate.getTime());
 			Calendar date = Utils.stringToCalendar(context, dayStr + " 00:00:00", SERVER_TIMESTAMP_FORMAT);
 			
-			colourBubble.setImageBitmap(DrawingUtils.getColoredRoundRectangle(context, 20, event.getDisplayColor(), true));
+			colourBubble.setImageBitmap(DrawingUtils.getCircleBitmap(context, 12, 12, event.getDisplayColor(), false));
+//			colourBubble.setImageBitmap(DrawingUtils.getColoredRoundRectangle(context, 20, event.getDisplayColor(), true));
 
 			if (sortedEvents != null) {
 				date.add(Calendar.DAY_OF_YEAR, -1);
