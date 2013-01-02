@@ -21,7 +21,7 @@
             android:layout_centerInParent="true"
             android:text="@string/my_account"
             android:textColor="@android:color/white"
-            android:textSize="20dp"
+            android:textSize="20sp"
             android:textStyle="bold" />
 
         <ProgressBar
@@ -33,6 +33,29 @@
             android:layout_centerInParent="true"
             android:layout_marginRight="20dp"
             android:visibility="gone" />
+
+        <Button
+            android:id="@+id/saveButton"
+            android:layout_width="wrap_content"
+            android:layout_height="33dp"
+            android:layout_alignParentRight="true"
+            android:layout_marginRight="5dp"
+            android:layout_marginTop="8dp"
+            android:background="@drawable/contacts_save_import_button"
+            android:gravity="center"
+            android:onClick="onClick"
+            android:paddingBottom="5dp"
+            android:paddingLeft="15dp"
+            android:paddingRight="15dp"
+            android:paddingTop="5dp"
+            android:shadowColor="@color/black"
+            android:shadowDx="0"
+            android:shadowDy="2"
+            android:shadowRadius="1.5"
+            android:text="@string/save"
+            android:textColor="@color/white"
+            android:textSize="14sp"
+            android:textStyle="bold" />
     </RelativeLayout>
 
     <ScrollView
@@ -45,110 +68,322 @@
             android:layout_height="wrap_content"
             android:focusableInTouchMode="true"
             android:orientation="vertical"
-            android:padding="5dp" >
+            android:paddingBottom="5dp"
+            android:paddingLeft="5dp"
+            android:paddingRight="5dp"
+            android:paddingTop="5dp" >
+
+            <RelativeLayout
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="2dp"
+                android:background="@drawable/event_icon_placeholder"
+                android:orientation="horizontal"
+                android:paddingBottom="5dp"
+                android:paddingLeft="5dp"
+                android:paddingRight="5dp"
+                android:paddingTop="5dp"
+                tools:ignore="UseCompoundDrawables" >
+
+                <TextView
+                    android:layout_width="105dp"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentLeft="true"
+                    android:layout_centerVertical="true"
+                    android:text="@string/replace_image"
+                    android:textColor="@color/darker_gray"
+                    android:textStyle="bold" />
+
+                <ImageView
+                    android:id="@+id/accountImage"
+                    android:layout_width="120dp"
+                    android:layout_height="120dp"
+                    android:layout_alignParentRight="true"
+                    android:layout_centerVertical="true"
+                    android:contentDescription="@string/account_icon_placeholder"
+                    android:src="@drawable/group_icon" />
+            </RelativeLayout>
+
+            <RelativeLayout
+                android:layout_width="fill_parent"
+                android:layout_height="40dp"
+                android:layout_marginBottom="2dp"
+                android:background="@drawable/event_icon_placeholder"
+                android:orientation="horizontal"
+                android:paddingBottom="5dp"
+                android:paddingLeft="5dp"
+                android:paddingRight="5dp"
+                android:paddingTop="5dp" >
+
+                <TextView
+                    android:layout_width="105dp"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentLeft="true"
+                    android:layout_centerVertical="true"
+                    android:text="@string/remove_image"
+                    android:textColor="@color/darker_gray"
+                    android:textStyle="bold" />
+
+                <CheckBox
+                    android:id="@+id/removeImage"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentRight="true"
+                    android:layout_centerVertical="true"
+                    android:layout_gravity="right" />
+            </RelativeLayout>
 
             <LinearLayout
                 android:layout_width="fill_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal" >
+                android:layout_height="40dp"
+                android:layout_marginBottom="2dp"
+                android:background="@drawable/event_icon_placeholder"
+                android:orientation="horizontal"
+                android:paddingBottom="5dp"
+                android:paddingLeft="5dp"
+                android:paddingRight="5dp"
+                android:paddingTop="5dp" >
 
                 <TextView
-                    android:layout_width="100dp"
+                    android:layout_width="95dp"
                     android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical"
                     android:text="@string/name"
-                    android:textColor="@android:color/black" />
+                    android:textColor="@color/darker_gray"
+                    android:textStyle="bold" />
 
                 <EditText
                     android:id="@+id/nameView"
                     android:layout_width="fill_parent"
                     android:layout_height="wrap_content"
-                    android:inputType="text" />
+                    android:layout_gravity="center_vertical"
+                    android:background="@null"
+                    android:inputType="text"
+                    android:textColor="@color/darker_gray"
+                    android:textSize="15sp" />
             </LinearLayout>
 
             <LinearLayout
                 android:layout_width="fill_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal" >
+                android:layout_height="40dp"
+                android:layout_marginBottom="2dp"
+                android:background="@drawable/event_icon_placeholder"
+                android:orientation="horizontal"
+                android:paddingBottom="5dp"
+                android:paddingLeft="5dp"
+                android:paddingRight="5dp"
+                android:paddingTop="5dp" >
 
                 <TextView
-                    android:layout_width="100dp"
+                    android:layout_width="95dp"
                     android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical"
                     android:text="@string/lastname"
-                    android:textColor="@android:color/black" />
+                    android:textColor="@color/darker_gray"
+                    android:textStyle="bold" />
 
                 <EditText
                     android:id="@+id/lastnameView"
                     android:layout_width="fill_parent"
                     android:layout_height="wrap_content"
-                    android:inputType="text" />
+                    android:layout_gravity="center_vertical"
+                    android:background="@null"
+                    android:inputType="text"
+                    android:textColor="@color/darker_gray"
+                    android:textSize="15sp" />
             </LinearLayout>
 
             <LinearLayout
                 android:id="@+id/countrySpinnerBlock"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal" >
+                android:layout_height="40dp"
+                android:layout_marginBottom="2dp"
+                android:background="@drawable/event_icon_placeholder"
+                android:orientation="horizontal"
+                android:paddingBottom="0dp"
+                android:paddingLeft="5dp"
+                android:paddingRight="0dp"
+                android:paddingTop="0dp" >
 
                 <TextView
-                    android:layout_width="100dp"
+                    android:layout_width="95dp"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_vertical"
+                    android:layout_marginBottom="5dp"
+                    android:layout_marginTop="5dp"
                     android:text="@string/country"
-                    android:textColor="@android:color/black" />
+                    android:textColor="@color/darker_gray"
+                    android:textStyle="bold" />
 
-                <TextView
-                    android:id="@+id/countryView"
+                <RelativeLayout
                     android:layout_width="fill_parent"
                     android:layout_height="wrap_content"
-                    android:background="@android:drawable/btn_dropdown"
-                    android:gravity="center_vertical"
-                    android:singleLine="true"
-                    android:textColor="@color/black"
-                    android:textSize="15dp" />
+                    android:background="@drawable/transparent" >
+
+                    <TextView
+                        android:id="@+id/countryView"
+                        android:layout_width="fill_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentRight="true"
+                        android:layout_centerVertical="true"
+                        android:layout_marginBottom="5dp"
+                        android:layout_marginTop="5dp"
+                        android:singleLine="true"
+                        android:textColor="@color/darker_gray"
+                        android:textSize="15sp" />
+
+                    <RelativeLayout
+                        android:id="@+id/country_dropdown"
+                        android:layout_width="40dp"
+                        android:layout_height="40dp"
+                        android:layout_alignParentRight="true"
+                        android:background="@drawable/account_dropdown_button" >
+
+                        <ImageView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_centerInParent="true"
+                            android:src="@drawable/account_dropdown_button_arrow" />
+                    </RelativeLayout>
+                </RelativeLayout>
             </LinearLayout>
 
             <LinearLayout
                 android:id="@+id/timezoneSpinnerBlock"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal" >
+                android:layout_height="40dp"
+                android:layout_marginBottom="2dp"
+                android:background="@drawable/event_icon_placeholder"
+                android:orientation="horizontal"
+                android:paddingBottom="0dp"
+                android:paddingLeft="5dp"
+                android:paddingRight="0dp"
+                android:paddingTop="0dp" >
 
                 <TextView
-                    android:layout_width="100dp"
+                    android:layout_width="95dp"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_vertical"
+                    android:layout_marginBottom="5dp"
+                    android:layout_marginTop="5dp"
                     android:text="@string/timezone"
-                    android:textColor="@android:color/black" />
+                    android:textColor="@color/darker_gray"
+                    android:textStyle="bold" />
+
+                <RelativeLayout
+                    android:layout_width="fill_parent"
+                    android:layout_height="match_parent"
+                    android:background="@drawable/transparent" >
+
+                    <TextView
+                        android:id="@+id/timezoneView"
+                        android:layout_width="fill_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentLeft="true"
+                        android:layout_centerVertical="true"
+                        android:background="@null"
+                        android:singleLine="true"
+                        android:textColor="@color/darker_gray"
+                        android:textSize="15sp" />
+
+                    <RelativeLayout
+                        android:layout_width="40dp"
+                        android:layout_height="40dp"
+                        android:layout_alignParentRight="true"
+                        android:background="@drawable/account_dropdown_button" >
+
+                        <ImageView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_centerInParent="true"
+                            android:src="@drawable/account_dropdown_button_arrow" />
+                    </RelativeLayout>
+                </RelativeLayout>
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/languageSpinnerBlock"
+                android:layout_width="match_parent"
+                android:layout_height="40dp"
+                android:layout_marginBottom="2dp"
+                android:background="@drawable/event_icon_placeholder"
+                android:orientation="horizontal"
+                android:paddingBottom="0dp"
+                android:paddingLeft="5dp"
+                android:paddingRight="0dp"
+                android:paddingTop="0dp" >
 
                 <TextView
-                    android:id="@+id/timezoneView"
-                    android:layout_width="fill_parent"
+                    android:layout_width="95dp"
                     android:layout_height="wrap_content"
-                    android:background="@android:drawable/btn_dropdown"
-                    android:gravity="center_vertical"
-                    android:singleLine="true"
-                    android:textColor="@color/black"
-                    android:textSize="15dp" />
+                    android:layout_gravity="center_vertical"
+                    android:text="@string/language"
+                    android:textColor="@color/darker_gray"
+                    android:textStyle="bold" />
+
+                <RelativeLayout
+                    android:layout_width="fill_parent"
+                    android:layout_height="match_parent"
+                    android:background="@drawable/transparent" >
+
+                    <Spinner
+                        android:id="@+id/languageSpinner"
+                        android:layout_width="fill_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentLeft="true"
+                        android:layout_centerVertical="true"
+                        android:layout_marginRight="40dp"
+                        android:background="@null"
+                        android:singleLine="true"
+                        android:textColor="@color/darker_gray"
+                        android:textSize="15sp" />
+
+                    <RelativeLayout
+                        android:layout_width="40dp"
+                        android:layout_height="40dp"
+                        android:layout_alignParentRight="true"
+                        android:onClick="clickLang"
+                        android:background="@drawable/account_dropdown_button" >
+
+                        <ImageView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_centerInParent="true"
+                            android:src="@drawable/account_dropdown_button_arrow" />
+                    </RelativeLayout>
+                </RelativeLayout>
             </LinearLayout>
 
             <LinearLayout
                 android:layout_width="fill_parent"
-                android:layout_height="wrap_content"
+                android:layout_height="40dp"
+                android:layout_marginBottom="2dp"
+                android:background="@drawable/event_icon_placeholder"
                 android:orientation="horizontal"
+                android:paddingBottom="5dp"
+                android:paddingLeft="5dp"
+                android:paddingRight="5dp"
+                android:paddingTop="5dp"
                 android:visibility="visible" >
 
                 <TextView
-                    android:layout_width="100dp"
+                    android:layout_width="95dp"
                     android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical"
                     android:text="@string/email"
-                    android:textColor="@android:color/black" />
+                    android:textColor="@color/darker_gray"
+                    android:textStyle="bold" />
 
                 <EditText
                     android:id="@+id/email1View"
                     android:layout_width="fill_parent"
                     android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical"
+                    android:background="@null"
+                    android:inputType="textEmailAddress"
                     android:maxLines="2"
-                    android:inputType="text" />
+                    android:textColor="@color/darker_gray"
+                    android:textSize="15sp" />
             </LinearLayout>
 
             <TextView
@@ -161,22 +396,34 @@
 
             <LinearLayout
                 android:layout_width="fill_parent"
-                android:layout_height="wrap_content"
+                android:layout_height="40dp"
+                android:layout_marginBottom="2dp"
+                android:background="@drawable/event_icon_placeholder"
                 android:orientation="horizontal"
+                android:paddingBottom="5dp"
+                android:paddingLeft="5dp"
+                android:paddingRight="5dp"
+                android:paddingTop="5dp"
                 android:visibility="visible" >
 
                 <TextView
-                    android:layout_width="100dp"
+                    android:layout_width="95dp"
                     android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical"
                     android:text="@string/email2"
-                    android:textColor="@android:color/black" />
+                    android:textColor="@color/darker_gray"
+                    android:textStyle="bold" />
 
                 <EditText
                     android:id="@+id/email2View"
                     android:layout_width="fill_parent"
                     android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical"
+                    android:background="@null"
+                    android:inputType="textEmailAddress"
                     android:maxLines="2"
-                    android:inputType="text" />
+                    android:textColor="@color/darker_gray"
+                    android:textSize="15sp" />
             </LinearLayout>
 
             <TextView
@@ -189,22 +436,34 @@
 
             <LinearLayout
                 android:layout_width="fill_parent"
-                android:layout_height="wrap_content"
+                android:layout_height="40dp"
+                android:layout_marginBottom="2dp"
+                android:background="@drawable/event_icon_placeholder"
                 android:orientation="horizontal"
+                android:paddingBottom="5dp"
+                android:paddingLeft="5dp"
+                android:paddingRight="5dp"
+                android:paddingTop="5dp"
                 android:visibility="visible" >
 
                 <TextView
-                    android:layout_width="100dp"
+                    android:layout_width="95dp"
                     android:layout_height="wrap_content"
-                    android:text="@string/email3"
+                    android:layout_gravity="center_vertical"
                     android:maxLines="2"
-                    android:textColor="@android:color/black" />
+                    android:text="@string/email3"
+                    android:textColor="@color/darker_gray"
+                    android:textStyle="bold" />
 
                 <EditText
                     android:id="@+id/email3View"
                     android:layout_width="fill_parent"
                     android:layout_height="wrap_content"
-                    android:inputType="text" />
+                    android:layout_gravity="center"
+                    android:background="@null"
+                    android:inputType="textEmailAddress"
+                    android:textColor="@color/darker_gray"
+                    android:textSize="15sp" />
             </LinearLayout>
 
             <TextView
@@ -217,22 +476,34 @@
 
             <LinearLayout
                 android:layout_width="fill_parent"
-                android:layout_height="wrap_content"
+                android:layout_height="40dp"
+                android:layout_marginBottom="2dp"
+                android:background="@drawable/event_icon_placeholder"
                 android:orientation="horizontal"
+                android:paddingBottom="5dp"
+                android:paddingLeft="5dp"
+                android:paddingRight="5dp"
+                android:paddingTop="5dp"
                 android:visibility="visible" >
 
                 <TextView
-                    android:layout_width="100dp"
+                    android:layout_width="95dp"
                     android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical"
                     android:text="@string/email4"
-                    android:textColor="@android:color/black" />
+                    android:textColor="@color/darker_gray"
+                    android:textStyle="bold" />
 
                 <EditText
                     android:id="@+id/email4View"
                     android:layout_width="fill_parent"
                     android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical"
+                    android:background="@null"
+                    android:inputType="textEmailAddress"
                     android:maxLines="2"
-                    android:inputType="text" />
+                    android:textColor="@color/darker_gray"
+                    android:textSize="15sp" />
             </LinearLayout>
 
             <TextView
@@ -245,119 +516,219 @@
 
             <LinearLayout
                 android:layout_width="fill_parent"
-                android:layout_height="wrap_content"
+                android:layout_height="40dp"
+                android:layout_marginBottom="2dp"
+                android:background="@drawable/event_icon_placeholder"
                 android:orientation="horizontal" >
 
                 <TextView
-                    android:layout_width="100dp"
+                    android:layout_width="95dp"
                     android:layout_height="wrap_content"
-                    android:gravity="center_vertical"
+                    android:layout_gravity="center_vertical"
+                    android:layout_marginBottom="5dp"
+                    android:layout_marginLeft="5dp"
+                    android:layout_marginTop="5dp"
                     android:text="@string/phone1"
-                    android:textColor="@android:color/black" />
+                    android:textColor="@color/darker_gray"
+                    android:textStyle="bold" />
 
-                <EditText
+                <View
+                    android:layout_width="1dp"
+                    android:layout_height="match_parent"
+                    android:layout_gravity="center_vertical"
+                    android:background="@color/darker_gray" />
+
+                <TextView
                     android:id="@+id/phonecode1View"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical"
+                    android:layout_marginBottom="5dp"
+                    android:layout_marginTop="5dp"
+                    android:background="@drawable/transparent"
                     android:ems="3"
+                    android:gravity="center"
                     android:maxLength="5"
-                    android:inputType="phone"
-                    android:singleLine="true" />
+                    android:singleLine="true"
+                    android:textColor="@color/darker_gray"
+                    android:textSize="15sp" />
+
+                <View
+                    android:layout_width="1dp"
+                    android:layout_height="match_parent"
+                    android:background="@color/darker_gray" />
 
                 <EditText
                     android:id="@+id/phone1View"
                     android:layout_width="fill_parent"
                     android:layout_height="wrap_content"
-                    android:inputType="phone" />
+                    android:layout_marginBottom="5dp"
+                    android:layout_marginTop="5dp"
+                    android:layout_gravity="center_vertical"
+                    android:background="@drawable/transparent"
+                    android:inputType="phone"
+                    android:textColor="@color/darker_gray"
+                    android:textSize="15sp" />
             </LinearLayout>
 
             <LinearLayout
                 android:layout_width="fill_parent"
-                android:layout_height="wrap_content"
+                android:layout_height="40dp"
+                android:layout_marginBottom="2dp"
+                android:background="@drawable/event_icon_placeholder"
                 android:orientation="horizontal" >
 
                 <TextView
-                    android:layout_width="100dp"
+                    android:layout_width="95dp"
                     android:layout_height="wrap_content"
-                    android:gravity="center_vertical"
+                    android:layout_gravity="center_vertical"
+                    android:layout_marginBottom="5dp"
+                    android:layout_marginLeft="5dp"
+                    android:layout_marginTop="5dp"
                     android:text="@string/phone2"
-                    android:textColor="@android:color/black" />
+                    android:textColor="@color/darker_gray"
+                    android:textStyle="bold" />
 
-                <EditText
+                <View
+                    android:layout_width="1dp"
+                    android:layout_height="match_parent"
+                    android:layout_gravity="center_vertical"
+                    android:background="@color/darker_gray" />
+
+                <TextView
                     android:id="@+id/phonecode2View"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical"
+                    android:layout_marginBottom="5dp"
+                    android:layout_marginTop="5dp"
+                    android:background="@drawable/transparent"
                     android:ems="3"
+                    android:gravity="center"
                     android:maxLength="5"
-                    android:inputType="phone"
-                    android:singleLine="true" />
+                    android:singleLine="true"
+                    android:textColor="@color/darker_gray"
+                    android:textSize="15sp" />
+
+                <View
+                    android:layout_width="1dp"
+                    android:layout_height="match_parent"
+                    android:background="@color/darker_gray" />
 
                 <EditText
                     android:id="@+id/phone2View"
                     android:layout_width="fill_parent"
                     android:layout_height="wrap_content"
-                    android:inputType="phone" />
+                    android:layout_marginBottom="5dp"
+                    android:layout_marginTop="5dp"
+                    android:layout_gravity="center_vertical"
+                    android:background="@drawable/transparent"
+                    android:inputType="phone"
+                    android:textColor="@color/darker_gray"
+                    android:textSize="15sp" />
             </LinearLayout>
 
             <LinearLayout
                 android:layout_width="fill_parent"
-                android:layout_height="wrap_content"
+                android:layout_height="40dp"
+                android:layout_marginBottom="2dp"
+                android:background="@drawable/event_icon_placeholder"
                 android:orientation="horizontal" >
 
                 <TextView
-                    android:layout_width="100dp"
+                    android:layout_width="95dp"
                     android:layout_height="wrap_content"
-                    android:gravity="center_vertical"
+                    android:layout_gravity="center_vertical"
+                    android:layout_marginBottom="5dp"
+                    android:layout_marginLeft="5dp"
+                    android:layout_marginTop="5dp"
                     android:text="@string/phone3"
-                    android:textColor="@android:color/black" />
+                    android:textColor="@color/darker_gray"
+                    android:textStyle="bold" />
 
-                <EditText
+                <View
+                    android:layout_width="1dp"
+                    android:layout_height="match_parent"
+                    android:layout_gravity="center_vertical"
+                    android:background="@color/darker_gray" />
+
+                <TextView
                     android:id="@+id/phonecode3View"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical"
+                    android:layout_marginBottom="5dp"
+                    android:layout_marginTop="5dp"
+                    android:background="@drawable/transparent"
                     android:ems="3"
+                    android:gravity="center"
                     android:maxLength="5"
-                    android:inputType="phone"
-                    android:singleLine="true" />
+                    android:singleLine="true"
+                    android:textColor="@color/darker_gray"
+                    android:textSize="15sp" />
+
+                <View
+                    android:layout_width="1dp"
+                    android:layout_height="match_parent"
+                    android:background="@color/darker_gray" />
 
                 <EditText
                     android:id="@+id/phone3View"
                     android:layout_width="fill_parent"
                     android:layout_height="wrap_content"
-                    android:inputType="phone" />
+                    android:layout_marginBottom="5dp"
+                    android:layout_marginTop="5dp"
+                    android:layout_gravity="center_vertical"
+                    android:background="@drawable/transparent"
+                    android:inputType="phone"
+                    android:textColor="@color/darker_gray"
+                    android:textSize="15sp" />
             </LinearLayout>
 
             <LinearLayout
                 android:layout_width="fill_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal" >
+                android:layout_height="40dp"
+                android:layout_marginBottom="2dp"
+                android:background="@drawable/event_icon_placeholder"
+                android:orientation="horizontal"
+                android:paddingLeft="5dp" >
 
                 <TextView
-                    android:layout_width="100dp"
+                    android:layout_width="95dp"
                     android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical"
+                    android:layout_marginBottom="5dp"
+                    android:layout_marginTop="5dp"
                     android:text="@string/birthday"
-                    android:textColor="@android:color/black" />
+                    android:textColor="@color/darker_gray"
+                    android:textStyle="bold" />
 
                 <Button
                     android:id="@+id/birthdateButton"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_margin="0dp"
-                    android:paddingBottom="0dp"
-                    android:paddingTop="0dp"
-                    android:text="@string/date" />
+                    android:text="@string/date"
+                    android:visibility="gone" />
 
-                <EditText
+                <TextView
                     android:id="@+id/birthdateView"
                     android:layout_width="fill_parent"
                     android:layout_height="wrap_content"
-                    android:inputType="date" />
+                    android:layout_marginBottom="5dp"
+                    android:layout_marginRight="5dp"
+                    android:layout_marginTop="5dp"
+                    android:layout_gravity="center_vertical"
+                    android:background="@drawable/transparent"
+                    android:textColor="@color/darker_gray"
+                    android:textSize="15sp" />
             </LinearLayout>
 
             <LinearLayout
                 android:layout_width="fill_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal" >
+                android:layout_height="40dp"
+                android:orientation="horizontal"
+                android:visibility="gone" >
 
                 <TextView
                     android:layout_width="100dp"
@@ -373,172 +744,207 @@
 
             <LinearLayout
                 android:layout_width="fill_parent"
-                android:layout_height="wrap_content"
+                android:layout_height="40dp"
+                android:layout_marginBottom="2dp"
                 android:orientation="horizontal" >
 
+                <Button
+                    android:id="@+id/sex_button_male"
+                    android:layout_width="0dp"
+                    android:layout_height="40dp"
+                    android:layout_weight="0.33"
+                    android:background="@drawable/sex_button_left"
+                    android:gravity="center"
+                    android:text="@string/sex_male"
+                    android:textColor="@color/white"
+                    android:textStyle="bold" />
+
+                <View
+                    android:layout_width="1dp"
+                    android:layout_height="match_parent"
+                    android:layout_gravity="center_vertical"
+                    android:background="@color/darker_gray" />
+
+                <Button
+                    android:id="@+id/sex_button_female"
+                    android:layout_width="0dp"
+                    android:layout_height="40dp"
+                    android:layout_weight="0.33"
+                    android:background="@drawable/sex_button_middle"
+                    android:gravity="center"
+                    android:text="@string/sex_female"
+                    android:textColor="@color/white"
+                    android:textStyle="bold" />
+
+                <View
+                    android:layout_width="1dp"
+                    android:layout_height="match_parent"
+                    android:layout_gravity="center_vertical"
+                    android:background="@color/darker_gray" />
+
+                <Button
+                    android:id="@+id/sex_button_none"
+                    android:layout_width="0dp"
+                    android:layout_height="40dp"
+                    android:layout_weight="0.33"
+                    android:background="@drawable/sex_button_right"
+                    android:gravity="center"
+                    android:text="@string/sex_none"
+                    android:textColor="@color/white"
+                    android:textStyle="bold" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="fill_parent"
+                android:layout_height="40dp"
+                android:layout_marginBottom="2dp"
+                android:background="@drawable/event_icon_placeholder"
+                android:orientation="horizontal"
+                android:paddingBottom="5dp"
+                android:paddingLeft="5dp"
+                android:paddingRight="5dp"
+                android:paddingTop="5dp" >
+
                 <TextView
-                    android:layout_width="100dp"
+                    android:layout_width="95dp"
                     android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical"
                     android:text="@string/city"
-                    android:textColor="@android:color/black" />
+                    android:textColor="@color/darker_gray"
+                    android:textStyle="bold" />
 
                 <EditText
                     android:id="@+id/cityView"
                     android:layout_width="fill_parent"
                     android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical"
+                    android:background="@null"
                     android:inputType="text"
-                    android:singleLine="true" />
+                    android:singleLine="true"
+                    android:textColor="@color/darker_gray" />
             </LinearLayout>
 
             <LinearLayout
                 android:layout_width="fill_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal" >
+                android:layout_height="40dp"
+                android:layout_marginBottom="2dp"
+                android:background="@drawable/event_icon_placeholder"
+                android:orientation="horizontal"
+                android:paddingBottom="5dp"
+                android:paddingLeft="5dp"
+                android:paddingRight="5dp"
+                android:paddingTop="5dp" >
 
                 <TextView
-                    android:layout_width="100dp"
+                    android:layout_width="95dp"
                     android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical"
                     android:text="@string/street"
-                    android:textColor="@android:color/black" />
+                    android:textColor="@color/darker_gray"
+                    android:textStyle="bold" />
 
                 <EditText
                     android:id="@+id/streetView"
                     android:layout_width="fill_parent"
                     android:layout_height="wrap_content"
-                    android:inputType="text" />
+                    android:layout_gravity="center_vertical"
+                    android:background="@null"
+                    android:inputType="text"
+                    android:singleLine="true"
+                    android:textColor="@color/darker_gray" />
             </LinearLayout>
 
             <LinearLayout
                 android:layout_width="fill_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal" >
+                android:layout_height="40dp"
+                android:layout_marginBottom="2dp"
+                android:background="@drawable/event_icon_placeholder"
+                android:orientation="horizontal"
+                android:paddingBottom="5dp"
+                android:paddingLeft="5dp"
+                android:paddingRight="5dp"
+                android:paddingTop="5dp" >
 
                 <TextView
-                    android:layout_width="100dp"
+                    android:layout_width="95dp"
                     android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical"
                     android:text="@string/zip"
-                    android:textColor="@android:color/black" />
+                    android:textColor="@color/darker_gray"
+                    android:textStyle="bold" />
 
                 <EditText
                     android:id="@+id/zipView"
                     android:layout_width="fill_parent"
                     android:layout_height="wrap_content"
-                    android:inputType="text" />
-            </LinearLayout>
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                tools:ignore="UseCompoundDrawables" >
-
-                <TextView
-                    android:layout_width="100dp"
-                    android:layout_height="wrap_content"
-                    android:text="@string/replace_image"
-                    android:textColor="@android:color/black" />
-
-                <ImageView
-                    android:id="@+id/accountImage"
-                    android:layout_width="120dp"
-                    android:layout_height="120dp"
-                    android:contentDescription="@string/account_icon_placeholder"
-                    android:src="@drawable/group_icon" />
-            </LinearLayout>
-
-            <LinearLayout
-                android:layout_width="fill_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal" >
-
-                <TextView
-                    android:layout_width="100dp"
-                    android:layout_height="wrap_content"
-                    android:text="@string/remove_image"
-                    android:textColor="@android:color/black" />
-
-                <CheckBox
-                    android:id="@+id/removeImage"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content" />
-            </LinearLayout>
-
-            <LinearLayout
-                android:layout_width="fill_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal" >
-
-                <TextView
-                    android:layout_width="80dp"
-                    android:layout_height="wrap_content"
-                    android:text="@string/language"
-                    android:textColor="@android:color/black" />
-
-                <Spinner
-                    android:id="@+id/languageSpinner"
-                    android:layout_width="fill_parent"
-                    android:layout_height="wrap_content" />
-            </LinearLayout>
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="10dp"
-                android:layout_marginLeft="10dp"
-                android:gravity="center_horizontal" >
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
                     android:layout_gravity="center_vertical"
+                    android:background="@null"
+                    android:inputType="text"
+                    android:singleLine="true"
+                    android:textColor="@color/darker_gray" />
+            </LinearLayout>
+
+            <RelativeLayout
+                android:layout_width="fill_parent"
+                android:layout_height="40dp"
+                android:layout_marginBottom="2dp"
+                android:background="@drawable/event_icon_placeholder"
+                android:gravity="center_vertical"
+                android:orientation="horizontal"
+                android:paddingBottom="5dp"
+                android:paddingLeft="5dp"
+                android:paddingRight="5dp"
+                android:paddingTop="5dp" >
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentLeft="true"
+                    android:layout_centerVertical="true"
                     android:layout_marginRight="5dp"
                     android:singleLine="true"
                     android:text="@string/notify_by_email"
-                    android:textColor="@color/black"
+                    android:textColor="@color/darker_gray"
                     android:textStyle="bold" />
 
                 <ToggleButton
                     android:id="@+id/notificationsByEmail"
                     android:layout_width="wrap_content"
-                    android:layout_height="wrap_content" />
-            </LinearLayout>
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentRight="true"
+                    android:layout_centerVertical="true" />
+            </RelativeLayout>
 
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="10dp"
-                android:layout_marginLeft="10dp"
-                android:gravity="center_horizontal" >
+            <RelativeLayout
+                android:layout_width="fill_parent"
+                android:layout_height="40dp"
+                android:layout_marginBottom="2dp"
+                android:background="@drawable/event_icon_placeholder"
+                android:gravity="center_vertical"
+                android:orientation="horizontal"
+                android:paddingBottom="5dp"
+                android:paddingLeft="5dp"
+                android:paddingRight="5dp"
+                android:paddingTop="5dp" >
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_gravity="center_vertical"
+                    android:layout_alignParentLeft="true"
+                    android:layout_centerVertical="true"
                     android:layout_marginRight="5dp"
                     android:singleLine="true"
                     android:text="@string/notify_by_push"
-                    android:textColor="@color/black"
+                    android:textColor="@color/darker_gray"
                     android:textStyle="bold" />
 
                 <ToggleButton
                     android:id="@+id/notificationsByPush"
                     android:layout_width="wrap_content"
-                    android:layout_height="wrap_content" />
-            </LinearLayout>
-
-            <LinearLayout
-                android:layout_width="fill_parent"
-                android:layout_height="wrap_content"
-                android:gravity="center_horizontal"
-                android:orientation="horizontal" >
-
-                <Button
-                    android:id="@+id/saveButton"
-                    android:layout_width="100dp"
                     android:layout_height="wrap_content"
-                    android:onClick="saveAccount"
-                    android:text="@string/save" />
-            </LinearLayout>
+                    android:layout_alignParentRight="true"
+                    android:layout_centerVertical="true" />
+            </RelativeLayout>
         </LinearLayout>
     </ScrollView>
 
