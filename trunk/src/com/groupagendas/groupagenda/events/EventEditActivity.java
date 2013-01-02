@@ -91,32 +91,32 @@ public class EventEditActivity extends EventActivity {
 	private TextView topText;
 	private Button deleteButton;
 
-	private LinearLayout reminderBlock;
-	private TextView setReminderTrigger;
+//	private LinearLayout reminderBlock;
+//	private TextView setReminderTrigger;
 
-	private LinearLayout reminder1container;
-	private LinearLayout reminder2container;
-	private LinearLayout reminder3container;
-	private EditText reminder1;
-	private EditText reminder2;
-	private EditText reminder3;
+//	private LinearLayout reminder1container;
+//	private LinearLayout reminder2container;
+//	private LinearLayout reminder3container;
+//	private EditText reminder1;
+//	private EditText reminder2;
+//	private EditText reminder3;
 
-	private LinearLayout alarmBlock;
-	private TextView setAlarmTrigger;
+//	private LinearLayout alarmBlock;
+//	private TextView setAlarmTrigger;
 	private TextView creatorNameTextView;
-	private LinearLayout alarm1container;
-	private LinearLayout alarm2container;
-	private LinearLayout alarm3container;
-	private EditText alarm1;
-	private EditText alarm2;
-	private EditText alarm3;
+//	private LinearLayout alarm1container;
+//	private LinearLayout alarm2container;
+//	private LinearLayout alarm3container;
+//	private EditText alarm1;
+//	private EditText alarm2;
+//	private EditText alarm3;
 
 	private long event_internal_id;
 	private long event_external_id;
 
 	protected final static int DELETE_DIALOG = 1;
-	private boolean remindersShown = false;
-	private boolean alarmsShown = false;
+//	private boolean remindersShown = false;
+//	private boolean alarmsShown = false;
 	private boolean isInvited = false;
 	// private boolean eventEdited = false;
 	private boolean changesMade = false;
@@ -543,7 +543,7 @@ public class EventEditActivity extends EventActivity {
 		chatMessengerButton = (Button) findViewById(R.id.messenger_button);
 
 		// REMINDERS PANEL
-		reminderBlock = (LinearLayout) findViewById(R.id.reminder_block);
+/*		reminderBlock = (LinearLayout) findViewById(R.id.reminder_block);
 		setReminderTrigger = (TextView) findViewById(R.id.setReminderTrigger);
 		// TODO alarms eventedit turn on when ready.
 		setReminderTrigger.setVisibility(View.GONE);
@@ -682,7 +682,7 @@ public class EventEditActivity extends EventActivity {
 			public void onClick(View v) {
 				showDateTimeDialog(alarm3, ALARM3);
 			}
-		});
+		}); */
 
 		// INVITES SECTION
 		response_button_yes = (TextView) findViewById(R.id.button_yes);
@@ -1128,12 +1128,12 @@ public class EventEditActivity extends EventActivity {
 
 			}
 			if (event.isNative()) {
-				alarm1container.setEnabled(false);
-				alarm2container.setEnabled(false);
-				alarm3container.setEnabled(false);
-				reminder1container.setEnabled(false);
-				reminder2container.setEnabled(false);
-				reminder3container.setEnabled(false);
+//				alarm1container.setEnabled(false);
+//				alarm2container.setEnabled(false);
+//				alarm3container.setEnabled(false);
+//				reminder1container.setEnabled(false);
+//				reminder2container.setEnabled(false);
+//				reminder3container.setEnabled(false);
 				allDayToggleButton.setEnabled(false);
 				deleteButton.setVisibility(View.INVISIBLE);
 			}
@@ -1282,36 +1282,36 @@ public class EventEditActivity extends EventActivity {
 			} else {
 				chatMessengerButton.setVisibility(View.INVISIBLE);
 			}
-			if (result.getReminder1() != null) {
-				reminder1.setText(dtUtils.formatDateTime(result.getReminder1()));
-			} else {
-				reminder1.setText("");
-			}
-			if (result.getReminder2() != null) {
-				reminder2.setText(dtUtils.formatDateTime(result.getReminder2()));
-			} else {
-				reminder2.setText("");
-			}
-			if (result.getReminder3() != null) {
-				reminder3.setText(dtUtils.formatDateTime(result.getReminder3()));
-			} else {
-				reminder3.setText("");
-			}
-			if (result.getAlarm1() != null) {
-				alarm1.setText(dtUtils.formatDateTime(result.getAlarm1()));
-			} else {
-				alarm1.setText("");
-			}
-			if (result.getAlarm2() != null) {
-				alarm2.setText(dtUtils.formatDateTime(result.getAlarm2()));
-			} else {
-				alarm2.setText("");
-			}
-			if (result.getAlarm3() != null) {
-				alarm3.setText(dtUtils.formatDateTime(result.getAlarm3()));
-			} else {
-				alarm3.setText("");
-			}
+//			if (result.getReminder1() != null) {
+//				reminder1.setText(dtUtils.formatDateTime(result.getReminder1()));
+//			} else {
+//				reminder1.setText("");
+//			}
+//			if (result.getReminder2() != null) {
+//				reminder2.setText(dtUtils.formatDateTime(result.getReminder2()));
+//			} else {
+//				reminder2.setText("");
+//			}
+//			if (result.getReminder3() != null) {
+//				reminder3.setText(dtUtils.formatDateTime(result.getReminder3()));
+//			} else {
+//				reminder3.setText("");
+//			}
+//			if (result.getAlarm1() != null) {
+//				alarm1.setText(dtUtils.formatDateTime(result.getAlarm1()));
+//			} else {
+//				alarm1.setText("");
+//			}
+//			if (result.getAlarm2() != null) {
+//				alarm2.setText(dtUtils.formatDateTime(result.getAlarm2()));
+//			} else {
+//				alarm2.setText("");
+//			}
+//			if (result.getAlarm3() != null) {
+//				alarm3.setText(dtUtils.formatDateTime(result.getAlarm3()));
+//			} else {
+//				alarm3.setText("");
+//			}
 
 			if (!event.isNative()) {
 				showInvitesView(EventEditActivity.this);
