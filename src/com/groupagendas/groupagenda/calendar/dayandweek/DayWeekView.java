@@ -272,7 +272,11 @@ public class DayWeekView extends AbstractCalendarView {
 				}
 			}
 			
-			this.getTopPanelTitle().setText(title);	
+			this.getTopPanelTitle().setText(title);
+			RelativeLayout topBar = (RelativeLayout) findViewById(R.id.calendar_navbar);
+			LayoutParams lParams = (LayoutParams) topBar.getLayoutParams();
+			lParams.height = Math.round(35 * densityFactor);
+			topBar.setLayoutParams(lParams);
 		}
 		
 		@Override
