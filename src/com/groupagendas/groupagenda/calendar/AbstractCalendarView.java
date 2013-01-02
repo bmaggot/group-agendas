@@ -232,8 +232,7 @@ public abstract class AbstractCalendarView extends LinearLayout {
 		}
 	}
 
-	protected OnTouchListener createListener(
-			final GestureDetector swipeGestureDetector) {
+	protected OnTouchListener createListener(final GestureDetector swipeGestureDetector) {
 		return new OnTouchListener() {
 
 			@Override
