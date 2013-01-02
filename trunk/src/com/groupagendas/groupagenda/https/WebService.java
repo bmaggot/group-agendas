@@ -1,7 +1,6 @@
 package com.groupagendas.groupagenda.https;
 
 import java.io.IOException;
-import java.nio.charset.Charset;
 
 import org.apache.http.HttpResponse;
 import org.apache.http.HttpVersion;
@@ -18,8 +17,6 @@ import org.apache.http.conn.params.ConnPerRouteBean;
 import org.apache.http.conn.scheme.PlainSocketFactory;
 import org.apache.http.conn.scheme.Scheme;
 import org.apache.http.conn.scheme.SchemeRegistry;
-import org.apache.http.entity.mime.MultipartEntity;
-import org.apache.http.entity.mime.content.StringBody;
 import org.apache.http.impl.client.BasicCredentialsProvider;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.impl.conn.tsccm.ThreadSafeClientConnManager;
@@ -77,11 +74,8 @@ public class WebService {
 	}
 	
 	public HttpResponse getResponseFromHttpPost(HttpPost httpPost) throws ClientProtocolException, IOException{
-		MultipartEntity entity = (MultipartEntity) httpPost.getEntity();
-		entity.addPart("app_version", new StringBody("1001", Charset.forName("UTF-8")));
 		httpPost.setHeader("User-Agent", "Linux; GroupAgendas version: " + getApplicationVersion() + "; AndroidPhone " + android.os.Build.VERSION.RELEASE);
 		httpPost.setHeader("Accept", "*/*");
-		httpPost.setEntity(entity);
 		client = new DefaultHttpClient(clientConnectionManager, params);
 		HttpResponse response = client.execute(httpPost, context);
 		return response;
