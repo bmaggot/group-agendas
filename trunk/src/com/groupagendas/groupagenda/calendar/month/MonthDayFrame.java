@@ -107,18 +107,22 @@ public class MonthDayFrame extends RelativeLayout {
 		case SELECTED:
 			this.setBackgroundResource(R.drawable.calendar_month_day_selected);
 			dayTitle.setTextAppearance(getContext(), R.style.monthview_daynumber_selectedday);
+			dayTitle.setShadowLayer(1, 0, 1, Color.BLACK);
 			break;
 		case TODAY:
 			this.setBackgroundResource(R.drawable.calendar_month_day_today);
 			dayTitle.setTextAppearance(getContext(), R.style.monthview_daynumber_today);
+			dayTitle.setShadowLayer(1, 0, 1, Color.BLACK);
 			break;
 		case OTHER_MONTH:
 			this.setBackgroundResource(R.drawable.calendar_month_day_inactive);	
 			dayTitle.setTextAppearance(getContext(), R.style.monthview_daynumber_othermonth);
+			dayTitle.setShadowLayer(0, 0, 0, Color.BLACK);
 			break;
 		default:
 			this.setBackgroundResource(R.drawable.calendar_month_day_inactive);	
 			dayTitle.setTextAppearance(getContext(), R.style.monthview_daynumber_thismonth);
+			dayTitle.setShadowLayer(1, 0, 1, Color.WHITE);
 			break;		
 		}		
 	}
