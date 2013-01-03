@@ -308,7 +308,7 @@ public class MonthView extends AbstractCalendarView {
 
 	private class LocalTouchListener implements OnTouchListener {
 		private static final int SWIPE_MIN_DISTANCE = 30;
-		private static final int SWIPE_MAX_OFF_PATH = 160;
+		private static final int SWIPE_MAX_OFF_PATH = 200;
 //		private static final int SWIPE_THRESHOLD_VELOCITY = 20;
 
 		protected MonthView parentView;
@@ -341,18 +341,28 @@ public class MonthView extends AbstractCalendarView {
 				lastTouchY = event.getY();				
 				dX = lastTouchX - firstTouchX;
 				dY = lastTouchY - firstTouchY;
-			     
-			    if (((firstTouchX == event.getX(activePointerID)) && (firstTouchY == event.getY(activePointerID)))){
+				
+			    final float xTouch;
+		    	final float yTouch;
+			    if (event.getHistorySize() == 0) {
+			        xTouch = event.getX();
+			        yTouch = event.getY();
+			    } else {
+			    	 xTouch = event.getX(activePointerID);
+				     yTouch = event.getY(activePointerID);
+			    }
+			    
+			    if (((firstTouchX == xTouch) && (firstTouchY == yTouch))){
 		            ACTION = ACTION_CLICK;
 		        } else {
 		        	if (dX > 0) {
-		        		if ((Math.abs(dX) > SWIPE_MIN_DISTANCE) && (Math.abs(dY) < SWIPE_MAX_OFF_PATH)) {
+		        		if ((Math.abs(dX) > SWIPE_MIN_DISTANCE) && (Math.abs(dY) < (SWIPE_MAX_OFF_PATH * getResources().getDisplayMetrics().density))) {
 		        			ACTION = ACTION_SWIPE_LTR;
 		        		} else {
 		                	ACTION = ACTION_CLICK;
 		                }
 			        } else if (dX < 0) {
-		        		if ((Math.abs(dX) > SWIPE_MIN_DISTANCE) && (Math.abs(dY) < SWIPE_MAX_OFF_PATH)) {
+		        		if ((Math.abs(dX) > SWIPE_MIN_DISTANCE) && (Math.abs(dY) < (SWIPE_MAX_OFF_PATH * getResources().getDisplayMetrics().density))) {
 		        			ACTION = ACTION_SWIPE_RTL;
 		        		} else {
 		                	ACTION = ACTION_CLICK;
@@ -372,8 +382,15 @@ public class MonthView extends AbstractCalendarView {
 				break;
 			case MotionEvent.ACTION_MOVE:
 			    final int pointerIndex = event.findPointerIndex(activePointerID);
-		        final float x = event.getX(pointerIndex);
-		        final float y = event.getY(pointerIndex);
+			    final float x;
+		    	final float y;
+			    if (pointerIndex > 0) {
+			        x = event.getX(pointerIndex);
+			        y = event.getY(pointerIndex);
+			    } else {
+			    	x = event.getX();
+			    	y = event.getY();
+			    }
 
 		        lastTouchX = x;
 		        lastTouchY = y;
