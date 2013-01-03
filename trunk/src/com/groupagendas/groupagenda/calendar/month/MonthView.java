@@ -355,7 +355,7 @@ public class MonthView extends AbstractCalendarView {
 		        			ACTION = ACTION_SWIPE_RTL;
 		        		}
 	                } else {
-	                	ACTION = ACTION_IGNORE;
+	                	ACTION = ACTION_CLICK;
 	                }
 		        }
 			    
