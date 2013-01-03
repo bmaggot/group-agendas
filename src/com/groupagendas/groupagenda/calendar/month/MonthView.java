@@ -322,7 +322,6 @@ public class MonthView extends AbstractCalendarView {
 		final int ACTION_CLICK = 1;
 		final int ACTION_SWIPE_LTR = 2;
 		final int ACTION_SWIPE_RTL = 3;
-		final int ACTION_IGNORE = 4;
 		
 		public LocalTouchListener(MonthView parent) {
 //			Debug.waitForDebugger(); // TODO remove debugger call
@@ -349,11 +348,15 @@ public class MonthView extends AbstractCalendarView {
 		        	if (dX > 0) {
 		        		if ((Math.abs(dX) > SWIPE_MIN_DISTANCE) && (Math.abs(dY) < SWIPE_MAX_OFF_PATH)) {
 		        			ACTION = ACTION_SWIPE_LTR;
-		        		}
+		        		} else {
+		                	ACTION = ACTION_CLICK;
+		                }
 			        } else if (dX < 0) {
 		        		if ((Math.abs(dX) > SWIPE_MIN_DISTANCE) && (Math.abs(dY) < SWIPE_MAX_OFF_PATH)) {
 		        			ACTION = ACTION_SWIPE_RTL;
-		        		}
+		        		} else {
+		                	ACTION = ACTION_CLICK;
+		                }
 	                } else {
 	                	ACTION = ACTION_CLICK;
 	                }
