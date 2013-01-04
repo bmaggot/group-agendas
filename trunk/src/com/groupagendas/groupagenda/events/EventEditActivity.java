@@ -1159,7 +1159,11 @@ public class EventEditActivity extends EventActivity {
 				startCalendar = (Calendar) result.getStartCalendar().clone();
 			}
 			if (result.getEndCalendar() != null) {
-				endView.setText(dtUtils.formatDateTime(result.getEndCalendar()));
+				if (!allDayToggleButton.isChecked()) {
+					endView.setText(dtUtils.formatDateTime(result.getEndCalendar()));
+				} else {
+					endView.setText(dtUtils.formatDate(result.getEndCalendar()));
+				}
 				endCalendar = (Calendar) result.getEndCalendar().clone();
 			}
 
