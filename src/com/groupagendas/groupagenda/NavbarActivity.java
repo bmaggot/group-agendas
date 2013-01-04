@@ -9,7 +9,7 @@ import org.json.JSONObject;
 
 import android.annotation.SuppressLint;
 import android.app.AlertDialog;
-import android.app.Dialog;
+import android.app.DatePickerDialog;
 import android.app.ProgressDialog;
 import android.content.BroadcastReceiver;
 import android.content.ContentResolver;
@@ -32,13 +32,11 @@ import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
-import android.view.Window;
-import android.widget.Button;
 import android.widget.CompoundButton;
+import android.widget.DatePicker;
 import android.widget.FrameLayout;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 import az.mecid.android.ActionItem;
 import az.mecid.android.QuickAction;
@@ -67,7 +65,6 @@ import com.groupagendas.groupagenda.events.NewEventActivity;
 import com.groupagendas.groupagenda.settings.CalendarSettingsFragment;
 import com.groupagendas.groupagenda.utils.LanguageCodeGetter;
 import com.groupagendas.groupagenda.utils.Utils;
-import com.ptashek.widgets.datetimepicker.DateTimePicker;
 
 @SuppressLint("ParserError")
 public class NavbarActivity extends FragmentActivity {
@@ -124,6 +121,10 @@ public class NavbarActivity extends FragmentActivity {
 	public static ProgressDialog loadingProgressDialog;
 	public static boolean smthClicked = false;
 
+	private int mYear = 1970;
+	private int mMonth = 0;
+	private int mDay = 1;
+	
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -357,47 +358,33 @@ public class NavbarActivity extends FragmentActivity {
 	}
 
 	private void showGoToDateView() {
-		final Dialog mDateTimeDialog = new Dialog(this);
-		final RelativeLayout mDateTimeDialogView = (RelativeLayout) getLayoutInflater().inflate(R.layout.date_time_dialog, null);
-		final DateTimePicker mDateTimePicker = (DateTimePicker) mDateTimeDialogView.findViewById(R.id.DateTimePicker);
-		Calendar c = Calendar.getInstance();
-		mDateTimePicker.updateDate(c.get(Calendar.YEAR), c.get(Calendar.MONTH), c.get(Calendar.DAY_OF_MONTH));
+		if (selectedDate.get(Calendar.YEAR) > 1969) {
+			mYear = selectedDate.get(Calendar.YEAR);
+		} else {
+			mYear = 1970;
+		}
+		mMonth = selectedDate.get(Calendar.MONTH);
+		mDay = selectedDate.get(Calendar.DAY_OF_MONTH);
+		
+		new DatePickerDialog(this, mDateSetListener, mYear, mMonth, mDay).show();
+	}
 
-		((Button) mDateTimeDialogView.findViewById(R.id.SetDateTime)).setOnClickListener(new OnClickListener() {
+	private DatePickerDialog.OnDateSetListener mDateSetListener = new DatePickerDialog.OnDateSetListener() {
 
-			@SuppressLint("SimpleDateFormat")
-			@Override
-			public void onClick(View v) {
-				mDateTimePicker.clearFocus();
-				String dayStr = new SimpleDateFormat("yyyy-MM-dd").format(mDateTimePicker.getCalendar().getTime());
-				selectedDate = Utils
-						.stringToCalendar(getApplicationContext(), dayStr + " 00:00:00", DataManagement.SERVER_TIMESTAMP_FORMAT);
-				selectedDate.setFirstDayOfWeek(CalendarSettings.getFirstDayofWeek());
-				mDateTimeDialog.dismiss();
-				switchToView();
-			}
-		});
+		@Override
+		public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
+			mYear = year;
+			mMonth = monthOfYear;
+			mDay = dayOfMonth;
+			updateDate();
+		}
+	};
 
-		((Button) mDateTimeDialogView.findViewById(R.id.CancelDialog)).setOnClickListener(new OnClickListener() {
-
-			@Override
-			public void onClick(View v) {
-				mDateTimeDialog.cancel();
-			}
-		});
-
-		((Button) mDateTimeDialogView.findViewById(R.id.ResetDateTime)).setOnClickListener(new OnClickListener() {
-
-			@Override
-			public void onClick(View v) {
-				mDateTimePicker.reset();
-			}
-		});
-
-		mDateTimeDialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
-		mDateTimeDialog.setContentView(mDateTimeDialogView);
-		mDateTimePicker.hideTopBar();
-		mDateTimeDialog.show();
+	private void updateDate() {
+		String dayStr = mYear + "-" + (mMonth+1) + "-" + mDay; // TODO hujov format date
+		selectedDate = Utils.stringToCalendar(getApplicationContext(), dayStr + " 00:00:00", DataManagement.SERVER_TIMESTAMP_FORMAT);
+		selectedDate.setFirstDayOfWeek(CalendarSettings.getFirstDayofWeek());
+		switchToView();
 	}
 
 	private void showListSearchView() {
