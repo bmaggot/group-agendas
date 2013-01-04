@@ -96,7 +96,7 @@ public class MonthAdapter extends AbstractAdapter<Event> {
 				events = TreeMapUtils.getEventsFromTreemap(date, sortedEvents);
 				if (events != null) {
 					for (Event e : events) {
-						if (event.getEvent_id() == e.getEvent_id()) {
+						if (event.getEvent_id() == e.getEvent_id() && event.getTitle().equals(e.getTitle())) {
 							isYesterday = true;
 							break;
 						}
@@ -107,7 +107,7 @@ public class MonthAdapter extends AbstractAdapter<Event> {
 				events = TreeMapUtils.getEventsFromTreemap(date, sortedEvents);
 				if (events != null) {
 					for (Event e : events) {
-						if (event.getEvent_id() == e.getEvent_id()) {
+						if (event.getEvent_id() == e.getEvent_id() && event.getTitle().equals(e.getTitle())) {
 							isTomorrow = true;
 							break;
 						}
