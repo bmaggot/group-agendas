@@ -261,7 +261,8 @@ public class ContactManagement {
 										contact.groups = set;
 									}
 								}
-
+								
+								contact.setUploadedToServer(true);
 								insertContactToLocalDb(context, contact, 0);
 								if (contact.birthdate != null && contact.birthdate.length() == 10) {
 									Birthday birthday = new Birthday(context, contact);
