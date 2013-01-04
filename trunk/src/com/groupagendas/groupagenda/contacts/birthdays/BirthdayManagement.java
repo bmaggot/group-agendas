@@ -22,14 +22,6 @@ public class BirthdayManagement {
 		SimpleDateFormat sdf= new SimpleDateFormat(form);
 		SimpleDateFormat sdfy= new SimpleDateFormat(form);
 		String selection = generateInForBirthdayMonths(Integer.parseInt(sdf.format(startTime)), 1);
-		System.out.println(selection);
-
-//		if (startTime > 0) {
-//			selection = ContactsProvider.CMetaData.BirthdaysMetaData.BIRTHDATE_MM +" >= '" + sdf.format(startTime) + "'";
-//		}
-//		if (endTime > 0){
-//			selection += " OR " + ContactsProvider.CMetaData.BirthdaysMetaData.BIRTHDATE_MM +" <= '" + sdf.format(endTime) + "'";
-//		}
 		
 		cursor = context.getContentResolver()
 				.query(ContactsProvider.CMetaData.BirthdaysMetaData.CONTENT_URI,
