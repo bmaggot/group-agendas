@@ -933,6 +933,13 @@ public class EventEditActivity extends EventActivity {
 							final Calendar tempCal = Utils.stringToCalendar(EventEditActivity.this, temp,
 									DataManagement.SERVER_TIMESTAMP_FORMAT);
 							startTime.setText(dateTimeUtils.formatDate(tempCal) + " " + dateTimeUtils.formatTime(tempCal));
+							
+							tempCal.getTimeInMillis();
+							Calendar nowCal = Calendar.getInstance();
+							nowCal.getTimeInMillis();
+							if(tempCal.getTimeInMillis() < nowCal.getTimeInMillis()){
+								selectedTime.setEnabled(false);
+							}
 
 							try {
 								temp = pollThread.getString("end");
