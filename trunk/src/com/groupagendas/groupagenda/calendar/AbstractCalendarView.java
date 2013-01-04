@@ -295,7 +295,7 @@ public abstract class AbstractCalendarView extends LinearLayout {
 				ArrayList<Event> events = getEventProjectionsForDisplay(selectedDate);
 				ArrayList<Event> pollEvents = NavbarActivity.pollsList;
 				for (Event event : pollEvents) {
-					TreeMapUtils.putNewEventIntoTreeMap(context, sortedEvents,
+					TreeMapUtils.putNewEventPollsIntoTreeMap(context, sortedEvents,
 							event);
 				}
 				for (Event event : events) {
