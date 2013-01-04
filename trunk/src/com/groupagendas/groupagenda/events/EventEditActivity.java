@@ -934,9 +934,7 @@ public class EventEditActivity extends EventActivity {
 									DataManagement.SERVER_TIMESTAMP_FORMAT);
 							startTime.setText(dateTimeUtils.formatDate(tempCal) + " " + dateTimeUtils.formatTime(tempCal));
 							
-							tempCal.getTimeInMillis();
 							Calendar nowCal = Calendar.getInstance();
-							nowCal.getTimeInMillis();
 							if(tempCal.getTimeInMillis() < nowCal.getTimeInMillis()){
 								selectedTime.setEnabled(false);
 							}
