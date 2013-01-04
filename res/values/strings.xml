@@ -327,4 +327,7 @@
     <string name="rejoin">Rejoin</string>
     <string name="joined">Joined</string>
     <string name="rejected">Rejected</string>
+    <string name="morning">Morning</string>
+    <string name="afternoon">Afternoon</string>
+    <string name="evening">Evening</string>
 </resources>
