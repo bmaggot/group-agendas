@@ -124,6 +124,7 @@ public class NavbarActivity extends FragmentActivity {
 	private int mYear = 1970;
 	private int mMonth = 0;
 	private int mDay = 1;
+	Calendar start;
 	
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -700,7 +701,7 @@ public class NavbarActivity extends FragmentActivity {
 
 		@Override
 		protected void onPreExecute() {
-
+			start = Calendar.getInstance();
 			// Create a new progress dialog
 			progressDialog = new ProgressDialog(NavbarActivity.this);
 			// Set the progress dialog to display a horizontal progress bar
@@ -852,6 +853,8 @@ public class NavbarActivity extends FragmentActivity {
 
 			setAlarmsToAllEvents();
 			new ResponsesBadgeSyncTask().execute();
+			Calendar end = Calendar.getInstance();
+			System.out.println("All data download time:" + (end.getTimeInMillis() - start.getTimeInMillis()));
 		}
 	}
 
