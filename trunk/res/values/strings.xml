@@ -330,5 +330,5 @@
     <string name="morning">Morning</string>
     <string name="afternoon">Afternoon</string>
     <string name="evening">Evening</string>
-    <string name="start_and_end">Start & end</string>
+    <string name="start_and_end">Start &amp; end</string>
 </resources>
