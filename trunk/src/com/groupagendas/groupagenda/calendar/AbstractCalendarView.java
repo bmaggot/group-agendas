@@ -373,9 +373,11 @@ public abstract class AbstractCalendarView extends LinearLayout {
 					eventProjection
 							.setStatus(result.getInt(result
 									.getColumnIndexOrThrow(EventsProvider.EMetaData.EventsMetaData.STATUS)));
-					eventProjection
-							.setEvents_day(result.getString(result
-									.getColumnIndexOrThrow(EventsProvider.EMetaData.EventsIndexesMetaData.DAY)));
+					if(result.getColumnIndex(EventsProvider.EMetaData.EventsIndexesMetaData.DAY) > 0){
+						eventProjection
+								.setEvents_day(result.getString(result
+										.getColumnIndexOrThrow(EventsProvider.EMetaData.EventsIndexesMetaData.DAY)));
+					}
 
 					list.add(eventProjection);
 					result.moveToNext();
