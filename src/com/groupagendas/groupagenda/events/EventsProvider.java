@@ -221,6 +221,79 @@ public class EventsProvider extends ContentProvider{
 	}
 	// END Table Projection Map
 	
+	// Events Table Projection Map
+	private static HashMap<String, String> EM1;
+	
+	static {
+		EM1 = new HashMap<String, String>();
+		EM1.put(EMetaData.EventsMetaData._ID, EMetaData.EVENTS_TABLE+ "." + EMetaData.EventsMetaData._ID);
+		EM1.put(EMetaData.EventsMetaData.E_ID, EMetaData.EVENTS_TABLE+ "." + EMetaData.EventsMetaData.E_ID);
+		EM1.put(EMetaData.EventsMetaData.USER_ID, EMetaData.EventsMetaData.USER_ID);
+		
+		EM1.put(EMetaData.EventsMetaData.IS_SPORTS_EVENT, EMetaData.EventsMetaData.IS_SPORTS_EVENT);
+		EM1.put(EMetaData.EventsMetaData.STATUS, EMetaData.EventsMetaData.STATUS);
+		EM1.put(EMetaData.EventsMetaData.IS_OWNER, EMetaData.EventsMetaData.IS_OWNER);
+		EM1.put(EMetaData.EventsMetaData.TYPE, EMetaData.EventsMetaData.TYPE);
+		EM1.put(EMetaData.EventsMetaData.IS_ALL_DAY, EMetaData.EventsMetaData.IS_ALL_DAY);
+		EM1.put(EMetaData.EventsMetaData.IS_BIRTHDAY, EMetaData.EventsMetaData.IS_BIRTHDAY);
+		
+		EM1.put(EMetaData.EventsMetaData.CREATOR_FULLNAME, EMetaData.EventsMetaData.CREATOR_FULLNAME);
+		EM1.put(EMetaData.EventsMetaData.CREATOR_CONTACT_ID, EMetaData.EventsMetaData.CREATOR_CONTACT_ID);
+		
+		EM1.put(EMetaData.EventsMetaData.TITLE, EMetaData.EventsMetaData.TITLE);
+		EM1.put(EMetaData.EventsMetaData.ICON, EMetaData.EventsMetaData.ICON);
+		EM1.put(EMetaData.EventsMetaData.COLOR, EMetaData.EventsMetaData.COLOR);
+//		EM.put(EMetaData.EventsMetaData.TEXT_COLOR, EMetaData.EventsMetaData.TEXT_COLOR);//2012-10-24
+		EM1.put(EMetaData.EventsMetaData.EVENT_DISPLAY_COLOR, EMetaData.EventsMetaData.EVENT_DISPLAY_COLOR);//2012-10-24
+		EM1.put(EMetaData.EventsMetaData.DESC, EMetaData.EventsMetaData.DESC);
+		
+		EM1.put(EMetaData.EventsMetaData.LOCATION, EMetaData.EventsMetaData.LOCATION);
+		EM1.put(EMetaData.EventsMetaData.ACCOMODATION, EMetaData.EventsMetaData.ACCOMODATION);
+		
+		EM1.put(EMetaData.EventsMetaData.COST, EMetaData.EventsMetaData.COST);
+		EM1.put(EMetaData.EventsMetaData.TAKE_WITH_YOU, EMetaData.EventsMetaData.TAKE_WITH_YOU);
+		EM1.put(EMetaData.EventsMetaData.GO_BY, EMetaData.EventsMetaData.GO_BY);
+		
+		EM1.put(EMetaData.EventsMetaData.COUNTRY, EMetaData.EventsMetaData.COUNTRY);
+		EM1.put(EMetaData.EventsMetaData.CITY, EMetaData.EventsMetaData.CITY);
+		EM1.put(EMetaData.EventsMetaData.STREET, EMetaData.EventsMetaData.STREET);
+		EM1.put(EMetaData.EventsMetaData.ZIP, EMetaData.EventsMetaData.ZIP);
+		
+		EM1.put(EMetaData.EventsMetaData.TIMEZONE, EMetaData.EventsMetaData.TIMEZONE);
+		EM1.put(EMetaData.EventsMetaData.TIME_START_UTC_MILLISECONDS, EMetaData.EventsMetaData.TIME_START_UTC_MILLISECONDS);
+		EM1.put(EMetaData.EventsMetaData.TIME_END_UTC_MILLISECONDS, EMetaData.EventsMetaData.TIME_END_UTC_MILLISECONDS);
+		
+		EM1.put(EMetaData.EventsMetaData.REMINDER1, EMetaData.EventsMetaData.REMINDER1);
+		EM1.put(EMetaData.EventsMetaData.REMINDER2, EMetaData.EventsMetaData.REMINDER2);
+		EM1.put(EMetaData.EventsMetaData.REMINDER3, EMetaData.EventsMetaData.REMINDER3);
+		
+		EM1.put(EMetaData.EventsMetaData.ALARM1, EMetaData.EventsMetaData.ALARM1);
+		EM1.put(EMetaData.EventsMetaData.ALARM2, EMetaData.EventsMetaData.ALARM2);
+		EM1.put(EMetaData.EventsMetaData.ALARM3, EMetaData.EventsMetaData.ALARM3);
+		
+
+		EM1.put(EMetaData.EventsMetaData.CREATED_UTC_MILLISECONDS, EMetaData.EventsMetaData.CREATED_UTC_MILLISECONDS);
+		EM1.put(EMetaData.EventsMetaData.MODIFIED_UTC_MILLISECONDS, EMetaData.EventsMetaData.MODIFIED_UTC_MILLISECONDS);
+		
+		EM1.put(EMetaData.EventsMetaData.ATTENDANT_1_COUNT, EMetaData.EventsMetaData.ATTENDANT_1_COUNT);
+		EM1.put(EMetaData.EventsMetaData.ATTENDANT_2_COUNT, EMetaData.EventsMetaData.ATTENDANT_2_COUNT);
+		EM1.put(EMetaData.EventsMetaData.ATTENDANT_0_COUNT, EMetaData.EventsMetaData.ATTENDANT_0_COUNT);
+		EM1.put(EMetaData.EventsMetaData.ATTENDANT_4_COUNT, EMetaData.EventsMetaData.ATTENDANT_4_COUNT);
+		
+		EM1.put(EMetaData.EventsMetaData.INVITED, EMetaData.EventsMetaData.INVITED);
+//		EM.put(EMetaData.EventsMetaData.ASSIGNED_CONTACTS, EMetaData.EventsMetaData.ASSIGNED_CONTACTS);
+//		EM.put(EMetaData.EventsMetaData.ASSIGNED_GROUPS, EMetaData.EventsMetaData.ASSIGNED_GROUPS);
+		EM1.put(EMetaData.EventsMetaData.MESSAGES_COUNT, EMetaData.EventsMetaData.MESSAGES_COUNT);
+		EM1.put(EMetaData.EventsMetaData.NEW_MESSAGES_COUNT, EMetaData.EventsMetaData.NEW_MESSAGES_COUNT);
+		EM1.put(EMetaData.EventsMetaData.LAST_MESSAGE_DATE_TIME_UTC_MILISECONDS, EMetaData.EventsMetaData.LAST_MESSAGE_DATE_TIME_UTC_MILISECONDS);
+		
+		EM1.put(EMetaData.EventsMetaData.UPLOADED_SUCCESSFULLY, EMetaData.EventsMetaData.UPLOADED_SUCCESSFULLY);
+		EM1.put(EMetaData.EventsMetaData.POLL, EMetaData.EventsMetaData.POLL);
+		EM1.put(EMetaData.EventsMetaData.SELECTED_EVENT_POLLS_TIME, EMetaData.EventsMetaData.SELECTED_EVENT_POLLS_TIME);
+		EM1.put(EMetaData.EventsIndexesMetaData.DAY, EMetaData.EventsIndexesMetaData.DAY);
+		
+	}
+	
 	// Events day indexes table projection map
 	private static HashMap<String, String> DEM;
 	
@@ -308,8 +381,8 @@ public class EventsProvider extends ContentProvider{
 			break;
 			
 		case EVENTS_ON_DATE:
-			qb.setDistinct(true);
-			qb.setProjectionMap(EM);
+//			qb.setDistinct(true);
+			qb.setProjectionMap(EM1);
 			qb.setTables(EMetaData.EVENT_DAY_INDEX_TABLE + "," +  EMetaData.EVENTS_TABLE);
 			qb.appendWhere(EMetaData.EVENTS_TABLE + "." + EMetaData.EventsMetaData._ID
 					+"="

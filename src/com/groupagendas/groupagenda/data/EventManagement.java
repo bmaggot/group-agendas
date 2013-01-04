@@ -24,6 +24,7 @@ import android.content.ContentUris;
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
+import android.database.sqlite.SQLiteQueryBuilder;
 import android.net.Uri;
 import android.provider.BaseColumns;
 import android.util.Log;
@@ -492,13 +493,12 @@ public class EventManagement {
 				break;
 			case TM_EVENTS_ON_GIVEN_MONTH:
 				uri = EventsProvider.EMetaData.EVENTS_ON_DATE_URI;
-				where = "("+EventsProvider.EMetaData.EventsIndexesMetaData.MONTH + " = '" + month_index_formatter.format(date.getTime()) + "'";
 				Calendar tmp1 = (Calendar) date.clone();
 				tmp1.set(Calendar.DAY_OF_MONTH, tmp1.getMinimum(Calendar.DAY_OF_MONTH) - 7);
-				where += " OR " + EventsProvider.EMetaData.EventsIndexesMetaData.DAY + " > '" + day_index_formatter.format(tmp1.getTime()) + "'";
+				where = "(" + EventsProvider.EMetaData.EventsIndexesMetaData.DAY + " > '" + day_index_formatter.format(tmp1.getTime()) + "'";
 				tmp1.set(Calendar.MONTH, tmp1.get(Calendar.MONTH) + 1);
 				tmp1.set(Calendar.DAY_OF_MONTH, tmp1.getMaximum(Calendar.DAY_OF_MONTH) + 7);
-				where += " OR " + EventsProvider.EMetaData.EventsIndexesMetaData.DAY + " < '" + day_index_formatter.format(tmp1.getTime()) + "')";
+				where += " AND " + EventsProvider.EMetaData.EventsIndexesMetaData.DAY + " < '" + day_index_formatter.format(tmp1.getTime()) + "')";
 				break;
 			case TM_EVENTS_ON_GIVEN_YEAR:
 				uri = EventsProvider.EMetaData.EVENTS_ON_DATE_URI;
@@ -553,8 +553,24 @@ public class EventManagement {
 //			where += " AND " + EventsProvider.EMetaData.EventsIndexesMetaData.MONTH + " = '" + month_index_formatter.format(date.getTime()) + "'";
 ////			EventsProvider.EMetaData.EventsIndexesMetaData.MONTH + " = '" + month_index_formatter.format(date.getTime()) + "'";
 //		}
-
-		return context.getContentResolver().query(uri, projection, where, null, sortOrder);
+		if(eventTimeMode == TM_EVENTS_ON_GIVEN_MONTH){
+		String[] projection1 = {
+				EventsProvider.EMetaData.EventsMetaData.E_ID,
+				EventsProvider.EMetaData.EventsMetaData._ID,
+				EventsProvider.EMetaData.EventsMetaData.COLOR,
+				EventsProvider.EMetaData.EventsMetaData.EVENT_DISPLAY_COLOR,
+				EventsProvider.EMetaData.EventsMetaData.IS_ALL_DAY,
+				EventsProvider.EMetaData.EventsMetaData.TIME_START_UTC_MILLISECONDS,
+				EventsProvider.EMetaData.EventsMetaData.TIME_END_UTC_MILLISECONDS,
+				EventsProvider.EMetaData.EventsMetaData.ICON,
+				EventsProvider.EMetaData.EventsMetaData.TITLE,
+				EventsProvider.EMetaData.EventsMetaData.STATUS,
+				EventsProvider.EMetaData.EventsMetaData.IS_OWNER,
+				EventsProvider.EMetaData.EventsIndexesMetaData.DAY };
+		return context.getContentResolver().query(uri, projection1, where, null, sortOrder);
+		} else {
+			return context.getContentResolver().query(uri, projection, where, null, sortOrder);
+		}
 
 	}
 

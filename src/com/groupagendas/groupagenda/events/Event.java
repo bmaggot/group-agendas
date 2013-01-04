@@ -99,6 +99,7 @@ private static final String TIMESTAMP_FORMAT = DataManagement.SERVER_TIMESTAMP_F
 	private Invited myInvite;
 	private String poll;
 	private String selected_event_polls_time;
+	private String events_day;
 	
 	//TODO implement event missing attributes 
 	/* public String confirmed;
@@ -933,5 +934,11 @@ public String getSelectedEventPollsTime() {
 }
 public void setSelectedEventPollsTime(String selected_event_polls_time) {
 	this.selected_event_polls_time = selected_event_polls_time;
+}
+public String getEvents_day() {
+	return events_day;
+}
+public void setEvents_day(String events_day) {
+	this.events_day = events_day;
 }
 }
