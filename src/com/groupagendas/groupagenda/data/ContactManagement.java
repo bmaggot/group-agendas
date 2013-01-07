@@ -729,6 +729,7 @@ public class ContactManagement {
 		cv.put(ContactsProvider.CMetaData.ContactsMetaData.GROUPS, MapUtils.mapToString(context, contact.groups));
 
 		cv.put(ContactsProvider.CMetaData.ContactsMetaData.COLOR, contact.getColor());
+		cv.put(ContactsProvider.CMetaData.ContactsMetaData.UPLOADED_SUCCESSFULLY, contact.isUploadedToServer() ? 1 : 0);
 
 		try {
 			context.getContentResolver().insert(ContactsProvider.CMetaData.ContactsMetaData.CONTENT_URI, cv);
