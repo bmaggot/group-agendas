@@ -260,7 +260,7 @@ public class NavbarActivity extends FragmentActivity {
 			JSONObject object = new JSONObject(tempResponses);
 			newResponses = object.getInt("count");
 			if(uptadeResponresBadge){
-				acc.setResponsesBadge(""+newResponses);
+				//acc.setResponsesBadge(""+newResponses);
 				newResponsesBadges = newResponses;
 			} else {
 				newResponsesBadges += newResponses;
