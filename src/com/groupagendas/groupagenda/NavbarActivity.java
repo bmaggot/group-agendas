@@ -571,6 +571,7 @@ public class NavbarActivity extends FragmentActivity {
 		@Override
 		protected void onPreExecute() {
 			smthClicked = true;
+			progressDialog = new ProgressDialog(NavbarActivity.this);
 			progressDialog.setMessage(getApplicationContext().getResources().getString(R.string.loading));
 			progressDialog.setCancelable(false);
 			progressDialog.show();
@@ -596,6 +597,7 @@ public class NavbarActivity extends FragmentActivity {
 		@Override
 		protected void onPreExecute() {
 			smthClicked = true;
+			progressDialog = new ProgressDialog(NavbarActivity.this);
 			progressDialog.setMessage(getApplicationContext().getResources().getString(R.string.loading));
 			progressDialog.setCancelable(false);
 			progressDialog.show();
