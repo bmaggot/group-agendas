@@ -1,5 +1,6 @@
 package com.groupagendas.groupagenda.events;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.TimeZone;
@@ -21,6 +22,9 @@ public class NativeCalendarReader {
 	private static String ALLDAY = "allDay";
 	private static String EVENTTIMEZONE = "eventTimezone";
 	private static String EVENTLOCATION = "eventLocation";
+	private static String RRULE = "rrule";
+	private static String DURATION = "duration";
+	private static int DAY_DURATION_IN_MILLIS = 86400000;	
 	
 	static Cursor cursor;
 
@@ -28,11 +32,11 @@ public class NativeCalendarReader {
 		ArrayList<Event> nativeEvents = new ArrayList<Event>();
 		if (Integer.parseInt(Build.VERSION.SDK) >= 8) {
 			cursor = context.getContentResolver().query(Uri.parse("content://com.android.calendar/events"),
-					new String[] { ID, TITLE, DESCRIPTION, DTSTART, DTEND, ALLDAY, EVENTTIMEZONE, EVENTLOCATION }, null,
+					new String[] { ID, TITLE, DESCRIPTION, DTSTART, DTEND, ALLDAY, EVENTTIMEZONE, EVENTLOCATION, RRULE, DURATION }, null,
 					null, null);
 		} else {
 			cursor = context.getContentResolver().query(Uri.parse("content://calendar/events"),
-					new String[] { ID, TITLE, DESCRIPTION, DTSTART, DTEND, ALLDAY, EVENTTIMEZONE, EVENTLOCATION }, null,
+					new String[] { ID, TITLE, DESCRIPTION, DTSTART, DTEND, ALLDAY, EVENTTIMEZONE, EVENTLOCATION, RRULE, DURATION }, null,
 					null, null);
 		}
 
@@ -60,11 +64,11 @@ public class NativeCalendarReader {
 
 		if (Integer.parseInt(Build.VERSION.SDK) >= 8) {
 			cursor = context.getContentResolver().query(Uri.parse("content://com.android.calendar/events"),
-					new String[] { ID, TITLE, DESCRIPTION, DTSTART, DTEND, ALLDAY, EVENTTIMEZONE, EVENTLOCATION },
+					new String[] { ID, TITLE, DESCRIPTION, DTSTART, DTEND, ALLDAY, EVENTTIMEZONE, EVENTLOCATION, RRULE, DURATION },
 					selection, null, null);
 		} else {
 			cursor = context.getContentResolver().query(Uri.parse("content://calendar/events"),
-					new String[] { ID, TITLE, DESCRIPTION, DTSTART, DTEND, ALLDAY, EVENTTIMEZONE, EVENTLOCATION, },
+					new String[] { ID, TITLE, DESCRIPTION, DTSTART, DTEND, ALLDAY, EVENTTIMEZONE, EVENTLOCATION, RRULE, DURATION },
 					selection, null, null);
 		}
 
@@ -218,6 +222,17 @@ public class NativeCalendarReader {
 				endCalendar.setTimeInMillis(Long.valueOf(cursor.getString(4)));
 			} else {
 				endCalendar.setTimeInMillis(Long.valueOf(cursor.getString(3)));
+				if(cursor.getString(9) != null){
+					if(cursor.getString(9).matches("P[0-9]+S")){
+						String tmpDuration = cursor.getString(9).substring(1, cursor.getString(9).length()-1);
+						endCalendar.add(Calendar.SECOND, Integer.valueOf(tmpDuration));
+					} else if(cursor.getString(9).matches("P[0-9]+D")){
+						String tmpDuration = cursor.getString(9).substring(1, cursor.getString(9).length()-1);
+						endCalendar.add(Calendar.DAY_OF_MONTH, Integer.valueOf(tmpDuration));
+					} else {
+						System.out.println("NativeCalendarReader.makeNativeEventFromCursor(context, cur) = no endTime for " + event.getTitle());
+					}
+				}
 			}
 			endCalendar.clear(Calendar.DST_OFFSET);
 			endCalendar.setTimeZone(Calendar.getInstance().getTimeZone());
@@ -226,8 +241,16 @@ public class NativeCalendarReader {
 			event.setTimezone(account.getTimezone());
 			event.setCreator_fullname(context.getResources().getString(R.string.you));
 			event.setLocation(cursor.getString(7));
+			cursor.getString(8);
+			cursor.getString(9);
 			event.setType("native");
 			event.setStatus(1);
+			if(event.is_all_day()){
+				event.getEndCalendar().clear(Calendar.HOUR);
+				event.getEndCalendar().clear(Calendar.HOUR_OF_DAY);
+				event.getEndCalendar().clear(Calendar.MINUTE);
+				event.getEndCalendar().clear(Calendar.SECOND);
+			}
 			event.setNative(true);
 		} catch (Exception e) {
 			System.out.println("NativeCalendarReader makeNativeEventFromCursor");

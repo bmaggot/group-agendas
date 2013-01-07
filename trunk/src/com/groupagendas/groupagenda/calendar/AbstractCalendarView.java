@@ -306,8 +306,7 @@ public abstract class AbstractCalendarView extends LinearLayout {
 			if (account.getShow_native_calendars()) {
 				ArrayList<Event> nativeEvents = queryNativeEvents();
 				for (Event nativeEvent : nativeEvents) {
-					TreeMapUtils.putNewEventIntoTreeMap(context, sortedEvents,
-							nativeEvent);
+					TreeMapUtils.putNewEventPollsIntoTreeMap(context, sortedEvents, nativeEvent);
 				}
 			}
 			if (account.getShow_birthdays_calendars()) {
