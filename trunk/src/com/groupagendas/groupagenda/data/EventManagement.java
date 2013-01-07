@@ -630,8 +630,12 @@ public class EventManagement {
 									event = JSONUtils.createEventFromJSON(context, e);
 									if (event != null && !event.isNative()) {
 										event.setUploadedToServer(true);
-										values[value] = createCVforEventsTable(event);
-										value++;
+										if(event.getType().contentEquals("v") && event.getPoll().contentEquals("null")){
+											
+										} else {
+											values[value] = createCVforEventsTable(event);
+											value++;
+										}
 										// insertEventToLocalDB(context, event);
 									}
 								//}
@@ -680,13 +684,13 @@ public class EventManagement {
 		
 		if(!account.getResponsesBadge().equalsIgnoreCase("") && Integer.parseInt(account.getResponsesBadge()) > 0){
 			try {
-				reqEntity.addPart("update_lastview", new StringBody(""+1, Charset.forName("UTF-8")));
+				reqEntity.addPart("update_lastview", new StringBody(""+0, Charset.forName("UTF-8")));
 			} catch (UnsupportedEncodingException e1) {
 				Log.e("getResponsesFromRemoteDb(contactIds)", "Failed adding token to entity");
 			}
 		} else {
 			try {
-				reqEntity.addPart("update_lastview", new StringBody(""+0, Charset.forName("UTF-8")));
+				reqEntity.addPart("update_lastview", new StringBody(""+1, Charset.forName("UTF-8")));
 			} catch (UnsupportedEncodingException e1) {
 				Log.e("getResponsesFromRemoteDb(contactIds)", "Failed adding token to entity");
 			}
