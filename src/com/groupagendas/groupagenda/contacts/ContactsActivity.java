@@ -249,6 +249,11 @@ public class ContactsActivity extends ListActivity implements OnCheckedChangeLis
 							switch (DESTINATION) {
 							case DEST_EVENT_ACTIVITY:
 								EventActivity.selectedContacts = selectedContact;
+								for(Contact c : selectedContact){
+									if(!c.isUploadedToServer()){
+										Toast.makeText(getApplicationContext(), "can't "+c.name+" "+"invite", Toast.LENGTH_SHORT).show();
+									}
+								}
 								break;
 							case DEST_GROUP_EDIT:
 								GroupEditActivity.selectedContacts = selectedContact;
