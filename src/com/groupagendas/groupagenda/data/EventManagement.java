@@ -1650,6 +1650,7 @@ public class EventManagement {
 
 	// TODO javadoc
 	protected static Event createEventFromCursor(Context context, Cursor result) {
+		initUserTimezone(context);
 		Event item = new Event();
 		long timeinMillis;
 		item.setInternalID(result.getLong(result.getColumnIndex(EventsProvider.EMetaData.EventsMetaData._ID)));
