@@ -108,7 +108,7 @@ public class NavbarActivity extends FragmentActivity {
 
 	public static boolean showInvites = false;
 	public static boolean notResponses = true;
-	public static boolean uptadeResponresBadge = true;
+	public static boolean restoreResponresBadge = false;
 	public static boolean ifResponsesFirstTime = true;
 	public static int newResponsesBadges = 0;
 	public static String newPhoneNumber = "newphonenumber";
@@ -117,6 +117,7 @@ public class NavbarActivity extends FragmentActivity {
 	public static ArrayList<Event> pollsListToShow = new ArrayList<Event>();
 	//public static ArrayList<JSONObject> selectedPollTime = new ArrayList<JSONObject>();
 	public static ArrayList<Event> pollsListToDelete = new ArrayList<Event>();
+	public static boolean updateResponsesLastView = false;
 	
 	public static ProgressDialog loadingProgressDialog;
 	public static boolean smthClicked = false;
@@ -258,14 +259,11 @@ public class NavbarActivity extends FragmentActivity {
 		}
 		try {
 			JSONObject object = new JSONObject(tempResponses);
-			newResponses = object.getInt("count");
-			if(uptadeResponresBadge){
-				//acc.setResponsesBadge(""+newResponses);
-				newResponsesBadges = newResponses;
-			} else {
-				newResponsesBadges += newResponses;
+			if(!restoreResponresBadge){
+				newResponses = object.getInt("count");
 			}
-			uptadeResponresBadge = false;
+			newResponsesBadges = newResponses;
+			restoreResponresBadge = false;
 		} catch (Exception ex) {
 			Log.e("Badge JSON err", ex.getMessage());
 		}
