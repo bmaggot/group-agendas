@@ -93,7 +93,9 @@ public class ResponsesAdapter extends AbstractAdapter<JSONObject> {
 		
 		Calendar tempCal = Utils.stringToCalendar(context, temp, DataManagement.SERVER_TIMESTAMP_FORMAT);
 		DateTimeUtils dateTimeUtils = new DateTimeUtils(context);
-		eventDate.setText(dateTimeUtils.formatDate(tempCal));
+		if(tempCal != null){
+			eventDate.setText(dateTimeUtils.formatDate(tempCal));
+		}
 		
 		TextView responsesDate = (TextView) view.findViewById(R.id.responses_date);
 		TextView responsesTime = (TextView) view.findViewById(R.id.responses_time);
