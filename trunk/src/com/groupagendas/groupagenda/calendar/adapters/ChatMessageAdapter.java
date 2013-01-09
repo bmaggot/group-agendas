@@ -45,7 +45,9 @@ public class ChatMessageAdapter extends AbstractAdapter<ChatMessageObject> {
 		}
 		TextView chatTime = (TextView) view.findViewById(R.id.chat_message_time);
 		Calendar calendar = Calendar.getInstance();
-		calendar.setTimeInMillis(chatMessage.getCreated());
+		if(chatMessage.getCreated() != null){
+			calendar.setTimeInMillis(chatMessage.getCreated());
+		}
 		DateTimeUtils dtUtils = new DateTimeUtils(getContext());
 		chatTime.setText(dtUtils.formatDateTime(calendar));
 		TextView fromWho = (TextView) view.findViewById(R.id.chat_message_from_who);
