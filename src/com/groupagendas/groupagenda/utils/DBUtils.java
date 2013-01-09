@@ -7,7 +7,10 @@ import java.io.InputStream;
 import java.io.OutputStream;
 
 import android.content.Context;
+import android.database.Cursor;
+import android.net.Uri;
 import android.os.Environment;
+import android.util.Log;
 
 import com.groupagendas.groupagenda.error.report.Reporter;
 
@@ -49,5 +52,21 @@ public class DBUtils {
 		} catch (IOException e) {
 			Reporter.reportError(cont, this.getClass().toString(), Thread.currentThread().getStackTrace()[2].getMethodName().toString(), e.getMessage());
 		}
+	}
+	
+	public static void readAllUriColumns(Context context, Uri uri){
+		try {
+	        Cursor c = context.getContentResolver().query(Uri.parse("content://com.android.calendar/calendars"), null, null, null, null);
+	        if (c != null) {
+	            int num = c.getColumnCount();
+	            for (int i = 0; i < num; ++i) {
+	                String colname = c.getColumnName(i);
+	                Log.e("Uri column " + i, colname + "\n");
+	            }
+	        }
+
+	    } catch (Exception e) {
+	        e.printStackTrace();
+	    }
 	}
 }
