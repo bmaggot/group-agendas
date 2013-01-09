@@ -28,6 +28,7 @@ import android.net.Uri;
 import android.provider.BaseColumns;
 import android.util.Log;
 
+import com.groupagendas.groupagenda.NavbarActivity;
 import com.groupagendas.groupagenda.SaveDeletedData;
 import com.groupagendas.groupagenda.SaveDeletedData.SDMetaData;
 import com.groupagendas.groupagenda.account.Account;
@@ -682,18 +683,19 @@ public class EventManagement {
 			Log.e("getResponsesFromRemoteDb(contactIds)", "Failed adding token to entity");
 		}
 		
-		if(!account.getResponsesBadge().equalsIgnoreCase("") && Integer.parseInt(account.getResponsesBadge()) > 0){
-			try {
-				reqEntity.addPart("update_lastview", new StringBody(""+1, Charset.forName("UTF-8")));
-			} catch (UnsupportedEncodingException e1) {
-				Log.e("getResponsesFromRemoteDb(contactIds)", "Failed adding token to entity");
-			}
-		} else {
+		if(!NavbarActivity.updateResponsesLastView){
 			try {
 				reqEntity.addPart("update_lastview", new StringBody(""+0, Charset.forName("UTF-8")));
 			} catch (UnsupportedEncodingException e1) {
 				Log.e("getResponsesFromRemoteDb(contactIds)", "Failed adding token to entity");
 			}
+		} else {
+			try {
+				reqEntity.addPart("update_lastview", new StringBody(""+1, Charset.forName("UTF-8")));
+			} catch (UnsupportedEncodingException e1) {
+				Log.e("getResponsesFromRemoteDb(contactIds)", "Failed adding token to entity");
+			}
+			NavbarActivity.updateResponsesLastView = false;
 		}
 
 		post.setEntity(reqEntity);
