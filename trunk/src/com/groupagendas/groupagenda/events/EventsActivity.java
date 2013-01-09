@@ -336,10 +336,11 @@ public class EventsActivity extends ListActivity {
 					if(NavbarActivity.ifResponsesFirstTime){ // if star presed first time open responses
 					//if(NavbarActivity.newResponsesBadges > 0){ // if is new responses then open responses
 						NavbarActivity.newResponsesBadges = 0;
+						NavbarActivity.updateResponsesLastView = true;
 						newResponsesBadge();
 						NavbarActivity.notResponses = false;
+						NavbarActivity.restoreResponresBadge = true;
 						changeTitle(getString(R.string.responses));
-						//qa.dismiss();
 						createResponsesList();
 						NavbarActivity.ifResponsesFirstTime = false;
 					} else {
@@ -352,17 +353,14 @@ public class EventsActivity extends ListActivity {
 	
 							@Override
 							public void onClick(View v) {
-								//Account acc = new Account(getApplicationContext());
-								//acc.setResponsesBadge(""+0);
 								NavbarActivity.newResponsesBadges = 0;
+								NavbarActivity.updateResponsesLastView = true;
+								NavbarActivity.restoreResponresBadge = true;
 								newResponsesBadge();
 								NavbarActivity.notResponses = false;
 								changeTitle(getString(R.string.responses));
 								qa.dismiss();
-								createResponsesList();
-	//							Intent i = new Intent(EventsActivity.this, ResponsesActivity.class);
-	//							startActivity(i);
-	
+								createResponsesList();	
 							}
 						});
 						
