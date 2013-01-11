@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.TreeMap;
 
 import android.content.Context;
+import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
@@ -24,7 +25,7 @@ public class MonthAdapter extends AbstractAdapter<Event> {
 	public static final String SERVER_TIMESTAMP_FORMAT = "yyyy-MM-dd HH:mm:ss";
 
 	SimpleDateFormat timeFormat;
-	TreeMap<Calendar, ArrayList<Event>> sortedEvents;
+	TreeMap<String, ArrayList<Event>> sortedEvents;
 	Calendar selectedDate;
 
 	public MonthAdapter(Context context, List<Event> list) {
@@ -37,13 +38,13 @@ public class MonthAdapter extends AbstractAdapter<Event> {
 		setAMPM(setAMPM);
 	}
 	
-	public MonthAdapter(Context context, List<Event> list, boolean setAMPM, TreeMap<Calendar, ArrayList<Event>> sortedEvents) {
+	public MonthAdapter(Context context, List<Event> list, boolean setAMPM, TreeMap<String, ArrayList<Event>> sortedEvents) {
 		super(context, list);
 		setAMPM(setAMPM);
 		this.sortedEvents = sortedEvents;
 	}
 	
-	public MonthAdapter(Context context, List<Event> list, boolean setAMPM, TreeMap<Calendar, ArrayList<Event>> sortedEvents, Calendar selectedDate) {
+	public MonthAdapter(Context context, List<Event> list, boolean setAMPM, TreeMap<String, ArrayList<Event>> sortedEvents, Calendar selectedDate) {
 		super(context, list);
 		setAMPM(setAMPM);
 		this.sortedEvents = sortedEvents;
@@ -61,7 +62,7 @@ public class MonthAdapter extends AbstractAdapter<Event> {
 		}
 	}
 	
-	public void setSelectedDate (Calendar date, TreeMap<Calendar, ArrayList<Event>> sortedEvents) {
+	public void setSelectedDate (Calendar date, TreeMap<String, ArrayList<Event>> sortedEvents) {
 		this.selectedDate = date;
 		this.sortedEvents = sortedEvents; 
 		notifyDataSetChanged();
@@ -96,7 +97,9 @@ public class MonthAdapter extends AbstractAdapter<Event> {
 				events = TreeMapUtils.getEventsFromTreemap(date, sortedEvents);
 				if (events != null) {
 					for (Event e : events) {
-						if (event.getEvent_id() == e.getEvent_id() && event.getTitle().equals(e.getTitle())) {
+						if (event.getEvent_id() == e.getEvent_id() && event.getTitle().equals(e.getTitle())
+								&& (event.getEndCalendar().getTime().toString().equals(e.getEndCalendar().getTime().toString()))
+								&& (event.getStartCalendar().getTime().toString().equals(e.getStartCalendar().getTime().toString()))) {
 							isYesterday = true;
 							break;
 						}
@@ -107,7 +110,9 @@ public class MonthAdapter extends AbstractAdapter<Event> {
 				events = TreeMapUtils.getEventsFromTreemap(date, sortedEvents);
 				if (events != null) {
 					for (Event e : events) {
-						if (event.getEvent_id() == e.getEvent_id() && event.getTitle().equals(e.getTitle())) {
+						if (event.getEvent_id() == e.getEvent_id() && event.getTitle().equals(e.getTitle()) 
+								&& (event.getEndCalendar().getTime().toString().equals(e.getEndCalendar().getTime().toString()))
+								&& (event.getStartCalendar().getTime().toString().equals(e.getStartCalendar().getTime().toString()))) {
 							isTomorrow = true;
 							break;
 						}

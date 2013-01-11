@@ -24,6 +24,8 @@ import android.content.ContentUris;
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
+import android.database.DatabaseUtils;
+import android.database.sqlite.SQLiteQueryBuilder;
 import android.net.Uri;
 import android.provider.BaseColumns;
 import android.util.Log;
@@ -448,6 +450,8 @@ public class EventManagement {
 	 */
 	public static Cursor createEventProjectionByDateFromLocalDb(Context context, String[] projection, Calendar date, int daysToSelect,
 			int eventTimeMode, String sortOrder, boolean filterRejected) {
+//		Calendar calendar = Calendar.getInstance();
+//		Log.e("createEventProjectionByDateFromLocalDb", calendar.getTime().toString());
 		initUserTimezone(context);
 		day_index_formatter = new SimpleDateFormat(EventsProvider.EMetaData.EventsIndexesMetaData.DAY_COLUMN_FORMAT, Locale.getDefault());
 		month_index_formatter = new SimpleDateFormat(EventsProvider.EMetaData.EventsIndexesMetaData.MONTH_COLUMN_FORMAT, Locale.getDefault());
@@ -493,12 +497,9 @@ public class EventManagement {
 				break;
 			case TM_EVENTS_ON_GIVEN_MONTH:
 				uri = EventsProvider.EMetaData.EVENTS_ON_DATE_URI;
-				Calendar tmp1 = (Calendar) date.clone();
-				tmp1.set(Calendar.DAY_OF_MONTH, tmp1.getMinimum(Calendar.DAY_OF_MONTH) - 7);
-				where = "(" + EventsProvider.EMetaData.EventsIndexesMetaData.DAY + " > '" + day_index_formatter.format(tmp1.getTime()) + "'";
-				tmp1.set(Calendar.MONTH, tmp1.get(Calendar.MONTH) + 1);
-				tmp1.set(Calendar.DAY_OF_MONTH, tmp1.getMaximum(Calendar.DAY_OF_MONTH) + 7);
-				where += " AND " + EventsProvider.EMetaData.EventsIndexesMetaData.DAY + " < '" + day_index_formatter.format(tmp1.getTime()) + "')";
+                where = EventsProvider.EMetaData.EventsIndexesMetaData.MONTH
+                        + " = '" + month_index_formatter.format(date.getTime())
+                        + "'";
 				break;
 			case TM_EVENTS_ON_GIVEN_YEAR:
 				uri = EventsProvider.EMetaData.EVENTS_ON_DATE_URI;
@@ -546,28 +547,25 @@ public class EventManagement {
 		//for don't get pool
 		where += " AND " + (EventsProvider.EMetaData.EventsMetaData.TYPE + " != 'v'");
 		
-//		if(eventTimeMode == TM_EVENTS_ON_GIVEN_MONTH){
-//			date.set(Calendar.MONTH, date.get(Calendar.MONTH) - 1);
-//			where += " AND " + EventsProvider.EMetaData.EventsIndexesMetaData.MONTH + " = '" + month_index_formatter.format(date.getTime()) + "'";
-//			date.set(Calendar.MONTH, date.get(Calendar.MONTH) + 2);
-//			where += " AND " + EventsProvider.EMetaData.EventsIndexesMetaData.MONTH + " = '" + month_index_formatter.format(date.getTime()) + "'";
-////			EventsProvider.EMetaData.EventsIndexesMetaData.MONTH + " = '" + month_index_formatter.format(date.getTime()) + "'";
-//		}
 		if(eventTimeMode == TM_EVENTS_ON_GIVEN_MONTH){
-		String[] projection1 = {
-				EventsProvider.EMetaData.EventsMetaData.E_ID,
-				EventsProvider.EMetaData.EventsMetaData._ID,
-				EventsProvider.EMetaData.EventsMetaData.COLOR,
-				EventsProvider.EMetaData.EventsMetaData.EVENT_DISPLAY_COLOR,
-				EventsProvider.EMetaData.EventsMetaData.IS_ALL_DAY,
-				EventsProvider.EMetaData.EventsMetaData.TIME_START_UTC_MILLISECONDS,
-				EventsProvider.EMetaData.EventsMetaData.TIME_END_UTC_MILLISECONDS,
-				EventsProvider.EMetaData.EventsMetaData.ICON,
-				EventsProvider.EMetaData.EventsMetaData.TITLE,
-				EventsProvider.EMetaData.EventsMetaData.STATUS,
-				EventsProvider.EMetaData.EventsMetaData.IS_OWNER,
-				EventsProvider.EMetaData.EventsIndexesMetaData.DAY };
-		return context.getContentResolver().query(uri, projection1, where, null, sortOrder);
+			String[] projection1 = {
+					EventsProvider.EMetaData.EventsMetaData.E_ID,
+					EventsProvider.EMetaData.EventsMetaData._ID,
+					EventsProvider.EMetaData.EventsMetaData.COLOR,
+					EventsProvider.EMetaData.EventsMetaData.EVENT_DISPLAY_COLOR,
+					EventsProvider.EMetaData.EventsMetaData.IS_ALL_DAY,
+					EventsProvider.EMetaData.EventsMetaData.TIME_START_UTC_MILLISECONDS,
+					EventsProvider.EMetaData.EventsMetaData.TIME_END_UTC_MILLISECONDS,
+					EventsProvider.EMetaData.EventsMetaData.ICON,
+					EventsProvider.EMetaData.EventsMetaData.TITLE,
+					EventsProvider.EMetaData.EventsMetaData.STATUS,
+					EventsProvider.EMetaData.EventsMetaData.IS_OWNER,
+					EventsProvider.EMetaData.EventsIndexesMetaData.DAY };
+			
+			return EventsProvider.mOpenHelper.getReadableDatabase().rawQuery("SELECT events.event_id, events._id, color, " +
+					"event_display_color, is_all_day, time_start_utc, time_end_utc, icon, title, status, is_owner, day " +
+					"FROM events_days LEFT JOIN events USING(event_id) WHERE month = '"+month_index_formatter.format(date.getTime())+"'",
+					null);
 		} else {
 			return context.getContentResolver().query(uri, projection, where, null, sortOrder);
 		}
@@ -620,18 +618,22 @@ public class EventManagement {
 							try {
 								JSONObject e = es.getJSONObject(i);
 								//if(!e.getString("type").contentEquals("v")){
-								if(e.getString("type").contentEquals("v")){
-									//pollTimeArray = e.getString("poll");
-//									if(pollTimeArray != null &&!pollTimeArray.contentEquals("null")){
-//										JSONArray jsonPollTimeArray = new JSONArray(pollTimeArray);
-//									}
-								} else {
-									//pollTimeArray = "null";
-								}
+//								if(e.getString("type").contentEquals("v")){
+//									//pollTimeArray = e.getString("poll");
+////									if(pollTimeArray != null &&!pollTimeArray.contentEquals("null")){
+////										JSONArray jsonPollTimeArray = new JSONArray(pollTimeArray);
+////									}
+//								} else {
+//									//pollTimeArray = "null";
+//								}
 									event = JSONUtils.createEventFromJSON(context, e);
 									if (event != null && !event.isNative()) {
 										event.setUploadedToServer(true);
-										if(event.getType().contentEquals("v") && event.getPoll().contentEquals("null")){
+										if(event.getType().contentEquals("v") || 
+												event.getStatus() == Invited.REJECTED || 
+												(event.getStatus() == Invited.PENDING && 
+												event.getStartCalendar().before(Calendar.getInstance()) 
+												)){
 											
 										} else {
 											values[value] = createCVforEventsTable(event);
@@ -1017,7 +1019,15 @@ public class EventManagement {
 			if (eventTimeChanged) {
 				where = EventsProvider.EMetaData.EventsIndexesMetaData.EVENT_INTERNAL_ID + "=" + internalID;
 				resolver.delete(EventsProvider.EMetaData.EventsIndexesMetaData.CONTENT_URI, where, null);
-				insertEventToDayIndexTable(context, event);
+				if(event.getType().contentEquals("v") || 
+						event.getStatus() == Invited.REJECTED || 
+						(event.getStatus() == Invited.PENDING && 
+						event.getStartCalendar().before(Calendar.getInstance()))){
+					Log.e("Not inserted", event.getTitle() + " id: " + event.getEvent_id());
+				} else {
+					Log.i("Inserted", event.getTitle() + " id: " + event.getEvent_id());
+					insertEventToDayIndexTable(context, event);
+				}
 			}
 		}
 
@@ -1066,9 +1076,9 @@ public class EventManagement {
 		if (event_external_id > 0)
 			ext_id = "" + event_external_id;
 
-		if (event.is_all_day()) { // only one row is inserted
-			insertEventDayIndexRow(context, event_internal_id, ext_id, eventDayStart);
-		} else
+//		if (event.is_all_day()) { // only one row is inserted
+//			insertEventDayIndexRow(context, event_internal_id, ext_id, eventDayStart);
+//		} else
 			while (eventDayStart.before(event.getEndCalendar())) { // rows are
 																	// inserted
 																	// for each

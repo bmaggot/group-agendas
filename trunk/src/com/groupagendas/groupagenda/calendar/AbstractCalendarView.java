@@ -6,6 +6,7 @@ package com.groupagendas.groupagenda.calendar;
 
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Timer;
 import java.util.TreeMap;
 
 import android.app.Activity;
@@ -14,6 +15,7 @@ import android.database.Cursor;
 import android.graphics.Rect;
 import android.os.AsyncTask;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.GestureDetector;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
@@ -35,7 +37,7 @@ import com.groupagendas.groupagenda.utils.TreeMapUtils;
 import com.groupagendas.groupagenda.utils.Utils;
 
 public abstract class AbstractCalendarView extends LinearLayout {
-	protected TreeMap<Calendar, ArrayList<Event>> sortedEvents;
+	protected TreeMap<String, ArrayList<Event>> sortedEvents;
 	protected String[] EventProjectionForDisplay = {
 			EventsProvider.EMetaData.EventsMetaData.E_ID,
 			EventsProvider.EMetaData.EventsMetaData._ID,
@@ -51,6 +53,10 @@ public abstract class AbstractCalendarView extends LinearLayout {
 	protected GestureDetector swipeGestureDetector;
 
 	protected Calendar selectedDate;
+
+	public Calendar getSelectedDate() {
+		return selectedDate;
+	}
 
 	ImageButton prevButton;
 	ImageButton nextButton;
@@ -289,8 +295,11 @@ public abstract class AbstractCalendarView extends LinearLayout {
 		 * @author justinas.marcinka@gmail.com
 		 */
 		protected final Void doInBackground(Void... params) {
+			//TODO JEI TRUKSTA GREICIO UNCOMMENT.
+			try{ Thread.sleep(200); }catch(InterruptedException e){ e.printStackTrace(); }
+			Calendar calendar = Calendar.getInstance();
 			Account account = new Account(context);
-			sortedEvents = new TreeMap<Calendar, ArrayList<Event>>();
+			sortedEvents = new TreeMap<String, ArrayList<Event>>();
 			if (account.getShow_ga_calendars()) {
 				ArrayList<Event> events = getEventProjectionsForDisplay(selectedDate);
 				ArrayList<Event> pollEvents = NavbarActivity.pollsList;
@@ -303,12 +312,16 @@ public abstract class AbstractCalendarView extends LinearLayout {
 							event);
 				}
 			}
+			Log.e("End Loading GA", Calendar.getInstance().getTimeInMillis() - calendar.getTimeInMillis()+"");
+			calendar = Calendar.getInstance();
 			if (account.getShow_native_calendars()) {
 				ArrayList<Event> nativeEvents = queryNativeEvents();
 				for (Event nativeEvent : nativeEvents) {
-					TreeMapUtils.putNewEventPollsIntoTreeMap(context, sortedEvents, nativeEvent);
+					TreeMapUtils.putNativeEventsIntoTreeMap(context, sortedEvents, nativeEvent);
 				}
 			}
+			Log.e("End Loading NATIVE", Calendar.getInstance().getTimeInMillis() - calendar.getTimeInMillis()+"");
+			calendar = Calendar.getInstance();
 			if (account.getShow_birthdays_calendars()) {
 				ArrayList<Event> birthdayEvents = queryBirthdayEvents();
 				for (Event birthdayEvent : birthdayEvents) {
@@ -316,6 +329,7 @@ public abstract class AbstractCalendarView extends LinearLayout {
 							birthdayEvent);
 				}
 			}
+			Log.e("End Loading BIRTHDAYS", Calendar.getInstance().getTimeInMillis() - calendar.getTimeInMillis()+"");
 			/*
 			 * if(account.getShow_ga_calendars()){ sortedEvents =
 			 * TreeMapUtils.sortEvents(context,

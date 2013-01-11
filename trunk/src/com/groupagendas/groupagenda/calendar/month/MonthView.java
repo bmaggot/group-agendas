@@ -6,6 +6,7 @@ import java.util.Calendar;
 import android.content.Context;
 import android.database.Cursor;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.util.TypedValue;
 import android.view.Gravity;
 import android.view.MotionEvent;
@@ -266,6 +267,7 @@ public class MonthView extends AbstractCalendarView {
 			AbstractCalendarView.UpdateEventsInfoTask {
 
 		protected void onPostExecute(Void result) {
+//			Calendar calendar = Calendar.getInstance();
 			updateEventLists();
 			Calendar tmp = (Calendar) firstShownDate.clone();
 			for (MonthDayFrame frame : daysList) {
@@ -276,6 +278,7 @@ public class MonthView extends AbstractCalendarView {
 				tmp.add(Calendar.DATE, 1);
 			}
 			stillLoading = false;
+//			Log.e("onPostExecute", Calendar.getInstance().getTimeInMillis() - calendar.getTimeInMillis()+"");
 		}
 
 		protected void onPreExecute() {

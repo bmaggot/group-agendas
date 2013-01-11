@@ -43,7 +43,7 @@ public class ListnSearchView extends LinearLayout {
 	private LayoutInflater mInflater;
 	private EditText searchField;
 	private SectionListItem[] eventsArray;
-	private TreeMap<Calendar, ArrayList<Event>> sortedEvents;
+	private TreeMap<String, ArrayList<Event>> sortedEvents;
 
 	public ListnSearchView(Context context) {
 		this(context, null);
@@ -240,7 +240,7 @@ public class ListnSearchView extends LinearLayout {
 	private class GetEventsInfoTask extends AsyncTask<Void, Integer, Void> {
 		private Context context = ListnSearchView.this.getContext();
 		protected Calendar listStartDate = Utils.createNewTodayCalendar();
-		protected TreeMap<Calendar, ArrayList<Event>> sortedEvents;
+		protected TreeMap<String, ArrayList<Event>> sortedEvents;
 
 		/**
 		 * @author justinas.marcinka@gmail.com Returns event projection in: id,
