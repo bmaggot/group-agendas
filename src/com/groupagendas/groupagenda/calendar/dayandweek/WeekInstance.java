@@ -33,7 +33,7 @@ public class WeekInstance {
 	}
 
 
-	public void updateEventLists(TreeMap<Calendar, ArrayList<Event>> tm) {
+	public void updateEventLists(TreeMap<String, ArrayList<Event>> tm) {
 		maxAllDayEventsCount = 1;
 		for (int i = 0; i < daysToShow; i++ ){
 			Calendar tmp = (Calendar) shownDate.clone();

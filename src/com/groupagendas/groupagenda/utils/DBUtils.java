@@ -56,7 +56,7 @@ public class DBUtils {
 	
 	public static void readAllUriColumns(Context context, Uri uri){
 		try {
-	        Cursor c = context.getContentResolver().query(Uri.parse("content://com.android.calendar/calendars"), null, null, null, null);
+	        Cursor c = context.getContentResolver().query(uri, null, null, null, null);
 	        if (c != null) {
 	            int num = c.getColumnCount();
 	            for (int i = 0; i < num; ++i) {

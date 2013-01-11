@@ -45,7 +45,7 @@ public class MonthInstance implements OnTouchListener{
 		Utils.setCalendarToFirstDayOfWeek(firstShownDate);
 	}
 
-	public void setNewDate(Calendar date, TreeMap<Calendar, ArrayList<Event>> tm){
+	public void setNewDate(Calendar date, TreeMap<String, ArrayList<Event>> tm){
 		this.date = date;
 		Calendar tmp = Calendar.getInstance();
 		this.todayThisMonth = (tmp.get(Calendar.MONTH) == date.get(Calendar.MONTH) 
@@ -54,7 +54,7 @@ public class MonthInstance implements OnTouchListener{
 		refresh(tm);
 	}
 	
-	private void refresh(TreeMap<Calendar, ArrayList<Event>> tm) {
+	private void refresh(TreeMap<String, ArrayList<Event>> tm) {
 		title.setText(monthNames[date.get(Calendar.MONTH)]);
 		refreshDayCells(tm);
 		refreshWeekNumberCells();
@@ -107,7 +107,7 @@ public class MonthInstance implements OnTouchListener{
 	}
 	
 	
-	private void refreshDayCells(TreeMap<Calendar, ArrayList<Event>> tm) {
+	private void refreshDayCells(TreeMap<String, ArrayList<Event>> tm) {
 		
 		Calendar tmp = (Calendar) date.clone();		
 		//set first few days invisible

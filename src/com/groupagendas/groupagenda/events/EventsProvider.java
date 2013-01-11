@@ -20,7 +20,7 @@ import android.provider.BaseColumns;
 import android.text.TextUtils;
 
 public class EventsProvider extends ContentProvider{
-	private DatabaseHelper mOpenHelper;
+	public static DatabaseHelper mOpenHelper;
 
 	private SimpleDateFormat day_index_formatter = new SimpleDateFormat(EMetaData.EventsIndexesMetaData.DAY_COLUMN_FORMAT);
 
@@ -381,7 +381,6 @@ public class EventsProvider extends ContentProvider{
 			break;
 			
 		case EVENTS_ON_DATE:
-//			qb.setDistinct(true);
 			qb.setProjectionMap(EM1);
 			qb.setTables(EMetaData.EVENT_DAY_INDEX_TABLE + "," +  EMetaData.EVENTS_TABLE);
 			qb.appendWhere(EMetaData.EVENTS_TABLE + "." + EMetaData.EventsMetaData._ID
@@ -466,7 +465,6 @@ public class EventsProvider extends ContentProvider{
 	
 	
 	private Uri insertIndexedEvent(SQLiteDatabase db, ContentValues values) {
-//		System.out.println("TITLE " + values.get("title"));
 		Calendar eventDayStart = Calendar.getInstance();
 		Calendar eventTimeEnd = Calendar.getInstance();
 		
@@ -475,6 +473,7 @@ public class EventsProvider extends ContentProvider{
 		
 		if(millisStart == null || millisEnd == null) return null; //dont insert if crucial parts are missing
 		eventTimeEnd.setTimeInMillis(millisEnd);
+		eventTimeEnd.add(Calendar.MILLISECOND, 1);
 		eventDayStart.setTimeInMillis(millisStart);
 		eventDayStart.set(Calendar.HOUR_OF_DAY, 0);
 		eventDayStart.set(Calendar.MINUTE, 0);
@@ -488,29 +487,22 @@ public class EventsProvider extends ContentProvider{
 		String event_internal_id = "" + rowId;
 		String ext_id = values.getAsString(EMetaData.EventsMetaData.E_ID);
 
-		if (values.getAsString(EMetaData.EventsMetaData.IS_ALL_DAY).equalsIgnoreCase("1")) { 
-			// only one row is inserted
-			insertEventDayIndexRow(db, event_internal_id, ext_id, eventDayStart);
-		} else
-			while (eventDayStart.before(eventTimeEnd)) {
-				// rows are	inserted for each day that event lasts
+			do {
 				insertEventDayIndexRow(db, event_internal_id, ext_id, eventDayStart);
-				eventDayStart.add(Calendar.DATE, 1);
-			}
+				eventDayStart.add(Calendar.DAY_OF_MONTH, 1);
+			} while (eventDayStart.before(eventTimeEnd));
 		return insUri;
 	}
 
 	private void insertEventDayIndexRow(SQLiteDatabase db,
 		String event_internal_id, String ext_id, Calendar eventDayStart) {
 		ContentValues cv = new ContentValues();
-		cv.put(EventsProvider.EMetaData.EventsIndexesMetaData.EVENT_INTERNAL_ID, event_internal_id);
 		cv.put(EventsProvider.EMetaData.EventsIndexesMetaData.EVENT_EXTERNAL_ID, ext_id);
 		Date time = eventDayStart.getTime();
 
 		cv.put(EventsProvider.EMetaData.EventsIndexesMetaData.DAY, day_index_formatter.format(time));
 		cv.put(EventsProvider.EMetaData.EventsIndexesMetaData.MONTH, month_index_formatter.format(time));
-		db.replace(EventsProvider.EMetaData.EVENT_DAY_INDEX_TABLE, null, cv);
-		
+		db.insert(EventsProvider.EMetaData.EVENT_DAY_INDEX_TABLE, null, cv);
 	}
 
 	@Override
@@ -585,7 +577,7 @@ public class EventsProvider extends ContentProvider{
 		return numIns ;
 	}
 	
-	private static class DatabaseHelper extends SQLiteOpenHelper {
+	public static class DatabaseHelper extends SQLiteOpenHelper {
 		
 		public DatabaseHelper(Context context) {
 			super(context, EMetaData.DATABASE_NAME, null, EMetaData.DATABASE_VERSION);
@@ -668,9 +660,22 @@ public class EventsProvider extends ContentProvider{
 					+ EMetaData.EventsIndexesMetaData.EVENT_EXTERNAL_ID + " TEXT ,"
 					+ EMetaData.EventsIndexesMetaData.DAY + " TEXT , "
 					+ EMetaData.EventsIndexesMetaData.MONTH + " TEXT , "
-					+ "PRIMARY KEY (" + EMetaData.EventsIndexesMetaData.EVENT_INTERNAL_ID + ", " + EMetaData.EventsIndexesMetaData.DAY + ") ON CONFLICT IGNORE"
+//					+ "PRIMARY KEY (" + EMetaData.EventsIndexesMetaData.EVENT_INTERNAL_ID + ", " + EMetaData.EventsIndexesMetaData.DAY + ") ON CONFLICT IGNORE"
+					+ "PRIMARY KEY (" + EMetaData.EventsIndexesMetaData.EVENT_INTERNAL_ID + "),"
+					+ "UNIQUE (" + EMetaData.EventsIndexesMetaData.EVENT_INTERNAL_ID + ", " + EMetaData.EventsIndexesMetaData.DAY + ") ON CONFLICT IGNORE"
 					+")";
 			db.execSQL(query);
+			
+			query = "CREATE INDEX events_days_month ON events_days(month)";
+			db.execSQL(query);
+			query = "CREATE INDEX events_days_day ON events_days(day)";
+			db.execSQL(query);
+			query = "CREATE INDEX events_days_event_id ON events_days(event_id)";
+			db.execSQL(query);
+			
+//			EventsProvider.mOpenHelper.getReadableDatabase().rawQuery("CREATE INDEX events_days_month ON events_days(month)", null);
+//			EventsProvider.mOpenHelper.getReadableDatabase().rawQuery("delete from events_days where event_id NOT IN ( SELECT event_id FROM events WHERE status!=0 AND (status!=4 OR (status == 4 AND time_end_utc >= 1357888491405)) AND type != 'v' ) ", null);
+
 			
 //			query = "CREATE TABLE "
 //					+EMetaData.INVITED_TABLE

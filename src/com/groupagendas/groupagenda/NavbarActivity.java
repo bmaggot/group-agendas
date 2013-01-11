@@ -749,7 +749,7 @@ public class NavbarActivity extends FragmentActivity {
 						total = 20;
 						publishProgress(total);
 					} 
-					// NativeCalendarImporter.readCalendar(dm.getmContext());
+					System.gc();
 				case 2:// Load contacts
 					if (DataManagement.networkAvailable)
 						ContactManagement.getContactsFromRemoteDb(NavbarActivity.this, null);
@@ -758,6 +758,7 @@ public class NavbarActivity extends FragmentActivity {
 					loadPhase++;
 					total = 40;
 					publishProgress(total);
+					System.gc();
 				case 3:// Load groups
 					if (DataManagement.networkAvailable)
 						ContactManagement.getGroupsFromRemoteDb(NavbarActivity.this, null);
@@ -766,6 +767,7 @@ public class NavbarActivity extends FragmentActivity {
 					loadPhase++;
 					total = 50;
 					publishProgress(total);
+					System.gc();
 
 				case 4: // Load event templates
 					// if (DataManagement.networkAvailable)
@@ -775,6 +777,7 @@ public class NavbarActivity extends FragmentActivity {
 					loadPhase++;
 					total = 60;
 					publishProgress(total);
+					System.gc();
 
 				case 5: // Load events
 					if (DataManagement.networkAvailable){
@@ -785,6 +788,7 @@ public class NavbarActivity extends FragmentActivity {
 					loadPhase++;
 					total = 80;
 					publishProgress(total);
+					System.gc();
 
 				case 6: // Load chat threads if network available
 					if (DataManagement.networkAvailable) {
@@ -794,6 +798,7 @@ public class NavbarActivity extends FragmentActivity {
 					loadPhase++;
 					total = 100;
 					publishProgress(total);
+					System.gc();
 				}
 			}
 			return null;

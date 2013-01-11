@@ -43,6 +43,7 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.ToggleButton;
+
 import com.groupagendas.groupagenda.C2DMReceiver;
 import com.groupagendas.groupagenda.NavbarActivity;
 import com.groupagendas.groupagenda.R;
@@ -1013,7 +1014,7 @@ public class EventEditActivity extends EventActivity {
 				topText.setText(getResources().getStringArray(R.array.type_labels)[4]);
 			} else if (tmpTopText.equalsIgnoreCase("v")) {
 				topText.setText(getResources().getStringArray(R.array.type_labels)[5]);
-			} else if (tmpTopText.equalsIgnoreCase("native event")) {
+			} else if (tmpTopText.equalsIgnoreCase("native_event")) {
 				topText.setText(getResources().getStringArray(R.array.type_labels)[6]);
 			}
 
@@ -1157,6 +1158,11 @@ public class EventEditActivity extends EventActivity {
 			// START AND END TIME
 			if (result.getStartCalendar() != null) {
 				if (!allDayToggleButton.isChecked()) {
+//					if(TreeMapUtils.lastSelectionDate != null && result.getType().equalsIgnoreCase("native_event")){
+//						result.getStartCalendar().set(Calendar.DAY_OF_MONTH, TreeMapUtils.lastSelectionDate.get(Calendar.DAY_OF_MONTH));
+//						result.getStartCalendar().set(Calendar.MONTH, TreeMapUtils.lastSelectionDate.get(Calendar.MONTH));
+//						result.getStartCalendar().set(Calendar.YEAR, TreeMapUtils.lastSelectionDate.get(Calendar.YEAR));
+//					}
 					startView.setText(dtUtils.formatDateTime(result.getStartCalendar()));
 				} else {
 					startView.setText(dtUtils.formatDate(result.getStartCalendar()));
@@ -1165,6 +1171,11 @@ public class EventEditActivity extends EventActivity {
 			}
 			if (result.getEndCalendar() != null) {
 				if (!allDayToggleButton.isChecked()) {
+//					if(new AbstractCalendarView(this).getSelectedDate() != null  && result.getType().equalsIgnoreCase("native_event")){
+//						result.getEndCalendar().set(Calendar.DAY_OF_MONTH, TreeMapUtils.lastSelectionDate.get(Calendar.DAY_OF_MONTH));
+//						result.getEndCalendar().set(Calendar.MONTH, TreeMapUtils.lastSelectionDate.get(Calendar.MONTH));
+//						result.getEndCalendar().set(Calendar.YEAR, TreeMapUtils.lastSelectionDate.get(Calendar.YEAR));
+//					}
 					endView.setText(dtUtils.formatDateTime(result.getEndCalendar()));
 				} else {
 					endView.setText(dtUtils.formatDate(result.getEndCalendar()));

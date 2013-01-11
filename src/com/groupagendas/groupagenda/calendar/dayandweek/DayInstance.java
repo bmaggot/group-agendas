@@ -24,7 +24,7 @@ public class DayInstance  {
 		private Calendar selectedDate; 
 		private Activity activity;
 		
-		public DayInstance(Context context, Calendar selectedDate, TreeMap<Calendar, ArrayList<Event>> tm){
+		public DayInstance(Context context, Calendar selectedDate, TreeMap<String, ArrayList<Event>> tm){
 			activity = (Activity) context;
 			this.selectedDate = selectedDate;
 			updateEventLists(tm);
@@ -42,7 +42,7 @@ public class DayInstance  {
 		
 
 		
-		private void updateEventLists(TreeMap<Calendar, ArrayList<Event>> tm) {
+		private void updateEventLists(TreeMap<String, ArrayList<Event>> tm) {
 			selectedDate.clear(Calendar.ZONE_OFFSET);
 			selectedDate.setTimeZone(Calendar.getInstance().getTimeZone());
 			ArrayList<Event> events = TreeMapUtils.getEventsFromTreemap(selectedDate, tm);
@@ -87,12 +87,12 @@ public class DayInstance  {
 			this.selectedDate = selectedDate;
 		}
 
-		public void goNext(TreeMap<Calendar, ArrayList<Event>> tm) {
+		public void goNext(TreeMap<String, ArrayList<Event>> tm) {
 			selectedDate.add(Calendar.DATE, 1);
 			updateEventLists(tm);
 		}
 
-		public void goPrev(TreeMap<Calendar, ArrayList<Event>> tm) {
+		public void goPrev(TreeMap<String, ArrayList<Event>> tm) {
 			selectedDate.add(Calendar.DATE, -1);
 			updateEventLists(tm);
 		}

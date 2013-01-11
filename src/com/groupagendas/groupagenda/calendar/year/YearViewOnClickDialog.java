@@ -41,7 +41,7 @@ public class YearViewOnClickDialog extends Dialog implements android.view.View.O
 	 * @param tm 
 	 * @param events Events list for this dialog
 	 */
-	public YearViewOnClickDialog(Context context, Calendar selectedDate, TreeMap<Calendar, ArrayList<Event>> tm) {
+	public YearViewOnClickDialog(Context context, Calendar selectedDate, TreeMap<String, ArrayList<Event>> tm) {
 		this (context, selectedDate, 0, tm);
 		
 		
@@ -56,7 +56,7 @@ public class YearViewOnClickDialog extends Dialog implements android.view.View.O
 	 * @param events Events list for this dialog
 	 */
 	public YearViewOnClickDialog (final Context context, Calendar selectedDate,
-			int styleResId, TreeMap<Calendar, ArrayList<Event>> tm) {
+			int styleResId, TreeMap<String, ArrayList<Event>> tm) {
 		super(context, styleResId);
 		this.context = context;
 		this.setCanceledOnTouchOutside(true);
