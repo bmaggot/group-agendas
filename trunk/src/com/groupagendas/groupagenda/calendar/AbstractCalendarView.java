@@ -296,7 +296,7 @@ public abstract class AbstractCalendarView extends LinearLayout {
 		 */
 		protected final Void doInBackground(Void... params) {
 			//TODO JEI TRUKSTA GREICIO COMMENT.
-			try{ Thread.sleep(200); }catch(InterruptedException e){ e.printStackTrace(); }
+//			try{ Thread.sleep(200); }catch(InterruptedException e){ e.printStackTrace(); }
 			Calendar calendar = Calendar.getInstance();
 			Account account = new Account(context);
 			sortedEvents = new TreeMap<String, ArrayList<Event>>();
