@@ -481,9 +481,12 @@ public class EventManagement {
 					}
 					sb.append(")");
 					String inStringDay = sb.toString();
-					// TODO optimisation by using months column
-					where = EventsProvider.EMetaData.EventsIndexesMetaData.DAY + " IN " + inStringDay;
-
+					return EventsProvider.mOpenHelper.getReadableDatabase().rawQuery("SELECT events.event_id, events._id, color, event_display_color, is_all_day, time_start_utc, " +
+							"time_end_utc, icon, title, status, is_owner, day " +
+							"FROM events_days " +
+							"LEFT JOIN events ON (events_days.event_id = events.event_id) " +
+							"WHERE `day` IN "+inStringDay+" ",
+							null);
 				} else {
 					uri = EventsProvider.EMetaData.EventsMetaData.CONTENT_URI;
 					where = EventsProvider.EMetaData.EventsMetaData.TIME_END_UTC_MILLISECONDS + ">" + date.getTimeInMillis();
@@ -532,36 +535,22 @@ public class EventManagement {
 			uri = EventsProvider.EMetaData.EventsMetaData.CONTENT_URI;
 		}
 
-		String rejectedFilter = " AND " + EventsProvider.EMetaData.EventsMetaData.STATUS + "!=" + Invited.REJECTED;
-
-		String pendingFilter = " AND (" + EventsProvider.EMetaData.EventsMetaData.STATUS + "!=" + Invited.PENDING + " OR ("
-				+ EventsProvider.EMetaData.EventsMetaData.STATUS + " == " + Invited.PENDING + " AND "
-				+ EventsProvider.EMetaData.EventsMetaData.TIME_END_UTC_MILLISECONDS + " >= " + Calendar.getInstance().getTimeInMillis()
-				+ ")" + ")";
-
-		if (filterRejected) {
-			where += rejectedFilter;
-			where += pendingFilter;
-		}
+//		String rejectedFilter = " AND " + EventsProvider.EMetaData.EventsMetaData.STATUS + "!=" + Invited.REJECTED;
+//
+//		String pendingFilter = " AND (" + EventsProvider.EMetaData.EventsMetaData.STATUS + "!=" + Invited.PENDING + " OR ("
+//				+ EventsProvider.EMetaData.EventsMetaData.STATUS + " == " + Invited.PENDING + " AND "
+//				+ EventsProvider.EMetaData.EventsMetaData.TIME_END_UTC_MILLISECONDS + " >= " + Calendar.getInstance().getTimeInMillis()
+//				+ ")" + ")";
+//
+//		if (filterRejected) {
+//			where += rejectedFilter;
+//			where += pendingFilter;
+//		}
 		
 		//for don't get pool
-		where += " AND " + (EventsProvider.EMetaData.EventsMetaData.TYPE + " != 'v'");
+//		where += " AND " + (EventsProvider.EMetaData.EventsMetaData.TYPE + " != 'v'");
 		
-		if(eventTimeMode == TM_EVENTS_ON_GIVEN_MONTH){
-			String[] projection1 = {
-					EventsProvider.EMetaData.EventsMetaData.E_ID,
-					EventsProvider.EMetaData.EventsMetaData._ID,
-					EventsProvider.EMetaData.EventsMetaData.COLOR,
-					EventsProvider.EMetaData.EventsMetaData.EVENT_DISPLAY_COLOR,
-					EventsProvider.EMetaData.EventsMetaData.IS_ALL_DAY,
-					EventsProvider.EMetaData.EventsMetaData.TIME_START_UTC_MILLISECONDS,
-					EventsProvider.EMetaData.EventsMetaData.TIME_END_UTC_MILLISECONDS,
-					EventsProvider.EMetaData.EventsMetaData.ICON,
-					EventsProvider.EMetaData.EventsMetaData.TITLE,
-					EventsProvider.EMetaData.EventsMetaData.STATUS,
-					EventsProvider.EMetaData.EventsMetaData.IS_OWNER,
-					EventsProvider.EMetaData.EventsIndexesMetaData.DAY };
-			
+		if(eventTimeMode == TM_EVENTS_ON_GIVEN_MONTH){			
 			return EventsProvider.mOpenHelper.getReadableDatabase().rawQuery("SELECT events.event_id, events._id, color, " +
 					"event_display_color, is_all_day, time_start_utc, time_end_utc, icon, title, status, is_owner, day " +
 					"FROM events_days LEFT JOIN events USING(event_id) WHERE month = '"+month_index_formatter.format(date.getTime())+"'",
