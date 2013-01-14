@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -58,6 +59,7 @@ public class ContactManagement {
 	 */
 	// TODO MESKAI: naudoti metoda JSONUtils'uose kurti kontakta is JSON'o
 	public static void getContactsFromRemoteDb(Context context, HashSet<Integer> groupIds) {
+		Calendar start = Calendar.getInstance();
 		boolean success = false;
 		String error = null;
 		Account account = new Account(context);
@@ -277,7 +279,7 @@ public class ContactManagement {
 		} catch (Exception ex) {
 			Log.e("getContactsFromRemoteDb(contactIds)", ex.getMessage());
 		}
-
+		System.out.println("Contacts insert time:" + (Calendar.getInstance().getTimeInMillis() - start.getTimeInMillis()));
 		Data.setLoadContactsData(false);
 	}
 

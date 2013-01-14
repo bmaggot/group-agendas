@@ -655,7 +655,7 @@ public class EventManagement {
 							context.getContentResolver().bulkInsert(EventsProvider.EMetaData.INDEXED_EVENTS_URI, values2);
 						}
 						Calendar end = Calendar.getInstance();
-						System.out.println("insert time:" + (end.getTimeInMillis() - start.getTimeInMillis()));
+						System.out.println("Events insert time:" + (end.getTimeInMillis() - start.getTimeInMillis()));
 					}
 				}
 			}

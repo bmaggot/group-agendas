@@ -44,6 +44,7 @@ public class ListnSearchView extends LinearLayout {
 	private EditText searchField;
 	private SectionListItem[] eventsArray;
 	private TreeMap<String, ArrayList<Event>> sortedEvents;
+	public static final SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
 
 	public ListnSearchView(Context context) {
 		this(context, null);
@@ -299,18 +300,21 @@ public class ListnSearchView extends LinearLayout {
 			SimpleDateFormat sdf = new SimpleDateFormat("E, d MMMMM yyyy", getResources().getConfiguration().locale);
 			
 			ArrayList<SectionListItem> list = new ArrayList<SectionListItem>();
-			
 			if (!sortedEvents.isEmpty())
-				while (!date.after(sortedEvents.lastKey())) {
+				do {
 					section = sdf.format(date.getTime());
 
 					for (Event e : TreeMapUtils.getEventsFromTreemap(date, sortedEvents)) {
 						list.add(new SectionListItem(e, section));
 					}
-
-					date.add(Calendar.DATE, 1);
-				}
+					
+					date.add(Calendar.DAY_OF_MONTH, 1);
+				} while (!formatter.format(date.getTime()).equals(sortedEvents.lastKey()));
 			
+			section = sdf.format(date.getTime());
+			for (Event e : TreeMapUtils.getEventsFromTreemap(date, sortedEvents)) {
+				list.add(new SectionListItem(e, section));
+			}
 			eventsArray = list.toArray(new SectionListItem[list.size()]);
 		}
 
