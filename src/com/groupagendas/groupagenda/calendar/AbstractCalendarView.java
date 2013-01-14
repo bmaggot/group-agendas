@@ -6,7 +6,6 @@ package com.groupagendas.groupagenda.calendar;
 
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Timer;
 import java.util.TreeMap;
 
 import android.app.Activity;

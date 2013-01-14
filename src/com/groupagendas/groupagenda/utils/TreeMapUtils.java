@@ -80,7 +80,7 @@ public class TreeMapUtils {
 	}
 
 	public static void putEventIntoTreeMap(Context context, TreeMap<String, ArrayList<Event>> tm,Event event) {
-		String date_format = SERVER_TIMESTAMP_FORMAT;
+//		String date_format = SERVER_TIMESTAMP_FORMAT;
 		Calendar event_start = (Calendar) event.getStartCalendar().clone();
 		String dayStr = formatter.format(event_start.getTime());
 		tm = putValueIntoTreeMap(tm, dayStr, event);

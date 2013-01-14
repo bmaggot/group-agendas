@@ -12,7 +12,6 @@ import android.database.Cursor;
 import android.net.Uri;
 import android.os.Build;
 import android.text.format.DateUtils;
-import android.util.Log;
 
 import com.groupagendas.groupagenda.R;
 import com.groupagendas.groupagenda.account.Account;
