@@ -80,10 +80,12 @@ public class NativeCalendarReader {
 						new String[] { TITLE, DESCRIPTION, BEGIN, END, EVENT_ID, ALLDAY, EVENTLOCATION, DURATION, RRULE, ID}, null, null, null);
 
 		ArrayList<Event> nativeEvents = new ArrayList<Event>();
-		while (eventCursor.moveToNext()) {
-			nativeEvents.add(makeNativeEventFromCursor(context, eventCursor));
+		if(eventCursor != null){
+			while (eventCursor.moveToNext()) {
+				nativeEvents.add(makeNativeEventFromCursor(context, eventCursor));
+			}
+			eventCursor.close();
 		}
-		eventCursor.close();
 		return nativeEvents;
 	}
 
