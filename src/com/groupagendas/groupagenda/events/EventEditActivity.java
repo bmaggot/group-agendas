@@ -92,32 +92,32 @@ public class EventEditActivity extends EventActivity {
 	private TextView topText;
 	private Button deleteButton;
 
-//	private LinearLayout reminderBlock;
-//	private TextView setReminderTrigger;
+	// private LinearLayout reminderBlock;
+	// private TextView setReminderTrigger;
 
-//	private LinearLayout reminder1container;
-//	private LinearLayout reminder2container;
-//	private LinearLayout reminder3container;
-//	private EditText reminder1;
-//	private EditText reminder2;
-//	private EditText reminder3;
+	// private LinearLayout reminder1container;
+	// private LinearLayout reminder2container;
+	// private LinearLayout reminder3container;
+	// private EditText reminder1;
+	// private EditText reminder2;
+	// private EditText reminder3;
 
-//	private LinearLayout alarmBlock;
-//	private TextView setAlarmTrigger;
+	// private LinearLayout alarmBlock;
+	// private TextView setAlarmTrigger;
 	private TextView creatorNameTextView;
-//	private LinearLayout alarm1container;
-//	private LinearLayout alarm2container;
-//	private LinearLayout alarm3container;
-//	private EditText alarm1;
-//	private EditText alarm2;
-//	private EditText alarm3;
+	// private LinearLayout alarm1container;
+	// private LinearLayout alarm2container;
+	// private LinearLayout alarm3container;
+	// private EditText alarm1;
+	// private EditText alarm2;
+	// private EditText alarm3;
 
 	private long event_internal_id;
 	private long event_external_id;
 
 	protected final static int DELETE_DIALOG = 1;
-//	private boolean remindersShown = false;
-//	private boolean alarmsShown = false;
+	// private boolean remindersShown = false;
+	// private boolean alarmsShown = false;
 	private boolean isInvited = false;
 	// private boolean eventEdited = false;
 	private boolean changesMade = false;
@@ -544,146 +544,91 @@ public class EventEditActivity extends EventActivity {
 		chatMessengerButton = (Button) findViewById(R.id.messenger_button);
 
 		// REMINDERS PANEL
-/*		reminderBlock = (LinearLayout) findViewById(R.id.reminder_block);
-		setReminderTrigger = (TextView) findViewById(R.id.setReminderTrigger);
-		// TODO alarms eventedit turn on when ready.
-		setReminderTrigger.setVisibility(View.GONE);
-		setReminderTrigger.setOnClickListener(new OnClickListener() {
-
-			@Override
-			public void onClick(View v) {
-				if (remindersShown) {
-					remindersShown = false;
-					reminderBlock.setVisibility(View.GONE);
-				} else {
-					remindersShown = true;
-					reminderBlock.setVisibility(View.VISIBLE);
-				}
-			}
-		});
-		// REMINDER1
-		reminder1container = (LinearLayout) findViewById(R.id.reminder_container1);
-		reminder1 = (EditText) findViewById(R.id.reminder1);
-		reminder1container.setOnClickListener(new OnClickListener() {
-
-			@Override
-			public void onClick(View v) {
-				showDateTimeDialog(reminder1, REMINDER1);
-			}
-		});
-		reminder1.setOnClickListener(new OnClickListener() {
-
-			@Override
-			public void onClick(View v) {
-				showDateTimeDialog(reminder1, REMINDER1);
-			}
-		});
-		// REMINDER2
-		reminder2container = (LinearLayout) findViewById(R.id.reminder_container2);
-		reminder2 = (EditText) findViewById(R.id.reminder2);
-		reminder2container.setOnClickListener(new OnClickListener() {
-
-			@Override
-			public void onClick(View v) {
-				showDateTimeDialog(reminder2, REMINDER2);
-			}
-		});
-		reminder2.setOnClickListener(new OnClickListener() {
-
-			@Override
-			public void onClick(View v) {
-				showDateTimeDialog(reminder2, REMINDER2);
-			}
-		});
-		// REMINDER3
-		reminder3container = (LinearLayout) findViewById(R.id.reminder_container3);
-		reminder3 = (EditText) findViewById(R.id.reminder3);
-		reminder3container.setOnClickListener(new OnClickListener() {
-
-			@Override
-			public void onClick(View v) {
-				showDateTimeDialog(reminder3, REMINDER3);
-			}
-		});
-		reminder3.setOnClickListener(new OnClickListener() {
-
-			@Override
-			public void onClick(View v) {
-				showDateTimeDialog(reminder3, REMINDER3);
-			}
-		});
-
-		// ALARMS
-		alarmBlock = (LinearLayout) findViewById(R.id.alarm_block);
-		setAlarmTrigger = (TextView) findViewById(R.id.setAlarmTrigger);
-		// TODO alarms eventedit turn on when ready.
-		setAlarmTrigger.setVisibility(View.GONE);
-		setAlarmTrigger.setOnClickListener(new OnClickListener() {
-			@Override
-			public void onClick(View v) {
-				if (alarmsShown) {
-					alarmsShown = false;
-					alarmBlock.setVisibility(View.GONE);
-				} else {
-					alarmsShown = true;
-					alarmBlock.setVisibility(View.VISIBLE);
-				}
-			}
-		});
-
-		// ALARM1
-		alarm1 = (EditText) findViewById(R.id.alarm1);
-		alarm1container = (LinearLayout) findViewById(R.id.alarm_container1);
-		alarm1container.setOnClickListener(new OnClickListener() {
-
-			@Override
-			public void onClick(View v) {
-				showDateTimeDialog(alarm1, ALARM1);
-			}
-		});
-		alarm1.setOnClickListener(new OnClickListener() {
-
-			@Override
-			public void onClick(View v) {
-				showDateTimeDialog(alarm1, ALARM1);
-			}
-		});
-
-		// ALARM2
-		alarm2container = (LinearLayout) findViewById(R.id.alarm_container2);
-		alarm2 = (EditText) findViewById(R.id.alarm2);
-		alarm2container.setOnClickListener(new OnClickListener() {
-
-			@Override
-			public void onClick(View v) {
-				showDateTimeDialog(alarm2, ALARM2);
-			}
-		});
-		alarm2.setOnClickListener(new OnClickListener() {
-
-			@Override
-			public void onClick(View v) {
-				showDateTimeDialog(alarm2, ALARM2);
-			}
-		});
-
-		// ALARM3
-		alarm3container = (LinearLayout) findViewById(R.id.alarm_container3);
-		alarm3 = (EditText) findViewById(R.id.alarm3);
-		alarm3container.setOnClickListener(new OnClickListener() {
-
-			@Override
-			public void onClick(View v) {
-				showDateTimeDialog(alarm3, ALARM3);
-			}
-		});
-		alarm3.setOnClickListener(new OnClickListener() {
-
-			@Override
-			public void onClick(View v) {
-				showDateTimeDialog(alarm3, ALARM3);
-			}
-		}); */
+		/*
+		 * reminderBlock = (LinearLayout) findViewById(R.id.reminder_block);
+		 * setReminderTrigger = (TextView)
+		 * findViewById(R.id.setReminderTrigger); // TODO alarms eventedit turn
+		 * on when ready. setReminderTrigger.setVisibility(View.GONE);
+		 * setReminderTrigger.setOnClickListener(new OnClickListener() {
+		 * 
+		 * @Override public void onClick(View v) { if (remindersShown) {
+		 * remindersShown = false; reminderBlock.setVisibility(View.GONE); }
+		 * else { remindersShown = true;
+		 * reminderBlock.setVisibility(View.VISIBLE); } } }); // REMINDER1
+		 * reminder1container = (LinearLayout)
+		 * findViewById(R.id.reminder_container1); reminder1 = (EditText)
+		 * findViewById(R.id.reminder1);
+		 * reminder1container.setOnClickListener(new OnClickListener() {
+		 * 
+		 * @Override public void onClick(View v) { showDateTimeDialog(reminder1,
+		 * REMINDER1); } }); reminder1.setOnClickListener(new OnClickListener()
+		 * {
+		 * 
+		 * @Override public void onClick(View v) { showDateTimeDialog(reminder1,
+		 * REMINDER1); } }); // REMINDER2 reminder2container = (LinearLayout)
+		 * findViewById(R.id.reminder_container2); reminder2 = (EditText)
+		 * findViewById(R.id.reminder2);
+		 * reminder2container.setOnClickListener(new OnClickListener() {
+		 * 
+		 * @Override public void onClick(View v) { showDateTimeDialog(reminder2,
+		 * REMINDER2); } }); reminder2.setOnClickListener(new OnClickListener()
+		 * {
+		 * 
+		 * @Override public void onClick(View v) { showDateTimeDialog(reminder2,
+		 * REMINDER2); } }); // REMINDER3 reminder3container = (LinearLayout)
+		 * findViewById(R.id.reminder_container3); reminder3 = (EditText)
+		 * findViewById(R.id.reminder3);
+		 * reminder3container.setOnClickListener(new OnClickListener() {
+		 * 
+		 * @Override public void onClick(View v) { showDateTimeDialog(reminder3,
+		 * REMINDER3); } }); reminder3.setOnClickListener(new OnClickListener()
+		 * {
+		 * 
+		 * @Override public void onClick(View v) { showDateTimeDialog(reminder3,
+		 * REMINDER3); } });
+		 * 
+		 * // ALARMS alarmBlock = (LinearLayout) findViewById(R.id.alarm_block);
+		 * setAlarmTrigger = (TextView) findViewById(R.id.setAlarmTrigger); //
+		 * TODO alarms eventedit turn on when ready.
+		 * setAlarmTrigger.setVisibility(View.GONE);
+		 * setAlarmTrigger.setOnClickListener(new OnClickListener() {
+		 * 
+		 * @Override public void onClick(View v) { if (alarmsShown) {
+		 * alarmsShown = false; alarmBlock.setVisibility(View.GONE); } else {
+		 * alarmsShown = true; alarmBlock.setVisibility(View.VISIBLE); } } });
+		 * 
+		 * // ALARM1 alarm1 = (EditText) findViewById(R.id.alarm1);
+		 * alarm1container = (LinearLayout) findViewById(R.id.alarm_container1);
+		 * alarm1container.setOnClickListener(new OnClickListener() {
+		 * 
+		 * @Override public void onClick(View v) { showDateTimeDialog(alarm1,
+		 * ALARM1); } }); alarm1.setOnClickListener(new OnClickListener() {
+		 * 
+		 * @Override public void onClick(View v) { showDateTimeDialog(alarm1,
+		 * ALARM1); } });
+		 * 
+		 * // ALARM2 alarm2container = (LinearLayout)
+		 * findViewById(R.id.alarm_container2); alarm2 = (EditText)
+		 * findViewById(R.id.alarm2); alarm2container.setOnClickListener(new
+		 * OnClickListener() {
+		 * 
+		 * @Override public void onClick(View v) { showDateTimeDialog(alarm2,
+		 * ALARM2); } }); alarm2.setOnClickListener(new OnClickListener() {
+		 * 
+		 * @Override public void onClick(View v) { showDateTimeDialog(alarm2,
+		 * ALARM2); } });
+		 * 
+		 * // ALARM3 alarm3container = (LinearLayout)
+		 * findViewById(R.id.alarm_container3); alarm3 = (EditText)
+		 * findViewById(R.id.alarm3); alarm3container.setOnClickListener(new
+		 * OnClickListener() {
+		 * 
+		 * @Override public void onClick(View v) { showDateTimeDialog(alarm3,
+		 * ALARM3); } }); alarm3.setOnClickListener(new OnClickListener() {
+		 * 
+		 * @Override public void onClick(View v) { showDateTimeDialog(alarm3,
+		 * ALARM3); } });
+		 */
 
 		// INVITES SECTION
 		response_button_yes = (TextView) findViewById(R.id.button_yes);
@@ -838,12 +783,15 @@ public class EventEditActivity extends EventActivity {
 				to_reject_poll = false;
 				to_rejoin_poll = false;
 
+				descView.setEnabled(false);
+				inviteButton.setEnabled(false);
+
 				if (event.getStatus() == Invited.REJECTED) {
 					reject_poll.setVisibility(View.INVISIBLE);
 					poll_status_text.setText(getString(R.string.rejected));
 				} else {
 					rejoin_poll.setVisibility(View.INVISIBLE);
-					poll_status_text.setText(getString(R.string.joined));					
+					poll_status_text.setText(getString(R.string.joined));
 				}
 
 				reject_poll.setOnClickListener(new OnClickListener() {
@@ -877,19 +825,7 @@ public class EventEditActivity extends EventActivity {
 
 				LayoutInflater mInflater = LayoutInflater.from(EventEditActivity.this);
 
-				String jsonArraySelectedTime = event.getSelectedEventPollsTime();
-				selectedPollTime = new ArrayList<JSONObject>();
-				try {
-					if (jsonArraySelectedTime != null && !jsonArraySelectedTime.contentEquals("null")) {
-						final JSONArray jsonArray = new JSONArray(jsonArraySelectedTime);
-						for (int i = 0; i < jsonArray.length(); i++) {
-							JSONObject pollThread = jsonArray.getJSONObject(i);
-							selectedPollTime.add(pollThread);
-						}
-					}
-				} catch (JSONException e) {
-					e.printStackTrace();
-				}
+				selectedPollTime = getSelectedEventPollTimes(event);
 
 				String jsonArrayString = event.getPoll();
 				try {
@@ -902,11 +838,6 @@ public class EventEditActivity extends EventActivity {
 							allEventPolls.add(pollThread);
 							final View view = mInflater.inflate(R.layout.poll_thread, null);
 							final CheckBox selectedTime = (CheckBox) view.findViewById(R.id.selectedTime);
-
-							// if(pollThread.getString("response").contentEquals("1")){
-							// NavbarActivity.selectedPollTime.add(pollThread);
-							// //selectedTime.setChecked(true);
-							// }
 
 							LinearLayout backgr = (LinearLayout) view.findViewById(R.id.pollTimeBlock);
 
@@ -934,9 +865,9 @@ public class EventEditActivity extends EventActivity {
 							final Calendar tempCal = Utils.stringToCalendar(EventEditActivity.this, temp,
 									DataManagement.SERVER_TIMESTAMP_FORMAT);
 							startTime.setText(dateTimeUtils.formatDate(tempCal) + " " + dateTimeUtils.formatTime(tempCal));
-							
+
 							Calendar nowCal = Calendar.getInstance();
-							if(tempCal.getTimeInMillis() < nowCal.getTimeInMillis()){
+							if (tempCal.getTimeInMillis() < nowCal.getTimeInMillis()) {
 								selectedTime.setEnabled(false);
 							}
 
@@ -1134,12 +1065,12 @@ public class EventEditActivity extends EventActivity {
 
 			}
 			if (event.isNative()) {
-//				alarm1container.setEnabled(false);
-//				alarm2container.setEnabled(false);
-//				alarm3container.setEnabled(false);
-//				reminder1container.setEnabled(false);
-//				reminder2container.setEnabled(false);
-//				reminder3container.setEnabled(false);
+				// alarm1container.setEnabled(false);
+				// alarm2container.setEnabled(false);
+				// alarm3container.setEnabled(false);
+				// reminder1container.setEnabled(false);
+				// reminder2container.setEnabled(false);
+				// reminder3container.setEnabled(false);
 				allDayToggleButton.setEnabled(false);
 				deleteButton.setVisibility(View.INVISIBLE);
 			}
@@ -1158,11 +1089,15 @@ public class EventEditActivity extends EventActivity {
 			// START AND END TIME
 			if (result.getStartCalendar() != null) {
 				if (!allDayToggleButton.isChecked()) {
-//					if(TreeMapUtils.lastSelectionDate != null && result.getType().equalsIgnoreCase("native_event")){
-//						result.getStartCalendar().set(Calendar.DAY_OF_MONTH, TreeMapUtils.lastSelectionDate.get(Calendar.DAY_OF_MONTH));
-//						result.getStartCalendar().set(Calendar.MONTH, TreeMapUtils.lastSelectionDate.get(Calendar.MONTH));
-//						result.getStartCalendar().set(Calendar.YEAR, TreeMapUtils.lastSelectionDate.get(Calendar.YEAR));
-//					}
+					// if(TreeMapUtils.lastSelectionDate != null &&
+					// result.getType().equalsIgnoreCase("native_event")){
+					// result.getStartCalendar().set(Calendar.DAY_OF_MONTH,
+					// TreeMapUtils.lastSelectionDate.get(Calendar.DAY_OF_MONTH));
+					// result.getStartCalendar().set(Calendar.MONTH,
+					// TreeMapUtils.lastSelectionDate.get(Calendar.MONTH));
+					// result.getStartCalendar().set(Calendar.YEAR,
+					// TreeMapUtils.lastSelectionDate.get(Calendar.YEAR));
+					// }
 					startView.setText(dtUtils.formatDateTime(result.getStartCalendar()));
 				} else {
 					startView.setText(dtUtils.formatDate(result.getStartCalendar()));
@@ -1171,11 +1106,16 @@ public class EventEditActivity extends EventActivity {
 			}
 			if (result.getEndCalendar() != null) {
 				if (!allDayToggleButton.isChecked()) {
-//					if(new AbstractCalendarView(this).getSelectedDate() != null  && result.getType().equalsIgnoreCase("native_event")){
-//						result.getEndCalendar().set(Calendar.DAY_OF_MONTH, TreeMapUtils.lastSelectionDate.get(Calendar.DAY_OF_MONTH));
-//						result.getEndCalendar().set(Calendar.MONTH, TreeMapUtils.lastSelectionDate.get(Calendar.MONTH));
-//						result.getEndCalendar().set(Calendar.YEAR, TreeMapUtils.lastSelectionDate.get(Calendar.YEAR));
-//					}
+					// if(new AbstractCalendarView(this).getSelectedDate() !=
+					// null &&
+					// result.getType().equalsIgnoreCase("native_event")){
+					// result.getEndCalendar().set(Calendar.DAY_OF_MONTH,
+					// TreeMapUtils.lastSelectionDate.get(Calendar.DAY_OF_MONTH));
+					// result.getEndCalendar().set(Calendar.MONTH,
+					// TreeMapUtils.lastSelectionDate.get(Calendar.MONTH));
+					// result.getEndCalendar().set(Calendar.YEAR,
+					// TreeMapUtils.lastSelectionDate.get(Calendar.YEAR));
+					// }
 					endView.setText(dtUtils.formatDateTime(result.getEndCalendar()));
 				} else {
 					endView.setText(dtUtils.formatDate(result.getEndCalendar()));
@@ -1302,36 +1242,36 @@ public class EventEditActivity extends EventActivity {
 			} else {
 				chatMessengerButton.setVisibility(View.INVISIBLE);
 			}
-//			if (result.getReminder1() != null) {
-//				reminder1.setText(dtUtils.formatDateTime(result.getReminder1()));
-//			} else {
-//				reminder1.setText("");
-//			}
-//			if (result.getReminder2() != null) {
-//				reminder2.setText(dtUtils.formatDateTime(result.getReminder2()));
-//			} else {
-//				reminder2.setText("");
-//			}
-//			if (result.getReminder3() != null) {
-//				reminder3.setText(dtUtils.formatDateTime(result.getReminder3()));
-//			} else {
-//				reminder3.setText("");
-//			}
-//			if (result.getAlarm1() != null) {
-//				alarm1.setText(dtUtils.formatDateTime(result.getAlarm1()));
-//			} else {
-//				alarm1.setText("");
-//			}
-//			if (result.getAlarm2() != null) {
-//				alarm2.setText(dtUtils.formatDateTime(result.getAlarm2()));
-//			} else {
-//				alarm2.setText("");
-//			}
-//			if (result.getAlarm3() != null) {
-//				alarm3.setText(dtUtils.formatDateTime(result.getAlarm3()));
-//			} else {
-//				alarm3.setText("");
-//			}
+			// if (result.getReminder1() != null) {
+			// reminder1.setText(dtUtils.formatDateTime(result.getReminder1()));
+			// } else {
+			// reminder1.setText("");
+			// }
+			// if (result.getReminder2() != null) {
+			// reminder2.setText(dtUtils.formatDateTime(result.getReminder2()));
+			// } else {
+			// reminder2.setText("");
+			// }
+			// if (result.getReminder3() != null) {
+			// reminder3.setText(dtUtils.formatDateTime(result.getReminder3()));
+			// } else {
+			// reminder3.setText("");
+			// }
+			// if (result.getAlarm1() != null) {
+			// alarm1.setText(dtUtils.formatDateTime(result.getAlarm1()));
+			// } else {
+			// alarm1.setText("");
+			// }
+			// if (result.getAlarm2() != null) {
+			// alarm2.setText(dtUtils.formatDateTime(result.getAlarm2()));
+			// } else {
+			// alarm2.setText("");
+			// }
+			// if (result.getAlarm3() != null) {
+			// alarm3.setText(dtUtils.formatDateTime(result.getAlarm3()));
+			// } else {
+			// alarm3.setText("");
+			// }
 
 			if (!event.isNative()) {
 				showInvitesView(EventEditActivity.this);
@@ -1390,79 +1330,40 @@ public class EventEditActivity extends EventActivity {
 		@Override
 		protected Boolean doInBackground(Event... events) {
 			if (event.getType().contentEquals("v")) {
-
-//				for (int i = 0; i < eventPollSize; i++) {
-//					ArrayList<Event> list2 = NavbarActivity.pollsList;
-//					for (Event tempEvent : list2) {
-//						if (tempEvent.getEvent_id() == event.getEvent_id()) {
-//							NavbarActivity.pollsList.remove(tempEvent);
-//							break;
-//						}
-//					}
-//				}
 				deleteEventFromPollList(event);
 
-				if(poll_status != Invited.REJECTED){
-					try {
-						ArrayList<JSONObject> listToAdd = selectedPollTime;
-						if (!listToAdd.isEmpty()) {
-							for (JSONObject e : listToAdd) {
-								event = EventManagement.getEventFromLocalDb(EventEditActivity.this, event.getEvent_id(),
-										EventManagement.ID_EXTERNAL);
-								event.setStartCalendar(Utils.stringToCalendar(EventEditActivity.this, e.getString("start"),
-										DataManagement.SERVER_TIMESTAMP_FORMAT));
-								event.setEndCalendar(Utils.stringToCalendar(EventEditActivity.this, e.getString("end"),
-										DataManagement.SERVER_TIMESTAMP_FORMAT));
-								String jsonArrayString = event.getPoll();
-								if (jsonArrayString != null && !jsonArrayString.contentEquals("null")) {
-									JSONArray jsonArray = new JSONArray(jsonArrayString);
-									for (int i = 0; i < jsonArray.length(); i++) {
-										JSONObject e2 = jsonArray.getJSONObject(i);
-										if (e.getString("timestamp_start_utc").contentEquals(e2.getString("timestamp_start_utc"))
-												&& e.getString("id").contentEquals(e2.getString("id"))) {
-											NavbarActivity.pollsList.add(event);
-											break;
-										}
-									}
-								}
-							}
-						} else {
-//							String jsonArrayString = event.getPoll();
-//							if (jsonArrayString != null && !jsonArrayString.contentEquals("null")) {
-//								JSONArray jsonArray = new JSONArray(jsonArrayString);
-//								for (int i = 0; i < jsonArray.length(); i++) {
-//									JSONObject e = jsonArray.getJSONObject(i);
-//									event = EventManagement.getEventFromLocalDb(EventEditActivity.this, event.getEvent_id(),
-//											EventManagement.ID_EXTERNAL);
-//									event.setStartCalendar(Utils.stringToCalendar(EventEditActivity.this, e.getString("start"),
-//											DataManagement.SERVER_TIMESTAMP_FORMAT));
-//									event.setEndCalendar(Utils.stringToCalendar(EventEditActivity.this, e.getString("end"),
-//											DataManagement.SERVER_TIMESTAMP_FORMAT));
-//									NavbarActivity.pollsList.add(event);
-//								}
-//							}
-							addEventToPollList(EventEditActivity.this, event);
-						}
-	
-					} catch (JSONException e) {
-						e.printStackTrace();
+				if (poll_status != Invited.REJECTED) {
+					ArrayList<JSONObject> listToAdd = selectedPollTime;
+					if (!listToAdd.isEmpty()) {
+						addSelectedEventToPollList(EventEditActivity.this, event, selectedPollTime);
+					} else {
+						addEventToPollList(EventEditActivity.this, event);
 					}
-				}				
+				}
 
 				event.setStatus(poll_status);
 				event.setSelectedEventPollsTime("" + selectedPollTime);
+//				if (DataManagement.networkAvailable) {
+					if (!to_reject_poll && !to_rejoin_poll) {
+//						event.setUploadedToServer(EventManagement.votePoll(getApplicationContext(), "" + event.getEvent_id(),
+//								allEventPolls, "0"));
+//						event.setUploadedToServer(EventManagement.votePoll(getApplicationContext(), "" + event.getEvent_id(),
+//								selectedPollTime, "1"));
+						EventManagement.votePoll(getApplicationContext(), "" + event.getEvent_id(), allEventPolls, "0");
+						EventManagement.votePoll(getApplicationContext(), "" + event.getEvent_id(), selectedPollTime, "1");
+					} else {
+						if (to_reject_poll) {
+							EventManagement.rejectPoll(EventEditActivity.this, "" + event.getEvent_id());
+						}
+						if (to_rejoin_poll) {
+							EventManagement.rejoinPoll(EventEditActivity.this, "" + event.getEvent_id());
+						}
+					}
+//				} else {
+//					event.setUploadedToServer(false);
+//				}
+
 				EventManagement.updateEventInLocalDb(EventEditActivity.this, event);
-				if(!to_reject_poll && !to_rejoin_poll){
-					EventManagement.votePoll(getApplicationContext(), "" + event.getEvent_id(), allEventPolls, "0");
-					EventManagement.votePoll(getApplicationContext(), "" + event.getEvent_id(), selectedPollTime, "1");
-				} else {
-					if(to_reject_poll){
-						EventManagement.rejectPoll(EventEditActivity.this, ""+event.getEvent_id());
-					}
-					if(to_rejoin_poll){
-						EventManagement.rejoinPoll(EventEditActivity.this, ""+event.getEvent_id());
-					}
-				}
 
 				return true;
 			} else {
@@ -1545,6 +1446,9 @@ public class EventEditActivity extends EventActivity {
 		@Override
 		protected Boolean doInBackground(Void... type) {
 			if (event_internal_id > 0) {
+				if (event.getType().contentEquals("v")) {
+					deleteEventFromPollList(event);
+				}
 				EventManagement.deleteEvent(EventEditActivity.this, event);
 				return true;
 			}
@@ -1734,8 +1638,8 @@ public class EventEditActivity extends EventActivity {
 	public void showToast(String msg, int length) {
 		Toast.makeText(this, msg, length).show();
 	}
-	
-	public static void deleteEventFromPollList(Event event){
+
+	public static void deleteEventFromPollList(Event event) {
 		String jsonArrayString = event.getPoll();
 		try {
 			if (jsonArrayString != null && !jsonArrayString.contentEquals("null")) {
@@ -1743,6 +1647,9 @@ public class EventEditActivity extends EventActivity {
 				int eventPollSize = jsonArray.length();
 				for (int i = 0; i < eventPollSize; i++) {
 					ArrayList<Event> list2 = NavbarActivity.pollsList;
+					if (list2 == null) {
+						break;
+					}
 					for (Event tempEvent : list2) {
 						if (tempEvent.getEvent_id() == event.getEvent_id()) {
 							NavbarActivity.pollsList.remove(tempEvent);
@@ -1755,26 +1662,91 @@ public class EventEditActivity extends EventActivity {
 			e.printStackTrace();
 		}
 	}
-	
-	public static void addEventToPollList(Context context, Event event){
+
+	public static void addEventToPollList(Context context, Event event) {
 		String jsonArrayString = event.getPoll();
+		if (NavbarActivity.pollsList == null) {
+			NavbarActivity.pollsList = new ArrayList<Event>();
+		}
 		try {
 			if (jsonArrayString != null && !jsonArrayString.contentEquals("null")) {
 				JSONArray jsonArray = new JSONArray(jsonArrayString);
 				for (int i = 0; i < jsonArray.length(); i++) {
 					JSONObject e = jsonArray.getJSONObject(i);
-					event = EventManagement.getEventFromLocalDb(context, event.getEvent_id(),
-							EventManagement.ID_EXTERNAL);
-					event.setStartCalendar(Utils.stringToCalendar(context, e.getString("start"),
-							DataManagement.SERVER_TIMESTAMP_FORMAT));
-					event.setEndCalendar(Utils.stringToCalendar(context, e.getString("end"),
-							DataManagement.SERVER_TIMESTAMP_FORMAT));
+					event = EventManagement.getEventFromLocalDb(context, event.getEvent_id(), EventManagement.ID_EXTERNAL);
+					event.setStartCalendar(Utils.stringToCalendar(context, e.getString("start"), DataManagement.SERVER_TIMESTAMP_FORMAT));
+					event.setEndCalendar(Utils.stringToCalendar(context, e.getString("end"), DataManagement.SERVER_TIMESTAMP_FORMAT));
 					NavbarActivity.pollsList.add(event);
 				}
 			}
 		} catch (JSONException e) {
 			e.printStackTrace();
 		}
+	}
+
+	public static void addSelectedEventToPollList(Context context, Event event, ArrayList<JSONObject> selectedPollTime) {
+		if (NavbarActivity.pollsList == null) {
+			NavbarActivity.pollsList = new ArrayList<Event>();
+		}
+		try {
+			for (JSONObject e : selectedPollTime) {
+				event = EventManagement.getEventFromLocalDb(context, event.getEvent_id(), EventManagement.ID_EXTERNAL);
+				event.setStartCalendar(Utils.stringToCalendar(context, e.getString("start"), DataManagement.SERVER_TIMESTAMP_FORMAT));
+				event.setEndCalendar(Utils.stringToCalendar(context, e.getString("end"), DataManagement.SERVER_TIMESTAMP_FORMAT));
+				String jsonArrayString = event.getPoll();
+				if (jsonArrayString != null && !jsonArrayString.contentEquals("null")) {
+					JSONArray jsonArray = new JSONArray(jsonArrayString);
+					for (int i = 0; i < jsonArray.length(); i++) {
+						JSONObject e2 = jsonArray.getJSONObject(i);
+						if (e.getString("timestamp_start_utc").contentEquals(e2.getString("timestamp_start_utc"))
+								&& e.getString("id").contentEquals(e2.getString("id"))) {
+							NavbarActivity.pollsList.add(event);
+							break;
+						}
+					}
+				}
+			}
+		} catch (JSONException e) {
+			e.printStackTrace();
+		}
+	}
+
+	public static ArrayList<JSONObject> getSelectedEventPollTimes(Event event) {
+		String jsonArraySelectedTime = event.getSelectedEventPollsTime();
+		ArrayList<JSONObject> selectedPollTime = new ArrayList<JSONObject>();
+		try {
+			if (jsonArraySelectedTime != null && !jsonArraySelectedTime.contentEquals("null")) {
+				final JSONArray jsonArray = new JSONArray(jsonArraySelectedTime);
+				for (int i = 0; i < jsonArray.length(); i++) {
+					JSONObject pollThread = jsonArray.getJSONObject(i);
+					selectedPollTime.add(pollThread);
+				}
+			}
+		} catch (JSONException e) {
+			e.printStackTrace();
+		}
+
+		return selectedPollTime;
+	}
+
+	public static ArrayList<JSONObject> getAllEventPollTimes(Event event) {
+		String jsonArrayString = event.getPoll();
+		ArrayList<JSONObject> allEventPolls = new ArrayList<JSONObject>();
+		try {
+			if (jsonArrayString != null && !jsonArrayString.contentEquals("null")) {
+				final JSONArray jsonArray = new JSONArray(jsonArrayString);
+				// eventPollSize = jsonArray.length();
+				allEventPolls = new ArrayList<JSONObject>();
+				for (int i = 0; i < jsonArray.length(); i++) {
+					final JSONObject pollThread = jsonArray.getJSONObject(i);
+					allEventPolls.add(pollThread);
+				}
+			}
+		} catch (JSONException ex) {
+			ex.printStackTrace();
+		}
+
+		return allEventPolls;
 	}
 
 	private BroadcastReceiver mMessageReceiver = new BroadcastReceiver() {
