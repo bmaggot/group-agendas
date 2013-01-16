@@ -7,6 +7,8 @@ import java.util.TreeMap;
 
 import android.content.Context;
 
+import com.groupagendas.groupagenda.data.DataManagement;
+import com.groupagendas.groupagenda.data.EventManagement;
 import com.groupagendas.groupagenda.events.Event;
 
 public class TreeMapUtils {
@@ -29,12 +31,16 @@ public class TreeMapUtils {
 		Calendar event_start = null;
 		Calendar event_end = null;
 		Calendar tmp_event_start = null;
+		ArrayList<Event> pollEvents = EventManagement.getPollEventsFromLocalDb(context);
 		for (Event event : events) {
 			if (event.getStartCalendar() != null && event.getEndCalendar() != null) {
 				event_start = (Calendar) event.getStartCalendar().clone();
 				event_end = (Calendar) event.getEndCalendar().clone();
 				tmp_event_start = (Calendar) event_start.clone();
 				int difference = 0;
+				if(event_end.equals(Utils.stringToCalendar(context, "2100-01-01 00:00:00", DataManagement.SERVER_TIMESTAMP_FORMAT))){
+					continue;
+				}
 				while (tmp_event_start.before(event_end)) {
 					tmp_event_start.add(Calendar.DAY_OF_MONTH, 1);
 					difference++;
@@ -57,6 +63,10 @@ public class TreeMapUtils {
 					}
 				}
 			}
+		}
+		for(Event event : pollEvents){
+			putEventIntoTreeMap(context, tm, event);
+			
 		}
 		return tm;
 	}
