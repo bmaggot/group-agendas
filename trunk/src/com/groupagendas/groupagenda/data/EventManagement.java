@@ -616,6 +616,9 @@ public class EventManagement {
 									event = JSONUtils.createEventFromJSON(context, e);
 									if (event != null && !event.isNative()) {
 										event.setUploadedToServer(true);
+										if(event.getType().contentEquals("v")){											
+											context.getContentResolver().insert(EventsProvider.EMetaData.EventsMetaData.CONTENT_URI, createCVforEventsTable(event));								
+										}
 										if(event.getType().contentEquals("v") || 
 												event.getStatus() == Invited.REJECTED || 
 												(event.getStatus() == Invited.PENDING && 
@@ -791,6 +794,7 @@ public class EventManagement {
 			}
 		} catch (Exception ex) {
 			Log.e("votePoll", "er");
+			success = false;
 		}
 		return success;
 	}
@@ -1825,14 +1829,27 @@ public class EventManagement {
 		if (!eventChanges.isEmpty()) {
 //			sb = new StringBuilder();
 			for (Event e : eventChanges) {
-				if(getEventFromLocalDb(context, e.getEvent_id(), ID_EXTERNAL) == null){
-					insertEventToLocalDB(context, e);
-//					sb.append(e.getEvent_id());
-//					sb.append(',');
-				}else{
-					e.setInternalID(getEventFromLocalDb(context, e.getEvent_id(), ID_EXTERNAL).getInternalID());
-					updateEventInLocalDb(context, e);
-				}
+				if(!e.getType().contentEquals("v")){
+					if(getEventFromLocalDb(context, e.getEvent_id(), ID_EXTERNAL) == null){
+						insertEventToLocalDB(context, e);
+	//					sb.append(e.getEvent_id());
+	//					sb.append(',');
+					}else{
+						e.setInternalID(getEventFromLocalDb(context, e.getEvent_id(), ID_EXTERNAL).getInternalID());
+						updateEventInLocalDb(context, e);
+					}
+				} 
+//				else {
+//					if(getEventFromLocalDb(context, e.getEvent_id(), ID_EXTERNAL) == null){
+//						context.getContentResolver().insert(EventsProvider.EMetaData.EventsMetaData.CONTENT_URI, createCVforEventsTable(e));
+//						EventEditActivity.addEventToPollList(context, e);
+//					} else {
+//						e.setInternalID(getEventFromLocalDb(context, e.getEvent_id(), ID_EXTERNAL).getInternalID());
+//						updateEventInLocalDb(context, e);
+//						EventEditActivity.deleteEventFromPollList(e);
+//						EventEditActivity.addSelectedEventToPollList(context, e, EventEditActivity.getSelectedEventPollTimes(e));
+//					}
+//				}
 			}
 //			sb.deleteCharAt(sb.length() - 1);
 //			EventManagement.bulkDeleteEvents(context, sb.toString(), EventManagement.ID_EXTERNAL);
@@ -1908,16 +1925,30 @@ public class EventManagement {
 			while (!result.isAfterLast()) {
 				Event e = createEventFromCursor(context, result);
 
-				if (!editEvent(context, e)) {
-					int externalId = createEventInRemoteDb(context, e);
-					ContentValues values = new ContentValues();
-					values.put(EventsProvider.EMetaData.EventsMetaData.E_ID, externalId);
-					where = EventsProvider.EMetaData.EventsMetaData._ID + "=" + e.getInternalID();
-					context.getContentResolver().update(EventsProvider.EMetaData.EventsMetaData.CONTENT_URI, values, where, null);
-					result.moveToNext();
-				} else {
-					result.moveToNext();
-				}
+//				if(e.getType().contentEquals("v")){
+//					Log.d("event", "id "+e.getEvent_id());
+//					ArrayList<JSONObject> allEventPolls = EventEditActivity.getAllEventPollTimes(e);
+//					ArrayList<JSONObject> selectedPollTime = EventEditActivity.getSelectedEventPollTimes(e);
+//					if (DataManagement.networkAvailable) {
+//						e.setUploadedToServer(votePoll(context, "" + e.getEvent_id(), allEventPolls, "0"));
+//						e.setUploadedToServer(votePoll(context, "" + e.getEvent_id(), selectedPollTime, "1"));
+//					} else {
+//						e.setUploadedToServer(false);
+//					}
+//					updateEventInLocalDb(context, e);
+//					result.moveToNext();
+//				} else{
+					if (!editEvent(context, e)) {
+						int externalId = createEventInRemoteDb(context, e);
+						ContentValues values = new ContentValues();
+						values.put(EventsProvider.EMetaData.EventsMetaData.E_ID, externalId);
+						where = EventsProvider.EMetaData.EventsMetaData._ID + "=" + e.getInternalID();
+						context.getContentResolver().update(EventsProvider.EMetaData.EventsMetaData.CONTENT_URI, values, where, null);
+						result.moveToNext();
+					} else {
+						result.moveToNext();
+					}
+//				}
 			}
 		}
 		SaveDeletedData offlineDeletedEvents = new SaveDeletedData(context);
