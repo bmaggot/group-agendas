@@ -672,23 +672,8 @@ public class EventsProvider extends ContentProvider{
 			db.execSQL(query);
 			query = "CREATE INDEX events_days_event_id ON events_days(event_id)";
 			db.execSQL(query);
-			
-//			EventsProvider.mOpenHelper.getReadableDatabase().rawQuery("CREATE INDEX events_days_month ON events_days(month)", null);
-//			EventsProvider.mOpenHelper.getReadableDatabase().rawQuery("delete from events_days where event_id NOT IN ( SELECT event_id FROM events WHERE status!=0 AND (status!=4 OR (status == 4 AND time_end_utc >= 1357888491405)) AND type != 'v' ) ", null);
 
 			
-//			query = "CREATE TABLE "
-//					+EMetaData.INVITED_TABLE
-//					+ " ("
-//					+ EMetaData.InvitedMetaData.EVENT_ID + " INTEGER ,"
-//					+ EMetaData.InvitedMetaData.GCID + " INTEGER ,"
-//					+ EMetaData.InvitedMetaData.GUID + " INTEGER ,"
-//					+ EMetaData.InvitedMetaData.MY_CONTACT_ID + " INTEGER ,"
-//					+ EMetaData.InvitedMetaData.STATUS + " INTEGER, "
-//					+ EMetaData.InvitedMetaData.NAME + " TEXT, "
-//					+  "PRIMARY KEY (" + EMetaData.InvitedMetaData.EVENT_ID + ") ON CONFLICT REPLACE"
-//					+")";
-//			db.execSQL(query);
 		}
 
 		@Override
