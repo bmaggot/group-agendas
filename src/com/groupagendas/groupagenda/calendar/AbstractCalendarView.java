@@ -295,20 +295,24 @@ public abstract class AbstractCalendarView extends LinearLayout {
 		 */
 		protected final Void doInBackground(Void... params) {
 			//TODO JEI TRUKSTA GREICIO COMMENT.
-//			try{ Thread.sleep(200); }catch(InterruptedException e){ e.printStackTrace(); }
+			try{ Thread.sleep(1200); }catch(InterruptedException e){ e.printStackTrace(); }
 			Calendar calendar = Calendar.getInstance();
 			Account account = new Account(context);
 			sortedEvents = new TreeMap<String, ArrayList<Event>>();
 			if (account.getShow_ga_calendars()) {
 				ArrayList<Event> events = getEventProjectionsForDisplay(selectedDate);
 				ArrayList<Event> pollEvents = NavbarActivity.pollsList;
-				for (Event event : pollEvents) {
-					TreeMapUtils.putNewEventPollsIntoTreeMap(context, sortedEvents,
-							event);
+				if(pollEvents != null){
+					for (Event event : pollEvents) {
+						TreeMapUtils.putNewEventPollsIntoTreeMap(context, sortedEvents,
+								event);
+					}
 				}
-				for (Event event : events) {
-					TreeMapUtils.putNewEventIntoTreeMap(context, sortedEvents,
-							event);
+				if(events != null){
+					for (Event event : events) {
+						TreeMapUtils.putNewEventIntoTreeMap(context, sortedEvents,
+								event);
+					}
 				}
 			}
 			Log.e("End Loading GA", Calendar.getInstance().getTimeInMillis() - calendar.getTimeInMillis()+"");
