@@ -798,7 +798,6 @@ public class NavbarActivity extends FragmentActivity {
 						EventManagement.getEventsFromRemoteDb(NavbarActivity.this, "", 
 								Utils.millisToUnixTimestamp(startCalendar.getTimeInMillis()), 
 								Utils.millisToUnixTimestamp(endCalendar.getTimeInMillis()));
-						pollsList = EventManagement.getPollEventsFromLocalDb(NavbarActivity.this);
 						//acc.setResponses(""+EventManagement.getResponsesFromRemoteDb(getApplicationContext()));
 					}
 					loadPhase++;
@@ -949,6 +948,7 @@ public class NavbarActivity extends FragmentActivity {
 				EventManagement.getEventsFromRemoteDb(NavbarActivity.this, "", 
 						Utils.millisToUnixTimestamp(endCalendar.getTimeInMillis()), 
 						0);
+				pollsList = EventManagement.getPollEventsFromLocalDb(NavbarActivity.this);
 			}
 			return null;
 		}
