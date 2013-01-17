@@ -91,6 +91,7 @@ public class ContactManagement {
 		}
 
 		post.setEntity(reqEntity);
+		ContentValues[] values;
 		try {
 			HttpResponse rp = webService.getResponseFromHttpPost(post);
 
@@ -106,6 +107,8 @@ public class ContactManagement {
 					} else {
 						JSONArray cs = object.getJSONArray("contacts");
 						int count = cs.length();
+						values = new ContentValues[cs.length()];
+						Log.e("Contacts getted", cs.length()+"");
 						if (count > 0) {
 							for (int i = 0; i < count; i++) {
 								JSONObject c = cs.getJSONObject(i);
@@ -265,11 +268,15 @@ public class ContactManagement {
 								}
 								
 								contact.setUploadedToServer(true);
-								insertContactToLocalDb(context, contact, 0);
+//								insertContactToLocalDb(context, contact, 0);
+								values[i] = makeCVforContact(context, contact, 0);
 								if (contact.birthdate != null && contact.birthdate.length() == 10) {
 									Birthday birthday = new Birthday(context, contact);
 									insertBirthdayToLocalDb(context, birthday, contact.contact_id);
 								}
+							}
+							if(values != null){
+								context.getContentResolver().bulkInsert(ContactsProvider.CMetaData.ContactsMetaData.CONTENT_URI, values);
 							}
 						}
 					}
@@ -739,6 +746,73 @@ public class ContactManagement {
 		} catch (SQLiteException e) {
 			Log.e("insertContactToLocalDb(contact, " + id + ")", e.getMessage());
 		}
+	}
+	
+	public static ContentValues makeCVforContact(Context context, Contact contact, int id){
+		ContentValues cv = new ContentValues();
+
+		if (id > 0)
+			cv.put(ContactsProvider.CMetaData.ContactsMetaData.C_ID, id);
+		else {
+			cv.put(ContactsProvider.CMetaData.ContactsMetaData.C_ID, contact.contact_id);
+		}
+
+		cv.put(ContactsProvider.CMetaData.ContactsMetaData.LID, contact.lid);
+		cv.put(ContactsProvider.CMetaData.ContactsMetaData.NAME, contact.name);
+		cv.put(ContactsProvider.CMetaData.ContactsMetaData.LASTNAME, contact.lastname);
+		cv.put(ContactsProvider.CMetaData.ContactsMetaData.FULLNAME, contact.fullname);
+
+		cv.put(ContactsProvider.CMetaData.ContactsMetaData.EMAIL, contact.email);
+		cv.put(ContactsProvider.CMetaData.ContactsMetaData.PHONE, contact.phone1);
+		cv.put(ContactsProvider.CMetaData.ContactsMetaData.PHONE_CODE, contact.phone1_code);
+
+		cv.put(ContactsProvider.CMetaData.ContactsMetaData.BIRTHDATE, contact.birthdate);
+
+		cv.put(ContactsProvider.CMetaData.ContactsMetaData.COUNTRY, contact.country);
+		cv.put(ContactsProvider.CMetaData.ContactsMetaData.CITY, contact.city);
+		cv.put(ContactsProvider.CMetaData.ContactsMetaData.STREET, contact.street);
+		cv.put(ContactsProvider.CMetaData.ContactsMetaData.ZIP, contact.zip);
+
+		cv.put(ContactsProvider.CMetaData.ContactsMetaData.VISIBILITY, contact.visibility);
+		cv.put(ContactsProvider.CMetaData.ContactsMetaData.VISIBILITY2, contact.visibility2);
+
+		if (contact.image) {
+			cv.put(ContactsProvider.CMetaData.ContactsMetaData.IMAGE, "1");
+		} else {
+			cv.put(ContactsProvider.CMetaData.ContactsMetaData.IMAGE, "0");
+		}
+
+		cv.put(ContactsProvider.CMetaData.ContactsMetaData.IMAGE_URL, contact.image_url);
+		cv.put(ContactsProvider.CMetaData.ContactsMetaData.IMAGE_THUMB_URL, contact.image_thumb_url);
+		cv.put(ContactsProvider.CMetaData.ContactsMetaData.IMAGE_BYTES, contact.image_bytes);
+		if (contact.remove_image) {
+			cv.put(ContactsProvider.CMetaData.ContactsMetaData.REMOVE_IMAGE, "1");
+		} else {
+			cv.put(ContactsProvider.CMetaData.ContactsMetaData.REMOVE_IMAGE, "0");
+		}
+
+		cv.put(ContactsProvider.CMetaData.ContactsMetaData.REG_USER_ID, contact.reg_user_id);
+		cv.put(ContactsProvider.CMetaData.ContactsMetaData.AGENDA_VIEW, contact.agenda_view);
+
+		cv.put(ContactsProvider.CMetaData.ContactsMetaData.AGENDA_VIEW2, contact.agenda_view2);
+		cv.put(ContactsProvider.CMetaData.ContactsMetaData.CAN_ADD_NOTE, contact.can_add_note);
+		cv.put(ContactsProvider.CMetaData.ContactsMetaData.TIME_START, contact.time_start);
+		cv.put(ContactsProvider.CMetaData.ContactsMetaData.TIME_END, contact.time_end);
+		cv.put(ContactsProvider.CMetaData.ContactsMetaData.ALL_DAY, contact.all_day);
+		cv.put(ContactsProvider.CMetaData.ContactsMetaData.DISPLAY_TIME_END, contact.display_time_end);
+		cv.put(ContactsProvider.CMetaData.ContactsMetaData.TYPE, contact.type);
+		cv.put(ContactsProvider.CMetaData.ContactsMetaData.TITLE, contact.title);
+
+		cv.put(ContactsProvider.CMetaData.ContactsMetaData.REGISTERED, contact.registered);
+
+		cv.put(ContactsProvider.CMetaData.ContactsMetaData.CREATED, contact.created);
+		cv.put(ContactsProvider.CMetaData.ContactsMetaData.MODIFIED, contact.modified);
+
+		cv.put(ContactsProvider.CMetaData.ContactsMetaData.GROUPS, MapUtils.mapToString(context, contact.groups));
+
+		cv.put(ContactsProvider.CMetaData.ContactsMetaData.COLOR, contact.getColor());
+		cv.put(ContactsProvider.CMetaData.ContactsMetaData.UPLOADED_SUCCESSFULLY, contact.isUploadedToServer() ? 1 : 0);
+		return cv;
 	}
 
 	public static boolean insertContact(Context context, Contact contact, boolean notifyContact) {
