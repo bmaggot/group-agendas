@@ -568,7 +568,7 @@ public class EventManagement {
 	 * @since 2012-10-09
 	 * @version 1.0
 	 */
-	public static void getEventsFromRemoteDb(Context context, String eventCategory) {
+	public static void getEventsFromRemoteDb(Context context, String eventCategory, long startTimeUnixTimestamp, long endTimeUnixTimestamp) {
 		initUserTimezone(context);
 		boolean success = false;
 		Event event = null;
@@ -584,6 +584,12 @@ public class EventManagement {
 
 			reqEntity.addPart(TOKEN, new StringBody(Data.getToken(context), Charset.forName("UTF-8")));
 			reqEntity.addPart(CATEGORY, new StringBody(eventCategory, Charset.forName("UTF-8")));
+			if(startTimeUnixTimestamp > 0){
+				reqEntity.addPart("start", new StringBody(startTimeUnixTimestamp + "", Charset.forName("UTF-8")));
+			}
+			if(endTimeUnixTimestamp > 0){
+				reqEntity.addPart("end", new StringBody(endTimeUnixTimestamp + "", Charset.forName("UTF-8")));
+			}
 			post.setEntity(reqEntity);
 			HttpResponse rp = webService.getResponseFromHttpPost(post);
 
@@ -598,21 +604,10 @@ public class EventManagement {
 					} else {
 
 						JSONArray es = object.getJSONArray(EVENTS);
-						Calendar start = Calendar.getInstance();
-						values = new ContentValues[es.length()];
-						
+						values = new ContentValues[es.length()];						
 						for (int i = 0; i < es.length(); i++) {
 							try {
 								JSONObject e = es.getJSONObject(i);
-								//if(!e.getString("type").contentEquals("v")){
-//								if(e.getString("type").contentEquals("v")){
-//									//pollTimeArray = e.getString("poll");
-////									if(pollTimeArray != null &&!pollTimeArray.contentEquals("null")){
-////										JSONArray jsonPollTimeArray = new JSONArray(pollTimeArray);
-////									}
-//								} else {
-//									//pollTimeArray = "null";
-//								}
 									event = JSONUtils.createEventFromJSON(context, e);
 									if (event != null && !event.isNative()) {
 										event.setUploadedToServer(true);
@@ -644,8 +639,6 @@ public class EventManagement {
 							}
 							context.getContentResolver().bulkInsert(EventsProvider.EMetaData.INDEXED_EVENTS_URI, values2);
 						}
-						Calendar end = Calendar.getInstance();
-						System.out.println("Events insert time:" + (end.getTimeInMillis() - start.getTimeInMillis()));
 					}
 				}
 			}
