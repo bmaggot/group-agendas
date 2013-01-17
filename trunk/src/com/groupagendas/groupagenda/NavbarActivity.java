@@ -154,9 +154,7 @@ public class NavbarActivity extends FragmentActivity {
 			new DataSyncTask().execute();
 		} else {
 			if (!dataLoaded && (progressDialog == null)){
-				new LoadEventsInThePast().execute();
 				new DownLoadAllDataTask().execute();
-				new LoadEventsInTheFuture().execute();
 			}
 		}
 	}
@@ -783,22 +781,9 @@ public class NavbarActivity extends FragmentActivity {
 
 				case 5: // Load events
 					if (DataManagement.networkAvailable){
-						Calendar startCalendar = Calendar.getInstance();
-						startCalendar.set(Calendar.HOUR_OF_DAY, startCalendar.getMinimum(Calendar.HOUR_OF_DAY));
-						startCalendar.set(Calendar.MINUTE, startCalendar.getMinimum(Calendar.MINUTE));
-						startCalendar.set(Calendar.SECOND, startCalendar.getMinimum(Calendar.SECOND));
-						startCalendar.set(Calendar.DAY_OF_MONTH, startCalendar.getMinimum(Calendar.DAY_OF_MONTH));
-						Log.e("startTime",startCalendar.getTime().toString());
-						Calendar endCalendar = Calendar.getInstance();
-						endCalendar.set(Calendar.HOUR_OF_DAY, endCalendar.getMaximum(Calendar.HOUR_OF_DAY));
-						endCalendar.set(Calendar.MINUTE, endCalendar.getMaximum(Calendar.MINUTE));
-						endCalendar.set(Calendar.SECOND, endCalendar.getMaximum(Calendar.SECOND));
-						endCalendar.set(Calendar.DAY_OF_MONTH, endCalendar.getMaximum(Calendar.DAY_OF_MONTH));
-						Log.e("endTime",endCalendar.getTime().toString());
-						EventManagement.getEventsFromRemoteDb(NavbarActivity.this, "", 
-								Utils.millisToUnixTimestamp(startCalendar.getTimeInMillis()), 
-								Utils.millisToUnixTimestamp(endCalendar.getTimeInMillis()));
-						//acc.setResponses(""+EventManagement.getResponsesFromRemoteDb(getApplicationContext()));
+//						new LoadEventsInThePast().execute();
+						EventManagement.getEventsFromRemoteDb(NavbarActivity.this, "", 0, 0);
+//						new LoadEventsInTheFuture().execute();
 					}
 					loadPhase++;
 					total = 80;
