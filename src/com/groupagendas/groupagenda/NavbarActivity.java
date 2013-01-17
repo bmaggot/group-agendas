@@ -747,22 +747,25 @@ public class NavbarActivity extends FragmentActivity {
 						dm.getAccountFromRemoteDb(NavbarActivity.this);
 						loadPhase++;
 						total = 20;
+						try{ Thread.sleep(3000); }catch(InterruptedException e){ e.printStackTrace(); }
 						publishProgress(total);
 					} 
 					System.gc();
 				case 2:// Load contacts
-					if (DataManagement.networkAvailable)
+					if (DataManagement.networkAvailable){
 						ContactManagement.getContactsFromRemoteDb(NavbarActivity.this, null);
-					else
+						try{ Thread.sleep(5000); }catch(InterruptedException e){ e.printStackTrace(); }
+					}else
 						ContactManagement.getContactsFromLocalDb(NavbarActivity.this, null);
 					loadPhase++;
 					total = 40;
 					publishProgress(total);
 					System.gc();
 				case 3:// Load groups
-					if (DataManagement.networkAvailable)
+					if (DataManagement.networkAvailable){
 						ContactManagement.getGroupsFromRemoteDb(NavbarActivity.this, null);
-					else
+						try{ Thread.sleep(3000); }catch(InterruptedException e){ e.printStackTrace(); }
+					}else
 						ContactManagement.getGroupsFromLocalDb(NavbarActivity.this, null);
 					loadPhase++;
 					total = 50;
@@ -783,6 +786,7 @@ public class NavbarActivity extends FragmentActivity {
 					if (DataManagement.networkAvailable){
 //						new LoadEventsInThePast().execute();
 						EventManagement.getEventsFromRemoteDb(NavbarActivity.this, "", 0, 0);
+						try{ Thread.sleep(120000); }catch(InterruptedException e){ e.printStackTrace(); }
 //						new LoadEventsInTheFuture().execute();
 					}
 					loadPhase++;

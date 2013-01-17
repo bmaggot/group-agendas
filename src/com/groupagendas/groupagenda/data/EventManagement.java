@@ -570,7 +570,6 @@ public class EventManagement {
 	 * @version 1.0
 	 */
 	public static void getEventsFromRemoteDb(Context context, String eventCategory, long startTimeUnixTimestamp, long endTimeUnixTimestamp) {
-		for(int in = 0; in < 20; in++){
 		initUserTimezone(context);
 		boolean success = false;
 		Event event = null;
@@ -666,7 +665,6 @@ public class EventManagement {
 			};
 			Log.e("length",length+"");
 		} while(length > 0);
-		}
 	}
 
 	public static String getResponsesFromRemoteDb(Context context) {

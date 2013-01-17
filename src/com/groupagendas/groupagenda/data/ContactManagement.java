@@ -61,7 +61,6 @@ public class ContactManagement {
 	 */
 	// TODO MESKAI: naudoti metoda JSONUtils'uose kurti kontakta is JSON'o
 	public static void getContactsFromRemoteDb(Context context, HashSet<Integer> groupIds) {
-		for(int in = 0; in < 5; in++){
 		Calendar start = Calendar.getInstance();
 		boolean success = false;
 		String error = null;
@@ -307,7 +306,6 @@ public class ContactManagement {
 		Log.e("Contacts insert time:",  (Calendar.getInstance().getTimeInMillis() - start.getTimeInMillis())+"");
 		Data.setLoadContactsData(false);
 		}
-	}
 
 	/**
 	 * Get all contact entries from local database.
