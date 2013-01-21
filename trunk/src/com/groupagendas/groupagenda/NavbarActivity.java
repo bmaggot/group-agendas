@@ -794,6 +794,7 @@ public class NavbarActivity extends FragmentActivity {
 					if (DataManagement.networkAvailable){
 						EventManagement.getEventsFromRemoteDb(NavbarActivity.this, "", 0, 0);
 						pollsList = EventManagement.getPollEventsFromLocalDb(NavbarActivity.this);
+						Log.e("Polls length",pollsList.size()+"");
 						if(doUneedSleep){
 							try{ Thread.sleep(120000); }catch(InterruptedException e){ e.printStackTrace(); }
 						}
