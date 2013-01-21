@@ -107,6 +107,7 @@
     <string name="cost">Cost</string>
     <string name="accomodation">Accommodation</string>
     <string name="invite_people">Invite people</string>
+    <string name="copy_event">Copy event</string>
     <string name="loading_data">Loading data…</string>
     <string name="loading_account">Loading Account info…</string>
     <string name="loading_contacts">Loading Contacts…</string>
