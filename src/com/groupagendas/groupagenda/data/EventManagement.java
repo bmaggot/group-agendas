@@ -628,7 +628,7 @@ public class EventManagement {
 										event = JSONUtils.createEventFromJSON(context, e);
 										if (event != null && !event.isNative()) {
 											event.setUploadedToServer(true);
-											if(event.getType().contentEquals("v")){											
+											if(event.getType().contentEquals("v") && !event.getPoll().contentEquals("null")){											
 												context.getContentResolver().insert(EventsProvider.EMetaData.EventsMetaData.CONTENT_URI, createCVforEventsTable(event));								
 											}
 											if(event.getType().contentEquals("v") || 
@@ -1983,7 +1983,7 @@ public class EventManagement {
 		Event item;
 		String where = null;
 		
-		where = (EventsProvider.EMetaData.EventsMetaData.TYPE + " = 'v'");
+		where = (EventsProvider.EMetaData.EventsMetaData.TYPE + " = 'v'" +" AND "+ EventsProvider.EMetaData.EventsMetaData.STATUS + " != '0'");
 
 		ArrayList<Event> items = new ArrayList<Event>();
 
