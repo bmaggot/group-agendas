@@ -106,7 +106,7 @@ public class AlarmActivity extends Activity {
 							JSONObject object = new JSONObject(resp);
 							boolean success = object.getBoolean("success");
 							if (!success) {
-								Toast.makeText(AlarmActivity.this, getResources().getString(R.string.alarm_dismiss_all_alarms), Toast.LENGTH_LONG);
+								Toast.makeText(AlarmActivity.this, getResources().getString(R.string.alarm_dismiss_all_alarms), Toast.LENGTH_LONG).show();
 							}
 						}
 					}
