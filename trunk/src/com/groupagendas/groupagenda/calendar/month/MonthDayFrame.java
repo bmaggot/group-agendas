@@ -47,7 +47,7 @@ public class MonthDayFrame extends RelativeLayout {
 	public void DrawColourBubbles (ArrayList<Event> eventColorsArray, int frameWidth){
 		allBubblesContainer = (LinearLayout) findViewById(R.id.month_bubble_megacontainer);
 		allBubblesContainer.removeAllViews();
-		if (eventColorsArray.isEmpty()) return;
+		if (eventColorsArray == null || eventColorsArray.isEmpty()) return;
 		
 		LinearLayout line =  createBubbleContainerLine();
 		allBubblesContainer.addView(line);
