@@ -1992,10 +1992,12 @@ public class EventManagement {
 		if (result.moveToFirst()) {
 			while (!result.isAfterLast()) {
 				item = EventManagement.createEventFromCursor(context, result);
-				
+				if(item.getEvent_id() == 10994){
+					System.out.println();
+				}
 				String jsonArraySelectedTime = item.getSelectedEventPollsTime();
 				try {
-					if(jsonArraySelectedTime != null && !jsonArraySelectedTime.contentEquals("null") && !jsonArraySelectedTime.contentEquals("")){
+					if((jsonArraySelectedTime != null && !jsonArraySelectedTime.contentEquals("null")) && (jsonArraySelectedTime != null && jsonArraySelectedTime.length() > 2)){
 						final JSONArray jsonArray= new JSONArray(jsonArraySelectedTime);
 						for (int i = 0; i < jsonArray.length(); i++) {
 							JSONObject pollThread = jsonArray.getJSONObject(i);
