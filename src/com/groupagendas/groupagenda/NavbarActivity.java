@@ -127,6 +127,8 @@ public class NavbarActivity extends FragmentActivity {
 	private int mDay = 1;
 	Calendar start;
 	
+	public static boolean doUneedSleep = false;
+	
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -747,14 +749,18 @@ public class NavbarActivity extends FragmentActivity {
 						dm.getAccountFromRemoteDb(NavbarActivity.this);
 						loadPhase++;
 						total = 20;
-						try{ Thread.sleep(3000); }catch(InterruptedException e){ e.printStackTrace(); }
+						if(doUneedSleep){
+							try{ Thread.sleep(3000); }catch(InterruptedException e){ e.printStackTrace(); }
+						}
 						publishProgress(total);
 					} 
 					System.gc();
 				case 2:// Load contacts
 					if (DataManagement.networkAvailable){
 						ContactManagement.getContactsFromRemoteDb(NavbarActivity.this, null);
-						try{ Thread.sleep(5000); }catch(InterruptedException e){ e.printStackTrace(); }
+						if(doUneedSleep){
+							try{ Thread.sleep(5000); }catch(InterruptedException e){ e.printStackTrace(); }
+						}
 					}else
 						ContactManagement.getContactsFromLocalDb(NavbarActivity.this, null);
 					loadPhase++;
@@ -764,7 +770,9 @@ public class NavbarActivity extends FragmentActivity {
 				case 3:// Load groups
 					if (DataManagement.networkAvailable){
 						ContactManagement.getGroupsFromRemoteDb(NavbarActivity.this, null);
-						try{ Thread.sleep(3000); }catch(InterruptedException e){ e.printStackTrace(); }
+						if(doUneedSleep){
+							try{ Thread.sleep(3000); }catch(InterruptedException e){ e.printStackTrace(); }
+						}
 					}else
 						ContactManagement.getGroupsFromLocalDb(NavbarActivity.this, null);
 					loadPhase++;
@@ -784,10 +792,11 @@ public class NavbarActivity extends FragmentActivity {
 
 				case 5: // Load events
 					if (DataManagement.networkAvailable){
-//						new LoadEventsInThePast().execute();
 						EventManagement.getEventsFromRemoteDb(NavbarActivity.this, "", 0, 0);
-						try{ Thread.sleep(120000); }catch(InterruptedException e){ e.printStackTrace(); }
-//						new LoadEventsInTheFuture().execute();
+						pollsList = EventManagement.getPollEventsFromLocalDb(NavbarActivity.this);
+						if(doUneedSleep){
+							try{ Thread.sleep(120000); }catch(InterruptedException e){ e.printStackTrace(); }
+						}
 					}
 					loadPhase++;
 					total = 80;
@@ -899,47 +908,6 @@ public class NavbarActivity extends FragmentActivity {
 			switchToView();
 
 			setAlarmsToAllEvents();
-		}
-
-	}
-	
-	private class LoadEventsInThePast extends AsyncTask<Void, Integer, Void> {
-
-		@Override
-		protected Void doInBackground(Void... params) {
-			if (DataManagement.networkAvailable){
-				Calendar startCalendar = Calendar.getInstance();
-				startCalendar.set(Calendar.HOUR_OF_DAY, startCalendar.getMinimum(Calendar.HOUR_OF_DAY));
-				startCalendar.set(Calendar.MINUTE, startCalendar.getMinimum(Calendar.MINUTE));
-				startCalendar.set(Calendar.SECOND, startCalendar.getMinimum(Calendar.SECOND));
-				startCalendar.set(Calendar.DAY_OF_MONTH, startCalendar.getMinimum(Calendar.DAY_OF_MONTH));
-				Log.e("PAST",startCalendar.getTime().toString());
-				EventManagement.getEventsFromRemoteDb(NavbarActivity.this, "", 
-						0, 
-						Utils.millisToUnixTimestamp(startCalendar.getTimeInMillis()));
-			}
-			return null;
-		}
-
-	}
-	
-	private class LoadEventsInTheFuture extends AsyncTask<Void, Integer, Void> {
-
-		@Override
-		protected Void doInBackground(Void... params) {
-			if (DataManagement.networkAvailable){
-				Calendar endCalendar = Calendar.getInstance();
-				endCalendar.set(Calendar.HOUR_OF_DAY, endCalendar.getMaximum(Calendar.HOUR_OF_DAY));
-				endCalendar.set(Calendar.MINUTE, endCalendar.getMaximum(Calendar.MINUTE));
-				endCalendar.set(Calendar.SECOND, endCalendar.getMaximum(Calendar.SECOND));
-				endCalendar.set(Calendar.DAY_OF_MONTH, endCalendar.getMaximum(Calendar.DAY_OF_MONTH));
-				Log.e("FUTURE",endCalendar.getTime().toString());
-				EventManagement.getEventsFromRemoteDb(NavbarActivity.this, "", 
-						Utils.millisToUnixTimestamp(endCalendar.getTimeInMillis()), 
-						0);
-				pollsList = EventManagement.getPollEventsFromLocalDb(NavbarActivity.this);
-			}
-			return null;
 		}
 
 	}
