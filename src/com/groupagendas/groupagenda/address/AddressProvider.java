@@ -2,8 +2,6 @@ package com.groupagendas.groupagenda.address;
 
 import java.util.HashMap;
 
-import com.groupagendas.groupagenda.templates.TemplatesProvider.TMetaData;
-
 import android.content.ContentProvider;
 import android.content.ContentUris;
 import android.content.ContentValues;
@@ -28,6 +26,7 @@ public class AddressProvider extends ContentProvider {
 
 		public static final class AddressesMetaData implements BaseColumns {
 			public static final Uri CONTENT_URI = Uri.parse("content://" + AUTHORITY + "/" + ADDRESSES_TABLE);
+			public static final Uri CONTENT_URI_EXTERNAL_ID = Uri.parse("content://" + AUTHORITY + "/" + ADDRESSES_TABLE + "/external");
 			public static final String CONTENT_TYPE = "vnd.android.cursor.dir/vnd.formula.address_item";
 			public static final String CONTENT_ITEM_TYPE = "vnd.android.cursor.item/vnd.formula.address_item";
 
@@ -75,15 +74,15 @@ public class AddressProvider extends ContentProvider {
 	}
 
 	@Override
-	public int delete(Uri uri, String selection, String[] selectionArgs) {
+	public int delete(Uri uri, String where, String[] selectionArgs) {
 		int count;
 		SQLiteDatabase db = mOpenHelper.getWritableDatabase();
 		switch(mUriMatcher.match(uri)){
 			case ALL_ADDRESSES:
-				count = db.delete(AMetaData.ADDRESSES_TABLE, selection, selectionArgs);
+				count = db.delete(AMetaData.ADDRESSES_TABLE, where, selectionArgs);
 				break;
 			case SINGLE_ADDRESS:
-				String whereStr = AMetaData.AddressesMetaData.A_ID + "=" + uri.getPathSegments().get(1)+(!TextUtils.isEmpty(selection)?"AND(" + selection + ")":"");
+				String whereStr = AMetaData.AddressesMetaData.A_ID + "=" + uri.getPathSegments().get(1)+(!TextUtils.isEmpty(where)?"AND(" + where + ")":"");
 				count = db.delete(AMetaData.ADDRESSES_TABLE, whereStr, selectionArgs);
 				break;
 			default:
@@ -111,7 +110,7 @@ public class AddressProvider extends ContentProvider {
 		SQLiteDatabase db = mOpenHelper.getWritableDatabase();
 		switch (mUriMatcher.match(uri)) {
 		case ALL_ADDRESSES:
-			rowId = db.replace(TMetaData.TEMPLATES_TABLE, AMetaData.AddressesMetaData.A_ID, values);
+			rowId = db.replace(AMetaData.ADDRESSES_TABLE, AMetaData.AddressesMetaData.A_ID, values);
 			insUri = ContentUris.withAppendedId(AMetaData.AddressesMetaData.CONTENT_URI, rowId);
 			break;
 		default:
@@ -186,14 +185,17 @@ public class AddressProvider extends ContentProvider {
 		public void onCreate(SQLiteDatabase db) {
 			String query =	"CREATE TABLE "
 					+AMetaData.ADDRESSES_TABLE+" ("
-					+AMetaData.AddressesMetaData.A_ID + " INTEGER PRIMARY KEY,"
+					+AMetaData.AddressesMetaData._ID+" INTEGER PRIMARY KEY AUTOINCREMENT,"
+					+AMetaData.AddressesMetaData.A_ID + " INTEGER,"
 					+AMetaData.AddressesMetaData.USER_ID + " TEXT ,"
 					+AMetaData.AddressesMetaData.TITLE + " TEXT ,"
 					+AMetaData.AddressesMetaData.STREET + " TEXT ,"
+					+AMetaData.AddressesMetaData.CITY + " TEXT ,"
+					+AMetaData.AddressesMetaData.ZIP + " TEXT ,"
 					+AMetaData.AddressesMetaData.STATE + " TEXT ,"
 					+AMetaData.AddressesMetaData.COUNTRY + " TEXT ,"
 					+AMetaData.AddressesMetaData.TIMEZONE + " TEXT ,"
-					+AMetaData.AddressesMetaData.COUNTRY_NAME  + " TEXT ,";
+					+AMetaData.AddressesMetaData.COUNTRY_NAME  + " TEXT )";
 			
 			db.execSQL(query);
 					
