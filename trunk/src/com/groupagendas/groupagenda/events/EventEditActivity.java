@@ -49,6 +49,10 @@ import com.groupagendas.groupagenda.NavbarActivity;
 import com.groupagendas.groupagenda.R;
 import com.groupagendas.groupagenda.account.Account;
 import com.groupagendas.groupagenda.account.AccountActivity;
+import com.groupagendas.groupagenda.address.Address;
+import com.groupagendas.groupagenda.address.AddressBookActivity;
+import com.groupagendas.groupagenda.address.AddressBookInfoActivity;
+import com.groupagendas.groupagenda.address.AddressManagement;
 import com.groupagendas.groupagenda.chat.ChatMessageActivity;
 import com.groupagendas.groupagenda.contacts.Contact;
 import com.groupagendas.groupagenda.contacts.ContactInfoActivity;
@@ -86,6 +90,10 @@ public class EventEditActivity extends EventActivity {
 			if (!editable.toString().equalsIgnoreCase(oldText)) {
 				changesMade = true;
 				saveButton.setEnabled(changesMade);
+				if(cityView.getText().length() > 0 || streetView.getText().length() > 0 || zipView.getText().length() > 0){
+					save_address.setVisibility(View.VISIBLE);
+				}
+				AddressBookActivity.selectedAddressId = 0;
 			}
 		}
 	}
@@ -123,6 +131,9 @@ public class EventEditActivity extends EventActivity {
 	private int poll_status;
 	private boolean to_rejoin_poll;
 	private boolean to_reject_poll;
+	private Button navigation;
+	NavigationDialog navDialog;
+	private Button see_results;
 	
 	private Button copyEventButton;
 	private final String copy = "copy";
@@ -138,6 +149,7 @@ public class EventEditActivity extends EventActivity {
 		setContentView(R.layout.event_edit);
 		selectedContacts = null;
 		selectedGroups = null;
+		AddressBookActivity.selectedAddressId = 0;
 		setChangesMade(false);
 		setEditInvited(false);
 		hideAlarmPanel();
@@ -282,6 +294,14 @@ public class EventEditActivity extends EventActivity {
 			endView.setText(dtUtils.formatDateTime(endCalendar.getTime()));
 			changesMade = true;
 			enableDisableButtons(changesMade);
+			if(AddressBookActivity.selectedAddressId > 0){
+				Address address = AddressManagement.getAddressFromLocalDb(EventEditActivity.this, AddressBookActivity.selectedAddressId, AddressManagement.ID_INTERNAL);
+				cityView.setText(address.getCity());
+				streetView.setText(address.getStreet());
+				zipView.setText(address.getZip());
+				countryView.setText(address.getCountry_name());
+				timezoneView.setText(address.getTimezone());
+			}
 		}
 	}
 
@@ -688,6 +708,69 @@ public class EventEditActivity extends EventActivity {
 				showDialog(DELETE_DIALOG);
 			}
 		});
+		
+		navigation = (Button) findViewById(R.id.navigation_button);
+		navigation.setOnClickListener(new OnClickListener() {
+			
+			@Override
+			public void onClick(View v) {
+				//showEventDirection(EventEditActivity.this, "lukiskiu g. 5, vilnius", streetView.getText()+", "+cityView.getText()+", "+countryView.getText().toString());
+				//showEventLocation(EventEditActivity.this, streetView.getText()+", "+cityView.getText()+", "+countryView.getText().toString());
+				String eventAddress = "";
+				if(streetView.getText().length() > 0 || cityView.getText().length() > 0 || countryView.getText().length() > 0){
+					eventAddress = streetView.getText()+", "+cityView.getText()+", "+countryView.getText().toString();
+				} 
+				
+				String homeAddress = "";
+				if(!account.getStreet().contentEquals("null") && !account.getCity().contentEquals("null")){
+					homeAddress = account.getStreet()+", "+account.getCity();
+				}
+				
+				if (DataManagement.networkAvailable){
+					navDialog = new NavigationDialog(EventEditActivity.this, R.style.yearview_eventlist, homeAddress , eventAddress);
+					navDialog.show();
+				} else {
+					Toast.makeText(EventEditActivity.this, getString(R.string.no_internet_conn), Toast.LENGTH_SHORT).show();
+				}
+			}
+		});
+		
+		save_address = (Button) findViewById(R.id.save_address);
+		save_address.setOnClickListener(new OnClickListener() {
+			
+			@Override
+			public void onClick(View v) {
+				Intent addressCreate = new Intent(EventEditActivity.this, AddressBookInfoActivity.class);
+				addressCreate.putExtra("action", false);
+				addressCreate.putExtra("fill_info", true);
+				startActivity(addressCreate);
+			}
+		});
+		
+		address = (Button) findViewById(R.id.address_button);
+		address.setOnClickListener(new OnClickListener() {
+			
+			@Override
+			public void onClick(View v) {
+				Intent address = new Intent(EventEditActivity.this, AddressBookActivity.class);
+				address.putExtra("action", true);
+				startActivity(address);
+			}
+		});
+		
+		see_results = (Button) findViewById(R.id.poll_results_button);
+		see_results.setOnClickListener(new OnClickListener() {
+			
+			@Override
+			public void onClick(View v) {
+				Intent intent = new Intent(EventEditActivity.this, PollResultsActivity.class);
+				intent.putExtra("pollTime", event.getPoll());
+				//event.getInvited().toString();
+				//intent.putExtra("invited", event.getInvited().toString());
+				startActivity(intent);
+				
+			}
+		});
 	}
 
 	class GetEventTask extends AsyncTask<Long, Event, Event> {
@@ -738,6 +821,10 @@ public class EventEditActivity extends EventActivity {
 			account = new Account(EventEditActivity.this);
 			event = result;
 			selectedIcon = event.getIcon();
+			
+			if(!event.getStreet().contentEquals("") && !event.getCity().contentEquals("")){
+				navigation.setVisibility(View.VISIBLE);
+			}
 
 			if (event.getType().contentEquals("v") && !intent.getBooleanExtra(copy, false)) {
 				startViewBlock.setVisibility(View.GONE);
@@ -752,6 +839,7 @@ public class EventEditActivity extends EventActivity {
 
 				descView.setEnabled(false);
 				inviteButton.setEnabled(false);
+				see_results.setVisibility(View.VISIBLE);
 
 				if (event.getStatus() == Invited.REJECTED) {
 					reject_poll.setVisibility(View.INVISIBLE);
@@ -1275,6 +1363,7 @@ public class EventEditActivity extends EventActivity {
 				saveButton.setVisibility(View.VISIBLE);
 				saveButton.setEnabled(true);
 			}
+			
 			dataLoaded = true;
 			pd.dismiss();
 		}
@@ -1668,7 +1757,7 @@ public class EventEditActivity extends EventActivity {
 
 		return allEventPolls;
 	}
-
+	
 	private BroadcastReceiver mMessageReceiver = new BroadcastReceiver() {
 		@Override
 		public void onReceive(Context context, Intent intent) {
