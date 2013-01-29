@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Calendar;
 
 import android.app.Activity;
+import android.app.DatePickerDialog;
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
@@ -11,7 +12,9 @@ import android.graphics.Color;
 import android.graphics.drawable.BitmapDrawable;
 import android.os.Bundle;
 import android.view.View;
+import android.view.View.OnClickListener;
 import android.widget.Button;
+import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -35,6 +38,7 @@ import com.groupagendas.groupagenda.timezone.TimezonesAdapter;
 import com.groupagendas.groupagenda.utils.DateTimeUtils;
 import com.groupagendas.groupagenda.utils.DrawingUtils;
 import com.groupagendas.groupagenda.utils.Prefs;
+import com.groupagendas.groupagenda.utils.StartEndDateTimeSelectDialog;
 
 public class EventActivity extends Activity {
 	public static final int DEFAULT_EVENT_DURATION_IN_MINS = 60;
@@ -159,6 +163,10 @@ public class EventActivity extends Activity {
 	protected RelativeLayout inviteDelegate2;
 
 	private static boolean editInvited = false;
+	
+	private Calendar targetCalendar;
+	private TextView targetDateView;
+	private StartEndDateTimeSelectDialog dateTimeDialog;
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -590,5 +598,68 @@ public class EventActivity extends Activity {
 		EventActivity.newInvites = template.getInvited();
 		
 		setTimezone(template.getTimezoneInUse());
+	}
+	
+	private DatePickerDialog.OnDateSetListener mDateSetListener = new DatePickerDialog.OnDateSetListener() {
+		
+		@Override
+		public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
+			updateTargets();
+		}
+
+		private void updateTargets() {
+			EventEditActivity.setChangesMade(true);
+			targetDateView.setText(dtUtils.formatDateTime(targetCalendar.getTime()));
+		}
+	};
+	
+	private void setTargets(Calendar targetCalendar, TextView targetDateView) {
+		this.targetCalendar = targetCalendar;
+		this.targetDateView = targetDateView;
+	}
+	
+	public void initAlarms(){
+		// ALARM1
+		alarm1View = (TextView) findViewById(R.id.alarmView1);
+		alarmContainer1.setOnClickListener(new OnClickListener() {
+			
+			@Override
+			public void onClick(View v) {
+				if(alarm1time == null) alarm1time = Calendar.getInstance();
+				setTargets(alarm1time, alarm1View);
+				dateTimeDialog = new StartEndDateTimeSelectDialog(EventActivity.this, StartEndDateTimeSelectDialog.SECTION_DATE, targetCalendar, mDateSetListener);
+				dateTimeDialog.show();
+			}
+		});
+
+		// ALARM2
+		alarm2View = (TextView) findViewById(R.id.alarmView2);
+		alarmContainer2.setOnClickListener(new OnClickListener() {
+			
+			@Override
+			public void onClick(View v) {
+				if(alarm2time == null) alarm2time = Calendar.getInstance();
+				setTargets(alarm2time, alarm2View);
+				dateTimeDialog = new StartEndDateTimeSelectDialog(EventActivity.this, StartEndDateTimeSelectDialog.SECTION_DATE, targetCalendar, mDateSetListener);
+				dateTimeDialog.show();
+			}
+		});
+
+		// ALARM3
+		alarm3View = (TextView) findViewById(R.id.alarmView3);
+		alarmContainer3.setOnClickListener(new OnClickListener() {
+			
+			@Override
+			public void onClick(View v) {
+				if(alarm3time == null) alarm3time = Calendar.getInstance();
+				setTargets(alarm3time, alarm3View);
+				dateTimeDialog = new StartEndDateTimeSelectDialog(EventActivity.this, StartEndDateTimeSelectDialog.SECTION_DATE, targetCalendar, mDateSetListener);
+				dateTimeDialog.show();
+			}
+		});
+	}
+	
+	public static void initReminders(){
+		
 	}
 }
