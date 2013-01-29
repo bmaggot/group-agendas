@@ -43,6 +43,7 @@ import az.mecid.android.QuickAction;
 
 import com.groupagendas.groupagenda.account.Account;
 import com.groupagendas.groupagenda.account.verification.SmsVerificationCodeActivity;
+import com.groupagendas.groupagenda.alarm.AlarmReceiver;
 import com.groupagendas.groupagenda.calendar.AbstractCalendarView;
 import com.groupagendas.groupagenda.calendar.agenda.AgendaView;
 import com.groupagendas.groupagenda.calendar.dayandweek.DayWeekView;
@@ -126,6 +127,7 @@ public class NavbarActivity extends FragmentActivity {
 	private int mMonth = 0;
 	private int mDay = 1;
 	Calendar start;
+	public static AlarmReceiver alarmReceiver = new AlarmReceiver();
 	
 	public static boolean doUneedSleep = false;
 	
@@ -650,7 +652,7 @@ public class NavbarActivity extends FragmentActivity {
 
 	@Override
 	public void onBackPressed() {
-		if (viewState.equals(ViewState.CALENDAR_SETTINGS) || viewState.equals(ViewState.CHAT_THREADS)) {
+		if (viewState != null && (viewState.equals(ViewState.CALENDAR_SETTINGS) || viewState.equals(ViewState.CHAT_THREADS))) {
 			Account account = new Account(this);
 			viewState = ViewState.getValueByString(account.getSetting_default_view());
 			this.onResume();
@@ -813,6 +815,7 @@ public class NavbarActivity extends FragmentActivity {
 					total = 100;
 					publishProgress(total);
 					System.gc();
+					DataManagement.getAlarmsFromServer(getApplicationContext());
 				}
 			}
 			return null;
@@ -1085,5 +1088,8 @@ public class NavbarActivity extends FragmentActivity {
 		dialog.show();
 	}
 	
+	public static void refreshAlarmReceiver(){
+		alarmReceiver = new AlarmReceiver();
+	}
 	
 }

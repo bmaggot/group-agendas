@@ -20,8 +20,10 @@ import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.groupagendas.groupagenda.NavbarActivity;
 import com.groupagendas.groupagenda.R;
 import com.groupagendas.groupagenda.account.Account;
+import com.groupagendas.groupagenda.alarm.AlarmsManagement;
 import com.groupagendas.groupagenda.contacts.Contact;
 import com.groupagendas.groupagenda.contacts.Group;
 import com.groupagendas.groupagenda.data.DataManagement;
@@ -193,15 +195,32 @@ public class EventActivity extends Activity {
 		event.setTake_with_you(takewithyouView.getText().toString());
 		event.setCost(costView.getText().toString());
 		event.setAccomodation(accomodationView.getText().toString());
-		if (alarm1time != null) {
-			event.setAlarm1(alarm1time);
+		if(NavbarActivity.alarmReceiver == null){
+			NavbarActivity.refreshAlarmReceiver();
 		}
-		if (alarm2time != null) {
-			event.setAlarm2(alarm2time);
+		if (alarm1time != null || alarm2time != null || alarm3time != null) {
+			long alarm1 = 0;
+			long alarm2 = 0;
+			long alarm3 = 0;
+			if(alarm1time != null){
+				alarm1time.clear(Calendar.SECOND);
+				alarm1time.clear(Calendar.MILLISECOND);
+				alarm1 = alarm1time.getTimeInMillis();
+			}
+			if (alarm2time != null) {
+				alarm2time.clear(Calendar.SECOND);
+				alarm2time.clear(Calendar.MILLISECOND);
+				alarm2 = alarm2time.getTimeInMillis();
+			}
+			if (alarm3time != null) {
+				alarm3time.clear(Calendar.SECOND);
+				alarm3time.clear(Calendar.MILLISECOND);
+				alarm3 = alarm3time.getTimeInMillis();
+			}
+			AlarmsManagement.setAlarmsForEvent(getApplicationContext(), alarm1, 0, alarm2, 0, alarm3, 0, event.getEvent_id());
 		}
-		if (alarm3time != null) {
-			event.setAlarm3(alarm3time);
-		}
+
+		
 		event.setReminder1(reminder1time);
 		event.setReminder2(reminder2time);
 		event.setReminder3(reminder3time);

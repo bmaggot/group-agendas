@@ -12,6 +12,7 @@ import android.content.Context;
 import android.util.Log;
 
 import com.groupagendas.groupagenda.account.Account;
+import com.groupagendas.groupagenda.alarm.Alarm;
 import com.groupagendas.groupagenda.contacts.Contact;
 import com.groupagendas.groupagenda.contacts.ContactsProvider;
 import com.groupagendas.groupagenda.contacts.Group;
@@ -20,6 +21,7 @@ import com.groupagendas.groupagenda.data.EventManagement;
 import com.groupagendas.groupagenda.error.report.Reporter;
 import com.groupagendas.groupagenda.events.Event;
 import com.groupagendas.groupagenda.events.EventsProvider;
+import com.groupagendas.groupagenda.events.EventsProvider.EMetaData.AlarmsMetaData;
 import com.groupagendas.groupagenda.events.Invited;
 import com.groupagendas.groupagenda.templates.Template;
 import com.groupagendas.groupagenda.templates.TemplatesProvider.TMetaData.TemplatesMetaData;
@@ -164,18 +166,11 @@ public class JSONUtils {
 	
 			// reminders
 			unixTimestamp = e.optLong(EventManagement.ABSOLUTE_REMINDER_1);
-			if (unixTimestamp != 0) event.setReminder1(Utils.createCalendar(Utils.unixTimestampToMilis(unixTimestamp), EventManagement.user_timezone));
+			if (unixTimestamp > 0) event.setReminder1(Utils.createCalendar(Utils.unixTimestampToMilis(unixTimestamp), EventManagement.user_timezone));
 			unixTimestamp = e.optLong(EventManagement.ABSOLUTE_REMINDER_2);
-			if (unixTimestamp != 0) event.setReminder2(Utils.createCalendar(Utils.unixTimestampToMilis(unixTimestamp), EventManagement.user_timezone));
+			if (unixTimestamp > 0) event.setReminder2(Utils.createCalendar(Utils.unixTimestampToMilis(unixTimestamp), EventManagement.user_timezone));
 			unixTimestamp = e.optLong(EventManagement.ABSOLUTE_REMINDER_3);
-			if (unixTimestamp != 0) event.setReminder3(Utils.createCalendar(Utils.unixTimestampToMilis(unixTimestamp), EventManagement.user_timezone));
-			//alarms
-			unixTimestamp = e.optLong(EventManagement.ABSOLUTE_ALARM_1);
-			if (unixTimestamp != 0) event.setAlarm1(Utils.createCalendar(Utils.unixTimestampToMilis(unixTimestamp), EventManagement.user_timezone));
-			unixTimestamp = e.optLong(EventManagement.ABSOLUTE_ALARM_2);
-			if (unixTimestamp != 0) event.setAlarm2(Utils.createCalendar(Utils.unixTimestampToMilis(unixTimestamp), EventManagement.user_timezone));
-			unixTimestamp = e.optLong(EventManagement.ABSOLUTE_ALARM_3);
-			if (unixTimestamp != 0) event.setAlarm3(Utils.createCalendar(Utils.unixTimestampToMilis(unixTimestamp), EventManagement.user_timezone));
+			if (unixTimestamp > 0) event.setReminder3(Utils.createCalendar(Utils.unixTimestampToMilis(unixTimestamp), EventManagement.user_timezone));
 	
 			try {
 				event.setAlarm1fired(e.getString(EventManagement.ALARM_1_FIRED));
@@ -616,6 +611,19 @@ public class JSONUtils {
 		}
 		return result ;
 	}
+	
+	public static ArrayList<Alarm> JSONArrayToAlarmArray(JSONArray alarmsJSON, Context context){
+		ArrayList<Alarm> result = new ArrayList<Alarm>();
+		if(alarmsJSON != null){
+			for (int i = 0; i < alarmsJSON.length(); i++) {
+				JSONObject o = alarmsJSON.optJSONObject(i);
+				if(o != null){
+					result.add(createAlarmFromJSONObject(o, context));
+				}
+			}
+		}
+		return result;
+	}
 
 	private static Group createGroupFromJSONObject(JSONObject g, Context context) {
 		Group group = new Group();
@@ -717,6 +725,17 @@ public class JSONUtils {
 		}
 		return group;
 
+	}
+	
+	public static Alarm createAlarmFromJSONObject(JSONObject jsonObject, Context context) {
+		Alarm alarm = new Alarm();
+		alarm.setUserId(jsonObject.optInt(AlarmsMetaData.USER_ID));
+		alarm.setEventId(jsonObject.optInt(AlarmsMetaData.EVENT_ID));
+		alarm.setAlarmTimestamp(Utils.unixTimestampToMilis(jsonObject.optLong(AlarmsMetaData.TIMESTAMP)));
+		alarm.setOffset(jsonObject.optLong(AlarmsMetaData.OFFSET));
+		alarm.setSent(jsonObject.optBoolean(AlarmsMetaData.SENT));
+		alarm.setAlarm_id(alarm.getEventId() + "_" + alarm.getAlarmTimestamp());
+		return alarm;
 	}
 
 	public static Template createTemplateFromJSON(Context context, JSONObject e) {

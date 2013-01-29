@@ -90,7 +90,6 @@ public class TreeMapUtils {
 	}
 
 	public static void putEventIntoTreeMap(Context context, TreeMap<String, ArrayList<Event>> tm,Event event) {
-//		String date_format = SERVER_TIMESTAMP_FORMAT;
 		Calendar event_start = (Calendar) event.getStartCalendar().clone();
 		String dayStr = formatter.format(event_start.getTime());
 		tm = putValueIntoTreeMap(tm, dayStr, event);
@@ -175,7 +174,6 @@ public static void putNewEventPollsIntoTreeMap(Context context, TreeMap<String, 
 				Calendar eventDay = null;
 				for (int i = 0; i < difference; i++) {
 					String dayStr = formatter.format(event_start.getTime());
-//					eventDay = Utils.stringToCalendar(context, dayStr + " 00:00:00", SERVER_TIMESTAMP_FORMAT);
 					if(event_start.getTimeInMillis() > nowCal.getTimeInMillis()){
 						tm = putValueIntoTreeMap(tm, dayStr, event);
 					}
@@ -214,7 +212,6 @@ public static void putNativeEventsIntoTreeMap(Context context, TreeMap<String, A
 		} else {
 			dayStr = formatter.format(event_start.getTime());
 		}
-//			Calendar eventDay = Utils.stringToCalendar(context, dayStr + " 00:00:00", SERVER_TIMESTAMP_FORMAT);
 			tm = putValueIntoTreeMap(tm, dayStr, event);
 		} 
 		else if (difference >= 0) {

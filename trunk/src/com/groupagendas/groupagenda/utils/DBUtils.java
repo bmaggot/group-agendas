@@ -15,20 +15,20 @@ import android.util.Log;
 import com.groupagendas.groupagenda.error.report.Reporter;
 
 public class DBUtils {
-	
+
 	public final static String DBPath = Environment.getDataDirectory() + "/data/com.groupagendas.groupagenda/databases/";
-	
+
 	private String mDBName;
-	
-	public DBUtils(String DBName){
+
+	public DBUtils(String DBName) {
 		mDBName = DBName;
 	}
-	
+
 	public boolean checkDataBase() {
 		File dbFile = new File(DBPath + mDBName);
 		return dbFile.exists();
 	}
-	
+
 	public void copyDataBase(Context cont) {
 		InputStream myInput;
 		try {
@@ -50,23 +50,30 @@ public class DBUtils {
 			myOutput.close();
 			myInput.close();
 		} catch (IOException e) {
-			Reporter.reportError(cont, this.getClass().toString(), Thread.currentThread().getStackTrace()[2].getMethodName().toString(), e.getMessage());
+			Reporter.reportError(cont, this.getClass().toString(), Thread.currentThread().getStackTrace()[2].getMethodName().toString(),
+					e.getMessage());
 		}
 	}
-	
-	public static void readAllUriColumns(Context context, Uri uri){
-		try {
-	        Cursor c = context.getContentResolver().query(uri, null, null, null, null);
-	        if (c != null) {
-	            int num = c.getColumnCount();
-	            for (int i = 0; i < num; ++i) {
-	                String colname = c.getColumnName(i);
-	                Log.e("Uri column " + i, colname + "\n");
-	            }
-	        }
 
-	    } catch (Exception e) {
-	        e.printStackTrace();
-	    }
+	public static void readAllUriColumns(Context context, Uri URI) {
+		Cursor cursor = context.getContentResolver().query(URI, null, null, null, null);
+
+		if (cursor != null) {
+
+			if (cursor.moveToFirst()) {
+				int row = 0;
+				do {
+
+					Log.d("row start " + row, "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
+					for (int i = 0; i < cursor.getColumnCount(); i++) {
+						Log.d("columns " + i, "" + cursor.getColumnName(i) + " '" + cursor.getString(i) + "'");
+					}
+					Log.d("row end " + row, "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
+					row++;
+
+				} while (cursor.moveToNext());
+			}
+			cursor.close();
+		}
 	}
 }

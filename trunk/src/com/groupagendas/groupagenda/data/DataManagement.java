@@ -51,7 +51,7 @@ import com.groupagendas.groupagenda.account.Account;
 import com.groupagendas.groupagenda.account.AccountProvider;
 import com.groupagendas.groupagenda.address.Address;
 import com.groupagendas.groupagenda.address.AddressProvider.AMetaData.AddressesMetaData;
-import com.groupagendas.groupagenda.alarm.AlarmReceiver;
+import com.groupagendas.groupagenda.alarm.AlarmsManagement;
 import com.groupagendas.groupagenda.contacts.ContactsProvider;
 import com.groupagendas.groupagenda.contacts.Group;
 import com.groupagendas.groupagenda.error.report.Reporter;
@@ -93,6 +93,7 @@ public class DataManagement {
 	private static final String EVENTS_REMOVED = "removed_events";
 	private static final String CONTACTS_REMOVED = "removed_contacts";
 	private static final String GROUPS_REMOVED = "removed_groups";
+	private static final String ALARMS = "alarms";
 
 	private DataManagement(Context c) {
 		Data.setPrefs(new Prefs(c));
@@ -2199,18 +2200,6 @@ public class DataManagement {
 		return response;
 	}
 
-	public static void setAlarmsToEvent(AlarmReceiver alarm, Event event, Context context) {
-		if (!event.isAlarm1fired() && event.getAlarm1() != null) {
-			alarm.SetAlarm(context.getApplicationContext(), event.getAlarm1().getTimeInMillis(), event, 1);
-		}
-		if (!event.isAlarm2fired() && event.getAlarm2() != null) {
-			alarm.SetAlarm(context.getApplicationContext(), event.getAlarm2().getTimeInMillis(), event, 2);
-		}
-		if (!event.isAlarm3fired() && event.getAlarm3() != null) {
-			alarm.SetAlarm(context.getApplicationContext(), event.getAlarm3().getTimeInMillis(), event, 3);
-		}
-	}
-
 	public void createTemplate(Context context, Template template) {
 //		// TODO implement offline mode
 //		Integer templateId = uploadTemplateToRemoteDb(context, template);
@@ -2252,7 +2241,35 @@ public class DataManagement {
 		JSONArray deletedGroups = response.optJSONArray(GROUPS_REMOVED);
 		ContactManagement
 				.syncGroups(context, JSONUtils.JSONArrayToGroupsArray(groupChanges, context), JSONUtils.JSONArrayToLongArray(deletedGroups));
+		
+		DataManagement.getAlarmsFromServer(context);
 
+	}
+	
+	public static void getAlarmsFromServer(Context context){
+		try{
+			WebService webService = new WebService(context);
+			HttpPost post = new HttpPost(Data.getServerUrl() + "/mobile/alarms/get");
+	
+			MultipartEntity reqEntity = new MultipartEntity(HttpMultipartMode.BROWSER_COMPATIBLE);
+	
+			reqEntity.addPart(TOKEN, new StringBody(Data.getToken(context), Charset.forName("UTF-8")));
+	
+			post.setEntity(reqEntity);
+			HttpResponse rp = webService.getResponseFromHttpPost(post);
+			if (rp.getStatusLine().getStatusCode() == HttpStatus.SC_OK) {
+				String resp = EntityUtils.toString(rp.getEntity());
+				if (resp != null) {
+					JSONArray alarms = new JSONObject(resp).optJSONArray(ALARMS);
+					AlarmsManagement.syncAlarms(context, JSONUtils.JSONArrayToAlarmArray(alarms, context));
+				}
+			} else {
+				// TODO set error code
+				Log.e("Get Alarms - status", rp.getStatusLine().getStatusCode() + "");
+			}
+		} catch (Exception e){
+			e.printStackTrace();
+		}
 	}
 
 	private static JSONObject getDataChangesJSON(Context context, long latestUpdateUnixTimestamp) {

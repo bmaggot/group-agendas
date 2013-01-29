@@ -451,10 +451,9 @@ public class EventsActivity extends ListActivity {
 						break;
 				case R.id.btnSettings:
 					if(!NavbarActivity.smthClicked){
-						Log.e("huj", "jest");
 						startActivity(new Intent(EventsActivity.this, SettingsActivity.class));
 					} else {
-						Log.e("huj", "net");
+						
 					}
 					break;
 				case R.id.btnNewevent:
