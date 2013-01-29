@@ -27,6 +27,7 @@ import com.groupagendas.groupagenda.NavbarActivity;
 import com.groupagendas.groupagenda.R;
 import com.groupagendas.groupagenda.account.Account;
 import com.groupagendas.groupagenda.account.AccountActivity;
+import com.groupagendas.groupagenda.address.AddressBookActivity;
 import com.groupagendas.groupagenda.data.Data;
 import com.groupagendas.groupagenda.data.DataManagement;
 import com.groupagendas.groupagenda.error.report.Reporter;
@@ -47,7 +48,8 @@ public class SettingsActivity extends ListActivity{
 				getString(R.string.more_emails),
 				getString(R.string.whats_new),
 				getString(R.string.provide_feedback),
-				getString(R.string.write_review)
+				getString(R.string.write_review),
+				getString(R.string.address_book)
 		};
 		
 		setListAdapter(new SettingsAdapter(this, settings));
@@ -100,6 +102,9 @@ public class SettingsActivity extends ListActivity{
 		break;
 		case 7:
 			startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("market://details?id=" + getApplicationContext().getPackageName())));
+		break;
+		case 8:
+			startActivity(new Intent(SettingsActivity.this, AddressBookActivity.class));
 		break;
 		}
 	}
