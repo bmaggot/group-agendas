@@ -32,6 +32,10 @@ import android.widget.Toast;
 
 import com.groupagendas.groupagenda.R;
 import com.groupagendas.groupagenda.account.Account;
+import com.groupagendas.groupagenda.address.Address;
+import com.groupagendas.groupagenda.address.AddressBookActivity;
+import com.groupagendas.groupagenda.address.AddressBookInfoActivity;
+import com.groupagendas.groupagenda.address.AddressManagement;
 import com.groupagendas.groupagenda.contacts.Contact;
 import com.groupagendas.groupagenda.contacts.ContactsActivity;
 import com.groupagendas.groupagenda.contacts.Group;
@@ -61,6 +65,8 @@ public class NewEventActivity extends EventActivity {
 	int templateInUse = 0;
 
 	private CheckBox templateTrigger;
+	boolean changesMade;
+	private TextWatcher watcher;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -317,6 +323,29 @@ public class NewEventActivity extends EventActivity {
 		takewithyouView = (EditText) findViewById(R.id.takewithyouView);
 		costView = (EditText) findViewById(R.id.costView);
 		accomodationView = (EditText) findViewById(R.id.accomodationView);
+		
+		address = (Button) findViewById(R.id.address_button);
+		address.setOnClickListener(new OnClickListener() {
+			
+			@Override
+			public void onClick(View v) {
+				Intent address = new Intent(NewEventActivity.this, AddressBookActivity.class);
+				address.putExtra("action", true);
+				startActivity(address);
+			}
+		});
+		
+		save_address = (Button) findViewById(R.id.save_address);
+		save_address.setOnClickListener(new OnClickListener() {
+			
+			@Override
+			public void onClick(View v) {
+				Intent addressCreate = new Intent(NewEventActivity.this, AddressBookInfoActivity.class);
+				addressCreate.putExtra("action", false);
+				addressCreate.putExtra("fill_info", true);
+				startActivity(addressCreate);
+			}
+		});
 
 		hideAddressPanel(addressPanel, detailsPanel);
 		hideDetailsPanel(addressPanel, detailsPanel);
@@ -346,7 +375,7 @@ public class NewEventActivity extends EventActivity {
 				}
 			}
 		});
-
+		
 		// INVITES SECTION
 		invitesColumn = (LinearLayout) findViewById(R.id.invitesLine);
 		invitedPersonList = (LinearLayout) findViewById(R.id.invited_person_list);
@@ -416,6 +445,16 @@ public class NewEventActivity extends EventActivity {
 		account = new Account(this);
 		invitationResponseLine = (RelativeLayout) findViewById(R.id.response_to_invitation);
 		invitationResponseStatus = (TextView) findViewById(R.id.status);
+		
+		if (watcher == null) {
+			watcher = new GenericTextWatcher();
+		}
+		
+		countryView.addTextChangedListener(watcher);
+		cityView.addTextChangedListener(watcher);
+		streetView.addTextChangedListener(watcher);
+		zipView.addTextChangedListener(watcher);
+		timezoneView.addTextChangedListener(watcher);
 		startView = (TextView) findViewById(R.id.startView);
 		endView = (TextView) findViewById(R.id.endView);
 
@@ -556,6 +595,16 @@ public class NewEventActivity extends EventActivity {
 			invitationResponseLine.setVisibility(View.GONE);
 		}
 		
+		if(AddressBookActivity.selectedAddressId > 0){
+			Address address = AddressManagement.getAddressFromLocalDb(NewEventActivity.this, AddressBookActivity.selectedAddressId, AddressManagement.ID_INTERNAL);
+			cityView.setText(address.getCity());
+			streetView.setText(address.getStreet());
+			zipView.setText(address.getZip());
+			countryView.setText(address.getCountry_name());
+			timezoneView.setText(address.getTimezone());
+			AddressBookActivity.selectedAddressId = 0;
+		}
+		
 		startView.setText(dtUtils.formatDateTime(startCalendar.getTime()));
 		endView.setText(dtUtils.formatDateTime(endCalendar.getTime()));
 		countryView.setText(countriesList.get(timezoneInUse).country2);
@@ -624,6 +673,10 @@ public class NewEventActivity extends EventActivity {
 
 		zipViewBlock = (LinearLayout) findViewById(R.id.zipViewBlock);
 		zipViewBlock.setVisibility(View.VISIBLE);
+		address.setVisibility(View.VISIBLE);
+		if(cityView.getText().length() > 0 || streetView.getText().length() > 0 || zipView.getText().length() > 0){
+			save_address.setVisibility(View.VISIBLE);
+		}
 	}
 
 	public void hideAddressPanel(LinearLayout addressPanel, LinearLayout detailsPanel) {
@@ -640,6 +693,8 @@ public class NewEventActivity extends EventActivity {
 
 		zipViewBlock = (LinearLayout) findViewById(R.id.zipViewBlock);
 		zipViewBlock.setVisibility(View.GONE);
+		address.setVisibility(View.GONE);
+		save_address.setVisibility(View.GONE);
 	}
 
 	public void showDetailsPanel() {
@@ -954,5 +1009,27 @@ public class NewEventActivity extends EventActivity {
 		if (view != null)
 			view.setText(data.getAccomodation());
 
+	}
+	
+	private class GenericTextWatcher implements TextWatcher {
+
+		private String oldText = null;
+
+		public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+			oldText = charSequence.toString();
+		}
+
+		public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+		}
+
+		public void afterTextChanged(Editable editable) {
+			if (!editable.toString().equalsIgnoreCase(oldText)) {
+				changesMade = true;
+				saveButton.setEnabled(changesMade);
+				if(cityView.getText().length() > 0 || streetView.getText().length() > 0 || zipView.getText().length() > 0){
+					save_address.setVisibility(View.VISIBLE);
+				}
+			}
+		}
 	}
 }
