@@ -2,21 +2,34 @@
 <com.groupagendas.groupagenda.calendar.listnsearch.ListnSearchView xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
-    android:background="@drawable/search_field_background"
+    android:background="@color/black"
     android:orientation="vertical" >
 
-    <EditText
-        android:id="@+id/listnsearch_search"
+    <LinearLayout
+	    android:background="@drawable/search_field_background_round"
         android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:layout_marginBottom="2dp"
-        android:layout_marginLeft="10dp"
-        android:layout_marginRight="10dp"
-        android:layout_marginTop="5dp"
-        android:hint="@string/search"
-        android:singleLine="true" />
+        android:layout_height="wrap_content" >
+	    <EditText
+	        android:drawableLeft="@drawable/magnifying_glass"
+	        android:background="@drawable/search_field_background_rounded"
+	        android:paddingLeft="15dp"
+	        android:paddingRight="15dp"
+	        android:paddingTop="5dp"
+	        android:paddingBottom="5dp"
+	        android:includeFontPadding="false"
+	        android:id="@+id/listnsearch_search"
+	        android:layout_width="fill_parent"
+	        android:layout_height="wrap_content"
+	        android:layout_gravity="center"
+	        android:layout_marginBottom="5dp"
+	        android:layout_marginLeft="10dp"
+	        android:layout_marginRight="10dp"
+	        android:layout_marginTop="5dp"
+	        android:hint="@string/search"
+	        android:singleLine="true" />
 
+    </LinearLayout>
+    
     <FrameLayout
         android:id="@+id/listView"
         android:layout_width="fill_parent"
