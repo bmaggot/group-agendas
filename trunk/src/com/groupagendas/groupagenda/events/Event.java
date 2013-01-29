@@ -32,7 +32,7 @@ private static final String TIMESTAMP_FORMAT = DataManagement.SERVER_TIMESTAMP_F
 	private static final String DEFAULT_DESCRIPTION = "";
 	
 	private long internalID;
-	private int event_id; //TODO solve ids over 32k
+	private int event_id;
 	private int user_id;
 	private int status;
 	private int creator_contact_id;
