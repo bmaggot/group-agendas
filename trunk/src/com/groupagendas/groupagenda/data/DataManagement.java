@@ -50,6 +50,7 @@ import com.groupagendas.groupagenda.R;
 import com.groupagendas.groupagenda.account.Account;
 import com.groupagendas.groupagenda.account.AccountProvider;
 import com.groupagendas.groupagenda.address.Address;
+import com.groupagendas.groupagenda.address.AddressProvider;
 import com.groupagendas.groupagenda.address.AddressProvider.AMetaData.AddressesMetaData;
 import com.groupagendas.groupagenda.alarm.AlarmsManagement;
 import com.groupagendas.groupagenda.contacts.ContactsProvider;
@@ -2310,6 +2311,7 @@ public class DataManagement {
 		context.getContentResolver().delete(EventsProvider.EMetaData.EventsMetaData.CONTENT_URI, "", null);
 		context.getContentResolver().delete(EventsProvider.EMetaData.EventsIndexesMetaData.CONTENT_URI, "", null);
 		context.getContentResolver().delete(ContactsProvider.CMetaData.BirthdaysMetaData.CONTENT_URI, "", null);
+		context.getContentResolver().delete(AddressProvider.AMetaData.AddressesMetaData.CONTENT_URI, "", null);
 		// getContentResolver().delete(EventsProvider.EMetaData.InvitedMetaData.CONTENT_URI,
 		// "", null);
 		context.getContentResolver().getType(EventsProvider.EMetaData.EventsMetaData.CONTENT_URI);
