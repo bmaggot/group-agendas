@@ -322,8 +322,6 @@
                     android:dividerHeight="0dp"
                     android:fadingEdge="none"
                     android:fitsSystemWindows="true"
-                    android:paddingLeft="10dp"
-                    android:paddingRight="10dp"
                     tools:ignore="NestedScrolling" />
             </LinearLayout>
 
