@@ -219,7 +219,7 @@ public class AccountActivity extends Activity implements OnClickListener {
 			public void onItemSelected(AdapterView<?> arg0, View arg1,
 					int arg2, long arg3) {
 				try {
-					int color = getResources().getColor(R.color.darker_gray); 
+					int color = getResources().getColor(R.color.black); 
 					((TextView) arg1).setTextColor(color);
 				} catch (Exception e) {
 					
