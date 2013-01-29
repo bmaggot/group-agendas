@@ -102,7 +102,7 @@ public class InvitedAdapter extends AbstractAdapter<Invited> {
 						}
 						
 						if (activity instanceof EventEditActivity) {
-							((EventEditActivity) activity).setChangesMade(true);
+							EventEditActivity.setChangesMade(true);
 						}
 					}
 				});

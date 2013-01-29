@@ -110,7 +110,7 @@ public class EventEditActivity extends EventActivity {
 
 	protected final static int DELETE_DIALOG = 1;
 	private boolean isInvited = false;
-	private boolean changesMade = false;
+	private static boolean changesMade = false;
 
 	private Intent intent;
 
@@ -152,7 +152,7 @@ public class EventEditActivity extends EventActivity {
 		AddressBookActivity.selectedAddressId = 0;
 		setChangesMade(false);
 		setEditInvited(false);
-		hideAlarmPanel();
+		showAlarmPanel();
 	}
 
 	@Override
@@ -771,6 +771,8 @@ public class EventEditActivity extends EventActivity {
 				
 			}
 		});
+		
+		initAlarms();
 	}
 
 	class GetEventTask extends AsyncTask<Long, Event, Event> {
@@ -1860,11 +1862,11 @@ public class EventEditActivity extends EventActivity {
 		dialog.show();
 	}
 	
-	public void setChangesMade (boolean changed) {
+	public static void setChangesMade (boolean changed) {
 		changesMade = changed;
 	}
 	
-	public boolean getChangesMade() {
+	public static boolean getChangesMade() {
 		return changesMade;
 	}
 }
