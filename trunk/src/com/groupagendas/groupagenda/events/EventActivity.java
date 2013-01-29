@@ -8,16 +8,17 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
+import android.graphics.drawable.BitmapDrawable;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
-import android.widget.ToggleButton;
 
 import com.groupagendas.groupagenda.R;
 import com.groupagendas.groupagenda.account.Account;
@@ -26,14 +27,17 @@ import com.groupagendas.groupagenda.contacts.Group;
 import com.groupagendas.groupagenda.data.DataManagement;
 import com.groupagendas.groupagenda.settings.AutoColorItem;
 import com.groupagendas.groupagenda.settings.AutoIconItem;
+import com.groupagendas.groupagenda.templates.Template;
 import com.groupagendas.groupagenda.timezone.CountriesAdapter;
 import com.groupagendas.groupagenda.timezone.TimezonesAdapter;
 import com.groupagendas.groupagenda.utils.DateTimeUtils;
+import com.groupagendas.groupagenda.utils.DrawingUtils;
 import com.groupagendas.groupagenda.utils.Prefs;
 
 public class EventActivity extends Activity {
 	public static final int DEFAULT_EVENT_DURATION_IN_MINS = 60;
-	protected static final int COLOURED_BUBBLE_SIZE = 50;
+	protected static final int COLOURED_BUBBLE_SIZE = 40;
+	
 	public static final String EXTRA_STRING_FOR_START_CALENDAR = "strStartTime";
 	public static final String EXTRA_STRING_FOR_END_CALENDAR = "strEndTime";
 
@@ -41,27 +45,31 @@ public class EventActivity extends Activity {
 	public static ArrayList<Contact> selectedContacts;
 	public static ArrayList<Group> selectedGroups;
 
+	public static Calendar startCalendar = Calendar.getInstance();
+	public static Calendar endCalendar = Calendar.getInstance();
+	
 	protected DateTimeUtils dtUtils;
-	public static ToggleButton allDayToggleButton;
-	protected EditText descView;
+	protected static EditText descView;
 
-	protected TextView countryView;
-	protected EditText cityView;
-	protected EditText streetView;
-	protected EditText zipView;
-	protected TextView timezoneView;
+	protected static TextView countryView;
+	protected static EditText cityView;
+	protected static EditText streetView;
+	protected static EditText zipView;
+	protected static TextView timezoneView;
 
-	protected EditText locationView;
-	protected EditText gobyView;
-	protected EditText takewithyouView;
-	protected EditText costView;
-	protected EditText accomodationView;
-	protected Calendar startCalendar = Calendar.getInstance();
-	protected Calendar endCalendar = Calendar.getInstance();
-	protected EditText titleView;
+	protected static EditText locationView;
+	protected static EditText gobyView;
+	protected static EditText takewithyouView;
+	protected static EditText costView;
+	protected static EditText accomodationView;
+	protected static EditText titleView;
 	protected Button saveButton;
-	protected ImageView iconView;
-	protected ImageView colorView;
+	protected static ImageView iconView;
+	protected static ImageView colorView;
+	
+	protected static TextView alarm1View;
+	protected static TextView alarm2View;
+	protected static TextView alarm3View;
 
 	protected LinearLayout addressPanel;
 	protected LinearLayout addressLine;
@@ -80,15 +88,17 @@ public class EventActivity extends Activity {
 	protected LinearLayout takewithyouViewBlock;
 	protected LinearLayout costViewBlock;
 	protected LinearLayout accomodationViewBlock;
+	
+	protected LinearLayout alarmContainer1;
+	protected LinearLayout alarmContainer2;
+	protected LinearLayout alarmContainer3;
 
 	protected boolean addressPanelVisible = true;
 	protected boolean detailsPanelVisible = true;
+	protected boolean alarmPanelVisible = true;
 
-	protected EditText startView;
-	protected Button startButton;
-
-	protected EditText endView;
-	protected Button endButton;
+	protected static TextView startView;
+	protected static TextView endView;
 
 	protected final static int DIALOG_START = 0;
 	protected final static int DIALOG_END = 1;
@@ -114,22 +124,25 @@ public class EventActivity extends Activity {
 
 	protected ContentValues cv;
 
-	protected RelativeLayout addressDetailsPanel;
+	protected LinearLayout addressDetailsPanel;
 	protected TextView addressTrigger;
 	protected TextView detailsTrigger;
+	protected RelativeLayout alarmTrigger;
 	protected ProgressBar pb;
-	protected String selectedIcon = Event.DEFAULT_ICON;
-	protected String selectedColor = Event.DEFAULT_COLOR;
+	protected static String selectedIcon = Event.DEFAULT_ICON;
+	protected static String selectedColor = Event.DEFAULT_COLOR;
 
-	protected Event event;
-	protected ArrayList<StaticTimezones> countriesList = null;
-	protected ArrayList<StaticTimezones> filteredCountriesList = null;
-	protected CountriesAdapter countriesAdapter = null;
-	protected TimezonesAdapter timezonesAdapter = null;
+	public static Event event;
+	public static ArrayList<StaticTimezones> countriesList = null;
+	public static ArrayList<StaticTimezones> filteredCountriesList = null;
+	public static CountriesAdapter countriesAdapter = null;
+	public static TimezonesAdapter timezonesAdapter = null;
 	protected InvitedAdapter invitedAdapter = null;
 	protected LinearLayout invitedPersonList;
-	protected int timezoneInUse = 0;
+	protected ListView invitedPersonListView;
+	public static int timezoneInUse = 0;
 	protected Button inviteButton;
+	protected Button inviteEditButton;
 	protected LinearLayout invitesColumn;
 	protected RelativeLayout invitationResponseLine;
 	protected TextView invitationResponseStatus;
@@ -139,12 +152,16 @@ public class EventActivity extends Activity {
 
 	protected Account account;
 
+	protected View inviteDelegate1;
+	protected RelativeLayout inviteDelegate2;
+
+	private static boolean editInvited = false;
+	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		dtUtils = new DateTimeUtils(this);
 		newInvites = null;
-
 	}
 
 	@Override
@@ -157,9 +174,8 @@ public class EventActivity extends Activity {
 		if (timezoneInUse > 0) {
 			event.setTimezone(countriesList.get(timezoneInUse).timezone);
 		}
-		event.setIs_all_day(allDayToggleButton.isChecked());
+		
 		event.setDescription(descView.getText().toString());
-		// title
 		event.setTitle(titleView.getText().toString());
 
 		// calendars
@@ -248,6 +264,7 @@ public class EventActivity extends Activity {
 
 	public void showAddressPanel() {
 		addressPanelVisible = true;
+		
 		timezoneSpinnerBlock.setVisibility(View.VISIBLE);
 		countrySpinnerBlock.setVisibility(View.VISIBLE);
 		cityViewBlock.setVisibility(View.VISIBLE);
@@ -257,21 +274,49 @@ public class EventActivity extends Activity {
 
 	public void hideAddressPanel() {
 		addressPanelVisible = false;
-		if (!detailsPanelVisible && addressDetailsPanel != null && addressPanel != null && detailsPanel != null) {
-			addressDetailsPanel.setVisibility(View.VISIBLE);
-			addressPanel.setVisibility(View.GONE);
-			detailsPanel.setVisibility(View.GONE);
-		}
 
-		timezoneSpinnerBlock.setVisibility(View.GONE);
+		countrySpinnerBlock = (LinearLayout) findViewById(R.id.countrySpinnerBlock);
 		countrySpinnerBlock.setVisibility(View.GONE);
+		
+		cityViewBlock = (LinearLayout) findViewById(R.id.cityViewBlock);
 		cityViewBlock.setVisibility(View.GONE);
+		
+		streetViewBlock = (LinearLayout) findViewById(R.id.streetViewBlock);
 		streetViewBlock.setVisibility(View.GONE);
+		
+		zipViewBlock = (LinearLayout) findViewById(R.id.zipViewBlock);
 		zipViewBlock.setVisibility(View.GONE);
+	}
+
+	public void showAlarmPanel() {
+		alarmPanelVisible = true;
+		
+		alarmContainer1 = (LinearLayout) findViewById(R.id.alarm_container1);
+		alarmContainer1.setVisibility(View.VISIBLE);
+		
+		alarmContainer2 = (LinearLayout) findViewById(R.id.alarm_container2);
+		alarmContainer2.setVisibility(View.VISIBLE);
+		
+		alarmContainer3 = (LinearLayout) findViewById(R.id.alarm_container3);
+		alarmContainer3.setVisibility(View.VISIBLE);
+	}
+
+	public void hideAlarmPanel() {
+		alarmPanelVisible = false;
+
+		alarmContainer1 = (LinearLayout) findViewById(R.id.alarm_container1);
+		alarmContainer1.setVisibility(View.GONE);
+		
+		alarmContainer2 = (LinearLayout) findViewById(R.id.alarm_container2);
+		alarmContainer2.setVisibility(View.GONE);
+		
+		alarmContainer3 = (LinearLayout) findViewById(R.id.alarm_container3);
+		alarmContainer3.setVisibility(View.GONE);
 	}
 
 	public void showDetailsPanel() {
 		detailsPanelVisible = true;
+		
 		locationViewBlock.setVisibility(View.VISIBLE);
 		gobyViewBlock.setVisibility(View.VISIBLE);
 		takewithyouViewBlock.setVisibility(View.VISIBLE);
@@ -281,24 +326,20 @@ public class EventActivity extends Activity {
 
 	public void hideDetailsPanel() {
 		detailsPanelVisible = false;
-		if (!addressPanelVisible && addressDetailsPanel != null && addressPanel != null && detailsPanel != null) {
-			addressDetailsPanel.setVisibility(View.VISIBLE);
-			addressPanel.setVisibility(View.GONE);
-			detailsPanel.setVisibility(View.GONE);
-		}
-		LinearLayout locationViewBlock = (LinearLayout) findViewById(R.id.locationBlock);
+
+		locationViewBlock = (LinearLayout) findViewById(R.id.locationViewBlock);
 		locationViewBlock.setVisibility(View.GONE);
-
-		LinearLayout gobyViewBlock = (LinearLayout) findViewById(R.id.go_byBlock);
+		
+		gobyViewBlock = (LinearLayout) findViewById(R.id.gobyViewBlock);
 		gobyViewBlock.setVisibility(View.GONE);
-
-		LinearLayout takewithyouViewBlock = (LinearLayout) findViewById(R.id.take_with_youBlock);
+		
+		takewithyouViewBlock = (LinearLayout) findViewById(R.id.takewithyouViewBlock);
 		takewithyouViewBlock.setVisibility(View.GONE);
 
-		LinearLayout costViewBlock = (LinearLayout) findViewById(R.id.costBlock);
+		costViewBlock = (LinearLayout) findViewById(R.id.costViewBlock);
 		costViewBlock.setVisibility(View.GONE);
-
-		LinearLayout accomodationViewBlock = (LinearLayout) findViewById(R.id.accomodationBlock);
+		
+		accomodationViewBlock = (LinearLayout) findViewById(R.id.accomodationViewBlock);
 		accomodationViewBlock.setVisibility(View.GONE);
 	}
 
@@ -322,7 +363,7 @@ public class EventActivity extends Activity {
 		int invitedListSize = event.getInvited().size();
 		invitedPersonList.removeAllViews();
 		if (invitedListSize == 0) {
-			inviteButton.setBackgroundResource(R.drawable.event_invite_people_button_standalone);
+			((View) inviteButton.getParent()).setBackgroundResource(R.drawable.event_invite_people_button_standalone);
 		} else {
 			boolean contains = false;
 			account = new Account(context);
@@ -344,30 +385,36 @@ public class EventActivity extends Activity {
 				invitedListSize++;
 			}
 
-			inviteButton.setBackgroundResource(R.drawable.event_invite_people_button_notalone);
-			invitedAdapter = new InvitedAdapter(this, event.getInvited(), event.getEvent_id());
+			((View) inviteButton.getParent()).setBackgroundResource(R.drawable.event_invite_people_button_notalone);
+			invitedAdapter = new InvitedAdapter(this, event.getInvited(), event.getEvent_id(), this);
 			for (int i = 0; i < invitedListSize; i++) {
 				View view = invitedAdapter.getView(i, null, null);
 				invitedPersonList.addView(view);
 			}
+//			invitedPersonListView.setAdapter(invitedAdapter);
+			
+//			invitedAdapter.notifyDataSetChanged();
 		}
 
 	}
 
 	// TODO write a javadoc for respondToInvitation(int response)
 	protected void respondToInvitation(int response) {
+		TextView myStatus;
 		invitesColumn = (LinearLayout) findViewById(R.id.invitesLine);
-		RelativeLayout myInvitation = (RelativeLayout) invitesColumn.findViewWithTag(Invited.OWN_INVITATION_ENTRY);
-		TextView myStatus = (TextView) myInvitation.findViewById(R.id.invited_status);
+		LinearLayout myInvitation = (LinearLayout) invitesColumn.findViewWithTag(Invited.OWN_INVITATION_ENTRY);
+		if (myInvitation != null) {
+			myStatus = (TextView) myInvitation.findViewById(R.id.invited_status);
+		} else {
+			myStatus = new TextView(EventActivity.this);
+		}
 
 		switch (response) {
 		case 0:
 			event.setStatus(0);
 			invitationResponseStatus.setText(this.getString(R.string.status_not_attending));
 			myStatus.setText(this.getString(R.string.status_not_attending));
-			myStatus.setBackgroundColor(Color.parseColor("#5d5d5d")); // TODO
-																		// hardcoded
-																		// color-code
+			myStatus.setBackgroundColor(Color.parseColor("#5d5d5d")); // TODO hardcoded color-code
 			response_button_yes.setVisibility(View.VISIBLE);
 			response_button_maybe.setVisibility(View.VISIBLE);
 			response_button_no.setVisibility(View.INVISIBLE);
@@ -376,9 +423,7 @@ public class EventActivity extends Activity {
 			event.setStatus(1);
 			invitationResponseStatus.setText(this.getString(R.string.status_attending));
 			myStatus.setText(this.getString(R.string.status_attending));
-			myStatus.setBackgroundColor(Color.parseColor("#26b2d8")); // TODO
-																		// hardcoded
-																		// color-code
+			myStatus.setBackgroundColor(Color.parseColor("#66AEBA")); // TODO hardcoded color-code
 			response_button_yes.setVisibility(View.INVISIBLE);
 			response_button_maybe.setVisibility(View.VISIBLE);
 			response_button_no.setVisibility(View.VISIBLE);
@@ -387,9 +432,7 @@ public class EventActivity extends Activity {
 			event.setStatus(2);
 			invitationResponseStatus.setText(this.getString(R.string.status_maybe));
 			myStatus.setText(this.getString(R.string.status_maybe));
-			myStatus.setBackgroundColor(Color.parseColor("#b5b5b5")); // TODO
-																		// hardcoded
-																		// color-code
+			myStatus.setBackgroundColor(Color.parseColor("#b5b5b5")); // TODO hardcoded color-code
 			response_button_yes.setVisibility(View.VISIBLE);
 			response_button_maybe.setVisibility(View.INVISIBLE);
 			response_button_no.setVisibility(View.VISIBLE);
@@ -462,5 +505,63 @@ public class EventActivity extends Activity {
 				startActivity(smsIntent);
 			}
 		}
+	}
+	
+	public static void setCalendar (Calendar startTime, Calendar endTime) {
+		Calendar tmpCal;
+		
+		startCalendar.setTime(startTime.getTime());
+		tmpCal = (Calendar) startCalendar.clone();
+		tmpCal.add(Calendar.HOUR_OF_DAY, 1);
+		if (endTime.after(tmpCal)) {
+			endCalendar.setTime(endTime.getTime());
+		} else {
+			endCalendar.setTime(tmpCal.getTime());
+		}
+		
+	}
+
+	public static void setTimezone(int timezoneInUse) {
+		EventActivity.timezoneInUse = timezoneInUse;
+	}
+	
+	public void setEditInvited (boolean changed) {
+		editInvited = changed;
+	}
+	
+	public boolean getEditInvited () {
+		return editInvited;
+	}
+	
+	public static void setTemplateData(Context context, Template template) {
+		titleView.setText(template.getTitle());
+		
+		EventActivity.selectedColor = template.getColor();
+		EventActivity.colorView.setBackgroundDrawable(new BitmapDrawable(DrawingUtils
+				.getColoredRoundSquare(context,
+						COLOURED_BUBBLE_SIZE, 5,
+						selectedColor, false)));
+		EventActivity.selectedIcon = template.getIcon();
+		EventActivity.iconView.setImageResource(template.getIconId(context));		
+//		startCalendar = template.getStartCalendar();
+//		endCalendar = template.getEndCalendar();
+		EventActivity.timezoneView.setText(template.getTimezone());
+		
+		EventActivity.descView.setText(template.getDescription_());
+		
+//		countryView.setText(template.getCountry());
+		EventActivity.cityView.setText(template.getCity());
+		EventActivity.streetView.setText(template.getStreet());
+		EventActivity.zipView.setText(template.getZip());
+		
+		EventActivity.locationView.setText(template.getLocation());
+		EventActivity.gobyView.setText(template.getGo_by());
+		EventActivity.takewithyouView.setText(template.getTake_with_you());
+		EventActivity.costView.setText(template.getCost());
+		EventActivity.accomodationView.setText(template.getAccomodation());
+		
+		EventActivity.newInvites = template.getInvited();
+		
+		setTimezone(template.getTimezoneInUse());
 	}
 }
