@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:gravity="center_horizontal"
+    android:orientation="vertical" >
+    
+	<Button android:id="@+id/location"
+	    android:background="@drawable/event_invite_people_button_standalone"
+	    android:layout_width="fill_parent"
+	    android:layout_height="wrap_content"
+	    android:layout_marginLeft="10dp"
+	    android:layout_marginRight="10dp"
+	    android:layout_marginTop="5dp"
+	    android:padding="5dp"
+	    android:text="@string/showLocation"
+	    android:textSize="15dp"
+	    android:textColor="@color/black"
+	    android:textStyle="bold" />
+	
+	<Button android:id="@+id/fromHomeToDestination"
+	    android:background="@drawable/event_invite_people_button_standalone"
+	    android:layout_width="fill_parent"
+	    android:layout_height="wrap_content"
+	    android:layout_marginLeft="10dp"
+	    android:layout_marginRight="10dp"
+	    android:layout_marginTop="5dp"
+	    android:padding="5dp"
+	    android:text="@string/fromHomeToDestination"
+	    android:textSize="15dp"
+	    android:textColor="@color/black"
+	    android:textStyle="bold" />
+	
+	<Button android:id="@+id/fromLocationToDestination"
+	    android:background="@drawable/event_invite_people_button_standalone"
+	    android:layout_width="fill_parent"
+	    android:layout_height="wrap_content"
+	    android:layout_marginLeft="10dp"
+	    android:layout_marginRight="10dp"
+	    android:layout_marginTop="5dp"
+	    android:layout_marginBottom="15dp"
+	    android:padding="5dp"
+	    android:text="@string/fromLocationToDestination"
+	    android:textSize="15dp"
+	    android:textColor="@color/black"
+	    android:textStyle="bold" />
+</LinearLayout>
