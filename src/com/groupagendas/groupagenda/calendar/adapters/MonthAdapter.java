@@ -10,7 +10,9 @@ import android.content.Context;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.LinearLayout.LayoutParams;
 
 import com.groupagendas.groupagenda.EventActivityOnClickListener;
 import com.groupagendas.groupagenda.R;
@@ -26,6 +28,7 @@ public class MonthAdapter extends AbstractAdapter<Event> {
 	SimpleDateFormat timeFormat;
 	TreeMap<String, ArrayList<Event>> sortedEvents;
 	Calendar selectedDate;
+	float density;
 
 	public MonthAdapter(Context context, List<Event> list) {
 		super(context, list);
@@ -48,6 +51,7 @@ public class MonthAdapter extends AbstractAdapter<Event> {
 		setAMPM(setAMPM);
 		this.sortedEvents = sortedEvents;
 		this.selectedDate = selectedDate;
+		this.density = context.getResources().getDisplayMetrics().density;
 	}
 	
 	public void setAMPM(boolean usesAMPM) {
@@ -75,6 +79,7 @@ public class MonthAdapter extends AbstractAdapter<Event> {
 		Object item = getItem(i);
 		if (item instanceof Event){
 			Event event = (Event) item;
+			int circlePx = Math.round(12*density);
 			
 			ArrayList<Event> events;
 			boolean isYesterday = false;
@@ -88,7 +93,7 @@ public class MonthAdapter extends AbstractAdapter<Event> {
 			String dayStr = new SimpleDateFormat("yyyy-MM-dd").format(selectedDate.getTime());
 			Calendar date = Utils.stringToCalendar(context, dayStr + " 00:00:00", SERVER_TIMESTAMP_FORMAT);
 			
-			colourBubble.setImageBitmap(DrawingUtils.getCircleBitmap(context, 12, 12, event.getDisplayColor(), false));
+			colourBubble.setImageBitmap(DrawingUtils.getCircleBitmap(context, circlePx, circlePx, event.getDisplayColor(), false));
 //			colourBubble.setImageBitmap(DrawingUtils.getColoredRoundRectangle(context, 20, event.getDisplayColor(), true));
 
 			if (sortedEvents != null) {
@@ -120,6 +125,9 @@ public class MonthAdapter extends AbstractAdapter<Event> {
 			}
 			
 			if (isYesterday && isTomorrow || event.isBirthday() || event.is_all_day()) {
+				ListView.LayoutParams lParams = new ListView.LayoutParams(LayoutParams.FILL_PARENT, Math.round(40*density));
+				view.setLayoutParams(lParams);
+				
 				startTime.setText(R.string.all_day);
 				endTime.setText("");
 				

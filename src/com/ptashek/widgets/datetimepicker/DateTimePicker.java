@@ -84,7 +84,7 @@ public class DateTimePicker extends RelativeLayout implements View.OnClickListen
 		timePicker = (TimePicker) timePickerView.findViewById(R.id.TimePicker);
 		timePicker.setOnTimeChangedListener(this);
 
-		if(!EventActivity.allDayToggleButton.isChecked()){
+		if(!EventActivity.event.is_all_day()){
 			// Handle button clicks
 			((Button) findViewById(R.id.SwitchToTime)).setOnClickListener(this); // shows the time picker
 			((Button) findViewById(R.id.SwitchToDate)).setOnClickListener(this); // shows the date picker

@@ -85,6 +85,13 @@ public class AccountProvider extends ContentProvider{
 			public static final String MODIFIED	= "modified";
 			
 			public static final String NEED_UPDATE = "need_update";
+			
+			public static final String SETTING_MORNING_START = "morning_start";
+			public static final String SETTING_MORNING_END = "morning_end";
+			public static final String SETTING_AFTERNOON_START = "afternoon_start";
+			public static final String SETTING_AFTERNOON_END = "afternoon_end";
+			public static final String SETTING_EVENING_START = "evening_start";
+			public static final String SETTING_EVENING_END = "evening_end";
 		}
 		
 		public static final class AutoiconMetaData implements BaseColumns {

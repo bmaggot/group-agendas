@@ -31,6 +31,7 @@ import com.groupagendas.groupagenda.utils.Utils;
 
 public class MonthView extends AbstractCalendarView {
 
+	private static final int MINIMUM_SHOWN_EVENT_ROWS = 4;
 	// private static final int WEEK_TITLE_WIDTH_DP = 0;
 	private final int TABLE_ROW_HEIGHT = Math.round(44 * densityFactor);
 	private Calendar firstShownDate;
@@ -47,6 +48,7 @@ public class MonthView extends AbstractCalendarView {
 //	private GestureDetector swipeDetector;
 	private LinearLayout calendarTable;
 	private LocalTouchListener localHero;
+	private LinearLayout wrapper;
 
 	public MonthView(Context context) {
 		this(context, null);
@@ -135,7 +137,6 @@ public class MonthView extends AbstractCalendarView {
 			updateShownDate();
 			setTopPanel();
 			paintTable(selectedDate);
-
 			setDayFrames();
 			updateEventLists();
 		}
@@ -156,8 +157,43 @@ public class MonthView extends AbstractCalendarView {
 		eventsAdapter = new MonthAdapter(getContext(), null, am_pmEnabled,
 				sortedEvents, selectedDate);
 		eventsList = (ListView) findViewById(R.id.month_list);
+		fillBottomSpace();
 		eventsList.setAdapter(eventsAdapter);
 		updateEventLists();
+	}
+
+	private void fillBottomSpace() {
+		eventsList.removeFooterView(wrapper);
+		float density = getResources().getDisplayMetrics().density;
+		android.widget.AbsListView.LayoutParams lParamsW = new ListView.LayoutParams(LayoutParams.FILL_PARENT, LayoutParams.WRAP_CONTENT);
+		LayoutParams lParamsD = new LinearLayout.LayoutParams(LayoutParams.MATCH_PARENT, Math.round(1*density));
+		LayoutParams lParamsV = new LinearLayout.LayoutParams(LayoutParams.MATCH_PARENT, Math.round(40*density));
+		wrapper = new LinearLayout(getContext());
+		int i = Math.round(MINIMUM_SHOWN_EVENT_ROWS * density);
+		
+		wrapper.setLayoutParams(lParamsW);
+		wrapper.setOrientation(LinearLayout.VERTICAL);
+		
+		if ((sortedEvents != null) && (selectedDate != null)) {
+			if (TreeMapUtils.getEventsFromTreemap(selectedDate, sortedEvents) != null) {
+				i = i - TreeMapUtils.getEventsFromTreemap(selectedDate, sortedEvents).size();
+			}
+		}
+		
+		for (int j = 0; j < i; j++) {
+			View v = mInflater.inflate(R.layout.calendar_month_event_list_placeholder, null);
+			View d = new View(getContext());
+			v.setLayoutParams(lParamsV);
+			v.setClickable(false);
+			d.setLayoutParams(lParamsD);
+			d.setBackgroundColor(getResources().getColor(R.color.lighter_gray));
+			wrapper.addView(v);
+			wrapper.addView(d);
+			wrapper.setClickable(false);
+			wrapper.setFocusable(false);
+		}
+		
+		eventsList.addFooterView(wrapper);
 	}
 
 	@Override
@@ -166,6 +202,7 @@ public class MonthView extends AbstractCalendarView {
 				selectedDate, sortedEvents);
 		eventsAdapter.setList(eventsList);
 		eventsAdapter.setSelectedDate(selectedDate, sortedEvents);
+		fillBottomSpace();
 	}
 
 	@Override

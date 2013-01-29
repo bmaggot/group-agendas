@@ -57,9 +57,11 @@ import com.groupagendas.groupagenda.contacts.Group;
 import com.groupagendas.groupagenda.error.report.Reporter;
 import com.groupagendas.groupagenda.events.Event;
 import com.groupagendas.groupagenda.events.EventsProvider;
+import com.groupagendas.groupagenda.events.Invited;
 import com.groupagendas.groupagenda.https.WebService;
 import com.groupagendas.groupagenda.settings.AutoColorItem;
 import com.groupagendas.groupagenda.settings.AutoIconItem;
+import com.groupagendas.groupagenda.templates.Template;
 import com.groupagendas.groupagenda.templates.TemplatesProvider;
 import com.groupagendas.groupagenda.templates.TemplatesProvider.TMetaData.TemplatesMetaData;
 import com.groupagendas.groupagenda.utils.JSONUtils;
@@ -85,6 +87,7 @@ public class DataManagement {
 	private static final String DATA_DELTA_URL = "/mobile/data_delta";
 	private static final String SUCCESS = "success";
 	private static final String EVENTS = "events";
+	private static final String TEMPLATES = "templates";
 	private static final String CONTACTS = "contacts";
 	private static final String GROUPS = "groups";
 	private static final String EVENTS_REMOVED = "removed_events";
@@ -1528,7 +1531,7 @@ public class DataManagement {
 	 * @since 2012-09-24
 	 * @return Uploaded event's ID in remote database.
 	 */
-	public int uploadTemplateToRemoteDb(Context context, Event event) {
+	public static int insertTemplateToRemoteDb(Context context, Event event) {
 		int response = 0;
 		try {
 			WebService webService = new WebService(context);
@@ -1703,8 +1706,7 @@ public class DataManagement {
 				}
 			}
 		} catch (Exception ex) {
-			Reporter.reportError(context, this.getClass().toString(), Thread.currentThread().getStackTrace()[2].getMethodName().toString(),
-					ex.getMessage());
+			Reporter.reportError(context, "DataManagement", Thread.currentThread().getStackTrace()[2].getMethodName().toString(), ex.getMessage());
 		}
 		return response;
 	}
@@ -1727,16 +1729,14 @@ public class DataManagement {
 	 * @since 2012-09-24
 	 * @return True if successful.
 	 */
-	public boolean uploadTemplateToLocalDb(Event template, int template_id) {
+	public static boolean insertTemplateToLocalDb(Context context, Template template) {
 		boolean success = false;
 
 		try {
-			ContentValues cv = new ContentValues();
+			ContentValues cv = template.toContentValues();
 
-			if (template_id != 0)
-				cv.put(TemplatesMetaData.T_ID, template_id);
-			else if (template.getEvent_id() > 0)
-				cv.put(TemplatesMetaData.T_ID, template.getEvent_id());
+			if (template.getTemplate_id() > 0)
+				cv.put(TemplatesMetaData.T_ID, template.getTemplate_id());
 			else
 				cv.put(TemplatesMetaData.T_ID, 0);
 
@@ -1748,21 +1748,21 @@ public class DataManagement {
 			if (template.getColor() != null)
 				cv.put(TemplatesMetaData.COLOR, template.getColor());
 
-			if (template.getActualTitle() != null)
-				cv.put(TemplatesMetaData.TITLE, template.getActualTitle());
+			if (template.getTitle() != null)
+				cv.put(TemplatesMetaData.TITLE, template.getTitle());
 			else
 				cv.put(TemplatesMetaData.TITLE, "Untitled");
 
-			long timeInMillis = template.getStartCalendar().getTimeInMillis();
-			if (timeInMillis > 0)
-				cv.put(TemplatesMetaData.TIME_START, Utils.millisToUnixTimestamp(timeInMillis));
+//			long timeInMillis = template.getStartCalendar().getTimeInMillis();
+//			if (timeInMillis > 0)
+//				cv.put(TemplatesMetaData.TIME_START, Utils.millisToUnixTimestamp(timeInMillis));
 
-			timeInMillis = template.getEndCalendar().getTimeInMillis();
-			if (timeInMillis > 0)
-				cv.put(TemplatesMetaData.TIME_START, Utils.millisToUnixTimestamp(timeInMillis));
+//			timeInMillis = template.getEndCalendar().getTimeInMillis();
+//			if (timeInMillis > 0)
+//				cv.put(TemplatesMetaData.TIME_START, Utils.millisToUnixTimestamp(timeInMillis));
 
-			if (template.getDescription() != null)
-				cv.put(TemplatesMetaData.DESC, template.getDescription());
+			if (template.getDescription_() != null)
+				cv.put(TemplatesMetaData.DESC, template.getDescription_());
 			else
 				cv.put(TemplatesMetaData.DESC, "");
 
@@ -1816,94 +1816,29 @@ public class DataManagement {
 			else
 				cv.put(TemplatesMetaData.ACCOMODATION, "");
 
-			// if (Data.selectedContacts != null &&
-			// !Data.selectedContacts.isEmpty()) {
-			// template.assigned_contacts = new
-			// int[Data.selectedContacts.size()];
-			// int i = 0;
-			// for (Contact contact : Data.selectedContacts) {
-			// template.getAssigned_contacts()[i] = contact.contact_id;
-			// i++;
-			// }
-			// }
-			//
-			// if (template.getAssigned_contacts() != null) {
-			// for (int i = 0, l = template.getAssigned_contacts().length; i <
-			// l; i++) {
-			// cv.put(TemplatesMetaData.ASSIGNED_CONTACTS,
-			// String.valueOf(template.getAssigned_contacts()[i]));
-			// }
-			// } else {
-			// cv.put(TemplatesMetaData.ASSIGNED_CONTACTS, "");
-			// }
-			//
-			// if (template.getAssigned_groups() != null) {
-			// for (int i = 0, l = template.getAssigned_groups().length; i < l;
-			// i++) {
-			// cv.put(TemplatesMetaData.ASSIGNED_GROUPS,
-			// String.valueOf(template.getAssigned_groups()[i]));
-			// }
-			// } else {
-			// cv.put(TemplatesMetaData.ASSIGNED_GROUPS, "");
-			// }
-
-			// if (template.reminder1 != null)
-			// cv.put(TemplatesMetaData.REMINDER1, template.reminder1);
-			// else
-			// cv.put(TemplatesMetaData.REMINDER1, "");
-
-			// if (template.reminder2 != null)
-			// cv.put(TemplatesMetaData.REMINDER2, template.reminder2);
-			// else
-			// cv.put(TemplatesMetaData.REMINDER2, "");
-
-			// if (template.reminder3 != null)
-			// cv.put(TemplatesMetaData.REMINDER3, template.reminder3);
-			// else
-			// cv.put(TemplatesMetaData.REMINDER3, "");
-
-			// if (template.getAlarm1() != null)
-			// cv.put(TemplatesMetaData.ALARM1, template.getAlarm1());
-			// else
-			// cv.put(TemplatesMetaData.ALARM1, "");
-
-			// if (template.getAlarm2() != null)
-			// cv.put(TemplatesMetaData.ALARM2, template.getAlarm2());
-			// else
-			// cv.put(TemplatesMetaData.ALARM2, "");
-
-			// if (template.getAlarm3() != null)
-			// cv.put(TemplatesMetaData.ALARM3, template.getAlarm3());
-			// else
-			// cv.put(TemplatesMetaData.ALARM3, "");
-
-			// TODO find out wtf is bd in event
-			// if (event.birthday) {
-			// reqEntity.addPart("bd", new StringBody("1"));
-			// }
-
-			Data.getmContext().getContentResolver().insert(TemplatesMetaData.CONTENT_URI, cv);
+			context.getContentResolver().insert(TemplatesMetaData.CONTENT_URI, cv);
 			success = true;
 		} catch (Exception e) {
-			Log.e("uploadTemplateToLocalDb(template[event_id=" + template.getEvent_id() + "], id=" + template_id + ")", "CATCH!");
+			Log.e("uploadTemplateToLocalDb(context, template[event_id=" + template.getTemplate_id() + "])", "Sum shit has just failed!");
 		}
 
 		return success;
 	}
 
 	// TODO getTemplatesFromRemoteDb() documentation pending.
-	public ArrayList<Event> getTemplatesFromRemoteDb() {
+	public static void getTemplatesFromRemoteDb(Context context) {
+		String GET_TEMPLATES_FROM_REMOTE_DB_URL = "mobile/templates_get";
+		
 		boolean success = false;
-		ArrayList<Event> templates = new ArrayList<Event>();
-		Event template = null;
+		Template template = null;
 
 		try {
-			WebService webService = new WebService(getContext());
-			HttpPost post = new HttpPost(Data.getServerUrl() + "mobile/templates_get");
+			WebService webService = new WebService(context);
+			HttpPost post = new HttpPost(Data.getServerUrl() + GET_TEMPLATES_FROM_REMOTE_DB_URL);
 
 			MultipartEntity reqEntity = new MultipartEntity(HttpMultipartMode.BROWSER_COMPATIBLE);
 
-			reqEntity.addPart("token", new StringBody(Data.getToken(getContext()), Charset.forName("UTF-8")));
+			reqEntity.addPart(TOKEN, new StringBody(Data.getToken(context), Charset.forName("UTF-8")));
 
 			post.setEntity(reqEntity);
 			HttpResponse rp = webService.getResponseFromHttpPost(post);
@@ -1912,496 +1847,74 @@ public class DataManagement {
 				String resp = EntityUtils.toString(rp.getEntity());
 				if (resp != null) {
 					JSONObject object = new JSONObject(resp);
-					success = object.getBoolean("success");
+					success = object.getBoolean(SUCCESS);
 
 					if (success == false) {
-						// TODO show an error.
+						// error = object.getString("error");
 					} else {
-						JSONArray es = object.getJSONArray("templates");
-						int count = es.length();
-						for (int i = 0; i < count; i++) {
-							JSONObject e = es.getJSONObject(i);
-
-							template = new Event();
-
+						JSONArray es = object.getJSONArray(TEMPLATES);
+						for (int i = 0; i < es.length(); i++) {
 							try {
-								template.setEvent_id(e.getInt("template_id"));
-								// cv.put(EventsProvider.EMetaData.EventsMetaData.E_ID,
-								// template.event_id);
+								JSONObject e = es.getJSONObject(i);
+								template = JSONUtils.createTemplateFromJSON(context, e);
+								if (template != null) {
+									template.setUploadedToServer(true);
+									insertTemplateToLocalDb(context, template);
+								}
 							} catch (JSONException ex) {
-								Reporter.reportError(getContext(), this.getClass().toString(), Thread.currentThread().getStackTrace()[2]
-										.getMethodName().toString(), ex.getMessage());
+								Log.e("getTemplatesFromRemoteDb(contex)", "Failed parsing JSON");
 							}
-							// try {
-							// template.user_id = e.getInt("user_id");
-							// cv.put(EventsProvider.EMetaData.EventsMetaData.USER_ID,
-							// template.user_id);
-							// } catch (JSONException ex) {
-							// Reporter.reportError(this.getClass().toString(),
-							// Thread.currentThread().getStackTrace()[2].getMethodName().toString(),
-							// ex.getMessage());
-							// }
-							// try {
-							// template.status = e.getInt("status");
-							// cv.put(EventsProvider.EMetaData.EventsMetaData.STATUS,
-							// template.status);
-							// } catch (JSONException ex) {
-							// Reporter.reportError(this.getClass().toString(),
-							// Thread.currentThread().getStackTrace()[2].getMethodName().toString(),
-							// ex.getMessage());
-							// }
-							// try {
-							// int is_owner = e.getInt("is_owner");
-							// template.is_owner = is_owner == 1;
-							// cv.put(EventsProvider.EMetaData.EventsMetaData.IS_OWNER,
-							// template.is_owner);
-							// } catch (JSONException ex) {
-							// Reporter.reportError(this.getClass().toString(),
-							// Thread.currentThread().getStackTrace()[2].getMethodName().toString(),
-							// ex.getMessage());
-							// }
-							// try {
-							// template.type = e.getString("type");
-							// cv.put(EventsProvider.EMetaData.EventsMetaData.TYPE,
-							// template.type);
-							// } catch (JSONException ex) {
-							// Reporter.reportError(this.getClass().toString(),
-							// Thread.currentThread().getStackTrace()[2].getMethodName().toString(),
-							// ex.getMessage());
-							// }
-							try {
-								template.setTitle(e.getString("title"));
-								// cv.put(EventsProvider.EMetaData.EventsMetaData.TITLE,
-								// template.title);
-							} catch (JSONException ex) {
-								Reporter.reportError(getContext(), this.getClass().toString(), Thread.currentThread().getStackTrace()[2]
-										.getMethodName().toString(), ex.getMessage());
-							}
-							try {
-								template.setIcon(e.getString("icon"));
-								// cv.put(EventsProvider.EMetaData.EventsMetaData.ICON,
-								// template.icon);
-							} catch (JSONException ex) {
-								Reporter.reportError(getContext(), this.getClass().toString(), Thread.currentThread().getStackTrace()[2]
-										.getMethodName().toString(), ex.getMessage());
-							}
-							try {
-								template.setColor(e.getString("color"));
-								// cv.put(EventsProvider.EMetaData.EventsMetaData.COLOR,
-								// template.getColor());
-							} catch (JSONException ex) {
-								Reporter.reportError(getContext(), this.getClass().toString(), Thread.currentThread().getStackTrace()[2]
-										.getMethodName().toString(), ex.getMessage());
-							}
-							try {
-								template.setDescription(e.getString("description"));
-								// cv.put(EventsProvider.EMetaData.EventsMetaData.DESC,
-								// template.description_);
-							} catch (JSONException ex) {
-								Reporter.reportError(getContext(), this.getClass().toString(), Thread.currentThread().getStackTrace()[2]
-										.getMethodName().toString(), ex.getMessage());
-							}
-							try {
-								template.setLocation(e.getString("location"));
-								// cv.put(EventsProvider.EMetaData.EventsMetaData.LOCATION,
-								// template.location);
-							} catch (JSONException ex) {
-								Reporter.reportError(getContext(), this.getClass().toString(), Thread.currentThread().getStackTrace()[2]
-										.getMethodName().toString(), ex.getMessage());
-							}
-							try {
-								template.setAccomodation(e.getString("accomodation"));
-								// cv.put(EventsProvider.EMetaData.EventsMetaData.ACCOMODATION,
-								// template.accomodation);
-							} catch (JSONException ex) {
-								Reporter.reportError(getContext(), this.getClass().toString(), Thread.currentThread().getStackTrace()[2]
-										.getMethodName().toString(), ex.getMessage());
-							}
-							try {
-								template.setCost(e.getString("cost"));
-								// cv.put(EventsProvider.EMetaData.EventsMetaData.COST,
-								// template.cost);
-							} catch (JSONException ex) {
-								Reporter.reportError(getContext(), this.getClass().toString(), Thread.currentThread().getStackTrace()[2]
-										.getMethodName().toString(), ex.getMessage());
-							}
-							try {
-								template.setTake_with_you(e.getString("take_with_you"));
-								// cv.put(EventsProvider.EMetaData.EventsMetaData.TAKE_WITH_YOU,
-								// template.take_with_you);
-							} catch (JSONException ex) {
-								Reporter.reportError(getContext(), this.getClass().toString(), Thread.currentThread().getStackTrace()[2]
-										.getMethodName().toString(), ex.getMessage());
-							}
-							try {
-								template.setGo_by(e.getString("go_by"));
-								// cv.put(EventsProvider.EMetaData.EventsMetaData.GO_BY,
-								// template.go_by);
-							} catch (JSONException ex) {
-								Reporter.reportError(getContext(), this.getClass().toString(), Thread.currentThread().getStackTrace()[2]
-										.getMethodName().toString(), ex.getMessage());
-							}
-							/* Address START */
-							try {
-								template.setCountry(e.getString("country"));
-								// cv.put(EventsProvider.EMetaData.EventsMetaData.COUNTRY,
-								// template.country);
-							} catch (JSONException ex) {
-								Reporter.reportError(getContext(), this.getClass().toString(), Thread.currentThread().getStackTrace()[2]
-										.getMethodName().toString(), ex.getMessage());
-							}
-							try {
-								template.setCity(e.getString("city"));
-								// cv.put(EventsProvider.EMetaData.EventsMetaData.CITY,
-								// template.city);
-							} catch (JSONException ex) {
-								Reporter.reportError(getContext(), this.getClass().toString(), Thread.currentThread().getStackTrace()[2]
-										.getMethodName().toString(), ex.getMessage());
-							}
-							try {
-								template.setStreet(e.getString("street"));
-								// cv.put(EventsProvider.EMetaData.EventsMetaData.STREET,
-								// template.street);
-							} catch (JSONException ex) {
-								Reporter.reportError(getContext(), this.getClass().toString(), Thread.currentThread().getStackTrace()[2]
-										.getMethodName().toString(), ex.getMessage());
-							}
-							try {
-								template.setZip(e.getString("zip"));
-								// cv.put(EventsProvider.EMetaData.EventsMetaData.ZIP,
-								// template.zip);
-							} catch (JSONException ex) {
-								Reporter.reportError(getContext(), this.getClass().toString(), Thread.currentThread().getStackTrace()[2]
-										.getMethodName().toString(), ex.getMessage());
-							}
-							try {
-								template.setTimezone(e.getString("timezone"));
-								// cv.put(EventsProvider.EMetaData.EventsMetaData.TIMEZONE,
-								// template.timezone);
-							} catch (JSONException ex) {
-								Reporter.reportError(getContext(), this.getClass().toString(), Thread.currentThread().getStackTrace()[2]
-										.getMethodName().toString(), ex.getMessage());
-							}
-							/* Address END */
-
-							try {
-								template.setStartCalendar(Utils.createCalendar(e.getLong("time_start"), template.getTimezone()));
-								// cv.put(EventsProvider.EMetaData.EventsMetaData.TIME_START,
-								// template.time_start);
-							} catch (JSONException ex) {
-								Reporter.reportError(getContext(), this.getClass().toString(), Thread.currentThread().getStackTrace()[2]
-										.getMethodName().toString(), ex.getMessage());
-							}
-
-							try {
-								template.setEndCalendar(Utils.createCalendar(e.getLong("time_end"), template.getTimezone()));
-								// cv.put(EventsProvider.EMetaData.EventsMetaData.TIME_END,
-								// template.time_end);
-							} catch (JSONException ex) {
-								Reporter.reportError(getContext(), this.getClass().toString(), Thread.currentThread().getStackTrace()[2]
-										.getMethodName().toString(), ex.getMessage());
-							}
-
-							// try {
-							// template.time = e.getString("time");
-							// cv.put(EventsProvider.EMetaData.EventsMetaData.TIME,
-							// template.time);
-							// } catch (JSONException ex) {
-							// Reporter.reportError(this.getClass().toString(),
-							// Thread.currentThread().getStackTrace()[2].getMethodName().toString(),
-							// ex.getMessage());
-							// }
-							// try {
-							// template.my_time_start =
-							// e.getString("my_time_start");
-							// cv.put(EventsProvider.EMetaData.EventsMetaData.MY_TIME_START,
-							// template.my_time_start);
-							// template.setStartCalendar(Utils.stringToCalendar(template.my_time_start,
-							// SERVER_TIMESTAMP_FORMAT));
-							//
-							// } catch (JSONException ex) {
-							// Reporter.reportError(this.getClass().toString(),
-							// Thread.currentThread().getStackTrace()[2].getMethodName()
-							// .toString(), ex.getMessage());
-							// }
-							// try {
-							// template.my_time_end =
-							// e.getString("my_time_end");
-							// cv.put(EventsProvider.EMetaData.EventsMetaData.MY_TIME_END,
-							// template.my_time_end);
-							// template.setEndCalendar(Utils.stringToCalendar(template.my_time_end,
-							// SERVER_TIMESTAMP_FORMAT));
-							//
-							// } catch (JSONException ex) {
-							// Reporter.reportError(this.getClass().toString(),
-							// Thread.currentThread().getStackTrace()[2].getMethodName()
-							// .toString(), ex.getMessage());
-							// }
-							/* Reminders START */
-							// try {
-							// template.reminder1 = e.getString("reminder1");
-							// cv.put(EventsProvider.EMetaData.EventsMetaData.REMINDER1,
-							// template.reminder1);
-							// } catch (JSONException ex) {
-							// Reporter.reportError(this.getClass().toString(),
-							// Thread.currentThread().getStackTrace()[2].getMethodName()
-							// .toString(), ex.getMessage());
-							// }
-							// try {
-							// template.reminder2 = e.getString("reminder2");
-							// cv.put(EventsProvider.EMetaData.EventsMetaData.REMINDER2,
-							// template.reminder2);
-							// } catch (JSONException ex) {
-							// Reporter.reportError(this.getClass().toString(),
-							// Thread.currentThread().getStackTrace()[2].getMethodName()
-							// .toString(), ex.getMessage());
-							// }
-							// try {
-							// template.reminder3 = e.getString("reminder3");
-							// cv.put(EventsProvider.EMetaData.EventsMetaData.REMINDER3,
-							// template.reminder3);
-							// } catch (JSONException ex) {
-							// Reporter.reportError(this.getClass().toString(),
-							// Thread.currentThread().getStackTrace()[2].getMethodName()
-							// .toString(), ex.getMessage());
-							// }
-							/* Reminders START */
-							/* Alarms START */
-							// String tmpAlarmFired = "";
-							// try {
-							// template.alarm1 = e.getString("alarm1");
-							// cv.put(EventsProvider.EMetaData.EventsMetaData.REMINDER1,
-							// template.reminder1);
-							// } catch (JSONException ex) {
-							// Reporter.reportError(this.getClass().toString(),
-							// Thread.currentThread().getStackTrace()[2].getMethodName()
-							// .toString(), ex.getMessage());
-							// }
-							// tmpAlarmFired = e.getString("alarm1_fired");
-							// if(!tmpAlarmFired.equals("null") &&
-							// tmpAlarmFired.matches("[0-9]*")){
-							// template.alarm1fired =
-							// Integer.parseInt(tmpAlarmFired) == 1;
-							// }
-							// try {
-							// template.alarm2 = e.getString("alarm2");
-							// cv.put(EventsProvider.EMetaData.EventsMetaData.REMINDER2,
-							// template.reminder2);
-							// } catch (JSONException ex) {
-							// Reporter.reportError(this.getClass().toString(),
-							// Thread.currentThread().getStackTrace()[2].getMethodName()
-							// .toString(), ex.getMessage());
-							// }
-							// tmpAlarmFired = e.getString("alarm2_fired");
-							// if(!tmpAlarmFired.equals("null") &&
-							// tmpAlarmFired.matches("[0-9]*")){
-							// template.alarm2fired =
-							// Integer.parseInt(tmpAlarmFired) == 1;
-							// }
-							// try {
-							// template.alarm3 = e.getString("alarm3");
-							// cv.put(EventsProvider.EMetaData.EventsMetaData.REMINDER3,
-							// template.reminder3);
-							// } catch (JSONException ex) {
-							// Reporter.reportError(this.getClass().toString(),
-							// Thread.currentThread().getStackTrace()[2].getMethodName()
-							// .toString(), ex.getMessage());
-							// }
-							// tmpAlarmFired = e.getString("alarm3_fired");
-							// if(!tmpAlarmFired.equals("null") &&
-							// tmpAlarmFired.matches("[0-9]*")){
-							// template.alarm3fired =
-							// Integer.parseInt(tmpAlarmFired) == 1;
-							// }
-							/* Alarms END */
-
-							// try {
-							// template.created = e.getString("created");
-							// cv.put(EventsProvider.EMetaData.EventsMetaData.CREATED,
-							// template.created);
-							// } catch (JSONException ex) {
-							// Reporter.reportError(this.getClass().toString(),
-							// Thread.currentThread().getStackTrace()[2].getMethodName()
-							// .toString(), ex.getMessage());
-							// }
-							// try {
-							// template.modified = e.getString("modified");
-							// cv.put(EventsProvider.EMetaData.EventsMetaData.MODIFIED,
-							// template.modified);
-							// } catch (JSONException ex) {
-							// Reporter.reportError(this.getClass().toString(),
-							// Thread.currentThread().getStackTrace()[2].getMethodName()
-							// .toString(), ex.getMessage());
-							// }
-							//
-							// try {
-							// template.attendant_1_count =
-							// e.getInt("attendant_1_count");
-							// cv.put(EventsProvider.EMetaData.EventsMetaData.ATTENDANT_1_COUNT,
-							// template.attendant_1_count);
-							// } catch (JSONException ex) {
-							// Reporter.reportError(this.getClass().toString(),
-							// Thread.currentThread().getStackTrace()[2].getMethodName()
-							// .toString(), ex.getMessage());
-							// }
-							// try {
-							// template.attendant_2_count =
-							// e.getInt("attendant_2_count");
-							// cv.put(EventsProvider.EMetaData.EventsMetaData.ATTENDANT_2_COUNT,
-							// template.attendant_2_count);
-							// } catch (JSONException ex) {
-							// Reporter.reportError(this.getClass().toString(),
-							// Thread.currentThread().getStackTrace()[2].getMethodName()
-							// .toString(), ex.getMessage());
-							// }
-							// try {
-							// template.attendant_0_count =
-							// e.getInt("attendant_0_count");
-							// cv.put(EventsProvider.EMetaData.EventsMetaData.ATTENDANT_0_COUNT,
-							// template.attendant_0_count);
-							// } catch (JSONException ex) {
-							// Reporter.reportError(this.getClass().toString(),
-							// Thread.currentThread().getStackTrace()[2].getMethodName()
-							// .toString(), ex.getMessage());
-							// }
-							// try {
-							// template.attendant_4_count =
-							// e.getInt("attendant_4_count");
-							// cv.put(EventsProvider.EMetaData.EventsMetaData.ATTENDANT_4_COUNT,
-							// template.attendant_4_count);
-							// } catch (JSONException ex) {
-							// Reporter.reportError(this.getClass().toString(),
-							// Thread.currentThread().getStackTrace()[2].getMethodName()
-							// .toString(), ex.getMessage());
-							// }
-							//
-							// try {
-							// int is_sports_event =
-							// e.getInt("is_sports_event");
-							// template.is_sports_event = is_sports_event == 1;
-							// cv.put(EventsProvider.EMetaData.EventsMetaData.IS_SPORTS_EVENT,
-							// template.is_sports_event);
-							// } catch (JSONException ex) {
-							// Reporter.reportError(this.getClass().toString(),
-							// Thread.currentThread().getStackTrace()[2].getMethodName()
-							// .toString(), ex.getMessage());
-							// }
-							// try {
-							// template.creator_fullname =
-							// e.getString("creator_fullname");
-							// cv.put(EventsProvider.EMetaData.EventsMetaData.CREATOR_FULLNAME,
-							// template.creator_fullname);
-							// } catch (JSONException ex) {
-							// Reporter.reportError(this.getClass().toString(),
-							// Thread.currentThread().getStackTrace()[2].getMethodName()
-							// .toString(), ex.getMessage());
-							// }
-							// try {
-							// template.creator_contact_id =
-							// e.getInt("creator_contact_id");
-							// cv.put(EventsProvider.EMetaData.EventsMetaData.CREATOR_CONTACT_ID,
-							// template.creator_contact_id);
-							// } catch (JSONException ex) {
-							// Reporter.reportError(this.getClass().toString(),
-							// Thread.currentThread().getStackTrace()[2].getMethodName()
-							// .toString(), ex.getMessage());
-							// }
-							// TODO contacts[] ant Templates
-							try {
-								@SuppressWarnings("unused")
-								JSONArray contacts = e.getJSONArray("groups");
-								// cv.put(EventsProvider.EMetaData.EventsMetaData.ASSIGNED_CONTACTS,
-								// assigned_contacts);
-							} catch (JSONException ex) {
-								Reporter.reportError(getContext(), this.getClass().toString(), Thread.currentThread().getStackTrace()[2]
-										.getMethodName().toString(), ex.getMessage());
-							}
-							// TODO groups[] ant Templates
-							try {
-								@SuppressWarnings("unused")
-								JSONArray groups = e.getJSONArray("groups");
-
-								// cv.put(EventsProvider.EMetaData.EventsMetaData.ASSIGNED_GROUPS,
-								// assigned_groups);
-							} catch (JSONException ex) {
-								Reporter.reportError(getContext(), this.getClass().toString(), Thread.currentThread().getStackTrace()[2]
-										.getMethodName().toString(), ex.getMessage());
-							}
-							// try {
-							// String invited = e.getString("invited");
-							// cv.put(EventsProvider.EMetaData.EventsMetaData.INVITED,
-							// invited);
-							// } catch (JSONException ex) {
-							// Reporter.reportError(this.getClass().toString(),
-							// Thread.currentThread().getStackTrace()[2].getMethodName()
-							// .toString(), ex.getMessage());
-							// }
-							// try {
-							// int all_day = e.getInt("all_day_event");
-							// template.is_all_day = all_day == 1;
-							// } catch (JSONException ex) {
-							// Reporter.reportError(this.getClass().toString(),
-							// Thread.currentThread().getStackTrace()[2].getMethodName().toString(),
-							// ex.getMessage());
-							// }
-
-							// Data.getmContext().getContentResolver().insert(EventsProvider.EMetaData.EventsMetaData.CONTENT_URI,
-							// cv);
-							templates.add(template);
 						}
 					}
 				}
 			}
 		} catch (Exception ex) {
-			Reporter.reportError(getContext(), this.getClass().toString(), Thread.currentThread().getStackTrace()[2].getMethodName()
-					.toString(), ex.getMessage());
-		}
-		// if (contactsBirthdays != null && !contactsBirthdays.isEmpty()) {
-		// templates.addAll(contactsBirthdays);
-		// }
-		// sortEvents(events);
-		return templates;
+			Reporter.reportError(context, "DataManagement", Thread.currentThread().getStackTrace()[2].getMethodName().toString(), ex.getMessage());
+		};
 	}
 
-	public Event getTemplateFromLocalDb(int template_id) {
-		Event event = new Event();
+	public static Template getTemplateFromLocalDb(Context context, int template_id) {
+		Template template = new Template();
 		Uri uri = Uri.parse(TemplatesMetaData.CONTENT_URI.toString() + "/" + template_id);
 		Cursor result = Data.getmContext().getContentResolver().query(uri, null, null, null, null);
 
 		if (result.moveToFirst()) {
-			event.setEvent_id(result.getInt(result.getColumnIndex(TemplatesMetaData.T_ID)));
-			event.setColor(result.getString(result.getColumnIndex(TemplatesMetaData.COLOR)));
-			event.setIcon(result.getString(result.getColumnIndex(TemplatesMetaData.ICON)));
+			template.setColor(result.getString(result.getColumnIndex(TemplatesMetaData.COLOR)));
+			template.setIcon(result.getString(result.getColumnIndex(TemplatesMetaData.ICON)));
 
-			event.setTitle(result.getString(result.getColumnIndex(TemplatesMetaData.TITLE)));
-			event.setStartCalendar(Utils.createCalendar(result.getLong(result.getColumnIndex(TemplatesMetaData.TIME_START)),
-					result.getString(result.getColumnIndex(TemplatesMetaData.TIMEZONE))));
-			event.setEndCalendar(Utils.createCalendar(result.getLong(result.getColumnIndex(TemplatesMetaData.TIME_END)),
-					result.getString(result.getColumnIndex(TemplatesMetaData.TIMEZONE))));
-			event.setDescription(result.getString(result.getColumnIndex(TemplatesMetaData.DESC)));
+			template.setTitle(result.getString(result.getColumnIndex(TemplatesMetaData.TITLE)));
+//			template.setStartCalendar(Utils.createCalendar(result.getLong(result.getColumnIndex(TemplatesMetaData.TIME_START)),
+//					result.getString(result.getColumnIndex(TemplatesMetaData.TIMEZONE))));
+//			template.setEndCalendar(Utils.createCalendar(result.getLong(result.getColumnIndex(TemplatesMetaData.TIME_END)),
+//					result.getString(result.getColumnIndex(TemplatesMetaData.TIMEZONE))));
+			template.setTimezone(result.getString(result.getColumnIndex(TemplatesMetaData.TIMEZONE)));
+			template.setDescription_(result.getString(result.getColumnIndex(TemplatesMetaData.DESC)));
 
-			event.setCountry(result.getString(result.getColumnIndex(TemplatesMetaData.COUNTRY)));
-			event.setCity(result.getString(result.getColumnIndex(TemplatesMetaData.CITY)));
-			event.setStreet(result.getString(result.getColumnIndex(TemplatesMetaData.STREET)));
-			event.setZip(result.getString(result.getColumnIndex(TemplatesMetaData.ZIP)));
-			event.setTimezone(result.getString(result.getColumnIndex(TemplatesMetaData.TIMEZONE)));
+			template.setCountry(result.getString(result.getColumnIndex(TemplatesMetaData.COUNTRY)));
+			template.setCity(result.getString(result.getColumnIndex(TemplatesMetaData.CITY)));
+			template.setStreet(result.getString(result.getColumnIndex(TemplatesMetaData.STREET)));
+			template.setZip(result.getString(result.getColumnIndex(TemplatesMetaData.ZIP)));
 
-			event.setLocation(result.getString(result.getColumnIndex(TemplatesMetaData.LOCATION)));
-			event.setGo_by(result.getString(result.getColumnIndex(TemplatesMetaData.GO_BY)));
-			event.setTake_with_you(result.getString(result.getColumnIndex(TemplatesMetaData.TAKE_WITH_YOU)));
-			event.setCost(result.getString(result.getColumnIndex(TemplatesMetaData.COST)));
-			event.setAccomodation(result.getString(result.getColumnIndex(TemplatesMetaData.ACCOMODATION)));
+			template.setLocation(result.getString(result.getColumnIndex(TemplatesMetaData.LOCATION)));
+			template.setGo_by(result.getString(result.getColumnIndex(TemplatesMetaData.GO_BY)));
+			template.setTake_with_you(result.getString(result.getColumnIndex(TemplatesMetaData.TAKE_WITH_YOU)));
+			template.setCost(result.getString(result.getColumnIndex(TemplatesMetaData.COST)));
+			template.setAccomodation(result.getString(result.getColumnIndex(TemplatesMetaData.ACCOMODATION)));
+			
+			try {
+				ArrayList<Invited> invites = new ArrayList<Invited>();
 
-			// event.setReminder1(result.getInt(result.getColumnIndex(TemplatesMetaData.REMINDER1)));
-			// event.setReminder2(result.getInt(result.getColumnIndex(TemplatesMetaData.REMINDER2)));
-			// event.setReminder3(result.getInt(result.getColumnIndex(TemplatesMetaData.REMINDER3)));
-
-			// event.setAlarm1(result.getInt(result.getColumnIndex(TemplatesMetaData.ALARM1)));
-			// event.setAlarm2(result.getInt(result.getColumnIndex(TemplatesMetaData.ALARM2)));
-			// event.setAlarm3(result.getInt(result.getColumnIndex(TemplatesMetaData.ALARM3)));
+				template.setMyInvite(JSONUtils.createInvitedListFromJSONArrayString(context,
+						result.getString(result.getColumnIndex(TemplatesMetaData.INVITED)), invites));
+				template.setInvited(invites);
+			} catch (Exception e) {
+				Log.e("getTemplateFromLocalDb", "Error parsing invited array for T_ID: " + template.getTemplate_id());
+			}
 		}
+		
+		result.close();
 
-		return event;
+		return template;
 	}
 
 	/**
@@ -2411,18 +1924,42 @@ public class DataManagement {
 	 * and temporary memory.
 	 * 
 	 * @author meska.lt@gmail.com
-	 * @version 1.0
+	 * @version 1.1
 	 * @since 2012-09-24
 	 * @return ArrayList of Event objects retrieved from remote database.
 	 */
-	public ArrayList<Event> getTemplates() {
-		ArrayList<Event> templates = getTemplatesFromRemoteDb();
-
-		for (Event template : templates) {
-			uploadTemplateToLocalDb(template, 0);
+	public static ArrayList<Template> getTemplateProjectionsFromLocalDb(Context context) {
+		ArrayList<Template> list = new ArrayList<Template>();
+		
+		if (TemplatesProvider.mOpenHelper == null)
+			TemplatesProvider.mOpenHelper = new TemplatesProvider.DatabaseHelper(context);
+		
+		Cursor result = TemplatesProvider.mOpenHelper.getReadableDatabase().rawQuery("SELECT "
+			+ TemplatesProvider.TMetaData.TemplatesMetaData._ID + ", "
+			+ TemplatesProvider.TMetaData.TemplatesMetaData.T_ID + ", "
+			+ TemplatesProvider.TMetaData.TemplatesMetaData.T_TITLE + ", "
+			+ TemplatesProvider.TMetaData.TemplatesMetaData.COLOR + " "
+			+ "FROM "
+			+ TemplatesProvider.TMetaData.TEMPLATES_TABLE
+			, null
+		);
+		
+		if (result.moveToFirst()) {
+			while (!result.isAfterLast()) {
+				Template templateProjection = new Template();
+				
+				templateProjection.setInternalID(result.getLong(result.getColumnIndexOrThrow(TemplatesProvider.TMetaData.TemplatesMetaData._ID)));
+				templateProjection.setTemplate_id(result.getInt(result.getColumnIndexOrThrow(TemplatesProvider.TMetaData.TemplatesMetaData.T_ID)));
+				templateProjection.setTitle(result.getString(result.getColumnIndexOrThrow(TemplatesProvider.TMetaData.TemplatesMetaData.T_TITLE)));
+				templateProjection.setColor(result.getString(result.getColumnIndexOrThrow(TemplatesProvider.TMetaData.TemplatesMetaData.COLOR)));
+				
+				list.add(templateProjection);
+				result.moveToNext();
+			}
 		}
-
-		return templates;
+		
+		result.close();
+		return list;
 	}
 
 	// Addresses
@@ -2674,10 +2211,10 @@ public class DataManagement {
 		}
 	}
 
-	public void createTemplate(Context context, Event event) {
-		// TODO implement offline mode
-		Integer templateId = uploadTemplateToRemoteDb(context, event);
-		uploadTemplateToLocalDb(event, templateId);
+	public void createTemplate(Context context, Template template) {
+//		// TODO implement offline mode
+//		Integer templateId = uploadTemplateToRemoteDb(context, template);
+		insertTemplateToLocalDb(context, template);
 
 	}
 

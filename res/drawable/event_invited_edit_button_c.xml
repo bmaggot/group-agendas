@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<shape xmlns:android="http://schemas.android.com/apk/res/android" >
+    <gradient android:startColor="@color/event_invite_button_c_gradstart"
+        	android:endColor="@color/event_invite_button_c_gradend"
+        	android:angle="270" />
+    
+    <corners android:radius="5dp" />
+    
+    <stroke android:width="1dp" android:color="@color/darker_gray" />
+</shape>

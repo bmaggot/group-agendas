@@ -21,6 +21,8 @@ import com.groupagendas.groupagenda.error.report.Reporter;
 import com.groupagendas.groupagenda.events.Event;
 import com.groupagendas.groupagenda.events.EventsProvider;
 import com.groupagendas.groupagenda.events.Invited;
+import com.groupagendas.groupagenda.templates.Template;
+import com.groupagendas.groupagenda.templates.TemplatesProvider.TMetaData.TemplatesMetaData;
 
 public class JSONUtils {
 
@@ -715,6 +717,60 @@ public class JSONUtils {
 		}
 		return group;
 
+	}
+
+	public static Template createTemplateFromJSON(Context context, JSONObject e) {
+		Template template = new Template();
+
+		try {
+			template.setTemplate_id(e.getInt(TemplatesMetaData.T_ID));
+			template.setTimezone(e.getString(TemplatesMetaData.TIMEZONE));
+		} catch (JSONException e1) {
+			Reporter.reportError(context, EventManagement.CLASS_NAME, Thread.currentThread().getStackTrace()[2].getMethodName().toString(),
+					e1.getMessage());
+		}
+			try {
+				if(e.getString(EventManagement.TYPE).contentEquals("v")){
+					template.setStartCalendar(Utils.stringToCalendar(context, "0", DataManagement.SERVER_TIMESTAMP_FORMAT));
+					template.setEndCalendar(Utils.stringToCalendar(context, "2100-01-01 00:00:00", DataManagement.SERVER_TIMESTAMP_FORMAT));
+				} else {
+					template.setStartCalendar(Utils.stringToCalendar(context, e.getString("time_start"), DataManagement.SERVER_TIMESTAMP_FORMAT));
+					template.setEndCalendar(Utils.stringToCalendar(context, e.getString("time_end"), DataManagement.SERVER_TIMESTAMP_FORMAT));
+				}
+			} catch (JSONException e2) {
+				e2.printStackTrace();
+			}
+
+			template.setTitle(e.optString(TemplatesMetaData.TITLE));
+			template.setIcon(e.optString(TemplatesMetaData.ICON));
+			template.setColor(e.optString(TemplatesMetaData.COLOR));
+			template.setDescription_(e.optString(TemplatesMetaData.DESC));
+		
+		
+			template.setLocation(e.optString(EventManagement.LOCATION));
+			template.setAccomodation(e.optString(EventManagement.ACCOMODATION));
+			template.setCost(e.optString(EventManagement.COST));
+			template.setTake_with_you(e.optString(EventManagement.TAKE_WITH_YOU));
+			template.setGo_by(e.optString(EventManagement.GO_BY));
+
+			template.setCountry(e.optString(EventManagement.COUNTRY));
+			template.setCity(e.optString(EventManagement.CITY));
+			template.setStreet(e.optString(EventManagement.STREET));
+			template.setZip(e.optString(EventManagement.ZIP));
+
+			template.setIs_all_day(e.optInt(EventManagement.IS_ALL_DAY) == 1);
+
+			try {
+				String jsonstring = e.getString(EventManagement.INVITED);
+			
+				ArrayList<Invited> invites = new ArrayList<Invited>();
+				createInvitedListFromJSONArrayString(context, jsonstring, invites);
+				template.setInvited(invites);
+			} catch (JSONException e1) {
+				template.setInvited(new ArrayList<Invited>());
+			}
+
+		return template;
 	}
 
 }
