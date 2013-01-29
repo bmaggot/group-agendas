@@ -21,7 +21,7 @@ import android.text.TextUtils;
  *
  */
 public class TemplatesProvider extends ContentProvider {
-	private DatabaseHelper mOpenHelper;
+	public static DatabaseHelper mOpenHelper;
 
 	public static class TMetaData {
 		public static final String AUTHORITY = "com.groupagendas.groupagenda.templates.TemplatesProvider";
@@ -36,12 +36,13 @@ public class TemplatesProvider extends ContentProvider {
 			public static final String CONTENT_TYPE = "vnd.android.cursor.dir/vnd.formula.events_item";
 			public static final String CONTENT_ITEM_TYPE = "vnd.android.cursor.item/vnd.formula.events_item";
 
-			public static final String T_ID 	= "event_id";
+			public static final String T_ID 	= "template_id";
+			public static final String _ID 	= "_id";
 			
 			public static final String IS_SPORTS_EVENT	= "is_sports_event";
-//			public static final String TYPE 	= "type";
-//			public static final String IS_ALL_DAY = "is_all_day";
+			public static final String IS_ALL_DAY = "is_all_day";
 			
+			public static final String T_TITLE	= "template_title";
 			public static final String TITLE	= "title";
 			public static final String ICON		= "icon";
 			public static final String COLOR 	= "color";
@@ -60,6 +61,7 @@ public class TemplatesProvider extends ContentProvider {
 			public static final String ZIP 		= "zip";
 			
 			public static final String TIMEZONE = "timezone";
+			public static final String TIMEZONE_IN_USE = "timezone_in_use";
 			public static final String TIME_START = "time_start";
 			public static final String TIME_END = "time_end";
 			
@@ -81,11 +83,12 @@ public class TemplatesProvider extends ContentProvider {
 			
 			public static final String ASSIGNED_CONTACTS = "contacts";
 			public static final String ASSIGNED_GROUPS = "groups";
-//			public static final String INVITED = "invited";
+			public static final String INVITED = "invited";
 			
 //			public static final String NEED_UPDATE = "need_update";
 			
-			public static final String DEFAULT_SORT_ORDER = TIME_START+" ASC";
+			public static final String DEFAULT_SORT_ORDER = TIME_START + " ASC";
+			public static final String UPLOADED_SUCCESSFULLY = "uploaded";
 		}
 	}
 	
@@ -98,9 +101,10 @@ public class TemplatesProvider extends ContentProvider {
 		TM.put(TMetaData.TemplatesMetaData.T_ID, TMetaData.TemplatesMetaData.T_ID);
 
 		TM.put(TMetaData.TemplatesMetaData.IS_SPORTS_EVENT, TMetaData.TemplatesMetaData.IS_SPORTS_EVENT);
-//		TM.put(TMetaData.TemplatesMetaData.TYPE, TMetaData.TemplatesMetaData.TYPE);
-//		TM.put(TMetaData.TemplatesMetaData.IS_ALL_DAY, TMetaData.TemplatesMetaData.IS_ALL_DAY);
+		TM.put(TMetaData.TemplatesMetaData.TIMEZONE_IN_USE, TMetaData.TemplatesMetaData.TIMEZONE_IN_USE);
+		TM.put(TMetaData.TemplatesMetaData.IS_ALL_DAY, TMetaData.TemplatesMetaData.IS_ALL_DAY);
 
+		TM.put(TMetaData.TemplatesMetaData.T_TITLE, TMetaData.TemplatesMetaData.T_TITLE);
 		TM.put(TMetaData.TemplatesMetaData.TITLE, TMetaData.TemplatesMetaData.TITLE);
 		TM.put(TMetaData.TemplatesMetaData.ICON, TMetaData.TemplatesMetaData.ICON);
 		TM.put(TMetaData.TemplatesMetaData.COLOR, TMetaData.TemplatesMetaData.COLOR);
@@ -135,6 +139,7 @@ public class TemplatesProvider extends ContentProvider {
 		
 		TM.put(TMetaData.TemplatesMetaData.ASSIGNED_CONTACTS, TMetaData.TemplatesMetaData.ASSIGNED_CONTACTS);
 		TM.put(TMetaData.TemplatesMetaData.ASSIGNED_GROUPS, TMetaData.TemplatesMetaData.ASSIGNED_GROUPS);
+		TM.put(TMetaData.TemplatesMetaData.INVITED, TMetaData.TemplatesMetaData.INVITED);
 	}
 	
 	/* UriMatcher */
@@ -227,7 +232,9 @@ public class TemplatesProvider extends ContentProvider {
 			throw new IllegalArgumentException("Unknow URI " + uri);
 		}
 		
-		getContext().getContentResolver().notifyChange(insUri, null);
+		if(insUri != null){
+			getContext().getContentResolver().notifyChange(insUri, null);
+		}
 		return insUri;
 	}
 	
@@ -251,7 +258,7 @@ public class TemplatesProvider extends ContentProvider {
 		return count;
 	}
 	
-	private static class DatabaseHelper extends SQLiteOpenHelper {
+	public static class DatabaseHelper extends SQLiteOpenHelper {
 		
 		public DatabaseHelper(Context context) {
 			super(context, TMetaData.DATABASE_NAME, null, TMetaData.DATABASE_VERSION);
@@ -261,12 +268,14 @@ public class TemplatesProvider extends ContentProvider {
 		public void onCreate(SQLiteDatabase db) {
 			String query =	"CREATE TABLE "
 				+TMetaData.TEMPLATES_TABLE+" ("
-				+TMetaData.TemplatesMetaData.T_ID+" INTEGER PRIMARY KEY,"
+				+TMetaData.TemplatesMetaData._ID+" INTEGER PRIMARY KEY AUTOINCREMENT,"
+				+TMetaData.TemplatesMetaData.T_ID+" INTEGER UNIQUE ON CONFLICT IGNORE,"
 				
 				+TMetaData.TemplatesMetaData.IS_SPORTS_EVENT+" TEXT ,"
-//				+EMetaData.EventsMetaData.TYPE+" TEXT ,"
+				+TMetaData.TemplatesMetaData.IS_ALL_DAY +" INTEGER ,"
 				
 				+TMetaData.TemplatesMetaData.TITLE+" TEXT ,"
+				+TMetaData.TemplatesMetaData.T_TITLE+" TEXT ,"
 				+TMetaData.TemplatesMetaData.ICON+" TEXT ,"
 				+TMetaData.TemplatesMetaData.COLOR+" TEXT ,"
 				+TMetaData.TemplatesMetaData.DESC+" TEXT ,"
@@ -284,6 +293,7 @@ public class TemplatesProvider extends ContentProvider {
 				+TMetaData.TemplatesMetaData.ZIP+" TEXT ,"
 				
 				+TMetaData.TemplatesMetaData.TIMEZONE+" TEXT ,"
+				+TMetaData.TemplatesMetaData.TIMEZONE_IN_USE+" INTEGER ,"
 				+TMetaData.TemplatesMetaData.TIME_START+" INTEGER ,"
 				+TMetaData.TemplatesMetaData.TIME_END+" INTEGER ,"
 				
@@ -303,9 +313,11 @@ public class TemplatesProvider extends ContentProvider {
 //				+EMetaData.EventsMetaData.ATTENDANT_0_COUNT+" TEXT ,"
 //				+EMetaData.EventsMetaData.ATTENDANT_4_COUNT+" TEXT ,"
 				
+				+TMetaData.TemplatesMetaData.UPLOADED_SUCCESSFULLY+" INTEGER ,"
+				
 				+TMetaData.TemplatesMetaData.ASSIGNED_CONTACTS+" TEXT ,"
-				+TMetaData.TemplatesMetaData.ASSIGNED_GROUPS+" TEXT )";
-//				+EMetaData.EventsMetaData.INVITED+" TEXT ,"
+				+TMetaData.TemplatesMetaData.ASSIGNED_GROUPS+" TEXT ,"
+				+TMetaData.TemplatesMetaData.INVITED+" TEXT )";
 //				+EMetaData.EventsMetaData.NEED_UPDATE+" INTEGER DEFAULT 0 )";
 				
 			db.execSQL(query);

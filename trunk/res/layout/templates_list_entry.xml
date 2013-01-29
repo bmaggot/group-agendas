@@ -4,17 +4,17 @@
     android:layout_width="fill_parent"
     android:layout_height="wrap_content"
     android:orientation="horizontal"
+    android:paddingLeft="10dp"
     android:background="@drawable/calendar_agenda_entry" >
     
-    <ImageView android:id="@+id/event_color_placeholder"
-        android:layout_marginLeft="10dp"
+    <ImageView android:id="@+id/month_entry_color_placeholder"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center_vertical|left"
         android:contentDescription="@string/event_color_placeholder"
         android:src="@null" />
     
-<!--     <LinearLayout android:orientation="vertical"
+    <LinearLayout android:orientation="vertical"
         android:layout_gravity="center_vertical"
         android:layout_marginLeft="5dp"
         android:layout_height="wrap_content"
@@ -51,9 +51,9 @@
         android:layout_gravity="center_vertical"
         android:contentDescription="@string/event_icons_placeholder"
         android:layout_margin="3dp"
-        android:src="@null" /> -->
+        android:src="@null" />
     
-   	<TextView android:id="@+id/entry_title"
+   	<TextView android:id="@+id/month_entry_title"
 	    android:layout_width="wrap_content"
 	    android:layout_height="wrap_content"
 		android:layout_gravity="center_vertical"
