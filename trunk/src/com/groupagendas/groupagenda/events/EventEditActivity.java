@@ -910,6 +910,7 @@ public class EventEditActivity extends EventActivity {
 									backgr.setBackgroundResource(R.drawable.event_invited_entry_notalone_background);
 								}
 							}
+							backgr.setPadding(DrawingUtils.convertDPtoPX(5), DrawingUtils.convertDPtoPX(5), DrawingUtils.convertDPtoPX(5), DrawingUtils.convertDPtoPX(5));
 
 							TextView startTime = (TextView) view
 									.findViewById(R.id.pollStartTime);
