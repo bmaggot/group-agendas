@@ -12,6 +12,8 @@ import android.content.Context;
 import android.util.Log;
 
 import com.groupagendas.groupagenda.account.Account;
+import com.groupagendas.groupagenda.address.Address;
+import com.groupagendas.groupagenda.address.AddressManagement;
 import com.groupagendas.groupagenda.alarm.Alarm;
 import com.groupagendas.groupagenda.contacts.Contact;
 import com.groupagendas.groupagenda.contacts.ContactsProvider;
@@ -725,6 +727,29 @@ public class JSONUtils {
 		}
 		return group;
 
+	}
+	
+	public static Address createAddressFromJSON(Context context, JSONObject e) {
+		Address address = new Address();
+		try {
+			address.setId(e.getInt(AddressManagement.ADDRESS_ID));
+			address.setUser_id(e.getInt(AddressManagement.USER_ID));
+			address.setTitle(e.getString(AddressManagement.TITLE));
+			address.setStreet(e.getString(AddressManagement.STREET));
+			address.setCity(e.getString(AddressManagement.CITY));
+			address.setZip(e.getString(AddressManagement.ZIP));
+			address.setState(e.getString(AddressManagement.STATE));
+			address.setCountry(e.getString(AddressManagement.COUNTRY));
+			address.setTimezone(e.getString(AddressManagement.TIMEZONE));
+			address.setCountry_name(e.getString(AddressManagement.COUNTRY_NAME));
+		} catch (JSONException e1) {
+			Reporter.reportError(context, AddressManagement.CLASS_NAME, Thread.currentThread().getStackTrace()[2].getMethodName().toString(),
+					e1.getMessage());
+		}
+		
+			
+			
+		return address;
 	}
 	
 	public static Alarm createAlarmFromJSONObject(JSONObject jsonObject, Context context) {
