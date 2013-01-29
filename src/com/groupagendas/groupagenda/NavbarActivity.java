@@ -43,6 +43,7 @@ import az.mecid.android.QuickAction;
 
 import com.groupagendas.groupagenda.account.Account;
 import com.groupagendas.groupagenda.account.verification.SmsVerificationCodeActivity;
+import com.groupagendas.groupagenda.address.AddressManagement;
 import com.groupagendas.groupagenda.alarm.AlarmReceiver;
 import com.groupagendas.groupagenda.calendar.AbstractCalendarView;
 import com.groupagendas.groupagenda.calendar.agenda.AgendaView;
@@ -772,6 +773,7 @@ public class NavbarActivity extends FragmentActivity {
 				case 3:// Load groups
 					if (DataManagement.networkAvailable){
 						ContactManagement.getGroupsFromRemoteDb(NavbarActivity.this, null);
+						AddressManagement.getAddressBookFromRemoteDb(NavbarActivity.this);
 						if(doUneedSleep){
 							try{ Thread.sleep(3000); }catch(InterruptedException e){ e.printStackTrace(); }
 						}
