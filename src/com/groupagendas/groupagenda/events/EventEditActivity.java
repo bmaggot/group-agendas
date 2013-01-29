@@ -63,6 +63,7 @@ import com.groupagendas.groupagenda.timezone.TimezonesAdapter;
 import com.groupagendas.groupagenda.utils.DateTimeSelectActivity;
 import com.groupagendas.groupagenda.utils.DateTimeUtils;
 import com.groupagendas.groupagenda.utils.DrawingUtils;
+import com.groupagendas.groupagenda.utils.SelectPollForCopyingDialog;
 import com.groupagendas.groupagenda.utils.Utils;
 
 public class EventEditActivity extends EventActivity {
@@ -122,6 +123,9 @@ public class EventEditActivity extends EventActivity {
 	private int poll_status;
 	private boolean to_rejoin_poll;
 	private boolean to_reject_poll;
+	
+	private Button copyEventButton;
+	private final String copy = "copy";
 
 	public void enableDisableButtons(Boolean state) {
 		saveButton.setEnabled(state);
@@ -307,16 +311,14 @@ public class EventEditActivity extends EventActivity {
 		saveButton.setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View v) {
-				if (!saveButton
-						.getText()
-						.toString()
-						.equalsIgnoreCase(
-								getResources().getString(R.string.saving))) {
+				// enableDisableButtons(false);
+				if(intent.getBooleanExtra(copy, false)){
+					new CopyEventTask().execute();
+				} else if (!saveButton.getText().toString().equalsIgnoreCase(getResources().getString(R.string.saving))) {
 					new UpdateEventTask().execute();
 					dataLoaded = false;
 				} else {
-					Toast.makeText(EventEditActivity.this, R.string.wait,
-							Toast.LENGTH_SHORT);
+					Toast.makeText(EventEditActivity.this, R.string.wait, Toast.LENGTH_SHORT).show();
 				}
 				sendSms();
 			}
@@ -550,6 +552,9 @@ public class EventEditActivity extends EventActivity {
 
 		chatMessengerButton = (Button) findViewById(R.id.messenger_button);
 
+
+		 
+
 		// INVITES SECTION
 		response_button_yes = (TextView) findViewById(R.id.button_yes);
 		response_button_yes.setOnClickListener(new OnClickListener() {
@@ -579,6 +584,29 @@ public class EventEditActivity extends EventActivity {
 		});
 
 		invitedPersonList = (LinearLayout) findViewById(R.id.invited_person_list);
+		copyEventButton = (Button) findViewById(R.id.copy_event_button);
+		if(intent.getBooleanExtra(copy, false)){
+			copyEventButton.setVisibility(View.GONE);
+		} else {
+			copyEventButton.setOnClickListener(new OnClickListener() {
+				
+				@Override
+				public void onClick(View v) {
+					if(event.getType().contentEquals("v")){
+						showPollSelectionForCopyingDialog(event);
+					} else {
+						EventEditActivity.this.finish();
+						Intent intent = new Intent(EventEditActivity.this, EventEditActivity.class);
+						intent.putExtra("event_id", event.getInternalID());
+						intent.putExtra("type", event.getType());
+						intent.putExtra("isNative", event.isNative());
+						intent.putExtra(copy, true);
+						startActivity(intent);
+					}
+				}
+			});
+		}
+		
 //		invitedPersonListView = (ListView) findViewById(R.id.invited_person_listview);
 
 		super.inviteEditButton = (Button) findViewById(R.id.invite_edit_button);
@@ -677,7 +705,7 @@ public class EventEditActivity extends EventActivity {
 		}
 
 		@Override
-		protected Event doInBackground(Long... ids) {
+		protected Event doInBackground(Long...ids) {
 			if (intent.getBooleanExtra("isNative", false)) {
 				return NativeCalendarReader.getNativeEventFromLocalDbById(
 						getApplicationContext(), ids[0]);
@@ -703,12 +731,15 @@ public class EventEditActivity extends EventActivity {
 				throw new IllegalStateException(
 						"EVENT NOT FOUND IN LOCAL DB!!!!!!");
 			}
-
+			if(intent.getBooleanExtra(copy, false)){
+				result.setIs_owner(true);
+				result.setInvited(new ArrayList<Invited>());
+			}
 			account = new Account(EventEditActivity.this);
 			event = result;
 			selectedIcon = event.getIcon();
 
-			if (event.getType().contentEquals("v")) {
+			if (event.getType().contentEquals("v") && !intent.getBooleanExtra(copy, false)) {
 				startViewBlock.setVisibility(View.GONE);
 				endViewBlock.setVisibility(View.GONE);
 				pollStartEndTime.setVisibility(View.VISIBLE);
@@ -929,7 +960,9 @@ public class EventEditActivity extends EventActivity {
 			// if this user is owner of event, fields can be edited
 			if (result.is_owner()) {
 				saveButton.setVisibility(View.VISIBLE);
-				deleteButton.setVisibility(View.VISIBLE);
+				if(!intent.getBooleanExtra(copy, false)){
+					deleteButton.setVisibility(View.VISIBLE);
+				}
 
 				// ICON SELECTION
 				iconView.setOnClickListener(new OnClickListener() {
@@ -979,8 +1012,7 @@ public class EventEditActivity extends EventActivity {
 				// COLOR SELECTION
 
 				selectedColor = result.getColor();
-				final String[] colorsValues = getResources().getStringArray(
-						R.array.colors_values);
+				final String[] colorsValues = getResources().getStringArray(R.array.colors_values);
 				colorView.setOnClickListener(new OnClickListener() {
 					@Override
 					public void onClick(View v) {
@@ -1067,6 +1099,11 @@ public class EventEditActivity extends EventActivity {
 			iconView.setImageResource(result.getIconId(EventEditActivity.this));
 
 			// START AND END TIME
+			if(result.getType().contentEquals("v") && intent.getBooleanExtra(copy, false)){
+				String[] times = intent.getStringExtra("times").split(" - ");
+				result.setStartCalendar(Utils.stringToCalendar(EventEditActivity.this, times[0], "yyyy-MM-dd HH:mm"));
+				result.setEndCalendar(Utils.stringToCalendar(EventEditActivity.this, times[1], "yyyy-MM-dd HH:mm"));
+			}
 			if (result.getStartCalendar() != null) {
 				if (!event.is_all_day()) {
 					startView.setText(dtUtils.formatDateTime(result
@@ -1093,8 +1130,7 @@ public class EventEditActivity extends EventActivity {
 				descView.setText(result.getDescription());
 			}
 			descView.addTextChangedListener(watcher);
-			if (ContactManagement.getContactFromLocalDb(
-					getApplicationContext(), result.getCreator_contact_id(), 0) != null) {
+			if (ContactManagement.getContactFromLocalDb(getApplicationContext(), result.getCreator_contact_id(), 0) != null && !intent.getBooleanExtra(copy, false)) {
 				creatorNameTextView.setText(result.getCreator_fullname());
 				creatorNameTextView.setOnClickListener(new OnClickListener() {
 
@@ -1109,10 +1145,9 @@ public class EventEditActivity extends EventActivity {
 						startActivity(contactIntent);
 					}
 				});
-			} else if (result.getCreator_contact_id() == 0
-					&& !result.is_owner()) {
+			} else if (result.getCreator_contact_id() == 0 && !result.is_owner() && !intent.getBooleanExtra(copy, false)) {
 				creatorNameTextView.setText(result.getCreator_fullname());
-			} else if (result.is_owner()) {
+			} else if (result.is_owner() || intent.getBooleanExtra(copy, false)) {
 				creatorNameTextView.setText(getResources().getString(
 						R.string.you));
 				creatorNameTextView.setOnClickListener(new OnClickListener() {
@@ -1235,7 +1270,11 @@ public class EventEditActivity extends EventActivity {
 			} else {
 				inviteButton.setVisibility(View.INVISIBLE);
 			}
-
+			
+			if(intent.getBooleanExtra(copy, false)){
+				saveButton.setVisibility(View.VISIBLE);
+				saveButton.setEnabled(true);
+			}
 			dataLoaded = true;
 			pd.dismiss();
 		}
@@ -1636,6 +1675,100 @@ public class EventEditActivity extends EventActivity {
 			onResume();
 		}
 	};
+	
+	class CopyEventTask extends AsyncTask<Event, Void, Boolean> {
+
+		@Override
+		protected void onPreExecute() {
+			pb.setVisibility(View.VISIBLE);
+			saveButton.setText(getString(R.string.saving));
+			Toast.makeText(EventEditActivity.this, R.string.copying_new_event, Toast.LENGTH_SHORT).show();
+	
+			super.onPreExecute();
+		}
+
+		@Override
+		protected Boolean doInBackground(Event... events) {
+			event = EventEditActivity.this.setEventData(event);
+
+			if (event.getColor().equals(Event.DEFAULT_COLOR)) {
+				EventEditActivity.this.setAutoColor(EventEditActivity.this);
+			}
+
+			if (event.getIcon().equals(Event.DEFAULT_ICON)) {
+				EventEditActivity.this.setAutoIcon(EventEditActivity.this);
+			}
+
+			int testEvent = event.isValid();
+			if (testEvent == 0) {
+				EventManagement.createNewEvent(EventEditActivity.this, event);
+				return true;
+			} else {
+				errorStr = setErrorStr(testEvent);
+				return false;
+			}
+		}
+
+		@Override
+		protected void onPostExecute(Boolean result) {
+			if (result) {
+				sendSms();
+				Toast.makeText(EventEditActivity.this, R.string.new_event_copied, Toast.LENGTH_SHORT).show();
+				finish();
+			} else {
+				showDialog(DIALOG_ERROR);
+				pb.setVisibility(View.GONE);
+				saveButton.setText(getString(R.string.save));
+			}
+			super.onPostExecute(result);
+		}
+
+	}
+	
+	public void showPollSelectionForCopyingDialog(Event event){
+		String jsonArrayString = event.getPoll();
+		ArrayList<String> pollsList = new ArrayList<String>();
+		try {
+			if (jsonArrayString != null && !jsonArrayString.contentEquals("null")) {
+				final JSONArray jsonArray = new JSONArray(jsonArrayString);
+				for (int i = 0; i < jsonArray.length(); i++) {
+					final JSONObject pollThread = jsonArray.getJSONObject(i);
+
+					DateTimeUtils dateTimeUtils = new DateTimeUtils(EventEditActivity.this);
+
+					String temp = "";
+					try {
+						temp = pollThread.getString("start");
+					} catch (JSONException e) {
+						Log.e("PollAdapter", "Failed getting poll time.");
+					}
+
+					final Calendar tempCal = Utils.stringToCalendar(EventEditActivity.this, temp,
+							DataManagement.SERVER_TIMESTAMP_FORMAT);
+					String start = dateTimeUtils.formatDate(tempCal) + " " + dateTimeUtils.formatTime(tempCal);
+					try {
+						temp = pollThread.getString("end");
+					} catch (JSONException e) {
+						Log.e("PollAdapter", "Failed getting poll time.");
+					}
+
+					final Calendar tempCal2 = Utils.stringToCalendar(EventEditActivity.this, temp,
+							DataManagement.SERVER_TIMESTAMP_FORMAT);
+					String end = dateTimeUtils.formatDate(tempCal2) + " " + dateTimeUtils.formatTime(tempCal2);
+					
+					Calendar nowCal = Calendar.getInstance();
+					if (tempCal.getTimeInMillis() > nowCal.getTimeInMillis()) {
+						pollsList.add(start +" - " + end);
+					}
+
+				}
+			}
+		} catch (JSONException e) {
+			e.printStackTrace();
+		}
+		SelectPollForCopyingDialog dialog = new SelectPollForCopyingDialog(this, pollsList, event);
+		dialog.show();
+	}
 	
 	public void setChangesMade (boolean changed) {
 		changesMade = changed;

@@ -66,7 +66,7 @@ public class EventManagement {
 	public static final String DATA_ENCODING = "UTF-8";
 
 	private static final String GET_EVENTS_FROM_REMOTE_DB_URL = "mobile/events_list";
-	public static int eventsInOnePostRetrieveSize = 99999;
+	public static int eventsInOnePostRetrieveSize = 200;
 	
 
 	// //////////////////////////METHODS THAT ARE USED BY
@@ -218,7 +218,7 @@ public class EventManagement {
 
 		}
 
-		deleteEventFromLocalDb(context, event.getInternalID());
+		deleteEventFromLocalDb(context, event.getInternalID(), event.getEvent_id());
 	}
 
 	/**
@@ -577,6 +577,7 @@ public class EventManagement {
 		ContentValues[] values2;
 		int length = 0;
 		int pageNumber = 1;
+		boolean hasMOreEvents = false;
 
 		do{
 			try {
@@ -618,7 +619,7 @@ public class EventManagement {
 						if (success == false) {
 							// error = object.getString("error");
 						} else {
-	
+							hasMOreEvents = object.getBoolean("has_more");
 							JSONArray es = object.getJSONArray(EVENTS);
 							length = es.length();
 							values = new ContentValues[length];						
@@ -638,8 +639,8 @@ public class EventManagement {
 													)){
 												
 											} else {
-												insertEventToLocalDB(context, event);
-//												values[value] = createCVforEventsTable(event);
+//												insertEventToLocalDB(context, event);
+												values[value] = createCVforEventsTable(event);
 												value++;
 											}
 										}
@@ -649,22 +650,20 @@ public class EventManagement {
 									Log.e(CLASS_NAME, "JSON");
 								}
 							}
-//							if (values != null){
-//								values2 = new ContentValues[value];
-//								for (int i = 0; i < value; i++) {
-//									values2[i] = values[i];
-//								}
-//								int h = context.getContentResolver().bulkInsert(EventsProvider.EMetaData.INDEXED_EVENTS_URI, values2);
-//								Log.e("inserted",h+"");
-//							}
+							if (values != null){
+								values2 = new ContentValues[value];
+								for (int i = 0; i < value; i++) {
+									values2[i] = values[i];
+								}
+								context.getContentResolver().bulkInsert(EventsProvider.EMetaData.INDEXED_EVENTS_URI, values2);
+							}
 						}
 					}
 				}
 			} catch (Exception ex) {
 				Reporter.reportError(context, CLASS_NAME, Thread.currentThread().getStackTrace()[2].getMethodName().toString(), ex.getMessage());
 			};
-			Log.e("length",length+"");
-		} while(length > 0);
+		} while(hasMOreEvents);
 	}
 
 	public static String getResponsesFromRemoteDb(Context context) {
@@ -1047,7 +1046,7 @@ public class EventManagement {
 	 * @since 2012-10-09
 	 * @version 1.0
 	 */
-	private static void deleteEventFromLocalDb(Context context, long internalID) {
+	private static void deleteEventFromLocalDb(Context context, long internalID, long externalID) {
 		String where;
 
 		// 1. Deleting event from events table
@@ -1055,7 +1054,7 @@ public class EventManagement {
 		context.getContentResolver().delete(EventsProvider.EMetaData.EventsMetaData.CONTENT_URI, where, null);
 
 		// 2. Deleting event from events day indexes table
-		where = EventsProvider.EMetaData.EventsIndexesMetaData.EVENT_INTERNAL_ID + "=" + internalID;
+		where = EventsProvider.EMetaData.EventsIndexesMetaData.EVENT_EXTERNAL_ID + "=" + externalID;
 		context.getContentResolver().delete(EventsProvider.EMetaData.EventsIndexesMetaData.CONTENT_URI, where, null);
 
 	}

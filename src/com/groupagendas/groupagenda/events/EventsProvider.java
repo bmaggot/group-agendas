@@ -5,6 +5,7 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 
+import android.annotation.SuppressLint;
 import android.content.ContentProvider;
 import android.content.ContentUris;
 import android.content.ContentValues;
@@ -19,6 +20,9 @@ import android.net.Uri;
 import android.provider.BaseColumns;
 import android.text.TextUtils;
 
+import com.groupagendas.groupagenda.events.EventsProvider.EMetaData.AlarmsMetaData;
+
+@SuppressLint("SimpleDateFormat")
 public class EventsProvider extends ContentProvider{
 	public static DatabaseHelper mOpenHelper;
 
@@ -34,6 +38,7 @@ public class EventsProvider extends ContentProvider{
 
 		public static final String EVENTS_TABLE = "events";
 		public static final String EVENT_DAY_INDEX_TABLE = "events_days";
+		public static final String ALARMS_TABLE = "alarms";
 //		public static final String INVITED_TABLE = "invited";
 		
 		private static final String events_on_date = "events_on_date";
@@ -68,6 +73,21 @@ public class EventsProvider extends ContentProvider{
 			public static final String GCID = "gcid";
 			public static final String GUID = "guid";
 			public static final String NAME = "gname";
+
+		}
+		
+		public static final class AlarmsMetaData{
+			public static final Uri CONTENT_URI = Uri.parse("content://" + AUTHORITY + "/" + ALARMS_TABLE);	
+			public static final String CONTENT_TYPE = "vnd.android.cursor.dir/vnd.groupagendas.alarm_item";
+			
+			public static final String ALARM_ID = "_id";
+			public static final String USER_ID = "user_id";
+			public static final String EVENT_ID = "event_id";
+			
+			public static final String TIMESTAMP = "timestamp";
+			public static final String OFFSET = "offset";
+			public static final String SENT = "sent";
+			public static final String DEFAULT_SORT_ORDER = TIMESTAMP+" ASC";
 
 		}
 		
@@ -317,6 +337,17 @@ public class EventsProvider extends ContentProvider{
 //			IM.put(EMetaData.InvitedMetaData.NAME, EMetaData.InvitedMetaData.NAME);
 //		}
 	
+	private static HashMap<String, String> AEM;
+	
+	static{
+		AEM = new HashMap<String, String>();
+		AEM.put(AlarmsMetaData.USER_ID, AlarmsMetaData.USER_ID);
+		AEM.put(AlarmsMetaData.EVENT_ID, AlarmsMetaData.EVENT_ID);
+		AEM.put(AlarmsMetaData.TIMESTAMP, AlarmsMetaData.TIMESTAMP);
+		AEM.put(AlarmsMetaData.OFFSET, AlarmsMetaData.OFFSET);
+		AEM.put(AlarmsMetaData.SENT, AlarmsMetaData.SENT);
+	}
+	
 	
 	
 	// UriMatcher
@@ -330,7 +361,7 @@ public class EventsProvider extends ContentProvider{
 //	private static final int INVITED = 4;
 	private static final int INDEXED_EVENTS = 5;
 	private static final int UPDATE_EVENTS_NEW_MESSAGE_COUNT_AFTER_CHAT_POST = 6;
-
+	private static final int ALARM = 7;
 	static {
 		mUriMatcher = new UriMatcher(UriMatcher.NO_MATCH);
 		mUriMatcher.addURI(EMetaData.AUTHORITY, EMetaData.EVENTS_TABLE, ALL_EVENTS);
@@ -341,6 +372,7 @@ public class EventsProvider extends ContentProvider{
 		mUriMatcher.addURI(EMetaData.AUTHORITY, EMetaData.indexed_events, INDEXED_EVENTS);
 //		mUriMatcher.addURI(EMetaData.AUTHORITY, EMetaData.INVITED_TABLE, INVITED);
 		mUriMatcher.addURI(EMetaData.AUTHORITY, EMetaData.EVENTS_TABLE + "/increment_messages_attributes", UPDATE_EVENTS_NEW_MESSAGE_COUNT_AFTER_CHAT_POST);
+		mUriMatcher.addURI(EMetaData.AUTHORITY, EMetaData.ALARMS_TABLE, ALARM);
 	}
 	// END UriMatcher
 	
@@ -399,6 +431,11 @@ public class EventsProvider extends ContentProvider{
 //			qb.setProjectionMap(IM);
 //			orderBy = (TextUtils.isEmpty(sortOrder)) ? null : sortOrder;
 //			break;
+		case ALARM:
+			qb.setTables(EMetaData.ALARMS_TABLE);
+			qb.setProjectionMap(AEM);
+			orderBy = (TextUtils.isEmpty(sortOrder)) ? EMetaData.AlarmsMetaData.DEFAULT_SORT_ORDER : sortOrder;
+			break;
 		default:
 			throw new IllegalArgumentException("Unknow URI " + uri);
 		}
@@ -428,6 +465,9 @@ public class EventsProvider extends ContentProvider{
 //			case INVITED:
 //				count = db.delete(EMetaData.INVITED_TABLE, where, whereArgs);
 //				break;
+			case ALARM:
+				count = db.delete(EMetaData.ALARMS_TABLE, where, whereArgs);
+				break;
 			default:
 				
 				throw new IllegalArgumentException("Unknow URI "+uri);
@@ -453,7 +493,10 @@ public class EventsProvider extends ContentProvider{
 		case INDEXED_EVENTS:
 			insUri = insertIndexedEvent(db, values);
 			break;
-				
+		case ALARM:
+			rowId = db.replace(EMetaData.ALARMS_TABLE, EMetaData.AlarmsMetaData.ALARM_ID, values);
+			insUri = ContentUris.withAppendedId(EMetaData.AlarmsMetaData.CONTENT_URI, rowId);
+			break;	
 		default:
 			throw new IllegalArgumentException("Unknow URI " + uri);
 		}
@@ -660,7 +703,6 @@ public class EventsProvider extends ContentProvider{
 					+ EMetaData.EventsIndexesMetaData.EVENT_EXTERNAL_ID + " TEXT ,"
 					+ EMetaData.EventsIndexesMetaData.DAY + " TEXT , "
 					+ EMetaData.EventsIndexesMetaData.MONTH + " TEXT , "
-//					+ "PRIMARY KEY (" + EMetaData.EventsIndexesMetaData.EVENT_INTERNAL_ID + ", " + EMetaData.EventsIndexesMetaData.DAY + ") ON CONFLICT IGNORE"
 					+ "PRIMARY KEY (" + EMetaData.EventsIndexesMetaData.EVENT_INTERNAL_ID + "),"
 					+ "UNIQUE (" + EMetaData.EventsIndexesMetaData.EVENT_INTERNAL_ID + ", " + EMetaData.EventsIndexesMetaData.DAY + ") ON CONFLICT IGNORE"
 					+")";
@@ -672,8 +714,18 @@ public class EventsProvider extends ContentProvider{
 			db.execSQL(query);
 			query = "CREATE INDEX events_days_event_id ON events_days(event_id)";
 			db.execSQL(query);
-
 			
+			query = "CREATE TABLE " +
+			EMetaData.ALARMS_TABLE +
+			" ("+
+			AlarmsMetaData.ALARM_ID + " VARCHAR PRIMARY KEY ON CONFLICT REPLACE, "+
+			AlarmsMetaData.USER_ID + " INTEGER, " +
+			AlarmsMetaData.EVENT_ID + " INTEGER, " +
+			AlarmsMetaData.TIMESTAMP + " INTEGER, " +
+			AlarmsMetaData.OFFSET + " INTEGER, " +
+			AlarmsMetaData.SENT + " TEXT " +
+			")";
+			db.execSQL(query);			
 		}
 
 		@Override

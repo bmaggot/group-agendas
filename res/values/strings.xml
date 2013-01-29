@@ -338,6 +338,7 @@
     <string name="afternoon">Afternoon</string>
     <string name="evening">Evening</string>
     <string name="start_and_end">Start &amp; end</string>
+    <string name="select_poll_to_copy">Select date for copying event!</string>
     <string name="dropdown_icon">Dropdown icon placeholder</string>
     <string name="dash">&#8212;</string>
     <string name="not_in_your_contact_list">Not in your contact list</string>
