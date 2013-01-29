@@ -8,8 +8,8 @@
         android:startColor="@color/event_invite_button_c_gradstart" />
 
     <corners
-        android:bottomLeftRadius="0dp"
-        android:bottomRightRadius="5dp"
+        android:bottomLeftRadius="5dp"
+        android:bottomRightRadius="0dp"
         android:topLeftRadius="0dp"
         android:topRightRadius="5dp" />
 

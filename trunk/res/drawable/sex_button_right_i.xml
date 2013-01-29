@@ -8,11 +8,11 @@
                 android:endColor="#427884"
                 android:centerColor="#21C0DB"
                 android:startColor="#66AEBA" />
-            <corners
-                android:bottomLeftRadius="0dp"
-                android:bottomRightRadius="5dp"
-                android:topLeftRadius="0dp"
-                android:topRightRadius="5dp" />
+		    <corners
+		        android:bottomLeftRadius="5dp"
+		        android:bottomRightRadius="0dp"
+		        android:topLeftRadius="0dp"
+		        android:topRightRadius="5dp" />
         </shape>
     </item>
     <item android:top="20dp" >
@@ -21,11 +21,11 @@
                 android:angle="270"
                 android:endColor="#66AEBA"
                 android:startColor="#66AEBA" />
-            <corners
-                android:bottomLeftRadius="0dp"
-                android:bottomRightRadius="5dp"
-                android:topLeftRadius="0dp"
-                android:topRightRadius="5dp" />
+		    <corners
+		        android:bottomLeftRadius="5dp"
+		        android:bottomRightRadius="0dp"
+		        android:topLeftRadius="0dp"
+		        android:topRightRadius="5dp" />
         </shape>
     </item>
 

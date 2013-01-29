@@ -18,18 +18,35 @@
             android:layout_centerInParent="true"
             android:text="@string/settings"
             android:textColor="@android:color/white"
-            android:textSize="20dp"
-            android:textStyle="bold" />
+            android:textSize="20sp"
+            android:textStyle="bold"
+            android:shadowColor="@color/black"
+            android:shadowDx="0"
+            android:shadowDy="-1"
+            android:shadowRadius="1" />
 
         <Button
             android:id="@+id/logoutButton"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_height="33dp"
             android:layout_alignParentRight="true"
-            android:layout_marginRight="10dp"
-            android:layout_marginTop="3dp"
+            android:layout_marginRight="5dp"
+            android:layout_marginTop="8dp"
+            android:background="@drawable/contacts_save_import_button"
             android:onClick="logout"
-            android:text="@string/logout" />
+            android:gravity="center"
+            android:paddingBottom="5dp"
+            android:paddingLeft="15dp"
+            android:paddingRight="15dp"
+            android:paddingTop="5dp"
+            android:shadowColor="@color/black"
+            android:shadowDx="0"
+            android:shadowDy="2"
+            android:shadowRadius="1.5"
+            android:text="@string/logout"
+            android:textColor="@color/white"
+            android:textSize="14sp"
+            android:textStyle="bold" />
     </RelativeLayout>
 
     <ImageView android:contentDescription="@string/login_ga_logo_placeholder"

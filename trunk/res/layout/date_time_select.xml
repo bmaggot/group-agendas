@@ -1,0 +1,339 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:layout_gravity="center_horizontal"
+    android:background="@color/white"
+    android:orientation="vertical" >
+
+    <RelativeLayout
+        android:id="@+id/topBar"
+        android:layout_width="fill_parent"
+        android:layout_height="50dp"
+        android:background="@drawable/top_bar_background" >
+
+        <Button
+            android:id="@+id/templatesButton"
+            android:layout_width="wrap_content"
+            android:layout_height="33dp"
+            android:layout_alignParentLeft="true"
+            android:layout_marginLeft="5dp"
+            android:layout_marginTop="8dp"
+            android:background="@drawable/contacts_save_import_button"
+            android:gravity="center"
+            android:onClick="chooseTemplate"
+            android:paddingBottom="5dp"
+            android:paddingLeft="5dp"
+            android:paddingRight="5dp"
+            android:paddingTop="5dp"
+            android:shadowColor="@color/black"
+            android:shadowDx="0"
+            android:shadowDy="2"
+            android:shadowRadius="1.5"
+            android:text="@string/templates"
+            android:textColor="@color/white"
+            android:textSize="14sp"
+            android:textStyle="bold"
+            android:visibility="gone" />
+
+        <TextView
+            android:id="@+id/topText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:shadowColor="@color/black"
+            android:shadowDx="0"
+            android:shadowDy="-1"
+            android:shadowRadius="1"
+            android:text="@string/start_and_end"
+            android:textColor="@android:color/white"
+            android:textSize="20sp"
+            android:textStyle="bold" />
+
+        <ProgressBar
+            android:id="@+id/progress"
+            style="@android:style/Widget.ProgressBar.Small"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentLeft="true"
+            android:layout_centerInParent="true"
+            android:layout_marginLeft="20dp"
+            android:visibility="gone" />
+
+        <Button
+            android:id="@+id/saveButton"
+            android:layout_width="wrap_content"
+            android:layout_height="33dp"
+            android:layout_alignParentRight="true"
+            android:layout_marginRight="5dp"
+            android:layout_marginTop="8dp"
+            android:background="@drawable/contacts_save_import_button"
+            android:gravity="center"
+            android:onClick="onClick"
+            android:paddingBottom="5dp"
+            android:paddingLeft="15dp"
+            android:paddingRight="15dp"
+            android:paddingTop="5dp"
+            android:shadowColor="@color/black"
+            android:shadowDx="0"
+            android:shadowDy="2"
+            android:shadowRadius="1.5"
+            android:text="@string/save"
+            android:textColor="@color/white"
+            android:textSize="14sp"
+            android:textStyle="bold" />
+    </RelativeLayout>
+
+    <LinearLayout
+        android:layout_width="fill_parent"
+        android:layout_height="40dp"
+        android:layout_margin="10dp"
+        android:orientation="horizontal" >
+
+        <Button
+            android:id="@+id/button_morning"
+            android:layout_width="0dp"
+            android:layout_height="40dp"
+            android:layout_weight="0.33"
+            android:background="@drawable/daytime_button_left"
+            android:gravity="center"
+            android:onClick="onClick"
+            android:text="@string/morning"
+            android:textColor="@color/white"
+            android:textStyle="bold" />
+        <Button
+            android:id="@+id/button_afternoon"
+            android:layout_width="0dp"
+            android:layout_height="40dp"
+            android:layout_weight="0.33"
+            android:background="@drawable/daytime_button_middle"
+            android:gravity="center"
+            android:onClick="onClick"
+            android:text="@string/afternoon"
+            android:textColor="@color/white"
+            android:textStyle="bold" />
+        <Button
+            android:id="@+id/button_evening"
+            android:layout_width="0dp"
+            android:layout_height="40dp"
+            android:layout_weight="0.33"
+            android:background="@drawable/daytime_button_right"
+            android:gravity="center"
+            android:onClick="onClick"
+            android:text="@string/evening"
+            android:textColor="@color/white"
+            android:textStyle="bold" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="fill_parent"
+        android:layout_height="40dp"
+        android:layout_marginBottom="2dp"
+        android:layout_marginLeft="10dp"
+        android:layout_marginRight="10dp"
+        android:orientation="horizontal" >
+
+        <TextView
+            android:layout_width="95dp"
+            android:layout_height="wrap_content"
+            android:text="@string/start_time"
+            android:layout_gravity="center_vertical"
+            android:textColor="@color/black"
+            android:textStyle="bold" />
+
+        <LinearLayout
+            android:background="@drawable/event_icon_placeholder"
+            android:layout_width="fill_parent"
+            android:layout_height="match_parent"
+            android:layout_gravity="center_vertical" >
+        <TextView
+            android:id="@+id/startDateView"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:ems="7"
+            android:gravity="center"
+            android:textColor="@color/black" />
+        <View
+            android:background="@color/darker_gray"
+            android:layout_marginRight="5dp"
+            android:layout_width="1dp"
+            android:layout_height="match_parent" />
+        <TextView
+            android:id="@+id/startTimeView"
+            android:layout_width="fill_parent"
+            android:layout_height="match_parent"
+            android:paddingRight="10dp"
+            android:gravity="center"
+            android:textColor="@color/black" />
+        </LinearLayout>
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="fill_parent"
+        android:layout_height="40dp"
+        android:layout_marginBottom="2dp"
+        android:layout_marginLeft="10dp"
+        android:layout_marginRight="10dp"
+        android:orientation="horizontal" >
+
+        <TextView
+            android:layout_width="95dp"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:text="@string/end_time"
+            android:textColor="@color/black"
+            android:textStyle="bold" />
+
+        <LinearLayout
+            android:background="@drawable/event_icon_placeholder"
+            android:layout_width="fill_parent"
+            android:layout_height="match_parent"
+            android:layout_gravity="center_vertical" >
+        <TextView
+            android:id="@+id/endDateView"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:ems="7"
+            android:gravity="center"
+            android:textColor="@color/black" />
+        <View
+            android:background="@color/darker_gray"
+            android:layout_marginRight="5dp"
+            android:layout_width="1dp"
+            android:layout_height="match_parent" />
+        <TextView
+            android:id="@+id/endTimeView"
+            android:layout_width="fill_parent"
+            android:layout_height="match_parent"
+            android:gravity="center"
+            android:paddingRight="10dp"
+            android:textColor="@color/black" />
+        </LinearLayout>
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/countrySpinnerBlock"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="2dp"
+        android:layout_marginLeft="10dp"
+        android:layout_marginRight="10dp"
+        android:orientation="horizontal" >
+
+        <TextView
+            android:layout_width="95dp"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:paddingBottom="5dp"
+            android:paddingTop="4dp"
+            android:singleLine="true"
+            android:text="@string/country"
+            android:textColor="@color/black"
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/countryView"
+            android:layout_width="fill_parent"
+            android:layout_height="40dp"
+            android:background="@drawable/event_icon_placeholder"
+            android:gravity="center_vertical"
+            android:paddingBottom="5dp"
+            android:paddingLeft="10dp"
+            android:paddingTop="4dp"
+            android:singleLine="true"
+            android:textColor="@color/black"
+            android:textSize="15sp" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/timezoneSpinnerBlock"
+        android:layout_width="match_parent"
+        android:layout_height="40dp"
+        android:layout_marginLeft="10dp"
+        android:layout_marginRight="10dp"
+        android:layout_marginBottom="2dp"
+        android:orientation="horizontal"
+        android:paddingBottom="0dp"
+        android:paddingLeft="0dp"
+        android:paddingRight="0dp"
+        android:paddingTop="0dp" >
+
+        <TextView
+            android:layout_width="95dp"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:layout_marginBottom="5dp"
+            android:layout_marginTop="5dp"
+            android:text="@string/timezone"
+            android:textColor="@color/black"
+            android:textStyle="bold" />
+
+        <RelativeLayout
+            android:layout_width="fill_parent"
+            android:layout_height="match_parent"
+            android:background="@drawable/event_icon_placeholder" >
+
+            <TextView
+                android:id="@+id/timezoneView"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:layout_alignParentLeft="true"
+                android:layout_centerVertical="true"
+                android:background="@null"
+                android:gravity="center_vertical"
+                android:padding="10dp"
+                android:singleLine="true"
+                android:textColor="@color/black"
+                android:textSize="15sp" />
+
+            <RelativeLayout
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:layout_alignParentRight="true"
+                android:background="@drawable/account_dropdown_button_right_round" >
+
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerInParent="true"
+                    android:contentDescription="@string/dropdown_icon"
+                    android:src="@drawable/account_dropdown_button_arrow" />
+            </RelativeLayout>
+        </RelativeLayout>
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/alldayViewBlock"
+        android:layout_width="match_parent"
+        android:layout_height="40dp"
+        android:layout_marginTop="3dp"
+        android:layout_marginBottom="2dp"
+        android:layout_marginLeft="10dp"
+        android:layout_marginRight="10dp"
+        android:orientation="horizontal"
+        android:paddingBottom="0dp"
+        android:paddingLeft="0dp"
+        android:paddingRight="0dp"
+        android:paddingTop="0dp" >
+
+        <TextView
+            android:layout_width="93dp"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:layout_marginBottom="5dp"
+            android:layout_marginTop="5dp"
+            android:text="@string/all_day"
+            android:textColor="@color/black"
+            android:textStyle="bold" />
+
+        <ToggleButton
+            android:id="@+id/allDayToggleButton"
+            android:layout_width="60dp"
+            android:layout_height="40dp"
+            android:layout_gravity="center_vertical"
+            android:padding="0dp"
+            android:textOn=""
+            android:textOff="" />
+    </LinearLayout>
+
+</LinearLayout>

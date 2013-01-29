@@ -10,6 +10,8 @@ import java.util.Calendar;
 import android.content.Context;
 
 import com.groupagendas.groupagenda.account.Account;
+import com.groupagendas.groupagenda.account.AccountProvider;
+import com.groupagendas.groupagenda.utils.Prefs;
 
 public class CalendarSettings {
 
@@ -135,5 +137,41 @@ public class CalendarSettings {
 	public static void setDefaultView(Context context) {
 		Account account = new Account(context);
 		account.setSetting_default_view(DEFAULT_SETTING_DEFAULT_VIEW);
+	}
+	
+	public static int getMorningStart(Context context) {
+		Prefs prefs = new Prefs(context);
+		int timeInMillis = Integer.parseInt(prefs.getValue(AccountProvider.AMetaData.AccountMetaData.SETTING_MORNING_START, "30600000"));
+		return timeInMillis;
+	}
+	
+	public static int getMorningEnd(Context context) {
+		Prefs prefs = new Prefs(context);
+		int timeInMillis = Integer.parseInt(prefs.getValue(AccountProvider.AMetaData.AccountMetaData.SETTING_MORNING_END, "45000000"));
+		return timeInMillis;
+	}
+	
+	public static int getAfternoonStart(Context context) {
+		Prefs prefs = new Prefs(context);
+		int timeInMillis = Integer.parseInt(prefs.getValue(AccountProvider.AMetaData.AccountMetaData.SETTING_AFTERNOON_START, "46800000"));
+		return timeInMillis;
+	}
+	
+	public static int getAfternoonEnd(Context context) {
+		Prefs prefs = new Prefs(context);
+		int timeInMillis = Integer.parseInt(prefs.getValue(AccountProvider.AMetaData.AccountMetaData.SETTING_AFTERNOON_END, "63000000"));
+		return timeInMillis;
+	}
+	
+	public static int getEveningStart(Context context) {
+		Prefs prefs = new Prefs(context);
+		int timeInMillis = Integer.parseInt(prefs.getValue(AccountProvider.AMetaData.AccountMetaData.SETTING_EVENING_START, "70200000"));
+		return timeInMillis;
+	}
+	
+	public static int getEveningEnd(Context context) {
+		Prefs prefs = new Prefs(context);
+		int timeInMillis = Integer.parseInt(prefs.getValue(AccountProvider.AMetaData.AccountMetaData.SETTING_EVENING_END, "86340000"));
+		return timeInMillis;
 	}
 }

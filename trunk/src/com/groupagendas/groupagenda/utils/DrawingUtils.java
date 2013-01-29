@@ -139,4 +139,10 @@ public static Bitmap getColoredRoundRectangle (Context context, int sizeDP, Stri
 	return getRoundRectBitmap(context, widthPX, heightPX, roundRadius, color, shadow);
 }
 
+public static Bitmap getColoredRoundSquare (Context context, int sizeDP, int roundY, String color, boolean shadow){
+	int heightPX = convertDPtoPX(sizeDP);
+	int widthPX = heightPX;
+	int roundRadius = convertDPtoPX(roundY);
+	return getRoundRectBitmap(context, widthPX, heightPX, roundRadius, color, shadow);
+}
 }

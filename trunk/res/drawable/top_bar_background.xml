@@ -20,10 +20,9 @@
     <item android:bottom="1dp">
         <shape android:shape="rectangle" >
             <gradient
-                android:angle="90"
-                android:centerColor="#21c0db"
-                android:endColor="#21c0db"
-                android:startColor="#21c0db" />
+                android:angle="270"
+                android:endColor="#36B4C2"
+                android:startColor="#A4E3EA" />
         </shape>
     </item>
 </layer-list>

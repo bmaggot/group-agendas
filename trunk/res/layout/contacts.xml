@@ -53,6 +53,10 @@
             android:textColor="@android:color/white"
             android:textSize="20sp"
             android:textStyle="bold"
+            android:shadowColor="@color/black"
+            android:shadowDx="0"
+            android:shadowDy="-1"
+            android:shadowRadius="1"
             android:visibility="invisible" />
 
         <ProgressBar
@@ -75,8 +79,8 @@
             android:background="@drawable/contacts_save_import_button"
             android:gravity="center"
             android:paddingBottom="5dp"
-            android:paddingLeft="4dp"
-            android:paddingRight="4dp"
+            android:paddingLeft="10dp"
+            android:paddingRight="10dp"
             android:paddingTop="5dp"
             android:shadowColor="@color/black"
             android:shadowDx="0"
@@ -94,12 +98,21 @@
         android:background="@drawable/search_field_background" >
 
         <EditText
+	        android:drawableLeft="@drawable/magnifying_glass"
+	        android:background="@drawable/search_field_background_rounded"
+	        android:paddingLeft="15dp"
+	        android:paddingRight="15dp"
+	        android:paddingTop="5dp"
+	        android:paddingBottom="5dp"
+	        android:includeFontPadding="false"
             android:id="@+id/search"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentLeft="true"
+	        android:layout_centerVertical="true"
             android:layout_marginTop="4dp"
             android:layout_marginRight="5dp"
+            android:layout_marginLeft="5dp"
             android:layout_toLeftOf="@+id/clear_button"
             android:hint="@string/search"
             android:singleLine="true" />

@@ -18,8 +18,12 @@
             android:layout_centerInParent="true"
             android:text="@string/calendar_settings"
             android:textColor="@android:color/white"
-            android:textSize="20dp"
-            android:textStyle="bold" />
+            android:textSize="20sp"
+            android:textStyle="bold"
+            android:shadowColor="@color/black"
+            android:shadowDx="0"
+            android:shadowDy="-1"
+            android:shadowRadius="1" />
 
         <ProgressBar
             android:id="@+id/progress"
@@ -28,14 +32,34 @@
             android:layout_height="wrap_content"
             android:layout_alignParentRight="true"
             android:layout_centerInParent="true"
-            android:layout_marginRight="20dp"
+            android:layout_marginRight="20sp"
             android:visibility="gone" />
-    </RelativeLayout>
+        <Button
+            android:id="@+id/save"
+            android:layout_width="wrap_content"
+            android:layout_height="33dp"
+            android:layout_alignParentRight="true"
+            android:layout_marginRight="5dp"
+            android:layout_marginTop="8dp"
+            android:background="@drawable/contacts_save_import_button"
+            android:gravity="center"
+            android:paddingBottom="5dp"
+            android:paddingLeft="15dp"
+            android:paddingRight="15dp"
+            android:paddingTop="5dp"
+            android:shadowColor="@color/black"
+            android:shadowDx="0"
+            android:shadowDy="2"
+            android:shadowRadius="1.5"
+            android:text="@string/save"
+            android:textColor="@color/white"
+            android:textSize="14sp"
+            android:textStyle="bold" />
+      </RelativeLayout>
 
     <ScrollView
         android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/topBar" >
+        android:layout_height="wrap_content" >
 
         <LinearLayout
             android:layout_width="fill_parent"
@@ -172,16 +196,134 @@
             </LinearLayout>
 
             <LinearLayout
+                android:background="@drawable/event_icon_placeholder"
                 android:layout_width="fill_parent"
-                android:layout_height="wrap_content"
+                android:layout_height="40dp"
                 android:layout_marginTop="10dp"
-                android:gravity="center_horizontal" >
+                android:layout_marginBottom="2dp"
+                android:paddingLeft="10dp"
+                android:paddingRight="10dp"
+                android:orientation="horizontal" >
 
-                <Button
-                    android:id="@+id/save"
-                    android:layout_width="100dp"
+                <TextView
+                    android:layout_width="80dp"
                     android:layout_height="wrap_content"
-                    android:text="@string/save" />
+                    android:text="@string/morning"
+                    android:textColor="@color/black"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:id="@+id/morningStartView"
+                    android:layout_width="0dp"
+                    android:layout_weight="1"
+                    android:layout_height="match_parent"
+                    android:gravity="center"
+                    android:onClick="onClick"
+                    android:textColor="@color/black" />
+                
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:gravity="center"
+                    android:ems="2"
+                    android:text="@string/dash"
+                    android:padding="10dp"
+                    android:textColor="@color/black" />
+                <TextView
+                    android:id="@+id/morningEndView"
+                    android:layout_width="0dp"
+                    android:layout_weight="1"
+                    android:layout_height="match_parent"
+                    android:gravity="center"
+                    android:onClick="onClick"
+                    android:textColor="@color/black" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:background="@drawable/event_icon_placeholder"
+                android:layout_width="fill_parent"
+                android:layout_height="40dp"
+                android:layout_marginBottom="2dp"
+                android:paddingLeft="10dp"
+                android:paddingRight="10dp"
+                android:orientation="horizontal" >
+
+                <TextView
+                    android:layout_width="80dp"
+                    android:layout_height="wrap_content"
+                    android:text="@string/afternoon"
+                    android:textColor="@color/black"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:id="@+id/afternoonStartView"
+                    android:layout_width="0dp"
+                    android:layout_weight="1"
+                    android:layout_height="match_parent"
+                    android:gravity="center"
+                    android:onClick="onClick"
+                    android:textColor="@color/black" />
+                
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:gravity="center_vertical"
+                    android:ems="2"
+                    android:text="@string/dash"
+                    android:padding="10dp"
+                    android:textColor="@color/black" />
+                
+                <TextView
+                    android:id="@+id/afternoonEndView"
+                    android:layout_width="0dp"
+                    android:layout_weight="1"
+                    android:layout_height="match_parent"
+                    android:gravity="center"
+                    android:onClick="onClick"
+                    android:textColor="@color/black" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:background="@drawable/event_icon_placeholder"
+                android:layout_width="fill_parent"
+                android:layout_height="40dp"
+                android:layout_marginBottom="2dp"
+                android:paddingLeft="10dp"
+                android:paddingRight="10dp"
+                android:orientation="horizontal" >
+
+                <TextView
+                    android:layout_width="80dp"
+                    android:layout_height="wrap_content"
+                    android:text="@string/evening"
+                    android:textColor="@color/black"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:id="@+id/eveningStartView"
+                    android:layout_width="0dp"
+                    android:layout_weight="1"
+                    android:layout_height="match_parent"
+                    android:gravity="center"
+                    android:onClick="onClick"
+                    android:textColor="@color/black" />
+                
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:gravity="center_vertical"
+                    android:ems="2"
+                    android:text="@string/dash"
+                    android:padding="10dp"
+                    android:textColor="@color/black" />
+                <TextView
+                    android:id="@+id/eveningEndView"
+                    android:layout_width="0dp"
+                    android:layout_weight="1"
+                    android:layout_height="match_parent"
+                    android:gravity="center"
+                    android:onClick="onClick"
+                    android:textColor="@color/black" />
             </LinearLayout>
         </LinearLayout>
     </ScrollView>

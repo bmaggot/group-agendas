@@ -4,14 +4,9 @@
 	<item android:state_pressed="true" android:drawable="@drawable/contacts_save_import_button_c" />
 	<!-- State: focused (selected) -->
 	<item android:state_focused="true" android:drawable="@drawable/contacts_save_import_button_f" />
+	<!-- State: disabled -->
+	<item android:state_enabled="false" android:drawable="@drawable/contacts_save_import_button_d" />
 	
-	<item android:state_enabled="false"
-	    android:drawable="@drawable/contacts_save_import_button_disabled"
-	    />
-<!-- 	<item android:state_enabled="true" -->
-<!-- 	    android:drawable="@drawable/contacts_save_import_button_disabled" -->
-<!-- 	    /> -->
-	<!-- State: normal (default) -->
 	<item android:drawable="@drawable/contacts_save_import_button_i" />
 
 </selector>

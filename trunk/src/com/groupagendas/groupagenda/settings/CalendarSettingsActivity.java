@@ -1,6 +1,11 @@
 package com.groupagendas.groupagenda.settings;
 
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+
 import android.app.Activity;
+import android.app.TimePickerDialog;
+import android.app.TimePickerDialog.OnTimeSetListener;
 import android.content.ContentValues;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -10,6 +15,8 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ProgressBar;
 import android.widget.Spinner;
+import android.widget.TextView;
+import android.widget.TimePicker;
 import android.widget.ToggleButton;
 
 import com.groupagendas.groupagenda.R;
@@ -17,10 +24,11 @@ import com.groupagendas.groupagenda.account.Account;
 import com.groupagendas.groupagenda.account.AccountProvider;
 import com.groupagendas.groupagenda.data.CalendarSettings;
 import com.groupagendas.groupagenda.data.DataManagement;
+import com.groupagendas.groupagenda.utils.DateTimeUtils;
 import com.groupagendas.groupagenda.utils.Prefs;
 import com.groupagendas.groupagenda.utils.Utils;
 
-public class CalendarSettingsActivity extends Activity {
+public class CalendarSettingsActivity extends Activity implements OnClickListener {
 	private Button saveButton;
 
 	private ToggleButton am_pmToggle;
@@ -34,7 +42,90 @@ public class CalendarSettingsActivity extends Activity {
 	private DataManagement dm;
 	private ProgressBar pb;
 
+	private TextView morningStartView;
+	private TextView morningEndView;
+	private TextView afternoonStartView;
+	private TextView afternoonEndView;
+	private TextView eveningStartView;
+	private TextView eveningEndView;
+	
 	private Prefs prefs;
+
+	private TextView destination;
+	
+	public void setDestination(TextView view) {
+		this.destination = view;
+	}
+	
+	private int mHour = 8;
+	private int mMinute = 30;
+	
+	private int[] daytimes = new int[6];
+	
+	private OnTimeSetListener mOnTimeSetListener = new OnTimeSetListener() {
+		@Override
+		public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
+			String time = "";
+			Calendar tmpCal = Calendar.getInstance();
+			Account acc = new Account(CalendarSettingsActivity.this);
+			int timeInMillis;
+			
+			SimpleDateFormat sdf;
+			
+			mHour = hourOfDay;
+			mMinute = minute;
+			timeInMillis = (mHour*3600 + mMinute*60)*1000;
+			
+			tmpCal.set(Calendar.HOUR_OF_DAY, mHour);
+			tmpCal.set(Calendar.MINUTE, mMinute);
+			
+			if (acc.getSetting_ampm() == 1) {
+				sdf = new SimpleDateFormat("hh:mm a");
+			} else {
+				sdf = new SimpleDateFormat("HH:mm");
+			}
+			
+			time = sdf.format(tmpCal.getTime());
+			setDaytime(destination, timeInMillis);
+			destination.setText(time);
+		}
+	};
+	
+	private boolean setDaytime(View target, int valueInMillis) {
+		boolean success = false;
+		int targetId = target.getId();
+		
+		switch (targetId) {
+		case R.id.morningStartView:
+			daytimes[0] = valueInMillis;
+			success = true;
+			break;
+		case R.id.morningEndView:
+			daytimes[1] = valueInMillis;
+			success = true;
+			break;
+		case R.id.afternoonStartView:
+			daytimes[2] = valueInMillis;
+			success = true;
+			break;
+		case R.id.afternoonEndView:
+			daytimes[3] = valueInMillis;
+			success = true;
+			break;
+		case R.id.eveningStartView:
+			daytimes[4] = valueInMillis;
+			success = true;
+			break;
+		case R.id.eveningEndView:
+			daytimes[5] = valueInMillis;
+			success = true;
+			break;
+		default:
+			break;
+		}
+		
+		return success;
+	}
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -85,6 +176,20 @@ public class CalendarSettingsActivity extends Activity {
 				new SaveTask().execute();
 			}
 		});
+		
+		morningStartView = (TextView) findViewById(R.id.morningStartView);
+		morningEndView = (TextView) findViewById(R.id.morningEndView);
+		afternoonStartView = (TextView) findViewById(R.id.afternoonStartView);
+		afternoonEndView = (TextView) findViewById(R.id.afternoonEndView);
+		eveningStartView = (TextView) findViewById(R.id.eveningStartView);
+		eveningEndView = (TextView) findViewById(R.id.eveningEndView);
+		
+		morningStartView.setOnClickListener(this);
+		morningEndView.setOnClickListener(this);
+		afternoonStartView.setOnClickListener(this);
+		afternoonEndView.setOnClickListener(this);
+		eveningStartView.setOnClickListener(this);
+		eveningEndView.setOnClickListener(this);
 	}
 
 	class SaveTask extends AsyncTask<Void, Boolean, Boolean> {
@@ -115,6 +220,13 @@ public class CalendarSettingsActivity extends Activity {
 			prefs.setValue(AccountProvider.AMetaData.AccountMetaData.SETTING_DATE_FORMAT, dateformat);
 			values.put(AccountProvider.AMetaData.AccountMetaData.SETTING_DEFAULT_VIEW, defaultview);
 			prefs.setValue(AccountProvider.AMetaData.AccountMetaData.SETTING_DEFAULT_VIEW, defaultview);
+
+			prefs.setValue(AccountProvider.AMetaData.AccountMetaData.SETTING_MORNING_START, ""+daytimes[0]);
+			prefs.setValue(AccountProvider.AMetaData.AccountMetaData.SETTING_MORNING_END, ""+daytimes[1]);
+			prefs.setValue(AccountProvider.AMetaData.AccountMetaData.SETTING_AFTERNOON_START, ""+daytimes[2]);
+			prefs.setValue(AccountProvider.AMetaData.AccountMetaData.SETTING_AFTERNOON_END, ""+daytimes[3]);
+			prefs.setValue(AccountProvider.AMetaData.AccountMetaData.SETTING_EVENING_START, ""+daytimes[4]);
+			prefs.setValue(AccountProvider.AMetaData.AccountMetaData.SETTING_EVENING_END, ""+daytimes[5]);
 			
 			prefs.save();
 
@@ -142,7 +254,6 @@ public class CalendarSettingsActivity extends Activity {
 	}
 
 	private void feelFields(Account account) {
-		
 		if (account.getSetting_ampm() == 1) {
 			am_pmToggle.setChecked(true);
 		} else {
@@ -160,7 +271,33 @@ public class CalendarSettingsActivity extends Activity {
 			dateformatSpinner.setSelection(pos);
 		}
 
+		daytimes[0] = CalendarSettings.getMorningStart(CalendarSettingsActivity.this);
+		daytimes[1] = CalendarSettings.getMorningEnd(CalendarSettingsActivity.this);
+		daytimes[2] = CalendarSettings.getAfternoonStart(CalendarSettingsActivity.this);
+		daytimes[3] = CalendarSettings.getAfternoonEnd(CalendarSettingsActivity.this);
+		daytimes[4] = CalendarSettings.getEveningStart(CalendarSettingsActivity.this);
+		daytimes[5] = CalendarSettings.getEveningEnd(CalendarSettingsActivity.this);
+		
+		morningStartView.setText(getDaytime(0));
+		morningEndView.setText(getDaytime(1));
+		afternoonStartView.setText(getDaytime(2));
+		afternoonEndView.setText(getDaytime(3));
+		eveningStartView.setText(getDaytime(4));
+		eveningEndView.setText(getDaytime(5));
+
 		prefs.save();
+	}
+
+	private String getDaytime(int i) {
+		Calendar tmpCal = Calendar.getInstance();
+		DateTimeUtils dtUtils = new DateTimeUtils(CalendarSettingsActivity.this);
+		int timeInMillis = daytimes[i] / 1000;
+		int mHour = timeInMillis / 3600;
+		int mMinute = timeInMillis % 3600 / 60;
+		tmpCal.set(Calendar.HOUR_OF_DAY, mHour);
+		tmpCal.set(Calendar.MINUTE, mMinute);
+		
+		return dtUtils.formatTime(tmpCal);
 	}
 
 	class GetAccountFromDBTask extends AsyncTask<Void, Account, Account> {
@@ -210,5 +347,59 @@ public class CalendarSettingsActivity extends Activity {
 			super.onPostExecute(account);
 		}
 
+	}
+
+	@Override
+	public void onClick(View v) {
+		Account mAccount = new Account(CalendarSettingsActivity.this);
+		int timeInMillis;
+		int id = v.getId();
+		switch (id) {
+		case R.id.morningStartView:
+			timeInMillis = daytimes[0] / 1000;
+			mHour = timeInMillis / 3600;
+			mMinute = timeInMillis % 3600 / 60;
+			setDestination((TextView) v);
+			new TimePickerDialog(CalendarSettingsActivity.this, mOnTimeSetListener, mHour, mMinute, !(mAccount.getSetting_ampm() == 1)).show();
+			break;
+		case R.id.morningEndView:
+			timeInMillis = daytimes[1] / 1000;
+			mHour = timeInMillis / 3600;
+			mMinute = timeInMillis % 3600 / 60;
+			setDestination((TextView) v);
+			new TimePickerDialog(CalendarSettingsActivity.this, mOnTimeSetListener, mHour, mMinute, !(mAccount.getSetting_ampm() == 1)).show();
+			break;
+		case R.id.afternoonStartView:
+			timeInMillis = daytimes[2] / 1000;
+			mHour = timeInMillis / 3600;
+			mMinute = timeInMillis % 3600 / 60;
+			setDestination((TextView) v);
+			new TimePickerDialog(CalendarSettingsActivity.this, mOnTimeSetListener, mHour, mMinute, !(mAccount.getSetting_ampm() == 1)).show();
+			break;
+		case R.id.afternoonEndView:
+			timeInMillis = daytimes[3] / 1000;
+			mHour = timeInMillis / 3600;
+			mMinute = timeInMillis % 3600 / 60;
+			setDestination((TextView) v);
+			new TimePickerDialog(CalendarSettingsActivity.this, mOnTimeSetListener, mHour, mMinute, !(mAccount.getSetting_ampm() == 1)).show();
+			break;
+		case R.id.eveningStartView:
+			timeInMillis = daytimes[4] / 1000;
+			mHour = timeInMillis / 3600;
+			mMinute = timeInMillis % 3600 / 60;
+			setDestination((TextView) v);
+			new TimePickerDialog(CalendarSettingsActivity.this, mOnTimeSetListener, mHour, mMinute, !(mAccount.getSetting_ampm() == 1)).show();
+			break;
+		case R.id.eveningEndView:
+			timeInMillis = daytimes[5] / 1000;
+			mHour = timeInMillis / 3600;
+			mMinute = timeInMillis % 3600 / 60;
+			setDestination((TextView) v);
+			new TimePickerDialog(CalendarSettingsActivity.this, mOnTimeSetListener, mHour, mMinute, !(mAccount.getSetting_ampm() == 1)).show();
+			break;
+		default:
+			break;
+		}
+		
 	}
 }

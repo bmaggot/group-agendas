@@ -91,7 +91,7 @@
                     android:layout_alignParentLeft="true"
                     android:layout_centerVertical="true"
                     android:text="@string/replace_image"
-                    android:textColor="@color/darker_gray"
+                    android:textColor="@color/black"
                     android:textStyle="bold" />
 
                 <ImageView
@@ -121,7 +121,7 @@
                     android:layout_alignParentLeft="true"
                     android:layout_centerVertical="true"
                     android:text="@string/remove_image"
-                    android:textColor="@color/darker_gray"
+                    android:textColor="@color/black"
                     android:textStyle="bold" />
 
                 <CheckBox
@@ -149,7 +149,7 @@
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_vertical"
                     android:text="@string/name"
-                    android:textColor="@color/darker_gray"
+                    android:textColor="@color/black"
                     android:textStyle="bold" />
 
                 <EditText
@@ -159,7 +159,7 @@
                     android:layout_gravity="center_vertical"
                     android:background="@null"
                     android:inputType="text"
-                    android:textColor="@color/darker_gray"
+                    android:textColor="@color/black"
                     android:textSize="15sp" />
             </LinearLayout>
 
@@ -179,7 +179,7 @@
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_vertical"
                     android:text="@string/lastname"
-                    android:textColor="@color/darker_gray"
+                    android:textColor="@color/black"
                     android:textStyle="bold" />
 
                 <EditText
@@ -189,7 +189,7 @@
                     android:layout_gravity="center_vertical"
                     android:background="@null"
                     android:inputType="text"
-                    android:textColor="@color/darker_gray"
+                    android:textColor="@color/black"
                     android:textSize="15sp" />
             </LinearLayout>
 
@@ -212,7 +212,7 @@
                     android:layout_marginBottom="5dp"
                     android:layout_marginTop="5dp"
                     android:text="@string/country"
-                    android:textColor="@color/darker_gray"
+                    android:textColor="@color/black"
                     android:textStyle="bold" />
 
                 <RelativeLayout
@@ -229,7 +229,7 @@
                         android:layout_marginBottom="5dp"
                         android:layout_marginTop="5dp"
                         android:singleLine="true"
-                        android:textColor="@color/darker_gray"
+                        android:textColor="@color/black"
                         android:textSize="15sp" />
 
                     <RelativeLayout
@@ -237,9 +237,10 @@
                         android:layout_width="40dp"
                         android:layout_height="40dp"
                         android:layout_alignParentRight="true"
-                        android:background="@drawable/account_dropdown_button" >
+                        android:background="@drawable/account_dropdown_button_right_round" >
 
                         <ImageView
+                            android:contentDescription="@string/dropdown_icon"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_centerInParent="true"
@@ -267,7 +268,7 @@
                     android:layout_marginBottom="5dp"
                     android:layout_marginTop="5dp"
                     android:text="@string/timezone"
-                    android:textColor="@color/darker_gray"
+                    android:textColor="@color/black"
                     android:textStyle="bold" />
 
                 <RelativeLayout
@@ -283,16 +284,17 @@
                         android:layout_centerVertical="true"
                         android:background="@null"
                         android:singleLine="true"
-                        android:textColor="@color/darker_gray"
+                        android:textColor="@color/black"
                         android:textSize="15sp" />
 
                     <RelativeLayout
                         android:layout_width="40dp"
                         android:layout_height="40dp"
                         android:layout_alignParentRight="true"
-                        android:background="@drawable/account_dropdown_button" >
+                        android:background="@drawable/account_dropdown_button_right_round" >
 
                         <ImageView
+                            android:contentDescription="@string/dropdown_icon"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_centerInParent="true"
@@ -318,7 +320,7 @@
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_vertical"
                     android:text="@string/language"
-                    android:textColor="@color/darker_gray"
+                    android:textColor="@color/black"
                     android:textStyle="bold" />
 
                 <RelativeLayout
@@ -335,7 +337,7 @@
                         android:layout_marginRight="40dp"
                         android:background="@null"
                         android:singleLine="true"
-                        android:textColor="@color/darker_gray"
+                        android:textColor="@color/black"
                         android:textSize="15sp" />
 
                     <RelativeLayout
@@ -343,9 +345,10 @@
                         android:layout_height="40dp"
                         android:layout_alignParentRight="true"
                         android:onClick="clickLang"
-                        android:background="@drawable/account_dropdown_button" >
+                        android:background="@drawable/account_dropdown_button_right_round" >
 
                         <ImageView
+                            android:contentDescription="@string/dropdown_icon"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_centerInParent="true"
@@ -371,7 +374,7 @@
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_vertical"
                     android:text="@string/email"
-                    android:textColor="@color/darker_gray"
+                    android:textColor="@color/black"
                     android:textStyle="bold" />
 
                 <EditText
@@ -382,7 +385,7 @@
                     android:background="@null"
                     android:inputType="textEmailAddress"
                     android:maxLines="2"
-                    android:textColor="@color/darker_gray"
+                    android:textColor="@color/black"
                     android:textSize="15sp" />
             </LinearLayout>
 
@@ -411,7 +414,7 @@
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_vertical"
                     android:text="@string/email2"
-                    android:textColor="@color/darker_gray"
+                    android:textColor="@color/black"
                     android:textStyle="bold" />
 
                 <EditText
@@ -422,7 +425,7 @@
                     android:background="@null"
                     android:inputType="textEmailAddress"
                     android:maxLines="2"
-                    android:textColor="@color/darker_gray"
+                    android:textColor="@color/black"
                     android:textSize="15sp" />
             </LinearLayout>
 
@@ -452,7 +455,7 @@
                     android:layout_gravity="center_vertical"
                     android:maxLines="2"
                     android:text="@string/email3"
-                    android:textColor="@color/darker_gray"
+                    android:textColor="@color/black"
                     android:textStyle="bold" />
 
                 <EditText
@@ -462,7 +465,7 @@
                     android:layout_gravity="center"
                     android:background="@null"
                     android:inputType="textEmailAddress"
-                    android:textColor="@color/darker_gray"
+                    android:textColor="@color/black"
                     android:textSize="15sp" />
             </LinearLayout>
 
@@ -491,7 +494,7 @@
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_vertical"
                     android:text="@string/email4"
-                    android:textColor="@color/darker_gray"
+                    android:textColor="@color/black"
                     android:textStyle="bold" />
 
                 <EditText
@@ -502,7 +505,7 @@
                     android:background="@null"
                     android:inputType="textEmailAddress"
                     android:maxLines="2"
-                    android:textColor="@color/darker_gray"
+                    android:textColor="@color/black"
                     android:textSize="15sp" />
             </LinearLayout>
 
@@ -529,7 +532,7 @@
                     android:layout_marginLeft="5dp"
                     android:layout_marginTop="5dp"
                     android:text="@string/phone1"
-                    android:textColor="@color/darker_gray"
+                    android:textColor="@color/black"
                     android:textStyle="bold" />
 
                 <View
@@ -550,7 +553,7 @@
                     android:gravity="center"
                     android:maxLength="5"
                     android:singleLine="true"
-                    android:textColor="@color/darker_gray"
+                    android:textColor="@color/black"
                     android:textSize="15sp" />
 
                 <View
@@ -567,7 +570,7 @@
                     android:layout_gravity="center_vertical"
                     android:background="@drawable/transparent"
                     android:inputType="phone"
-                    android:textColor="@color/darker_gray"
+                    android:textColor="@color/black"
                     android:textSize="15sp" />
             </LinearLayout>
 
@@ -586,7 +589,7 @@
                     android:layout_marginLeft="5dp"
                     android:layout_marginTop="5dp"
                     android:text="@string/phone2"
-                    android:textColor="@color/darker_gray"
+                    android:textColor="@color/black"
                     android:textStyle="bold" />
 
                 <View
@@ -607,7 +610,7 @@
                     android:gravity="center"
                     android:maxLength="5"
                     android:singleLine="true"
-                    android:textColor="@color/darker_gray"
+                    android:textColor="@color/black"
                     android:textSize="15sp" />
 
                 <View
@@ -624,7 +627,7 @@
                     android:layout_gravity="center_vertical"
                     android:background="@drawable/transparent"
                     android:inputType="phone"
-                    android:textColor="@color/darker_gray"
+                    android:textColor="@color/black"
                     android:textSize="15sp" />
             </LinearLayout>
 
@@ -643,7 +646,7 @@
                     android:layout_marginLeft="5dp"
                     android:layout_marginTop="5dp"
                     android:text="@string/phone3"
-                    android:textColor="@color/darker_gray"
+                    android:textColor="@color/black"
                     android:textStyle="bold" />
 
                 <View
@@ -664,7 +667,7 @@
                     android:gravity="center"
                     android:maxLength="5"
                     android:singleLine="true"
-                    android:textColor="@color/darker_gray"
+                    android:textColor="@color/black"
                     android:textSize="15sp" />
 
                 <View
@@ -681,7 +684,7 @@
                     android:layout_gravity="center_vertical"
                     android:background="@drawable/transparent"
                     android:inputType="phone"
-                    android:textColor="@color/darker_gray"
+                    android:textColor="@color/black"
                     android:textSize="15sp" />
             </LinearLayout>
 
@@ -700,7 +703,7 @@
                     android:layout_marginBottom="5dp"
                     android:layout_marginTop="5dp"
                     android:text="@string/birthday"
-                    android:textColor="@color/darker_gray"
+                    android:textColor="@color/black"
                     android:textStyle="bold" />
 
                 <Button
@@ -720,7 +723,7 @@
                     android:layout_marginTop="5dp"
                     android:layout_gravity="center_vertical"
                     android:background="@drawable/transparent"
-                    android:textColor="@color/darker_gray"
+                    android:textColor="@color/black"
                     android:textSize="15sp" />
             </LinearLayout>
 
@@ -734,7 +737,7 @@
                     android:layout_width="100dp"
                     android:layout_height="wrap_content"
                     android:text="@string/sex"
-                    android:textColor="@android:color/black" />
+                    android:textColor="@color/black" />
 
                 <Spinner
                     android:id="@+id/sexSpinner"
@@ -810,7 +813,7 @@
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_vertical"
                     android:text="@string/city"
-                    android:textColor="@color/darker_gray"
+                    android:textColor="@color/black"
                     android:textStyle="bold" />
 
                 <EditText
@@ -821,7 +824,7 @@
                     android:background="@null"
                     android:inputType="text"
                     android:singleLine="true"
-                    android:textColor="@color/darker_gray" />
+                    android:textColor="@color/black" />
             </LinearLayout>
 
             <LinearLayout
@@ -840,7 +843,7 @@
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_vertical"
                     android:text="@string/street"
-                    android:textColor="@color/darker_gray"
+                    android:textColor="@color/black"
                     android:textStyle="bold" />
 
                 <EditText
@@ -851,7 +854,7 @@
                     android:background="@null"
                     android:inputType="text"
                     android:singleLine="true"
-                    android:textColor="@color/darker_gray" />
+                    android:textColor="@color/black" />
             </LinearLayout>
 
             <LinearLayout
@@ -870,7 +873,7 @@
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_vertical"
                     android:text="@string/zip"
-                    android:textColor="@color/darker_gray"
+                    android:textColor="@color/black"
                     android:textStyle="bold" />
 
                 <EditText
@@ -881,7 +884,7 @@
                     android:background="@null"
                     android:inputType="text"
                     android:singleLine="true"
-                    android:textColor="@color/darker_gray" />
+                    android:textColor="@color/black" />
             </LinearLayout>
 
             <RelativeLayout
@@ -904,7 +907,7 @@
                     android:layout_marginRight="5dp"
                     android:singleLine="true"
                     android:text="@string/notify_by_email"
-                    android:textColor="@color/darker_gray"
+                    android:textColor="@color/black"
                     android:textStyle="bold" />
 
                 <ToggleButton
@@ -935,7 +938,7 @@
                     android:layout_marginRight="5dp"
                     android:singleLine="true"
                     android:text="@string/notify_by_push"
-                    android:textColor="@color/darker_gray"
+                    android:textColor="@color/black"
                     android:textStyle="bold" />
 
                 <ToggleButton
