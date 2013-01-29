@@ -53,11 +53,11 @@ public class EventActivity extends Activity {
 	protected DateTimeUtils dtUtils;
 	protected static EditText descView;
 
-	protected static TextView countryView;
-	protected static EditText cityView;
-	protected static EditText streetView;
-	protected static EditText zipView;
-	protected static TextView timezoneView;
+	public static TextView countryView;
+	public static EditText cityView;
+	public static EditText streetView;
+	public static EditText zipView;
+	public static TextView timezoneView;
 
 	protected static EditText locationView;
 	protected static EditText gobyView;
@@ -133,7 +133,7 @@ public class EventActivity extends Activity {
 	protected ProgressBar pb;
 	protected static String selectedIcon = Event.DEFAULT_ICON;
 	protected static String selectedColor = Event.DEFAULT_COLOR;
-
+	
 	public static Event event;
 	public static ArrayList<StaticTimezones> countriesList = null;
 	public static ArrayList<StaticTimezones> filteredCountriesList = null;
@@ -151,7 +151,8 @@ public class EventActivity extends Activity {
 	protected TextView response_button_yes;
 	protected TextView response_button_no;
 	protected TextView response_button_maybe;
-
+	protected Button address;
+	protected Button save_address;
 	protected Account account;
 
 	protected View inviteDelegate1;
@@ -289,6 +290,11 @@ public class EventActivity extends Activity {
 		cityViewBlock.setVisibility(View.VISIBLE);
 		streetViewBlock.setVisibility(View.VISIBLE);
 		zipViewBlock.setVisibility(View.VISIBLE);
+		address.setVisibility(View.VISIBLE);
+		if(cityView.getText().length() > 0 || streetView.getText().length() > 0 || zipView.getText().length() > 0){
+			save_address.setVisibility(View.VISIBLE);
+		}
+		
 	}
 
 	public void hideAddressPanel() {
@@ -305,6 +311,8 @@ public class EventActivity extends Activity {
 		
 		zipViewBlock = (LinearLayout) findViewById(R.id.zipViewBlock);
 		zipViewBlock.setVisibility(View.GONE);
+		address.setVisibility(View.GONE);
+		save_address.setVisibility(View.GONE);
 	}
 
 	public void showAlarmPanel() {
