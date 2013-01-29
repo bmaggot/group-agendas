@@ -175,6 +175,11 @@
             android:authorities="com.groupagendas.groupagenda.templates.TemplatesProvider"
             android:exported="false" >
         </provider>
+        <provider
+            android:name=".address.AddressProvider"
+            android:authorities="com.groupagendas.groupagenda.address.AddressProvider"
+            android:exported="false" >
+        </provider>
 
         <receiver
             android:name=".ConnectReceiver"
@@ -321,6 +326,24 @@
         </activity>
         <activity
             android:name=".account.verification.SmsVerificationCodeActivity"
+            android:configChanges="keyboardHidden|orientation"
+            android:screenOrientation="portrait"
+            android:theme="@android:style/Theme.NoTitleBar" >
+        </activity>
+        <activity
+            android:name=".events.PollResultsActivity"
+            android:configChanges="keyboardHidden|orientation"
+            android:screenOrientation="portrait"
+            android:theme="@android:style/Theme.NoTitleBar" >
+        </activity>
+        <activity
+            android:name=".address.AddressBookActivity"
+            android:configChanges="keyboardHidden|orientation"
+            android:screenOrientation="portrait"
+            android:theme="@android:style/Theme.NoTitleBar" >
+        </activity>
+        <activity
+            android:name=".address.AddressBookInfoActivity"
             android:configChanges="keyboardHidden|orientation"
             android:screenOrientation="portrait"
             android:theme="@android:style/Theme.NoTitleBar" >
