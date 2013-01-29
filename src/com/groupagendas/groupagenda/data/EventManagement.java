@@ -36,6 +36,7 @@ import com.groupagendas.groupagenda.chat.ChatThreadObject;
 import com.groupagendas.groupagenda.contacts.Contact;
 import com.groupagendas.groupagenda.error.report.Reporter;
 import com.groupagendas.groupagenda.events.Event;
+import com.groupagendas.groupagenda.events.EventEditActivity;
 import com.groupagendas.groupagenda.events.EventsAdapter;
 import com.groupagendas.groupagenda.events.EventsProvider;
 import com.groupagendas.groupagenda.events.EventsProvider.EMetaData;
@@ -1852,17 +1853,17 @@ public class EventManagement {
 						updateEventInLocalDb(context, e);
 					}
 				} 
-//				else {
-//					if(getEventFromLocalDb(context, e.getEvent_id(), ID_EXTERNAL) == null){
-//						context.getContentResolver().insert(EventsProvider.EMetaData.EventsMetaData.CONTENT_URI, createCVforEventsTable(e));
-//						EventEditActivity.addEventToPollList(context, e);
-//					} else {
-//						e.setInternalID(getEventFromLocalDb(context, e.getEvent_id(), ID_EXTERNAL).getInternalID());
-//						updateEventInLocalDb(context, e);
-//						EventEditActivity.deleteEventFromPollList(e);
-//						EventEditActivity.addSelectedEventToPollList(context, e, EventEditActivity.getSelectedEventPollTimes(e));
-//					}
-//				}
+				else {
+					if(getEventFromLocalDb(context, e.getEvent_id(), ID_EXTERNAL) == null){
+						context.getContentResolver().insert(EventsProvider.EMetaData.EventsMetaData.CONTENT_URI, createCVforEventsTable(e));
+						EventEditActivity.addEventToPollList(context, e);
+					} else {
+						e.setInternalID(getEventFromLocalDb(context, e.getEvent_id(), ID_EXTERNAL).getInternalID());
+						updateEventInLocalDb(context, e);
+						EventEditActivity.deleteEventFromPollList(e);
+						EventEditActivity.addSelectedEventToPollList(context, e, EventEditActivity.getSelectedEventPollTimes(e));
+					}
+				}
 			}
 //			sb.deleteCharAt(sb.length() - 1);
 //			EventManagement.bulkDeleteEvents(context, sb.toString(), EventManagement.ID_EXTERNAL);
