@@ -4,7 +4,7 @@
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
     android:background="@android:color/white"
-	tools:ignore="TooManyViews"  >
+    tools:ignore="TooManyViews" >
 
     <RelativeLayout
         android:id="@+id/topBar"
@@ -87,14 +87,14 @@
     <ScrollView
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-		android:layout_below="@+id/topBar" >
+        android:layout_below="@+id/topBar" >
 
         <LinearLayout
-	        android:layout_width="fill_parent"
-	        android:layout_height="wrap_content"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
             android:focusableInTouchMode="true"
-            android:orientation="vertical"
             android:isScrollContainer="true"
+            android:orientation="vertical"
             android:padding="5dp" >
 
             <LinearLayout
@@ -118,12 +118,12 @@
                     android:layout_width="42dp"
                     android:layout_height="42dp"
                     android:layout_gravity="top"
-                    android:layout_marginTop="1dp"
                     android:layout_marginLeft="2dp"
                     android:layout_marginRight="5dp"
-                    android:padding="0dp"
+                    android:layout_marginTop="1dp"
                     android:background="@drawable/account_dropdown_button_round"
-                    android:contentDescription="@string/event_color_placeholder" />
+                    android:contentDescription="@string/event_color_placeholder"
+                    android:padding="0dp" />
 
                 <EditText
                     android:id="@+id/title"
@@ -133,8 +133,8 @@
                     android:background="@drawable/event_icon_placeholder"
                     android:gravity="center_vertical"
                     android:hint="@string/title"
-                    android:textColor="@color/black"
-                    android:padding="10dp" />
+                    android:padding="10dp"
+                    android:textColor="@color/black" />
             </LinearLayout>
 
             <LinearLayout
@@ -243,7 +243,7 @@
                         android:gravity="center_vertical"
                         android:padding="10dp"
                         android:singleLine="true"
-	                    android:textColor="@color/black"
+                        android:textColor="@color/black"
                         android:textSize="15sp" />
 
                     <RelativeLayout
@@ -326,6 +326,17 @@
                     android:paddingRight="10dp"
                     tools:ignore="NestedScrolling" />
             </LinearLayout>
+            
+            <Button
+                    android:id="@+id/poll_results_button"
+                    android:layout_width="fill_parent"
+                    android:layout_height="40dp"
+                    android:layout_marginBottom="5dp"
+                    android:background="@drawable/account_dropdown_button"
+                    android:text="@string/see_results"
+                    android:textSize="16sp"
+                    android:textStyle="bold"
+                    android:visibility="gone" />
 
             <LinearLayout
                 android:id="@+id/addressDetailsLine"
@@ -401,105 +412,112 @@
                         android:src="@drawable/account_dropdown_button_arrow" />
                 </RelativeLayout>
             </LinearLayout>
-            
-			<LinearLayout
+
+            <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:baselineAligned="false"
                 android:layout_marginBottom="5dp"
+                android:baselineAligned="false"
                 android:orientation="horizontal"
                 android:visibility="gone" >
-                
+
                 <RelativeLayout
                     android:id="@+id/reminder_trigger"
-                    android:layout_height="wrap_content"
                     android:layout_width="0dp"
+                    android:layout_height="wrap_content"
                     android:layout_weight="0.25" >
+
                     <ImageView
                         android:id="@+id/reminder_trigger_image"
-                        android:src="@drawable/event_edit_reminder_button_i"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_centerHorizontal="true"
                         android:layout_alignParentTop="true"
-                        android:contentDescription="@string/reminder" />
+                        android:layout_centerHorizontal="true"
+                        android:contentDescription="@string/reminder"
+                        android:src="@drawable/event_edit_reminder_button_i" />
+
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="@string/reminder"
-                        android:textColor="@color/black"
+                        android:layout_below="@+id/reminder_trigger_image"
                         android:layout_centerHorizontal="true"
-                        android:layout_below="@+id/reminder_trigger_image" />
+                        android:text="@string/reminder"
+                        android:textColor="@color/black" />
                 </RelativeLayout>
-                
-			    <RelativeLayout
+
+                <RelativeLayout
                     android:id="@+id/repeat_trigger"
-                    android:layout_height="wrap_content"
                     android:layout_width="0dp"
+                    android:layout_height="wrap_content"
                     android:layout_weight="0.25" >
+
                     <ImageView
                         android:id="@+id/repeat_trigger_image"
-                        android:src="@drawable/event_edit_repeat_button_i"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_centerHorizontal="true"
                         android:layout_alignParentTop="true"
-                        android:contentDescription="@string/repeat" />
+                        android:layout_centerHorizontal="true"
+                        android:contentDescription="@string/repeat"
+                        android:src="@drawable/event_edit_repeat_button_i" />
+
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="@string/repeat"
-                        android:textColor="@color/black"
+                        android:layout_below="@+id/repeat_trigger_image"
                         android:layout_centerHorizontal="true"
-                        android:layout_below="@+id/repeat_trigger_image" />
+                        android:text="@string/repeat"
+                        android:textColor="@color/black" />
                 </RelativeLayout>
-                
-			    <RelativeLayout
+
+                <RelativeLayout
                     android:id="@+id/alarm_trigger"
-                    android:layout_height="wrap_content"
                     android:layout_width="0dp"
+                    android:layout_height="wrap_content"
                     android:layout_weight="0.25" >
+
                     <ImageView
                         android:id="@+id/alarm_trigger_image"
-                        android:src="@drawable/event_edit_alarm_button_i"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_centerHorizontal="true"
                         android:layout_alignParentTop="true"
-                        android:contentDescription="@string/alarm" />
+                        android:layout_centerHorizontal="true"
+                        android:contentDescription="@string/alarm"
+                        android:src="@drawable/event_edit_alarm_button_i" />
+
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="@string/alarm"
-                        android:textColor="@color/black"
+                        android:layout_below="@+id/alarm_trigger_image"
                         android:layout_centerHorizontal="true"
-                        android:layout_below="@+id/alarm_trigger_image" />
+                        android:text="@string/alarm"
+                        android:textColor="@color/black" />
                 </RelativeLayout>
-                
+
                 <RelativeLayout
                     android:id="@+id/share_trigger"
-                    android:layout_height="wrap_content"
                     android:layout_width="0dp"
+                    android:layout_height="wrap_content"
                     android:layout_weight="0.25" >
+
                     <ImageView
                         android:id="@+id/share_trigger_image"
-                        android:src="@drawable/event_edit_share_button_i"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_centerHorizontal="true"
                         android:layout_alignParentTop="true"
-                        android:contentDescription="@string/share" />
+                        android:layout_centerHorizontal="true"
+                        android:contentDescription="@string/share"
+                        android:src="@drawable/event_edit_share_button_i" />
+
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="@string/share"
-                        android:textColor="@color/black"
+                        android:layout_below="@+id/share_trigger_image"
                         android:layout_centerHorizontal="true"
-                        android:layout_below="@+id/share_trigger_image" />
+                        android:text="@string/share"
+                        android:textColor="@color/black" />
                 </RelativeLayout>
-                
             </LinearLayout>
-            
+
             <LinearLayout
                 android:id="@+id/locationViewBlock"
                 android:layout_width="fill_parent"
@@ -630,7 +648,7 @@
                     android:textColor="@color/black" />
             </LinearLayout>
 
-			<LinearLayout
+            <LinearLayout
                 android:id="@+id/countrySpinnerBlock"
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
@@ -756,116 +774,139 @@
                     android:textSize="15sp" />
             </LinearLayout>
 
-	        <LinearLayout
-	            android:id="@+id/alarm_container1"
-	            android:layout_width="fill_parent"
-	            android:layout_height="wrap_content"
-	            android:layout_marginBottom="2dp"
-	            android:orientation="horizontal" >
-	
-	            <TextView
-	                android:layout_width="95dp"
-	                android:layout_height="wrap_content"
-	                android:layout_gravity="center_vertical"
-	                android:paddingBottom="5dp"
-	                android:paddingTop="4dp"
-	                android:singleLine="true"
-	                android:text="@string/event_alarm1"
-	                android:textColor="@color/black"
-	                android:textSize="15sp"
-	                android:textStyle="bold" />
-	
-	            <TextView
-	                android:id="@+id/alarmView1"
-	                android:layout_width="fill_parent"
-	                android:layout_height="40dp"
-	                android:background="@drawable/event_icon_placeholder"
-	                android:gravity="center_vertical"
-	                android:paddingBottom="5dp"
-	                android:paddingLeft="10dp"
-	                android:paddingTop="4dp"
-	                android:singleLine="true"
-	                android:textColor="@color/black"
-	                android:textSize="15sp" />
-	        </LinearLayout>
-	
-	        <LinearLayout
-	            android:id="@+id/alarm_container2"
-	            android:layout_width="fill_parent"
-	            android:layout_height="wrap_content"
-	            android:layout_marginBottom="2dp"
-	            android:orientation="horizontal" >
-	
-	            <TextView
-	                android:layout_width="95dp"
-	                android:layout_height="wrap_content"
-	                android:layout_gravity="center_vertical"
-	                android:paddingBottom="5dp"
-	                android:paddingTop="4dp"
-	                android:singleLine="true"
-	                android:text="@string/event_alarm2"
-	                android:textColor="@color/black"
-	                android:textSize="15sp"
-	                android:textStyle="bold" />
-	
-	            <TextView
-	                android:id="@+id/alarmView2"
-	                android:layout_width="fill_parent"
-	                android:layout_height="40dp"
-	                android:background="@drawable/event_icon_placeholder"
-	                android:gravity="center_vertical"
-	                android:paddingBottom="5dp"
-	                android:paddingLeft="10dp"
-	                android:paddingTop="4dp"
-	                android:singleLine="true"
-	                android:textColor="@color/black"
-	                android:textSize="15sp" />
-	        </LinearLayout>
-	
-	        <LinearLayout
-	            android:id="@+id/alarm_container3"
-	            android:layout_width="fill_parent"
-	            android:layout_height="wrap_content"
-	            android:layout_marginBottom="2dp"
-	            android:orientation="horizontal" >
-	
-	            <TextView
-	                android:layout_width="95dp"
-	                android:layout_height="wrap_content"
-	                android:layout_gravity="center_vertical"
-	                android:paddingBottom="5dp"
-	                android:paddingTop="4dp"
-	                android:singleLine="true"
-	                android:text="@string/event_alarm3"
-	                android:textColor="@color/black"
-	                android:textSize="15sp"
-	                android:textStyle="bold" />
-	
-	            <TextView
-	                android:id="@+id/alarmView3"
-	                android:layout_width="fill_parent"
-	                android:layout_height="40dp"
-	                android:background="@drawable/event_icon_placeholder"
-	                android:gravity="center_vertical"
-	                android:paddingBottom="5dp"
-	                android:paddingLeft="10dp"
-	                android:paddingTop="4dp"
-	                android:singleLine="true"
-	                android:textColor="@color/black"
-	                android:textSize="15sp" />
-	        </LinearLayout>
-	
+            <Button
+                android:id="@+id/save_address"
+                android:layout_width="fill_parent"
+                android:layout_height="40dp"
+                android:layout_marginTop="5dp"
+                android:background="@drawable/account_dropdown_button"
+                android:text="@string/save_in_address_book"
+                android:textSize="16sp"
+                android:textStyle="bold"
+                android:visibility="gone" />
+
+            <Button
+                android:id="@+id/address_button"
+                android:layout_width="fill_parent"
+                android:layout_height="40dp"
+                android:layout_marginTop="5dp"
+                android:layout_marginBottom="5dp"
+                android:background="@drawable/account_dropdown_button"
+                android:text="@string/address_book"
+                android:textSize="16sp"
+                android:textStyle="bold"
+                android:visibility="gone" />
+
+            <LinearLayout
+                android:id="@+id/alarm_container1"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="2dp"
+                android:orientation="horizontal" >
+
+                <TextView
+                    android:layout_width="95dp"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical"
+                    android:paddingBottom="5dp"
+                    android:paddingTop="4dp"
+                    android:singleLine="true"
+                    android:text="@string/event_alarm1"
+                    android:textColor="@color/black"
+                    android:textSize="15sp"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:id="@+id/alarmView1"
+                    android:layout_width="fill_parent"
+                    android:layout_height="40dp"
+                    android:background="@drawable/event_icon_placeholder"
+                    android:gravity="center_vertical"
+                    android:paddingBottom="5dp"
+                    android:paddingLeft="10dp"
+                    android:paddingTop="4dp"
+                    android:singleLine="true"
+                    android:textColor="@color/black"
+                    android:textSize="15sp" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/alarm_container2"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="2dp"
+                android:orientation="horizontal" >
+
+                <TextView
+                    android:layout_width="95dp"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical"
+                    android:paddingBottom="5dp"
+                    android:paddingTop="4dp"
+                    android:singleLine="true"
+                    android:text="@string/event_alarm2"
+                    android:textColor="@color/black"
+                    android:textSize="15sp"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:id="@+id/alarmView2"
+                    android:layout_width="fill_parent"
+                    android:layout_height="40dp"
+                    android:background="@drawable/event_icon_placeholder"
+                    android:gravity="center_vertical"
+                    android:paddingBottom="5dp"
+                    android:paddingLeft="10dp"
+                    android:paddingTop="4dp"
+                    android:singleLine="true"
+                    android:textColor="@color/black"
+                    android:textSize="15sp" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/alarm_container3"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="2dp"
+                android:orientation="horizontal" >
+
+                <TextView
+                    android:layout_width="95dp"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical"
+                    android:paddingBottom="5dp"
+                    android:paddingTop="4dp"
+                    android:singleLine="true"
+                    android:text="@string/event_alarm3"
+                    android:textColor="@color/black"
+                    android:textSize="15sp"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:id="@+id/alarmView3"
+                    android:layout_width="fill_parent"
+                    android:layout_height="40dp"
+                    android:background="@drawable/event_icon_placeholder"
+                    android:gravity="center_vertical"
+                    android:paddingBottom="5dp"
+                    android:paddingLeft="10dp"
+                    android:paddingTop="4dp"
+                    android:singleLine="true"
+                    android:textColor="@color/black"
+                    android:textSize="15sp" />
+            </LinearLayout>
+
             <Button
                 android:id="@+id/navigation_button"
                 android:layout_width="fill_parent"
                 android:layout_height="40dp"
                 android:layout_marginBottom="5dp"
-                android:background="@drawable/event_invite_people_button_standalone"
-                android:text="@string/messenger"
+                android:background="@drawable/account_dropdown_button"
+                android:text="@string/navigation"
                 android:textSize="16sp"
                 android:textStyle="bold"
                 android:visibility="gone" />
-            
+
             <Button
                 android:id="@+id/copy_event_button"
                 android:layout_width="fill_parent"
@@ -876,11 +917,11 @@
                 android:padding="10dp"
                 android:singleLine="true"
                 android:text="@string/copy_event"
-                android:textStyle="bold"
                 android:textColor="@color/black"
                 android:textSize="16sp"
+                android:textStyle="bold"
                 android:visibility="gone" />
-			
+
             <Button
                 android:id="@+id/messenger_button"
                 android:layout_width="fill_parent"
@@ -962,10 +1003,12 @@
                     </LinearLayout>
                 </RelativeLayout>
 
+                
+
                 <LinearLayout
                     android:layout_width="fill_parent"
                     android:layout_height="40dp"
-	                android:background="@drawable/account_dropdown_button"
+                    android:background="@drawable/account_dropdown_button"
                     android:orientation="horizontal" >
 
                     <View
@@ -999,16 +1042,16 @@
                             android:layout_centerVertical="true"
                             android:layout_marginLeft="0dp"
                             android:layout_marginRight="10dp"
-                            android:gravity="center"
                             android:background="@drawable/event_invited_edit_button"
+                            android:gravity="center"
+                            android:paddingBottom="5dp"
                             android:paddingLeft="10dp"
                             android:paddingRight="10dp"
                             android:paddingTop="6dp"
-                            android:paddingBottom="5dp"
-                            android:visibility="gone"
                             android:text="@string/edit"
                             android:textSize="16sp"
-                            android:textStyle="bold" />
+                            android:textStyle="bold"
+                            android:visibility="gone" />
                     </RelativeLayout>
                 </LinearLayout>
 
