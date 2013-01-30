@@ -99,6 +99,7 @@ public class AlarmsManagement {
 			cursor.moveToNext();
 			}while (!cursor.isAfterLast());
 		}
+		cursor.close();
 		return alarms;
 	}
 	
