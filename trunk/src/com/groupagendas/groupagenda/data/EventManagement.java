@@ -68,7 +68,6 @@ public class EventManagement {
 
 	private static final String GET_EVENTS_FROM_REMOTE_DB_URL = "mobile/events_list";
 	public static int eventsInOnePostRetrieveSize = 200;
-	
 
 	// //////////////////////////METHODS THAT ARE USED BY
 	// UI////////////////////////////////////////////////////////////////////
@@ -450,11 +449,13 @@ public class EventManagement {
 	 */
 	public static Cursor createEventProjectionByDateFromLocalDb(Context context, String[] projection, Calendar date, int daysToSelect,
 			int eventTimeMode, String sortOrder, boolean filterRejected) {
-//		Calendar calendar = Calendar.getInstance();
-//		Log.e("createEventProjectionByDateFromLocalDb", calendar.getTime().toString());
+		// Calendar calendar = Calendar.getInstance();
+		// Log.e("createEventProjectionByDateFromLocalDb",
+		// calendar.getTime().toString());
 		initUserTimezone(context);
 		day_index_formatter = new SimpleDateFormat(EventsProvider.EMetaData.EventsIndexesMetaData.DAY_COLUMN_FORMAT, Locale.getDefault());
-		month_index_formatter = new SimpleDateFormat(EventsProvider.EMetaData.EventsIndexesMetaData.MONTH_COLUMN_FORMAT, Locale.getDefault());
+		month_index_formatter = new SimpleDateFormat(EventsProvider.EMetaData.EventsIndexesMetaData.MONTH_COLUMN_FORMAT,
+				Locale.getDefault());
 		String where;
 
 		Uri uri;
@@ -481,12 +482,11 @@ public class EventManagement {
 					}
 					sb.append(")");
 					String inStringDay = sb.toString();
-					return EventsProvider.mOpenHelper.getReadableDatabase().rawQuery("SELECT events.event_id, events._id, color, event_display_color, is_all_day, time_start_utc, " +
-							"time_end_utc, icon, title, status, is_owner, day " +
-							"FROM events_days " +
-							"LEFT JOIN events ON (events_days.event_id = events.event_id) " +
-							"WHERE `day` IN "+inStringDay+" ",
-							null);
+					return EventsProvider.mOpenHelper.getReadableDatabase().rawQuery(
+							"SELECT events.event_id, events._id, color, event_display_color, is_all_day, time_start_utc, "
+									+ "time_end_utc, icon, title, status, is_owner, day " + "FROM events_days "
+									+ "LEFT JOIN events ON (events_days.event_id = events.event_id) " + "WHERE `day` IN " + inStringDay
+									+ " ", null);
 				} else {
 					uri = EventsProvider.EMetaData.EventsMetaData.CONTENT_URI;
 					where = EventsProvider.EMetaData.EventsMetaData.TIME_END_UTC_MILLISECONDS + ">" + date.getTimeInMillis();
@@ -500,9 +500,7 @@ public class EventManagement {
 				break;
 			case TM_EVENTS_ON_GIVEN_MONTH:
 				uri = EventsProvider.EMetaData.EVENTS_ON_DATE_URI;
-                where = EventsProvider.EMetaData.EventsIndexesMetaData.MONTH
-                        + " = '" + month_index_formatter.format(date.getTime())
-                        + "'";
+				where = EventsProvider.EMetaData.EventsIndexesMetaData.MONTH + " = '" + month_index_formatter.format(date.getTime()) + "'";
 				break;
 			case TM_EVENTS_ON_GIVEN_YEAR:
 				uri = EventsProvider.EMetaData.EVENTS_ON_DATE_URI;
@@ -535,26 +533,34 @@ public class EventManagement {
 			uri = EventsProvider.EMetaData.EventsMetaData.CONTENT_URI;
 		}
 
-//		String rejectedFilter = " AND " + EventsProvider.EMetaData.EventsMetaData.STATUS + "!=" + Invited.REJECTED;
-//
-//		String pendingFilter = " AND (" + EventsProvider.EMetaData.EventsMetaData.STATUS + "!=" + Invited.PENDING + " OR ("
-//				+ EventsProvider.EMetaData.EventsMetaData.STATUS + " == " + Invited.PENDING + " AND "
-//				+ EventsProvider.EMetaData.EventsMetaData.TIME_END_UTC_MILLISECONDS + " >= " + Calendar.getInstance().getTimeInMillis()
-//				+ ")" + ")";
-//
-//		if (filterRejected) {
-//			where += rejectedFilter;
-//			where += pendingFilter;
-//		}
-		
-		//for don't get pool
-//		where += " AND " + (EventsProvider.EMetaData.EventsMetaData.TYPE + " != 'v'");
-		
-		if(eventTimeMode == TM_EVENTS_ON_GIVEN_MONTH){			
-			return EventsProvider.mOpenHelper.getReadableDatabase().rawQuery("SELECT events.event_id, events._id, color, " +
-					"event_display_color, is_all_day, time_start_utc, time_end_utc, icon, title, status, is_owner, day " +
-					"FROM events_days LEFT JOIN events USING(event_id) WHERE month = '"+month_index_formatter.format(date.getTime())+"'",
-					null);
+		// String rejectedFilter = " AND " +
+		// EventsProvider.EMetaData.EventsMetaData.STATUS + "!=" +
+		// Invited.REJECTED;
+		//
+		// String pendingFilter = " AND (" +
+		// EventsProvider.EMetaData.EventsMetaData.STATUS + "!=" +
+		// Invited.PENDING + " OR ("
+		// + EventsProvider.EMetaData.EventsMetaData.STATUS + " == " +
+		// Invited.PENDING + " AND "
+		// + EventsProvider.EMetaData.EventsMetaData.TIME_END_UTC_MILLISECONDS +
+		// " >= " + Calendar.getInstance().getTimeInMillis()
+		// + ")" + ")";
+		//
+		// if (filterRejected) {
+		// where += rejectedFilter;
+		// where += pendingFilter;
+		// }
+
+		// for don't get pool
+		// where += " AND " + (EventsProvider.EMetaData.EventsMetaData.TYPE +
+		// " != 'v'");
+
+		if (eventTimeMode == TM_EVENTS_ON_GIVEN_MONTH) {
+			return EventsProvider.mOpenHelper.getReadableDatabase().rawQuery(
+					"SELECT events.event_id, events._id, color, "
+							+ "event_display_color, is_all_day, time_start_utc, time_end_utc, icon, title, status, is_owner, day "
+							+ "FROM events_days LEFT JOIN events USING(event_id) WHERE month = '"
+							+ month_index_formatter.format(date.getTime()) + "'", null);
 		} else {
 			return context.getContentResolver().query(uri, projection, where, null, sortOrder);
 		}
@@ -580,20 +586,20 @@ public class EventManagement {
 		int pageNumber = 1;
 		boolean hasMOreEvents = false;
 
-		do{
+		do {
 			try {
 				int value = 0;
 				WebService webService = new WebService(context);
 				HttpPost post = new HttpPost(Data.getServerUrl() + GET_EVENTS_FROM_REMOTE_DB_URL);
-	
+
 				MultipartEntity reqEntity = new MultipartEntity(HttpMultipartMode.BROWSER_COMPATIBLE);
-	
+
 				reqEntity.addPart(TOKEN, new StringBody(Data.getToken(context), Charset.forName("UTF-8")));
 				reqEntity.addPart(CATEGORY, new StringBody(eventCategory, Charset.forName("UTF-8")));
-				if(startTimeUnixTimestamp > 0){
+				if (startTimeUnixTimestamp > 0) {
 					reqEntity.addPart("start", new StringBody(startTimeUnixTimestamp + "", Charset.forName("UTF-8")));
 				}
-				if(endTimeUnixTimestamp > 0){
+				if (endTimeUnixTimestamp > 0) {
 					reqEntity.addPart("end", new StringBody(endTimeUnixTimestamp + "", Charset.forName("UTF-8")));
 				}
 				try {
@@ -602,56 +608,57 @@ public class EventManagement {
 				} catch (UnsupportedEncodingException e1) {
 					e1.printStackTrace();
 				}
-				
+
 				try {
-					reqEntity.addPart("size", new StringBody(eventsInOnePostRetrieveSize+"", Charset.forName("UTF-8")));
+					reqEntity.addPart("size", new StringBody(eventsInOnePostRetrieveSize + "", Charset.forName("UTF-8")));
 				} catch (UnsupportedEncodingException e1) {
 					e1.printStackTrace();
 				}
 				post.setEntity(reqEntity);
 				HttpResponse rp = webService.getResponseFromHttpPost(post);
-	
+
 				if (rp.getStatusLine().getStatusCode() == HttpStatus.SC_OK) {
 					String resp = EntityUtils.toString(rp.getEntity());
 					if (resp != null) {
 						JSONObject object = new JSONObject(resp);
 						success = object.getBoolean(SUCCESS);
-	
+
 						if (success == false) {
 							// error = object.getString("error");
 						} else {
 							hasMOreEvents = object.getBoolean("has_more");
 							JSONArray es = object.getJSONArray(EVENTS);
 							length = es.length();
-							values = new ContentValues[length];						
+							values = new ContentValues[length];
 							for (int i = 0; i < es.length(); i++) {
 								try {
 									JSONObject e = es.getJSONObject(i);
-										event = JSONUtils.createEventFromJSON(context, e);
-										if (event != null && !event.isNative()) {
-											event.setUploadedToServer(true);
-											if(event.getType().contentEquals("v") && !event.getPoll().contentEquals("null")){											
-												context.getContentResolver().insert(EventsProvider.EMetaData.EventsMetaData.CONTENT_URI, createCVforEventsTable(event));								
-											}
-											if(event.getType().contentEquals("v") || 
-													event.getStatus() == Invited.REJECTED || 
-													(event.getStatus() == Invited.PENDING && 
-													event.getStartCalendar().before(Calendar.getInstance()) 
-													)){
-												
-											} else {
-//												insertEventToLocalDB(context, event);
-												values[value] = createCVforEventsTable(event);
-												value++;
-											}
+									event = JSONUtils.createEventFromJSON(context, e);
+									if (event != null && !event.isNative()) {
+										event.setUploadedToServer(true);
+										if (event.getType().contentEquals("v") && !event.getPoll().contentEquals("null")) {
+											context.getContentResolver().insert(EventsProvider.EMetaData.EventsMetaData.CONTENT_URI,
+													createCVforEventsTable(event));
 										}
-									//}
-	
+										if (event.getType().contentEquals("v")
+												|| event.getStatus() == Invited.REJECTED
+												|| (event.getStatus() == Invited.PENDING && event.getStartCalendar().before(
+														Calendar.getInstance()))) {
+
+										} else {
+											// insertEventToLocalDB(context,
+											// event);
+											values[value] = createCVforEventsTable(event);
+											value++;
+										}
+									}
+									// }
+
 								} catch (JSONException ex) {
 									Log.e(CLASS_NAME, "JSON");
 								}
 							}
-							if (values != null){
+							if (values != null) {
 								values2 = new ContentValues[value];
 								for (int i = 0; i < value; i++) {
 									values2[i] = values[i];
@@ -662,9 +669,11 @@ public class EventManagement {
 					}
 				}
 			} catch (Exception ex) {
-				Reporter.reportError(context, CLASS_NAME, Thread.currentThread().getStackTrace()[2].getMethodName().toString(), ex.getMessage());
-			};
-		} while(hasMOreEvents);
+				Reporter.reportError(context, CLASS_NAME, Thread.currentThread().getStackTrace()[2].getMethodName().toString(),
+						ex.getMessage());
+			}
+			;
+		} while (hasMOreEvents);
 	}
 
 	public static String getResponsesFromRemoteDb(Context context) {
@@ -687,16 +696,16 @@ public class EventManagement {
 		} catch (UnsupportedEncodingException e1) {
 			Log.e("getResponsesFromRemoteDb(contactIds)", "Failed adding token to entity");
 		}
-		
-		if(!NavbarActivity.updateResponsesLastView){
+
+		if (!NavbarActivity.updateResponsesLastView) {
 			try {
-				reqEntity.addPart("update_lastview", new StringBody(""+0, Charset.forName("UTF-8")));
+				reqEntity.addPart("update_lastview", new StringBody("" + 0, Charset.forName("UTF-8")));
 			} catch (UnsupportedEncodingException e1) {
 				Log.e("getResponsesFromRemoteDb(contactIds)", "Failed adding token to entity");
 			}
 		} else {
 			try {
-				reqEntity.addPart("update_lastview", new StringBody(""+1, Charset.forName("UTF-8")));
+				reqEntity.addPart("update_lastview", new StringBody("" + 1, Charset.forName("UTF-8")));
 			} catch (UnsupportedEncodingException e1) {
 				Log.e("getResponsesFromRemoteDb(contactIds)", "Failed adding token to entity");
 			}
@@ -737,7 +746,7 @@ public class EventManagement {
 		}
 		return resp;
 	}
-	
+
 	public static boolean votePoll(Context context, String event_id, ArrayList<JSONObject> selectedEventPolls, String status) {
 		boolean success = false;
 		String error = null;
@@ -757,33 +766,33 @@ public class EventManagement {
 		} catch (UnsupportedEncodingException e1) {
 			Log.e("votePoll", "Failed adding token to entity");
 		}
-		
+
 		try {
 			reqEntity.addPart("event_id", new StringBody(event_id, Charset.forName("UTF-8")));
 		} catch (UnsupportedEncodingException e1) {
 			Log.e("votePoll", "Failed adding token to entity");
 		}
-		
+
 		int selectedEventPollsSize = selectedEventPolls.size();
-		for(int i = 0; i < selectedEventPollsSize; i++){
+		for (int i = 0; i < selectedEventPollsSize; i++) {
 			String selectedEventPollTimeId = "";
 			try {
 				selectedEventPollTimeId = selectedEventPolls.get(i).getString("id");
 			} catch (JSONException e) {
 				e.printStackTrace();
 			}
-			if(!selectedEventPollTimeId.contentEquals("")){
+			if (!selectedEventPollTimeId.contentEquals("")) {
 				try {
-					reqEntity.addPart("votes["+i+"][id]", new StringBody(selectedEventPollTimeId, Charset.forName("UTF-8")));
+					reqEntity.addPart("votes[" + i + "][id]", new StringBody(selectedEventPollTimeId, Charset.forName("UTF-8")));
 				} catch (UnsupportedEncodingException e1) {
 					Log.e("votePoll", "Failed adding votes id to entity");
-				}		
-				
+				}
+
 				try {
-					reqEntity.addPart("votes["+i+"][status]", new StringBody(status, Charset.forName("UTF-8")));
+					reqEntity.addPart("votes[" + i + "][status]", new StringBody(status, Charset.forName("UTF-8")));
 				} catch (UnsupportedEncodingException e1) {
 					Log.e("votePoll", "Failed adding votes status to entity");
-				}	
+				}
 			}
 		}
 
@@ -811,7 +820,7 @@ public class EventManagement {
 		}
 		return success;
 	}
-	
+
 	public static boolean rejectPoll(Context context, String event_id) {
 		boolean success = false;
 		String error = null;
@@ -831,7 +840,7 @@ public class EventManagement {
 		} catch (UnsupportedEncodingException e1) {
 			Log.e("rejectPoll", "Failed adding token to entity");
 		}
-		
+
 		try {
 			reqEntity.addPart("event_id", new StringBody(event_id, Charset.forName("UTF-8")));
 		} catch (UnsupportedEncodingException e1) {
@@ -861,7 +870,7 @@ public class EventManagement {
 		}
 		return success;
 	}
-	
+
 	public static boolean rejoinPoll(Context context, String event_id) {
 		boolean success = false;
 		String error = null;
@@ -881,7 +890,7 @@ public class EventManagement {
 		} catch (UnsupportedEncodingException e1) {
 			Log.e("rejoinPoll", "Failed adding token to entity");
 		}
-		
+
 		try {
 			reqEntity.addPart("event_id", new StringBody(event_id, Charset.forName("UTF-8")));
 		} catch (UnsupportedEncodingException e1) {
@@ -931,7 +940,7 @@ public class EventManagement {
 		Uri eventUri = context.getContentResolver().insert(EventsProvider.EMetaData.INDEXED_EVENTS_URI, cv);
 
 		long internalID = 0;
-		if(eventUri != null){
+		if (eventUri != null) {
 			internalID = ContentUris.parseId(eventUri);
 		}
 		return internalID;
@@ -1023,10 +1032,8 @@ public class EventManagement {
 			if (eventTimeChanged) {
 				where = EventsProvider.EMetaData.EventsIndexesMetaData.EVENT_INTERNAL_ID + "=" + internalID;
 				resolver.delete(EventsProvider.EMetaData.EventsIndexesMetaData.CONTENT_URI, where, null);
-				if(event.getType().contentEquals("v") || 
-						event.getStatus() == Invited.REJECTED || 
-						(event.getStatus() == Invited.PENDING && 
-						event.getStartCalendar().before(Calendar.getInstance()))){
+				if (event.getType().contentEquals("v") || event.getStatus() == Invited.REJECTED
+						|| (event.getStatus() == Invited.PENDING && event.getStartCalendar().before(Calendar.getInstance()))) {
 					Log.e("Not inserted", event.getTitle() + " id: " + event.getEvent_id());
 				} else {
 					Log.i("Inserted", event.getTitle() + " id: " + event.getEvent_id());
@@ -1080,19 +1087,20 @@ public class EventManagement {
 		if (event_external_id > 0)
 			ext_id = "" + event_external_id;
 
-//		if (event.is_all_day()) { // only one row is inserted
-//			insertEventDayIndexRow(context, event_internal_id, ext_id, eventDayStart);
-//		} else
-			while (eventDayStart.before(event.getEndCalendar())) { // rows are
-																	// inserted
-																	// for each
-																	// day that
-																	// event
-																	// lasts
-				insertEventDayIndexRow(context, event_internal_id, ext_id, eventDayStart);
-				eventDayStart.add(Calendar.DATE, 1);
+		// if (event.is_all_day()) { // only one row is inserted
+		// insertEventDayIndexRow(context, event_internal_id, ext_id,
+		// eventDayStart);
+		// } else
+		while (eventDayStart.before(event.getEndCalendar())) { // rows are
+																// inserted
+																// for each
+																// day that
+																// event
+																// lasts
+			insertEventDayIndexRow(context, event_internal_id, ext_id, eventDayStart);
+			eventDayStart.add(Calendar.DATE, 1);
 
-			}
+		}
 	}
 
 	// TODO javadoc
@@ -1166,7 +1174,7 @@ public class EventManagement {
 		String where = EventsProvider.EMetaData.EventsMetaData._ID + "=" + event.getInternalID();
 		context.getContentResolver().update(uri, cv, where, null);
 	}
-	
+
 	public static void updateEventSelectedPollsTimeInLocalDb(Context context, Event event) {
 		ContentValues cv = new ContentValues();
 		cv.put(EventsProvider.EMetaData.EventsMetaData.SELECTED_EVENT_POLLS_TIME, event.getSelectedEventPollsTime());
@@ -1385,45 +1393,45 @@ public class EventManagement {
 
 	private static boolean editEvent(Context context, Event e) {
 		boolean success = false;
-		if(e.getEvent_id() > 0){
+		if (e.getEvent_id() > 0) {
 			try {
 				WebService webService = new WebService(context);
 				HttpPost post = new HttpPost(Data.getServerUrl() + "mobile/events_edit");
-	
+
 				MultipartEntity reqEntity = new MultipartEntity(HttpMultipartMode.BROWSER_COMPATIBLE);
-	
+
 				reqEntity.addPart(TOKEN, new StringBody(Data.getToken(context), Charset.forName("UTF-8")));
 				reqEntity.addPart("event_id", new StringBody(String.valueOf(e.getEvent_id()), Charset.forName("UTF-8")));
-	
+
 				reqEntity.addPart("event_type", new StringBody(e.getType(), Charset.forName("UTF-8")));
-	
+
 				reqEntity.addPart("icon", new StringBody(e.getIcon(), Charset.forName("UTF-8")));
 				reqEntity.addPart("color", new StringBody(e.getColor(), Charset.forName("UTF-8")));
-	
+
 				reqEntity.addPart("title", new StringBody(e.getTitle(), Charset.forName("UTF-8")));
-	
+
 				reqEntity.addPart("timestamp_start_utc",
 						new StringBody("" + Utils.millisToUnixTimestamp(e.getStartCalendar().getTimeInMillis()), Charset.forName("UTF-8")));
-				reqEntity.addPart("timestamp_end_utc", new StringBody("" + Utils.millisToUnixTimestamp(e.getEndCalendar().getTimeInMillis()),
-						Charset.forName("UTF-8")));
-	
+				reqEntity.addPart("timestamp_end_utc",
+						new StringBody("" + Utils.millisToUnixTimestamp(e.getEndCalendar().getTimeInMillis()), Charset.forName("UTF-8")));
+
 				reqEntity.addPart("timezone", new StringBody(e.getTimezone(), Charset.forName("UTF-8")));
-	
+
 				reqEntity.addPart("all_day_event", new StringBody(e.is_all_day() ? "1" : "0", Charset.forName("UTF-8")));
-	
+
 				reqEntity.addPart("description", new StringBody(e.getDescription(), Charset.forName("UTF-8")));
-	
+
 				reqEntity.addPart("country", new StringBody(e.getCountry(), Charset.forName("UTF-8")));
 				reqEntity.addPart("zip", new StringBody(e.getZip(), Charset.forName("UTF-8")));
 				reqEntity.addPart("city", new StringBody(e.getCity(), Charset.forName("UTF-8")));
 				reqEntity.addPart("street", new StringBody(e.getStreet(), Charset.forName("UTF-8")));
 				reqEntity.addPart("location", new StringBody(e.getLocation(), Charset.forName("UTF-8")));
-	
+
 				reqEntity.addPart("go_by", new StringBody(e.getGo_by(), Charset.forName("UTF-8")));
 				reqEntity.addPart("take_with_you", new StringBody(e.getTake_with_you(), Charset.forName("UTF-8")));
 				reqEntity.addPart("cost", new StringBody(e.getCost(), Charset.forName("UTF-8")));
 				reqEntity.addPart("accomodation", new StringBody(e.getAccomodation(), Charset.forName("UTF-8")));
-	
+
 				if (e.getAlarm1() != null) {
 					reqEntity.addPart("a1",
 							new StringBody("" + Utils.millisToUnixTimestamp(e.getAlarm1().getTimeInMillis()), Charset.forName("UTF-8")));
@@ -1436,20 +1444,26 @@ public class EventManagement {
 					reqEntity.addPart("a3",
 							new StringBody("" + Utils.millisToUnixTimestamp(e.getAlarm3().getTimeInMillis()), Charset.forName("UTF-8")));
 				}
-	
+
 				if (e.getReminder1() != null) {
+					e.getReminder1().clear(Calendar.SECOND);
+					e.getReminder1().clear(Calendar.MILLISECOND);
 					reqEntity.addPart("r1",
 							new StringBody("" + Utils.millisToUnixTimestamp(e.getReminder1().getTimeInMillis()), Charset.forName("UTF-8")));
 				}
 				if (e.getReminder2() != null) {
+					e.getReminder2().clear(Calendar.SECOND);
+					e.getReminder2().clear(Calendar.MILLISECOND);
 					reqEntity.addPart("r2",
 							new StringBody("" + Utils.millisToUnixTimestamp(e.getReminder2().getTimeInMillis()), Charset.forName("UTF-8")));
 				}
 				if (e.getReminder3() != null) {
+					e.getReminder3().clear(Calendar.SECOND);
+					e.getReminder3().clear(Calendar.MILLISECOND);
 					reqEntity.addPart("r3",
 							new StringBody("" + Utils.millisToUnixTimestamp(e.getReminder3().getTimeInMillis()), Charset.forName("UTF-8")));
 				}
-	
+
 				// if (Data.selectedContacts != null &&
 				// !Data.selectedContacts.isEmpty()) {
 				// e.assigned_contacts = new int[Data.selectedContacts.size()];
@@ -1461,12 +1475,13 @@ public class EventManagement {
 				// }
 				if (e.getAssigned_contacts() != null) {
 					for (int i = 0, l = e.getAssigned_contacts().length; i < l; i++) {
-						reqEntity.addPart("contacts[]", new StringBody(String.valueOf(e.getAssigned_contacts()[i]), Charset.forName("UTF-8")));
+						reqEntity.addPart("contacts[]",
+								new StringBody(String.valueOf(e.getAssigned_contacts()[i]), Charset.forName("UTF-8")));
 					}
 				} else {
 					reqEntity.addPart("contacts[]", new StringBody("", Charset.forName("UTF-8")));
 				}
-	
+
 				Account account = new Account(context);
 				// if (e.assigned_groups != null) {
 				// for (int i = 0, l = e.assigned_groups.length; i < l; i++) {
@@ -1480,10 +1495,10 @@ public class EventManagement {
 				// }
 				reqEntity.addPart("session", new StringBody(account.getSessionId(), Charset.forName("UTF-8")));
 				post.setEntity(reqEntity);
-	
+
 				if (DataManagement.networkAvailable) {
 					HttpResponse rp = webService.getResponseFromHttpPost(post);
-	
+
 					if (rp.getStatusLine().getStatusCode() == HttpStatus.SC_OK) {
 						String resp = EntityUtils.toString(rp.getEntity());
 						if (resp != null) {
@@ -1496,7 +1511,8 @@ public class EventManagement {
 					}
 				}
 			} catch (Exception ex) {
-				Reporter.reportError(context, CLASS_NAME, Thread.currentThread().getStackTrace()[2].getMethodName().toString(), ex.getMessage());
+				Reporter.reportError(context, CLASS_NAME, Thread.currentThread().getStackTrace()[2].getMethodName().toString(),
+						ex.getMessage());
 				success = false;
 			}
 		}
@@ -1565,10 +1581,10 @@ public class EventManagement {
 	 */
 	protected static ContentValues createCVforEventsTable(Event event) {
 		ContentValues cv = new ContentValues();
-		if(event.getEvent_id() != 0){
+		if (event.getEvent_id() != 0) {
 			cv.put(EventsProvider.EMetaData.EventsMetaData.E_ID, event.getEvent_id());
 		} else {
-			event.setEvent_id((int)Calendar.getInstance().getTimeInMillis());
+			event.setEvent_id((int) Calendar.getInstance().getTimeInMillis());
 			cv.put(EventsProvider.EMetaData.EventsMetaData.E_ID, event.getEvent_id());
 		}
 
@@ -1592,7 +1608,7 @@ public class EventManagement {
 		cv.put(EventsProvider.EMetaData.EventsMetaData.TYPE, event.getType());
 		cv.put(EventsProvider.EMetaData.EventsMetaData.CREATOR_FULLNAME, event.getCreator_fullname());
 		cv.put(EventsProvider.EMetaData.EventsMetaData.TITLE, event.getTitle());
-//		System.out.println(event.getTitle());
+		// System.out.println(event.getTitle());
 		cv.put(EventsProvider.EMetaData.EventsMetaData.ICON, event.getIcon());
 		cv.put(EventsProvider.EMetaData.EventsMetaData.COLOR, event.getColor());
 		// cv.put(EventsProvider.EMetaData.EventsMetaData.TEXT_COLOR,
@@ -1752,8 +1768,7 @@ public class EventManagement {
 		item.setNew_message_count(result.getInt(result.getColumnIndex(EventsProvider.EMetaData.EventsMetaData.NEW_MESSAGES_COUNT)));
 		item.setLast_message_date_time(result.getLong(result
 				.getColumnIndex(EventsProvider.EMetaData.EventsMetaData.LAST_MESSAGE_DATE_TIME_UTC_MILISECONDS)));
-		item.setPoll(result.getString(result
-				.getColumnIndex(EventsProvider.EMetaData.EventsMetaData.POLL)));
+		item.setPoll(result.getString(result.getColumnIndex(EventsProvider.EMetaData.EventsMetaData.POLL)));
 		item.setSelectedEventPollsTime(result.getString(result
 				.getColumnIndex(EventsProvider.EMetaData.EventsMetaData.SELECTED_EVENT_POLLS_TIME)));
 		return item;
@@ -1841,20 +1856,19 @@ public class EventManagement {
 		StringBuilder sb;
 		initUserTimezone(context);
 		if (!eventChanges.isEmpty()) {
-//			sb = new StringBuilder();
+			// sb = new StringBuilder();
 			for (Event e : eventChanges) {
-				if(!e.getType().contentEquals("v")){
-					if(getEventFromLocalDb(context, e.getEvent_id(), ID_EXTERNAL) == null){
+				if (!e.getType().contentEquals("v")) {
+					if (getEventFromLocalDb(context, e.getEvent_id(), ID_EXTERNAL) == null) {
 						insertEventToLocalDB(context, e);
-	//					sb.append(e.getEvent_id());
-	//					sb.append(',');
-					}else{
+						// sb.append(e.getEvent_id());
+						// sb.append(',');
+					} else {
 						e.setInternalID(getEventFromLocalDb(context, e.getEvent_id(), ID_EXTERNAL).getInternalID());
 						updateEventInLocalDb(context, e);
 					}
-				} 
-				else {
-					if(getEventFromLocalDb(context, e.getEvent_id(), ID_EXTERNAL) == null){
+				} else {
+					if (getEventFromLocalDb(context, e.getEvent_id(), ID_EXTERNAL) == null) {
 						context.getContentResolver().insert(EventsProvider.EMetaData.EventsMetaData.CONTENT_URI, createCVforEventsTable(e));
 						EventEditActivity.addEventToPollList(context, e);
 					} else {
@@ -1865,10 +1879,11 @@ public class EventManagement {
 					}
 				}
 			}
-//			sb.deleteCharAt(sb.length() - 1);
-//			EventManagement.bulkDeleteEvents(context, sb.toString(), EventManagement.ID_EXTERNAL);
-//			for (Event e : eventChanges) {
-//			}
+			// sb.deleteCharAt(sb.length() - 1);
+			// EventManagement.bulkDeleteEvents(context, sb.toString(),
+			// EventManagement.ID_EXTERNAL);
+			// for (Event e : eventChanges) {
+			// }
 		}
 
 		if (deletedEventsIDs.length > 0) {
@@ -1939,30 +1954,34 @@ public class EventManagement {
 			while (!result.isAfterLast()) {
 				Event e = createEventFromCursor(context, result);
 
-//				if(e.getType().contentEquals("v")){
-//					Log.d("event", "id "+e.getEvent_id());
-//					ArrayList<JSONObject> allEventPolls = EventEditActivity.getAllEventPollTimes(e);
-//					ArrayList<JSONObject> selectedPollTime = EventEditActivity.getSelectedEventPollTimes(e);
-//					if (DataManagement.networkAvailable) {
-//						e.setUploadedToServer(votePoll(context, "" + e.getEvent_id(), allEventPolls, "0"));
-//						e.setUploadedToServer(votePoll(context, "" + e.getEvent_id(), selectedPollTime, "1"));
-//					} else {
-//						e.setUploadedToServer(false);
-//					}
-//					updateEventInLocalDb(context, e);
-//					result.moveToNext();
-//				} else{
-					if (!editEvent(context, e)) {
-						int externalId = createEventInRemoteDb(context, e);
-						ContentValues values = new ContentValues();
-						values.put(EventsProvider.EMetaData.EventsMetaData.E_ID, externalId);
-						where = EventsProvider.EMetaData.EventsMetaData._ID + "=" + e.getInternalID();
-						context.getContentResolver().update(EventsProvider.EMetaData.EventsMetaData.CONTENT_URI, values, where, null);
-						result.moveToNext();
-					} else {
-						result.moveToNext();
-					}
-//				}
+				// if(e.getType().contentEquals("v")){
+				// Log.d("event", "id "+e.getEvent_id());
+				// ArrayList<JSONObject> allEventPolls =
+				// EventEditActivity.getAllEventPollTimes(e);
+				// ArrayList<JSONObject> selectedPollTime =
+				// EventEditActivity.getSelectedEventPollTimes(e);
+				// if (DataManagement.networkAvailable) {
+				// e.setUploadedToServer(votePoll(context, "" + e.getEvent_id(),
+				// allEventPolls, "0"));
+				// e.setUploadedToServer(votePoll(context, "" + e.getEvent_id(),
+				// selectedPollTime, "1"));
+				// } else {
+				// e.setUploadedToServer(false);
+				// }
+				// updateEventInLocalDb(context, e);
+				// result.moveToNext();
+				// } else{
+				if (!editEvent(context, e)) {
+					int externalId = createEventInRemoteDb(context, e);
+					ContentValues values = new ContentValues();
+					values.put(EventsProvider.EMetaData.EventsMetaData.E_ID, externalId);
+					where = EventsProvider.EMetaData.EventsMetaData._ID + "=" + e.getInternalID();
+					context.getContentResolver().update(EventsProvider.EMetaData.EventsMetaData.CONTENT_URI, values, where, null);
+					result.moveToNext();
+				} else {
+					result.moveToNext();
+				}
+				// }
 			}
 		}
 		SaveDeletedData offlineDeletedEvents = new SaveDeletedData(context);
@@ -1978,12 +1997,12 @@ public class EventManagement {
 		offlineDeletedEvents.clear(3);
 		result.close();
 	}
-	
+
 	public static ArrayList<Event> getPollEventsFromLocalDb(Context context) {
 		Event item;
 		String where = null;
-		
-		where = (EventsProvider.EMetaData.EventsMetaData.TYPE + " = 'v'" +" AND "+ EventsProvider.EMetaData.EventsMetaData.STATUS + " != '0'");
+
+		where = (EventsProvider.EMetaData.EventsMetaData.TYPE + " = 'v'" + " AND " + EventsProvider.EMetaData.EventsMetaData.STATUS + " != '0'");
 
 		ArrayList<Event> items = new ArrayList<Event>();
 
@@ -1994,52 +2013,62 @@ public class EventManagement {
 				item = EventManagement.createEventFromCursor(context, result);
 				String jsonArraySelectedTime = item.getSelectedEventPollsTime();
 				try {
-					if((jsonArraySelectedTime != null && !jsonArraySelectedTime.contentEquals("null")) && (jsonArraySelectedTime != null && jsonArraySelectedTime.length() > 2)){
-						final JSONArray jsonArray= new JSONArray(jsonArraySelectedTime);
+					if ((jsonArraySelectedTime != null && !jsonArraySelectedTime.contentEquals("null"))
+							&& (jsonArraySelectedTime != null && jsonArraySelectedTime.length() > 2)) {
+						final JSONArray jsonArray = new JSONArray(jsonArraySelectedTime);
 						for (int i = 0; i < jsonArray.length(); i++) {
 							JSONObject pollThread = jsonArray.getJSONObject(i);
 							item = EventManagement.createEventFromCursor(context, result);
-							item.setStartCalendar(Utils.stringToCalendar(context, pollThread.getString("start"), DataManagement.SERVER_TIMESTAMP_FORMAT));
-							item.setEndCalendar(Utils.stringToCalendar(context, pollThread.getString("end"), DataManagement.SERVER_TIMESTAMP_FORMAT));
+							item.setStartCalendar(Utils.stringToCalendar(context, pollThread.getString("start"),
+									DataManagement.SERVER_TIMESTAMP_FORMAT));
+							item.setEndCalendar(Utils.stringToCalendar(context, pollThread.getString("end"),
+									DataManagement.SERVER_TIMESTAMP_FORMAT));
 							items.add(item);
 						}
 					} else {
 						String jsonArrayString = item.getPoll();
-						if(jsonArrayString != null && !jsonArrayString.contentEquals("null")){
-							JSONArray jsonArray= new JSONArray(jsonArrayString);
+						if (jsonArrayString != null && !jsonArrayString.contentEquals("null")) {
+							JSONArray jsonArray = new JSONArray(jsonArrayString);
 							for (int i = 0; i < jsonArray.length(); i++) {
 								JSONObject e = jsonArray.getJSONObject(i);
-								//if(e.getString("response").contentEquals("1")){
-									item = EventManagement.createEventFromCursor(context, result);
-									item.setStartCalendar(Utils.stringToCalendar(context, e.getString("start"), DataManagement.SERVER_TIMESTAMP_FORMAT));
-									item.setEndCalendar(Utils.stringToCalendar(context, e.getString("end"), DataManagement.SERVER_TIMESTAMP_FORMAT));
-									items.add(item);
-								//}
+								// if(e.getString("response").contentEquals("1")){
+								item = EventManagement.createEventFromCursor(context, result);
+								item.setStartCalendar(Utils.stringToCalendar(context, e.getString("start"),
+										DataManagement.SERVER_TIMESTAMP_FORMAT));
+								item.setEndCalendar(Utils.stringToCalendar(context, e.getString("end"),
+										DataManagement.SERVER_TIMESTAMP_FORMAT));
+								items.add(item);
+								// }
 							}
 						}
 					}
 				} catch (JSONException e) {
 					e.printStackTrace();
 				}
-				
-//				String jsonArrayString = item.getPoll();
-//				try {
-//					if(jsonArrayString != null && !jsonArrayString.contentEquals("null")){
-//						JSONArray jsonArray= new JSONArray(jsonArrayString);
-//						for (int i = 0; i < jsonArray.length(); i++) {
-//							JSONObject e = jsonArray.getJSONObject(i);
-//							//if(e.getString("response").contentEquals("1")){
-//								item = EventManagement.createEventFromCursor(context, result);
-//								item.setStartCalendar(Utils.stringToCalendar(context, e.getString("start"), DataManagement.SERVER_TIMESTAMP_FORMAT));
-//								item.setEndCalendar(Utils.stringToCalendar(context, e.getString("end"), DataManagement.SERVER_TIMESTAMP_FORMAT));
-//								items.add(item);
-//							//}
-//						}
-//					}
-//				} catch (JSONException e) {
-//					e.printStackTrace();
-//				}
-				
+
+				// String jsonArrayString = item.getPoll();
+				// try {
+				// if(jsonArrayString != null &&
+				// !jsonArrayString.contentEquals("null")){
+				// JSONArray jsonArray= new JSONArray(jsonArrayString);
+				// for (int i = 0; i < jsonArray.length(); i++) {
+				// JSONObject e = jsonArray.getJSONObject(i);
+				// //if(e.getString("response").contentEquals("1")){
+				// item = EventManagement.createEventFromCursor(context,
+				// result);
+				// item.setStartCalendar(Utils.stringToCalendar(context,
+				// e.getString("start"),
+				// DataManagement.SERVER_TIMESTAMP_FORMAT));
+				// item.setEndCalendar(Utils.stringToCalendar(context,
+				// e.getString("end"), DataManagement.SERVER_TIMESTAMP_FORMAT));
+				// items.add(item);
+				// //}
+				// }
+				// }
+				// } catch (JSONException e) {
+				// e.printStackTrace();
+				// }
+
 				result.moveToNext();
 			}
 		}
