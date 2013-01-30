@@ -76,6 +76,10 @@ public class EventActivity extends Activity {
 	protected static TextView alarm1View;
 	protected static TextView alarm2View;
 	protected static TextView alarm3View;
+	
+	protected static TextView reminder1View;
+	protected static TextView reminder2View;
+	protected static TextView reminder3View;
 
 	protected LinearLayout addressPanel;
 	protected LinearLayout addressLine;
@@ -98,10 +102,15 @@ public class EventActivity extends Activity {
 	protected LinearLayout alarmContainer1;
 	protected LinearLayout alarmContainer2;
 	protected LinearLayout alarmContainer3;
+	
+	protected LinearLayout reminderContainer1;
+	protected LinearLayout reminderContainer2;
+	protected LinearLayout reminderContainer3;
 
 	protected boolean addressPanelVisible = true;
 	protected boolean detailsPanelVisible = true;
 	protected boolean alarmPanelVisible = true;
+	protected boolean reminderPanelVisible = true;
 
 	protected static TextView startView;
 	protected static TextView endView;
@@ -335,6 +344,19 @@ public class EventActivity extends Activity {
 		alarmContainer3 = (LinearLayout) findViewById(R.id.alarm_container3);
 		alarmContainer3.setVisibility(View.VISIBLE);
 	}
+	
+	public void showReminderPanel() {
+		reminderPanelVisible = true;
+		
+		reminderContainer1 = (LinearLayout) findViewById(R.id.reminder_container1);
+		reminderContainer1.setVisibility(View.VISIBLE);
+		
+		reminderContainer2 = (LinearLayout) findViewById(R.id.reminder_container2);
+		reminderContainer2.setVisibility(View.VISIBLE);
+		
+		reminderContainer3 = (LinearLayout) findViewById(R.id.reminder_container3);
+		reminderContainer3.setVisibility(View.VISIBLE);
+	}
 
 	public void hideAlarmPanel() {
 		alarmPanelVisible = false;
@@ -347,6 +369,19 @@ public class EventActivity extends Activity {
 		
 		alarmContainer3 = (LinearLayout) findViewById(R.id.alarm_container3);
 		alarmContainer3.setVisibility(View.GONE);
+	}
+	
+	public void hideReminderPanel() {
+		reminderPanelVisible = false;
+		
+		reminderContainer1 = (LinearLayout) findViewById(R.id.reminder_container1);
+		reminderContainer1.setVisibility(View.GONE);
+		
+		reminderContainer2 = (LinearLayout) findViewById(R.id.reminder_container2);
+		reminderContainer2.setVisibility(View.GONE);
+		
+		reminderContainer3 = (LinearLayout) findViewById(R.id.reminder_container3);
+		reminderContainer3.setVisibility(View.GONE);
 	}
 
 	public void showDetailsPanel() {
@@ -619,7 +654,6 @@ public class EventActivity extends Activity {
 	}
 	
 	public void initAlarms(){
-		// ALARM1
 		alarm1View = (TextView) findViewById(R.id.alarmView1);
 		alarmContainer1.setOnClickListener(new OnClickListener() {
 			
@@ -631,8 +665,6 @@ public class EventActivity extends Activity {
 				dateTimeDialog.show();
 			}
 		});
-
-		// ALARM2
 		alarm2View = (TextView) findViewById(R.id.alarmView2);
 		alarmContainer2.setOnClickListener(new OnClickListener() {
 			
@@ -644,8 +676,6 @@ public class EventActivity extends Activity {
 				dateTimeDialog.show();
 			}
 		});
-
-		// ALARM3
 		alarm3View = (TextView) findViewById(R.id.alarmView3);
 		alarmContainer3.setOnClickListener(new OnClickListener() {
 			
@@ -659,7 +689,39 @@ public class EventActivity extends Activity {
 		});
 	}
 	
-	public static void initReminders(){
-		
+	public void initReminders(){
+		reminder1View = (TextView) findViewById(R.id.reminderView1);
+		reminderContainer1.setOnClickListener(new OnClickListener() {
+			
+			@Override
+			public void onClick(View v) {
+				if(reminder1time == null) reminder1time = Calendar.getInstance();
+				setTargets(reminder1time, reminder1View);
+				dateTimeDialog = new StartEndDateTimeSelectDialog(EventActivity.this, StartEndDateTimeSelectDialog.SECTION_DATE, targetCalendar, mDateSetListener);
+				dateTimeDialog.show();
+			}
+		});
+		reminder2View = (TextView) findViewById(R.id.reminderView2);
+		reminderContainer2.setOnClickListener(new OnClickListener() {
+			
+			@Override
+			public void onClick(View v) {
+				if(reminder2time == null) reminder2time = Calendar.getInstance();
+				setTargets(reminder2time, reminder2View);
+				dateTimeDialog = new StartEndDateTimeSelectDialog(EventActivity.this, StartEndDateTimeSelectDialog.SECTION_DATE, targetCalendar, mDateSetListener);
+				dateTimeDialog.show();
+			}
+		});
+		reminder3View = (TextView) findViewById(R.id.reminderView3);
+		reminderContainer3.setOnClickListener(new OnClickListener() {
+			
+			@Override
+			public void onClick(View v) {
+				if(reminder3time == null) reminder3time = Calendar.getInstance();
+				setTargets(reminder3time, reminder3View);
+				dateTimeDialog = new StartEndDateTimeSelectDialog(EventActivity.this, StartEndDateTimeSelectDialog.SECTION_DATE, targetCalendar, mDateSetListener);
+				dateTimeDialog.show();
+			}
+		});
 	}
 }
