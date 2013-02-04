@@ -1,10 +1,13 @@
 package com.groupagendas.groupagenda.account;
 
 import java.util.Calendar;
+import java.util.Collections;
+import java.util.Map;
 
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
+import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
 
 import com.groupagendas.groupagenda.R;
 import com.groupagendas.groupagenda.data.Data;
@@ -26,6 +29,57 @@ public class Account {
 	
 	public Account(Context context) {
 		prefs = context.getSharedPreferences("ACCOUNT_DATA", 0);
+		if (prefs == null) { // adt plugin layout viewer
+			prefs = new SharedPreferences() {
+				@Override
+				public void unregisterOnSharedPreferenceChangeListener(OnSharedPreferenceChangeListener listener) {
+				}
+				
+				@Override
+				public void registerOnSharedPreferenceChangeListener(OnSharedPreferenceChangeListener listener) {
+				}
+				
+				@Override
+				public String getString(String key, String defValue) {
+					return defValue;
+				}
+				
+				@Override
+				public long getLong(String key, long defValue) {
+					return defValue;
+				}
+				
+				@Override
+				public int getInt(String key, int defValue) {
+					return defValue;
+				}
+				
+				@Override
+				public float getFloat(String key, float defValue) {
+					return defValue;
+				}
+				
+				@Override
+				public boolean getBoolean(String key, boolean defValue) {
+					return defValue;
+				}
+				
+				@Override
+				public Map<String, ?> getAll() {
+					return Collections.emptyMap();
+				}
+				
+				@Override
+				public Editor edit() {
+					return null;
+				}
+				
+				@Override
+				public boolean contains(String key) {
+					return false;
+				}
+			};
+		}
 		prefsEditor = prefs.edit();
 	}
 

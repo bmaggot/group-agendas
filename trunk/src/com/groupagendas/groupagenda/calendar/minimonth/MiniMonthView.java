@@ -1,6 +1,7 @@
 package com.groupagendas.groupagenda.calendar.minimonth;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Calendar;
 
 import android.content.Context;
@@ -58,9 +59,8 @@ public class MiniMonthView extends AbstractCalendarView {
 
 	public MiniMonthView(Context context, AttributeSet attrs) {
 		super(context, attrs);
-		WeekDayNames = getResources().getStringArray(R.array.week_days_short);
-		MonthNames = getResources().getStringArray(R.array.month_names);
-
+		
+		initDefaultWmNames();
 	}
 
 	@Override

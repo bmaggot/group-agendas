@@ -56,8 +56,7 @@ public class MonthView extends AbstractCalendarView {
 
 	public MonthView(Context context, AttributeSet attrs) {
 		super(context, attrs);
-		WeekDayNames = getResources().getStringArray(R.array.week_days_short);
-		MonthNames = getResources().getStringArray(R.array.month_names);
+		initDefaultWmNames();
 
 		localHero = new LocalTouchListener(this);
 	}

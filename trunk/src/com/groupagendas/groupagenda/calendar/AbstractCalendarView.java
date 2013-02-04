@@ -5,6 +5,7 @@ package com.groupagendas.groupagenda.calendar;
  */
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.TreeMap;
 
@@ -20,6 +21,7 @@ import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.TouchDelegate;
 import android.view.View;
+import android.view.WindowManager;
 import android.widget.FrameLayout;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
@@ -67,14 +69,14 @@ public abstract class AbstractCalendarView extends LinearLayout {
 	TextView topPanelTitle;
 	private FrameLayout topPanelBottomLineFrame;
 
-	protected final int DISPLAY_WIDTH = ((Activity) getContext())
-			.getWindowManager().getDefaultDisplay().getWidth();
+	protected final int DISPLAY_WIDTH = ((WindowManager) getContext().getSystemService(Context.WINDOW_SERVICE)).
+			getDefaultDisplay().getWidth();
 	protected final float densityFactor = getResources().getDisplayMetrics().density;
-	protected final int VIEW_WIDTH = ((Activity) getContext())
-			.getWindowManager().getDefaultDisplay().getWidth();
+	protected final int VIEW_WIDTH = ((WindowManager) getContext().getSystemService(Context.WINDOW_SERVICE)).
+			getDefaultDisplay().getWidth();
 
-	protected final int VIEW_HEIGHT = ((Activity) getContext())
-			.getWindowManager().getDefaultDisplay().getHeight()
+	protected final int VIEW_HEIGHT = ((WindowManager) getContext().getSystemService(Context.WINDOW_SERVICE)).
+			getDefaultDisplay().getHeight()
 			- Math.round((getResources().getInteger(
 					R.integer.CALENDAR_TOPBAR_HEIGHT) + getResources()
 					.getInteger(R.integer.NAVBAR_HEIGHT)) * densityFactor);
@@ -126,10 +128,14 @@ public abstract class AbstractCalendarView extends LinearLayout {
 	public AbstractCalendarView(Context context, AttributeSet attrs) {
 		super(context, attrs);
 		dtUtils = new DateTimeUtils(context);
-		mInflater = (LayoutInflater) ((Activity) context)
+		mInflater = (LayoutInflater) context
 				.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 		am_pmEnabled = CalendarSettings.isUsing_AM_PM(context);
-		if (am_pmEnabled) {
+		
+		if (isInEditMode()) {
+			HourNames = new String[24];
+			Arrays.fill(HourNames, "XX");
+		} else if (am_pmEnabled) {
 			HourNames = getResources().getStringArray(R.array.hour_names_am_pm);
 		} else {
 			HourNames = getResources().getStringArray(R.array.hour_names);
@@ -253,6 +259,18 @@ public abstract class AbstractCalendarView extends LinearLayout {
 
 	public GestureDetector getSwipeGestureDetector() {
 		return swipeGestureDetector;
+	}
+
+	protected void initDefaultWmNames() {
+		if (isInEditMode()) {
+			WeekDayNames = new String[7];
+			Arrays.fill(WeekDayNames, "Day");
+			MonthNames = new String[12];
+			Arrays.fill(MonthNames, "Mon");
+		} else {
+			WeekDayNames = getResources().getStringArray(R.array.week_days_short);
+			MonthNames = getResources().getStringArray(R.array.month_names);
+		}
 	}
 
 	/**
