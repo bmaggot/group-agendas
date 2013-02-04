@@ -38,8 +38,7 @@ public class YearView extends AbstractCalendarView {
 	
 	public YearView(Context context, AttributeSet attrs) {
 		super(context, attrs);
-		WeekDayNames = getResources().getStringArray(R.array.week_days_short);
-		MonthNames = getResources().getStringArray(R.array.month_names);
+		initDefaultWmNames();
 		
 		//init array of all year day frames;
 		for (int i = 0; i < MonthsInYear; i++){

@@ -35,9 +35,14 @@ public class DayWeekView extends AbstractCalendarView {
 	public DayWeekView(Context context,
 			AttributeSet attrs) {
 		super(context, attrs);
-		WeekDayNames = getResources().getStringArray(R.array.week_days_names);
-		WeekDayNamesShort = getResources().getStringArray(R.array.week_days_short);
-		MonthNames = getResources().getStringArray(R.array.month_names);
+		if (isInEditMode()) {
+			initDefaultWmNames();
+			WeekDayNamesShort = WeekDayNames;
+		} else {
+			WeekDayNames = getResources().getStringArray(R.array.week_days_names);
+			WeekDayNamesShort = getResources().getStringArray(R.array.week_days_short);
+			MonthNames = getResources().getStringArray(R.array.month_names);
+		}
 	}
 
 	

@@ -54,8 +54,7 @@ public class AgendaView extends AbstractCalendarView {
 
 	public AgendaView(Context context, AttributeSet attrs) {
 		super(context, attrs);
-		WeekDayNames = getResources().getStringArray(R.array.week_days_short);
-		MonthNames = getResources().getStringArray(R.array.month_names_short);
+		initDefaultWmNames();
 	}
 
 	@Override
