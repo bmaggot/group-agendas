@@ -9,7 +9,6 @@ import java.util.Arrays;
 import java.util.Calendar;
 import java.util.TreeMap;
 
-import android.app.Activity;
 import android.content.Context;
 import android.database.Cursor;
 import android.graphics.Rect;
@@ -311,6 +310,7 @@ public abstract class AbstractCalendarView extends LinearLayout {
 		 * 
 		 * @author justinas.marcinka@gmail.com
 		 */
+		@Override
 		protected final Void doInBackground(Void... params) {
 			if(NavbarActivity.doUneedSleep){
 				try{ Thread.sleep(1200); }catch(InterruptedException e){ e.printStackTrace(); }
@@ -439,6 +439,7 @@ public abstract class AbstractCalendarView extends LinearLayout {
 
 		protected abstract ArrayList<Event> queryBirthdayEvents();
 
+		@Override
 		protected abstract void onPostExecute(Void result);
 
 	}

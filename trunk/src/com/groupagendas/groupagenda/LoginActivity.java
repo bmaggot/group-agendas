@@ -50,7 +50,7 @@ public class LoginActivity extends Activity {
 		super.onCreate(savedInstanceState);
 		//language
 		Account account = new Account(this);
-		if(account != null){
+		/*if(account != null)*/{
 			Resources res = this.getResources();
 			DisplayMetrics dm = res.getDisplayMetrics();
 			Configuration config = res.getConfiguration();

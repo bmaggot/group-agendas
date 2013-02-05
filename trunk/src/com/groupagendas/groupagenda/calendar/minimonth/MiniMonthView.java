@@ -1,7 +1,6 @@
 package com.groupagendas.groupagenda.calendar.minimonth;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Calendar;
 
 import android.content.Context;
@@ -336,6 +335,7 @@ public class MiniMonthView extends AbstractCalendarView {
 
 	private class UpdateEventsInfoTask extends AbstractCalendarView.UpdateEventsInfoTask {
 
+		@Override
 		protected void onPostExecute(Void result) {
 			Calendar tmp = (Calendar) firstShownDate.clone();
 
@@ -351,6 +351,7 @@ public class MiniMonthView extends AbstractCalendarView {
 			stillLoading = false;
 		}
 
+		@Override
 		protected void onPreExecute() {
 			stillLoading = true;
 		}

@@ -375,7 +375,9 @@ public class Data {
 
 
 
-
+	/**
+	 * @return 
+	 */
 	public static ArrayList<ChatMessageObject> getChatMessages() {
 		return chatMessages;
 	}

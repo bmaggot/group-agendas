@@ -72,7 +72,7 @@ public class ResponsesAdapter extends AbstractAdapter<JSONObject> {
 			Log.e("ResponsesAdapter", "Failed getting event title.");
 		}
 				
-		Event event = new Event();;
+		Event event = new Event();
 		try {
 			event = EventManagement.getEventFromLocalDb(context, responsesThread.getLong("event_id"), EventManagement.ID_EXTERNAL);
 		} catch (JSONException e1) {

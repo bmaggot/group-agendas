@@ -180,6 +180,7 @@ public class YearView extends AbstractCalendarView {
 	
 	private class UpdateEventsInfoTask extends AbstractCalendarView.UpdateEventsInfoTask{
 		
+	@Override
 	protected void onPostExecute(Void result) {
 		Calendar tmp = (Calendar) selectedDate.clone();
 		Utils.setCalendarToFirstDayOfYear(tmp);
@@ -191,6 +192,7 @@ public class YearView extends AbstractCalendarView {
 		stillLoading = false;
 	}
 	
+	@Override
 	protected void onPreExecute() {
 		stillLoading = true;
 	}

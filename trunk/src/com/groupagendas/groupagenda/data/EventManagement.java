@@ -560,7 +560,8 @@ public class EventManagement {
 					"SELECT events.event_id, events._id, color, "
 							+ "event_display_color, is_all_day, time_start_utc, time_end_utc, icon, title, status, is_owner, day "
 							+ "FROM events_days LEFT JOIN events USING(event_id) WHERE month = '"
-							+ month_index_formatter.format(date.getTime()) + "'", null);
+							// TODO: revise this NPE workaround
+							+ month_index_formatter.format(date != null ? date.getTime() : new Date()) + "'", null);
 		} else {
 			return context.getContentResolver().query(uri, projection, where, null, sortOrder);
 		}
@@ -658,7 +659,7 @@ public class EventManagement {
 									Log.e(CLASS_NAME, "JSON");
 								}
 							}
-							if (values != null) {
+							if (values.length > 0) {
 								values2 = new ContentValues[value];
 								for (int i = 0; i < value; i++) {
 									values2[i] = values[i];
@@ -672,7 +673,6 @@ public class EventManagement {
 				Reporter.reportError(context, CLASS_NAME, Thread.currentThread().getStackTrace()[2].getMethodName().toString(),
 						ex.getMessage());
 			}
-			;
 		} while (hasMOreEvents);
 	}
 
@@ -2013,8 +2013,8 @@ public class EventManagement {
 				item = EventManagement.createEventFromCursor(context, result);
 				String jsonArraySelectedTime = item.getSelectedEventPollsTime();
 				try {
-					if ((jsonArraySelectedTime != null && !jsonArraySelectedTime.contentEquals("null"))
-							&& (jsonArraySelectedTime != null && jsonArraySelectedTime.length() > 2)) {
+					if (jsonArraySelectedTime != null && !jsonArraySelectedTime.contentEquals("null") &&
+							jsonArraySelectedTime.length() > 2) {
 						final JSONArray jsonArray = new JSONArray(jsonArraySelectedTime);
 						for (int i = 0; i < jsonArray.length(); i++) {
 							JSONObject pollThread = jsonArray.getJSONObject(i);

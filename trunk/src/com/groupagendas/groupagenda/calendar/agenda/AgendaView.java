@@ -337,6 +337,7 @@ public class AgendaView extends AbstractCalendarView {
 
 	private class UpdateEventsInfoTask extends AbstractCalendarView.UpdateEventsInfoTask {
 
+		@Override
 		protected void onPostExecute(Void result) {
 			Calendar tmp = (Calendar) shownDate.clone();
 			for (AgendaFrame frame : daysList) {
@@ -348,6 +349,7 @@ public class AgendaView extends AbstractCalendarView {
 
 		}
 		
+		@Override
 		protected void onPreExecute() {
 			stillLoading = true;
 		}

@@ -41,6 +41,7 @@ public class CalendarSettings {
 	 * @deprecated
 	 * @return user's timezone.
 	 */
+	@Deprecated
 	public static String getTimeZone() {
 		Account mAccount = new Account();
 		return mAccount.getTimezone();
@@ -84,7 +85,7 @@ public class CalendarSettings {
 
 	public static String getDateFormat(Context context) {
 		Account account = new Account(context);
-		if (account != null) {
+		/*if (account != null) */{
 			if (!account.getSetting_date_format().equalsIgnoreCase("null")) {
 				formatterDateFormat = account.getSetting_date_format();
 				return formatterDateFormat;

@@ -301,6 +301,7 @@ public class MonthView extends AbstractCalendarView {
 	private class UpdateEventsInfoTask extends
 			AbstractCalendarView.UpdateEventsInfoTask {
 
+		@Override
 		protected void onPostExecute(Void result) {
 //			Calendar calendar = Calendar.getInstance();
 			updateEventLists();
@@ -316,6 +317,7 @@ public class MonthView extends AbstractCalendarView {
 //			Log.e("onPostExecute", Calendar.getInstance().getTimeInMillis() - calendar.getTimeInMillis()+"");
 		}
 
+		@Override
 		protected void onPreExecute() {
 			stillLoading = true;
 		}

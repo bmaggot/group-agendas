@@ -50,7 +50,7 @@ public class PollResultsActivity extends Activity {
 			if(y == invitedSize+1){
 				date1.setText("Total");
 			} else {
-				if(y > 0 && y < invitedSize+1){
+				if(/*y > 0 && y < invitedSize+1*/invite != null){
 					date1.setText(invite.getName());
 					guid = invite.getGuid();
 				}

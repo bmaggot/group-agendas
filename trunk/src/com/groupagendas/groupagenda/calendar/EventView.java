@@ -39,7 +39,7 @@ public class EventView extends View{
 	  @Override
 	    protected void onSizeChanged(int w, int h, int oldw, int oldh) {
 	        this.width = w;
-	        this.height = h;;
+	        this.height = h;
 	    }
 
 	    @Override

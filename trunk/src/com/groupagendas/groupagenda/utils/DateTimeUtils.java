@@ -98,6 +98,7 @@ public class DateTimeUtils {
 	 * @param date
 	 * @return
 	 */
+	@Deprecated
 	public Calendar stringDateToCalendar(Context context, String date){
 		Calendar c = Calendar.getInstance();
 		try {
@@ -114,6 +115,7 @@ public class DateTimeUtils {
 	 * @param date
 	 * @return
 	 */
+	@Deprecated
 	public String formatDateTime(Context context, String date) {
 		String formatedDate = "";
 		try {
@@ -136,6 +138,7 @@ public class DateTimeUtils {
 	 * @param date
 	 * @return
 	 */
+	@Deprecated
 	public String formatDateToDefault(Date date) {
 		return dDateFormater.format(date);
 	}
@@ -144,6 +147,7 @@ public class DateTimeUtils {
 	 * @param date
 	 * @return
 	 */
+	@Deprecated
 	public String formatDateTimeToDefault(Date date) {
 		return dDateTimeFormater.format(date);
 	}
@@ -158,6 +162,7 @@ public class DateTimeUtils {
 	 * @param date
 	 * @return
 	 */
+	@Deprecated
 	public String formatTimeToDefault(Date date) {
 		return dTimeFormater.format(date);
 	}

@@ -238,6 +238,7 @@ public class Utils {
 	 * @return
 	 */
 	// TODO crash while offline
+	@Deprecated
 	public static String formatCalendar(Context context, Calendar calendar){
 		return CalendarSettings.getDateFormatter(context).format(calendar.getTime());
 	}

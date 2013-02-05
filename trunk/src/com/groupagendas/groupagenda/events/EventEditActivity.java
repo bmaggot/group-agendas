@@ -80,13 +80,16 @@ public class EventEditActivity extends EventActivity {
 
 		private String oldText = null;
 
+		@Override
 		public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
 			oldText = charSequence.toString();
 		}
 
+		@Override
 		public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
 		}
 
+		@Override
 		public void afterTextChanged(Editable editable) {
 			if (!editable.toString().equalsIgnoreCase(oldText)) {
 				changesMade = true;
@@ -616,7 +619,7 @@ public class EventEditActivity extends EventActivity {
 			}
 		});
 
-		inviteDelegate1 = (View) findViewById(R.id.invite_button_del1);
+		inviteDelegate1 = findViewById(R.id.invite_button_del1);
 		inviteDelegate2 = (RelativeLayout) findViewById(R.id.invite_button_del2);
 
 		inviteDelegate1.setOnClickListener(new OnClickListener() {

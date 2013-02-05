@@ -318,6 +318,7 @@ public class ListnSearchView extends LinearLayout {
 			eventsArray = list.toArray(new SectionListItem[list.size()]);
 		}
 
+		@Override
 		protected void onPostExecute(Void result) {
 			setEventsList(listStartDate);
 			arrayAdapter = new StandardArrayAdapter(getContext(), R.id.agenda_entry_title_placeholder, eventsArray);
