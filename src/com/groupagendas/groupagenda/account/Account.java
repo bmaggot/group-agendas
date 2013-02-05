@@ -7,7 +7,6 @@ import java.util.Map;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
-import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
 
 import com.groupagendas.groupagenda.R;
 import com.groupagendas.groupagenda.data.Data;
@@ -22,6 +21,7 @@ public class Account {
 /**
  * @deprecated soon to be removed.
  */
+	@Deprecated
 	public Account() {
 		prefs = Data.getmContext().getSharedPreferences("ACCOUNT_DATA", 0);
 		prefsEditor = prefs.edit();

@@ -495,12 +495,14 @@ public class DayWeekView extends AbstractCalendarView {
 	 * @see AbstractCalendarView.UpdateEventsInfoTask
 	 */
 		private class UpdateEventsInfoTask extends AbstractCalendarView.UpdateEventsInfoTask{
+			@Override
 			protected void onPostExecute(Void result) {
 				daysShown.updateEventLists(sortedEvents);
 				updateEventLists();
 				stillLoading = false;
 			}
 			
+			@Override
 			protected void onPreExecute() {
 				stillLoading = true;
 			}

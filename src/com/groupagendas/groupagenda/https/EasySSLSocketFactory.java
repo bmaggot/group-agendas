@@ -48,7 +48,8 @@ public class EasySSLSocketFactory implements SocketFactory, LayeredSocketFactory
      * @see org.apache.http.conn.scheme.SocketFactory#connectSocket(java.net.Socket, java.lang.String, int,
      *      java.net.InetAddress, int, org.apache.http.params.HttpParams)
      */
-    public Socket connectSocket(Socket sock, String host, int port, InetAddress localAddress, int localPort,
+    @Override
+	public Socket connectSocket(Socket sock, String host, int port, InetAddress localAddress, int localPort,
             HttpParams params) throws IOException, UnknownHostException, ConnectTimeoutException {
         int connTimeout = HttpConnectionParams.getConnectionTimeout(params);
         int soTimeout = HttpConnectionParams.getSoTimeout(params);
@@ -73,14 +74,16 @@ public class EasySSLSocketFactory implements SocketFactory, LayeredSocketFactory
     /**
      * @see org.apache.http.conn.scheme.SocketFactory#createSocket()
      */
-    public Socket createSocket() throws IOException {
+    @Override
+	public Socket createSocket() throws IOException {
         return getSSLContext().getSocketFactory().createSocket();
     }
  
     /**
      * @see org.apache.http.conn.scheme.SocketFactory#isSecure(java.net.Socket)
      */
-    public boolean isSecure(Socket socket) throws IllegalArgumentException {
+    @Override
+	public boolean isSecure(Socket socket) throws IllegalArgumentException {
         return true;
     }
  
@@ -88,7 +91,8 @@ public class EasySSLSocketFactory implements SocketFactory, LayeredSocketFactory
      * @see org.apache.http.conn.scheme.LayeredSocketFactory#createSocket(java.net.Socket, java.lang.String, int,
      *      boolean)
      */
-    public Socket createSocket(Socket socket, String host, int port, boolean autoClose) throws IOException,
+    @Override
+	public Socket createSocket(Socket socket, String host, int port, boolean autoClose) throws IOException,
             UnknownHostException {
         return getSSLContext().getSocketFactory().createSocket(socket, host, port, autoClose);
     }
@@ -99,11 +103,13 @@ public class EasySSLSocketFactory implements SocketFactory, LayeredSocketFactory
     // for the correct operation of some connection managers
     // -------------------------------------------------------------------
  
-    public boolean equals(Object obj) {
+    @Override
+	public boolean equals(Object obj) {
         return ((obj != null) && obj.getClass().equals(EasySSLSocketFactory.class));
     }
  
-    public int hashCode() {
+    @Override
+	public int hashCode() {
         return EasySSLSocketFactory.class.hashCode();
     }
  

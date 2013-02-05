@@ -291,7 +291,7 @@ public class ContactManagement {
 										insertBirthdayToLocalDb(context, birthday, contact.contact_id);
 									}
 								}
-								if(values != null){
+								/*if(values != null)*/{
 									context.getContentResolver().bulkInsert(ContactsProvider.CMetaData.ContactsMetaData.CONTENT_URI, values);
 								}
 							}
@@ -2233,7 +2233,7 @@ public class ContactManagement {
 			context.getContentResolver().update(ContactsProvider.CMetaData.BirthdaysMetaData.CONTENT_URI, cv, where, null);
 			return true;
 		} catch (SQLiteException e) {
-			Log.e("insertBirthdayToLocalDb(birthday, " + birthday.getBirthdayId() + ")", e.getMessage());
+			Log.e("insertBirthdayToLocalDb(birthday, " + (birthday != null ? birthday.getBirthdayId() : "null") + ")", e.getMessage());
 			return false;
 		}
 	}

@@ -131,42 +131,42 @@ public class InvitedAdapter extends AbstractAdapter<Invited> {
 			}
 			statusView.setText(temp);
 			statusView.setBackgroundColor(statusBackground);
-		}
 
-		if (i == listSize - 1)
-			view.setBackgroundResource(R.drawable.event_invited_entry_last_background);
-
-		if ((((invited.getGuid() != myID) && (invited.getMy_contact_id() < 1)) || ((invited.getGcid() > 0) && invited.getMy_contact_id() < 1))
-				&& ContactManagement.getContactFromLocalDb(context, invited.getMy_contact_id(), 0) == null) {
-			addToContactView.setVisibility(View.VISIBLE);
-			view.setOnClickListener(new OnClickListener() {
-				@Override
-				public void onClick(View v) {
-					InviteDialog dia = new InviteDialog(context, 0, invited, event_id);
-					dia.show();
-				}
-			});
-		} else if (ContactManagement.getContactFromLocalDb(context, invited.getMy_contact_id(), 0) != null){
-			view.setOnClickListener(new OnClickListener() {
-				
-				@Override
-				public void onClick(View v) {
-					Intent contactIntent = new Intent(context, ContactInfoActivity.class);
-					contactIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-					contactIntent.putExtra("contactId", invited.getMy_contact_id());
-					context.startActivity(contactIntent);
-				}
-			});
-		} else if (invited.getGuid() == new Account(context).getUser_id()) {
-			view.setOnClickListener(new OnClickListener() {
-				
-				@Override
-				public void onClick(View v) {
-					Intent contactIntent = new Intent(context, AccountActivity.class);
-					contactIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-					context.startActivity(contactIntent);
-				}
-			});
+			if (i == listSize - 1)
+				view.setBackgroundResource(R.drawable.event_invited_entry_last_background);
+	
+			if ((((invited.getGuid() != myID) && (invited.getMy_contact_id() < 1)) || ((invited.getGcid() > 0) && invited.getMy_contact_id() < 1))
+					&& ContactManagement.getContactFromLocalDb(context, invited.getMy_contact_id(), 0) == null) {
+				addToContactView.setVisibility(View.VISIBLE);
+				view.setOnClickListener(new OnClickListener() {
+					@Override
+					public void onClick(View v) {
+						InviteDialog dia = new InviteDialog(context, 0, invited, event_id);
+						dia.show();
+					}
+				});
+			} else if (ContactManagement.getContactFromLocalDb(context, invited.getMy_contact_id(), 0) != null){
+				view.setOnClickListener(new OnClickListener() {
+					
+					@Override
+					public void onClick(View v) {
+						Intent contactIntent = new Intent(context, ContactInfoActivity.class);
+						contactIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+						contactIntent.putExtra("contactId", invited.getMy_contact_id());
+						context.startActivity(contactIntent);
+					}
+				});
+			} else if (invited.getGuid() == new Account(context).getUser_id()) {
+				view.setOnClickListener(new OnClickListener() {
+					
+					@Override
+					public void onClick(View v) {
+						Intent contactIntent = new Intent(context, AccountActivity.class);
+						contactIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+						context.startActivity(contactIntent);
+					}
+				});
+			}
 		}
 
 		return view;

@@ -65,7 +65,7 @@ public class ContactInfoActivity extends Activity {
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 
-		new DateTimeUtils(this);
+		// TODO?: new DateTimeUtils(this);
 
 		intent = getIntent();
 
@@ -122,7 +122,7 @@ public class ContactInfoActivity extends Activity {
 				if (contact.phone1 != null && !contact.phone1.equals("null")) {
 					phone_full += contact.phone1;
 				}
-				if (phone_full != null && phone_full.length() > 0) {
+				if (/*phone_full != null && */phone_full.length() > 0) {
 					setTableRow(getString(R.string.phone), phone_full);
 				}
 				// Birth date
@@ -305,8 +305,8 @@ public class ContactInfoActivity extends Activity {
 
 		cur = getContentResolver().query(uri, projection, selection, null, null);
 
-		if ((cur != null) && (cur.getCount() > 0)) {
-			if (cur.moveToFirst()) {
+		if (cur != null) {
+			if (cur.getCount() > 0 && cur.moveToFirst()) {
 				while (!cur.isAfterLast()) {
 					if (result.length() < 1) {
 						result += cur.getString(cur.getColumnIndex(projection[0]));
@@ -316,11 +316,11 @@ public class ContactInfoActivity extends Activity {
 					cur.moveToNext();
 				}
 			}
+			cur.close();
 		} else {
 			Log.i("GetGroupTitlesTask", "Query didn't return any entry");
 		}
 
-		cur.close();
 
 		return result;
 	}

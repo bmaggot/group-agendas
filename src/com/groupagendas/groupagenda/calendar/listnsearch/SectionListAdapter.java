@@ -33,7 +33,7 @@ public class SectionListAdapter extends BaseAdapter implements ListAdapter,
         public void onInvalidated() {
             super.onInvalidated();
             updateSessionCache();
-        };
+        }
     };
 
     private final ListAdapter linkedAdapter;

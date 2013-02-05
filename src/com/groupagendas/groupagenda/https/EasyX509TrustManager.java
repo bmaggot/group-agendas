@@ -32,14 +32,16 @@ public class EasyX509TrustManager implements X509TrustManager {
     /**
      * @see javax.net.ssl.X509TrustManager#checkClientTrusted(X509Certificate[],String authType)
      */
-    public void checkClientTrusted(X509Certificate[] certificates, String authType) throws CertificateException {
+    @Override
+	public void checkClientTrusted(X509Certificate[] certificates, String authType) throws CertificateException {
 //        standardTrustManager.checkClientTrusted(certificates, authType);
     }
  
     /**
      * @see javax.net.ssl.X509TrustManager#checkServerTrusted(X509Certificate[],String authType)
      */
-    public void checkServerTrusted(X509Certificate[] certificates, String authType) throws CertificateException {
+    @Override
+	public void checkServerTrusted(X509Certificate[] certificates, String authType) throws CertificateException {
 //        if ((certificates != null) && (certificates.length == 1)) {
 //            certificates[0].checkValidity();
 //        } else {
@@ -50,7 +52,8 @@ public class EasyX509TrustManager implements X509TrustManager {
     /**
      * @see javax.net.ssl.X509TrustManager#getAcceptedIssuers()
      */
-    public X509Certificate[] getAcceptedIssuers() {
+    @Override
+	public X509Certificate[] getAcceptedIssuers() {
         return null;
     }
  

@@ -862,7 +862,9 @@ public class DataManagement {
 				url = new URL(path);
 			} else if (method.equals("GET")) {
 				url = new URL(path + "?" + URLEncodedUtils.format(paramsList, "utf-8"));
-			}
+			} else
+				throw new IllegalArgumentException("Unknown HTTP method: " + method);
+			
 			connection = (HttpURLConnection) url.openConnection();
 
 			connection.setDoInput(true);
@@ -1284,7 +1286,6 @@ public class DataManagement {
 
 	public ArrayList<Event> getNaviveCalendarEvents(ArrayList<Event> events) {
 		Cursor calendars = getNativeCalendars();
-		;
 
 		if (calendars != null) {
 			while (!calendars.isAfterLast()) {
@@ -1409,6 +1410,7 @@ public class DataManagement {
 	 * @throws ExecutionException
 	 * @throws InterruptedException
 	 */
+	@Deprecated
 	public Event updateEventByIdFromRemoteDb(int event_id, Context context) throws ExecutionException, InterruptedException {
 		Event event = null;
 		try {
@@ -1872,7 +1874,7 @@ public class DataManagement {
 			}
 		} catch (Exception ex) {
 			Reporter.reportError(context, "DataManagement", Thread.currentThread().getStackTrace()[2].getMethodName().toString(), ex.getMessage());
-		};
+		}
 	}
 
 	public static Template getTemplateFromLocalDb(Context context, int template_id) {

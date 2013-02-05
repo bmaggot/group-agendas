@@ -89,6 +89,7 @@ public class Invited {
 	public Invited() {
 	}
 	
+	@Override
 	public String toString() {
 		StringBuilder sb = new StringBuilder();
 		

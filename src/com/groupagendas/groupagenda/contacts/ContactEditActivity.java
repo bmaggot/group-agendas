@@ -76,12 +76,15 @@ public class ContactEditActivity extends Activity implements OnClickListener, On
 
 		private String oldText = null;
 		
-	    public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+	    @Override
+		public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
 	    	oldText = charSequence.toString();
 	    }
-	    public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {}
+	    @Override
+		public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {}
 	    
-	    public void afterTextChanged(Editable editable) {
+	    @Override
+		public void afterTextChanged(Editable editable) {
 	    	if(!editable.toString().equalsIgnoreCase(oldText)){
 	    		changesMade = true;
 //	    		saveButton.setEnabled(changesMade);
@@ -358,6 +361,7 @@ public class ContactEditActivity extends Activity implements OnClickListener, On
 		});
 	}
 
+	@Override
 	public void onClick(View v) {
 		switch (v.getId()) {
 		case R.id.sendbutton:

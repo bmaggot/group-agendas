@@ -232,6 +232,7 @@ public class DateTimeSelectActivity extends Activity implements OnClickListener 
 				finish();
 				break;
 			}
+			break;
 			
 		case R.id.button_morning:
 			timeInMillis = CalendarSettings.getMorningStart(this) / 1000;

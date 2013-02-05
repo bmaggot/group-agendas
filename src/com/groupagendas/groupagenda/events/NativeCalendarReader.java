@@ -235,7 +235,7 @@ public class NativeCalendarReader {
 
 	public static ArrayList<Event> readNativeCalendarEventsForAFewDays(Context context, Calendar startDate, int days) {
 		Calendar endDate = Calendar.getInstance();
-		;
+		
 		if (days > 0) {
 			endDate.setTimeInMillis(startDate.getTimeInMillis());
 			int counter = 0;

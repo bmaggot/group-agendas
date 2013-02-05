@@ -380,7 +380,7 @@ public class NewEventActivity extends EventActivity {
 		invitesColumn = (LinearLayout) findViewById(R.id.invitesLine);
 		invitedPersonList = (LinearLayout) findViewById(R.id.invited_person_list);
 //		invitedPersonListView = (ListView) findViewById(R.id.invited_person_listview);
-		inviteDelegate1 = (View) findViewById(R.id.invite_button_del1);
+		inviteDelegate1 = findViewById(R.id.invite_button_del1);
 		inviteDelegate2 = (RelativeLayout) findViewById(R.id.invite_button_del2);
 		
 		inviteDelegate1.setOnClickListener(new OnClickListener() {
@@ -648,6 +648,7 @@ public class NewEventActivity extends EventActivity {
 		startActivity(i);
 	}
 
+	@Override
 	protected Event setEventData(Event event) {
 		event = super.setEventData(event);
 		event.setCreatedMillisUtc(Calendar.getInstance().getTimeInMillis()); // set create time
@@ -659,6 +660,7 @@ public class NewEventActivity extends EventActivity {
 		return event;
 	}
 
+	@Override
 	public void showAddressPanel() {
 		addressPanelVisible = true;
 
@@ -697,6 +699,7 @@ public class NewEventActivity extends EventActivity {
 		save_address.setVisibility(View.GONE);
 	}
 
+	@Override
 	public void showDetailsPanel() {
 		detailsPanelVisible = true;
 		
@@ -1015,13 +1018,16 @@ public class NewEventActivity extends EventActivity {
 
 		private String oldText = null;
 
+		@Override
 		public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
 			oldText = charSequence.toString();
 		}
 
+		@Override
 		public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
 		}
 
+		@Override
 		public void afterTextChanged(Editable editable) {
 			if (!editable.toString().equalsIgnoreCase(oldText)) {
 				changesMade = true;

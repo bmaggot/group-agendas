@@ -78,6 +78,7 @@ public class Reporter {
 								object = new JSONObject(resp);
 							} catch (JSONException e) {
 								Log.e("reportError: error while creating JSONObject ", e.getMessage());
+								return null;
 							}
 							try {
 								if (object.getBoolean("success")) {
