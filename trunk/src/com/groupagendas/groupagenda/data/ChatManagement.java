@@ -129,16 +129,13 @@ public class ChatManagement {
 
 	public static ArrayList<ChatMessageObject> getChatMessagesForEventFromLocalDb(Context context, int eventId) {
 		// EventManagement.resetEventsNewMessageCount(context, eventId);
-		ArrayList<ChatMessageObject> chatMessages = new ArrayList<ChatMessageObject>();
 		Cursor cur;
 		String selection = ChatProvider.CMMetaData.ChatMetaData.E_ID + "=" + eventId;
 		cur = context.getContentResolver().query(ChatProvider.CMMetaData.ChatMetaData.CONTENT_URI, null, selection, null, null);
+		ArrayList<ChatMessageObject> chatMessages = new ArrayList<ChatMessageObject>(cur.getCount());
 
-		if (cur.moveToFirst()) {
-			do {
-				chatMessages.add(makeChatMessageObjectFromCursor(cur));
-				cur.moveToNext();
-			} while (!cur.isAfterLast());
+		while (cur.moveToNext()) {
+			chatMessages.add(makeChatMessageObjectFromCursor(cur));
 		}
 		cur.close();
 		return chatMessages;
@@ -508,18 +505,15 @@ public class ChatManagement {
 	}
 	
 	public static ArrayList<ChatMessageObject> getChatMessagesCreatedOffline(Context context) {
-		ArrayList<ChatMessageObject> offlineChatMessages = new ArrayList<ChatMessageObject>();
 		Uri uri = ChatProvider.CMMetaData.ChatMetaData.CONTENT_URI;
 		String projection[] = null;
 		Account account = new Account(context);
 		String selection = (ChatProvider.CMMetaData.ChatMetaData.MODIFIED +">"+ account.getLastTimeConnectedToWeb() + " AND " +
 		ChatProvider.CMMetaData.ChatMetaData.USER_ID + "=" + account.getUser_id());
 		Cursor cur = context.getContentResolver().query(uri, projection, selection, null, null);
-		if(cur.moveToFirst()){
-			do{
-				offlineChatMessages.add(makeChatMessageObjectFromCursor(cur));
-				cur.moveToNext();
-			} while(!cur.isAfterLast());
+		ArrayList<ChatMessageObject> offlineChatMessages = new ArrayList<ChatMessageObject>(cur.getCount());
+		while (cur.moveToNext()) {
+			offlineChatMessages.add(makeChatMessageObjectFromCursor(cur));
 		}
 		cur.close();
 		return offlineChatMessages;

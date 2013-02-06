@@ -333,7 +333,7 @@
         <activity
             android:name=".events.PollResultsActivity"
             android:configChanges="keyboardHidden|orientation"
-            android:screenOrientation="portrait"
+            android:screenOrientation="landscape"
             android:theme="@android:style/Theme.NoTitleBar" >
         </activity>
         <activity

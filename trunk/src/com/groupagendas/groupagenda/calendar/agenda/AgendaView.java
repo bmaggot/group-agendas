@@ -124,13 +124,10 @@ public class AgendaView extends AbstractCalendarView {
 			tmp.add(Calendar.DATE, day);
 			day++;
 
-			String title = WeekDayNames[tmp.get(Calendar.DAY_OF_WEEK) - 1];
-			title += ", ";
-			title += MonthNames[tmp.get(Calendar.MONTH)];
-			title += " ";
-			title += tmp.get(Calendar.DATE);
-			title += ", ";
-			title += tmp.get(Calendar.YEAR);
+			StringBuilder title = new StringBuilder(WeekDayNames[tmp.get(Calendar.DAY_OF_WEEK) - 1]);
+			title.append(", ").append(MonthNames[tmp.get(Calendar.MONTH)]);
+			title.append(' ').append(tmp.get(Calendar.DAY_OF_MONTH));
+			title.append(", ").append(tmp.get(Calendar.YEAR));
 
 			dayTitle.setText(title);
 			if (Utils.isToday(tmp)) {
@@ -209,8 +206,8 @@ public class AgendaView extends AbstractCalendarView {
 
 			@Override
 			public boolean onLongClick(View v) {
-				String date = "" + titleTime.getText();
-				date.replace(" ", "");
+				String date = titleTime.getText().toString();
+				date = date.replace(" ", "");
 				final String[] splitDate = date.split(",");
 				String year = splitDate[2].replace(" ", "");
 				String[] splitMonth = splitDate[1].split(" ");
@@ -219,54 +216,14 @@ public class AgendaView extends AbstractCalendarView {
 				cal.set(Calendar.HOUR_OF_DAY, 12);
 				cal.set(Calendar.MINUTE, 0);
 				cal.clear(Calendar.MILLISECOND);
-				if (splitMonth[1].contains(MonthNames[0])) {
-					cal.set(Calendar.MONTH, 0);
-				} else {
-					if (splitMonth[1].contains(MonthNames[1])) {
-						cal.set(Calendar.MONTH, 1);
-					} else {
-						if (splitMonth[1].contains(MonthNames[2])) {
-							cal.set(Calendar.MONTH, 2);
-						} else {
-							if (splitMonth[1].contains(MonthNames[3])) {
-								cal.set(Calendar.MONTH, 3);
-							} else {
-								if (splitMonth[1].contains(MonthNames[4])) {
-									cal.set(Calendar.MONTH, 4);
-								} else {
-									if (splitMonth[1].contains(MonthNames[5])) {
-										cal.set(Calendar.MONTH, 5);
-									} else {
-										if (splitMonth[1].contains(MonthNames[6])) {
-											cal.set(Calendar.MONTH, 6);
-										} else {
-											if (splitMonth[1].contains(MonthNames[7])) {
-												cal.set(Calendar.MONTH, 7);
-											} else {
-												if (splitMonth[1].contains(MonthNames[8])) {
-													cal.set(Calendar.MONTH, 8);
-												} else {
-													if (splitMonth[1].contains(MonthNames[9])) {
-														cal.set(Calendar.MONTH, 9);
-													} else {
-														if (splitMonth[1].contains(MonthNames[10])) {
-															cal.set(Calendar.MONTH, 10);
-														} else {
-															if (splitMonth[1].contains(MonthNames[11])) {
-																cal.set(Calendar.MONTH, 11);
-															}
-														}
-													}
-												}
-											}
-										}
-									}
-								}
-							}
-						}
+
+				for (int i = 0; i < 12; i++) {
+					if (splitMonth[1].contains(MonthNames[i])) {
+						cal.set(Calendar.MONTH, i);
+						break;
 					}
 				}
-				
+
 				//TODO netrinti!
 //				if (cal.get(Calendar.MINUTE) > 30) {
 //					cal.clear(Calendar.MINUTE);
@@ -274,15 +231,19 @@ public class AgendaView extends AbstractCalendarView {
 //				} else {
 //					cal.clear(Calendar.MINUTE);
 //				}
-				
+
 				final TextView time = (TextView) v.findViewById(R.id.agenda_entry_blank_time_placeholder);
 				time.setVisibility(View.VISIBLE);
-				if(cal.get(Calendar.MINUTE) < 2){
-					time.setText("" + cal.get(Calendar.HOUR_OF_DAY) + ":" + cal.get(Calendar.MINUTE) + "0");
-				} else {
-					time.setText("" + cal.get(Calendar.HOUR_OF_DAY) + ":" + cal.get(Calendar.MINUTE));
+				{
+					StringBuilder sbTime = new StringBuilder();
+					sbTime.append(cal.get(Calendar.HOUR_OF_DAY));
+					sbTime.append(':');
+					sbTime.append(cal.get(Calendar.MINUTE));
+					if (cal.get(Calendar.MINUTE) < 2)
+						sbTime.append('0');
+					time.setText(sbTime);
 				}
-				
+
 				final TextView title = (TextView) v.findViewById(R.id.agenda_entry_blank_title_placeholder);
 				title.setVisibility(View.VISIBLE);
 				title.setText(R.string.new_event);

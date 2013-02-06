@@ -527,7 +527,7 @@ public class EventsProvider extends ContentProvider{
 		if (rowId < 0) return null;
 		Uri insUri = ContentUris.withAppendedId(EMetaData.EventsMetaData.CONTENT_URI, rowId);
 		
-		String event_internal_id = "" + rowId;
+		String event_internal_id = String.valueOf(rowId);
 		String ext_id = values.getAsString(EMetaData.EventsMetaData.E_ID);
 
 			do {

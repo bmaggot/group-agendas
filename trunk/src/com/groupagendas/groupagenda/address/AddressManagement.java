@@ -113,33 +113,30 @@ public class AddressManagement {
 	}
 	
 	public static ArrayList<Address> getAddressFromLocalDb(Context context, String where) {
-		ArrayList<Address> addresses = new ArrayList<Address>();
 		Cursor cur;
 		Address temp;
 
 		cur = context.getContentResolver().query(AddressProvider.AMetaData.AddressesMetaData.CONTENT_URI, null, where, null, null);
-
-		if (cur.moveToFirst()) {
-			while (!cur.isAfterLast()) {
-				temp = new Address();
-
-				temp.setId(cur.getInt(cur.getColumnIndex(AddressProvider.AMetaData.AddressesMetaData.A_ID)));
-				temp.setUser_id(cur.getInt(cur.getColumnIndex(AddressProvider.AMetaData.AddressesMetaData.USER_ID)));
-				temp.setTitle(cur.getString(cur.getColumnIndex(AddressProvider.AMetaData.AddressesMetaData.TITLE)));
-				temp.setStreet(cur.getString(cur.getColumnIndex(AddressProvider.AMetaData.AddressesMetaData.STREET)));
-				temp.setCity(cur.getString(cur.getColumnIndex(AddressProvider.AMetaData.AddressesMetaData.CITY)));
-				temp.setZip(cur.getString(cur.getColumnIndex(AddressProvider.AMetaData.AddressesMetaData.ZIP)));
-				temp.setState(cur.getString(cur.getColumnIndex(AddressProvider.AMetaData.AddressesMetaData.STATE)));
-				temp.setCountry(cur.getString(cur.getColumnIndex(AddressProvider.AMetaData.AddressesMetaData.COUNTRY)));
-				temp.setTimezone(cur.getString(cur.getColumnIndex(AddressProvider.AMetaData.AddressesMetaData.TIMEZONE)));
-				temp.setCountry_name(cur.getString(cur.getColumnIndex(AddressProvider.AMetaData.AddressesMetaData.COUNTRY_NAME)));
-
-				addresses.add(temp);
-
-				cur.moveToNext();
-			}
-		} else {
+		if (cur.getCount() < 1) {
 			Log.i("getAddressFromLocalDb()", "Empty or no response from local db.");
+		}
+		ArrayList<Address> addresses = new ArrayList<Address>(cur.getCount());
+
+		while (cur.moveToNext()) {
+			temp = new Address();
+
+			temp.setId(cur.getInt(cur.getColumnIndex(AddressProvider.AMetaData.AddressesMetaData.A_ID)));
+			temp.setUser_id(cur.getInt(cur.getColumnIndex(AddressProvider.AMetaData.AddressesMetaData.USER_ID)));
+			temp.setTitle(cur.getString(cur.getColumnIndex(AddressProvider.AMetaData.AddressesMetaData.TITLE)));
+			temp.setStreet(cur.getString(cur.getColumnIndex(AddressProvider.AMetaData.AddressesMetaData.STREET)));
+			temp.setCity(cur.getString(cur.getColumnIndex(AddressProvider.AMetaData.AddressesMetaData.CITY)));
+			temp.setZip(cur.getString(cur.getColumnIndex(AddressProvider.AMetaData.AddressesMetaData.ZIP)));
+			temp.setState(cur.getString(cur.getColumnIndex(AddressProvider.AMetaData.AddressesMetaData.STATE)));
+			temp.setCountry(cur.getString(cur.getColumnIndex(AddressProvider.AMetaData.AddressesMetaData.COUNTRY)));
+			temp.setTimezone(cur.getString(cur.getColumnIndex(AddressProvider.AMetaData.AddressesMetaData.TIMEZONE)));
+			temp.setCountry_name(cur.getString(cur.getColumnIndex(AddressProvider.AMetaData.AddressesMetaData.COUNTRY_NAME)));
+
+			addresses.add(temp);
 		}
 
 		cur.close();

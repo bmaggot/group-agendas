@@ -91,13 +91,10 @@ public class AlarmsManagement {
 	}
 	
 	public static ArrayList<Alarm> getAllAlarmsFromLocalDB(Context context){
-		ArrayList<Alarm> alarms = new ArrayList<Alarm>();
 		Cursor cursor = context.getContentResolver().query(EventsProvider.EMetaData.AlarmsMetaData.CONTENT_URI, null, null, null, null);
-		if(cursor.moveToFirst()){
-			do{
+		ArrayList<Alarm> alarms = new ArrayList<Alarm>(cursor.getCount());
+		while (cursor.moveToNext()) {
 			alarms.add(createAlarmFromCursor(cursor));
-			cursor.moveToNext();
-			}while (!cursor.isAfterLast());
 		}
 		cursor.close();
 		return alarms;

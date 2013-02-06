@@ -649,7 +649,8 @@ private static final String TIMESTAMP_FORMAT = DataManagement.SERVER_TIMESTAMP_F
 		this.invited = invited;
 	}
 	public ArrayList<Invited> getInvited() {
-		if (invited == null) invited = new ArrayList<Invited>();
+		if (invited == null)
+			invited = new ArrayList<Invited>();
 		return invited;
 	}
 

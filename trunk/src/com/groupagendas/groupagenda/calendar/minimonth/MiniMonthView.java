@@ -2,6 +2,8 @@ package com.groupagendas.groupagenda.calendar.minimonth;
 
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Collections;
+import java.util.List;
 
 import android.content.Context;
 import android.content.Intent;
@@ -235,7 +237,14 @@ public class MiniMonthView extends AbstractCalendarView {
 
 				final TextView time = (TextView) v.findViewById(R.id.agenda_entry_blank_time_placeholder);
 				time.setVisibility(View.GONE);
-				time.setText("" + cal.get(Calendar.HOUR_OF_DAY) + ":" + cal.get(Calendar.MINUTE) + "0");
+				{
+					StringBuilder sbTime = new StringBuilder();
+					sbTime.append(cal.get(Calendar.HOUR_OF_DAY));
+					sbTime.append(':');
+					sbTime.append(cal.get(Calendar.MINUTE));
+					sbTime.append(0);
+					time.setText(sbTime);
+				}
 				final TextView title = (TextView) v.findViewById(R.id.agenda_entry_blank_title_placeholder);
 				title.setVisibility(View.VISIBLE);
 				title.setText(R.string.new_event);
@@ -275,7 +284,7 @@ public class MiniMonthView extends AbstractCalendarView {
 		for (AgendaFrame frame : daysList) {
 			TextView dayTitle = (TextView) frame.getDayContainer().findViewById(R.id.agenda_day_title);
 			TextView weekNum = (TextView) frame.getDayContainer().findViewById(R.id.agenda_week_title);
-			String title = "" + tmp.get(Calendar.DATE);
+			String title = String.valueOf(tmp.get(Calendar.DATE));
 			dayTitle.setText(title);
 			if (Utils.isToday(tmp)) {
 				dayTitle.setBackgroundColor(getResources().getColor(R.color.darker_gray));
@@ -287,7 +296,7 @@ public class MiniMonthView extends AbstractCalendarView {
 
 			if (tmp.get(Calendar.DAY_OF_WEEK) == firstDayOfWeek) {
 				weekNum.setVisibility(VISIBLE);
-				weekNum.setText("" + tmp.get(Calendar.WEEK_OF_YEAR));
+				weekNum.setText(String.valueOf(tmp.get(Calendar.WEEK_OF_YEAR)));
 			} else {
 				frame.getDayContainer().findViewById(R.id.agenda_week_title).setVisibility(GONE);
 			}
@@ -343,7 +352,8 @@ public class MiniMonthView extends AbstractCalendarView {
 				if (tmp.get(Calendar.MONTH) == selectedDate.get(Calendar.MONTH)) {
 					frame.setEventList(TreeMapUtils.getEventsFromTreemap(tmp, sortedEvents));
 				} else {
-					frame.setEventList(new ArrayList<Event>());
+					List<Event> empty = Collections.emptyList();
+					frame.setEventList(empty);
 				}
 				frame.UpdateList();
 				tmp.add(Calendar.DATE, 1);

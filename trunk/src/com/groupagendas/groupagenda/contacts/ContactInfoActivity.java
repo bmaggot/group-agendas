@@ -297,32 +297,29 @@ public class ContactInfoActivity extends Activity {
 
 	private String getGroupTitles(String ids) {
 		Cursor cur;
-		String result = "";
+		StringBuilder result = new StringBuilder();
 
 		Uri uri = ContactsProvider.CMetaData.GroupsMetaData.CONTENT_URI;
 		String[] projection = { ContactsProvider.CMetaData.GroupsMetaData.TITLE };
 		String selection = ContactsProvider.CMetaData.GroupsMetaData.G_ID + " IN (" + ids + ")";
 
 		cur = getContentResolver().query(uri, projection, selection, null, null);
-
-		if (cur != null) {
-			if (cur.getCount() > 0 && cur.moveToFirst()) {
-				while (!cur.isAfterLast()) {
-					if (result.length() < 1) {
-						result += cur.getString(cur.getColumnIndex(projection[0]));
-					} else {
-						result += "\n" + cur.getString(cur.getColumnIndex(projection[0]));
-					}
-					cur.moveToNext();
+		if (cur != null && cur.getCount() > 0) {
+			while (cur.moveToNext()) {
+				if (result.length() < 1) {
+					result.append(cur.getString(cur.getColumnIndex(projection[0])));
+				} else {
+					result.append("\n");
+					result.append(cur.getString(cur.getColumnIndex(projection[0])));
 				}
 			}
-			cur.close();
 		} else {
 			Log.i("GetGroupTitlesTask", "Query didn't return any entry");
 		}
+		if (cur != null)
+			cur.close();
 
-
-		return result;
+		return result.toString();
 	}
 
 }

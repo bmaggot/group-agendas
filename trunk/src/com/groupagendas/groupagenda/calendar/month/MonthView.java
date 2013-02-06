@@ -124,7 +124,7 @@ public class MonthView extends AbstractCalendarView {
 			setTopPanel();
 			paintTable(selectedDate);
 			setDayFrames();
-			updateEventLists();
+			// updateEventLists();
 		}
 	}
 
@@ -137,7 +137,7 @@ public class MonthView extends AbstractCalendarView {
 			setTopPanel();
 			paintTable(selectedDate);
 			setDayFrames();
-			updateEventLists();
+			// updateEventLists();
 		}
 	}
 
@@ -145,7 +145,7 @@ public class MonthView extends AbstractCalendarView {
 	public void setupView() {
 		monthTable = (TableLayout) findViewById(R.id.month_table);
 		paintTable(selectedDate);
-		setDayFrames();
+		// setDayFrames();
 
 		RelativeLayout topPanel = (RelativeLayout) findViewById(R.id.calendar_navbar);
 		topPanel.setOnTouchListener(localHero);
@@ -158,7 +158,9 @@ public class MonthView extends AbstractCalendarView {
 		eventsList = (ListView) findViewById(R.id.month_list);
 		fillBottomSpace();
 		eventsList.setAdapter(eventsAdapter);
-		updateEventLists();
+		// updateEventLists();
+		
+		setDayFrames();
 	}
 
 	private void fillBottomSpace() {
@@ -219,7 +221,7 @@ public class MonthView extends AbstractCalendarView {
 		new UpdateEventsInfoTask().execute();
 		Calendar tmp = (Calendar) firstShownDate.clone();
 		for (MonthDayFrame frame : daysList) {
-			String title = "" + tmp.get(Calendar.DATE);
+			String title = String.valueOf(tmp.get(Calendar.DATE));
 
 			frame.setDayTitle(title);
 
@@ -263,7 +265,7 @@ public class MonthView extends AbstractCalendarView {
 
 			TextView weekNum = (TextView) mInflater.inflate(
 					R.layout.calendar_month_week_container, null);
-			weekNum.setText("" + tmp.get(Calendar.WEEK_OF_YEAR));
+			weekNum.setText(String.valueOf(tmp.get(Calendar.WEEK_OF_YEAR)));
 			weekNum.setHeight(TABLE_ROW_HEIGHT);
 			weekNum.setBackgroundResource(R.drawable.calendar_month_day_inactive);
 			month_weeknumbers_container.addView(weekNum);
@@ -473,7 +475,7 @@ public class MonthView extends AbstractCalendarView {
 							}
 	
 							setDayFrames(); // TODO optimize: now all day frames are redrawn
-							updateEventLists();
+							// updateEventLists();
 						}
 					}
 				}

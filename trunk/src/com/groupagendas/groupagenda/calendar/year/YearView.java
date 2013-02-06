@@ -28,7 +28,7 @@ public class YearView extends AbstractCalendarView {
 	public boolean stillLoading = true;
 	
 	private LinearLayout year_Table;
-	private ArrayList<ArrayList<YearViewMonthInnerCell>>yearDaysMap = new ArrayList<ArrayList<YearViewMonthInnerCell>>();
+	private ArrayList<ArrayList<YearViewMonthInnerCell>>yearDaysMap = new ArrayList<ArrayList<YearViewMonthInnerCell>>(MonthsInYear);
 	private MonthInstance months[] = new MonthInstance[MonthsInYear];
 	
 
@@ -49,11 +49,9 @@ public class YearView extends AbstractCalendarView {
 
 	@Override
 	protected void setTopPanel() {
-		String title = getContext().getString(R.string.year);
-		title += " ";
-		title += selectedDate.get(Calendar.YEAR);
+		StringBuilder title = new StringBuilder(getContext().getString(R.string.year));
+		title.append(' ').append(selectedDate.get(Calendar.YEAR));
 		this.getTopPanelTitle().setText(title);
-
 	}
 
 	@Override

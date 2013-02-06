@@ -321,36 +321,36 @@ public class ContactManagement {
 	 * @version 0.1
 	 */
 	public static ArrayList<Contact> getContactsFromLocalDb(Context context, String where) {
-		ArrayList<Contact> contacts = new ArrayList<Contact>();
 		Cursor cur;
 		Contact temp;
 
 		cur = context.getContentResolver().query(ContactsProvider.CMetaData.ContactsMetaData.CONTENT_URI, null, where, null, null);
+		ArrayList<Contact> contacts = new ArrayList<Contact>(cur.getCount());
 
-		if (cur.moveToFirst()) {
-			while (!cur.isAfterLast()) {
+		if (cur.getCount() > 0) {
+			while (cur.moveToNext()) {
 				temp = new Contact();
-
+	
 				temp.contact_id = cur.getInt(cur.getColumnIndex(ContactsProvider.CMetaData.ContactsMetaData.C_ID));
 				temp.lid = cur.getString(cur.getColumnIndex(ContactsProvider.CMetaData.ContactsMetaData.LID));
 				temp.name = cur.getString(cur.getColumnIndex(ContactsProvider.CMetaData.ContactsMetaData.NAME));
 				temp.lastname = cur.getString(cur.getColumnIndex(ContactsProvider.CMetaData.ContactsMetaData.LASTNAME));
 				temp.fullname = cur.getString(cur.getColumnIndex(ContactsProvider.CMetaData.ContactsMetaData.FULLNAME));
-
+	
 				temp.email = cur.getString(cur.getColumnIndex(ContactsProvider.CMetaData.ContactsMetaData.EMAIL));
 				temp.phone1 = cur.getString(cur.getColumnIndex(ContactsProvider.CMetaData.ContactsMetaData.PHONE));
 				temp.phone1_code = cur.getString(cur.getColumnIndex(ContactsProvider.CMetaData.ContactsMetaData.PHONE_CODE));
-
+	
 				temp.birthdate = cur.getString(cur.getColumnIndex(ContactsProvider.CMetaData.ContactsMetaData.BIRTHDATE));
-
+	
 				temp.country = cur.getString(cur.getColumnIndex(ContactsProvider.CMetaData.ContactsMetaData.COUNTRY));
 				temp.city = cur.getString(cur.getColumnIndex(ContactsProvider.CMetaData.ContactsMetaData.CITY));
 				temp.street = cur.getString(cur.getColumnIndex(ContactsProvider.CMetaData.ContactsMetaData.STREET));
 				temp.zip = cur.getString(cur.getColumnIndex(ContactsProvider.CMetaData.ContactsMetaData.ZIP));
-
+	
 				temp.visibility = cur.getString(cur.getColumnIndex(ContactsProvider.CMetaData.ContactsMetaData.VISIBILITY));
 				temp.visibility2 = cur.getString(cur.getColumnIndex(ContactsProvider.CMetaData.ContactsMetaData.VISIBILITY2));
-
+	
 				String resp = cur.getString(cur.getColumnIndex(ContactsProvider.CMetaData.ContactsMetaData.IMAGE));
 				if (resp != null) {
 					if (resp.equals("1"))
@@ -360,7 +360,7 @@ public class ContactManagement {
 				} else {
 					temp.image = false;
 				}
-
+	
 				temp.image_url = cur.getString(cur.getColumnIndex(ContactsProvider.CMetaData.ContactsMetaData.IMAGE_URL));
 				temp.image_thumb_url = cur.getString(cur.getColumnIndex(ContactsProvider.CMetaData.ContactsMetaData.IMAGE_THUMB_URL));
 				temp.image_bytes = cur.getBlob(cur.getColumnIndex(ContactsProvider.CMetaData.ContactsMetaData.IMAGE_BYTES));
@@ -369,7 +369,7 @@ public class ContactManagement {
 				} else {
 					temp.remove_image = false;
 				}
-
+	
 				temp.reg_user_id = cur.getInt(cur.getColumnIndex(ContactsProvider.CMetaData.ContactsMetaData.REG_USER_ID));
 				temp.agenda_view = cur.getString(cur.getColumnIndex(ContactsProvider.CMetaData.ContactsMetaData.AGENDA_VIEW));
 				temp.agenda_view2 = cur.getString(cur.getColumnIndex(ContactsProvider.CMetaData.ContactsMetaData.AGENDA_VIEW2));
@@ -381,21 +381,19 @@ public class ContactManagement {
 				temp.type = cur.getString(cur.getColumnIndex(ContactsProvider.CMetaData.ContactsMetaData.TYPE));
 				temp.title = cur.getString(cur.getColumnIndex(ContactsProvider.CMetaData.ContactsMetaData.TITLE));
 				temp.registered = cur.getString(cur.getColumnIndex(ContactsProvider.CMetaData.ContactsMetaData.REGISTERED));
-
+	
 				temp.created = cur.getLong(cur.getColumnIndex(ContactsProvider.CMetaData.ContactsMetaData.CREATED));
 				temp.modified = cur.getLong(cur.getColumnIndex(ContactsProvider.CMetaData.ContactsMetaData.MODIFIED));
 				temp.setUploadedToServer(1 == cur.getInt(cur.getColumnIndex(ContactsProvider.CMetaData.ContactsMetaData.UPLOADED_SUCCESSFULLY)));
-
+	
 				resp = cur.getString(cur.getColumnIndex(ContactsProvider.CMetaData.ContactsMetaData.GROUPS));
 				if (resp != null) {
 					temp.groups = MapUtils.stringToMap(context, resp);
 				}
-
+	
 				temp.setColor(cur.getString(cur.getColumnIndex(ContactsProvider.CMetaData.ContactsMetaData.COLOR)));
-
+	
 				contacts.add(temp);
-
-				cur.moveToNext();
 			}
 		} else {
 			Log.i("getContactsFromLocalDb()", "Empty or no response from local db.");
@@ -638,8 +636,8 @@ public class ContactManagement {
 		if (groups != null) {
 			for (int i = 0, l = groups.size(); i < l; i++) {
 				try {
-					if (groups.get("" + i) != null) {
-						reqEntity.addPart(ContactsProvider.CMetaData.ContactsMetaData.GROUPS + "[]", new StringBody(groups.get("" + i),
+					if (groups.get(String.valueOf(i)) != null) {
+						reqEntity.addPart(ContactsProvider.CMetaData.ContactsMetaData.GROUPS + "[]", new StringBody(groups.get(String.valueOf(i)),
 								Charset.forName("UTF-8")));
 					}
 				} catch (UnsupportedEncodingException e) {
@@ -661,7 +659,7 @@ public class ContactManagement {
 						if (success) {
 							destination_id = object.getInt("contact_id");
 							DataManagement.synchronizeWithServer(context, null, account.getLatestUpdateUnixTimestamp());
-							Log.i("createContact - success", "" + success);
+							Log.i("createContact - success", String.valueOf(success));
 						}
 
 						if (success == false) {
@@ -1000,14 +998,14 @@ public class ContactManagement {
 	 * @version 0.1
 	 */
 	public static ArrayList<Group> getGroupsFromLocalDb(Context context, String where) {
-		ArrayList<Group> contacts = new ArrayList<Group>();
 		Cursor cur;
 		Group temp;
 
 		cur = context.getContentResolver().query(ContactsProvider.CMetaData.GroupsMetaData.CONTENT_URI, null, where, null, null);
+		ArrayList<Group> contacts = new ArrayList<Group>(cur.getCount());
 
-		if (cur.moveToFirst()) {
-			while (!cur.isAfterLast()) {
+		if (cur.getCount() > 0) {
+			while (cur.moveToNext()) {
 				temp = new Group();
 
 				temp.group_id = cur.getInt(cur.getColumnIndex(ContactsProvider.CMetaData.GroupsMetaData.G_ID));
@@ -1049,8 +1047,6 @@ public class ContactManagement {
 				}
 
 				contacts.add(temp);
-
-				cur.moveToNext();
 			}
 		} else {
 			Log.i("getGroupsFromLocalDb()", "Empty or no response from local db.");
@@ -1119,10 +1115,10 @@ public class ContactManagement {
 								max_key = temp;
 							}
 						}
-						c.groups.put("" + (max_key + 1), "" + destination_id);
+						c.groups.put(String.valueOf(max_key + 1), String.valueOf(destination_id));
 					} else {
 						c.groups = new HashMap<String, String>();
-						c.groups.put("" + max_key, "" + destination_id);
+						c.groups.put(String.valueOf(max_key), String.valueOf(destination_id));
 					}
 
 					ContactManagement.updateContactOnLocalDb(context, c);
@@ -1147,10 +1143,10 @@ public class ContactManagement {
 								max_key = temp;
 							}
 						}
-						c.groups.put("" + (max_key + 1), "" + group.group_id);
+						c.groups.put(String.valueOf(max_key + 1), String.valueOf(group.group_id));
 					} else {
 						c.groups = new HashMap<String, String>();
-						c.groups.put("" + max_key, "" + group.group_id);
+						c.groups.put(String.valueOf(max_key), String.valueOf(group.group_id));
 					}
 
 					ContactManagement.updateContactOnLocalDb(context, c);
@@ -1246,7 +1242,7 @@ public class ContactManagement {
 				if (temp > max_key) {
 					max_key = temp;
 				}
-				if ((map.get(s) != null) && (map.get(s).equalsIgnoreCase("" + contactID))) {
+				if ((map.get(s) != null) && (map.get(s).equalsIgnoreCase(String.valueOf(contactID)))) {
 					target = temp;
 					if (!insert) {
 						map.remove(s);
@@ -1259,7 +1255,7 @@ public class ContactManagement {
 			}
 
 			if (insert && target == -1) {
-				map.put("" + (max_key + 1), "" + contactID);
+				map.put(String.valueOf(max_key + 1), String.valueOf(contactID));
 				cv.put(ContactsProvider.CMetaData.GroupsMetaData.CONTACT_COUNT, (contact_count + 1));
 				cv.put(ContactsProvider.CMetaData.GroupsMetaData.CONTACTS, MapUtils.mapToString(context, map));
 				target = -1;
@@ -1331,7 +1327,7 @@ public class ContactManagement {
 
 		try {
 			reqEntity
-					.addPart(ContactsProvider.CMetaData.GroupsMetaData.G_ID, new StringBody("" + group.group_id, Charset.forName("UTF-8")));
+					.addPart(ContactsProvider.CMetaData.GroupsMetaData.G_ID, new StringBody(String.valueOf(group.group_id), Charset.forName("UTF-8")));
 		} catch (UnsupportedEncodingException e) {
 			Log.e("insertGroupToRemoteDb(group, " + id + ")", "Failed adding group_id to entity.");
 		}
@@ -1398,7 +1394,7 @@ public class ContactManagement {
 
 		try {
 			reqEntity.addPart(ContactsProvider.CMetaData.GroupsMetaData.CONTACT_COUNT,
-					new StringBody("" + group.contact_count, Charset.forName("UTF-8")));
+					new StringBody(String.valueOf(group.contact_count), Charset.forName("UTF-8")));
 		} catch (UnsupportedEncodingException e) {
 			Log.e("insertGroupToRemoteDb(group, " + id + ")", "Failed adding contacts_count to entity.");
 		}
@@ -1433,7 +1429,7 @@ public class ContactManagement {
 						success = object.getBoolean("success");
 						if (success)
 							destination_id = object.getInt("group_id");
-						Log.e("createGroup - success", "" + success);
+						Log.e("createGroup - success", String.valueOf(success));
 
 						if (success == false) {
 							Data.setERROR(object.getJSONObject("error").getString("reason"));
@@ -1486,7 +1482,7 @@ public class ContactManagement {
 				if (temp2 > max_key) {
 					max_key = temp2;
 				}
-				if ((map.get(s) != null) && (map.get(s).equalsIgnoreCase("" + contactID))) {
+				if ((map.get(s) != null) && (map.get(s).equalsIgnoreCase(String.valueOf(contactID)))) {
 					target = temp2;
 					if (!insert) {
 						map.remove(s);
@@ -1498,7 +1494,7 @@ public class ContactManagement {
 			}
 
 			if (insert && target == -1) {
-				map.put("" + (max_key + 1), "" + contactID);
+				map.put(String.valueOf(max_key + 1), String.valueOf(contactID));
 				group.contact_count += 1;
 				target = -1;
 			}
@@ -1538,7 +1534,7 @@ public class ContactManagement {
 
 		try {
 			reqEntity
-					.addPart(ContactsProvider.CMetaData.GroupsMetaData.G_ID, new StringBody("" + group.group_id, Charset.forName("UTF-8")));
+					.addPart(ContactsProvider.CMetaData.GroupsMetaData.G_ID, new StringBody(String.valueOf(group.group_id), Charset.forName("UTF-8")));
 		} catch (UnsupportedEncodingException e) {
 			Log.e("editGroupOnRemoteDb(group, " + group.group_id + ")", "Failed adding group_id to entity.");
 		}
@@ -1605,7 +1601,7 @@ public class ContactManagement {
 
 		try {
 			reqEntity.addPart(ContactsProvider.CMetaData.GroupsMetaData.CONTACT_COUNT,
-					new StringBody("" + group.contact_count, Charset.forName("UTF-8")));
+					new StringBody(String.valueOf(group.contact_count), Charset.forName("UTF-8")));
 		} catch (UnsupportedEncodingException e) {
 			Log.e("editGroupOnRemoteDb(group, " + group.group_id + ")", "Failed adding contacts_count to entity.");
 		}
@@ -1621,7 +1617,7 @@ public class ContactManagement {
 						JSONObject object = new JSONObject(resp);
 						success = object.getBoolean("success");
 
-						Log.e("editGroup - success", "" + success);
+						Log.e("editGroup - success", String.valueOf(success));
 
 						if (success == false) {
 							Data.setERROR(object.getJSONObject("error").getString("reason"));
@@ -2072,8 +2068,8 @@ public class ContactManagement {
 		if (groups != null) {
 			for (int i = 0, l = groups.size(); i < l; i++) {
 				try {
-					if (groups.get("" + i) != null) {
-						reqEntity.addPart(ContactsProvider.CMetaData.ContactsMetaData.GROUPS + "[]", new StringBody(groups.get("" + i),
+					if (groups.get(String.valueOf(i)) != null) {
+						reqEntity.addPart(ContactsProvider.CMetaData.ContactsMetaData.GROUPS + "[]", new StringBody(groups.get(String.valueOf(i)),
 								Charset.forName("UTF-8")));
 					}
 				} catch (UnsupportedEncodingException e) {
@@ -2101,7 +2097,7 @@ public class ContactManagement {
 
 						success = object.getBoolean("success");
 
-						Log.e("editContact - success", "" + success);
+						Log.e("editContact - success", String.valueOf(success));
 
 						if (success == false) {
 							Data.setERROR(object.getJSONObject("error").getString("reason"));
@@ -2547,9 +2543,9 @@ public class ContactManagement {
 
 			reqEntity.addPart("token", new StringBody(Data.getToken(context), Charset.forName("UTF-8")));
 			if (guid > 0) {
-				reqEntity.addPart("guid", new StringBody("" + guid, Charset.forName("UTF-8")));
+				reqEntity.addPart("guid", new StringBody(String.valueOf(guid), Charset.forName("UTF-8")));
 			} else if (gcid > 0) {
-				reqEntity.addPart("gcid", new StringBody("" + gcid, Charset.forName("UTF-8")));
+				reqEntity.addPart("gcid", new StringBody(String.valueOf(gcid), Charset.forName("UTF-8")));
 			}
 			if (req) {
 				reqEntity.addPart("req_details", new StringBody("1", Charset.forName("UTF-8")));
@@ -2582,8 +2578,8 @@ public class ContactManagement {
 			map = contact.groups;
 			if (map != null) {
 				for (int i = 0; i < map.size(); i++) {
-					map.get("" + i);
-					Group g = getGroupFromLocalDb(context, Integer.valueOf(map.get("" + i)), 0);
+					map.get(String.valueOf(i));
+					Group g = getGroupFromLocalDb(context, Integer.valueOf(map.get(String.valueOf(i))), 0);
 					if (g != null) {
 						updateGroupOnLocalDb(context, g, contact.contact_id, false);
 						editGroupOnRemoteDb(context, g, contact.contact_id, false);
@@ -2605,44 +2601,43 @@ public class ContactManagement {
 		Cursor result = context.getContentResolver().query(uri, projection, where, null, null);// result
 																								// nieko
 																								// neismeta
-		if (result.moveToFirst()) {
-			while (!result.isAfterLast()) {
-				Contact c = new Contact(context, result);
+		while (result.moveToNext()) {
+			Contact c = new Contact(context, result);
 
-				if (c.contact_id != 0) {
-					int destination_id = insertContactToRemoteDb(context, c, 0, false);
-					if (destination_id >= 0) {
-						updateContactIdInLocalDb(context, c.getInternal_id(), destination_id);
+			if (c.contact_id != 0) {
+				int destination_id = insertContactToRemoteDb(context, c, 0, false);
+				if (destination_id >= 0) {
+					updateContactIdInLocalDb(context, c.getInternal_id(), destination_id);
 
-						if (c.groups != null) {
-							for (String key : c.groups.keySet()) {
-								if (!key.contentEquals("")) {
-									Group g = getGroupFromLocalDb(context, Integer.parseInt(c.groups.get(key)), 0);
-									editGroupOnRemoteDb(context, g, 0, true);
-								}
+					if (c.groups != null) {
+						for (String key : c.groups.keySet()) {
+							if (!key.contentEquals("")) {
+								Group g = getGroupFromLocalDb(context, Integer.parseInt(c.groups.get(key)), 0);
+								editGroupOnRemoteDb(context, g, 0, true);
 							}
 						}
-
-						c.contact_id = destination_id;
-					} else {
-						removeContactFromLocalDbByInternalId(context, c.getInternal_id());
-					}
-					boolean edited = editContactOnRemoteDb(context, c);
-					if (edited) {
-						updateContactOnLocalDb(context, c);
-						if (!c.birthdate.contentEquals("")) {
-							updateBirthdayOnLocalDb(context, c);
-						}
 					}
 
+					c.contact_id = destination_id;
+				} else {
+					removeContactFromLocalDbByInternalId(context, c.getInternal_id());
 				}
-				result.moveToNext();
+				boolean edited = editContactOnRemoteDb(context, c);
+				if (edited) {
+					updateContactOnLocalDb(context, c);
+					if (!c.birthdate.contentEquals("")) {
+						updateBirthdayOnLocalDb(context, c);
+					}
+				}
+
 			}
 		}
+		result.close();
+		
 		SaveDeletedData offlineDeletedContacts = new SaveDeletedData(context);
 		String offlineDeleted = offlineDeletedContacts.getDELETED_CONTACTS();
 		String[] ids = offlineDeleted.split(SDMetaData.SEPARATOR);
-		if (ids[0] != "") {
+		if (ids[0].length() > 0) {
 			for (int i = 0; i < ids.length; i++) {
 				int id = Integer.parseInt(ids[i]);
 				removeContactFromRemoteDb(context, id);
@@ -2650,7 +2645,6 @@ public class ContactManagement {
 
 		}
 		offlineDeletedContacts.clear(1);
-		result.close();
 	}
 
 	public static boolean removeGroupFromRemoteDb(Context context, int groupId) {
@@ -2712,7 +2706,7 @@ public class ContactManagement {
 					if (c.groups != null) {
 						Set<String> keySet = c.groups.keySet();
 						for (String g : keySet) {
-							if (c.groups.get(g).equalsIgnoreCase("" + groupId)) {
+							if (c.groups.get(g).equalsIgnoreCase(String.valueOf(groupId))) {
 								c.groups.remove(g);
 								ContactManagement.updateContactOnLocalDb(context, c);
 								break;
@@ -2795,7 +2789,7 @@ public class ContactManagement {
 
 		try {
 			reqEntity.addPart(ContactsProvider.CMetaData.GroupsMetaData.CONTACT_COUNT,
-					new StringBody("" + group.contacts.size(), Charset.forName("UTF-8")));
+					new StringBody(String.valueOf(group.contacts.size()), Charset.forName("UTF-8")));
 		} catch (UnsupportedEncodingException e) {
 			Log.e("editGroupOnRemoteDb(group, " + group.group_id + ")", "Failed adding contacts_count to entity.");
 		}
@@ -2848,79 +2842,76 @@ public class ContactManagement {
 		Uri uri = ContactsProvider.CMetaData.GroupsMetaData.CONTENT_URI;
 		String where = ContactsProvider.CMetaData.GroupsMetaData.MODIFIED + ">" + account.getLastTimeConnectedToWeb();
 		Cursor result = context.getContentResolver().query(uri, projection, where, null, null);
-		if (result.moveToFirst()) {
-			while (!result.isAfterLast()) {
-				Group group = new Group(context, result);
+		while (result.moveToNext()) {
+			Group group = new Group(context, result);
 
-				if (group.group_id != 0) {
-					boolean check = updateGroupInRemoteDb(context, group);
-					int destination_id = group.group_id;
-					if (!check) {
-						destination_id = insertGroupToRemoteDb(context, group, 0);
-					}
-					if (destination_id >= 0) {
-						updateGroupIdInLocalDb(context, group.getInternal_id(), destination_id);
-						int max_key = 0;
-						if (group.contacts != null) {
-
-							for (String s : group.contacts.keySet()) {
-								Contact c = ContactManagement.getContactFromLocalDb(context, Integer.parseInt(group.contacts.get(s)), 0);
-
-								if (c.groups != null) {
-									Set<String> keySet = c.groups.keySet();
-									for (String g : keySet) {
-										if (c.groups.get(g).equalsIgnoreCase("" + group.group_id)) {
-											c.groups.remove(g);
-											ContactManagement.updateContactOnLocalDb(context, c);
-											break;
-										}
-									}
-								}
-
-								if (c.groups != null) {
-									for (String key : c.groups.keySet()) {
-										int temp = Integer.parseInt(key);
-										if (temp > max_key) {
-											max_key = temp;
-										}
-									}
-									c.groups.put("" + (max_key + 1), "" + destination_id);
-								} else {
-									c.groups = new HashMap<String, String>();
-									c.groups.put("" + max_key, "" + destination_id);
-								}
-
-								ContactManagement.updateContactOnLocalDb(context, c);
-							}
-						}
-						group.group_id = destination_id;
-					} else {
-						removeGroupFromLocalDbByInternalId(context, group.getInternal_id());
-					}
-					boolean edited = false;
-					if (DataManagement.networkAvailable) {
-						edited = updateGroupInRemoteDb(context, group);
-					}
-					if (edited) {
-						updateGroupOnLocalDb(context, group, 0, false);
-					}
-
+			if (group.group_id != 0) {
+				boolean check = updateGroupInRemoteDb(context, group);
+				int destination_id = group.group_id;
+				if (!check) {
+					destination_id = insertGroupToRemoteDb(context, group, 0);
 				}
-				result.moveToNext();
+				if (destination_id >= 0) {
+					updateGroupIdInLocalDb(context, group.getInternal_id(), destination_id);
+					int max_key = 0;
+					if (group.contacts != null) {
+
+						for (String s : group.contacts.keySet()) {
+							Contact c = ContactManagement.getContactFromLocalDb(context, Integer.parseInt(group.contacts.get(s)), 0);
+
+							if (c.groups != null) {
+								Set<String> keySet = c.groups.keySet();
+								for (String g : keySet) {
+									if (c.groups.get(g).equalsIgnoreCase(String.valueOf(group.group_id))) {
+										c.groups.remove(g);
+										ContactManagement.updateContactOnLocalDb(context, c);
+										break;
+									}
+								}
+							}
+
+							if (c.groups != null) {
+								for (String key : c.groups.keySet()) {
+									int temp = Integer.parseInt(key);
+									if (temp > max_key) {
+										max_key = temp;
+									}
+								}
+								c.groups.put(String.valueOf(max_key + 1), String.valueOf(destination_id));
+							} else {
+								c.groups = new HashMap<String, String>();
+								c.groups.put(String.valueOf(max_key), String.valueOf(destination_id));
+							}
+
+							ContactManagement.updateContactOnLocalDb(context, c);
+						}
+					}
+					group.group_id = destination_id;
+				} else {
+					removeGroupFromLocalDbByInternalId(context, group.getInternal_id());
+				}
+				boolean edited = false;
+				if (DataManagement.networkAvailable) {
+					edited = updateGroupInRemoteDb(context, group);
+				}
+				if (edited) {
+					updateGroupOnLocalDb(context, group, 0, false);
+				}
+
 			}
-			result.close();
 		}
+		result.close();
+
 		SaveDeletedData offlineDeletedGroups = new SaveDeletedData(context);
 		String offlineDeleted = offlineDeletedGroups.getDELETED_GROUPS();
 		String[] ids = offlineDeleted.split(SDMetaData.SEPARATOR);
-		if (ids[0] != "") {
+		if (ids[0].length() > 0) {
 			for (int i = 0; i < ids.length; i++) {
 				int id = Integer.parseInt(ids[i]);
 				removeGroupFromRemoteDb(context, id);
 			}
 		}
 		offlineDeletedGroups.clear(2);
-		result.close();
 	}
 
 }

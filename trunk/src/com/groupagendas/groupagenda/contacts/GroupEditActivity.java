@@ -223,7 +223,7 @@ public class GroupEditActivity extends Activity implements OnClickListener {
 			editedGroup.contacts = new HashMap<String, String>();
 
 			for (int i = 0, l = selectedContacts.size(); i < l; i++) {
-				editedGroup.contacts.put("" + i, "" + selectedContacts.get(i).contact_id);
+				editedGroup.contacts.put(String.valueOf(i), String.valueOf(selectedContacts.get(i).contact_id));
 			}
 			editedGroup.contact_count = editedGroup.contacts.size();
 
@@ -293,7 +293,7 @@ public class GroupEditActivity extends Activity implements OnClickListener {
 			editedGroup.contacts = new HashMap<String, String>();
 
 			for (int i = 0, l = selectedContacts.size(); i < l; i++) {
-				editedGroup.contacts.put("" + i, "" + selectedContacts.get(i).contact_id);
+				editedGroup.contacts.put(String.valueOf(i), String.valueOf(selectedContacts.get(i).contact_id));
 			}
 			editedGroup.contact_count = editedGroup.contacts.size();
 
@@ -328,7 +328,7 @@ public class GroupEditActivity extends Activity implements OnClickListener {
 					if (c.groups != null) {
 						Set<String> keySet = c.groups.keySet();
 						for (String g : keySet) {
-							if (c.groups.get(g).equalsIgnoreCase("" + editedGroup.group_id)) {
+							if (c.groups.get(g).equalsIgnoreCase(String.valueOf(editedGroup.group_id))) {
 								c.groups.remove(g);
 								if (c.groups.size() == 0) {
 									c.groups = new HashMap<String, String>();
@@ -358,10 +358,10 @@ public class GroupEditActivity extends Activity implements OnClickListener {
 									c.groups = new HashMap<String, String>();
 								}
 							}
-							c.groups.put("" + (max_key + 1), "" + editedGroup.group_id);
+							c.groups.put(String.valueOf(max_key + 1), String.valueOf(editedGroup.group_id));
 						} else {
 							c.groups = new HashMap<String, String>();
-							c.groups.put("" + max_key, "" + editedGroup.group_id);
+							c.groups.put(String.valueOf(max_key), String.valueOf(editedGroup.group_id));
 						}
 
 						ContactManagement.updateContactOnLocalDb(getApplicationContext(), c);
@@ -545,7 +545,7 @@ public class GroupEditActivity extends Activity implements OnClickListener {
 
 				for (int i = 0, l = ids.length; i < l; i++) {
 					if (selections[i]) {
-						editedGroup.contacts.put("" + i, "" + ids[i]);
+						editedGroup.contacts.put(String.valueOf(i), String.valueOf(ids[i]));
 					}
 				}
 				editedGroup.contact_count = editedGroup.contacts.size();
@@ -593,8 +593,6 @@ public class GroupEditActivity extends Activity implements OnClickListener {
 	}
 
 	private void doCrop() {
-		final ArrayList<CropOption> cropOptions = new ArrayList<CropOption>();
-
 		Intent intent = new Intent("com.android.camera.action.CROP");
 		intent.setType("image/*");
 
@@ -624,6 +622,7 @@ public class GroupEditActivity extends Activity implements OnClickListener {
 
 				startActivityForResult(i, CROP_FROM_CAMERA);
 			} else {
+				final ArrayList<CropOption> cropOptions = new ArrayList<CropOption>(list.size());
 				for (ResolveInfo res : list) {
 					final CropOption co = new CropOption();
 

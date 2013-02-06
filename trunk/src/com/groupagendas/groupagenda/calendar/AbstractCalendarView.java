@@ -4,23 +4,26 @@ package com.groupagendas.groupagenda.calendar;
  * @author justinas.marcinka@gmail.com
  */
 
+import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
+import java.util.List;
 import java.util.TreeMap;
 
 import android.content.Context;
+import android.content.res.Resources;
 import android.database.Cursor;
 import android.graphics.Rect;
 import android.os.AsyncTask;
 import android.util.AttributeSet;
+import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.GestureDetector;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.TouchDelegate;
 import android.view.View;
-import android.view.WindowManager;
 import android.widget.FrameLayout;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
@@ -67,18 +70,34 @@ public abstract class AbstractCalendarView extends LinearLayout {
 	protected TouchDelegateGroup touchDelegates;
 	TextView topPanelTitle;
 	private FrameLayout topPanelBottomLineFrame;
+	
+	protected final int DISPLAY_WIDTH;
+	protected final int VIEW_WIDTH;
+	protected final int VIEW_HEIGHT;
+	protected final float densityFactor;
+	{
+		Resources r = getResources();
+		DisplayMetrics dm = r.getDisplayMetrics();
+		densityFactor = dm.density;
+		final int headFoot = Math.round((r.getInteger(R.integer.CALENDAR_TOPBAR_HEIGHT) + r.getInteger(R.integer.NAVBAR_HEIGHT)) * densityFactor);
+		
+		/* Seems not necessary
+		WindowManager wm = (WindowManager) getContext().getSystemService(Context.WINDOW_SERVICE);
+		if (wm == null) {
+			assert (Build.VERSION.SDK_INT == 0 || isInEditMode());
+		*/
+			DISPLAY_WIDTH = dm.widthPixels;
+			VIEW_HEIGHT = dm.heightPixels - headFoot;
+		/* Fun fact: in ADT plugin, d.getWidth() is 0
+		} else {
+			Display d = wm.getDefaultDisplay();
+			DISPLAY_WIDTH = d.getWidth();
+			VIEW_HEIGHT = d.getHeight() - headFoot;
+		}
+		*/
+		VIEW_WIDTH = DISPLAY_WIDTH;
+	}
 
-	protected final int DISPLAY_WIDTH = ((WindowManager) getContext().getSystemService(Context.WINDOW_SERVICE)).
-			getDefaultDisplay().getWidth();
-	protected final float densityFactor = getResources().getDisplayMetrics().density;
-	protected final int VIEW_WIDTH = ((WindowManager) getContext().getSystemService(Context.WINDOW_SERVICE)).
-			getDefaultDisplay().getWidth();
-
-	protected final int VIEW_HEIGHT = ((WindowManager) getContext().getSystemService(Context.WINDOW_SERVICE)).
-			getDefaultDisplay().getHeight()
-			- Math.round((getResources().getInteger(
-					R.integer.CALENDAR_TOPBAR_HEIGHT) + getResources()
-					.getInteger(R.integer.NAVBAR_HEIGHT)) * densityFactor);
 	protected LayoutInflater mInflater;
 
 	protected boolean am_pmEnabled;
@@ -139,6 +158,18 @@ public abstract class AbstractCalendarView extends LinearLayout {
 		} else {
 			HourNames = getResources().getStringArray(R.array.hour_names);
 		}
+		
+		/*{ In a real device, the values are equal; need proof-of-concept for side effects, if any
+			Resources r = getResources();
+			DisplayMetrics dm = r.getDisplayMetrics();
+			WindowManager wm = (WindowManager) getContext().getSystemService(Context.WINDOW_SERVICE);
+			if (wm != null) {
+				Display d = wm.getDefaultDisplay();
+				Log.e("CalendarView", "WM Default Display width: " + d.getWidth() + " height: " + d.getHeight());
+				Log.e("CalendarView", "DisplayMetrics px width: " + dm.widthPixels + " height: " + dm.heightPixels);
+			}
+		}*/
+		
 		// TODO Set calendar_top_bar height in code
 		// RelativeLayout topPanel = (RelativeLayout)
 		// this.findViewById(R.layout.calendar_top_bar);
@@ -315,7 +346,8 @@ public abstract class AbstractCalendarView extends LinearLayout {
 			if(NavbarActivity.doUneedSleep){
 				try{ Thread.sleep(1200); }catch(InterruptedException e){ e.printStackTrace(); }
 			}
-			Calendar calendar = Calendar.getInstance();
+			// Calendar calendar = Calendar.getInstance();
+			long start = System.nanoTime();
 			Account account = new Account(context);
 			sortedEvents = new TreeMap<String, ArrayList<Event>>();
 			if (account.getShow_ga_calendars()) {
@@ -334,16 +366,20 @@ public abstract class AbstractCalendarView extends LinearLayout {
 					}
 				}
 			}
-			Log.e("End Loading GA", Calendar.getInstance().getTimeInMillis() - calendar.getTimeInMillis()+"");
-			calendar = Calendar.getInstance();
+			Log.e("End Loading GA", String.valueOf((System.nanoTime() - start) / 1000000));
+			// Log.e("End Loading GA", Calendar.getInstance().getTimeInMillis() - calendar.getTimeInMillis()+"");
+			// calendar = Calendar.getInstance();
+			start = System.nanoTime();
 			if (account.getShow_native_calendars()) {
 				ArrayList<Event> nativeEvents = queryNativeEvents();
 				for (Event nativeEvent : nativeEvents) {
 					TreeMapUtils.putNativeEventsIntoTreeMap(context, sortedEvents, nativeEvent);
 				}
 			}
-			Log.e("End Loading NATIVE", Calendar.getInstance().getTimeInMillis() - calendar.getTimeInMillis()+"");
-			calendar = Calendar.getInstance();
+			Log.e("End Loading NATIVE", String.valueOf((System.nanoTime() - start) / 1000000));
+			// Log.e("End Loading NATIVE", Calendar.getInstance().getTimeInMillis() - calendar.getTimeInMillis()+"");
+			// calendar = Calendar.getInstance();
+			start = System.nanoTime();
 			if (account.getShow_birthdays_calendars()) {
 				ArrayList<Event> birthdayEvents = queryBirthdayEvents();
 				for (Event birthdayEvent : birthdayEvents) {
@@ -351,7 +387,8 @@ public abstract class AbstractCalendarView extends LinearLayout {
 							birthdayEvent);
 				}
 			}
-			Log.e("End Loading BIRTHDAYS", Calendar.getInstance().getTimeInMillis() - calendar.getTimeInMillis()+"");
+			Log.e("End Loading BIRTHDAYS", String.valueOf((System.nanoTime() - start) / 1000000));
+			// Log.e("End Loading BIRTHDAYS", Calendar.getInstance().getTimeInMillis() - calendar.getTimeInMillis()+"");
 			/*
 			 * if(account.getShow_ga_calendars()){ sortedEvents =
 			 * TreeMapUtils.sortEvents(context,
@@ -368,55 +405,52 @@ public abstract class AbstractCalendarView extends LinearLayout {
 		}
 
 		private ArrayList<Event> createEventsListFromCursor(Cursor result) {
-			ArrayList<Event> list = new ArrayList<Event>();
-			if (result.moveToFirst()) {
-				while (!result.isAfterLast()) {
-					Event eventProjection = new Event();
+			ArrayList<Event> list = new ArrayList<Event>(result.getCount());
+			while (result.moveToNext()) {
+				Event eventProjection = new Event();
+				eventProjection
+						.setInternalID(result.getLong(result
+								.getColumnIndexOrThrow(EventsProvider.EMetaData.EventsMetaData._ID)));
+				eventProjection
+						.setEvent_id(result.getInt(result
+								.getColumnIndexOrThrow(EventsProvider.EMetaData.EventsMetaData.E_ID)));
+				eventProjection
+						.setTitle(result.getString(result
+								.getColumnIndexOrThrow(EventsProvider.EMetaData.EventsMetaData.TITLE)));
+				eventProjection
+						.setIcon(result.getString(result
+								.getColumnIndexOrThrow(EventsProvider.EMetaData.EventsMetaData.ICON)));
+				eventProjection
+						.setColor(result.getString(result
+								.getColumnIndexOrThrow(EventsProvider.EMetaData.EventsMetaData.COLOR)));
+				eventProjection
+						.setDisplayColor(result.getString(result
+								.getColumnIndexOrThrow(EventsProvider.EMetaData.EventsMetaData.EVENT_DISPLAY_COLOR))); // 2012-10-29
+				String user_timezone = CalendarSettings
+						.getTimeZone(context);
+				long timeinMillis = result
+						.getLong(result
+								.getColumnIndexOrThrow(EventsProvider.EMetaData.EventsMetaData.TIME_START_UTC_MILLISECONDS));
+				eventProjection.setStartCalendar(Utils.createCalendar(
+						timeinMillis, user_timezone));
+				timeinMillis = result
+						.getLong(result
+								.getColumnIndexOrThrow(EventsProvider.EMetaData.EventsMetaData.TIME_END_UTC_MILLISECONDS));
+				eventProjection.setEndCalendar(Utils.createCalendar(
+						timeinMillis, user_timezone));
+				eventProjection
+						.setIs_all_day(result.getInt(result
+								.getColumnIndexOrThrow(EventsProvider.EMetaData.EventsMetaData.IS_ALL_DAY)) == 1);
+				eventProjection
+						.setStatus(result.getInt(result
+								.getColumnIndexOrThrow(EventsProvider.EMetaData.EventsMetaData.STATUS)));
+				if (result.getColumnIndex(EventsProvider.EMetaData.EventsIndexesMetaData.DAY) > 0) {
 					eventProjection
-							.setInternalID(result.getLong(result
-									.getColumnIndexOrThrow(EventsProvider.EMetaData.EventsMetaData._ID)));
-					eventProjection
-							.setEvent_id(result.getInt(result
-									.getColumnIndexOrThrow(EventsProvider.EMetaData.EventsMetaData.E_ID)));
-					eventProjection
-							.setTitle(result.getString(result
-									.getColumnIndexOrThrow(EventsProvider.EMetaData.EventsMetaData.TITLE)));
-					eventProjection
-							.setIcon(result.getString(result
-									.getColumnIndexOrThrow(EventsProvider.EMetaData.EventsMetaData.ICON)));
-					eventProjection
-							.setColor(result.getString(result
-									.getColumnIndexOrThrow(EventsProvider.EMetaData.EventsMetaData.COLOR)));
-					eventProjection
-							.setDisplayColor(result.getString(result
-									.getColumnIndexOrThrow(EventsProvider.EMetaData.EventsMetaData.EVENT_DISPLAY_COLOR))); // 2012-10-29
-					String user_timezone = CalendarSettings
-							.getTimeZone(context);
-					long timeinMillis = result
-							.getLong(result
-									.getColumnIndexOrThrow(EventsProvider.EMetaData.EventsMetaData.TIME_START_UTC_MILLISECONDS));
-					eventProjection.setStartCalendar(Utils.createCalendar(
-							timeinMillis, user_timezone));
-					timeinMillis = result
-							.getLong(result
-									.getColumnIndexOrThrow(EventsProvider.EMetaData.EventsMetaData.TIME_END_UTC_MILLISECONDS));
-					eventProjection.setEndCalendar(Utils.createCalendar(
-							timeinMillis, user_timezone));
-					eventProjection
-							.setIs_all_day(result.getInt(result
-									.getColumnIndexOrThrow(EventsProvider.EMetaData.EventsMetaData.IS_ALL_DAY)) == 1);
-					eventProjection
-							.setStatus(result.getInt(result
-									.getColumnIndexOrThrow(EventsProvider.EMetaData.EventsMetaData.STATUS)));
-					if(result.getColumnIndex(EventsProvider.EMetaData.EventsIndexesMetaData.DAY) > 0){
-						eventProjection
-								.setEvents_day(result.getString(result
-										.getColumnIndexOrThrow(EventsProvider.EMetaData.EventsIndexesMetaData.DAY)));
-					}
-
-					list.add(eventProjection);
-					result.moveToNext();
+							.setEvents_day(result.getString(result
+									.getColumnIndexOrThrow(EventsProvider.EMetaData.EventsIndexesMetaData.DAY)));
 				}
+
+				list.add(eventProjection);
 			}
 			return list;
 		}
