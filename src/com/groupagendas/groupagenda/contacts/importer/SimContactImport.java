@@ -27,48 +27,46 @@ public class SimContactImport {
 		Cursor cursorSim = context.getContentResolver().query(simUri, null, null, null, null);
 		totalEntries = cursorSim.getCount();
 
-		if (cursorSim.moveToFirst()) {
-			while (!cursorSim.isAfterLast()) {
-				Contact simContact = new Contact();
-				simPhoneName = cursorSim.getString(cursorSim.getColumnIndex(DISPLAY_NAME));
-				String[] nameArray;
-				String firstName = "";
-				String lastName = "";
+		while (cursorSim.moveToNext()) {
+			Contact simContact = new Contact();
+			simPhoneName = cursorSim.getString(cursorSim.getColumnIndex(DISPLAY_NAME));
+			String[] nameArray;
+			String firstName = "";
+			String lastName = "";
 
-				if (simPhoneName.matches("[0-9,A-Z,a-z]*\\s[0-9,A-Z,a-z]*")) {
-					nameArray = simPhoneName.split("\\s");
-					firstName = nameArray[0];
-					if (nameArray.length <= 2) {
-						lastName = nameArray[1];
-					} else if (nameArray.length > 2) {
-						for (int i = 1; i < nameArray.length; i++) {
-							lastName = lastName + nameArray[i];
-						}
+			if (simPhoneName.matches("[0-9,A-Z,a-z]*\\s[0-9,A-Z,a-z]*")) {
+				nameArray = simPhoneName.split("\\s");
+				firstName = nameArray[0];
+				if (nameArray.length <= 2) {
+					lastName = nameArray[1];
+				} else if (nameArray.length > 2) {
+					for (int i = 1; i < nameArray.length; i++) {
+						lastName = lastName + nameArray[i];
 					}
-				} else {
-					firstName = simPhoneName;
-					lastName = "";
 				}
+			} else {
+				firstName = simPhoneName;
+				lastName = "";
+			}
 
-				simPhoneNo = cursorSim.getString(cursorSim.getColumnIndex(NUMBER));
-				simPhoneNo.replaceAll("\\D", "");
-				simPhoneNo.replaceAll("&", "");
-				simPhoneName = simPhoneName.replace("|", "");
-				simContact.name = firstName;
-				simContact.lastname = lastName;
-				simContact.phone1 = simPhoneNo;
-				Log.i("SimContacts", simPhoneName);
-				Log.i("SimContactsNo", simPhoneNo);
-				
-				if(ContactManagement.insertContact(context, simContact, false)){
-					importedContactAmount++;
-				} else {
-					unimportedContactAmount++;
-				}
-				cursorSim.moveToNext();
+			simPhoneNo = cursorSim.getString(cursorSim.getColumnIndex(NUMBER));
+			simPhoneNo.replaceAll("\\D", "");
+			simPhoneNo.replaceAll("&", "");
+			simPhoneName = simPhoneName.replace("|", "");
+			simContact.name = firstName;
+			simContact.lastname = lastName;
+			simContact.phone1 = simPhoneNo;
+			Log.i("SimContacts", simPhoneName);
+			Log.i("SimContactsNo", simPhoneNo);
+			
+			if (ContactManagement.insertContact(context, simContact, false)) {
+				importedContactAmount++;
+			} else {
+				unimportedContactAmount++;
 			}
 		}
 		cursorSim.close();
+		
 		importStats[0] = importedContactAmount;
 		importStats[1] = unimportedContactAmount;
 		importStats[2] = totalEntries;

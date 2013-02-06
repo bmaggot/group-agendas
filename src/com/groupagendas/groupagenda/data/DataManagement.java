@@ -959,26 +959,18 @@ public class DataManagement {
 
 			Cursor result = Data.getmContext().getContentResolver()
 					.query(AccountProvider.AMetaData.AutoiconMetaData.CONTENT_URI, null, null, null, null);
-			result.moveToFirst();
 
-			int i = 1;
-			while (!result.isAfterLast()) {
-
+			Charset utf8 = Charset.forName("UTF-8");
+			for (int i = 1; result.moveToNext(); i++) {
 				reqEntity.addPart(
 						"autoicon[" + i + "][icon]",
-						new StringBody(result.getString(result.getColumnIndex(AccountProvider.AMetaData.AutoiconMetaData.ICON)), Charset
-								.forName("UTF-8")));
+						new StringBody(result.getString(result.getColumnIndex(AccountProvider.AMetaData.AutoiconMetaData.ICON)), utf8));
 				reqEntity.addPart(
 						"autoicon[" + i + "][keyword]",
-						new StringBody(result.getString(result.getColumnIndex(AccountProvider.AMetaData.AutoiconMetaData.KEYWORD)), Charset
-								.forName("UTF-8")));
+						new StringBody(result.getString(result.getColumnIndex(AccountProvider.AMetaData.AutoiconMetaData.KEYWORD)), utf8));
 				reqEntity.addPart(
 						"autoicon[" + i + "][context]",
-						new StringBody(result.getString(result.getColumnIndex(AccountProvider.AMetaData.AutoiconMetaData.CONTEXT)), Charset
-								.forName("UTF-8")));
-
-				i++;
-				result.moveToNext();
+						new StringBody(result.getString(result.getColumnIndex(AccountProvider.AMetaData.AutoiconMetaData.CONTEXT)), utf8));
 			}
 
 			post.setEntity(reqEntity);
@@ -1007,12 +999,10 @@ public class DataManagement {
 	}
 
 	public static ArrayList<AutoIconItem> getAutoIcons(Context context) {
-		ArrayList<AutoIconItem> Items = new ArrayList<AutoIconItem>();
-
 		Cursor result = context.getContentResolver().query(AccountProvider.AMetaData.AutoiconMetaData.CONTENT_URI, null, null, null, null);
-		result.moveToFirst();
+		ArrayList<AutoIconItem> Items = new ArrayList<AutoIconItem>(result.getCount());
 
-		while (!result.isAfterLast()) {
+		while (result.moveToNext()) {
 
 			final AutoIconItem item = new AutoIconItem();
 
@@ -1020,8 +1010,6 @@ public class DataManagement {
 			item.icon = result.getString(result.getColumnIndex(AccountProvider.AMetaData.AutoiconMetaData.ICON));
 			item.keyword = result.getString(result.getColumnIndex(AccountProvider.AMetaData.AutoiconMetaData.KEYWORD));
 			item.context = result.getString(result.getColumnIndex(AccountProvider.AMetaData.AutoiconMetaData.CONTEXT));
-
-			result.moveToNext();
 
 			Items.add(item);
 		}
@@ -1042,24 +1030,18 @@ public class DataManagement {
 
 			Cursor result = Data.getmContext().getContentResolver()
 					.query(AccountProvider.AMetaData.AutocolorMetaData.CONTENT_URI, null, null, null, null);
-			result.moveToFirst();
 
-			int i = 1;
-			while (!result.isAfterLast()) {
-
+			Charset utf8 = Charset.forName("UTF-8");
+			for (int i = 1; result.moveToNext(); i++) {
 				reqEntity.addPart(
 						"autocolor[" + i + "][color]",
-						new StringBody(result.getString(result.getColumnIndex(AccountProvider.AMetaData.AutocolorMetaData.COLOR)), Charset
-								.forName("UTF-8")));
+						new StringBody(result.getString(result.getColumnIndex(AccountProvider.AMetaData.AutocolorMetaData.COLOR)), utf8));
 				reqEntity.addPart("autocolor[" + i + "][keyword]",
 						new StringBody(result.getString(result.getColumnIndex(AccountProvider.AMetaData.AutocolorMetaData.KEYWORD)),
-								Charset.forName("UTF-8")));
+								utf8));
 				reqEntity.addPart("autocolor[" + i + "][context]",
 						new StringBody(result.getString(result.getColumnIndex(AccountProvider.AMetaData.AutocolorMetaData.CONTEXT)),
-								Charset.forName("UTF-8")));
-
-				i++;
-				result.moveToNext();
+								utf8));
 			}
 
 			post.setEntity(reqEntity);
@@ -1088,24 +1070,17 @@ public class DataManagement {
 	}
 
 	public static ArrayList<AutoColorItem> getAutoColors(Context context) {
-		ArrayList<AutoColorItem> Items = new ArrayList<AutoColorItem>();
-
 		Cursor result = context.getContentResolver().query(AccountProvider.AMetaData.AutocolorMetaData.CONTENT_URI, null, null, null, null);
-		if (result.moveToFirst()) {
+		ArrayList<AutoColorItem> Items = new ArrayList<AutoColorItem>(result.getCount());
+		while (result.moveToNext()) {
+			final AutoColorItem item = new AutoColorItem();
 
-			while (!result.isAfterLast()) {
+			item.id = result.getInt(result.getColumnIndex(AccountProvider.AMetaData.AutocolorMetaData.C_ID));
+			item.color = result.getString(result.getColumnIndex(AccountProvider.AMetaData.AutocolorMetaData.COLOR));
+			item.keyword = result.getString(result.getColumnIndex(AccountProvider.AMetaData.AutocolorMetaData.KEYWORD));
+			item.context = result.getString(result.getColumnIndex(AccountProvider.AMetaData.AutocolorMetaData.CONTEXT));
 
-				final AutoColorItem item = new AutoColorItem();
-
-				item.id = result.getInt(result.getColumnIndex(AccountProvider.AMetaData.AutocolorMetaData.C_ID));
-				item.color = result.getString(result.getColumnIndex(AccountProvider.AMetaData.AutocolorMetaData.COLOR));
-				item.keyword = result.getString(result.getColumnIndex(AccountProvider.AMetaData.AutocolorMetaData.KEYWORD));
-				item.context = result.getString(result.getColumnIndex(AccountProvider.AMetaData.AutocolorMetaData.CONTEXT));
-
-				Items.add(item);
-
-				result.moveToNext();
-			}
+			Items.add(item);
 		}
 		result.close();
 
@@ -1210,7 +1185,7 @@ public class DataManagement {
 
 						success = object.getBoolean("success");
 
-						Log.e("editGroup - success", "" + success);
+						Log.e("editGroup - success", String.valueOf(success));
 
 						if (success == false) {
 							Data.setERROR(object.getJSONObject("error").getString("reason"));
@@ -1301,8 +1276,7 @@ public class DataManagement {
 									new String[] { "_id", "title", "description", "dtstart", "dtend", "eventLocation", "eventTimezone" },
 									where, null, null);
 
-					cursor.moveToFirst();
-					while (!cursor.isAfterLast()) {
+					while (cursor.moveToNext()) {
 						final Event item = new Event();
 
 						item.setNative(true);
@@ -1326,7 +1300,6 @@ public class DataManagement {
 						item.setEndCalendar(Utils.createCalendar(endLong, item.getTimezone()));
 
 						events.add(item);
-						cursor.moveToNext();
 					}
 				}
 
@@ -1588,12 +1561,12 @@ public class DataManagement {
 			long timeInMillis = event.getStartCalendar().getTimeInMillis();
 			if (timeInMillis > 0)
 				reqEntity.addPart("timestamp_start_utc",
-						new StringBody("" + Utils.millisToUnixTimestamp(timeInMillis), Charset.forName("UTF-8")));
+						new StringBody(String.valueOf(Utils.millisToUnixTimestamp(timeInMillis)), Charset.forName("UTF-8")));
 
 			timeInMillis = event.getEndCalendar().getTimeInMillis();
 			if (timeInMillis > 0)
 				reqEntity.addPart("timestamp_end_utc",
-						new StringBody("" + Utils.millisToUnixTimestamp(timeInMillis), Charset.forName("UTF-8")));
+						new StringBody(String.valueOf(Utils.millisToUnixTimestamp(timeInMillis)), Charset.forName("UTF-8")));
 
 			// timeInMillis = event.getReminder1().getTimeInMillis();
 			// if (timeInMillis > 0)
@@ -2283,7 +2256,7 @@ public class DataManagement {
 			MultipartEntity reqEntity = new MultipartEntity(HttpMultipartMode.BROWSER_COMPATIBLE);
 
 			reqEntity.addPart(TOKEN, new StringBody(Data.getToken(context), Charset.forName("UTF-8")));
-			reqEntity.addPart(LATEST_UPDATE_UNIX_TIMESTAMP, new StringBody("" + latestUpdateUnixTimestamp, Charset.forName("UTF-8")));
+			reqEntity.addPart(LATEST_UPDATE_UNIX_TIMESTAMP, new StringBody(String.valueOf(latestUpdateUnixTimestamp), Charset.forName("UTF-8")));
 
 			post.setEntity(reqEntity);
 			HttpResponse rp = webService.getResponseFromHttpPost(post);

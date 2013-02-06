@@ -110,17 +110,17 @@ public class EventsActivity extends ListActivity {
 		this.setContentView(R.layout.events);
 
 		topView = (TextView) findViewById(R.id.topText);
-		
+
 		eventsAdapter = new EventsAdapter(new ArrayList<Event>(), this);
 		eventsAdapter.registerDataSetObserver(new DataSetObserver() {
 			@Override
 			public void onChanged() {
-				
 				if (new_invites != null)
 					new_invites.setTitle(getString(R.string.status_new_invites_count, eventsAdapter.getNewInvitesCount()));
-                if (filterState != FilterState.ALL){
-                	if(NavbarActivity.notResponses){
-                		if (filterState == FilterState.NEW_INVITES) changeTitle(getString(R.string.status_new_invites_count, eventsAdapter.getNewInvitesCount()));
+                if (filterState != FilterState.ALL) {
+                	if (NavbarActivity.notResponses) {
+                		if (filterState == FilterState.NEW_INVITES)
+                			changeTitle(getString(R.string.status_new_invites_count, eventsAdapter.getNewInvitesCount()));
                 	} else {
                 		changeTitle(getString(R.string.responses));
             			createResponsesList();
@@ -185,8 +185,8 @@ public class EventsActivity extends ListActivity {
 	}
 
 	private void filterEventsByStatus(int status) {
-		eventsAdapter.getFilter().filter("" + status);
-		eventsAdapter.setFilter("" + status);
+		eventsAdapter.getFilter().filter(String.valueOf(status));
+		eventsAdapter.setFilter(String.valueOf(status));
 	}
 
 	@Override
@@ -218,11 +218,10 @@ public class EventsActivity extends ListActivity {
 			} else {
 				JSONArray gs = object.getJSONArray("items");
 				int count = gs.length();
-				if (count > 0) {
-					for (int i = 0; i < count; i++) {
-						JSONObject g = gs.getJSONObject(i);
-						list.add(g);
-					}
+				list.ensureCapacity(count);
+				for (int i = 0; i < count; i++) {
+					JSONObject g = gs.getJSONObject(i);
+					list.add(g);
 				}
 			}
 		} catch (Exception ex) {

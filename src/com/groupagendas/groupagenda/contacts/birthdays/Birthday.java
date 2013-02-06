@@ -18,7 +18,7 @@ public class Birthday {
 
 	public Birthday(Context context, Contact contact) {
 		Account acc = new Account(context);
-		setContact_id("" + contact.contact_id);
+		setContact_id(String.valueOf(contact.contact_id));
 		setName(contact.name);
 		setLastName(contact.lastname);
 		setBirthday(contact.birthdate);

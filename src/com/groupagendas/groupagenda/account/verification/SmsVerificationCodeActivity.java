@@ -40,11 +40,11 @@ public class SmsVerificationCodeActivity extends Activity {
 			public void onClick(View v) {
 				new ConfirmationSyncTask().execute();
 
-				Log.e("confirm code", "" + confirmCode.getText().toString());
+				Log.e("confirm code", confirmCode.getText().toString());
 				// finish();
 			}
 		});
-		Log.e("phone number", "" + getIntent().getStringExtra(NavbarActivity.newPhoneNumber));
+		Log.e("phone number", getIntent().getStringExtra(NavbarActivity.newPhoneNumber));
 
 	}
 

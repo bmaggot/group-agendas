@@ -237,7 +237,7 @@ public class JSONUtils {
 					String jsonArraySelectedTime = e.getString(EventManagement.POLL);
 					ArrayList<JSONObject> selectedPollTime = new ArrayList<JSONObject>();
 					if(jsonArraySelectedTime != null && !jsonArraySelectedTime.contentEquals("null")){
-						final JSONArray jsonArray= new JSONArray(jsonArraySelectedTime);
+						final JSONArray jsonArray = new JSONArray(jsonArraySelectedTime);
 						for (int i = 0; i < jsonArray.length(); i++) {
 							JSONObject pollThread = jsonArray.getJSONObject(i);
 							if(pollThread.getString("response").contentEquals("1")){
@@ -245,7 +245,7 @@ public class JSONUtils {
 							}
 						}
 					}
-					event.setSelectedEventPollsTime(""+selectedPollTime);
+					event.setSelectedEventPollsTime(String.valueOf(selectedPollTime));
 				} catch (JSONException e1) {
 					Reporter.reportError(context, EventManagement.CLASS_NAME, Thread.currentThread().getStackTrace()[2].getMethodName().toString(),
 							e1.getMessage());
@@ -255,23 +255,27 @@ public class JSONUtils {
 		}
 
 	public static Invited createInvitedListFromJSONArrayString(Context context,
-	String jsonArrayString, ArrayList<Invited> invites) throws JSONException  {
-	JSONArray jsonArray= new JSONArray(jsonArrayString);
-	if (invites == null) invites = new ArrayList<Invited>();
-	Account acc = new Account(context);
-	int id = acc.getUser_id();
-	Invited myInvite = null;
-	int count = jsonArray.length();
-	if (count > 0) {
+			String jsonArrayString, ArrayList<Invited> invites) throws JSONException {
+		JSONArray jsonArray = new JSONArray(jsonArrayString);
+		Account acc = new Account(context);
+		int id = acc.getUser_id();
+		Invited myInvite = null;
+		int count = jsonArray.length();
+		// if (invites == null)
+		//	invites = new ArrayList<Invited>(count);
+		// else
+		if (invites != null)
+			invites.ensureCapacity(count);
 		for (int i = 0; i < count; i++) {
 			JSONObject e = jsonArray.getJSONObject(i);
 			Invited o = JSONUtils.createInvitedFromJSONObject(e);
-			invites.add(o);
-			if (id == o.getGuid()) myInvite = o;
+			if (invites != null)
+				invites.add(o);
+			if (id == o.getGuid())
+				myInvite = o;
 		}
-	}
-	
-	return myInvite;
+
+		return myInvite;
 	}
 
 	public static Invited createInvitedFromJSONObject(JSONObject input) {

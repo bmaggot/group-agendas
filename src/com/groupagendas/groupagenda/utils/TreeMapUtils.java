@@ -18,12 +18,12 @@ public class TreeMapUtils {
 	
 	
 	public static ArrayList<Event> getEventsFromTreemap(Calendar date, TreeMap<String, ArrayList<Event>> tm){
-		if (date != null && tm != null)
+		if (date != null && tm != null) {
 			if (tm.containsKey(formatter.format(date.getTime()))) {
 				return tm.get(formatter.format(date.getTime()));
-			} 
-			return new ArrayList<Event>();
-		
+			}
+		}
+		return new ArrayList<Event>();
 	}
 	
 	public static TreeMap<String, ArrayList<Event>> sortEvents(Context context, ArrayList<Event> events) {
@@ -77,12 +77,12 @@ public class TreeMapUtils {
 		}
 		if (tm.containsKey(eventDay)) {
 			ArrayList<Event> tmpArrayList = tm.get(eventDay);
-			if(tmpArrayList != null){
+			if (tmpArrayList != null) {
 				tmpArrayList.add(event);
 				tm.put(eventDay, tmpArrayList);
 			}
 		} else {
-			ArrayList<Event> tmpArrayList = new ArrayList<Event>();
+			ArrayList<Event> tmpArrayList = new ArrayList<Event>(1);
 			tmpArrayList.add(event);
 			tm.put(eventDay, tmpArrayList);
 		}

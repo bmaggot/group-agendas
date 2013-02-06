@@ -73,10 +73,10 @@ public class ContactsAdapter extends AbstractAdapter<Contact> implements Filtera
 		 */
 		// if(contact.email != null && !contact.email.equals("null"))
 		// holder.email.setText(contact.email);
-		convertView.setTag("" + contact.contact_id);
+		convertView.setTag(String.valueOf(contact.contact_id));
 
 		if (contact.contact_id == 0)
-			holder.email.setText("" + contact.created);
+			holder.email.setText(String.valueOf(contact.created));
 
 		if (contact.image && contact.image_bytes != null) {
 			Bitmap bitmap = Utils.getResizedBitmap(BitmapFactory.decodeByteArray(contact.image_bytes, 0, contact.image_bytes.length), 72,

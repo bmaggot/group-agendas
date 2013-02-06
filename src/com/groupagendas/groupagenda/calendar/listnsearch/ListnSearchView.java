@@ -251,7 +251,6 @@ public class ListnSearchView extends LinearLayout {
 		 * @return
 		 */
 		private ArrayList<Event> getEventProjectionsForDisplay(Calendar date) {
-			ArrayList<Event> list = new ArrayList<Event>();
 			String[] projection = {
 					EventsProvider.EMetaData.EventsMetaData._ID,
 					EventsProvider.EMetaData.EventsMetaData.E_ID,
@@ -263,25 +262,23 @@ public class ListnSearchView extends LinearLayout {
 					EventsProvider.EMetaData.EventsMetaData.IS_ALL_DAY, };
 			
 			Cursor result = EventManagement.createEventProjectionByDateFromLocalDb(context, projection, date, 0, EventManagement.TM_EVENTS_FROM_GIVEN_DATE, null, true);
-			if (result.moveToFirst()) {
-				while (!result.isAfterLast()) {
-					Event eventProjection = new Event();
-					
-					eventProjection.setInternalID(result.getLong(result.getColumnIndexOrThrow(EventsProvider.EMetaData.EventsMetaData._ID)));
-					eventProjection.setEvent_id(result.getInt(result.getColumnIndexOrThrow(EventsProvider.EMetaData.EventsMetaData.E_ID)));
-					eventProjection.setTitle(result.getString(result.getColumnIndexOrThrow(EventsProvider.EMetaData.EventsMetaData.TITLE)));
-					eventProjection.setIcon(result.getString(result.getColumnIndexOrThrow(EventsProvider.EMetaData.EventsMetaData.ICON)));
-					eventProjection.setColor(result.getString(result.getColumnIndexOrThrow(EventsProvider.EMetaData.EventsMetaData.COLOR)));
-					String user_timezone = CalendarSettings.getTimeZone(context);
-					long timeinMillis = result.getLong(result.getColumnIndexOrThrow(EventsProvider.EMetaData.EventsMetaData.TIME_START_UTC_MILLISECONDS));
-					eventProjection.setStartCalendar(Utils.createCalendar(timeinMillis, user_timezone));
-					timeinMillis = result.getLong(result.getColumnIndexOrThrow(EventsProvider.EMetaData.EventsMetaData.TIME_END_UTC_MILLISECONDS));
-					eventProjection.setEndCalendar(Utils.createCalendar(timeinMillis, user_timezone));
-					eventProjection.setIs_all_day(result.getInt(result.getColumnIndexOrThrow(EventsProvider.EMetaData.EventsMetaData.IS_ALL_DAY)) == 1);
-					
-					list.add(eventProjection);
-					result.moveToNext();
-				}
+			ArrayList<Event> list = new ArrayList<Event>(result.getCount());
+			while (result.moveToNext()) {
+				Event eventProjection = new Event();
+				
+				eventProjection.setInternalID(result.getLong(result.getColumnIndexOrThrow(EventsProvider.EMetaData.EventsMetaData._ID)));
+				eventProjection.setEvent_id(result.getInt(result.getColumnIndexOrThrow(EventsProvider.EMetaData.EventsMetaData.E_ID)));
+				eventProjection.setTitle(result.getString(result.getColumnIndexOrThrow(EventsProvider.EMetaData.EventsMetaData.TITLE)));
+				eventProjection.setIcon(result.getString(result.getColumnIndexOrThrow(EventsProvider.EMetaData.EventsMetaData.ICON)));
+				eventProjection.setColor(result.getString(result.getColumnIndexOrThrow(EventsProvider.EMetaData.EventsMetaData.COLOR)));
+				String user_timezone = CalendarSettings.getTimeZone(context);
+				long timeinMillis = result.getLong(result.getColumnIndexOrThrow(EventsProvider.EMetaData.EventsMetaData.TIME_START_UTC_MILLISECONDS));
+				eventProjection.setStartCalendar(Utils.createCalendar(timeinMillis, user_timezone));
+				timeinMillis = result.getLong(result.getColumnIndexOrThrow(EventsProvider.EMetaData.EventsMetaData.TIME_END_UTC_MILLISECONDS));
+				eventProjection.setEndCalendar(Utils.createCalendar(timeinMillis, user_timezone));
+				eventProjection.setIs_all_day(result.getInt(result.getColumnIndexOrThrow(EventsProvider.EMetaData.EventsMetaData.IS_ALL_DAY)) == 1);
+				
+				list.add(eventProjection);
 			}
 			result.close();
 			return list;
@@ -300,19 +297,25 @@ public class ListnSearchView extends LinearLayout {
 			SimpleDateFormat sdf = new SimpleDateFormat("E, d MMMMM yyyy", getResources().getConfiguration().locale);
 			
 			ArrayList<SectionListItem> list = new ArrayList<SectionListItem>();
-			if (!sortedEvents.isEmpty())
+			if (!sortedEvents.isEmpty()) {
 				do {
 					section = sdf.format(date.getTime());
 
-					for (Event e : TreeMapUtils.getEventsFromTreemap(date, sortedEvents)) {
+					ArrayList<Event> evts = TreeMapUtils.getEventsFromTreemap(date, sortedEvents);
+					list.ensureCapacity(list.size() + evts.size());
+					for (Event e : evts) {
 						list.add(new SectionListItem(e, section));
 					}
 					
 					date.add(Calendar.DAY_OF_MONTH, 1);
 				} while (!formatter.format(date.getTime()).equals(sortedEvents.lastKey()));
+			}
 			
 			section = sdf.format(date.getTime());
-			for (Event e : TreeMapUtils.getEventsFromTreemap(date, sortedEvents)) {
+			
+			ArrayList<Event> evts = TreeMapUtils.getEventsFromTreemap(date, sortedEvents);
+			list.ensureCapacity(list.size() + evts.size());
+			for (Event e : evts) {
 				list.add(new SectionListItem(e, section));
 			}
 			eventsArray = list.toArray(new SectionListItem[list.size()]);

@@ -84,7 +84,7 @@ public class InvitedAdapter extends AbstractAdapter<Invited> {
 				view.setTag(Invited.OWN_INVITATION_ENTRY);
 				removeButton.setImageDrawable(null);
 			} else {
-				view.setTag("" + i);
+				view.setTag(String.valueOf(i));
 				
 				removeButton.setOnClickListener(new OnClickListener() {
 					

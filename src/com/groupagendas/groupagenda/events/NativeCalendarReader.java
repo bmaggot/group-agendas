@@ -43,7 +43,7 @@ public class NativeCalendarReader {
 				new String[] { TITLE, DESCRIPTION, BEGIN, END, EVENT_ID, ALLDAY, EVENTLOCATION, DURATION, RRULE, ID }, null, null,
 				"startDay ASC, startMinute ASC");
 
-		ArrayList<Event> nativeEvents = new ArrayList<Event>();
+		ArrayList<Event> nativeEvents = new ArrayList<Event>(eventCursor.getCount());
 		while (eventCursor.moveToNext()) {
 			nativeEvents.add(makeNativeEventFromCursor(context, eventCursor));
 		}
@@ -79,14 +79,15 @@ public class NativeCalendarReader {
 				.query(builder.build(),
 						new String[] { TITLE, DESCRIPTION, BEGIN, END, EVENT_ID, ALLDAY, EVENTLOCATION, DURATION, RRULE, ID}, null, null, null);
 
-		ArrayList<Event> nativeEvents = new ArrayList<Event>();
-		if(eventCursor != null){
+		if (eventCursor != null) {
+			ArrayList<Event> nativeEvents = new ArrayList<Event>(eventCursor.getCount());
 			while (eventCursor.moveToNext()) {
 				nativeEvents.add(makeNativeEventFromCursor(context, eventCursor));
 			}
 			eventCursor.close();
+			return nativeEvents;
 		}
-		return nativeEvents;
+		return new ArrayList<Event>(0);
 	}
 
 	public static Event makeNativeEventFromCursor(Context context, Cursor cursor) {

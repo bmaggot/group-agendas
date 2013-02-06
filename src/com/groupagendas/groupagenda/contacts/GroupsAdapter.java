@@ -64,7 +64,7 @@ public class GroupsAdapter extends AbstractAdapter<Group> implements Filterable 
 		}
 		holder.contact.setText(contactsText.toString());
 
-		convertView.setTag("" + group.group_id);
+		convertView.setTag(String.valueOf(group.group_id));
 
 		if (group.image && group.image_bytes != null) {
 			Bitmap bitmap = Utils.getResizedBitmap(BitmapFactory.decodeByteArray(group.image_bytes, 0, group.image_bytes.length), 72, 72);

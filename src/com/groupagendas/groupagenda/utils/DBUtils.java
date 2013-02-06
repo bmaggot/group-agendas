@@ -66,7 +66,7 @@ public class DBUtils {
 
 					Log.d("row start " + row, "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
 					for (int i = 0; i < cursor.getColumnCount(); i++) {
-						Log.d("columns " + i, "" + cursor.getColumnName(i) + " '" + cursor.getString(i) + "'");
+						Log.d("columns " + i, cursor.getColumnName(i) + " '" + cursor.getString(i) + "'");
 					}
 					Log.d("row end " + row, "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
 					row++;

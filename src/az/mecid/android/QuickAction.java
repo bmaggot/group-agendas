@@ -163,8 +163,9 @@ public class QuickAction extends CustomPopupWindow {
 		Drawable icon;
 		OnClickListener listener;
 
-		if (actionList == null)
-			actionList = new ArrayList<ActionItem>();
+		// Already moved to constructor
+		// if (actionList == null)
+		//	actionList = new ArrayList<ActionItem>();
 
 		for (int i = 0; i < actionList.size(); i++) {
 			ActionItem ai = actionList.get(i);
