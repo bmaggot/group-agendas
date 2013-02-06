@@ -88,7 +88,6 @@ public class AddressBookInfoActivity extends Activity {
 		String[] country_codes;
 		String[] timezones;
 		String[] altnames;
-		countriesList = new ArrayList<StaticTimezones>();
 
 		cities = getResources().getStringArray(R.array.city);
 		countries = getResources().getStringArray(R.array.countries);
@@ -96,10 +95,12 @@ public class AddressBookInfoActivity extends Activity {
 		country_codes = getResources().getStringArray(R.array.country_codes);
 		timezones = getResources().getStringArray(R.array.timezones);
 		altnames = getResources().getStringArray(R.array.timezone_altnames);
+		
+		countriesList = new ArrayList<StaticTimezones>(cities.length);
 		for (int i = 0; i < cities.length; i++) {
 			StaticTimezones temp = new EventActivity().new StaticTimezones();
 
-			temp.id = "" + i;
+			temp.id = String.valueOf(i);
 			temp.city = cities[i];
 			temp.country = countries[i];
 			temp.country2 = countries2[i];
@@ -109,10 +110,10 @@ public class AddressBookInfoActivity extends Activity {
 
 			countriesList.add(temp);
 		}
-		if (countriesList != null) {
+		// if (countriesList != null) {
 			countriesAdapter = new CountriesAdapter(AddressBookInfoActivity.this, R.layout.search_dialog_item, countriesList);
 			timezonesAdapter = new TimezonesAdapter(AddressBookInfoActivity.this, R.layout.search_dialog_item, countriesList);
-		}
+		// }
 
 		action = getIntent().getBooleanExtra("action", true);
 		fill_info = getIntent().getBooleanExtra("fill_info", false);

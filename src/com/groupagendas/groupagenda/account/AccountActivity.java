@@ -119,7 +119,7 @@ public class AccountActivity extends Activity implements OnClickListener {
 	private final int DIALOG_ERROR = 5;
 	private String errorStr;
 
-	private ArrayList<StaticTimezones> countriesList = new ArrayList<StaticTimezones>();
+	private ArrayList<StaticTimezones> countriesList = new ArrayList<StaticTimezones>(0);
 	private ArrayList<StaticTimezones> filteredCountriesList = new ArrayList<StaticTimezones>();
 	private CountriesAdapter countriesAdapter = null;
 	private TimezonesAdapter timezonesAdapter = null;
@@ -157,43 +157,46 @@ public class AccountActivity extends Activity implements OnClickListener {
 		super.onResume();
 		this.setContentView(R.layout.account);
 		final Account account = new Account(this);
-		String[] cities;
-		String[] countries;
-		String[] countries2;
-		String[] country_codes;
-		String[] timezones;
-		String[] altnames;
-		String[] call_codes;
-		
-		countriesList = new ArrayList<StaticTimezones>();
 
-		cities = getResources().getStringArray(R.array.city);
-		countries = getResources().getStringArray(R.array.countries);
-		countries2 = getResources().getStringArray(R.array.countries2);
-		country_codes = getResources().getStringArray(R.array.country_codes);
-		timezones = getResources().getStringArray(R.array.timezones);
-		altnames = getResources().getStringArray(R.array.timezone_altnames);
-		call_codes = getResources().getStringArray(R.array.call_codes);
+		// does not seem reasonable to re-initialize every single time
+		if (countriesList.isEmpty()) {
+			String[] cities;
+			String[] countries;
+			String[] countries2;
+			String[] country_codes;
+			String[] timezones;
+			String[] altnames;
+			String[] call_codes;
 
-		for (int i = 0; i < cities.length; i++) {
-			// TODO what have I done?!
-			StaticTimezones temp = new EventActivity().new StaticTimezones();
-
-			temp.id = "" + i;
-			temp.city = cities[i];
-			temp.country = countries[i];
-			temp.country2 = countries2[i];
-			temp.country_code = country_codes[i];
-			temp.timezone = timezones[i];
-			temp.altname = altnames[i];
-			temp.call_code = call_codes[i];
-
-			countriesList.add(temp);
-		}
-		if (countriesList != null) {
-			countriesAdapter = new CountriesAdapter(AccountActivity.this, R.layout.search_dialog_item, countriesList);
-			timezonesAdapter = new TimezonesAdapter(AccountActivity.this, R.layout.search_dialog_item, countriesList);
-			callcodesAdapter = new CallCodeAdapter(AccountActivity.this, R.layout.search_dialog_item, countriesList);
+			cities = getResources().getStringArray(R.array.city);
+			countries = getResources().getStringArray(R.array.countries);
+			countries2 = getResources().getStringArray(R.array.countries2);
+			country_codes = getResources().getStringArray(R.array.country_codes);
+			timezones = getResources().getStringArray(R.array.timezones);
+			altnames = getResources().getStringArray(R.array.timezone_altnames);
+			call_codes = getResources().getStringArray(R.array.call_codes);
+			
+			countriesList = new ArrayList<StaticTimezones>(cities.length);
+			for (int i = 0; i < cities.length; i++) {
+				// TODO what have I done?!
+				StaticTimezones temp = new EventActivity().new StaticTimezones();
+	
+				temp.id = String.valueOf(i);
+				temp.city = cities[i];
+				temp.country = countries[i];
+				temp.country2 = countries2[i];
+				temp.country_code = country_codes[i];
+				temp.timezone = timezones[i];
+				temp.altname = altnames[i];
+				temp.call_code = call_codes[i];
+	
+				countriesList.add(temp);
+			}
+			// if (countriesList != null) { // 
+				countriesAdapter = new CountriesAdapter(AccountActivity.this, R.layout.search_dialog_item, countriesList);
+				timezonesAdapter = new TimezonesAdapter(AccountActivity.this, R.layout.search_dialog_item, countriesList);
+				callcodesAdapter = new CallCodeAdapter(AccountActivity.this, R.layout.search_dialog_item, countriesList);
+			// }
 		}
 
 		email1View = (EditText) findViewById(R.id.email1View);
@@ -1051,8 +1054,6 @@ public class AccountActivity extends Activity implements OnClickListener {
 	}
 
 	private void doCrop() {
-		final ArrayList<CropOption> cropOptions = new ArrayList<CropOption>();
-
 		Intent intent = new Intent("com.android.camera.action.CROP");
 		intent.setType("image/*");
 
@@ -1082,6 +1083,7 @@ public class AccountActivity extends Activity implements OnClickListener {
 
 				startActivityForResult(i, CROP_FROM_CAMERA);
 			} else {
+				final ArrayList<CropOption> cropOptions = new ArrayList<CropOption>(list.size());
 				for (ResolveInfo res : list) {
 					final CropOption co = new CropOption();
 

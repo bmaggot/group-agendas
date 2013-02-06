@@ -168,17 +168,18 @@ public class ContactEditActivity extends Activity implements OnClickListener, On
 		String[] timezones;
 		String[] country_codes;
 		String[] call_codes;
-		countriesList = new ArrayList<StaticTimezones>();
 
 		countries = getResources().getStringArray(R.array.countries);
 		timezones = getResources().getStringArray(R.array.timezones);
 		country_codes = getResources().getStringArray(R.array.country_codes);
 		call_codes = getResources().getStringArray(R.array.call_codes);
+
+		countriesList = new ArrayList<StaticTimezones>(countries.length);
 		for (int i = 0; i < countries.length; i++) {
 			// TODO OMG WHAT HAVE I DONE AGAIN?! :|
 			StaticTimezones temp = new EventActivity().new StaticTimezones();
 
-			temp.id = "" + i;
+			temp.id = String.valueOf(i);
 			temp.country = countries[i];
 			temp.country_code = country_codes[i];
 			temp.call_code = call_codes[i];
@@ -275,17 +276,18 @@ public class ContactEditActivity extends Activity implements OnClickListener, On
 		String[] timezones;
 		String[] country_codes;
 		String[] call_codes;
-		countriesList = new ArrayList<StaticTimezones>();
 
 		countries = getResources().getStringArray(R.array.countries);
 		timezones = getResources().getStringArray(R.array.timezones);
 		country_codes = getResources().getStringArray(R.array.country_codes);
 		call_codes = getResources().getStringArray(R.array.call_codes);
+
+		countriesList = new ArrayList<StaticTimezones>(countries.length);
 		for (int i = 0; i < countries.length; i++) {
 			// TODO OMG WHAT HAVE I DONE AGAIN?! :|
 			StaticTimezones temp = new EventActivity().new StaticTimezones();
 
-			temp.id = "" + i;
+			temp.id = String.valueOf(i);
 			temp.country = countries[i];
 			temp.country_code = country_codes[i];
 			temp.call_code = call_codes[i];
@@ -685,7 +687,7 @@ public class ContactEditActivity extends Activity implements OnClickListener, On
 				}
 				if (!selectedGroups.isEmpty()) {
 					for (Group g : selectedGroups) {
-						editedContact.groups.put("" + i, "" + g.group_id);
+						editedContact.groups.put(String.valueOf(i), String.valueOf(g.group_id));
 						ContactManagement.updateGroupOnLocalDb(getApplicationContext(), g, editedContact.contact_id, true);
 						ContactManagement.editGroupOnRemoteDb(getApplicationContext(), g, editedContact.contact_id, true);
 						i++;
@@ -836,7 +838,7 @@ public class ContactEditActivity extends Activity implements OnClickListener, On
 				Map<String, String> map = new HashMap<String, String>();
 				editedContact.groups = map;
 				for (Group g : selectedGroups) {
-					editedContact.groups.put("" + i, "" + g.group_id);
+					editedContact.groups.put(String.valueOf(i), String.valueOf(g.group_id));
 					// ContactManagement.updateGroupOnLocalDb(getApplicationContext(),
 					// g, editedContact.contact_id);
 					i++;
@@ -975,8 +977,6 @@ public class ContactEditActivity extends Activity implements OnClickListener, On
 	}
 
 	private void doCrop() {
-		final ArrayList<CropOption> cropOptions = new ArrayList<CropOption>();
-
 		Intent intent = new Intent("com.android.camera.action.CROP");
 		intent.setType("image/*");
 
@@ -1006,6 +1006,7 @@ public class ContactEditActivity extends Activity implements OnClickListener, On
 
 				startActivityForResult(i, CROP_FROM_CAMERA);
 			} else {
+				final ArrayList<CropOption> cropOptions = new ArrayList<CropOption>(list.size());
 				for (ResolveInfo res : list) {
 					final CropOption co = new CropOption();
 

@@ -2,6 +2,7 @@ package com.groupagendas.groupagenda.events;
 
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Collection;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -170,36 +171,41 @@ public class EventEditActivity extends EventActivity {
 		}
 		dtUtils = new DateTimeUtils(this);
 		account = new Account(EventEditActivity.this);
-		String[] cities;
-		String[] countries;
-		String[] countries2;
-		String[] country_codes;
-		String[] timezones;
-		String[] altnames;
-		countriesList = new ArrayList<StaticTimezones>();
 
-		cities = getResources().getStringArray(R.array.city);
-		countries = getResources().getStringArray(R.array.countries);
-		countries2 = getResources().getStringArray(R.array.countries2);
-		country_codes = getResources().getStringArray(R.array.country_codes);
-		timezones = getResources().getStringArray(R.array.timezones);
-		altnames = getResources().getStringArray(R.array.timezone_altnames);
-		for (int i = 0; i < cities.length; i++) {
-			StaticTimezones temp = new StaticTimezones();
+		// avoid unnecessary initialization
+		if (countriesList == null || countriesList.isEmpty()) {
+			String[] cities;
+			String[] countries;
+			String[] countries2;
+			String[] country_codes;
+			String[] timezones;
+			String[] altnames;
 
-			temp.id = "" + i;
-			temp.city = cities[i];
-			temp.country = countries[i];
-			temp.country2 = countries2[i];
-			temp.country_code = country_codes[i];
-			temp.timezone = timezones[i];
-			temp.altname = altnames[i];
+			cities = getResources().getStringArray(R.array.city);
+			countries = getResources().getStringArray(R.array.countries);
+			countries2 = getResources().getStringArray(R.array.countries2);
+			country_codes = getResources().getStringArray(R.array.country_codes);
+			timezones = getResources().getStringArray(R.array.timezones);
+			altnames = getResources().getStringArray(R.array.timezone_altnames);
 
-			countriesList.add(temp);
-		}
-		if (countriesList != null) {
-			countriesAdapter = new CountriesAdapter(EventEditActivity.this, R.layout.search_dialog_item, countriesList);
-			timezonesAdapter = new TimezonesAdapter(EventEditActivity.this, R.layout.search_dialog_item, countriesList);
+			countriesList = new ArrayList<StaticTimezones>(cities.length);
+			for (int i = 0; i < cities.length; i++) {
+				StaticTimezones temp = new StaticTimezones();
+	
+				temp.id = String.valueOf(i);
+				temp.city = cities[i];
+				temp.country = countries[i];
+				temp.country2 = countries2[i];
+				temp.country_code = country_codes[i];
+				temp.timezone = timezones[i];
+				temp.altname = altnames[i];
+	
+				countriesList.add(temp);
+			}
+			// if (countriesList != null) {
+				countriesAdapter = new CountriesAdapter(EventEditActivity.this, R.layout.search_dialog_item, countriesList);
+				timezonesAdapter = new TimezonesAdapter(EventEditActivity.this, R.layout.search_dialog_item, countriesList);
+			// }
 		}
 
 		initViewItems();
@@ -238,7 +244,9 @@ public class EventEditActivity extends EventActivity {
 
 		ArrayList<Contact> selectedContactsFromGroups = new ArrayList<Contact>();
 		for (Group group : EventActivity.selectedGroups) {
-			for (String id : group.contacts.values()) {
+			Collection<String> c = group.contacts.values();
+			selectedContactsFromGroups.ensureCapacity(selectedContactsFromGroups.size() + c.size());
+			for (String id : c) {
 				selectedContactsFromGroups.add(ContactManagement.getContactFromLocalDb(this, Integer.valueOf(id), 0));
 			}
 		}
@@ -844,8 +852,8 @@ public class EventEditActivity extends EventActivity {
 					if (jsonArrayString != null && !jsonArrayString.contentEquals("null")) {
 						final JSONArray jsonArray = new JSONArray(jsonArrayString);
 						eventPollSize = jsonArray.length();
-						allEventPolls = new ArrayList<JSONObject>();
-						for (int i = 0; i < jsonArray.length(); i++) {
+						allEventPolls = new ArrayList<JSONObject>(eventPollSize);
+						for (int i = 0; i < eventPollSize; i++) {
 							final JSONObject pollThread = jsonArray.getJSONObject(i);
 							allEventPolls.add(pollThread);
 							final View view = mInflater.inflate(R.layout.poll_thread, null);
@@ -1275,10 +1283,10 @@ public class EventEditActivity extends EventActivity {
 			String selection = EventsProvider.EMetaData.AlarmsMetaData.EVENT_ID + "=" + event_external_id;
 			Cursor cursor = getApplicationContext().getContentResolver().query(EventsProvider.EMetaData.AlarmsMetaData.CONTENT_URI, null,
 					selection, null, null);
-			if (cursor != null && cursor.moveToFirst()) {
+			if (cursor != null) {
 				calendar = Calendar.getInstance();
 				DateTimeUtils dateTimeUtils = new DateTimeUtils(EventEditActivity.this);
-				do {
+				while (cursor.moveToNext()) {
 					Alarm alarm = AlarmsManagement.createAlarmFromCursor(cursor);
 					calendar.setTimeInMillis(alarm.getAlarmTimestamp());
 					if (alarm1View.getText().toString().equals("")
@@ -1300,8 +1308,7 @@ public class EventEditActivity extends EventActivity {
 							alarm3time = Calendar.getInstance();
 						alarm3time.setTimeInMillis(calendar.getTimeInMillis());
 					}
-					cursor.moveToNext();
-				} while (!cursor.isAfterLast());
+				}
 				cursor.close();
 			}
 
@@ -1365,7 +1372,7 @@ public class EventEditActivity extends EventActivity {
 				}
 
 				event.setStatus(poll_status);
-				event.setSelectedEventPollsTime("" + selectedPollTime);
+				event.setSelectedEventPollsTime(String.valueOf(selectedPollTime));
 				// if (DataManagement.networkAvailable) {
 				if (!to_reject_poll && !to_rejoin_poll) {
 					// event.setUploadedToServer(EventManagement.votePoll(getApplicationContext(),
@@ -1374,14 +1381,14 @@ public class EventEditActivity extends EventActivity {
 					// event.setUploadedToServer(EventManagement.votePoll(getApplicationContext(),
 					// "" + event.getEvent_id(),
 					// selectedPollTime, "1"));
-					EventManagement.votePoll(getApplicationContext(), "" + event.getEvent_id(), allEventPolls, "0");
-					EventManagement.votePoll(getApplicationContext(), "" + event.getEvent_id(), selectedPollTime, "1");
+					EventManagement.votePoll(getApplicationContext(), String.valueOf(event.getEvent_id()), allEventPolls, "0");
+					EventManagement.votePoll(getApplicationContext(), String.valueOf(event.getEvent_id()), selectedPollTime, "1");
 				} else {
 					if (to_reject_poll) {
-						EventManagement.rejectPoll(EventEditActivity.this, "" + event.getEvent_id());
+						EventManagement.rejectPoll(EventEditActivity.this, String.valueOf(event.getEvent_id()));
 					}
 					if (to_rejoin_poll) {
-						EventManagement.rejoinPoll(EventEditActivity.this, "" + event.getEvent_id());
+						EventManagement.rejoinPoll(EventEditActivity.this, String.valueOf(event.getEvent_id()));
 					}
 				}
 				// } else {
@@ -1393,7 +1400,7 @@ public class EventEditActivity extends EventActivity {
 				return true;
 			} else {
 				if (isInvited) {
-					if (EventManagement.inviteExtraContacts(EventEditActivity.this, "" + event.getEvent_id(), selectedContacts)) {
+					if (EventManagement.inviteExtraContacts(EventEditActivity.this, String.valueOf(event.getEvent_id()), selectedContacts)) {
 						return true;
 					} else {
 						errorStr = "Invite wasn't successfull.";
@@ -1593,7 +1600,9 @@ public class EventEditActivity extends EventActivity {
 		try {
 			if (jsonArrayString != null && !jsonArrayString.contentEquals("null")) {
 				JSONArray jsonArray = new JSONArray(jsonArrayString);
-				for (int i = 0; i < jsonArray.length(); i++) {
+				int size = jsonArray.length();
+				NavbarActivity.pollsList.ensureCapacity(size);
+				for (int i = 0; i < size; i++) {
 					JSONObject e = jsonArray.getJSONObject(i);
 					event = EventManagement.getEventFromLocalDb(context, event.getEvent_id(), EventManagement.ID_EXTERNAL);
 					event.setStartCalendar(Utils.stringToCalendar(context, e.getString("start"), DataManagement.SERVER_TIMESTAMP_FORMAT));
@@ -1639,7 +1648,9 @@ public class EventEditActivity extends EventActivity {
 		try {
 			if (jsonArraySelectedTime != null && !jsonArraySelectedTime.contentEquals("null")) {
 				final JSONArray jsonArray = new JSONArray(jsonArraySelectedTime);
-				for (int i = 0; i < jsonArray.length(); i++) {
+				int size = jsonArray.length();
+				selectedPollTime.ensureCapacity(size);
+				for (int i = 0; i < size; i++) {
 					JSONObject pollThread = jsonArray.getJSONObject(i);
 					selectedPollTime.add(pollThread);
 				}
@@ -1657,9 +1668,10 @@ public class EventEditActivity extends EventActivity {
 		try {
 			if (jsonArrayString != null && !jsonArrayString.contentEquals("null")) {
 				final JSONArray jsonArray = new JSONArray(jsonArrayString);
-				// eventPollSize = jsonArray.length();
-				allEventPolls = new ArrayList<JSONObject>();
-				for (int i = 0; i < jsonArray.length(); i++) {
+				int eventPollSize = jsonArray.length();
+				allEventPolls.ensureCapacity(eventPollSize);
+				// allEventPolls = new ArrayList<JSONObject>(eventPollSize);
+				for (int i = 0; i < eventPollSize; i++) {
 					final JSONObject pollThread = jsonArray.getJSONObject(i);
 					allEventPolls.add(pollThread);
 				}
