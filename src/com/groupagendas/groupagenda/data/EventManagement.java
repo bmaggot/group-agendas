@@ -174,22 +174,29 @@ public class EventManagement {
 	 */
 	public static void createNewEvent(Context context, Event event) {
 		initUserTimezone(context);
-
-		if (DataManagement.networkAvailable) {
-			int id = createEventInRemoteDb(context, event);
-
-			if (id > 0) {
-				event.setEvent_id(id);
-				event.setUploadedToServer(true);
-			} else {
-				event.setUploadedToServer(false);
-				// TODO report error
-			}
-		} else {
-			event.setUploadedToServer(false);
-		}
-
-		insertEventToLocalDB(context, event);
+//		for(int i = 1; i < 32; i++){
+//			Log.e("DAY", i+"");
+//			event.getStartCalendar().set(Calendar.DAY_OF_MONTH, i);
+//			event.getEndCalendar().set(Calendar.DAY_OF_MONTH, i);
+//			for(int n = 0; n < 24; n++){
+				if (DataManagement.networkAvailable) {
+//					Log.e("COUNT", n+"");
+					int id = createEventInRemoteDb(context, event);
+		
+					if (id > 0) {
+						event.setEvent_id(id);
+						event.setUploadedToServer(true);
+					} else {
+						event.setUploadedToServer(false);
+						// TODO report error
+					}
+				} else {
+					event.setUploadedToServer(false);
+				}
+		
+				insertEventToLocalDB(context, event);
+//			}
+//		}
 
 	}
 
@@ -631,10 +638,12 @@ public class EventManagement {
 							JSONArray es = object.getJSONArray(EVENTS);
 							length = es.length();
 							values = new ContentValues[length];
+//							Log.e("Count", length+"");
 							for (int i = 0; i < es.length(); i++) {
 								try {
 									JSONObject e = es.getJSONObject(i);
 									event = JSONUtils.createEventFromJSON(context, e);
+//									Log.e("Event", "PageNumber: "+pageNumber +" - EventID "+ event.getEvent_id()+"");
 									if (event != null && !event.isNative()) {
 										event.setUploadedToServer(true);
 										if (event.getType().contentEquals("v") && !event.getPoll().contentEquals("null")) {
@@ -665,6 +674,8 @@ public class EventManagement {
 									values2[i] = values[i];
 								}
 								context.getContentResolver().bulkInsert(EventsProvider.EMetaData.INDEXED_EVENTS_URI, values2);
+//								Log.e("Inserted", insertedCount+"");
+//								Log.e("Inserted", "END");
 							}
 						}
 					}
