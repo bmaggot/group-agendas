@@ -11,19 +11,14 @@ import com.groupagendas.groupagenda.contacts.ContactsProvider;
 import com.groupagendas.groupagenda.events.Event;
 
 public class BirthdayManagement {
-	static Cursor cursor;
-
-	
-
 	public static ArrayList<Event> readBirthdayEventsForTimeInterval(
 			Context context, long startTime, long endTime) {
-		ArrayList<Event> birthdayEvents = new ArrayList<Event>();
 		String form = "MM";
-		SimpleDateFormat sdf= new SimpleDateFormat(form);
-		SimpleDateFormat sdfy= new SimpleDateFormat(form);
+		SimpleDateFormat sdf = new SimpleDateFormat(form);
+		SimpleDateFormat sdfy = new SimpleDateFormat(form);
 		String selection = generateInForBirthdayMonths(Integer.parseInt(sdf.format(startTime)), 1);
 		
-		cursor = context.getContentResolver()
+		Cursor cursor = context.getContentResolver()
 				.query(ContactsProvider.CMetaData.BirthdaysMetaData.CONTENT_URI,
 						new String[] { 
 						ContactsProvider.CMetaData.BirthdaysMetaData.B_ID, 
@@ -35,41 +30,40 @@ public class BirthdayManagement {
 						null, null);
 		
 
+		ArrayList<Event> birthdayEvents = new ArrayList<Event>();
 		if (cursor != null) {
-
-			if (cursor.moveToFirst()) {
-				do {
-					Event event = new Event();
-					Calendar calendar = Calendar.getInstance();
-					String age="";
-					String yearForm = "yyyy";
-					sdfy = new SimpleDateFormat(yearForm);
-					
-					event.setInternalID(Long.valueOf(cursor.getString(5)));
-					event.setCountry(cursor.getString(3));
-					event.setTimezone(cursor.getString(4));
-					String[] date = cursor.getString(2).split("-");
-					age=""+(Integer.parseInt(sdfy.format(startTime))-Integer.parseInt(date[0]));
-					event.setTitle(cursor.getString(1)+" (Age: "+ age +")");
-					if(Integer.parseInt(sdf.format(startTime)) == 12 && Integer.parseInt(date[1]) == 1){
-						calendar.set(Integer.parseInt(sdfy.format(startTime)) + 1, Integer.parseInt(date[1])-1,Integer.parseInt(date[2]));
-					} else {
-						calendar.set(Integer.parseInt(sdfy.format(startTime)), Integer.parseInt(date[1])-1,Integer.parseInt(date[2]));
-					}
-					calendar.clear(Calendar.HOUR);
-					calendar.clear(Calendar.HOUR_OF_DAY);
-					calendar.clear(Calendar.MINUTE);
-					calendar.clear(Calendar.SECOND);
-					calendar.clear(Calendar.MILLISECOND);
-					event.setStartCalendar(calendar);
-					event.setEndCalendar(calendar);
-					event.setType("Note");
-					event.setIs_all_day(true);
-					event.setBirthday(true);
-					event.setIcon("iconbd");
-					
-					birthdayEvents.add(event);
-				} while (cursor.moveToNext());
+			birthdayEvents.ensureCapacity(cursor.getCount());
+			while (cursor.moveToNext()) {
+				Event event = new Event();
+				Calendar calendar = Calendar.getInstance();
+				String age = "";
+				String yearForm = "yyyy";
+				sdfy = new SimpleDateFormat(yearForm);
+				
+				event.setInternalID(Long.valueOf(cursor.getString(5)));
+				event.setCountry(cursor.getString(3));
+				event.setTimezone(cursor.getString(4));
+				String[] date = cursor.getString(2).split("-");
+				age = String.valueOf(Integer.parseInt(sdfy.format(startTime))-Integer.parseInt(date[0]));
+				event.setTitle(cursor.getString(1)+" (Age: "+ age +")");
+				if(Integer.parseInt(sdf.format(startTime)) == 12 && Integer.parseInt(date[1]) == 1){
+					calendar.set(Integer.parseInt(sdfy.format(startTime)) + 1, Integer.parseInt(date[1])-1,Integer.parseInt(date[2]));
+				} else {
+					calendar.set(Integer.parseInt(sdfy.format(startTime)), Integer.parseInt(date[1])-1,Integer.parseInt(date[2]));
+				}
+				calendar.clear(Calendar.HOUR);
+				calendar.clear(Calendar.HOUR_OF_DAY);
+				calendar.clear(Calendar.MINUTE);
+				calendar.clear(Calendar.SECOND);
+				calendar.clear(Calendar.MILLISECOND);
+				event.setStartCalendar(calendar);
+				event.setEndCalendar(calendar);
+				event.setType("Note");
+				event.setIs_all_day(true);
+				event.setBirthday(true);
+				event.setIcon("iconbd");
+				
+				birthdayEvents.add(event);
 			}
 			cursor.close();
 		}

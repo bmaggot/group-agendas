@@ -2,6 +2,7 @@ package com.groupagendas.groupagenda.events;
 
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Collection;
 import java.util.concurrent.ExecutionException;
 
 import android.app.AlertDialog;
@@ -458,35 +459,38 @@ public class NewEventActivity extends EventActivity {
 		startView = (TextView) findViewById(R.id.startView);
 		endView = (TextView) findViewById(R.id.endView);
 
-		String[] cities;
-		String[] countries;
-		String[] countries2;
-		String[] country_codes;
-		String[] timezones;
-		String[] altnames;
-		countriesList = new ArrayList<StaticTimezones>();
-
-		cities = getResources().getStringArray(R.array.city);
-		countries = getResources().getStringArray(R.array.countries);
-		countries2 = getResources().getStringArray(R.array.countries2);
-		country_codes = getResources().getStringArray(R.array.country_codes);
-		timezones = getResources().getStringArray(R.array.timezones);
-		altnames = getResources().getStringArray(R.array.timezone_altnames);
-		for (int i = 0; i < cities.length; i++) {
-			StaticTimezones temp = new StaticTimezones();
-
-			temp.id = "" + i;
-			temp.city = cities[i];
-			temp.country = countries[i];
-			temp.country2 = countries2[i];
-			temp.country_code = country_codes[i];
-			temp.timezone = timezones[i];
-			temp.altname = altnames[i];
-
-			countriesList.add(temp);
-		}
-		if (countriesList != null) {
-			countriesAdapter = new CountriesAdapter(NewEventActivity.this, R.layout.search_dialog_item, countriesList);
+		if (countriesList == null || countriesList.isEmpty()) {
+			String[] cities;
+			String[] countries;
+			String[] countries2;
+			String[] country_codes;
+			String[] timezones;
+			String[] altnames;
+	
+			cities = getResources().getStringArray(R.array.city);
+			countries = getResources().getStringArray(R.array.countries);
+			countries2 = getResources().getStringArray(R.array.countries2);
+			country_codes = getResources().getStringArray(R.array.country_codes);
+			timezones = getResources().getStringArray(R.array.timezones);
+			altnames = getResources().getStringArray(R.array.timezone_altnames);
+	
+			countriesList = new ArrayList<StaticTimezones>(cities.length);
+			for (int i = 0; i < cities.length; i++) {
+				StaticTimezones temp = new StaticTimezones();
+	
+				temp.id = String.valueOf(i);
+				temp.city = cities[i];
+				temp.country = countries[i];
+				temp.country2 = countries2[i];
+				temp.country_code = country_codes[i];
+				temp.timezone = timezones[i];
+				temp.altname = altnames[i];
+	
+				countriesList.add(temp);
+			}
+			// if (countriesList != null) {
+				countriesAdapter = new CountriesAdapter(NewEventActivity.this, R.layout.search_dialog_item, countriesList);
+			// }
 		}
 
 		if (!timezoneFound) {
@@ -563,7 +567,9 @@ public class NewEventActivity extends EventActivity {
 
 		ArrayList<Contact> selectedContactsFromGroups = new ArrayList<Contact>();
 		for (Group group : EventActivity.selectedGroups) {
-			for (String id : group.contacts.values()) {
+			Collection<String> c = group.contacts.values();
+			selectedContactsFromGroups.ensureCapacity(selectedContactsFromGroups.size() + c.size());
+			for (String id : c) {
 				selectedContactsFromGroups.add(ContactManagement.getContactFromLocalDb(this, Integer.valueOf(id), 0));
 			}
 		}

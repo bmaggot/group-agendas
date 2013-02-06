@@ -123,7 +123,6 @@ public class RegistrationActivity extends Activity {
 		String[] timezones;
 		String[] altnames;
 		String[] call_codes;
-		countriesList = new ArrayList<StaticTimezones>();
 
 		cities = getResources().getStringArray(R.array.city);
 		countries = getResources().getStringArray(R.array.countries);
@@ -132,11 +131,13 @@ public class RegistrationActivity extends Activity {
 		timezones = getResources().getStringArray(R.array.timezones);
 		altnames = getResources().getStringArray(R.array.timezone_altnames);
 		call_codes = getResources().getStringArray(R.array.call_codes);
+
+		countriesList = new ArrayList<StaticTimezones>(cities.length);
 		for (int i = 0; i < cities.length; i++) {
 			// TODO OMG WHAT HAVE I DONE AGAIN?! :|
 			StaticTimezones temp = new EventActivity().new StaticTimezones();
 
-			temp.id = "" + i;
+			temp.id = String.valueOf(i);
 			temp.city = cities[i];
 			temp.country = countries[i];
 			temp.country2 = countries2[i];
@@ -147,9 +148,9 @@ public class RegistrationActivity extends Activity {
 
 			countriesList.add(temp);
 		}
-		if (countriesList != null) {
+		// if (countriesList != null) {
 			countriesAdapter = new CountriesAdapter(RegistrationActivity.this, R.layout.search_dialog_item, countriesList);
-		}
+		// }
 	}
 
 	@Override
