@@ -48,7 +48,7 @@ public class AddressBookActivity extends ListActivity {
 	protected void onResume() {
 		super.onResume();
 		
-		ArrayList<Address> addresses = AddressManagement.getAddressFromLocalDb(AddressBookActivity.this, null);
+		ArrayList<Address> addresses = AddressManagement.getAddressesFromLocalDb(AddressBookActivity.this, null);
 		setListAdapter(new AddressAdapter(this, addresses));
 	}
 	
