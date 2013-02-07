@@ -133,6 +133,19 @@ public final class CharsetUtils {
 	}
 	
 	/**
+	 * Adds a specified part to the given multipart entity with value encoded as string.<BR>
+	 * <BR>
+	 * Null values do not throw a NPE, as they are converted to the {@code "null"} string.
+	 * 
+	 * @param entity A multipart entity
+	 * @param key part name
+	 * @param value part value
+	 */
+	public static void addPartEmptyIfNull(MultipartEntity entity, Object key, Object value) {
+		addPart(entity, key, value != null ? value : "");
+	}
+	
+	/**
 	 * Adds specified parts to the given multipart entity with their values encoded as strings.<BR>
 	 * <BR>
 	 * The given array must be even sized, where part names are in the even-numbered indexes and
