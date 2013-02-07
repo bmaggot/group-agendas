@@ -417,7 +417,7 @@
                 android:layout_marginBottom="5dp"
                 android:baselineAligned="false"
                 android:orientation="horizontal"
-                android:visibility="gone" >
+                android:visibility="visible" >
 
                 <RelativeLayout
                     android:id="@+id/reminder_trigger"
