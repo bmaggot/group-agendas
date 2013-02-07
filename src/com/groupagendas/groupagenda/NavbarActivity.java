@@ -672,10 +672,14 @@ public class NavbarActivity extends FragmentActivity {
 
 	@Override
 	public boolean dispatchTouchEvent(MotionEvent ev) {
-		super.dispatchTouchEvent(ev);
-		if (calendarContainer.getChildAt(0) instanceof AbstractCalendarView) {
-			AbstractCalendarView view = (AbstractCalendarView) calendarContainer.getChildAt(0);
-			return view.getSwipeGestureDetector().onTouchEvent(ev);
+		try{
+			super.dispatchTouchEvent(ev);
+			if (calendarContainer.getChildAt(0) instanceof AbstractCalendarView) {
+				AbstractCalendarView view = (AbstractCalendarView) calendarContainer.getChildAt(0);
+				return view.getSwipeGestureDetector().onTouchEvent(ev);
+			}
+		} catch (Exception e) {
+			Log.e("navbar dispatchTouchEvent()", "3 fingers");
 		}
 		return false;
 	}
