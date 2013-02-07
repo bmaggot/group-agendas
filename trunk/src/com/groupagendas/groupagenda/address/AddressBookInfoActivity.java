@@ -24,7 +24,9 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.groupagendas.groupagenda.R;
+import com.groupagendas.groupagenda.SaveDeletedData;
 import com.groupagendas.groupagenda.account.Account;
+import com.groupagendas.groupagenda.data.DataManagement;
 import com.groupagendas.groupagenda.data.EventManagement;
 import com.groupagendas.groupagenda.events.Event;
 import com.groupagendas.groupagenda.events.EventActivity;
@@ -120,8 +122,8 @@ public class AddressBookInfoActivity extends Activity {
 
 		if (action) {
 			long selectedAddressId = Long.parseLong(getIntent().getStringExtra("addressId"));
-			address = AddressManagement.getAddressFromLocalDb(AddressBookInfoActivity.this, selectedAddressId,
-					AddressManagement.ID_INTERNAL);
+			String where = AddressProvider.AMetaData.AddressesMetaData._ID + " = " + selectedAddressId;
+			address = AddressManagement.getAddressFromLocalDb(AddressBookInfoActivity.this, where);
 
 			if (address.getTimezone().length() > 0) {
 				for (StaticTimezones entry : countriesList) {
@@ -341,12 +343,14 @@ public class AddressBookInfoActivity extends Activity {
 		@Override
 		protected Boolean doInBackground(Void... type) {
 			String res = AddressManagement.setAddressBookEntries(AddressBookInfoActivity.this, address, AddressManagement.DELETE);
-			if (res.contentEquals("true")) {
-				AddressManagement.deleteAddressFromLocalDb(AddressBookInfoActivity.this, address.getId());
-				return true;
-			} else {
-				return false;
-			}
+			if (!res.contentEquals("true")) {
+				SaveDeletedData offlineDeletedAddresses1 = new SaveDeletedData(AddressBookInfoActivity.this);
+				offlineDeletedAddresses1.addAddressForLaterDelete(address.getId());				
+			} 
+			
+			AddressManagement.deleteAddressFromLocalDb(AddressBookInfoActivity.this, address.getId());
+			
+			return true;
 		}
 
 		@Override
@@ -382,11 +386,12 @@ public class AddressBookInfoActivity extends Activity {
 		protected Boolean doInBackground(Event... events) {
 			String res = AddressManagement.setAddressBookEntries(AddressBookInfoActivity.this, address, AddressManagement.UPDATE);
 			if (res.contentEquals("true")) {
-				AddressManagement.updateAddressInLocalDb(AddressBookInfoActivity.this, address);
-				return true;
+				address.setUploadedToServer(true);
 			} else {
-				return false;
+				address.setUploadedToServer(false);
 			}
+			AddressManagement.updateAddressInLocalDb(AddressBookInfoActivity.this, address);
+			return true;
 		}
 
 		@Override
@@ -424,20 +429,25 @@ public class AddressBookInfoActivity extends Activity {
 
 		@Override
 		protected Boolean doInBackground(Event... events) {
-			String res = AddressManagement.setAddressBookEntries(AddressBookInfoActivity.this, address, AddressManagement.CREATE);
 			int address_id = 0;
-			try {
-				address_id = Integer.parseInt(res);
-			} catch (Exception e) {
-				return false;
+			
+			if(DataManagement.networkAvailable){
+				String res = AddressManagement.setAddressBookEntries(AddressBookInfoActivity.this, address, AddressManagement.CREATE);
+				try {
+					address_id = Integer.parseInt(res);
+				} catch (Exception e) {
+					//return false;
+				}
 			}
+			
 			if (address_id > 0) {
-				address.setId(address_id);
-				AddressManagement.insertAddressInLocalDb(AddressBookInfoActivity.this, address);
-				return true;
+				address.setUploadedToServer(true);
 			} else {
-				return false;
+				address.setUploadedToServer(false);
 			}
+			address.setId(address_id);
+			AddressManagement.insertAddressInLocalDb(AddressBookInfoActivity.this, address);
+			return true;
 		}
 
 		@Override
