@@ -32,7 +32,7 @@ public class AddressAdapter extends AbstractAdapter<Address> {
 
 		
 		holder.title.setText(address.getTitle());
-		convertView.setTag(""+address.getId());
+		convertView.setTag(""+address.getIdInternal());
 		return convertView;
 	}
 
