@@ -55,6 +55,7 @@ import com.groupagendas.groupagenda.address.Address;
 import com.groupagendas.groupagenda.address.AddressBookActivity;
 import com.groupagendas.groupagenda.address.AddressBookInfoActivity;
 import com.groupagendas.groupagenda.address.AddressManagement;
+import com.groupagendas.groupagenda.address.AddressProvider;
 import com.groupagendas.groupagenda.alarm.Alarm;
 import com.groupagendas.groupagenda.alarm.AlarmsManagement;
 import com.groupagendas.groupagenda.chat.ChatMessageActivity;
@@ -98,7 +99,7 @@ public class EventEditActivity extends EventActivity {
 				if (cityView.getText().length() > 0 || streetView.getText().length() > 0 || zipView.getText().length() > 0) {
 					save_address.setVisibility(View.VISIBLE);
 				}
-				AddressBookActivity.selectedAddressId = 0;
+				//AddressBookActivity.selectedAddressId = 0;
 			}
 		}
 	}
@@ -298,8 +299,8 @@ public class EventEditActivity extends EventActivity {
 			changesMade = true;
 			enableDisableButtons(changesMade);
 			if (AddressBookActivity.selectedAddressId > 0) {
-				Address address = AddressManagement.getAddressFromLocalDb(EventEditActivity.this, AddressBookActivity.selectedAddressId,
-						AddressManagement.ID_INTERNAL);
+				String where = AddressProvider.AMetaData.AddressesMetaData._ID + " = " + AddressBookActivity.selectedAddressId;
+				Address address = AddressManagement.getAddressFromLocalDb(EventEditActivity.this, where);
 				cityView.setText(address.getCity());
 				streetView.setText(address.getStreet());
 				zipView.setText(address.getZip());
@@ -1372,28 +1373,28 @@ public class EventEditActivity extends EventActivity {
 				}
 
 				event.setStatus(poll_status);
-				event.setSelectedEventPollsTime(String.valueOf(selectedPollTime));
-				// if (DataManagement.networkAvailable) {
-				if (!to_reject_poll && !to_rejoin_poll) {
-					// event.setUploadedToServer(EventManagement.votePoll(getApplicationContext(),
-					// "" + event.getEvent_id(),
-					// allEventPolls, "0"));
-					// event.setUploadedToServer(EventManagement.votePoll(getApplicationContext(),
-					// "" + event.getEvent_id(),
-					// selectedPollTime, "1"));
-					EventManagement.votePoll(getApplicationContext(), String.valueOf(event.getEvent_id()), allEventPolls, "0");
-					EventManagement.votePoll(getApplicationContext(), String.valueOf(event.getEvent_id()), selectedPollTime, "1");
-				} else {
-					if (to_reject_poll) {
-						EventManagement.rejectPoll(EventEditActivity.this, String.valueOf(event.getEvent_id()));
+				event.setSelectedEventPollsTime("" + selectedPollTime);
+//				if (DataManagement.networkAvailable) {
+					if (!to_reject_poll && !to_rejoin_poll) {
+						event.setUploadedToServer(EventManagement.votePoll(getApplicationContext(), "" + event.getEvent_id(),
+								allEventPolls, "0"));
+						event.setUploadedToServer(EventManagement.votePoll(getApplicationContext(), "" + event.getEvent_id(),
+								selectedPollTime, "1"));
+//						EventManagement.votePoll(getApplicationContext(), "" + event.getEvent_id(), allEventPolls, "0");
+//						EventManagement.votePoll(getApplicationContext(), "" + event.getEvent_id(), selectedPollTime, "1");
+					} else {
+						if (to_reject_poll) {
+							event.setUploadedToServer(EventManagement.rejectPoll(EventEditActivity.this, "" + event.getEvent_id()));
+//							EventManagement.rejectPoll(EventEditActivity.this, "" + event.getEvent_id());
+						}
+						if (to_rejoin_poll) {
+							event.setUploadedToServer(EventManagement.rejoinPoll(EventEditActivity.this, "" + event.getEvent_id()));
+//							EventManagement.rejoinPoll(EventEditActivity.this, "" + event.getEvent_id());
+						}
 					}
-					if (to_rejoin_poll) {
-						EventManagement.rejoinPoll(EventEditActivity.this, String.valueOf(event.getEvent_id()));
-					}
-				}
-				// } else {
-				// event.setUploadedToServer(false);
-				// }
+//				} else {
+//					event.setUploadedToServer(false);
+//				}
 
 				EventManagement.updateEventInLocalDb(EventEditActivity.this, event);
 
