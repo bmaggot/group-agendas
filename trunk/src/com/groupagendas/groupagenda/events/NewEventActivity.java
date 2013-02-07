@@ -37,6 +37,7 @@ import com.groupagendas.groupagenda.address.Address;
 import com.groupagendas.groupagenda.address.AddressBookActivity;
 import com.groupagendas.groupagenda.address.AddressBookInfoActivity;
 import com.groupagendas.groupagenda.address.AddressManagement;
+import com.groupagendas.groupagenda.address.AddressProvider;
 import com.groupagendas.groupagenda.contacts.Contact;
 import com.groupagendas.groupagenda.contacts.ContactsActivity;
 import com.groupagendas.groupagenda.contacts.Group;
@@ -602,7 +603,8 @@ public class NewEventActivity extends EventActivity {
 		}
 		
 		if(AddressBookActivity.selectedAddressId > 0){
-			Address address = AddressManagement.getAddressFromLocalDb(NewEventActivity.this, AddressBookActivity.selectedAddressId, AddressManagement.ID_INTERNAL);
+			String where = AddressProvider.AMetaData.AddressesMetaData._ID + " = " + AddressBookActivity.selectedAddressId;
+			Address address = AddressManagement.getAddressFromLocalDb(NewEventActivity.this, where);
 			cityView.setText(address.getCity());
 			streetView.setText(address.getStreet());
 			zipView.setText(address.getZip());
