@@ -2,6 +2,7 @@ package com.groupagendas.groupagenda.address;
 
 public class Address {
 	private int id;
+	private int id_internal;
 	private int user_id;
 	private String title;
 	private String street;
@@ -11,11 +12,19 @@ public class Address {
 	private String country;
 	private String timezone;
 	private String country_name;
+	private boolean uploadedToServer = true;
+	
 	public int getId() {
 		return id;
 	}
 	public void setId(int id) {
 		this.id = id;
+	}
+	public int getIdInternal() {
+		return id_internal;
+	}
+	public void setIdInternal(int id) {
+		this.id_internal = id;
 	}
 	public int getUser_id() {
 		return user_id;
@@ -70,5 +79,11 @@ public class Address {
 	}
 	public void setCountry_name(String country_name) {
 		this.country_name = country_name;
+	}
+	public boolean isUploadedToServer() {
+		return uploadedToServer;
+	}
+	public void setUploadedToServer(boolean bool) {
+		uploadedToServer = bool;
 	}
 }
