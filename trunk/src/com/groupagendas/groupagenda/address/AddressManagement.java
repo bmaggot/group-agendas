@@ -3,6 +3,7 @@ package com.groupagendas.groupagenda.address;
 import java.io.UnsupportedEncodingException;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
+import java.util.Calendar;
 
 import org.apache.http.HttpResponse;
 import org.apache.http.HttpStatus;
@@ -20,16 +21,19 @@ import android.database.Cursor;
 import android.net.Uri;
 import android.util.Log;
 
+import com.groupagendas.groupagenda.SaveDeletedData;
+import com.groupagendas.groupagenda.SaveDeletedData.SDMetaData;
 import com.groupagendas.groupagenda.account.Account;
 import com.groupagendas.groupagenda.data.Data;
+import com.groupagendas.groupagenda.events.EventsProvider;
 import com.groupagendas.groupagenda.https.WebService;
 import com.groupagendas.groupagenda.utils.JSONUtils;
 
 public class AddressManagement {
-	
+
 	public static final String CLASS_NAME = "AddressManagement.class";
 	public static final String DATA = "data";
-	
+
 	public static final String ADDRESS_ID = "id";
 	public static final String USER_ID = "user_id";
 	public static final String TITLE = "title";
@@ -41,7 +45,13 @@ public class AddressManagement {
 	public static final String TIMEZONE = "timezone";
 	public static final String COUNTRY_NAME = "country_name";
 
-	
+	public static final int ID_INTERNAL = 0;
+	public static final int ID_EXTERNAL = 1;
+
+	public static final int CREATE = 0;
+	public static final int UPDATE = 1;
+	public static final int DELETE = 2;
+
 	public static void getAddressBookFromRemoteDb(Context context) {
 		boolean success = false;
 		String error = null;
@@ -83,8 +93,10 @@ public class AddressManagement {
 							for (int i = 0; i < count; i++) {
 								JSONObject g = gs.getJSONObject(i);
 								address = JSONUtils.createAddressFromJSON(context, g);
-								if(address != null){
-									context.getContentResolver().insert(AddressProvider.AMetaData.AddressesMetaData.CONTENT_URI, createCVforAddressTable(address));
+								address.setUploadedToServer(true);
+								if (address != null) {
+									context.getContentResolver().insert(AddressProvider.AMetaData.AddressesMetaData.CONTENT_URI,
+											createCVforAddressTable(address));
 								}
 							}
 						}
@@ -96,10 +108,15 @@ public class AddressManagement {
 			Log.e("getAddressBookFromRemoteDb", "er");
 		}
 	}
-	
+
 	protected static ContentValues createCVforAddressTable(Address address) {
 		ContentValues cv = new ContentValues();
-		cv.put(AddressProvider.AMetaData.AddressesMetaData.A_ID, address.getId());
+		if (address.getId() != 0) {
+			cv.put(AddressProvider.AMetaData.AddressesMetaData.A_ID, address.getId());
+		} else {
+			address.setId((((int) Calendar.getInstance().getTimeInMillis()) * -1));
+			cv.put(AddressProvider.AMetaData.AddressesMetaData.A_ID, address.getId());
+		}
 		cv.put(AddressProvider.AMetaData.AddressesMetaData.USER_ID, address.getUser_id());
 		cv.put(AddressProvider.AMetaData.AddressesMetaData.TITLE, address.getTitle());
 		cv.put(AddressProvider.AMetaData.AddressesMetaData.STREET, address.getStreet());
@@ -109,10 +126,11 @@ public class AddressManagement {
 		cv.put(AddressProvider.AMetaData.AddressesMetaData.COUNTRY, address.getCountry());
 		cv.put(AddressProvider.AMetaData.AddressesMetaData.TIMEZONE, address.getTimezone());
 		cv.put(AddressProvider.AMetaData.AddressesMetaData.COUNTRY_NAME, address.getCountry_name());
+		cv.put(AddressProvider.AMetaData.AddressesMetaData.UPLOADED_SUCCESSFULLY, address.isUploadedToServer() ? 1 : 0);
 		return cv;
 	}
-	
-	public static ArrayList<Address> getAddressFromLocalDb(Context context, String where) {
+
+	public static ArrayList<Address> getAddressesFromLocalDb(Context context, String where) {
 		Cursor cur;
 		Address temp;
 
@@ -123,19 +141,7 @@ public class AddressManagement {
 		ArrayList<Address> addresses = new ArrayList<Address>(cur.getCount());
 
 		while (cur.moveToNext()) {
-			temp = new Address();
-
-			temp.setId(cur.getInt(cur.getColumnIndex(AddressProvider.AMetaData.AddressesMetaData.A_ID)));
-			temp.setUser_id(cur.getInt(cur.getColumnIndex(AddressProvider.AMetaData.AddressesMetaData.USER_ID)));
-			temp.setTitle(cur.getString(cur.getColumnIndex(AddressProvider.AMetaData.AddressesMetaData.TITLE)));
-			temp.setStreet(cur.getString(cur.getColumnIndex(AddressProvider.AMetaData.AddressesMetaData.STREET)));
-			temp.setCity(cur.getString(cur.getColumnIndex(AddressProvider.AMetaData.AddressesMetaData.CITY)));
-			temp.setZip(cur.getString(cur.getColumnIndex(AddressProvider.AMetaData.AddressesMetaData.ZIP)));
-			temp.setState(cur.getString(cur.getColumnIndex(AddressProvider.AMetaData.AddressesMetaData.STATE)));
-			temp.setCountry(cur.getString(cur.getColumnIndex(AddressProvider.AMetaData.AddressesMetaData.COUNTRY)));
-			temp.setTimezone(cur.getString(cur.getColumnIndex(AddressProvider.AMetaData.AddressesMetaData.TIMEZONE)));
-			temp.setCountry_name(cur.getString(cur.getColumnIndex(AddressProvider.AMetaData.AddressesMetaData.COUNTRY_NAME)));
-
+			temp = createAddressFromCursor(cur);
 			addresses.add(temp);
 		}
 
@@ -143,53 +149,46 @@ public class AddressManagement {
 
 		return addresses;
 	}
-	
-	public static final int ID_INTERNAL = 0;
-	public static final int ID_EXTERNAL = 1;
 
-	public static Address getAddressFromLocalDb(Context context, long ID, int id_mode) {
+	private static Address createAddressFromCursor(Cursor cursor) {
+		Address address = new Address();
+
+		address.setIdInternal(cursor.getInt(cursor.getColumnIndex(AddressProvider.AMetaData.AddressesMetaData._ID)));
+		address.setId(cursor.getInt(cursor.getColumnIndex(AddressProvider.AMetaData.AddressesMetaData.A_ID)));
+		address.setUser_id(cursor.getInt(cursor.getColumnIndex(AddressProvider.AMetaData.AddressesMetaData.USER_ID)));
+		address.setTitle(cursor.getString(cursor.getColumnIndex(AddressProvider.AMetaData.AddressesMetaData.TITLE)));
+		address.setStreet(cursor.getString(cursor.getColumnIndex(AddressProvider.AMetaData.AddressesMetaData.STREET)));
+		address.setCity(cursor.getString(cursor.getColumnIndex(AddressProvider.AMetaData.AddressesMetaData.CITY)));
+		address.setZip(cursor.getString(cursor.getColumnIndex(AddressProvider.AMetaData.AddressesMetaData.ZIP)));
+		address.setState(cursor.getString(cursor.getColumnIndex(AddressProvider.AMetaData.AddressesMetaData.STATE)));
+		address.setCountry(cursor.getString(cursor.getColumnIndex(AddressProvider.AMetaData.AddressesMetaData.COUNTRY)));
+		address.setTimezone(cursor.getString(cursor.getColumnIndex(AddressProvider.AMetaData.AddressesMetaData.TIMEZONE)));
+		address.setCountry_name(cursor.getString(cursor.getColumnIndex(AddressProvider.AMetaData.AddressesMetaData.COUNTRY_NAME)));
+		address.setUploadedToServer(1 == cursor.getInt(cursor.getColumnIndex(EventsProvider.EMetaData.EventsMetaData.UPLOADED_SUCCESSFULLY)));
+
+		return address;
+	}
+
+	public static Address getAddressFromLocalDb(Context context, String where) {
 		Address item = new Address();
-		Uri uri;
-
-		switch (id_mode) {
-		case (ID_INTERNAL):
-			uri = AddressProvider.AMetaData.AddressesMetaData.CONTENT_URI;
-			break;
-		case (ID_EXTERNAL):
-			uri = AddressProvider.AMetaData.AddressesMetaData.CONTENT_URI_EXTERNAL_ID;
-			break;
-		default:
-			throw new IllegalStateException("method getAddressFromLocalDB: Unknown id mode");
-		}
-
-		uri = Uri.parse(uri + "/" + ID);
-		Cursor cur = context.getContentResolver().query(uri, null, null, null, null);
+		Cursor cur = context.getContentResolver().query(AddressProvider.AMetaData.AddressesMetaData.CONTENT_URI, null, where, null, null);
 		if (cur.moveToFirst()) {
-			item.setId(cur.getInt(cur.getColumnIndex(AddressProvider.AMetaData.AddressesMetaData.A_ID)));
-			item.setUser_id(cur.getInt(cur.getColumnIndex(AddressProvider.AMetaData.AddressesMetaData.USER_ID)));
-			item.setTitle(cur.getString(cur.getColumnIndex(AddressProvider.AMetaData.AddressesMetaData.TITLE)));
-			item.setStreet(cur.getString(cur.getColumnIndex(AddressProvider.AMetaData.AddressesMetaData.STREET)));
-			item.setCity(cur.getString(cur.getColumnIndex(AddressProvider.AMetaData.AddressesMetaData.CITY)));
-			item.setZip(cur.getString(cur.getColumnIndex(AddressProvider.AMetaData.AddressesMetaData.ZIP)));
-			item.setState(cur.getString(cur.getColumnIndex(AddressProvider.AMetaData.AddressesMetaData.STATE)));
-			item.setCountry(cur.getString(cur.getColumnIndex(AddressProvider.AMetaData.AddressesMetaData.COUNTRY)));
-			item.setTimezone(cur.getString(cur.getColumnIndex(AddressProvider.AMetaData.AddressesMetaData.TIMEZONE)));
-			item.setCountry_name(cur.getString(cur.getColumnIndex(AddressProvider.AMetaData.AddressesMetaData.COUNTRY_NAME)));
+			item = createAddressFromCursor(cur);
 		}
 		cur.close();
 		return item;
 	}
-	
-	
-	public static final int CREATE = 0;
-	public static final int UPDATE = 1;
-	public static final int DELETE = 2;
+
 	/**
 	 * Create, edit, delete address in remote DB.
 	 * 
 	 * @param context
-	 * @param address - address to create, edit, delete
-	 * @param param - param to create, edit, delete address (params: AddressManagement.CREATE, AddressManagement.UPDATE, AddressManagement.DELETE )
+	 * @param address
+	 *            - address to create, edit, delete
+	 * @param param
+	 *            - param to create, edit, delete address (params:
+	 *            AddressManagement.CREATE, AddressManagement.UPDATE,
+	 *            AddressManagement.DELETE )
 	 * @return address id when CREATING. Success when EDITING, DELETING.
 	 */
 	public static String setAddressBookEntries(Context context, Address address, int param) {
@@ -212,22 +211,22 @@ public class AddressManagement {
 		} catch (UnsupportedEncodingException e1) {
 			Log.e("setAddressBookEntries", "Failed adding token to entity");
 		}
-		
-		switch (param){
+
+		switch (param) {
 		case UPDATE:
 			try {
-				reqEntity.addPart("id", new StringBody(""+address.getId(), Charset.forName("UTF-8")));
+				reqEntity.addPart("id", new StringBody("" + address.getId(), Charset.forName("UTF-8")));
 			} catch (UnsupportedEncodingException e1) {
 				Log.e("setAddressBookEntries", "Failed adding address id to entity");
 			}
-			
+
 			try {
 				reqEntity.addPart("title", new StringBody(address.getTitle(), Charset.forName("UTF-8")));
 			} catch (UnsupportedEncodingException e1) {
 				Log.e("setAddressBookEntries", "Failed adding address title to entity");
 			}
 			break;
-		case CREATE:			
+		case CREATE:
 			try {
 				reqEntity.addPart("title", new StringBody(address.getTitle(), Charset.forName("UTF-8")));
 			} catch (UnsupportedEncodingException e1) {
@@ -236,48 +235,49 @@ public class AddressManagement {
 			break;
 		case DELETE:
 			try {
-				reqEntity.addPart("id", new StringBody(""+address.getId(), Charset.forName("UTF-8")));
+				reqEntity.addPart("id", new StringBody("" + address.getId(), Charset.forName("UTF-8")));
 			} catch (UnsupportedEncodingException e1) {
 				Log.e("setAddressBookEntries", "Failed adding address id to entity");
 			}
 			break;
 		}
-		
-		
-		try {
-			reqEntity.addPart("street", new StringBody(address.getStreet(), Charset.forName("UTF-8")));
-		} catch (UnsupportedEncodingException e1) {
-			Log.e("setAddressBookEntries", "Failed adding address street to entity");
-		}
-		
-		try {
-			reqEntity.addPart("city", new StringBody(address.getCity(), Charset.forName("UTF-8")));
-		} catch (UnsupportedEncodingException e1) {
-			Log.e("setAddressBookEntries", "Failed adding address city to entity");
-		}
-		
-		try {
-			reqEntity.addPart("zip", new StringBody(address.getZip(), Charset.forName("UTF-8")));
-		} catch (UnsupportedEncodingException e1) {
-			Log.e("setAddressBookEntries", "Failed adding address zip to entity");
-		}
-		
-		try {
-			reqEntity.addPart("state", new StringBody(address.getState(), Charset.forName("UTF-8")));
-		} catch (UnsupportedEncodingException e1) {
-			Log.e("setAddressBookEntries", "Failed adding address state to entity");
-		}
-		
-		try {
-			reqEntity.addPart("country", new StringBody(address.getCountry(), Charset.forName("UTF-8")));
-		} catch (UnsupportedEncodingException e1) {
-			Log.e("setAddressBookEntries", "Failed adding address country to entity");
-		}
-		
-		try {
-			reqEntity.addPart("timezone", new StringBody(address.getTimezone(), Charset.forName("UTF-8")));
-		} catch (UnsupportedEncodingException e1) {
-			Log.e("setAddressBookEntries", "Failed adding address timezone to entity");
+
+		if (param != DELETE) {
+			try {
+				reqEntity.addPart("street", new StringBody(address.getStreet(), Charset.forName("UTF-8")));
+			} catch (UnsupportedEncodingException e1) {
+				Log.e("setAddressBookEntries", "Failed adding address street to entity");
+			}
+
+			try {
+				reqEntity.addPart("city", new StringBody(address.getCity(), Charset.forName("UTF-8")));
+			} catch (UnsupportedEncodingException e1) {
+				Log.e("setAddressBookEntries", "Failed adding address city to entity");
+			}
+
+			try {
+				reqEntity.addPart("zip", new StringBody(address.getZip(), Charset.forName("UTF-8")));
+			} catch (UnsupportedEncodingException e1) {
+				Log.e("setAddressBookEntries", "Failed adding address zip to entity");
+			}
+
+			try {
+				reqEntity.addPart("state", new StringBody(address.getState(), Charset.forName("UTF-8")));
+			} catch (UnsupportedEncodingException e1) {
+				Log.e("setAddressBookEntries", "Failed adding address state to entity");
+			}
+
+			try {
+				reqEntity.addPart("country", new StringBody(address.getCountry(), Charset.forName("UTF-8")));
+			} catch (UnsupportedEncodingException e1) {
+				Log.e("setAddressBookEntries", "Failed adding address country to entity");
+			}
+
+			try {
+				reqEntity.addPart("timezone", new StringBody(address.getTimezone(), Charset.forName("UTF-8")));
+			} catch (UnsupportedEncodingException e1) {
+				Log.e("setAddressBookEntries", "Failed adding address timezone to entity");
+			}
 		}
 
 		post.setEntity(reqEntity);
@@ -291,13 +291,14 @@ public class AddressManagement {
 					success = object.getBoolean("success");
 
 					if (success == false) {
-						error = object.getString("error");
+						error = object.getString("reason");
 						Log.e("setAddressBookEntries - error: ", error);
+						result = "" + success;
 					} else {
-						if(param == CREATE){
+						if (param == CREATE) {
 							result = object.getString("id");
 						} else {
-							result = ""+success;
+							result = "" + success;
 						}
 					}
 				}
@@ -306,22 +307,70 @@ public class AddressManagement {
 		} catch (Exception ex) {
 			Log.e("setAddressBookEntries", "er");
 		}
-		
+
 		return result;
 	}
-	
+
 	public static void deleteAddressFromLocalDb(Context context, int address_id) {
 		String where = AddressProvider.AMetaData.AddressesMetaData.A_ID + "=" + address_id;
 		context.getContentResolver().delete(AddressProvider.AMetaData.AddressesMetaData.CONTENT_URI, where, null);
 	}
-	
+
 	public static void updateAddressInLocalDb(Context context, Address address) {
-		String where = AddressProvider.AMetaData.AddressesMetaData.A_ID + "=" + address.getId();
-		context.getContentResolver().update(AddressProvider.AMetaData.AddressesMetaData.CONTENT_URI, createCVforAddressTable(address), where, null);
+		String where = AddressProvider.AMetaData.AddressesMetaData._ID + "=" + address.getIdInternal();
+		context.getContentResolver().update(AddressProvider.AMetaData.AddressesMetaData.CONTENT_URI, createCVforAddressTable(address),
+				where, null);
 	}
-	
+
 	public static void insertAddressInLocalDb(Context context, Address address) {
 		context.getContentResolver().insert(AddressProvider.AMetaData.AddressesMetaData.CONTENT_URI, createCVforAddressTable(address));
+	}
+
+	public static void uploadOfflineAddresses(Context context) {
+		String projection[] = null;
+		Uri uri = AddressProvider.AMetaData.AddressesMetaData.CONTENT_URI;
+		String where = AddressProvider.AMetaData.AddressesMetaData.UPLOADED_SUCCESSFULLY + " = '0'";
+		Cursor result = context.getContentResolver().query(uri, projection, where, null, null);
+		if (result.moveToFirst()) {
+			while (!result.isAfterLast()) {
+				Address address = createAddressFromCursor(result);
+
+				String res = AddressManagement.setAddressBookEntries(context, address, AddressManagement.UPDATE);
+				if (res.contentEquals("true")) {
+					address.setUploadedToServer(true);
+					AddressManagement.updateAddressInLocalDb(context, address);
+					result.moveToNext();
+				} else {
+					String res2 = AddressManagement.setAddressBookEntries(context, address, AddressManagement.CREATE);
+					int address_id = 0;
+					try {
+						address_id = Integer.parseInt(res2);
+					} catch (Exception e) {
+
+					}
+					if (address_id > 0) {
+						address.setId(address_id);
+						address.setUploadedToServer(true);
+						AddressManagement.updateAddressInLocalDb(context, address);
+					}
+					result.moveToNext();
+				}
+			}
+		}
+		SaveDeletedData offlineDeletedAddresses = new SaveDeletedData(context);
+		String offlineDeleted = offlineDeletedAddresses.getDELETED_ADDRESSES();
+		String[] ids = offlineDeleted.split(SDMetaData.SEPARATOR);
+		if (ids[0] != "") {
+			for (int i = 0; i < ids.length; i++) {
+				int id = Integer.parseInt(ids[i]);
+				Address address = new Address();
+				address.setId(id);
+				AddressManagement.setAddressBookEntries(context, address, AddressManagement.DELETE);
+			}
+
+		}
+		offlineDeletedAddresses.clear(4);
+		result.close();
 	}
 
 }
