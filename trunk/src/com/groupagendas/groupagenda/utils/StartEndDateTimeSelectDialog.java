@@ -54,6 +54,7 @@ public class StartEndDateTimeSelectDialog extends Dialog implements OnClickListe
 	private OnDateSetListener mOnDateSetListener;
 	private Context mContext;
 	private Account acc;
+	private boolean deltaFive = false;
 
 	@Deprecated
 	public StartEndDateTimeSelectDialog(Context context) {
@@ -95,6 +96,11 @@ public class StartEndDateTimeSelectDialog extends Dialog implements OnClickListe
 			break;
 		}
 		
+	}
+	
+	public StartEndDateTimeSelectDialog(Context context, int state, Calendar cal, OnDateSetListener listener, boolean deltaFive) {
+		this(context, state, cal, listener);
+		this.deltaFive = deltaFive;
 	}
 	
 	private void showDate() {
@@ -160,7 +166,14 @@ public class StartEndDateTimeSelectDialog extends Dialog implements OnClickListe
 	
 	@Override
 	public void onClick(View v) {
+		int minuteUnit;
 		int id = v.getId();
+		
+		if (deltaFive) {
+			minuteUnit = 5;
+		} else {
+			minuteUnit = 1;
+		}
 		
 		switch (id) {
 		case R.id.incYear:
@@ -201,7 +214,7 @@ public class StartEndDateTimeSelectDialog extends Dialog implements OnClickListe
 			hourView.setText(sdf.format(mCalendar.getTime()));
 			break;
 		case R.id.incMinute:
-			mCalendar.add(Calendar.MINUTE, 1);
+			mCalendar.add(Calendar.MINUTE, 1*minuteUnit);
 			if ((mCalendar.get(Calendar.HOUR_OF_DAY) == 0) && (mCalendar.get(Calendar.MINUTE) == 0)) {
 				mCalendar.add(Calendar.HOUR_OF_DAY, -1);
 				if (acc.getSetting_ampm() == 1) {
@@ -252,7 +265,7 @@ public class StartEndDateTimeSelectDialog extends Dialog implements OnClickListe
 			hourView.setText(sdf.format(mCalendar.getTime()));
 			break;
 		case R.id.decMinute:
-			mCalendar.add(Calendar.MINUTE, -1);
+			mCalendar.add(Calendar.MINUTE, -1*minuteUnit);
 			if ((mCalendar.get(Calendar.HOUR_OF_DAY) == 23) && (mCalendar.get(Calendar.MINUTE) == 59)) {
 				mCalendar.add(Calendar.HOUR_OF_DAY, 1);
 				if (acc.getSetting_ampm() == 1) {
