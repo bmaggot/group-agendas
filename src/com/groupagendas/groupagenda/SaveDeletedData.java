@@ -17,6 +17,7 @@ public class SaveDeletedData {
 		public static final String DELETED_EVENTS = "deleted_events";
 		public static final String DELETED_CONTACTS = "deleted_contacts";
 		public static final String DELETED_GROUPS = "deleted-groups";
+		public static final String DELETED_ADDRESSES = "deleted-addresses";
 		public static final String SEPARATOR = ",";
 	}
 	
@@ -54,8 +55,11 @@ public class SaveDeletedData {
 		return prefsEditor.commit();
 	}
 	
+	public void addAddressForLaterDelete(int external_id){
+		addIdToPrefs(SDMetaData.DELETED_ADDRESSES, external_id);
+	}
+	
 	public void clear(int state){
-	    SharedPreferences.Editor editor = prefs.edit();
 
 	    switch (state) {
 		case 1:
@@ -67,9 +71,13 @@ public class SaveDeletedData {
 		case 3:
 			prefsEditor.putString(SaveDeletedData.SDMetaData.DELETED_EVENTS, "");
 			break;
+		case 4:
+			prefsEditor.putString(SaveDeletedData.SDMetaData.DELETED_ADDRESSES, "");
+			
+			break;
 		}
 	    
-	    editor.commit();	
+	    prefsEditor.commit();	
 	}
 	
 	
@@ -83,6 +91,9 @@ public class SaveDeletedData {
 	
 	public String getDELETED_GROUPS() {
 		return prefs.getString(SaveDeletedData.SDMetaData.DELETED_GROUPS, "");
+	}
+	public String getDELETED_ADDRESSES() {
+		return prefs.getString(SaveDeletedData.SDMetaData.DELETED_ADDRESSES, "");
 	}
 	
 	
