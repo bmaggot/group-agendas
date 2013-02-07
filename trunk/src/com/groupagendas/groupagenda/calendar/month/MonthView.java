@@ -6,6 +6,7 @@ import java.util.Calendar;
 import android.content.Context;
 import android.database.Cursor;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.util.TypedValue;
 import android.view.Gravity;
 import android.view.MotionEvent;
@@ -177,7 +178,11 @@ public class MonthView extends AbstractCalendarView {
 		
 		if ((sortedEvents != null) && (selectedDate != null)) {
 			if (TreeMapUtils.getEventsFromTreemap(selectedDate, sortedEvents) != null) {
-				i = i - TreeMapUtils.getEventsFromTreemap(selectedDate, sortedEvents).size();
+				try{
+					i = i - TreeMapUtils.getEventsFromTreemap(selectedDate, sortedEvents).size();
+				} catch (Exception e){
+					Log.e("fillBottomSpace()","kazkodel null");
+				}
 			}
 		}
 		
