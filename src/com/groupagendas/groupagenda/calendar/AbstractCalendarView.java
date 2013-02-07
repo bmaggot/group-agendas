@@ -4,11 +4,9 @@ package com.groupagendas.groupagenda.calendar;
  * @author justinas.marcinka@gmail.com
  */
 
-import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
-import java.util.List;
 import java.util.TreeMap;
 
 import android.content.Context;
