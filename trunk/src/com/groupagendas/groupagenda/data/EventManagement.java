@@ -174,29 +174,29 @@ public class EventManagement {
 	 */
 	public static void createNewEvent(Context context, Event event) {
 		initUserTimezone(context);
-//		for(int i = 1; i < 32; i++){
-//			Log.e("DAY", i+"");
-//			event.getStartCalendar().set(Calendar.DAY_OF_MONTH, i);
-//			event.getEndCalendar().set(Calendar.DAY_OF_MONTH, i);
-//			for(int n = 0; n < 24; n++){
-				if (DataManagement.networkAvailable) {
-//					Log.e("COUNT", n+"");
-					int id = createEventInRemoteDb(context, event);
-		
-					if (id > 0) {
-						event.setEvent_id(id);
-						event.setUploadedToServer(true);
-					} else {
-						event.setUploadedToServer(false);
-						// TODO report error
-					}
-				} else {
-					event.setUploadedToServer(false);
-				}
-		
-				insertEventToLocalDB(context, event);
-//			}
-//		}
+		// for(int i = 1; i < 32; i++){
+		// Log.e("DAY", i+"");
+		// event.getStartCalendar().set(Calendar.DAY_OF_MONTH, i);
+		// event.getEndCalendar().set(Calendar.DAY_OF_MONTH, i);
+		// for(int n = 0; n < 24; n++){
+		if (DataManagement.networkAvailable) {
+			// Log.e("COUNT", n+"");
+			int id = createEventInRemoteDb(context, event);
+
+			if (id > 0) {
+				event.setEvent_id(id);
+				event.setUploadedToServer(true);
+			} else {
+				event.setUploadedToServer(false);
+				// TODO report error
+			}
+		} else {
+			event.setUploadedToServer(false);
+		}
+
+		insertEventToLocalDB(context, event);
+		// }
+		// }
 
 	}
 
@@ -639,12 +639,13 @@ public class EventManagement {
 							JSONArray es = object.getJSONArray(EVENTS);
 							length = es.length();
 							values = new ContentValues[length];
-//							Log.e("Count", length+"");
+							// Log.e("Count", length+"");
 							for (int i = 0; i < es.length(); i++) {
 								try {
 									JSONObject e = es.getJSONObject(i);
 									event = JSONUtils.createEventFromJSON(context, e);
-//									Log.e("Event", "PageNumber: "+pageNumber +" - EventID "+ event.getEvent_id()+"");
+									// Log.e("Event", "PageNumber: "+pageNumber
+									// +" - EventID "+ event.getEvent_id()+"");
 									if (event != null && !event.isNative()) {
 										event.setUploadedToServer(true);
 										if (event.getType().contentEquals("v") && !event.getPoll().contentEquals("null")) {
@@ -675,8 +676,8 @@ public class EventManagement {
 									values2[i] = values[i];
 								}
 								context.getContentResolver().bulkInsert(EventsProvider.EMetaData.INDEXED_EVENTS_URI, values2);
-//								Log.e("Inserted", insertedCount+"");
-//								Log.e("Inserted", "END");
+								// Log.e("Inserted", insertedCount+"");
+								// Log.e("Inserted", "END");
 							}
 						}
 					}
@@ -879,6 +880,7 @@ public class EventManagement {
 			}
 		} catch (Exception ex) {
 			Log.e("rejectPoll", "er");
+			success = false;
 		}
 		return success;
 	}
@@ -929,6 +931,7 @@ public class EventManagement {
 			}
 		} catch (Exception ex) {
 			Log.e("rejoinPoll", "er");
+			success = false;
 		}
 		return success;
 	}
@@ -1190,6 +1193,7 @@ public class EventManagement {
 	public static void updateEventSelectedPollsTimeInLocalDb(Context context, Event event) {
 		ContentValues cv = new ContentValues();
 		cv.put(EventsProvider.EMetaData.EventsMetaData.SELECTED_EVENT_POLLS_TIME, event.getSelectedEventPollsTime());
+		cv.put(EventsProvider.EMetaData.EventsMetaData.UPLOADED_SUCCESSFULLY, event.isUploadedToServer() ? 1 : 0);
 		Uri uri = EventsProvider.EMetaData.EventsMetaData.CONTENT_URI;
 		String where = EventsProvider.EMetaData.EventsMetaData._ID + "=" + event.getInternalID();
 		context.getContentResolver().update(uri, cv, where, null);
@@ -1294,10 +1298,14 @@ public class EventManagement {
 
 			reqEntity.addPart("title", new StringBody(e.getTitle(), Charset.forName("UTF-8")));
 
-			reqEntity.addPart("timestamp_start_utc",
-					new StringBody(String.valueOf(Utils.millisToUnixTimestamp(e.getStartCalendar().getTimeInMillis())), Charset.forName("UTF-8")));
-			reqEntity.addPart("timestamp_end_utc", new StringBody(String.valueOf(Utils.millisToUnixTimestamp(e.getEndCalendar().getTimeInMillis())),
-					Charset.forName("UTF-8")));
+			reqEntity.addPart(
+					"timestamp_start_utc",
+					new StringBody(String.valueOf(Utils.millisToUnixTimestamp(e.getStartCalendar().getTimeInMillis())), Charset
+							.forName("UTF-8")));
+			reqEntity.addPart(
+					"timestamp_end_utc",
+					new StringBody(String.valueOf(Utils.millisToUnixTimestamp(e.getEndCalendar().getTimeInMillis())), Charset
+							.forName("UTF-8")));
 
 			reqEntity.addPart("all_day_event", new StringBody(e.is_all_day() ? "1" : "0", Charset.forName("UTF-8")));
 
@@ -1340,29 +1348,29 @@ public class EventManagement {
 			// }
 
 			if (e.getAlarm1() != null) {
-				reqEntity.addPart("a1",
-						new StringBody(String.valueOf(Utils.millisToUnixTimestamp(e.getAlarm1().getTimeInMillis())), Charset.forName("UTF-8")));
+				reqEntity.addPart("a1", new StringBody(String.valueOf(Utils.millisToUnixTimestamp(e.getAlarm1().getTimeInMillis())),
+						Charset.forName("UTF-8")));
 			}
 			if (e.getAlarm2() != null) {
-				reqEntity.addPart("a2",
-						new StringBody(String.valueOf(Utils.millisToUnixTimestamp(e.getAlarm2().getTimeInMillis())), Charset.forName("UTF-8")));
+				reqEntity.addPart("a2", new StringBody(String.valueOf(Utils.millisToUnixTimestamp(e.getAlarm2().getTimeInMillis())),
+						Charset.forName("UTF-8")));
 			}
 			if (e.getAlarm3() != null) {
-				reqEntity.addPart("a3",
-						new StringBody(String.valueOf(Utils.millisToUnixTimestamp(e.getAlarm3().getTimeInMillis())), Charset.forName("UTF-8")));
+				reqEntity.addPart("a3", new StringBody(String.valueOf(Utils.millisToUnixTimestamp(e.getAlarm3().getTimeInMillis())),
+						Charset.forName("UTF-8")));
 			}
 
 			if (e.getReminder1() != null) {
-				reqEntity.addPart("r1",
-						new StringBody(String.valueOf(Utils.millisToUnixTimestamp(e.getReminder1().getTimeInMillis())), Charset.forName("UTF-8")));
+				reqEntity.addPart("r1", new StringBody(String.valueOf(Utils.millisToUnixTimestamp(e.getReminder1().getTimeInMillis())),
+						Charset.forName("UTF-8")));
 			}
 			if (e.getReminder2() != null) {
-				reqEntity.addPart("r2",
-						new StringBody(String.valueOf(Utils.millisToUnixTimestamp(e.getReminder2().getTimeInMillis())), Charset.forName("UTF-8")));
+				reqEntity.addPart("r2", new StringBody(String.valueOf(Utils.millisToUnixTimestamp(e.getReminder2().getTimeInMillis())),
+						Charset.forName("UTF-8")));
 			}
 			if (e.getReminder3() != null) {
-				reqEntity.addPart("r3",
-						new StringBody(String.valueOf(Utils.millisToUnixTimestamp(e.getReminder3().getTimeInMillis())), Charset.forName("UTF-8")));
+				reqEntity.addPart("r3", new StringBody(String.valueOf(Utils.millisToUnixTimestamp(e.getReminder3().getTimeInMillis())),
+						Charset.forName("UTF-8")));
 			}
 
 			if (e.isBirthday()) {
@@ -1422,10 +1430,14 @@ public class EventManagement {
 
 				reqEntity.addPart("title", new StringBody(e.getTitle(), Charset.forName("UTF-8")));
 
-				reqEntity.addPart("timestamp_start_utc",
-						new StringBody(String.valueOf(Utils.millisToUnixTimestamp(e.getStartCalendar().getTimeInMillis())), Charset.forName("UTF-8")));
-				reqEntity.addPart("timestamp_end_utc",
-						new StringBody(String.valueOf(Utils.millisToUnixTimestamp(e.getEndCalendar().getTimeInMillis())), Charset.forName("UTF-8")));
+				reqEntity.addPart(
+						"timestamp_start_utc",
+						new StringBody(String.valueOf(Utils.millisToUnixTimestamp(e.getStartCalendar().getTimeInMillis())), Charset
+								.forName("UTF-8")));
+				reqEntity.addPart(
+						"timestamp_end_utc",
+						new StringBody(String.valueOf(Utils.millisToUnixTimestamp(e.getEndCalendar().getTimeInMillis())), Charset
+								.forName("UTF-8")));
 
 				reqEntity.addPart("timezone", new StringBody(e.getTimezone(), Charset.forName("UTF-8")));
 
@@ -1445,35 +1457,35 @@ public class EventManagement {
 				reqEntity.addPart("accomodation", new StringBody(e.getAccomodation(), Charset.forName("UTF-8")));
 
 				if (e.getAlarm1() != null) {
-					reqEntity.addPart("a1",
-							new StringBody(String.valueOf(Utils.millisToUnixTimestamp(e.getAlarm1().getTimeInMillis())), Charset.forName("UTF-8")));
+					reqEntity.addPart("a1", new StringBody(String.valueOf(Utils.millisToUnixTimestamp(e.getAlarm1().getTimeInMillis())),
+							Charset.forName("UTF-8")));
 				}
 				if (e.getAlarm2() != null) {
-					reqEntity.addPart("a2",
-							new StringBody(String.valueOf(Utils.millisToUnixTimestamp(e.getAlarm2().getTimeInMillis())), Charset.forName("UTF-8")));
+					reqEntity.addPart("a2", new StringBody(String.valueOf(Utils.millisToUnixTimestamp(e.getAlarm2().getTimeInMillis())),
+							Charset.forName("UTF-8")));
 				}
 				if (e.getAlarm3() != null) {
-					reqEntity.addPart("a3",
-							new StringBody(String.valueOf(Utils.millisToUnixTimestamp(e.getAlarm3().getTimeInMillis())), Charset.forName("UTF-8")));
+					reqEntity.addPart("a3", new StringBody(String.valueOf(Utils.millisToUnixTimestamp(e.getAlarm3().getTimeInMillis())),
+							Charset.forName("UTF-8")));
 				}
 
 				if (e.getReminder1() != null) {
 					e.getReminder1().clear(Calendar.SECOND);
 					e.getReminder1().clear(Calendar.MILLISECOND);
-					reqEntity.addPart("r1",
-							new StringBody(String.valueOf(Utils.millisToUnixTimestamp(e.getReminder1().getTimeInMillis())), Charset.forName("UTF-8")));
+					reqEntity.addPart("r1", new StringBody(String.valueOf(Utils.millisToUnixTimestamp(e.getReminder1().getTimeInMillis())),
+							Charset.forName("UTF-8")));
 				}
 				if (e.getReminder2() != null) {
 					e.getReminder2().clear(Calendar.SECOND);
 					e.getReminder2().clear(Calendar.MILLISECOND);
-					reqEntity.addPart("r2",
-							new StringBody(String.valueOf(Utils.millisToUnixTimestamp(e.getReminder2().getTimeInMillis())), Charset.forName("UTF-8")));
+					reqEntity.addPart("r2", new StringBody(String.valueOf(Utils.millisToUnixTimestamp(e.getReminder2().getTimeInMillis())),
+							Charset.forName("UTF-8")));
 				}
 				if (e.getReminder3() != null) {
 					e.getReminder3().clear(Calendar.SECOND);
 					e.getReminder3().clear(Calendar.MILLISECOND);
-					reqEntity.addPart("r3",
-							new StringBody(String.valueOf(Utils.millisToUnixTimestamp(e.getReminder3().getTimeInMillis())), Charset.forName("UTF-8")));
+					reqEntity.addPart("r3", new StringBody(String.valueOf(Utils.millisToUnixTimestamp(e.getReminder3().getTimeInMillis())),
+							Charset.forName("UTF-8")));
 				}
 
 				// if (Data.selectedContacts != null &&
@@ -1961,33 +1973,37 @@ public class EventManagement {
 		while (result.moveToNext()) {
 			Event e = createEventFromCursor(context, result);
 
-			// if(e.getType().contentEquals("v")){
-			// Log.d("event", "id "+e.getEvent_id());
-			// ArrayList<JSONObject> allEventPolls =
-			// EventEditActivity.getAllEventPollTimes(e);
-			// ArrayList<JSONObject> selectedPollTime =
-			// EventEditActivity.getSelectedEventPollTimes(e);
-			// if (DataManagement.networkAvailable) {
-			// e.setUploadedToServer(votePoll(context, "" + e.getEvent_id(),
-			// allEventPolls, "0"));
-			// e.setUploadedToServer(votePoll(context, "" + e.getEvent_id(),
-			// selectedPollTime, "1"));
-			// } else {
-			// e.setUploadedToServer(false);
-			// }
-			// updateEventInLocalDb(context, e);
-			// result.moveToNext();
-			// } else{
-			if (!editEvent(context, e)) {
-				int externalId = createEventInRemoteDb(context, e);
-				ContentValues values = new ContentValues();
-				values.put(EventsProvider.EMetaData.EventsMetaData.E_ID, externalId);
-				where = EventsProvider.EMetaData.EventsMetaData._ID + "=" + e.getInternalID();
-				context.getContentResolver().update(EventsProvider.EMetaData.EventsMetaData.CONTENT_URI, values, where, null);
+			if (e.getType().contentEquals("v")) {
+				Log.d("event", "id " + e.getEvent_id());
+				ArrayList<JSONObject> allEventPolls = EventEditActivity.getAllEventPollTimes(e);
+				ArrayList<JSONObject> selectedPollTime = EventEditActivity.getSelectedEventPollTimes(e);
+				if (DataManagement.networkAvailable) {
+					if (e.getStatus() == Invited.REJECTED) {
+						e.setUploadedToServer(rejectPoll(context, "" + e.getEvent_id()));
+					} else {
+						if (e.getStatus() == Invited.ACCEPTED) {
+							e.setUploadedToServer(rejoinPoll(context, "" + e.getEvent_id()));
+							e.setUploadedToServer(votePoll(context, "" + e.getEvent_id(), allEventPolls, "0"));
+							e.setUploadedToServer(votePoll(context, "" + e.getEvent_id(), selectedPollTime, "1"));
+						}
+					}
+
+				} else {
+					e.setUploadedToServer(false);
+				}
+				updateEventInLocalDb(context, e);
+			} else {
+				if (!editEvent(context, e)) {
+					int externalId = createEventInRemoteDb(context, e);
+					ContentValues values = new ContentValues();
+					values.put(EventsProvider.EMetaData.EventsMetaData.E_ID, externalId);
+					where = EventsProvider.EMetaData.EventsMetaData._ID + "=" + e.getInternalID();
+					context.getContentResolver().update(EventsProvider.EMetaData.EventsMetaData.CONTENT_URI, values, where, null);
+				}
 			}
 		}
 		result.close();
-		
+
 		SaveDeletedData offlineDeletedEvents = new SaveDeletedData(context);
 		String offlineDeleted = offlineDeletedEvents.getDELETED_EVENTS();
 		String[] ids = offlineDeleted.split(SDMetaData.SEPARATOR);
@@ -2014,8 +2030,7 @@ public class EventManagement {
 			item = EventManagement.createEventFromCursor(context, result);
 			String jsonArraySelectedTime = item.getSelectedEventPollsTime();
 			try {
-				if (jsonArraySelectedTime != null && !jsonArraySelectedTime.contentEquals("null") &&
-						jsonArraySelectedTime.length() > 2) {
+				if (jsonArraySelectedTime != null && !jsonArraySelectedTime.contentEquals("null") && jsonArraySelectedTime.length() > 2) {
 					final JSONArray jsonArray = new JSONArray(jsonArraySelectedTime);
 					for (int i = 0; i < jsonArray.length(); i++) {
 						JSONObject pollThread = jsonArray.getJSONObject(i);
@@ -2036,8 +2051,7 @@ public class EventManagement {
 							item = EventManagement.createEventFromCursor(context, result);
 							item.setStartCalendar(Utils.stringToCalendar(context, e.getString("start"),
 									DataManagement.SERVER_TIMESTAMP_FORMAT));
-							item.setEndCalendar(Utils.stringToCalendar(context, e.getString("end"),
-									DataManagement.SERVER_TIMESTAMP_FORMAT));
+							item.setEndCalendar(Utils.stringToCalendar(context, e.getString("end"), DataManagement.SERVER_TIMESTAMP_FORMAT));
 							items.add(item);
 							// }
 						}
