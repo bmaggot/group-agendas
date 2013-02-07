@@ -1,6 +1,5 @@
 package com.groupagendas.groupagenda.alarm;
 
-import java.nio.charset.Charset;
 import java.util.ArrayList;
 
 import org.apache.http.HttpResponse;
@@ -8,7 +7,6 @@ import org.apache.http.HttpStatus;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.entity.mime.HttpMultipartMode;
 import org.apache.http.entity.mime.MultipartEntity;
-import org.apache.http.entity.mime.content.StringBody;
 import org.apache.http.util.EntityUtils;
 import org.json.JSONObject;
 
@@ -22,6 +20,7 @@ import com.groupagendas.groupagenda.data.Data;
 import com.groupagendas.groupagenda.events.EventsProvider;
 import com.groupagendas.groupagenda.events.EventsProvider.EMetaData.AlarmsMetaData;
 import com.groupagendas.groupagenda.https.WebService;
+import com.groupagendas.groupagenda.utils.CharsetUtils;
 import com.groupagendas.groupagenda.utils.Utils;
 
 public class AlarmsManagement {
@@ -102,23 +101,19 @@ public class AlarmsManagement {
 	
 	public static boolean setAlarmsForEvent(Context context, long alarm1, long alarm1offset, long alarm2, long alarm2offset, long alarm3, long alarm3offset, int event_id){
 		boolean success = false;
-		try{
+		try {
 			WebService webService = new WebService(context);
 			HttpPost post = new HttpPost(Data.getServerUrl() + "mobile/alarms/set");
-	
+			
 			MultipartEntity reqEntity = new MultipartEntity(HttpMultipartMode.BROWSER_COMPATIBLE);
-	
-			reqEntity.addPart(TOKEN, new StringBody(Data.getToken(context), Charset.forName("UTF-8")));
-			reqEntity.addPart(EVENT_ID, new StringBody(event_id+"", Charset.forName("UTF-8")));
 			
-			reqEntity.addPart(ALARM_1_TIMESTAMP, new StringBody(Utils.millisToUnixTimestamp(alarm1) + "", Charset.forName("UTF-8")));
-			reqEntity.addPart(ALARM_1_OFFSET, new StringBody(Utils.millisToUnixTimestamp(alarm1offset) + "", Charset.forName("UTF-8")));
-			
-			reqEntity.addPart(ALARM_2_TIMESTAMP, new StringBody(Utils.millisToUnixTimestamp(alarm2) + "", Charset.forName("UTF-8")));
-			reqEntity.addPart(ALARM_2_OFFSET, new StringBody(Utils.millisToUnixTimestamp(alarm2offset) + "", Charset.forName("UTF-8")));
-			
-			reqEntity.addPart(ALARM_3_TIMESTAMP, new StringBody(Utils.millisToUnixTimestamp(alarm3) + "", Charset.forName("UTF-8")));
-			reqEntity.addPart(ALARM_3_OFFSET, new StringBody(Utils.millisToUnixTimestamp(alarm3offset) + "", Charset.forName("UTF-8")));
+			CharsetUtils.addAllParts(reqEntity, TOKEN, Data.getToken(context), EVENT_ID, event_id,
+					ALARM_1_TIMESTAMP, Utils.millisToUnixTimestamp(alarm1),
+					ALARM_1_OFFSET, Utils.millisToUnixTimestamp(alarm1offset),
+					ALARM_2_TIMESTAMP, Utils.millisToUnixTimestamp(alarm2),
+					ALARM_2_OFFSET, Utils.millisToUnixTimestamp(alarm2offset),
+					ALARM_3_TIMESTAMP, Utils.millisToUnixTimestamp(alarm3),
+					ALARM_3_OFFSET, Utils.millisToUnixTimestamp(alarm3offset));
 	
 			post.setEntity(reqEntity);
 			HttpResponse rp = webService.getResponseFromHttpPost(post);
@@ -126,8 +121,8 @@ public class AlarmsManagement {
 				String resp = EntityUtils.toString(rp.getEntity());
 				if (resp != null) {
 					success = new JSONObject(resp).optBoolean(SUCCESS);
-					if(success){
-						if(NavbarActivity.alarmReceiver == null){
+					if (success) {
+						if (NavbarActivity.alarmReceiver == null) {
 							NavbarActivity.refreshAlarmReceiver();
 						}
 						NavbarActivity.alarmReceiver.SetAlarm(context, alarm1, event_id);
@@ -136,7 +131,7 @@ public class AlarmsManagement {
 					}
 				}
 			} else {
-				Log.e("Get Alarms - status", rp.getStatusLine().getStatusCode() + "");
+				Log.e("Get Alarms - status", String.valueOf(rp.getStatusLine().getStatusCode()));
 			}
 		} catch (Exception e){
 			e.printStackTrace();

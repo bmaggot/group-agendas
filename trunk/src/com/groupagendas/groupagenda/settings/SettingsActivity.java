@@ -1,13 +1,10 @@
 package com.groupagendas.groupagenda.settings;
 
-import java.nio.charset.Charset;
-
 import org.apache.http.HttpResponse;
 import org.apache.http.HttpStatus;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.entity.mime.HttpMultipartMode;
 import org.apache.http.entity.mime.MultipartEntity;
-import org.apache.http.entity.mime.content.StringBody;
 import org.apache.http.util.EntityUtils;
 import org.json.JSONObject;
 
@@ -32,6 +29,7 @@ import com.groupagendas.groupagenda.data.Data;
 import com.groupagendas.groupagenda.data.DataManagement;
 import com.groupagendas.groupagenda.error.report.Reporter;
 import com.groupagendas.groupagenda.https.WebService;
+import com.groupagendas.groupagenda.utils.CharsetUtils;
 
 public class SettingsActivity extends ListActivity{
 	
@@ -145,7 +143,7 @@ public class SettingsActivity extends ListActivity{
 				MultipartEntity reqEntity = new MultipartEntity(HttpMultipartMode.BROWSER_COMPATIBLE);
 
 				Account account = new Account(SettingsActivity.this);
-				reqEntity.addPart("device_uuid", new StringBody(account.getPushId(), Charset.forName("UTF-8")));
+				CharsetUtils.addPart(reqEntity, "device_uuid", account.getPushId());
 
 				post.setEntity(reqEntity);
 

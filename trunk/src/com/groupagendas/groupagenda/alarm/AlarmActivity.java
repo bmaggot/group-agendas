@@ -1,7 +1,6 @@
 package com.groupagendas.groupagenda.alarm;
 
 import java.io.IOException;
-import java.nio.charset.Charset;
 import java.util.Calendar;
 
 import org.apache.http.HttpResponse;
@@ -9,7 +8,6 @@ import org.apache.http.HttpStatus;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.entity.mime.HttpMultipartMode;
 import org.apache.http.entity.mime.MultipartEntity;
-import org.apache.http.entity.mime.content.StringBody;
 import org.apache.http.util.EntityUtils;
 import org.json.JSONObject;
 
@@ -34,6 +32,7 @@ import com.groupagendas.groupagenda.data.DataManagement;
 import com.groupagendas.groupagenda.data.EventManagement;
 import com.groupagendas.groupagenda.events.Event;
 import com.groupagendas.groupagenda.https.WebService;
+import com.groupagendas.groupagenda.utils.CharsetUtils;
 import com.groupagendas.groupagenda.utils.Utils;
 
 public class AlarmActivity extends Activity {
@@ -134,8 +133,7 @@ public class AlarmActivity extends Activity {
 				HttpPost post = new HttpPost(Data.getServerUrl() + "mobile/alarms_dismiss");
 
 				MultipartEntity reqEntity = new MultipartEntity(HttpMultipartMode.BROWSER_COMPATIBLE);
-				reqEntity.addPart("token", new StringBody(Data.getToken(getApplicationContext()), Charset.forName("UTF-8")));
-				reqEntity.addPart("event_id", new StringBody(eventId + "", Charset.forName("UTF-8")));
+				CharsetUtils.addAllParts(reqEntity, "token", Data.getToken(getApplicationContext()), "event_id", eventId);
 				post.setEntity(reqEntity);
 				if (DataManagement.networkAvailable) {
 					HttpResponse rp = webService.getResponseFromHttpPost(post);
