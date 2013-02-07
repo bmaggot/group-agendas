@@ -326,6 +326,19 @@ public class NewEventActivity extends EventActivity {
 		costView = (EditText) findViewById(R.id.costView);
 		accomodationView = (EditText) findViewById(R.id.accomodationView);
 		
+		alarmTrigger = (RelativeLayout) findViewById(R.id.alarm_trigger);
+		alarmTrigger.setOnClickListener(new OnClickListener() {
+
+			@Override
+			public void onClick(View v) {
+				if (alarmPanelVisible) {
+					hideAlarmPanel();
+				} else {
+					showAlarmPanel();
+				}
+			}
+		});
+		
 		address = (Button) findViewById(R.id.address_button);
 		address.setOnClickListener(new OnClickListener() {
 			
@@ -439,6 +452,10 @@ public class NewEventActivity extends EventActivity {
 		});
 
 		EventActivity.event = new Event();
+		hideAlarmPanel();
+//		hideReminderPanel();
+		initAlarms();
+//		initReminders();
 	}
 
 	@Override
