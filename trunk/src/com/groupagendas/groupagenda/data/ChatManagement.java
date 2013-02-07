@@ -61,7 +61,10 @@ public class ChatManagement {
 			chatMessage.setMessage(json.getString(CMMetaData.ChatMetaData.MESSAGE));
 			String deleted = json.getString(CMMetaData.ChatMetaData.DELETED);
 			chatMessage.setDeleted(!deleted.equals("null"));
-			chatMessage.setFullname(json.getString(CMMetaData.ChatMetaData.FULLNAME));
+			if (json.has(CMMetaData.ChatMetaData.FULLNAME)) {
+				chatMessage.setFullname(json.getString(CMMetaData.ChatMetaData.FULLNAME));
+			}
+			chatMessage.setSuccessfully_uploaded(true);
 		} catch (JSONException e) {
 			Log.e("makeChatMessageObjectFromJSON(JSONObject json)", e.getMessage());
 		}
@@ -91,7 +94,10 @@ public class ChatManagement {
 			String deleted = json.getString(CMMetaData.ChatMetaData.DELETED);
 			cv.put(CMMetaData.ChatMetaData.DELETED, !deleted.equals("null"));
 			cv.put(CMMetaData.ChatMetaData.MODIFIED, Utils.unixTimestampToMilis(json.getLong(CMMetaData.ChatMetaData.CREATED)));
-			cv.put(CMMetaData.ChatMetaData.FULLNAME, json.getString(CMMetaData.ChatMetaData.FULLNAME));
+			if (json.has(CMMetaData.ChatMetaData.FULLNAME)) {
+				cv.put(CMMetaData.ChatMetaData.FULLNAME, json.getString(CMMetaData.ChatMetaData.FULLNAME));
+			}
+			cv.put(CMMetaData.ChatMetaData.SUCCESSFULLY_UPLOADED, true);
 		} catch (Exception e) {
 			Log.e("makeChatMessageObjectContentValueFromJSON(JSONObject json)", e.getMessage());
 		}
@@ -121,6 +127,7 @@ public class ChatManagement {
 			cv.put(CMMetaData.ChatMetaData.DELETED, chatMessage.isDeleted());
 			cv.put(CMMetaData.ChatMetaData.MODIFIED, chatMessage.getUpdated());
 			cv.put(CMMetaData.ChatMetaData.FULLNAME, chatMessage.getFullname());
+			cv.put(CMMetaData.ChatMetaData.SUCCESSFULLY_UPLOADED, chatMessage.isSuccessfully_uploaded());
 		} catch (Exception e) {
 			Log.e("makeContentValuesFromChatMessageObject(ChatMessageObject " + chatMessage.getMessageId() + ")", e.getMessage());
 		}
@@ -141,7 +148,7 @@ public class ChatManagement {
 		return chatMessages;
 	}
 
-	public static ChatMessageObject makeChatMessageObjectFromCursor(Cursor cur){
+	public static ChatMessageObject makeChatMessageObjectFromCursor(Cursor cur) {
 		ChatMessageObject message = new ChatMessageObject();
 		message.setMessageId(cur.getInt(cur.getColumnIndex(ChatProvider.CMMetaData.ChatMetaData.M_ID)));
 		message.setEventId(cur.getInt(cur.getColumnIndex(ChatProvider.CMMetaData.ChatMetaData.E_ID)));
@@ -154,7 +161,7 @@ public class ChatManagement {
 
 		return message;
 	}
-	
+
 	public static ChatMessageObject getLastMessageForEventFromLocalDb(Context context, int eventId) {
 		ChatMessageObject chatMessageObject = new ChatMessageObject();
 		String selection = ChatProvider.CMMetaData.ChatMetaData.E_ID + "=" + eventId + " AND "
@@ -277,7 +284,7 @@ public class ChatManagement {
 		}
 		return success;
 	}
-	
+
 	public static boolean removeChatMessageFromLocalDb(Context context, int messageId) {
 		boolean success = false;
 		try {
@@ -340,7 +347,8 @@ public class ChatManagement {
 							chatMessageObject = ChatManagement.makeChatMessageObjectFromJSON(context, object.getJSONObject("message"));
 							ContentValues cv = new ContentValues();
 							cv = new ContentValues();
-							cv.put(EMetaData.EventsMetaData.LAST_MESSAGE_DATE_TIME_UTC_MILISECONDS, Utils.millisToUnixTimestamp(chatMessageObject.getCreated()));
+							cv.put(EMetaData.EventsMetaData.LAST_MESSAGE_DATE_TIME_UTC_MILISECONDS,
+									Utils.millisToUnixTimestamp(chatMessageObject.getCreated()));
 							Uri uri = EventsProvider.EMetaData.EventsMetaData.CONTENT_URI;
 							String where = EventsProvider.EMetaData.EventsMetaData.E_ID + "=" + eventId;
 							Event event = EventManagement.getEventFromLocalDb(context, eventId, EventManagement.ID_EXTERNAL);
@@ -454,7 +462,7 @@ public class ChatManagement {
 		ChatMessageObject chatMessageObject = new ChatMessageObject();
 		Account account = new Account(context);
 		Calendar calendar = Calendar.getInstance();
-		chatMessageObject.setMessageId(((int)calendar.getTimeInMillis()));
+		chatMessageObject.setMessageId(((int) calendar.getTimeInMillis()));
 		chatMessageObject.setEventId(event_id);
 		chatMessageObject.setCreated(calendar.getTimeInMillis());
 		chatMessageObject.setUserId(account.getUser_id());
@@ -491,7 +499,7 @@ public class ChatManagement {
 			timestamp = cur.getLong(cur.getColumnIndex(LASTEST_UPDATED_TIMESTAMP));
 		}
 		cur.close();
-		if(timestamp == 0){
+		if (timestamp == 0) {
 			Uri uriNew = ChatProvider.CMMetaData.ChatMetaData.CONTENT_URI;
 			String projectionNew[] = { "MAX(" + ChatProvider.CMMetaData.ChatMetaData.CREATED + ") AS " + LASTEST_UPDATED_TIMESTAMP };
 			String selectionNew = ChatProvider.CMMetaData.ChatMetaData.E_ID + "=" + eventId;
@@ -503,13 +511,11 @@ public class ChatManagement {
 		}
 		return Utils.millisToUnixTimestamp(timestamp);
 	}
-	
+
 	public static ArrayList<ChatMessageObject> getChatMessagesCreatedOffline(Context context) {
 		Uri uri = ChatProvider.CMMetaData.ChatMetaData.CONTENT_URI;
 		String projection[] = null;
-		Account account = new Account(context);
-		String selection = (ChatProvider.CMMetaData.ChatMetaData.MODIFIED +">"+ account.getLastTimeConnectedToWeb() + " AND " +
-		ChatProvider.CMMetaData.ChatMetaData.USER_ID + "=" + account.getUser_id());
+		String selection = (ChatProvider.CMMetaData.ChatMetaData.SUCCESSFULLY_UPLOADED + "='0'");
 		Cursor cur = context.getContentResolver().query(uri, projection, selection, null, null);
 		ArrayList<ChatMessageObject> offlineChatMessages = new ArrayList<ChatMessageObject>(cur.getCount());
 		while (cur.moveToNext()) {
