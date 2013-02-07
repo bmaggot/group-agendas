@@ -30,6 +30,7 @@ public class AddressProvider extends ContentProvider {
 			public static final String CONTENT_TYPE = "vnd.android.cursor.dir/vnd.formula.address_item";
 			public static final String CONTENT_ITEM_TYPE = "vnd.android.cursor.item/vnd.formula.address_item";
 
+			public static final String _ID = "_id";
 			public static final String A_ID = "id";
 			public static final String USER_ID = "user_id";
 			public static final String TITLE = "title";
@@ -40,6 +41,7 @@ public class AddressProvider extends ContentProvider {
 			public static final String COUNTRY = "country";
 			public static final String TIMEZONE = "timezone";
 			public static final String COUNTRY_NAME = "country_name";
+			public static final String UPLOADED_SUCCESSFULLY = "uploaded";
 
 			public static final String DEFAULT_SORT_ORDER = TITLE + " ASC";
 		}
@@ -49,6 +51,7 @@ public class AddressProvider extends ContentProvider {
 
 	static {
 		AD = new HashMap<String, String>();
+		AD.put(AMetaData.AddressesMetaData._ID, AMetaData.AddressesMetaData._ID);
 		AD.put(AMetaData.AddressesMetaData.A_ID, AMetaData.AddressesMetaData.A_ID);
 		AD.put(AMetaData.AddressesMetaData.USER_ID, AMetaData.AddressesMetaData.USER_ID);
 		AD.put(AMetaData.AddressesMetaData.TITLE, AMetaData.AddressesMetaData.TITLE);
@@ -59,6 +62,7 @@ public class AddressProvider extends ContentProvider {
 		AD.put(AMetaData.AddressesMetaData.COUNTRY, AMetaData.AddressesMetaData.COUNTRY);
 		AD.put(AMetaData.AddressesMetaData.TIMEZONE, AMetaData.AddressesMetaData.TIMEZONE);
 		AD.put(AMetaData.AddressesMetaData.COUNTRY_NAME, AMetaData.AddressesMetaData.COUNTRY_NAME);
+		AD.put(AMetaData.AddressesMetaData.UPLOADED_SUCCESSFULLY, AMetaData.AddressesMetaData.UPLOADED_SUCCESSFULLY);
 	}
 
 	/* UriMatcher */
@@ -165,7 +169,7 @@ public class AddressProvider extends ContentProvider {
 			count = db.update(AMetaData.ADDRESSES_TABLE, values, selection, selectionArgs);
 			break;
 		case SINGLE_ADDRESS:
-			String whereStr = AMetaData.AddressesMetaData.A_ID + "=" + uri.getPathSegments().get(1) + (!TextUtils.isEmpty(selection)?"AND(" + selection + ")":"");
+			String whereStr = AMetaData.AddressesMetaData._ID + "=" + uri.getPathSegments().get(1) + (!TextUtils.isEmpty(selection)?"AND(" + selection + ")":"");
 			count = db.update(AMetaData.ADDRESSES_TABLE, values, whereStr, selectionArgs);
 			break;
 		default:
@@ -195,7 +199,8 @@ public class AddressProvider extends ContentProvider {
 					+AMetaData.AddressesMetaData.STATE + " TEXT ,"
 					+AMetaData.AddressesMetaData.COUNTRY + " TEXT ,"
 					+AMetaData.AddressesMetaData.TIMEZONE + " TEXT ,"
-					+AMetaData.AddressesMetaData.COUNTRY_NAME  + " TEXT )";
+					+AMetaData.AddressesMetaData.COUNTRY_NAME  + " TEXT ,"
+					+AMetaData.AddressesMetaData.UPLOADED_SUCCESSFULLY+" INTEGER DEFAULT 0 ) ";
 			
 			db.execSQL(query);
 					
