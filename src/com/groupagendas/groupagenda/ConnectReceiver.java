@@ -11,6 +11,7 @@ import android.os.AsyncTask;
 import android.util.Log;
 
 import com.groupagendas.groupagenda.account.Account;
+import com.groupagendas.groupagenda.address.AddressManagement;
 import com.groupagendas.groupagenda.data.ChatManagement;
 import com.groupagendas.groupagenda.data.ContactManagement;
 import com.groupagendas.groupagenda.data.DataManagement;
@@ -58,6 +59,7 @@ public class ConnectReceiver extends BroadcastReceiver {
 			ContactManagement.uploadOfflineCreatedGroups(context);
 			EventManagement.uploadOfflineEvents(context);
 			ChatManagement.uploadUnploaded(context, ChatManagement.getChatMessagesCreatedOffline(context));
+			AddressManagement.uploadOfflineAddresses(context);
 			DataManagement.synchronizeWithServer(context, null, account.getLatestUpdateUnixTimestamp());
 			return null;
 		}
