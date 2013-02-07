@@ -1,8 +1,6 @@
 package com.groupagendas.groupagenda.error.report;
 
 import java.io.IOException;
-import java.io.UnsupportedEncodingException;
-import java.nio.charset.Charset;
 
 import org.apache.http.HttpResponse;
 import org.apache.http.HttpStatus;
@@ -10,7 +8,6 @@ import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.entity.mime.HttpMultipartMode;
 import org.apache.http.entity.mime.MultipartEntity;
-import org.apache.http.entity.mime.content.StringBody;
 import org.apache.http.util.EntityUtils;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -22,16 +19,14 @@ import android.util.Log;
 import com.groupagendas.groupagenda.data.Data;
 import com.groupagendas.groupagenda.data.DataManagement;
 import com.groupagendas.groupagenda.https.WebService;
+import com.groupagendas.groupagenda.utils.CharsetUtils;
 
 public class Reporter {
-
-	private static HttpPost post = new HttpPost(Data.getServerUrl() + "mobile/error_put");
-	private static MultipartEntity reqEntity = new MultipartEntity(HttpMultipartMode.BROWSER_COMPATIBLE);
-	private static HttpResponse rp;
-	private static Context context;
+	private Reporter() {
+		// utility class
+	}
 
 	public static void reportError(Context context, String className, String methodName, String errorName) {
-		Reporter.context = context;
 		reportError(context, className, methodName, errorName, false);
 	}
 
@@ -40,35 +35,43 @@ public class Reporter {
 			if (!methodName.equals("getAccountFromRemoteDb") && !methodName.equals("getContactsFromRemoteDb")
 					&& !methodName.equals("getGroupsFromRemoteDb") && !methodName.equals("getEventsFromRemoteDb")
 					&& !methodName.equals("doInBackground")) {
-				String error = "Class: " + className + " Method : " + methodName + " Error Name: " + errorName;
-				Reporter reporter = new Reporter();
-				reporter.report(error);
+				StringBuilder sb = new StringBuilder("Class: ");
+				sb.append(className);
+				sb.append(" Method : ").append(methodName);
+				sb.append(" Error Name: ");
+				sb.append(errorName);
+				report(context, sb.toString());
 			}
 		}
 	}
 
-	public void report(String error) {
-		new ErrorReporter().execute(error);
+	public static void report(Context context, String error) {
+		new ErrorReporter(context).execute(error);
 	}
 
-	class ErrorReporter extends AsyncTask<String, Void, Void> {
+	static class ErrorReporter extends AsyncTask<String, Void, Void> {
+		private final Context context;
+
+		ErrorReporter(Context context) {
+			this.context = context;
+		}
 
 		@Override
 		protected Void doInBackground(String... params) {
 			String error = params[0];
 			WebService webService = new WebService(context);
 			try {
-				if (Data.getToken(context) != null) {
-					reqEntity.addPart("token", new StringBody(Data.getToken(context), Charset.forName("UTF-8")));
-				} else {
-					reqEntity.addPart("token", new StringBody("No token", Charset.forName("UTF-8")));
-				}
-				reqEntity.addPart("error", new StringBody(error, Charset.forName("UTF-8")));
-				reqEntity.addPart("app_version", new StringBody(android.os.Build.VERSION.RELEASE, Charset.forName("UTF-8")));
-				reqEntity.addPart("phone_model", new StringBody(android.os.Build.MODEL, Charset.forName("UTF-8")));
+				MultipartEntity reqEntity = new MultipartEntity(HttpMultipartMode.BROWSER_COMPATIBLE);
+				
+				final String token = Data.getToken(context);
+				CharsetUtils.addAllParts(reqEntity, "token", token != null ? token : "No token",
+						"error", error, "app_version", android.os.Build.VERSION.RELEASE,
+						"phone_model", android.os.Build.MODEL);
+				
+				HttpPost post = new HttpPost(Data.getServerUrl() + "mobile/error_put");
 				post.setEntity(reqEntity);
 				if (DataManagement.networkAvailable) {
-					rp = webService.getResponseFromHttpPost(post);
+					HttpResponse rp = webService.getResponseFromHttpPost(post);
 					if (rp.getStatusLine().getStatusCode() == HttpStatus.SC_OK) {
 						String resp = EntityUtils.toString(rp.getEntity());
 						Log.e("ERROR: ", error);
@@ -94,8 +97,6 @@ public class Reporter {
 				} else {
 					Log.e("Reporter", "I HAS NO INTERNET!");
 				}
-			} catch (UnsupportedEncodingException e) {
-				e.printStackTrace();
 			} catch (ClientProtocolException e) {
 				e.printStackTrace();
 			} catch (IOException e) {

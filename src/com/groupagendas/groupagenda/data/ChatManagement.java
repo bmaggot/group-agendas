@@ -1,7 +1,5 @@
 package com.groupagendas.groupagenda.data;
 
-import java.io.UnsupportedEncodingException;
-import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.Calendar;
 
@@ -10,7 +8,6 @@ import org.apache.http.HttpStatus;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.entity.mime.HttpMultipartMode;
 import org.apache.http.entity.mime.MultipartEntity;
-import org.apache.http.entity.mime.content.StringBody;
 import org.apache.http.util.EntityUtils;
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -31,6 +28,7 @@ import com.groupagendas.groupagenda.events.Event;
 import com.groupagendas.groupagenda.events.EventsProvider;
 import com.groupagendas.groupagenda.events.EventsProvider.EMetaData;
 import com.groupagendas.groupagenda.https.WebService;
+import com.groupagendas.groupagenda.utils.CharsetUtils;
 import com.groupagendas.groupagenda.utils.Utils;
 
 public class ChatManagement {
@@ -236,10 +234,11 @@ public class ChatManagement {
 
 			MultipartEntity reqEntity = new MultipartEntity(HttpMultipartMode.BROWSER_COMPATIBLE);
 
-			reqEntity.addPart(TOKEN, new StringBody(Data.getToken(context), Charset.forName("UTF-8")));
-			reqEntity.addPart("message_id", new StringBody(String.valueOf(messageId), Charset.forName("UTF-8")));
-			Account account = new Account(context);
-			reqEntity.addPart("session", new StringBody(account.getSessionId(), Charset.forName("UTF-8")));
+			{
+				Account account = new Account(context);
+				CharsetUtils.addAllParts(reqEntity, TOKEN, Data.getToken(context), "message_id", messageId,
+						"session", account.getSessionId());
+			}
 
 			post.setEntity(reqEntity);
 			HttpResponse rp = null;
@@ -250,9 +249,9 @@ public class ChatManagement {
 					if (resp != null) {
 						JSONObject object = new JSONObject(resp);
 						success = object.getBoolean("success");
-						if (success) {
-						} else {
-						}
+						// if (success) {
+						// } else {
+						// }
 					}
 				}
 			}
@@ -322,15 +321,12 @@ public class ChatManagement {
 
 			MultipartEntity reqEntity = new MultipartEntity(HttpMultipartMode.BROWSER_COMPATIBLE);
 
-			reqEntity.addPart(ChatManagement.TOKEN, new StringBody(Data.getToken(context), Charset.forName("UTF-8")));
-			reqEntity.addPart("event_id", new StringBody(String.valueOf(eventId), Charset.forName("UTF-8")));
-			if (message == null) {
-				reqEntity.addPart("message", new StringBody(String.valueOf(""), Charset.forName("UTF-8")));
-			} else {
-				reqEntity.addPart("message", new StringBody(String.valueOf(message), Charset.forName("UTF-8")));
+			{
+				Account account = new Account(context);
+				CharsetUtils.addAllParts(reqEntity, ChatManagement.TOKEN, Data.getToken(context),
+						"event_id", eventId, "message", message != null ? message : "",
+								"session", account.getSessionId());
 			}
-			Account account = new Account(context);
-			reqEntity.addPart("session", new StringBody(account.getSessionId(), Charset.forName("UTF-8")));
 
 			post.setEntity(reqEntity);
 			HttpResponse rp = null;
@@ -345,8 +341,7 @@ public class ChatManagement {
 							ChatManagement.insertChatMessageContentValueToLocalDb(context,
 									ChatManagement.makeChatMessageObjectContentValueFromJSON(context, object.getJSONObject("message")));
 							chatMessageObject = ChatManagement.makeChatMessageObjectFromJSON(context, object.getJSONObject("message"));
-							ContentValues cv = new ContentValues();
-							cv = new ContentValues();
+							ContentValues cv = new ContentValues(1);
 							cv.put(EMetaData.EventsMetaData.LAST_MESSAGE_DATE_TIME_UTC_MILISECONDS,
 									Utils.millisToUnixTimestamp(chatMessageObject.getCreated()));
 							Uri uri = EventsProvider.EMetaData.EventsMetaData.CONTENT_URI;
@@ -376,22 +371,13 @@ public class ChatManagement {
 		Log.e("ChatManagement", "");
 		MultipartEntity reqEntity = new MultipartEntity(HttpMultipartMode.BROWSER_COMPATIBLE);
 
-		try {
-			reqEntity.addPart(ChatManagement.TOKEN, new StringBody(Data.getToken(context), Charset.forName("UTF-8")));
-			reqEntity.addPart("event_id", new StringBody(String.valueOf(eventId), Charset.forName("UTF-8")));
-			if (lastMessageTimeStamp != 0) {
-				reqEntity.addPart("from_datetime", new StringBody(String.valueOf(lastMessageTimeStamp), Charset.forName("UTF-8")));
-			}
-			if (resetMessageCount) {
-				reqEntity.addPart("update_lastview", new StringBody("1", Charset.forName("UTF-8")));
-			} else {
-				reqEntity.addPart("update_lastview", new StringBody("0", Charset.forName("UTF-8")));
-			}
+		CharsetUtils.addAllParts(reqEntity, ChatManagement.TOKEN, Data.getToken(context), "event_id", eventId);
+		if (lastMessageTimeStamp != 0)
+			CharsetUtils.addPart(reqEntity, "from_datetime", lastMessageTimeStamp);
+		{
 			Account account = new Account(context);
-			reqEntity.addPart("session", new StringBody(account.getSessionId(), Charset.forName("UTF-8")));
-
-		} catch (UnsupportedEncodingException e1) {
-			e1.printStackTrace();
+			CharsetUtils.addAllParts(reqEntity, "update_lastview", resetMessageCount ? "1" : "0",
+					"session", account.getSessionId());
 		}
 
 		post.setEntity(reqEntity);
@@ -426,12 +412,9 @@ public class ChatManagement {
 		HttpPost post = new HttpPost(Data.getServerUrl() + "mobile/chat_get_all");
 		MultipartEntity reqEntity = new MultipartEntity(HttpMultipartMode.BROWSER_COMPATIBLE);
 
-		try {
-			reqEntity.addPart(ChatManagement.TOKEN, new StringBody(Data.getToken(context), Charset.forName("UTF-8")));
+		{
 			Account account = new Account(context);
-			reqEntity.addPart("session", new StringBody(account.getSessionId(), Charset.forName("UTF-8")));
-		} catch (UnsupportedEncodingException e1) {
-			e1.printStackTrace();
+			CharsetUtils.addAllParts(reqEntity, ChatManagement.TOKEN, Data.getToken(context), "session", account.getSessionId());
 		}
 
 		post.setEntity(reqEntity);
@@ -448,9 +431,8 @@ public class ChatManagement {
 							ChatManagement.insertChatMessageContentValueToLocalDb(context,
 									ChatManagement.makeChatMessageObjectContentValueFromJSON(context, JSONchatMessages.getJSONObject(i)));
 						}
-					} else {
-
-					}
+					}// else {
+					// }
 				}
 			}
 		} catch (Exception e) {

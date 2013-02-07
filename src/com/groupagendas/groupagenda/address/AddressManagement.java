@@ -1,7 +1,5 @@
 package com.groupagendas.groupagenda.address;
 
-import java.io.UnsupportedEncodingException;
-import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.Calendar;
 
@@ -10,7 +8,6 @@ import org.apache.http.HttpStatus;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.entity.mime.HttpMultipartMode;
 import org.apache.http.entity.mime.MultipartEntity;
-import org.apache.http.entity.mime.content.StringBody;
 import org.apache.http.util.EntityUtils;
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -27,7 +24,9 @@ import com.groupagendas.groupagenda.account.Account;
 import com.groupagendas.groupagenda.data.Data;
 import com.groupagendas.groupagenda.events.EventsProvider;
 import com.groupagendas.groupagenda.https.WebService;
+import com.groupagendas.groupagenda.utils.CharsetUtils;
 import com.groupagendas.groupagenda.utils.JSONUtils;
+import com.groupagendas.groupagenda.utils.StringValueUtils;
 
 public class AddressManagement {
 
@@ -61,17 +60,7 @@ public class AddressManagement {
 		HttpPost post = new HttpPost(Data.getServerUrl() + "mobile/adressbook_get");
 		MultipartEntity reqEntity = new MultipartEntity(HttpMultipartMode.BROWSER_COMPATIBLE);
 
-		try {
-			reqEntity.addPart("session", new StringBody(account.getSessionId(), Charset.forName("UTF-8")));
-		} catch (UnsupportedEncodingException e2) {
-			e2.printStackTrace();
-		}
-
-		try {
-			reqEntity.addPart("token", new StringBody(Data.getToken(context), Charset.forName("UTF-8")));
-		} catch (UnsupportedEncodingException e1) {
-			Log.e("getAddressBookFromRemoteDb(contactIds)", "Failed adding token to entity");
-		}
+		CharsetUtils.addAllParts(reqEntity, "session", account.getSessionId(), "token", Data.getToken(context));
 
 		post.setEntity(reqEntity);
 		try {
@@ -89,15 +78,13 @@ public class AddressManagement {
 					} else {
 						JSONArray gs = object.getJSONArray(DATA);
 						int count = gs.length();
-						if (count > 0) {
-							for (int i = 0; i < count; i++) {
-								JSONObject g = gs.getJSONObject(i);
-								address = JSONUtils.createAddressFromJSON(context, g);
+						for (int i = 0; i < count; i++) {
+							JSONObject g = gs.getJSONObject(i);
+							address = JSONUtils.createAddressFromJSON(context, g);
+							if (address != null) {
 								address.setUploadedToServer(true);
-								if (address != null) {
-									context.getContentResolver().insert(AddressProvider.AMetaData.AddressesMetaData.CONTENT_URI,
-											createCVforAddressTable(address));
-								}
+								context.getContentResolver().insert(AddressProvider.AMetaData.AddressesMetaData.CONTENT_URI,
+										createCVforAddressTable(address));
 							}
 						}
 					}
@@ -200,84 +187,24 @@ public class AddressManagement {
 		HttpPost post = new HttpPost(Data.getServerUrl() + "mobile/adressbook_set");
 		MultipartEntity reqEntity = new MultipartEntity(HttpMultipartMode.BROWSER_COMPATIBLE);
 
-		try {
-			reqEntity.addPart("session", new StringBody(account.getSessionId(), Charset.forName("UTF-8")));
-		} catch (UnsupportedEncodingException e2) {
-			e2.printStackTrace();
-		}
-
-		try {
-			reqEntity.addPart("token", new StringBody(Data.getToken(context), Charset.forName("UTF-8")));
-		} catch (UnsupportedEncodingException e1) {
-			Log.e("setAddressBookEntries", "Failed adding token to entity");
-		}
+		CharsetUtils.addAllParts(reqEntity, "session", account.getSessionId(), "token", Data.getToken(context));
 
 		switch (param) {
 		case UPDATE:
-			try {
-				reqEntity.addPart("id", new StringBody("" + address.getId(), Charset.forName("UTF-8")));
-			} catch (UnsupportedEncodingException e1) {
-				Log.e("setAddressBookEntries", "Failed adding address id to entity");
-			}
-
-			try {
-				reqEntity.addPart("title", new StringBody(address.getTitle(), Charset.forName("UTF-8")));
-			} catch (UnsupportedEncodingException e1) {
-				Log.e("setAddressBookEntries", "Failed adding address title to entity");
-			}
+			CharsetUtils.addAllParts(reqEntity, "id", address.getId(), "title", address.getTitle());
 			break;
 		case CREATE:
-			try {
-				reqEntity.addPart("title", new StringBody(address.getTitle(), Charset.forName("UTF-8")));
-			} catch (UnsupportedEncodingException e1) {
-				Log.e("setAddressBookEntries", "Failed adding address title to entity");
-			}
+			CharsetUtils.addPart(reqEntity, "title", address.getTitle());
 			break;
 		case DELETE:
-			try {
-				reqEntity.addPart("id", new StringBody("" + address.getId(), Charset.forName("UTF-8")));
-			} catch (UnsupportedEncodingException e1) {
-				Log.e("setAddressBookEntries", "Failed adding address id to entity");
-			}
+			CharsetUtils.addPart(reqEntity, "id", address.getId());
 			break;
 		}
 
 		if (param != DELETE) {
-			try {
-				reqEntity.addPart("street", new StringBody(address.getStreet(), Charset.forName("UTF-8")));
-			} catch (UnsupportedEncodingException e1) {
-				Log.e("setAddressBookEntries", "Failed adding address street to entity");
-			}
-
-			try {
-				reqEntity.addPart("city", new StringBody(address.getCity(), Charset.forName("UTF-8")));
-			} catch (UnsupportedEncodingException e1) {
-				Log.e("setAddressBookEntries", "Failed adding address city to entity");
-			}
-
-			try {
-				reqEntity.addPart("zip", new StringBody(address.getZip(), Charset.forName("UTF-8")));
-			} catch (UnsupportedEncodingException e1) {
-				Log.e("setAddressBookEntries", "Failed adding address zip to entity");
-			}
-
-			try {
-				reqEntity.addPart("state", new StringBody(address.getState(), Charset.forName("UTF-8")));
-			} catch (UnsupportedEncodingException e1) {
-				Log.e("setAddressBookEntries", "Failed adding address state to entity");
-			}
-
-			try {
-				reqEntity.addPart("country", new StringBody(address.getCountry(), Charset.forName("UTF-8")));
-			} catch (UnsupportedEncodingException e1) {
-				Log.e("setAddressBookEntries", "Failed adding address country to entity");
-			}
-
-			try {
-				reqEntity.addPart("timezone", new StringBody(address.getTimezone(), Charset.forName("UTF-8")));
-			} catch (UnsupportedEncodingException e1) {
-				Log.e("setAddressBookEntries", "Failed adding address timezone to entity");
-			}
+			CharsetUtils.addAllParts(reqEntity, "street", address.getStreet(), "city", address.getCity(),
+					"zip", address.getZip(), "state", address.getState(), "country", address.getCountry(),
+					"timezone", address.getTimezone());
 		}
 
 		post.setEntity(reqEntity);
@@ -293,12 +220,12 @@ public class AddressManagement {
 					if (success == false) {
 						error = object.getString("reason");
 						Log.e("setAddressBookEntries - error: ", error);
-						result = "" + success;
+						result = StringValueUtils.valueOf(success);
 					} else {
 						if (param == CREATE) {
 							result = object.getString("id");
 						} else {
-							result = "" + success;
+							result = StringValueUtils.valueOf(success);
 						}
 					}
 				}
@@ -331,36 +258,34 @@ public class AddressManagement {
 		Uri uri = AddressProvider.AMetaData.AddressesMetaData.CONTENT_URI;
 		String where = AddressProvider.AMetaData.AddressesMetaData.UPLOADED_SUCCESSFULLY + " = '0'";
 		Cursor result = context.getContentResolver().query(uri, projection, where, null, null);
-		if (result.moveToFirst()) {
-			while (!result.isAfterLast()) {
-				Address address = createAddressFromCursor(result);
+		while (result.moveToNext()) {
+			Address address = createAddressFromCursor(result);
 
-				String res = AddressManagement.setAddressBookEntries(context, address, AddressManagement.UPDATE);
-				if (res.contentEquals("true")) {
+			String res = AddressManagement.setAddressBookEntries(context, address, AddressManagement.UPDATE);
+			if (res.contentEquals("true")) {
+				address.setUploadedToServer(true);
+				AddressManagement.updateAddressInLocalDb(context, address);
+			} else {
+				String res2 = AddressManagement.setAddressBookEntries(context, address, AddressManagement.CREATE);
+				int address_id = 0;
+				try {
+					address_id = Integer.parseInt(res2);
+				} catch (Exception e) {
+
+				}
+				if (address_id > 0) {
+					address.setId(address_id);
 					address.setUploadedToServer(true);
 					AddressManagement.updateAddressInLocalDb(context, address);
-					result.moveToNext();
-				} else {
-					String res2 = AddressManagement.setAddressBookEntries(context, address, AddressManagement.CREATE);
-					int address_id = 0;
-					try {
-						address_id = Integer.parseInt(res2);
-					} catch (Exception e) {
-
-					}
-					if (address_id > 0) {
-						address.setId(address_id);
-						address.setUploadedToServer(true);
-						AddressManagement.updateAddressInLocalDb(context, address);
-					}
-					result.moveToNext();
 				}
 			}
 		}
+		result.close();
+		
 		SaveDeletedData offlineDeletedAddresses = new SaveDeletedData(context);
 		String offlineDeleted = offlineDeletedAddresses.getDELETED_ADDRESSES();
 		String[] ids = offlineDeleted.split(SDMetaData.SEPARATOR);
-		if (ids[0] != "") {
+		if (!ids[0].equals("")) {
 			for (int i = 0; i < ids.length; i++) {
 				int id = Integer.parseInt(ids[i]);
 				Address address = new Address();
@@ -370,7 +295,6 @@ public class AddressManagement {
 
 		}
 		offlineDeletedAddresses.clear(4);
-		result.close();
 	}
 
 }

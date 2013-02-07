@@ -1,8 +1,6 @@
 package com.groupagendas.groupagenda.data;
 
 import java.io.IOException;
-import java.io.UnsupportedEncodingException;
-import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.HashMap;
@@ -18,7 +16,6 @@ import org.apache.http.client.methods.HttpPost;
 import org.apache.http.entity.mime.HttpMultipartMode;
 import org.apache.http.entity.mime.MultipartEntity;
 import org.apache.http.entity.mime.content.ByteArrayBody;
-import org.apache.http.entity.mime.content.StringBody;
 import org.apache.http.util.EntityUtils;
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -41,7 +38,9 @@ import com.groupagendas.groupagenda.contacts.ContactsProvider;
 import com.groupagendas.groupagenda.contacts.Group;
 import com.groupagendas.groupagenda.contacts.birthdays.Birthday;
 import com.groupagendas.groupagenda.https.WebService;
+import com.groupagendas.groupagenda.utils.CharsetUtils;
 import com.groupagendas.groupagenda.utils.MapUtils;
+import com.groupagendas.groupagenda.utils.StringValueUtils;
 import com.groupagendas.groupagenda.utils.Utils;
 
 public class ContactManagement {
@@ -71,41 +70,15 @@ public class ContactManagement {
 		do {
 			HttpPost post = new HttpPost(Data.getServerUrl() + "mobile/contact_list");
 			MultipartEntity reqEntity = new MultipartEntity(HttpMultipartMode.BROWSER_COMPATIBLE);
-	
-			try {
-				reqEntity.addPart("session", new StringBody(account.getSessionId(), Charset.forName("UTF-8")));
-			} catch (UnsupportedEncodingException e2) {
-				e2.printStackTrace();
-			}
-	
-			try {
-				reqEntity.addPart("token", new StringBody(Data.getToken(context), Charset.forName("UTF-8")));
-			} catch (UnsupportedEncodingException e1) {
-				e1.printStackTrace();
-			}
 			
-			try {
-				reqEntity.addPart("page", new StringBody(pageNumber + "", Charset.forName("UTF-8")));
-				pageNumber++;
-			} catch (UnsupportedEncodingException e1) {
-				e1.printStackTrace();
-			}
-			
-			try {
-				reqEntity.addPart("size", new StringBody(contactsInOnePostRetrieveSize+"", Charset.forName("UTF-8")));
-			} catch (UnsupportedEncodingException e1) {
-				e1.printStackTrace();
-			}
+			CharsetUtils.addAllParts(reqEntity, "session", account.getSessionId(),
+					"token", Data.getToken(context), "page", pageNumber++,
+					"size", contactsInOnePostRetrieveSize);
 	
 			if (groupIds != null) {
 				Iterator<Integer> it = groupIds.iterator();
-				while (it.hasNext()) {
-					try {
-						reqEntity.addPart("group_id[]", new StringBody(String.valueOf(it.next()), Charset.forName("UTF-8")));
-					} catch (UnsupportedEncodingException e) {
-						e.printStackTrace();
-					}
-				}
+				while (it.hasNext())
+					CharsetUtils.addPart(reqEntity, "group_id[]", it.next());
 			}
 	
 			post.setEntity(reqEntity);
@@ -412,237 +385,45 @@ public class ContactManagement {
 		HttpPost post = new HttpPost(Data.getServerUrl() + "mobile/contact_create");
 		MultipartEntity reqEntity = new MultipartEntity(HttpMultipartMode.BROWSER_COMPATIBLE);
 
-		try {
-			reqEntity.addPart("session", new StringBody(account.getSessionId(), Charset.forName("UTF-8")));
-		} catch (UnsupportedEncodingException e2) {
-			e2.printStackTrace();
-		}
+		CharsetUtils.addAllParts(reqEntity, "session", account.getSessionId(),
+				"token", Data.getToken(context));
 
-		try {
-			reqEntity.addPart("token", new StringBody(Data.getToken(context), Charset.forName("UTF-8")));
-		} catch (UnsupportedEncodingException e) {
-			Log.e("insertContactToRemoteDb(group[id=" + contact.contact_id + "], " + id + ")", "Failed adding token to entity.");
-		}
-
-		if (contact.name != null) {
-			try {
-				reqEntity.addPart(ContactsProvider.CMetaData.ContactsMetaData.NAME, new StringBody(contact.name, Charset.forName("UTF-8")));
-			} catch (UnsupportedEncodingException e) {
-				Log.e("insertContactToRemoteDb(group[id=" + contact.contact_id + "], " + id + ")", "Failed adding name to entity.");
-			}
-		} else {
+		if (!CharsetUtils.addPartNotNull(reqEntity, ContactsProvider.CMetaData.ContactsMetaData.NAME, contact.name))
 			Log.e("insertContactToRemoteDb(group[id=" + contact.contact_id + "], " + id + ")", "Failed getting name from Contact object.");
-		}
-
-		if (contact.lastname != null) {
-			try {
-				reqEntity.addPart(ContactsProvider.CMetaData.ContactsMetaData.LASTNAME,
-						new StringBody(contact.lastname, Charset.forName("UTF-8")));
-			} catch (UnsupportedEncodingException e) {
-				Log.e("insertContactToRemoteDb(group, " + id + ")", "Failed adding lastname to entity.");
-			}
-		}
-
-		if (contact.email != null) {
-			try {
-				reqEntity.addPart(ContactsProvider.CMetaData.ContactsMetaData.EMAIL,
-						new StringBody(contact.email, Charset.forName("UTF-8")));
-			} catch (UnsupportedEncodingException e) {
-				Log.e("insertContactToRemoteDb(group, " + id + ")", "Failed adding email to entity.");
-			}
-		}
-
-		if (contact.phone1 != null) {
-			try {
-				reqEntity.addPart(ContactsProvider.CMetaData.ContactsMetaData.PHONE,
-						new StringBody(contact.phone1, Charset.forName("UTF-8")));
-			} catch (UnsupportedEncodingException e) {
-				Log.e("insertContactToRemoteDb(group, " + id + ")", "Failed adding phone1 to entity.");
-			}
-		}
-
-		if (contact.phone1_code != null) {
-			try {
-				reqEntity.addPart(ContactsProvider.CMetaData.ContactsMetaData.PHONE_CODE,
-						new StringBody(contact.phone1_code, Charset.forName("UTF-8")));
-			} catch (UnsupportedEncodingException e) {
-				Log.e("insertContactToRemoteDb(group, " + id + ")", "Failed adding phone1_code to entity.");
-			}
-		}
-
-		if (contact.birthdate != null) {
-			try {
-				reqEntity.addPart(ContactsProvider.CMetaData.ContactsMetaData.BIRTHDATE,
-						new StringBody(contact.birthdate, Charset.forName("UTF-8")));
-			} catch (UnsupportedEncodingException e) {
-				Log.e("insertContactToRemoteDb(group, " + id + ")", "Failed adding birthdate to entity.");
-			}
-		}
-
-		if (contact.country != null) {
-			try {
-				reqEntity.addPart(ContactsProvider.CMetaData.ContactsMetaData.COUNTRY,
-						new StringBody(contact.country, Charset.forName("UTF-8")));
-			} catch (UnsupportedEncodingException e) {
-				Log.e("insertContactToRemoteDb(group, " + id + ")", "Failed adding country to entity.");
-			}
-		}
-
-		if (contact.city != null) {
-			try {
-				reqEntity.addPart(ContactsProvider.CMetaData.ContactsMetaData.CITY, new StringBody(contact.city, Charset.forName("UTF-8")));
-			} catch (UnsupportedEncodingException e) {
-				Log.e("insertContactToRemoteDb(group, " + id + ")", "Failed adding city to entity.");
-			}
-		}
-
-		if (contact.street != null) {
-			try {
-				reqEntity.addPart(ContactsProvider.CMetaData.ContactsMetaData.STREET,
-						new StringBody(contact.street, Charset.forName("UTF-8")));
-			} catch (UnsupportedEncodingException e) {
-				Log.e("insertContactToRemoteDb(group, " + id + ")", "Failed adding street to entity.");
-				e.printStackTrace();
-			}
-		}
-
-		if (contact.zip != null) {
-			try {
-				reqEntity.addPart(ContactsProvider.CMetaData.ContactsMetaData.ZIP, new StringBody(contact.zip, Charset.forName("UTF-8")));
-			} catch (UnsupportedEncodingException e) {
-				Log.e("insertContactToRemoteDb(group, " + id + ")", "Failed adding zip to entity.");
-			}
-		}
-
-		if (contact.visibility != null) {
-			try {
-				reqEntity.addPart(ContactsProvider.CMetaData.ContactsMetaData.VISIBILITY,
-						new StringBody(contact.visibility, Charset.forName("UTF-8")));
-			} catch (UnsupportedEncodingException e) {
-				Log.e("insertContactToRemoteDb(group, " + id + ")", "Failed adding visibility to entity.");
-			}
-		}
-
-		if (contact.image) {
-			try {
-				reqEntity.addPart(ContactsProvider.CMetaData.ContactsMetaData.IMAGE, new StringBody("1", Charset.forName("UTF-8")));
-			} catch (UnsupportedEncodingException e) {
-				Log.e("insertContactToRemoteDb(group, " + id + ")", "Failed adding image to entity.");
-			}
-		}
-
-		if (contact.image_url != null) {
-			try {
-				reqEntity.addPart(ContactsProvider.CMetaData.ContactsMetaData.IMAGE_URL,
-						new StringBody(contact.image_url, Charset.forName("UTF-8")));
-			} catch (UnsupportedEncodingException e) {
-				Log.e("insertContactToRemoteDb(group, " + id + ")", "Failed adding image_url to entity.");
-			}
-		}
-
-		if (contact.image_thumb_url != null) {
-			try {
-				reqEntity.addPart(ContactsProvider.CMetaData.ContactsMetaData.IMAGE_THUMB_URL, new StringBody(contact.image_thumb_url,
-						Charset.forName("UTF-8")));
-			} catch (UnsupportedEncodingException e) {
-				Log.e("insertContactToRemoteDb(group, " + id + ")", "Failed adding image_thumb_url to entity.");
-			}
-		}
-
-		if (contact.image_bytes != null) {
-			try {
-				reqEntity.addPart(ContactsProvider.CMetaData.ContactsMetaData.IMAGE_BYTES,
-						new StringBody(contact.image_bytes + "", Charset.forName("UTF-8")));
-			} catch (UnsupportedEncodingException e) {
-				Log.e("insertContactToRemoteDb(group, " + id + ")", "Failed adding image_bytes to entity.");
-			}
-		}
-
-		if (contact.remove_image) {
-			try {
-				reqEntity.addPart(ContactsProvider.CMetaData.ContactsMetaData.REMOVE_IMAGE, new StringBody("1", Charset.forName("UTF-8")));
-			} catch (UnsupportedEncodingException e) {
-				Log.e("insertContactToRemoteDb(group, " + id + ")", "Failed adding remove_image to entity.");
-			}
-		}
-
-		if (contact.agenda_view != null) {
-			try {
-				reqEntity.addPart(ContactsProvider.CMetaData.ContactsMetaData.AGENDA_VIEW,
-						new StringBody(contact.agenda_view, Charset.forName("UTF-8")));
-			} catch (UnsupportedEncodingException e) {
-				Log.e("insertContactToRemoteDb(group, " + id + ")", "Failed adding agenda_view to entity.");
-			}
-		}
-
-		if (contact.registered != null) {
-			try {
-				reqEntity.addPart(ContactsProvider.CMetaData.ContactsMetaData.REGISTERED,
-						new StringBody(contact.registered, Charset.forName("UTF-8")));
-			} catch (UnsupportedEncodingException e) {
-				Log.e("insertContactToRemoteDb(group, " + id + ")", "Failed adding registered to entity.");
-			}
-		}
-
-		if (contact.created > 0) {
-			try {
-				reqEntity.addPart(ContactsProvider.CMetaData.ContactsMetaData.CREATED,
-						new StringBody(contact.created + "", Charset.forName("UTF-8")));
-			} catch (UnsupportedEncodingException e) {
-				Log.e("insertContactToRemoteDb(group, " + id + ")", "Failed adding created to entity.");
-			}
-		}
-
-		if (contact.modified > 0) {
-			try {
-				reqEntity.addPart(ContactsProvider.CMetaData.ContactsMetaData.MODIFIED,
-						new StringBody(contact.modified + "", Charset.forName("UTF-8")));
-			} catch (UnsupportedEncodingException e) {
-				Log.e("insertContactToRemoteDb(group, " + id + ")", "Failed adding modified to entity.");
-			}
-		}
-
-		if (contact.visibility != null) {
-			try {
-				reqEntity.addPart(ContactsProvider.CMetaData.ContactsMetaData.VISIBILITY,
-						new StringBody(contact.visibility + "", Charset.forName("UTF-8")));
-			} catch (UnsupportedEncodingException e) {
-				Log.e("insertContactToRemoteDb(group, " + id + ")", "Failed adding modified to entity.");
-			}
-		} else {
-			try {
-				reqEntity.addPart(ContactsProvider.CMetaData.ContactsMetaData.VISIBILITY, new StringBody(context.getResources()
-						.getStringArray(R.array.visibility_values)[0], Charset.forName("UTF-8")));
-			} catch (UnsupportedEncodingException e) {
-				Log.e("insertContactToRemoteDb(group, " + id + ")", "Failed adding modified to entity.");
-			}
-		}
-
-		try {
-			reqEntity.addPart(ContactsProvider.CMetaData.ContactsMetaData.COLOR,
-					new StringBody(contact.getColor(), Charset.forName("UTF-8")));
-		} catch (UnsupportedEncodingException e) {
-			Log.e("insertContactToRemoteDb(group, " + id + ")", "Failed adding color to entity.");
-		}
-
-		try {
-			reqEntity.addPart("inform_contact ",
-					new StringBody(notifyContact ? "1" : "0", Charset.forName("UTF-8")));
-		} catch (UnsupportedEncodingException e1) {
-			e1.printStackTrace();
-		}
+		
+		CharsetUtils.addPartNotNull(reqEntity, ContactsProvider.CMetaData.ContactsMetaData.LASTNAME, contact.lastname);
+		CharsetUtils.addPartNotNull(reqEntity, ContactsProvider.CMetaData.ContactsMetaData.EMAIL, contact.email);
+		CharsetUtils.addPartNotNull(reqEntity, ContactsProvider.CMetaData.ContactsMetaData.PHONE, contact.phone1);
+		CharsetUtils.addPartNotNull(reqEntity, ContactsProvider.CMetaData.ContactsMetaData.PHONE_CODE, contact.phone1_code);
+		CharsetUtils.addPartNotNull(reqEntity, ContactsProvider.CMetaData.ContactsMetaData.BIRTHDATE, contact.birthdate);
+		CharsetUtils.addPartNotNull(reqEntity, ContactsProvider.CMetaData.ContactsMetaData.COUNTRY, contact.country);
+		CharsetUtils.addPartNotNull(reqEntity, ContactsProvider.CMetaData.ContactsMetaData.CITY, contact.city);
+		CharsetUtils.addPartNotNull(reqEntity, ContactsProvider.CMetaData.ContactsMetaData.STREET, contact.street);
+		CharsetUtils.addPartNotNull(reqEntity, ContactsProvider.CMetaData.ContactsMetaData.ZIP, contact.zip);
+		CharsetUtils.addPartNotNull(reqEntity, ContactsProvider.CMetaData.ContactsMetaData.VISIBILITY,
+				contact.visibility != null ? contact.visibility :
+					context.getResources().getStringArray(R.array.visibility_values)[0]);
+		if (contact.image)
+			CharsetUtils.addPart(reqEntity, ContactsProvider.CMetaData.ContactsMetaData.IMAGE, "1");
+		CharsetUtils.addPartNotNull(reqEntity, ContactsProvider.CMetaData.ContactsMetaData.IMAGE_URL, contact.image_url);
+		CharsetUtils.addPartNotNull(reqEntity, ContactsProvider.CMetaData.ContactsMetaData.IMAGE_THUMB_URL, contact.image_thumb_url);
+		CharsetUtils.addPartNotNull(reqEntity, ContactsProvider.CMetaData.ContactsMetaData.IMAGE_BYTES, contact.image_bytes);
+		if (contact.remove_image)
+			CharsetUtils.addPart(reqEntity, ContactsProvider.CMetaData.ContactsMetaData.REMOVE_IMAGE, "1");
+		CharsetUtils.addPartNotNull(reqEntity, ContactsProvider.CMetaData.ContactsMetaData.AGENDA_VIEW, contact.agenda_view);
+		CharsetUtils.addPartNotNull(reqEntity, ContactsProvider.CMetaData.ContactsMetaData.REGISTERED, contact.registered);
+		if (contact.created > 0)
+			CharsetUtils.addPart(reqEntity, ContactsProvider.CMetaData.ContactsMetaData.CREATED, contact.created);
+		if (contact.modified > 0)
+			CharsetUtils.addPart(reqEntity, ContactsProvider.CMetaData.ContactsMetaData.MODIFIED, contact.modified);
+		CharsetUtils.addAllParts(reqEntity, ContactsProvider.CMetaData.ContactsMetaData.COLOR, contact.getColor(),
+				"inform_contact", notifyContact ? "1" : "0");
 		
 		Map<String, String> groups = contact.groups;
 		if (groups != null) {
 			for (int i = 0, l = groups.size(); i < l; i++) {
-				try {
-					if (groups.get(String.valueOf(i)) != null) {
-						reqEntity.addPart(ContactsProvider.CMetaData.ContactsMetaData.GROUPS + "[]", new StringBody(groups.get(String.valueOf(i)),
-								Charset.forName("UTF-8")));
-					}
-				} catch (UnsupportedEncodingException e) {
-					Log.e("insertContactToRemoteDb(group, " + id + ")", "Failed adding group to entity.");
-				}
+				final String group = groups.get(StringValueUtils.valueOf(i));
+				CharsetUtils.addPartNotNull(reqEntity, ContactsProvider.CMetaData.ContactsMetaData.GROUPS + "[]", group);
 			}
 		}
 
@@ -1305,7 +1086,6 @@ public class ContactManagement {
 	}
 
 	public static int insertGroupToRemoteDb(Context context, Group group, int id) {
-		String temp;
 		int destination_id = 0;
 		boolean success = false;
 		Account account = new Account(context);
@@ -1313,67 +1093,20 @@ public class ContactManagement {
 		HttpPost post = new HttpPost(Data.getServerUrl() + "mobile/groups_create");
 		MultipartEntity reqEntity = new MultipartEntity(HttpMultipartMode.BROWSER_COMPATIBLE);
 
-		try {
-			reqEntity.addPart("session", new StringBody(account.getSessionId(), Charset.forName("UTF-8")));
-		} catch (UnsupportedEncodingException e2) {
-			e2.printStackTrace();
-		}
-
-		try {
-			reqEntity.addPart("token", new StringBody(Data.getToken(context), Charset.forName("UTF-8")));
-		} catch (UnsupportedEncodingException e) {
-			Log.e("insertGroupToRemoteDb(group[id=" + group.group_id + "], " + id + ")", "Failed adding token to entity.");
-		}
-
-		try {
-			reqEntity
-					.addPart(ContactsProvider.CMetaData.GroupsMetaData.G_ID, new StringBody(String.valueOf(group.group_id), Charset.forName("UTF-8")));
-		} catch (UnsupportedEncodingException e) {
-			Log.e("insertGroupToRemoteDb(group, " + id + ")", "Failed adding group_id to entity.");
-		}
-
-		if (group.title != null) {
-			try {
-				reqEntity.addPart(ContactsProvider.CMetaData.GroupsMetaData.TITLE, new StringBody(group.title, Charset.forName("UTF-8")));
-			} catch (UnsupportedEncodingException e) {
-				Log.e("insertGroupToRemoteDb(group[id=" + group.group_id + "], " + id + ")", "Failed adding title to entity.");
-			}
-		} else {
+		CharsetUtils.addAllParts(reqEntity, "session", account.getSessionId(),
+				"token", Data.getToken(context),
+				ContactsProvider.CMetaData.GroupsMetaData.G_ID, group.group_id);
+		if (!CharsetUtils.addPartNotNull(reqEntity, ContactsProvider.CMetaData.GroupsMetaData.TITLE, group.title))
 			Log.e("insertGroupToRemoteDb(group[id=" + group.group_id + "], " + id + ")", "Failed getting title from Group object.");
-		}
+		CharsetUtils.addAllParts(reqEntity, ContactsProvider.CMetaData.GroupsMetaData.IMAGE, group.image ? "1" : "0",
+				ContactsProvider.CMetaData.GroupsMetaData.IMAGE_URL, group.image_url != null ? group.image_url : "",
+				ContactsProvider.CMetaData.GroupsMetaData.IMAGE_THUMB_URL, group.image_thumb_url != null ? group.image_thumb_url : "",
+				ContactsProvider.CMetaData.GroupsMetaData.REMOVE_IMAGE, group.remove_image ? "1" : "0",
+				ContactsProvider.CMetaData.GroupsMetaData.CONTACT_COUNT, group.contact_count);
 
-		if (group.image)
-			temp = "1";
-		else
-			temp = "0";
-		try {
-			reqEntity.addPart(ContactsProvider.CMetaData.GroupsMetaData.IMAGE, new StringBody(temp, Charset.forName("UTF-8")));
-		} catch (UnsupportedEncodingException e) {
-			Log.e("insertGroupToRemoteDb(group, " + id + ")", "Failed adding image to entity.");
-		}
-
-		if (group.image_url != null)
-			temp = group.image_url;
-		else
-			temp = "";
-		try {
-			reqEntity.addPart(ContactsProvider.CMetaData.GroupsMetaData.IMAGE_URL, new StringBody(temp, Charset.forName("UTF-8")));
-		} catch (UnsupportedEncodingException e) {
-			Log.e("insertGroupToRemoteDb(group, " + id + ")", "Failed adding image_url to entity.");
-		}
-
-		if (group.image_thumb_url != null)
-			temp = group.image_thumb_url;
-		else
-			temp = "";
-		try {
-			reqEntity.addPart(ContactsProvider.CMetaData.GroupsMetaData.IMAGE_THUMB_URL, new StringBody(temp, Charset.forName("UTF-8")));
-		} catch (UnsupportedEncodingException e) {
-			Log.e("insertGroupToRemoteDb(group, " + id + ")", "Failed adding image_thumb_url to entity.");
-		}
-
+		/* TODO: If/When the layout changes, uncomment and fix
 		if (group.image_bytes != null)
-			temp = group.image_bytes.toString();
+			temp = group.image_bytes.toString(); // [B@[hashcode in hex]
 		else
 			temp = "";
 		try {
@@ -1381,40 +1114,15 @@ public class ContactManagement {
 		} catch (UnsupportedEncodingException e) {
 			Log.e("insertGroupToRemoteDb(group, " + id + ")", "Failed adding image_bytes to entity.");
 		}
-
-		if (group.remove_image)
-			temp = "1";
-		else
-			temp = "0";
-		try {
-			reqEntity.addPart(ContactsProvider.CMetaData.GroupsMetaData.REMOVE_IMAGE, new StringBody(temp, Charset.forName("UTF-8")));
-		} catch (UnsupportedEncodingException e) {
-			Log.e("insertGroupToRemoteDb(group, " + id + ")", "Failed adding remove_image to entity.");
-		}
-
-		try {
-			reqEntity.addPart(ContactsProvider.CMetaData.GroupsMetaData.CONTACT_COUNT,
-					new StringBody(String.valueOf(group.contact_count), Charset.forName("UTF-8")));
-		} catch (UnsupportedEncodingException e) {
-			Log.e("insertGroupToRemoteDb(group, " + id + ")", "Failed adding contacts_count to entity.");
-		}
+		*/
 
 		Map<String, String> contacts = group.contacts;
 		if (contacts != null) {
 			for (String s : contacts.keySet()) {
-				try {
-					reqEntity.addPart(ContactsProvider.CMetaData.GroupsMetaData.CONTACTS + "[]",
-							new StringBody(contacts.get(s), Charset.forName("UTF-8")));
-				} catch (UnsupportedEncodingException e) {
-					Log.e("insertGroupToRemoteDb(group, " + id + ")", "Failed adding contact to entity.");
-				}
+				CharsetUtils.addPart(reqEntity, ContactsProvider.CMetaData.GroupsMetaData.CONTACTS + "[]", contacts.get(s));
 			}
 		} else {
-			try {
-				reqEntity.addPart(ContactsProvider.CMetaData.GroupsMetaData.CONTACTS + "[]", new StringBody("", Charset.forName("UTF-8")));
-			} catch (UnsupportedEncodingException e) {
-				Log.e("insertGroupToRemoteDb(group, " + id + ")", "Failed adding contact to entity.");
-			}
+			CharsetUtils.addPart(reqEntity, ContactsProvider.CMetaData.GroupsMetaData.CONTACTS + "[]", "");
 		}
 
 		post.setEntity(reqEntity);
@@ -1460,32 +1168,31 @@ public class ContactManagement {
 	 * @version 0.1
 	 */
 	public static boolean editGroupOnRemoteDb(Context context, Group group, int contactID, boolean insert) {
-		String temp;
 		boolean success = false;
 		Account account = new Account(context);
 		WebService webService = new WebService(context);
 		HttpPost post = new HttpPost(Data.getServerUrl() + "mobile/groups_edit");
 		MultipartEntity reqEntity = new MultipartEntity(HttpMultipartMode.BROWSER_COMPATIBLE);
 
-		Map<String, String> map = new HashMap<String, String>();
+		Map<String, String> contacts = group.contacts;
 		if (contactID > 0) {
 			int target = -1;
 			int max_key = 0;
-			map = group.contacts;
 
-			if (map == null) {
-				map = new HashMap<String, String>();
+			if (contacts == null) {
+				contacts = new HashMap<String, String>();
 			}
 
-			for (String s : map.keySet()) {
-				int temp2 = Integer.parseInt(s);
+			for (String k : contacts.keySet()) {
+				int temp2 = Integer.parseInt(k);
 				if (temp2 > max_key) {
 					max_key = temp2;
 				}
-				if ((map.get(s) != null) && (map.get(s).equalsIgnoreCase(String.valueOf(contactID)))) {
+				final String val = contacts.get(k);
+				if ((val != null) && (val.equalsIgnoreCase(StringValueUtils.valueOf(contactID)))) {
 					target = temp2;
 					if (!insert) {
-						map.remove(s);
+						contacts.remove(val);
 						group.contact_count -= 1;
 						target = -1;
 					}
@@ -1494,93 +1201,35 @@ public class ContactManagement {
 			}
 
 			if (insert && target == -1) {
-				map.put(String.valueOf(max_key + 1), String.valueOf(contactID));
+				contacts.put(StringValueUtils.valueOf(max_key + 1), StringValueUtils.valueOf(contactID));
 				group.contact_count += 1;
 				target = -1;
 			}
-		} else {
-			map = group.contacts;
 		}
 
-		Map<String, String> contacts = map;
 		if (contacts != null) {
 			for (String s : contacts.keySet()) {
-				try {
-					reqEntity.addPart(ContactsProvider.CMetaData.GroupsMetaData.CONTACTS + "[]",
-							new StringBody(contacts.get(s), Charset.forName("UTF-8")));
-				} catch (UnsupportedEncodingException e) {
-					Log.e("editGroupOnRemoteDb(group, " + group.group_id + ")", "Failed adding contact to entity.");
-				}
+				CharsetUtils.addPart(reqEntity, ContactsProvider.CMetaData.GroupsMetaData.CONTACTS + "[]", contacts.get(s));
 			}
 		} else {
-			try {
-				reqEntity.addPart(ContactsProvider.CMetaData.GroupsMetaData.CONTACTS + "[]", new StringBody("", Charset.forName("UTF-8")));
-			} catch (UnsupportedEncodingException e) {
-				Log.e("editGroupOnRemoteDb(group, " + group.group_id + ")", "Failed adding contact to entity.");
-			}
+			CharsetUtils.addPart(reqEntity, ContactsProvider.CMetaData.GroupsMetaData.CONTACTS + "[]", "");
 		}
 
-		try {
-			reqEntity.addPart("session", new StringBody(account.getSessionId(), Charset.forName("UTF-8")));
-		} catch (UnsupportedEncodingException e2) {
-			e2.printStackTrace();
-		}
-
-		try {
-			reqEntity.addPart("token", new StringBody(Data.getToken(context), Charset.forName("UTF-8")));
-		} catch (UnsupportedEncodingException e) {
-			Log.e("editGroupOnRemoteDb(group[id=" + group.group_id + "])", "Failed adding token to entity.");
-		}
-
-		try {
-			reqEntity
-					.addPart(ContactsProvider.CMetaData.GroupsMetaData.G_ID, new StringBody(String.valueOf(group.group_id), Charset.forName("UTF-8")));
-		} catch (UnsupportedEncodingException e) {
-			Log.e("editGroupOnRemoteDb(group, " + group.group_id + ")", "Failed adding group_id to entity.");
-		}
-
-		if (group.title != null) {
-			try {
-				reqEntity.addPart(ContactsProvider.CMetaData.GroupsMetaData.TITLE, new StringBody(group.title, Charset.forName("UTF-8")));
-			} catch (UnsupportedEncodingException e) {
-				Log.e("editGroupOnRemoteDb(group[id=" + group.group_id + "])", "Failed adding title to entity.");
-			}
-		} else {
+		CharsetUtils.addAllParts(reqEntity, "session", account.getSessionId(), "token", Data.getToken(context),
+				ContactsProvider.CMetaData.GroupsMetaData.G_ID, group.group_id);
+		
+		if (!CharsetUtils.addPartNotNull(reqEntity, ContactsProvider.CMetaData.GroupsMetaData.TITLE, group.title))
 			Log.e("editGroupOnRemoteDb(group[id=" + group.group_id + "])", "Failed getting title from Group object.");
-		}
 
-		if (group.image)
-			temp = "1";
-		else
-			temp = "0";
-		try {
-			reqEntity.addPart(ContactsProvider.CMetaData.GroupsMetaData.IMAGE, new StringBody(temp, Charset.forName("UTF-8")));
-		} catch (UnsupportedEncodingException e) {
-			Log.e("editGroupOnRemoteDb(group, " + group.group_id + ")", "Failed adding image to entity.");
-		}
+		CharsetUtils.addAllParts(reqEntity, ContactsProvider.CMetaData.GroupsMetaData.IMAGE, group.image ? "1" : "0",
+				ContactsProvider.CMetaData.GroupsMetaData.IMAGE_URL, group.image_url != null ? group.image_url : "",
+				ContactsProvider.CMetaData.GroupsMetaData.IMAGE_THUMB_URL, group.image_thumb_url != null ? group.image_thumb_url : "",
+				ContactsProvider.CMetaData.GroupsMetaData.REMOVE_IMAGE, group.remove_image ? "1" : "0",
+				ContactsProvider.CMetaData.GroupsMetaData.CONTACT_COUNT, group.contact_count);
 
-		if (group.image_url != null)
-			temp = group.image_url;
-		else
-			temp = "";
-		try {
-			reqEntity.addPart(ContactsProvider.CMetaData.GroupsMetaData.IMAGE_URL, new StringBody(temp, Charset.forName("UTF-8")));
-		} catch (UnsupportedEncodingException e) {
-			Log.e("editGroupOnRemoteDb(group, " + group.group_id + ")", "Failed adding image_url to entity.");
-		}
-
-		if (group.image_thumb_url != null)
-			temp = group.image_thumb_url;
-		else
-			temp = "";
-		try {
-			reqEntity.addPart(ContactsProvider.CMetaData.GroupsMetaData.IMAGE_THUMB_URL, new StringBody(temp, Charset.forName("UTF-8")));
-		} catch (UnsupportedEncodingException e) {
-			Log.e("editGroupOnRemoteDb(group, " + group.group_id + ")", "Failed adding image_thumb_url to entity.");
-		}
-
+		/* TODO: If/When the layout changes, uncomment and fix
 		if (group.image_bytes != null)
-			temp = group.image_bytes.toString();
+			temp = group.image_bytes.toString(); // [B@[hashcode in hex]
 		else
 			temp = "";
 		try {
@@ -1588,23 +1237,7 @@ public class ContactManagement {
 		} catch (UnsupportedEncodingException e) {
 			Log.e("editGroupOnRemoteDb(group, " + group.group_id + ")", "Failed adding image_bytes to entity.");
 		}
-
-		if (group.remove_image)
-			temp = "1";
-		else
-			temp = "0";
-		try {
-			reqEntity.addPart(ContactsProvider.CMetaData.GroupsMetaData.REMOVE_IMAGE, new StringBody(temp, Charset.forName("UTF-8")));
-		} catch (UnsupportedEncodingException e) {
-			Log.e("editGroupOnRemoteDb(group, " + group.group_id + ")", "Failed adding remove_image to entity.");
-		}
-
-		try {
-			reqEntity.addPart(ContactsProvider.CMetaData.GroupsMetaData.CONTACT_COUNT,
-					new StringBody(String.valueOf(group.contact_count), Charset.forName("UTF-8")));
-		} catch (UnsupportedEncodingException e) {
-			Log.e("editGroupOnRemoteDb(group, " + group.group_id + ")", "Failed adding contacts_count to entity.");
-		}
+		*/
 
 		post.setEntity(reqEntity);
 		try {
@@ -1617,7 +1250,7 @@ public class ContactManagement {
 						JSONObject object = new JSONObject(resp);
 						success = object.getBoolean("success");
 
-						Log.e("editGroup - success", String.valueOf(success));
+						Log.e("editGroup - success", StringValueUtils.valueOf(success));
 
 						if (success == false) {
 							Data.setERROR(object.getJSONObject("error").getString("reason"));
@@ -1689,26 +1322,12 @@ public class ContactManagement {
 		HttpPost post = new HttpPost(Data.getServerUrl() + "mobile/groups_list");
 		MultipartEntity reqEntity = new MultipartEntity(HttpMultipartMode.BROWSER_COMPATIBLE);
 
-		try {
-			reqEntity.addPart("session", new StringBody(account.getSessionId(), Charset.forName("UTF-8")));
-		} catch (UnsupportedEncodingException e2) {
-			e2.printStackTrace();
-		}
-
-		try {
-			reqEntity.addPart("token", new StringBody(Data.getToken(context), Charset.forName("UTF-8")));
-		} catch (UnsupportedEncodingException e1) {
-			Log.e("getGroupsFromRemoteDb(contactIds)", "Failed adding token to entity");
-		}
+		CharsetUtils.addAllParts(reqEntity, "session", account.getSessionId(), "token", Data.getToken(context));
 
 		if (contactIds != null) {
 			Iterator<Integer> it = contactIds.iterator();
 			while (it.hasNext()) {
-				try {
-					reqEntity.addPart("contact_id[]", new StringBody(String.valueOf(it.next()), Charset.forName("UTF-8")));
-				} catch (UnsupportedEncodingException e) {
-					Log.e("getGroupsFromRemoteDb(contactIds)", "Failed adding groupId to entity");
-				}
+				CharsetUtils.addPart(reqEntity, "contact_id[]", it.next());
 			}
 		}
 
@@ -1728,64 +1347,62 @@ public class ContactManagement {
 					} else {
 						JSONArray gs = object.getJSONArray("groups");
 						int count = gs.length();
-						if (count > 0) {
-							for (int i = 0; i < count; i++) {
-								JSONObject g = gs.getJSONObject(i);
-								Group group = new Group();
-								String temp;
+						for (int i = 0; i < count; i++) {
+							JSONObject g = gs.getJSONObject(i);
+							Group group = new Group();
+							String temp;
 
-								group.group_id = g.optInt(ContactsProvider.CMetaData.GroupsMetaData.G_ID);
+							group.group_id = g.optInt(ContactsProvider.CMetaData.GroupsMetaData.G_ID);
 
-								temp = g.optString(ContactsProvider.CMetaData.GroupsMetaData.TITLE);
-								if (temp != null && !temp.equals("null"))
-									group.title = temp;
-								else
-									group.title = "";
+							temp = g.optString(ContactsProvider.CMetaData.GroupsMetaData.TITLE);
+							if (temp != null && !temp.equals("null"))
+								group.title = temp;
+							else
+								group.title = "";
 
-								group.created = g.optLong(ContactsProvider.CMetaData.GroupsMetaData.CREATED);
+							group.created = g.optLong(ContactsProvider.CMetaData.GroupsMetaData.CREATED);
 
-								group.modified = g.optLong(ContactsProvider.CMetaData.GroupsMetaData.MODIFIED);
+							group.modified = g.optLong(ContactsProvider.CMetaData.GroupsMetaData.MODIFIED);
 
-								temp = g.optString(ContactsProvider.CMetaData.GroupsMetaData.DELETED);
-								if (temp != null && !temp.equals("null"))
-									group.deleted = temp;
-								else
-									group.deleted = "";
+							temp = g.optString(ContactsProvider.CMetaData.GroupsMetaData.DELETED);
+							if (temp != null && !temp.equals("null"))
+								group.deleted = temp;
+							else
+								group.deleted = "";
 
-								group.image = g.optBoolean(ContactsProvider.CMetaData.GroupsMetaData.IMAGE);
+							group.image = g.optBoolean(ContactsProvider.CMetaData.GroupsMetaData.IMAGE);
 
-								temp = g.optString(ContactsProvider.CMetaData.GroupsMetaData.IMAGE_THUMB_URL);
-								if (temp != null && !temp.equals("null"))
-									group.image_thumb_url = temp;
-								else
-									group.image_thumb_url = "";
+							temp = g.optString(ContactsProvider.CMetaData.GroupsMetaData.IMAGE_THUMB_URL);
+							if (temp != null && !temp.equals("null"))
+								group.image_thumb_url = temp;
+							else
+								group.image_thumb_url = "";
 
-								temp = g.optString(ContactsProvider.CMetaData.GroupsMetaData.IMAGE_URL);
-								if (temp != null && !temp.equals("null")) {
-									group.image_url = temp;
-									try {
-										group.image_bytes = Utils.imageToBytes(group.image_url, context);
-									} catch (Exception e) {
-										Log.e("getContactsFromRemoteDb(contactIds)", "Failed getting image_bytes.");
-									}
-								} else
-									group.image_url = "";
-
-								group.contact_count = g.optInt(ContactsProvider.CMetaData.GroupsMetaData.CONTACT_COUNT);
-
-								if (!g.optString("contacts").equals("null") && g.optString("contacts") != null) {
-									JSONArray contacts = g.optJSONArray("contacts");
-									if (contacts != null) {
-										Map<String, String> set = new HashMap<String, String>();
-										for (int j = 0, l = contacts.length(); j < l; j++) {
-											set.put(String.valueOf(j), contacts.optString(j));
-										}
-										group.contacts = set;
-									}
+							temp = g.optString(ContactsProvider.CMetaData.GroupsMetaData.IMAGE_URL);
+							if (temp != null && !temp.equals("null")) {
+								group.image_url = temp;
+								try {
+									group.image_bytes = Utils.imageToBytes(group.image_url, context);
+								} catch (Exception e) {
+									Log.e("getContactsFromRemoteDb(contactIds)", "Failed getting image_bytes.");
 								}
+							} else
+								group.image_url = "";
 
-								insertGroupToLocalDb(context, group, 0);
+							group.contact_count = g.optInt(ContactsProvider.CMetaData.GroupsMetaData.CONTACT_COUNT);
+
+							if (!g.optString("contacts").equals("null") && g.optString("contacts") != null) {
+								JSONArray contacts = g.optJSONArray("contacts");
+								if (contacts != null) {
+									Map<String, String> set = new HashMap<String, String>();
+									for (int j = 0, l = contacts.length(); j < l; j++) {
+										set.put(String.valueOf(j), contacts.optString(j));
+									}
+									group.contacts = set;
+								}
 							}
+
+							insertGroupToLocalDb(context, group, 0);
 						}
 					}
 				}
@@ -1807,24 +1424,9 @@ public class ContactManagement {
 		HttpPost post = new HttpPost(Data.getServerUrl() + "mobile/contact_remove");
 		MultipartEntity reqEntity = new MultipartEntity(HttpMultipartMode.BROWSER_COMPATIBLE);
 
-		try {
-			reqEntity.addPart("session", new StringBody(account.getSessionId(), Charset.forName("UTF-8")));
-		} catch (UnsupportedEncodingException e2) {
-			e2.printStackTrace();
-		}
-
-		try {
-			reqEntity.addPart(ContactsProvider.CMetaData.ContactsMetaData.C_ID,
-					new StringBody(String.valueOf(id), Charset.forName("UTF-8")));
-		} catch (UnsupportedEncodingException e) {
-			Log.e("removeContactFromRemoteDb(" + id + ")", "Failed adding contact's ID to entity.");
-		}
-
-		try {
-			reqEntity.addPart("token", new StringBody(Data.getToken(context), Charset.forName("UTF-8")));
-		} catch (UnsupportedEncodingException e) {
-			Log.e("removeContactFromRemoteDb(" + id + ")", "Failed adding user's token to entity.");
-		}
+		CharsetUtils.addAllParts(reqEntity, "session", account.getSessionId(),
+				ContactsProvider.CMetaData.ContactsMetaData.C_ID, id,
+				"token", Data.getToken(context));
 
 		post.setEntity(reqEntity);
 		try {
@@ -1898,190 +1500,41 @@ public class ContactManagement {
 		HttpPost post = new HttpPost(Data.getServerUrl() + "mobile/contact_edit");
 		MultipartEntity reqEntity = new MultipartEntity(HttpMultipartMode.BROWSER_COMPATIBLE);
 
-		try {
-			reqEntity.addPart("session", new StringBody(account.getSessionId(), Charset.forName("UTF-8")));
-		} catch (UnsupportedEncodingException e2) {
-			e2.printStackTrace();
+		CharsetUtils.addPart(reqEntity, "session", account.getSessionId());
+
+		if (!c.remove_image && c.image_bytes != null) {
+			ByteArrayBody bab = new ByteArrayBody(c.image_bytes, ContactsProvider.CMetaData.ContactsMetaData.IMAGE);
+			reqEntity.addPart(ContactsProvider.CMetaData.ContactsMetaData.IMAGE_BYTES, bab);
 		}
 
-		if (!c.remove_image) {
-			if (c.image_bytes != null) {
-				ByteArrayBody bab = new ByteArrayBody(c.image_bytes, ContactsProvider.CMetaData.ContactsMetaData.IMAGE);
-				reqEntity.addPart(ContactsProvider.CMetaData.ContactsMetaData.IMAGE_BYTES, bab);
-			}
-			try {
-				reqEntity.addPart(ContactsProvider.CMetaData.ContactsMetaData.REMOVE_IMAGE,
-						new StringBody(String.valueOf("0"), Charset.forName("UTF-8")));
-			} catch (UnsupportedEncodingException e) {
-				Log.e("editContactOnRemoteDb(contact[contact_id=" + c.contact_id + "])", "Failed adding remove_image to entity.");
-			}
-		} else {
-			try {
-				reqEntity.addPart(ContactsProvider.CMetaData.ContactsMetaData.REMOVE_IMAGE,
-						new StringBody(String.valueOf("1"), Charset.forName("UTF-8")));
-			} catch (UnsupportedEncodingException e) {
-				Log.e("editContactOnRemoteDb(contact[contact_id=" + c.contact_id + "])", "Failed adding remove_image to entity.");
-			}
-		}
+		CharsetUtils.addAllParts(reqEntity, ContactsProvider.CMetaData.ContactsMetaData.REMOVE_IMAGE, c.remove_image ? "1" : "0",
+				"token", Data.getToken(context),
+				ContactsProvider.CMetaData.ContactsMetaData.C_ID, c.contact_id);
 
-		try {
-			reqEntity.addPart("token", new StringBody(Data.getToken(context), Charset.forName("UTF-8")));
-		} catch (UnsupportedEncodingException e) {
-			Log.e("editContactOnRemoteDb(contact[contact_id=" + c.contact_id + "])", "Failed adding token to entity.");
-		}
-
-		try {
-			reqEntity.addPart(ContactsProvider.CMetaData.ContactsMetaData.C_ID,
-					new StringBody(String.valueOf(c.contact_id), Charset.forName("UTF-8")));
-		} catch (UnsupportedEncodingException e) {
-			Log.e("editContactOnRemoteDb(contact[contact_id=" + c.contact_id + "])", "Failed adding contact_id to entity.");
-		}
-
-		if (c.lid != null) {
-			try {
-				reqEntity.addPart(ContactsProvider.CMetaData.ContactsMetaData.LID, new StringBody(c.lid, Charset.forName("UTF-8")));
-			} catch (UnsupportedEncodingException e) {
-				Log.e("editContactOnRemoteDb(contact[contact_id=" + c.contact_id + "])", "Failed adding lid to entity.");
-			}
-		}
-
-		if (c.name != null) {
-			try {
-				reqEntity.addPart(ContactsProvider.CMetaData.ContactsMetaData.NAME, new StringBody(c.name, Charset.forName("UTF-8")));
-			} catch (UnsupportedEncodingException e) {
-				Log.e("editContactOnRemoteDb(contact[contact_id=" + c.contact_id + "])", "Failed adding name to entity.");
-			}
-		}
-
-		if (c.lastname != null) {
-			try {
-				reqEntity.addPart(ContactsProvider.CMetaData.ContactsMetaData.LASTNAME,
-						new StringBody(c.lastname, Charset.forName("UTF-8")));
-			} catch (UnsupportedEncodingException e) {
-				Log.e("editContactOnRemoteDb(contact[contact_id=" + c.contact_id + "])", "Failed adding lastname to entity.");
-			}
-		}
-
-		if (c.fullname != null) {
-			try {
-				reqEntity.addPart(ContactsProvider.CMetaData.ContactsMetaData.FULLNAME,
-						new StringBody(c.fullname, Charset.forName("UTF-8")));
-			} catch (UnsupportedEncodingException e) {
-				Log.e("editContactOnRemoteDb(contact[contact_id=" + c.contact_id + "])", "Failed adding fullname to entity.");
-			}
-		}
-
-		if (c.email != null) {
-			try {
-				reqEntity.addPart(ContactsProvider.CMetaData.ContactsMetaData.EMAIL, new StringBody(c.email, Charset.forName("UTF-8")));
-			} catch (UnsupportedEncodingException e) {
-				Log.e("editContactOnRemoteDb(contact[contact_id=" + c.contact_id + "])", "Failed adding email to entity.");
-			}
-		}
-
-		if (c.phone1 != null) {
-			try {
-				reqEntity.addPart(ContactsProvider.CMetaData.ContactsMetaData.PHONE, new StringBody(c.phone1, Charset.forName("UTF-8")));
-			} catch (UnsupportedEncodingException e) {
-				Log.e("editContactOnRemoteDb(contact[contact_id=" + c.contact_id + "])", "Failed adding phone1 to entity.");
-			}
-		}
-
-		if (c.phone1_code != null) {
-			try {
-				reqEntity.addPart(ContactsProvider.CMetaData.ContactsMetaData.PHONE_CODE,
-						new StringBody(c.phone1_code, Charset.forName("UTF-8")));
-			} catch (UnsupportedEncodingException e) {
-				Log.e("editContactOnRemoteDb(contact[contact_id=" + c.contact_id + "])", "Failed adding phone1 to entity.");
-			}
-		}
-
-		if (c.birthdate != null) {
-			try {
-				reqEntity.addPart(ContactsProvider.CMetaData.ContactsMetaData.BIRTHDATE,
-						new StringBody(c.birthdate, Charset.forName("UTF-8")));
-			} catch (UnsupportedEncodingException e) {
-				Log.e("editContactOnRemoteDb(contact[contact_id=" + c.contact_id + "])", "Failed adding birthdate to entity.");
-			}
-		}
-
-		if (c.country != null) {
-			try {
-				reqEntity.addPart(ContactsProvider.CMetaData.ContactsMetaData.COUNTRY, new StringBody(c.country, Charset.forName("UTF-8")));
-			} catch (UnsupportedEncodingException e) {
-				Log.e("editContactOnRemoteDb(contact[contact_id=" + c.contact_id + "])", "Failed adding country to entity.");
-			}
-		}
-
-		if (c.city != null) {
-			try {
-				reqEntity.addPart(ContactsProvider.CMetaData.ContactsMetaData.CITY, new StringBody(c.city, Charset.forName("UTF-8")));
-			} catch (UnsupportedEncodingException e) {
-				Log.e("editContactOnRemoteDb(contact[contact_id=" + c.contact_id + "])", "Failed adding city to entity.");
-			}
-		}
-
-		if (c.street != null) {
-			try {
-				reqEntity.addPart(ContactsProvider.CMetaData.ContactsMetaData.STREET, new StringBody(c.street, Charset.forName("UTF-8")));
-			} catch (UnsupportedEncodingException e) {
-				Log.e("editContactOnRemoteDb(contact[contact_id=" + c.contact_id + "])", "Failed adding street to entity.");
-			}
-		}
-
-		if (c.zip != null) {
-			try {
-				reqEntity.addPart(ContactsProvider.CMetaData.ContactsMetaData.ZIP, new StringBody(c.zip, Charset.forName("UTF-8")));
-			} catch (UnsupportedEncodingException e) {
-				Log.e("editContactOnRemoteDb(contact[contact_id=" + c.contact_id + "])", "Failed adding zip to entity.");
-			}
-		}
-
-		if (c.visibility != null) {
-			try {
-				reqEntity.addPart(ContactsProvider.CMetaData.ContactsMetaData.VISIBILITY,
-						new StringBody(c.visibility, Charset.forName("UTF-8")));
-			} catch (UnsupportedEncodingException e) {
-				Log.e("editContactOnRemoteDb(contact[contact_id=" + c.contact_id + "])", "Failed adding visibility to entity.");
-			}
-		}
-
-		if (c.visibility2 != null) {
-			try {
-				reqEntity.addPart(ContactsProvider.CMetaData.ContactsMetaData.VISIBILITY2,
-						new StringBody(c.visibility2, Charset.forName("UTF-8")));
-			} catch (UnsupportedEncodingException e) {
-				Log.e("editContactOnRemoteDb(contact[contact_id=" + c.contact_id + "])", "Failed adding visibility2 to entity.");
-			}
-		}
-
-		if (c.can_add_note != null) {
-			try {
-				reqEntity.addPart(ContactsProvider.CMetaData.ContactsMetaData.CAN_ADD_NOTE,
-						new StringBody(c.can_add_note, Charset.forName("UTF-8")));
-			} catch (UnsupportedEncodingException e) {
-				Log.e("editContactOnRemoteDb(contact[contact_id=" + c.contact_id + "])", "Failed adding can_add_note to entity.");
-			}
-		}
+		CharsetUtils.addPartNotNull(reqEntity, ContactsProvider.CMetaData.ContactsMetaData.LID, c.lid);
+		CharsetUtils.addPartNotNull(reqEntity, ContactsProvider.CMetaData.ContactsMetaData.NAME, c.name);
+		CharsetUtils.addPartNotNull(reqEntity, ContactsProvider.CMetaData.ContactsMetaData.LASTNAME, c.lastname);
+		CharsetUtils.addPartNotNull(reqEntity, ContactsProvider.CMetaData.ContactsMetaData.FULLNAME, c.fullname);
+		CharsetUtils.addPartNotNull(reqEntity, ContactsProvider.CMetaData.ContactsMetaData.EMAIL, c.email);
+		CharsetUtils.addPartNotNull(reqEntity, ContactsProvider.CMetaData.ContactsMetaData.PHONE, c.phone1);
+		CharsetUtils.addPartNotNull(reqEntity, ContactsProvider.CMetaData.ContactsMetaData.PHONE_CODE, c.phone1_code);
+		CharsetUtils.addPartNotNull(reqEntity, ContactsProvider.CMetaData.ContactsMetaData.BIRTHDATE, c.birthdate);
+		CharsetUtils.addPartNotNull(reqEntity, ContactsProvider.CMetaData.ContactsMetaData.COUNTRY, c.country);
+		CharsetUtils.addPartNotNull(reqEntity, ContactsProvider.CMetaData.ContactsMetaData.CITY, c.city);
+		CharsetUtils.addPartNotNull(reqEntity, ContactsProvider.CMetaData.ContactsMetaData.STREET, c.street);
+		CharsetUtils.addPartNotNull(reqEntity, ContactsProvider.CMetaData.ContactsMetaData.ZIP, c.zip);
+		CharsetUtils.addPartNotNull(reqEntity, ContactsProvider.CMetaData.ContactsMetaData.VISIBILITY, c.visibility);
+		CharsetUtils.addPartNotNull(reqEntity, ContactsProvider.CMetaData.ContactsMetaData.VISIBILITY2, c.visibility2);
+		CharsetUtils.addPartNotNull(reqEntity, ContactsProvider.CMetaData.ContactsMetaData.CAN_ADD_NOTE, c.can_add_note);
 
 		Map<String, String> groups = c.groups;
 		if (groups != null) {
 			for (int i = 0, l = groups.size(); i < l; i++) {
-				try {
-					if (groups.get(String.valueOf(i)) != null) {
-						reqEntity.addPart(ContactsProvider.CMetaData.ContactsMetaData.GROUPS + "[]", new StringBody(groups.get(String.valueOf(i)),
-								Charset.forName("UTF-8")));
-					}
-				} catch (UnsupportedEncodingException e) {
-					Log.e("editContactOnRemoteDb(contact[contact_id=" + c.contact_id + "])", "Failed adding group to entity.");
-				}
+				final String group = groups.get(StringValueUtils.valueOf(i));
+				CharsetUtils.addPartNotNull(reqEntity, ContactsProvider.CMetaData.ContactsMetaData.GROUPS + "[]", group);
 			}
 		} else {
-			try {
-				reqEntity.addPart(ContactsProvider.CMetaData.ContactsMetaData.GROUPS + "[]", new StringBody("", Charset.forName("UTF-8")));
-			} catch (UnsupportedEncodingException e) {
-				Log.e("editContactOnRemoteDb(contact[contact_id=" + c.contact_id + "])", "Failed adding group to entity.");
-			}
+			CharsetUtils.addPart(reqEntity, ContactsProvider.CMetaData.ContactsMetaData.GROUPS + "[]", "");
 		}
 
 		post.setEntity(reqEntity);
@@ -2311,77 +1764,46 @@ public class ContactManagement {
 
 		MultipartEntity reqEntity = new MultipartEntity(HttpMultipartMode.BROWSER_COMPATIBLE);
 
-		try {
-			reqEntity.addPart("session", new StringBody(account.getSessionId(), Charset.forName("UTF-8")));
-		} catch (UnsupportedEncodingException e2) {
-			e2.printStackTrace();
+		CharsetUtils.addAllParts(reqEntity, "session", account.getSessionId(), "token", Data.getToken(context));
+		for (int i = 0; i < contactChanges.size(); i++) {
+			Contact c = contactChanges.get(i);
+			StringBuilder sb = new StringBuilder("contacts[");
+			sb.append(i).append("][");
+			final int reset = sb.length();
+			{
+				sb.append(ContactsProvider.CMetaData.ContactsMetaData.NAME).append(']');
+				CharsetUtils.addPartNotNull(reqEntity, sb.toString(), c.name);
+				sb.setLength(reset);
+			}
+			{
+				sb.append(ContactsProvider.CMetaData.ContactsMetaData.LASTNAME).append(']');
+				CharsetUtils.addPartNotNull(reqEntity, sb.toString(), c.lastname);
+				sb.setLength(reset);
+			}
+			{
+				sb.append(ContactsProvider.CMetaData.ContactsMetaData.EMAIL).append(']');
+				CharsetUtils.addPartNotNull(reqEntity, sb.toString(), c.email);
+				sb.setLength(reset);
+			}
+			{
+				sb.append(ContactsProvider.CMetaData.ContactsMetaData.COUNTRY).append(']');
+				CharsetUtils.addPartNotNull(reqEntity, sb.toString(), c.country);
+				sb.setLength(reset);
+			}
+			{
+				sb.append(ContactsProvider.CMetaData.ContactsMetaData.PHONE).append(']');
+				CharsetUtils.addPartNotNull(reqEntity, sb.toString(), c.phone1);
+				sb.setLength(reset);
+			}
+			{
+				sb.append(ContactsProvider.CMetaData.ContactsMetaData.BIRTHDATE).append(']');
+				CharsetUtils.addPartNotNull(reqEntity, sb.toString(), c.birthdate);
+				sb.setLength(reset);
+			}
+			sb.append("local_id]");
+			CharsetUtils.addPart(reqEntity, sb.toString(), c.getInternal_id());
 		}
 
-		try {
-			reqEntity.addPart("token", new StringBody(Data.getToken(context), Charset.forName("UTF-8")));
-		} catch (UnsupportedEncodingException e) {
-			e.printStackTrace();
-		}
-		int i = 0;
-		for (Contact c : contactChanges) {
-			if (c.name != null) {
-				try {
-					reqEntity.addPart("contacts[" + i + "][" + ContactsProvider.CMetaData.ContactsMetaData.NAME + "]", new StringBody(
-							c.name, Charset.forName("UTF-8")));
-				} catch (UnsupportedEncodingException e) {
-					e.printStackTrace();
-				}
-			}
-			
-			if (c.lastname != null) {
-				try {
-					reqEntity.addPart("contacts[" + i + "][" + ContactsProvider.CMetaData.ContactsMetaData.LASTNAME + "]", new StringBody(
-							c.lastname, Charset.forName("UTF-8")));
-				} catch (UnsupportedEncodingException e) {
-					e.printStackTrace();
-				}
-			}
-			
-			if (c.email != null) {
-				try {
-					reqEntity.addPart("contacts[" + i + "][" + ContactsProvider.CMetaData.ContactsMetaData.EMAIL + "]", new StringBody(
-							c.email, Charset.forName("UTF-8")));
-				} catch (UnsupportedEncodingException e) {
-					e.printStackTrace();
-				}
-			}
-			if (c.country != null) {
-				try {
-					reqEntity.addPart("contacts[" + i + "][" + ContactsProvider.CMetaData.ContactsMetaData.COUNTRY + "]", new StringBody(
-							c.country, Charset.forName("UTF-8")));
-				} catch (UnsupportedEncodingException e) {
-					e.printStackTrace();
-				}
-			}
-			if (c.phone1 != null) {
-				try {
-					reqEntity.addPart("contacts[" + i + "][" + ContactsProvider.CMetaData.ContactsMetaData.PHONE + "]", new StringBody(
-							c.phone1, Charset.forName("UTF-8")));
-				} catch (UnsupportedEncodingException e) {
-					e.printStackTrace();
-				}
-			}
-			if (c.birthdate != null) {
-				try {
-					reqEntity.addPart("contacts[" + i + "][" + ContactsProvider.CMetaData.ContactsMetaData.BIRTHDATE + "]", new StringBody(
-							c.birthdate, Charset.forName("UTF-8")));
-				} catch (UnsupportedEncodingException e) {
-					e.printStackTrace();
-				}
-			}
-			try {
-				reqEntity.addPart("contacts[" + i + "][local_id]", new StringBody(c.getInternal_id() + "", Charset.forName("UTF-8")));
-			} catch (UnsupportedEncodingException e) {
-				e.printStackTrace();
-			}
-
-			i++;
-		}
 		try {
 			post.setEntity(reqEntity);
 			@SuppressWarnings("unused")
@@ -2535,20 +1957,14 @@ public class ContactManagement {
 
 			MultipartEntity reqEntity = new MultipartEntity(HttpMultipartMode.BROWSER_COMPATIBLE);
 
-			try {
-				reqEntity.addPart("session", new StringBody(account.getSessionId(), Charset.forName("UTF-8")));
-			} catch (UnsupportedEncodingException e2) {
-				e2.printStackTrace();
-			}
-
-			reqEntity.addPart("token", new StringBody(Data.getToken(context), Charset.forName("UTF-8")));
+			CharsetUtils.addAllParts(reqEntity, "session", account.getSessionId(), "token", Data.getToken(context));
 			if (guid > 0) {
-				reqEntity.addPart("guid", new StringBody(String.valueOf(guid), Charset.forName("UTF-8")));
+				CharsetUtils.addPart(reqEntity, "guid", guid);
 			} else if (gcid > 0) {
-				reqEntity.addPart("gcid", new StringBody(String.valueOf(gcid), Charset.forName("UTF-8")));
+				CharsetUtils.addPart(reqEntity, "gcid", gcid);
 			}
 			if (req) {
-				reqEntity.addPart("req_details", new StringBody("1", Charset.forName("UTF-8")));
+				CharsetUtils.addPart(reqEntity, "req_details", "1");
 			}
 			post.setEntity(reqEntity);
 			if (DataManagement.networkAvailable) {
@@ -2574,17 +1990,15 @@ public class ContactManagement {
 
 		if (insertedIntoQueue || deletedFromRemote) {
 			removeContactFromLocalDbByInternalId(context, contact.getInternal_id());
-			Map<String, String> map = new HashMap<String, String>();
-			map = contact.groups;
+			Map<String, String> map = contact.groups;
 			if (map != null) {
 				for (int i = 0; i < map.size(); i++) {
-					map.get(String.valueOf(i));
-					Group g = getGroupFromLocalDb(context, Integer.valueOf(map.get(String.valueOf(i))), 0);
+					final String groupId = map.get(StringValueUtils.valueOf(i));
+					Group g = getGroupFromLocalDb(context, Integer.valueOf(groupId), 0);
 					if (g != null) {
 						updateGroupOnLocalDb(context, g, contact.contact_id, false);
 						editGroupOnRemoteDb(context, g, contact.contact_id, false);
 					}
-
 				}
 			}
 			// removeContactFromLocalDb(context, contact.contact_id);
@@ -2655,22 +2069,9 @@ public class ContactManagement {
 
 		MultipartEntity reqEntity = new MultipartEntity(HttpMultipartMode.BROWSER_COMPATIBLE);
 
-		try {
-			reqEntity.addPart("session", new StringBody(account.getSessionId(), Charset.forName("UTF-8")));
-		} catch (UnsupportedEncodingException e2) {
-			e2.printStackTrace();
-		}
+		CharsetUtils.addAllParts(reqEntity, "session", account.getSessionId(), "token", Data.getToken(context),
+				"group_id", groupId);
 
-		try {
-			reqEntity.addPart("token", new StringBody(Data.getToken(context), Charset.forName("UTF-8")));
-		} catch (UnsupportedEncodingException e) {
-			e.printStackTrace();
-		}
-		try {
-			reqEntity.addPart("group_id", new StringBody(groupId + "", Charset.forName("UTF-8")));
-		} catch (UnsupportedEncodingException e) {
-			e.printStackTrace();
-		}
 		post.setEntity(reqEntity);
 		if (DataManagement.networkAvailable) {
 			try {
@@ -2757,50 +2158,13 @@ public class ContactManagement {
 
 		MultipartEntity reqEntity = new MultipartEntity(HttpMultipartMode.BROWSER_COMPATIBLE);
 
-		try {
-			reqEntity.addPart("session", new StringBody(account.getSessionId(), Charset.forName("UTF-8")));
-		} catch (UnsupportedEncodingException e) {
-			e.printStackTrace();
-		}
-
-		try {
-			reqEntity.addPart("token", new StringBody(Data.getToken(context), Charset.forName("UTF-8")));
-		} catch (UnsupportedEncodingException e) {
-			e.printStackTrace();
-		}
-
-		try {
-			reqEntity.addPart("group_id", new StringBody(group.group_id + "", Charset.forName("UTF-8")));
-		} catch (UnsupportedEncodingException e) {
-			e.printStackTrace();
-		}
-
-		try {
-			reqEntity.addPart("title", new StringBody(group.title, Charset.forName("UTF-8")));
-		} catch (UnsupportedEncodingException e) {
-			e.printStackTrace();
-		}
-
-		try {
-			reqEntity.addPart("remove_image", new StringBody(group.remove_image ? "1" : "0", Charset.forName("UTF-8")));
-		} catch (UnsupportedEncodingException e) {
-			e.printStackTrace();
-		}
-
-		try {
-			reqEntity.addPart(ContactsProvider.CMetaData.GroupsMetaData.CONTACT_COUNT,
-					new StringBody(String.valueOf(group.contacts.size()), Charset.forName("UTF-8")));
-		} catch (UnsupportedEncodingException e) {
-			Log.e("editGroupOnRemoteDb(group, " + group.group_id + ")", "Failed adding contacts_count to entity.");
-		}
+		CharsetUtils.addAllParts(reqEntity, "session", account.getSessionId(), "token", Data.getToken(context),
+				"group_id", group.group_id, "title", group.title, "remove_image", group.remove_image ? "1" : "0",
+				ContactsProvider.CMetaData.GroupsMetaData.CONTACT_COUNT, group.contacts.size());
 
 		if (group.contacts != null && !group.contacts.isEmpty()) {
 			for (String contactId : group.contacts.values()) {
-				try {
-					reqEntity.addPart("contacts[]", new StringBody(contactId, Charset.forName("UTF-8")));
-				} catch (UnsupportedEncodingException e) {
-					e.printStackTrace();
-				}
+				CharsetUtils.addPart(reqEntity, "contacts[]", contactId);
 			}
 		}
 
@@ -2826,14 +2190,6 @@ public class ContactManagement {
 		}
 
 		return success;
-	}
-
-	public static void updateGroupInLocalDb() {
-
-	}
-
-	public static void updateGroup() {
-
 	}
 
 	public static void uploadOfflineCreatedGroups(Context context) {
@@ -2862,7 +2218,7 @@ public class ContactManagement {
 							if (c.groups != null) {
 								Set<String> keySet = c.groups.keySet();
 								for (String g : keySet) {
-									if (c.groups.get(g).equalsIgnoreCase(String.valueOf(group.group_id))) {
+									if (c.groups.get(g).equalsIgnoreCase(StringValueUtils.valueOf(group.group_id))) {
 										c.groups.remove(g);
 										ContactManagement.updateContactOnLocalDb(context, c);
 										break;
@@ -2877,10 +2233,10 @@ public class ContactManagement {
 										max_key = temp;
 									}
 								}
-								c.groups.put(String.valueOf(max_key + 1), String.valueOf(destination_id));
+								c.groups.put(StringValueUtils.valueOf(max_key + 1), String.valueOf(destination_id));
 							} else {
 								c.groups = new HashMap<String, String>();
-								c.groups.put(String.valueOf(max_key), String.valueOf(destination_id));
+								c.groups.put(StringValueUtils.valueOf(max_key), String.valueOf(destination_id));
 							}
 
 							ContactManagement.updateContactOnLocalDb(context, c);
