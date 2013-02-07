@@ -409,6 +409,111 @@
             </LinearLayout>
 
             <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="5dp"
+                android:baselineAligned="false"
+                android:orientation="horizontal"
+                android:visibility="visible" >
+
+                <RelativeLayout
+                    android:id="@+id/reminder_trigger"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="0.25" >
+
+                    <ImageView
+                        android:id="@+id/reminder_trigger_image"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentTop="true"
+                        android:layout_centerHorizontal="true"
+                        android:contentDescription="@string/reminder"
+                        android:src="@drawable/event_edit_reminder_button_i" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_below="@+id/reminder_trigger_image"
+                        android:layout_centerHorizontal="true"
+                        android:text="@string/reminder"
+                        android:textColor="@color/black" />
+                </RelativeLayout>
+
+                <RelativeLayout
+                    android:id="@+id/repeat_trigger"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="0.25" >
+
+                    <ImageView
+                        android:id="@+id/repeat_trigger_image"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentTop="true"
+                        android:layout_centerHorizontal="true"
+                        android:contentDescription="@string/repeat"
+                        android:src="@drawable/event_edit_repeat_button_i" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_below="@+id/repeat_trigger_image"
+                        android:layout_centerHorizontal="true"
+                        android:text="@string/repeat"
+                        android:textColor="@color/black" />
+                </RelativeLayout>
+
+                <RelativeLayout
+                    android:id="@+id/alarm_trigger"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="0.25" >
+
+                    <ImageView
+                        android:id="@+id/alarm_trigger_image"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentTop="true"
+                        android:layout_centerHorizontal="true"
+                        android:contentDescription="@string/alarm"
+                        android:src="@drawable/event_edit_alarm_button_i" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_below="@+id/alarm_trigger_image"
+                        android:layout_centerHorizontal="true"
+                        android:text="@string/alarm"
+                        android:textColor="@color/black" />
+                </RelativeLayout>
+
+                <RelativeLayout
+                    android:id="@+id/share_trigger"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="0.25" >
+
+                    <ImageView
+                        android:id="@+id/share_trigger_image"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentTop="true"
+                        android:layout_centerHorizontal="true"
+                        android:contentDescription="@string/share"
+                        android:src="@drawable/event_edit_share_button_i" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_below="@+id/share_trigger_image"
+                        android:layout_centerHorizontal="true"
+                        android:text="@string/share"
+                        android:textColor="@color/black" />
+                </RelativeLayout>
+            </LinearLayout>
+
+            <LinearLayout
                 android:id="@+id/countrySpinnerBlock"
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
@@ -539,23 +644,23 @@
                 android:id="@+id/save_address"
                 android:layout_width="fill_parent"
                 android:layout_height="40dp"
-                android:layout_marginTop="5dp"
+                android:layout_marginBottom="5dp"
                 android:background="@drawable/event_invite_people_button_standalone"
                 android:text="@string/save_in_address_book"
                 android:textSize="16sp"
                 android:textStyle="bold" 
-                android:visibility="gone"/>
+                android:visibility="gone" />
             
             <Button
                 android:id="@+id/address_button"
                 android:layout_width="fill_parent"
                 android:layout_height="40dp"
-                android:layout_marginTop="5dp"
+                android:layout_marginBottom="5dp"
                 android:background="@drawable/event_invite_people_button_standalone"
                 android:text="@string/address_book"
                 android:textSize="16sp"
                 android:textStyle="bold" 
-                android:visibility="gone"/>
+                android:visibility="gone" />
 
             <LinearLayout
                 android:id="@+id/locationViewBlock"
@@ -692,6 +797,105 @@
             </LinearLayout>
 
             <LinearLayout
+                android:id="@+id/alarm_container1"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="2dp"
+                android:orientation="horizontal" >
+
+                <TextView
+                    android:layout_width="95dp"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical"
+                    android:paddingBottom="5dp"
+                    android:paddingTop="4dp"
+                    android:singleLine="true"
+                    android:text="@string/event_alarm1"
+                    android:textColor="@color/black"
+                    android:textSize="15sp"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:id="@+id/alarmView1"
+                    android:layout_width="fill_parent"
+                    android:layout_height="40dp"
+                    android:background="@drawable/event_icon_placeholder"
+                    android:gravity="center_vertical"
+                    android:paddingBottom="5dp"
+                    android:paddingLeft="10dp"
+                    android:paddingTop="4dp"
+                    android:singleLine="true"
+                    android:textColor="@color/black"
+                    android:textSize="15sp" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/alarm_container2"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="2dp"
+                android:orientation="horizontal" >
+
+                <TextView
+                    android:layout_width="95dp"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical"
+                    android:paddingBottom="5dp"
+                    android:paddingTop="4dp"
+                    android:singleLine="true"
+                    android:text="@string/event_alarm2"
+                    android:textColor="@color/black"
+                    android:textSize="15sp"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:id="@+id/alarmView2"
+                    android:layout_width="fill_parent"
+                    android:layout_height="40dp"
+                    android:background="@drawable/event_icon_placeholder"
+                    android:gravity="center_vertical"
+                    android:paddingBottom="5dp"
+                    android:paddingLeft="10dp"
+                    android:paddingTop="4dp"
+                    android:singleLine="true"
+                    android:textColor="@color/black"
+                    android:textSize="15sp" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/alarm_container3"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="2dp"
+                android:orientation="horizontal" >
+
+                <TextView
+                    android:layout_width="95dp"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical"
+                    android:paddingBottom="5dp"
+                    android:paddingTop="4dp"
+                    android:singleLine="true"
+                    android:text="@string/event_alarm3"
+                    android:textColor="@color/black"
+                    android:textSize="15sp"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:id="@+id/alarmView3"
+                    android:layout_width="fill_parent"
+                    android:layout_height="40dp"
+                    android:background="@drawable/event_icon_placeholder"
+                    android:gravity="center_vertical"
+                    android:paddingBottom="5dp"
+                    android:paddingLeft="10dp"
+                    android:paddingTop="4dp"
+                    android:singleLine="true"
+                    android:textColor="@color/black"
+                    android:textSize="15sp" />
+            </LinearLayout>
+
+            <LinearLayout
                 android:id="@+id/contactsBlock"
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
@@ -699,17 +903,6 @@
                 android:orientation="horizontal"
                 android:visibility="visible" >
             </LinearLayout>
-
-            <Button
-                android:id="@+id/share_button"
-                android:layout_width="fill_parent"
-                android:layout_height="40dp"
-                android:layout_margin="10dp"
-                android:background="@drawable/event_invite_people_button_standalone"
-                android:text="@string/share"
-                android:textSize="16sp"
-                android:textStyle="bold" 
-                android:visibility="gone"/>
 
             <LinearLayout
                 android:id="@+id/invitesLine"
@@ -777,14 +970,35 @@
                     layout="@layout/event_invitation_section" />
             </LinearLayout>
 
-            <CheckBox
-                android:id="@+id/templateTrigger"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:checked="false"
-                android:text="@string/event_save_as_template"
-                android:textColor="@color/black"
-                android:visibility="gone" />
+            <RelativeLayout
+                android:layout_width="fill_parent"
+                android:layout_height="40dp"
+                android:layout_marginBottom="2dp"
+                android:background="@drawable/event_icon_placeholder"
+                android:orientation="horizontal"
+                android:paddingBottom="5dp"
+                android:paddingLeft="5dp"
+                android:paddingRight="5dp"
+                android:paddingTop="5dp" >
+
+                <TextView
+                    android:layout_width="95dp"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentLeft="true"
+                    android:layout_centerVertical="true"
+                    android:text="@string/saving_new_template"
+                    android:textColor="@color/black"
+                    android:textStyle="bold" />
+
+                <CheckBox
+                    android:id="@+id/templateTrigger"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentRight="true"
+                    android:layout_centerVertical="true"
+                    android:layout_gravity="right" />
+            </RelativeLayout>
+
         </LinearLayout>
     </ScrollView>
 
