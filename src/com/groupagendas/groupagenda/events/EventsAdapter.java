@@ -229,9 +229,8 @@ public class EventsAdapter extends BaseAdapter implements Filterable{
 					event.setStatus(Invited.REJECTED);
 					respondToInvite(event);
 					EventEditActivity.deleteEventFromPollList(event);
-					new RejectPollTask().execute(event);
 					event.setSelectedEventPollsTime("[]");
-					EventManagement.updateEventSelectedPollsTimeInLocalDb(mContext, event);
+					new RejectPollTask().execute(event);
 					//poll_status = Invited.REJECTED;
 
 				}
@@ -320,7 +319,12 @@ public class EventsAdapter extends BaseAdapter implements Filterable{
 
 		@Override
 		protected Boolean doInBackground(Event... voids) {
-			EventManagement.rejectPoll(mContext, ""+voids[0].getEvent_id());
+			if(EventManagement.rejectPoll(mContext, ""+voids[0].getEvent_id())){
+				voids[0].setUploadedToServer(true);
+			} else {
+				voids[0].setUploadedToServer(false);
+			}
+			EventManagement.updateEventSelectedPollsTimeInLocalDb(mContext, voids[0]);
 			return true;
 		}
 
@@ -337,7 +341,12 @@ public class EventsAdapter extends BaseAdapter implements Filterable{
 
 		@Override
 		protected Boolean doInBackground(Event... voids) {
-			EventManagement.rejoinPoll(mContext, ""+voids[0].getEvent_id());
+			if(EventManagement.rejoinPoll(mContext, ""+voids[0].getEvent_id())){
+				voids[0].setUploadedToServer(true);
+			} else {
+				voids[0].setUploadedToServer(false);
+			}
+			EventManagement.updateEventSelectedPollsTimeInLocalDb(mContext, voids[0]);
 			return true;
 		}
 
