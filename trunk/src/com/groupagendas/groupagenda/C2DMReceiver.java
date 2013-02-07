@@ -76,7 +76,7 @@ public class C2DMReceiver extends C2DMBaseReceiver {
 		isChatMessage = false;
 		chatMessagesWindowUpdated = false;
 		if (receiveIntent.hasExtra(ACTION) && receiveIntent.getStringExtra(ACTION).equals(RESUBSCRIBE)) {
-			DataManagement.getInstance(context).registerPhone();
+			DataManagement.getInstance(context).registerPhone(context);
 		} else if (receiveIntent.hasExtra(ACTION) && receiveIntent.getStringExtra(ACTION).equals(CHAT_LAST_VIEW)
 				&& receiveIntent.hasExtra(REL_ID) && !receiveIntent.getStringExtra(REL_ID).equals("")) {
 			EventManagement.resetEventsNewMessageCount(context, Integer.parseInt(receiveIntent.getStringExtra(REL_ID)));
