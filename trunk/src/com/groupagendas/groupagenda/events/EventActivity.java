@@ -213,31 +213,6 @@ public class EventActivity extends Activity {
 		event.setTake_with_you(takewithyouView.getText().toString());
 		event.setCost(costView.getText().toString());
 		event.setAccomodation(accomodationView.getText().toString());
-		if(NavbarActivity.alarmReceiver == null){
-			NavbarActivity.refreshAlarmReceiver();
-		}
-		if (alarm1time != null || alarm2time != null || alarm3time != null) {
-			long alarm1 = 0;
-			long alarm2 = 0;
-			long alarm3 = 0;
-			if(alarm1time != null){
-				alarm1time.clear(Calendar.SECOND);
-				alarm1time.clear(Calendar.MILLISECOND);
-				alarm1 = alarm1time.getTimeInMillis();
-			}
-			if (alarm2time != null) {
-				alarm2time.clear(Calendar.SECOND);
-				alarm2time.clear(Calendar.MILLISECOND);
-				alarm2 = alarm2time.getTimeInMillis();
-			}
-			if (alarm3time != null) {
-				alarm3time.clear(Calendar.SECOND);
-				alarm3time.clear(Calendar.MILLISECOND);
-				alarm3 = alarm3time.getTimeInMillis();
-			}
-			AlarmsManagement.setAlarmsForEvent(getApplicationContext(), alarm1, 0, alarm2, 0, alarm3, 0, event.getEvent_id());
-		}
-
 		
 		event.setReminder1(reminder1time);
 		event.setReminder2(reminder2time);
@@ -661,7 +636,7 @@ public class EventActivity extends Activity {
 			public void onClick(View v) {
 				if(alarm1time == null) alarm1time = Calendar.getInstance();
 				setTargets(alarm1time, alarm1View);
-				dateTimeDialog = new StartEndDateTimeSelectDialog(EventActivity.this, StartEndDateTimeSelectDialog.SECTION_DATE, targetCalendar, mDateSetListener);
+				dateTimeDialog = new StartEndDateTimeSelectDialog(EventActivity.this, StartEndDateTimeSelectDialog.SECTION_DATE, targetCalendar, mDateSetListener, true);
 				dateTimeDialog.show();
 			}
 		});
@@ -672,7 +647,7 @@ public class EventActivity extends Activity {
 			public void onClick(View v) {
 				if(alarm2time == null) alarm2time = Calendar.getInstance();
 				setTargets(alarm2time, alarm2View);
-				dateTimeDialog = new StartEndDateTimeSelectDialog(EventActivity.this, StartEndDateTimeSelectDialog.SECTION_DATE, targetCalendar, mDateSetListener);
+				dateTimeDialog = new StartEndDateTimeSelectDialog(EventActivity.this, StartEndDateTimeSelectDialog.SECTION_DATE, targetCalendar, mDateSetListener, true);
 				dateTimeDialog.show();
 			}
 		});
@@ -683,7 +658,7 @@ public class EventActivity extends Activity {
 			public void onClick(View v) {
 				if(alarm3time == null) alarm3time = Calendar.getInstance();
 				setTargets(alarm3time, alarm3View);
-				dateTimeDialog = new StartEndDateTimeSelectDialog(EventActivity.this, StartEndDateTimeSelectDialog.SECTION_DATE, targetCalendar, mDateSetListener);
+				dateTimeDialog = new StartEndDateTimeSelectDialog(EventActivity.this, StartEndDateTimeSelectDialog.SECTION_DATE, targetCalendar, mDateSetListener, true);
 				dateTimeDialog.show();
 			}
 		});

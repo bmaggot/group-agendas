@@ -158,8 +158,8 @@ public class EventEditActivity extends EventActivity {
 		AddressBookActivity.selectedAddressId = 0;
 		setChangesMade(false);
 		setEditInvited(false);
-		showAlarmPanel();
-		showReminderPanel();
+		hideAlarmPanel();
+		hideReminderPanel();
 	}
 
 	@Override
@@ -1421,6 +1421,30 @@ public class EventEditActivity extends EventActivity {
 					int testEvent = event.isValid();
 					if (testEvent == 0) {
 						EventManagement.updateEvent(EventEditActivity.this, event);
+						if(NavbarActivity.alarmReceiver == null){
+							NavbarActivity.refreshAlarmReceiver();
+						}
+						if (alarm1time != null || alarm2time != null || alarm3time != null) {
+							long alarm1 = 0;
+							long alarm2 = 0;
+							long alarm3 = 0;
+							if(alarm1time != null){
+								alarm1time.clear(Calendar.SECOND);
+								alarm1time.clear(Calendar.MILLISECOND);
+								alarm1 = alarm1time.getTimeInMillis();
+							}
+							if (alarm2time != null) {
+								alarm2time.clear(Calendar.SECOND);
+								alarm2time.clear(Calendar.MILLISECOND);
+								alarm2 = alarm2time.getTimeInMillis();
+							}
+							if (alarm3time != null) {
+								alarm3time.clear(Calendar.SECOND);
+								alarm3time.clear(Calendar.MILLISECOND);
+								alarm3 = alarm3time.getTimeInMillis();
+							}
+							AlarmsManagement.setAlarmsForEvent(getApplicationContext(), alarm1, 0, alarm2, 0, alarm3, 0, event.getEvent_id());
+						}
 						return true;
 					} else {
 						errorStr = setErrorStr(testEvent);
@@ -1717,11 +1741,36 @@ public class EventEditActivity extends EventActivity {
 			int testEvent = event.isValid();
 			if (testEvent == 0) {
 				EventManagement.createNewEvent(EventEditActivity.this, event);
+				if(NavbarActivity.alarmReceiver == null){
+					NavbarActivity.refreshAlarmReceiver();
+				}
+				if (alarm1time != null || alarm2time != null || alarm3time != null) {
+					long alarm1 = 0;
+					long alarm2 = 0;
+					long alarm3 = 0;
+					if(alarm1time != null){
+						alarm1time.clear(Calendar.SECOND);
+						alarm1time.clear(Calendar.MILLISECOND);
+						alarm1 = alarm1time.getTimeInMillis();
+					}
+					if (alarm2time != null) {
+						alarm2time.clear(Calendar.SECOND);
+						alarm2time.clear(Calendar.MILLISECOND);
+						alarm2 = alarm2time.getTimeInMillis();
+					}
+					if (alarm3time != null) {
+						alarm3time.clear(Calendar.SECOND);
+						alarm3time.clear(Calendar.MILLISECOND);
+						alarm3 = alarm3time.getTimeInMillis();
+					}
+					AlarmsManagement.setAlarmsForEvent(getApplicationContext(), alarm1, 0, alarm2, 0, alarm3, 0, event.getEvent_id());
+				}
 				return true;
 			} else {
 				errorStr = setErrorStr(testEvent);
 				return false;
 			}
+			
 		}
 
 		@Override
