@@ -9,6 +9,7 @@ public class ChatMessageObject {
 	private boolean deleted;
 	private Long updated;
 	private String fullname;
+	private boolean successfully_uploaded = false;
 
 	/**
 	 * @return the messageId
@@ -121,5 +122,13 @@ public class ChatMessageObject {
 
 	public void setFullname(String fullname) {
 		this.fullname = fullname;
+	}
+
+	public boolean isSuccessfully_uploaded() {
+		return successfully_uploaded;
+	}
+
+	public void setSuccessfully_uploaded(boolean successfully_uploaded) {
+		this.successfully_uploaded = successfully_uploaded;
 	}
 }
