@@ -31,6 +31,7 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.groupagendas.groupagenda.NavbarActivity;
 import com.groupagendas.groupagenda.R;
 import com.groupagendas.groupagenda.account.Account;
 import com.groupagendas.groupagenda.address.Address;
@@ -38,6 +39,7 @@ import com.groupagendas.groupagenda.address.AddressBookActivity;
 import com.groupagendas.groupagenda.address.AddressBookInfoActivity;
 import com.groupagendas.groupagenda.address.AddressManagement;
 import com.groupagendas.groupagenda.address.AddressProvider;
+import com.groupagendas.groupagenda.alarm.AlarmsManagement;
 import com.groupagendas.groupagenda.contacts.Contact;
 import com.groupagendas.groupagenda.contacts.ContactsActivity;
 import com.groupagendas.groupagenda.contacts.Group;
@@ -792,6 +794,30 @@ public class NewEventActivity extends EventActivity {
 			int testEvent = event.isValid();
 			if (testEvent == 0) {
 				EventManagement.createNewEvent(NewEventActivity.this, event);
+				if(NavbarActivity.alarmReceiver == null){
+					NavbarActivity.refreshAlarmReceiver();
+				}
+				if (alarm1time != null || alarm2time != null || alarm3time != null) {
+					long alarm1 = 0;
+					long alarm2 = 0;
+					long alarm3 = 0;
+					if(alarm1time != null){
+						alarm1time.clear(Calendar.SECOND);
+						alarm1time.clear(Calendar.MILLISECOND);
+						alarm1 = alarm1time.getTimeInMillis();
+					}
+					if (alarm2time != null) {
+						alarm2time.clear(Calendar.SECOND);
+						alarm2time.clear(Calendar.MILLISECOND);
+						alarm2 = alarm2time.getTimeInMillis();
+					}
+					if (alarm3time != null) {
+						alarm3time.clear(Calendar.SECOND);
+						alarm3time.clear(Calendar.MILLISECOND);
+						alarm3 = alarm3time.getTimeInMillis();
+					}
+					AlarmsManagement.setAlarmsForEvent(getApplicationContext(), alarm1, 0, alarm2, 0, alarm3, 0, event.getEvent_id());
+				}
 				return true;
 			} else {
 				errorStr = setErrorStr(testEvent);
