@@ -33,6 +33,7 @@ public class TemplatesProvider extends ContentProvider {
 		
 		public static final class TemplatesMetaData implements BaseColumns {
 			public static final Uri CONTENT_URI = Uri.parse("content://" + AUTHORITY + "/" + TEMPLATES_TABLE);
+			public static final Uri CONTENT_URI_EXTERNAL_ID = Uri.parse("content://" + AUTHORITY + "/" + TEMPLATES_TABLE + "/external");
 			public static final String CONTENT_TYPE = "vnd.android.cursor.dir/vnd.formula.events_item";
 			public static final String CONTENT_ITEM_TYPE = "vnd.android.cursor.item/vnd.formula.events_item";
 
@@ -80,10 +81,10 @@ public class TemplatesProvider extends ContentProvider {
 //			public static final String ATTENDANT_2_COUNT = "attendant_2_count";
 //			public static final String ATTENDANT_0_COUNT = "attendant_0_count";
 //			public static final String ATTENDANT_4_COUNT = "attendant_4_count";
-			
-			public static final String ASSIGNED_CONTACTS = "contacts";
-			public static final String ASSIGNED_GROUPS = "groups";
+						
+			public static final String MY_INVITE = "my_invite";
 			public static final String INVITED = "invited";
+			public static final String INVITED_TOTAL = "total_invited";
 			
 //			public static final String NEED_UPDATE = "need_update";
 			
@@ -98,13 +99,14 @@ public class TemplatesProvider extends ContentProvider {
 	static {
 		TM = new HashMap<String, String>();
 		
+		TM.put(TMetaData.TemplatesMetaData._ID, TMetaData.TemplatesMetaData._ID);
+		
 		TM.put(TMetaData.TemplatesMetaData.T_ID, TMetaData.TemplatesMetaData.T_ID);
+		TM.put(TMetaData.TemplatesMetaData.T_TITLE, TMetaData.TemplatesMetaData.T_TITLE);
 
 		TM.put(TMetaData.TemplatesMetaData.IS_SPORTS_EVENT, TMetaData.TemplatesMetaData.IS_SPORTS_EVENT);
-		TM.put(TMetaData.TemplatesMetaData.TIMEZONE_IN_USE, TMetaData.TemplatesMetaData.TIMEZONE_IN_USE);
 		TM.put(TMetaData.TemplatesMetaData.IS_ALL_DAY, TMetaData.TemplatesMetaData.IS_ALL_DAY);
 
-		TM.put(TMetaData.TemplatesMetaData.T_TITLE, TMetaData.TemplatesMetaData.T_TITLE);
 		TM.put(TMetaData.TemplatesMetaData.TITLE, TMetaData.TemplatesMetaData.TITLE);
 		TM.put(TMetaData.TemplatesMetaData.ICON, TMetaData.TemplatesMetaData.ICON);
 		TM.put(TMetaData.TemplatesMetaData.COLOR, TMetaData.TemplatesMetaData.COLOR);
@@ -112,7 +114,6 @@ public class TemplatesProvider extends ContentProvider {
 
 		TM.put(TMetaData.TemplatesMetaData.LOCATION, TMetaData.TemplatesMetaData.LOCATION);
 		TM.put(TMetaData.TemplatesMetaData.ACCOMODATION, TMetaData.TemplatesMetaData.ACCOMODATION);
-
 		TM.put(TMetaData.TemplatesMetaData.COST, TMetaData.TemplatesMetaData.COST);
 		TM.put(TMetaData.TemplatesMetaData.TAKE_WITH_YOU, TMetaData.TemplatesMetaData.TAKE_WITH_YOU);
 		TM.put(TMetaData.TemplatesMetaData.GO_BY, TMetaData.TemplatesMetaData.GO_BY);
@@ -125,6 +126,7 @@ public class TemplatesProvider extends ContentProvider {
 		TM.put(TMetaData.TemplatesMetaData.TIMEZONE, TMetaData.TemplatesMetaData.TIMEZONE);
 		TM.put(TMetaData.TemplatesMetaData.TIME_START, TMetaData.TemplatesMetaData.TIME_START);
 		TM.put(TMetaData.TemplatesMetaData.TIME_END, TMetaData.TemplatesMetaData.TIME_END);
+		TM.put(TMetaData.TemplatesMetaData.TIMEZONE_IN_USE, TMetaData.TemplatesMetaData.TIMEZONE_IN_USE);
 
 		TM.put(TMetaData.TemplatesMetaData.REMINDER1, TMetaData.TemplatesMetaData.REMINDER1);
 		TM.put(TMetaData.TemplatesMetaData.REMINDER2, TMetaData.TemplatesMetaData.REMINDER2);
@@ -137,8 +139,6 @@ public class TemplatesProvider extends ContentProvider {
 		TM.put(TMetaData.TemplatesMetaData.CREATED, TMetaData.TemplatesMetaData.CREATED);
 		TM.put(TMetaData.TemplatesMetaData.MODIFIED, TMetaData.TemplatesMetaData.MODIFIED);
 		
-		TM.put(TMetaData.TemplatesMetaData.ASSIGNED_CONTACTS, TMetaData.TemplatesMetaData.ASSIGNED_CONTACTS);
-		TM.put(TMetaData.TemplatesMetaData.ASSIGNED_GROUPS, TMetaData.TemplatesMetaData.ASSIGNED_GROUPS);
 		TM.put(TMetaData.TemplatesMetaData.INVITED, TMetaData.TemplatesMetaData.INVITED);
 	}
 	
@@ -147,11 +147,13 @@ public class TemplatesProvider extends ContentProvider {
 
 	public static final int ALL_TEMPLATES = 0;
 	public static final int SINGLE_TEMPLATE = 1;
+	private static final int TEMPLATE_BY_EXTERNAL_ID = 2;
 
 	static {
 		mUriMatcher = new UriMatcher(UriMatcher.NO_MATCH);
 		mUriMatcher.addURI(TMetaData.AUTHORITY, TMetaData.TEMPLATES_TABLE, ALL_TEMPLATES);
 		mUriMatcher.addURI(TMetaData.AUTHORITY, TMetaData.TEMPLATES_TABLE+"/#", SINGLE_TEMPLATE);
+		mUriMatcher.addURI(TMetaData.AUTHORITY, TMetaData.TEMPLATES_TABLE + "/external/#", TEMPLATE_BY_EXTERNAL_ID);
 	}
 	
 	@Override
@@ -185,7 +187,13 @@ public class TemplatesProvider extends ContentProvider {
 			case SINGLE_TEMPLATE:
 				qb.setTables(TMetaData.TEMPLATES_TABLE);
 				qb.setProjectionMap(TM);
-				qb.appendWhere(TMetaData.TemplatesMetaData.T_ID + "=" + uri.getPathSegments().get(1));
+				qb.appendWhere(TMetaData.TemplatesMetaData._ID + "=" + uri.getPathSegments().get(1));
+				orderBy = (TextUtils.isEmpty(sortOrder)) ? TMetaData.TemplatesMetaData.DEFAULT_SORT_ORDER : sortOrder;
+				break;
+			case TEMPLATE_BY_EXTERNAL_ID:
+				qb.setTables(TMetaData.TEMPLATES_TABLE);
+				qb.setProjectionMap(TM);
+				qb.appendWhere(TMetaData.TemplatesMetaData.T_ID + "=" + uri.getPathSegments().get(2));
 				orderBy = (TextUtils.isEmpty(sortOrder)) ? TMetaData.TemplatesMetaData.DEFAULT_SORT_ORDER : sortOrder;
 				break;
 			default:
@@ -208,7 +216,7 @@ public class TemplatesProvider extends ContentProvider {
 				count = db.delete(TMetaData.TEMPLATES_TABLE, where, whereArgs);
 				break;
 			case SINGLE_TEMPLATE:
-				String whereStr = TMetaData.TemplatesMetaData.T_ID+"="+uri.getPathSegments().get(1)+(!TextUtils.isEmpty(where)?"AND("+where+")":"");
+				String whereStr = TMetaData.TemplatesMetaData._ID+"="+uri.getPathSegments().get(1)+(!TextUtils.isEmpty(where)?"AND("+where+")":"");
 				count = db.delete(TMetaData.TEMPLATES_TABLE, whereStr, whereArgs);
 				break;
 			default:
@@ -248,7 +256,7 @@ public class TemplatesProvider extends ContentProvider {
 			count = db.update(TMetaData.TEMPLATES_TABLE, values, where, whereArgs);
 			break;
 		case SINGLE_TEMPLATE:
-			String whereStr = TMetaData.TemplatesMetaData.T_ID+"="+uri.getPathSegments().get(1)+(!TextUtils.isEmpty(where)?"AND("+where+")":"");
+			String whereStr = TMetaData.TemplatesMetaData._ID+"="+uri.getPathSegments().get(1)+(!TextUtils.isEmpty(where)?"AND("+where+")":"");
 			count = db.update(TMetaData.TEMPLATES_TABLE, values, whereStr, whereArgs);
 			break;
 		default:
@@ -293,8 +301,8 @@ public class TemplatesProvider extends ContentProvider {
 				+TMetaData.TemplatesMetaData.ZIP+" TEXT ,"
 				
 				+TMetaData.TemplatesMetaData.TIMEZONE+" TEXT ,"
-				+TMetaData.TemplatesMetaData.TIMEZONE_IN_USE+" INTEGER ,"
-				+TMetaData.TemplatesMetaData.TIME_START+" INTEGER ,"
+				+TMetaData.TemplatesMetaData.TIMEZONE_IN_USE+" TEXT ,"
+				+TMetaData.TemplatesMetaData.TIME_START+" TEXT ,"
 				+TMetaData.TemplatesMetaData.TIME_END+" INTEGER ,"
 				
 				+TMetaData.TemplatesMetaData.REMINDER1+" INTEGER ,"
@@ -308,17 +316,9 @@ public class TemplatesProvider extends ContentProvider {
 				+TMetaData.TemplatesMetaData.CREATED+" TEXT ,"
 				+TMetaData.TemplatesMetaData.MODIFIED+" TEXT ,"
 				
-//				+EMetaData.EventsMetaData.ATTENDANT_1_COUNT+" TEXT ,"
-//				+EMetaData.EventsMetaData.ATTENDANT_2_COUNT+" TEXT ,"
-//				+EMetaData.EventsMetaData.ATTENDANT_0_COUNT+" TEXT ,"
-//				+EMetaData.EventsMetaData.ATTENDANT_4_COUNT+" TEXT ,"
-				
 				+TMetaData.TemplatesMetaData.UPLOADED_SUCCESSFULLY+" INTEGER ,"
 				
-				+TMetaData.TemplatesMetaData.ASSIGNED_CONTACTS+" TEXT ,"
-				+TMetaData.TemplatesMetaData.ASSIGNED_GROUPS+" TEXT ,"
 				+TMetaData.TemplatesMetaData.INVITED+" TEXT )";
-//				+EMetaData.EventsMetaData.NEED_UPDATE+" INTEGER DEFAULT 0 )";
 				
 			db.execSQL(query);
 		}
