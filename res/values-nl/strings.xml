@@ -285,4 +285,6 @@
     <string name="afternoon">Afternoon</string>
     <string name="evening">Evening</string>
     <string name="not_in_your_contact_list">Not in your contact list</string>
+    <string name="templates_were_cleared">List cleared successfully!</string>
+    <string name="templates_werent_cleared">Some error happened.</string>
 </resources>
