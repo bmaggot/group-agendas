@@ -63,12 +63,12 @@ import com.groupagendas.groupagenda.data.ContactManagement;
 import com.groupagendas.groupagenda.data.Data;
 import com.groupagendas.groupagenda.data.DataManagement;
 import com.groupagendas.groupagenda.error.report.Reporter;
-import com.groupagendas.groupagenda.events.EventActivity;
-import com.groupagendas.groupagenda.events.EventActivity.StaticTimezones;
 import com.groupagendas.groupagenda.timezone.CountriesAdapter;
 import com.groupagendas.groupagenda.utils.DateTimeUtils;
 import com.groupagendas.groupagenda.utils.MapUtils;
 import com.groupagendas.groupagenda.utils.StringValueUtils;
+import com.groupagendas.groupagenda.utils.TimezoneUtils;
+import com.groupagendas.groupagenda.utils.TimezoneUtils.StaticTimezone;
 import com.groupagendas.groupagenda.utils.Utils;
 
 public class ContactEditActivity extends Activity implements OnClickListener, OnItemSelectedListener {
@@ -142,7 +142,6 @@ public class ContactEditActivity extends Activity implements OnClickListener, On
 	private String[] canAddNotesValues;
 
 	private DateTimeUtils dtUtils;
-	private ArrayList<StaticTimezones> countriesList;
 	private CountriesAdapter countriesAdapter;
 	private LinearLayout countrySpinnerBlock;
 	private int timezoneInUse;
@@ -165,36 +164,14 @@ public class ContactEditActivity extends Activity implements OnClickListener, On
 
 		account = new Account(this);
 
-		String[] countries;
-		String[] timezones;
-		String[] country_codes;
-		String[] call_codes;
-
-		countries = getResources().getStringArray(R.array.countries);
-		timezones = getResources().getStringArray(R.array.timezones);
-		country_codes = getResources().getStringArray(R.array.country_codes);
-		call_codes = getResources().getStringArray(R.array.call_codes);
-
-		countriesList = new ArrayList<StaticTimezones>(countries.length);
-		for (int i = 0; i < countries.length; i++) {
-			// TODO OMG WHAT HAVE I DONE AGAIN?! :|
-			StaticTimezones temp = new EventActivity().new StaticTimezones();
-
-			temp.id = StringValueUtils.valueOf(i);
-			temp.country = countries[i];
-			temp.country_code = country_codes[i];
-			temp.call_code = call_codes[i];
-			temp.timezone = timezones[i];
-
-			countriesList.add(temp);
-		}
-
 		String tmz = account.getTimezone();
-		for (StaticTimezones item : countriesList) {
+		final List<StaticTimezone> countriesList = TimezoneUtils.getTimezones(this);
+		for (StaticTimezone item : countriesList) {
 			if (item.timezone.equalsIgnoreCase(tmz)) {
 				timezoneInUse = Integer.parseInt(item.id);
 				countryView.setText(countriesList.get(timezoneInUse).country);
 				phonecodeView.setText("+" + countriesList.get(timezoneInUse).call_code);
+				// TODO: what?
 				continue;
 			}
 		}
@@ -272,34 +249,8 @@ public class ContactEditActivity extends Activity implements OnClickListener, On
 		
 		zipView = (EditText) findViewById(R.id.zip);
 		
-
-		String[] countries;
-		String[] timezones;
-		String[] country_codes;
-		String[] call_codes;
-
-		countries = getResources().getStringArray(R.array.countries);
-		timezones = getResources().getStringArray(R.array.timezones);
-		country_codes = getResources().getStringArray(R.array.country_codes);
-		call_codes = getResources().getStringArray(R.array.call_codes);
-
-		countriesList = new ArrayList<StaticTimezones>(countries.length);
-		for (int i = 0; i < countries.length; i++) {
-			// TODO OMG WHAT HAVE I DONE AGAIN?! :|
-			StaticTimezones temp = new EventActivity().new StaticTimezones();
-
-			temp.id = StringValueUtils.valueOf(i);
-			temp.country = countries[i];
-			temp.country_code = country_codes[i];
-			temp.call_code = call_codes[i];
-			temp.timezone = timezones[i];
-
-			countriesList.add(temp);
-		}
-
-		if (countriesList != null) {
-			countriesAdapter = new CountriesAdapter(ContactEditActivity.this, R.layout.search_dialog_item, countriesList);
-		}
+		final List<StaticTimezone> countriesList = TimezoneUtils.getTimezones(this);
+		countriesAdapter = new CountriesAdapter(ContactEditActivity.this, R.layout.search_dialog_item, countriesList);
 
 		countrySpinnerBlock = (LinearLayout) findViewById(R.id.countrySpinnerBlock);
 		countryView = (TextView) findViewById(R.id.countryView);
@@ -536,7 +487,8 @@ public class ContactEditActivity extends Activity implements OnClickListener, On
 			}
 
 			if (result.country.length() > 0) {
-				for (StaticTimezones entry : countriesList) {
+				List<StaticTimezone> countriesList = TimezoneUtils.getTimezones(getApplicationContext());
+				for (StaticTimezone entry : countriesList) {
 					if (entry.country_code.equalsIgnoreCase(result.country))
 						timezoneInUse = Integer.parseInt(entry.id);
 				}
@@ -626,6 +578,8 @@ public class ContactEditActivity extends Activity implements OnClickListener, On
 				cv.put(ContactsProvider.CMetaData.ContactsMetaData.BIRTHDATE, editedContact.birthdate);
 			}
 
+			// this should be safe...
+			List<StaticTimezone> countriesList = TimezoneUtils.getTimezones(null);
 			editedContact.country = countriesList.get(timezoneInUse).country_code;
 			cv.put(ContactsProvider.CMetaData.ContactsMetaData.COUNTRY, editedContact.country);
 
@@ -804,6 +758,8 @@ public class ContactEditActivity extends Activity implements OnClickListener, On
 				editedContact.birthdate = "";
 				cv.put(ContactsProvider.CMetaData.ContactsMetaData.BIRTHDATE, editedContact.birthdate);
 			}
+			// this should be safe...
+			List<StaticTimezone> countriesList = TimezoneUtils.getTimezones(null);
 			editedContact.country = countriesList.get(timezoneInUse).country_code;
 			cv.put(ContactsProvider.CMetaData.ContactsMetaData.COUNTRY, editedContact.country);
 

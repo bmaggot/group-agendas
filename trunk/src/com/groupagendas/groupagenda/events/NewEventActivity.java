@@ -3,6 +3,7 @@ package com.groupagendas.groupagenda.events;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collection;
+import java.util.List;
 import java.util.concurrent.ExecutionException;
 
 import android.app.AlertDialog;
@@ -48,13 +49,13 @@ import com.groupagendas.groupagenda.data.Data;
 import com.groupagendas.groupagenda.data.DataManagement;
 import com.groupagendas.groupagenda.data.EventManagement;
 import com.groupagendas.groupagenda.templates.TemplatesActivity;
-import com.groupagendas.groupagenda.timezone.CountriesAdapter;
 import com.groupagendas.groupagenda.timezone.TimezonesAdapter;
 import com.groupagendas.groupagenda.utils.DateTimeSelectActivity;
 import com.groupagendas.groupagenda.utils.DateTimeUtils;
 import com.groupagendas.groupagenda.utils.DrawingUtils;
 import com.groupagendas.groupagenda.utils.Prefs;
-import com.groupagendas.groupagenda.utils.StringValueUtils;
+import com.groupagendas.groupagenda.utils.TimezoneUtils;
+import com.groupagendas.groupagenda.utils.TimezoneUtils.StaticTimezone;
 import com.groupagendas.groupagenda.utils.Utils;
 
 public class NewEventActivity extends EventActivity {
@@ -201,6 +202,8 @@ public class NewEventActivity extends EventActivity {
 		// Description
 		descView = (EditText) findViewById(R.id.descView);
 
+		final List<StaticTimezone> countriesList = TimezoneUtils.getTimezones(this);
+
 		// timezone
 		timezoneSpinnerBlock = (LinearLayout) findViewById(R.id.timezoneSpinnerBlock);
 		timezoneView = (TextView) findViewById(R.id.timezoneView);
@@ -297,15 +300,8 @@ public class NewEventActivity extends EventActivity {
 						countryView.setText(countriesList.get(timezoneInUse).country2);
 						event.setCountry(countriesList.get(timezoneInUse).country_code);
 
-						filteredCountriesList = new ArrayList<StaticTimezones>();
-
-						for (StaticTimezones tz : countriesList) {
-							if (tz.country_code.equalsIgnoreCase(event.getCountry())) {
-								filteredCountriesList.add(tz);
-							}
-						}
-
-						timezonesAdapter = new TimezonesAdapter(NewEventActivity.this, R.layout.search_dialog_item, filteredCountriesList);
+						timezonesAdapter = new TimezonesAdapter(NewEventActivity.this, R.layout.search_dialog_item,
+								TimezoneUtils.getTimezonesByCc(NewEventActivity.this, event.getCountry()));
 						timezonesAdapter.notifyDataSetChanged();
 
 						timezoneView.setText(countriesList.get(timezoneInUse).altname);
@@ -467,11 +463,11 @@ public class NewEventActivity extends EventActivity {
 		account = new Account(this);
 		invitationResponseLine = (RelativeLayout) findViewById(R.id.response_to_invitation);
 		invitationResponseStatus = (TextView) findViewById(R.id.status);
-		
+
 		if (watcher == null) {
 			watcher = new GenericTextWatcher();
 		}
-		
+
 		countryView.addTextChangedListener(watcher);
 		cityView.addTextChangedListener(watcher);
 		streetView.addTextChangedListener(watcher);
@@ -480,62 +476,24 @@ public class NewEventActivity extends EventActivity {
 		startView = (TextView) findViewById(R.id.startView);
 		endView = (TextView) findViewById(R.id.endView);
 
-		if (countriesList == null || countriesList.isEmpty()) {
-			String[] cities;
-			String[] countries;
-			String[] countries2;
-			String[] country_codes;
-			String[] timezones;
-			String[] altnames;
-	
-			cities = getResources().getStringArray(R.array.city);
-			countries = getResources().getStringArray(R.array.countries);
-			countries2 = getResources().getStringArray(R.array.countries2);
-			country_codes = getResources().getStringArray(R.array.country_codes);
-			timezones = getResources().getStringArray(R.array.timezones);
-			altnames = getResources().getStringArray(R.array.timezone_altnames);
-	
-			countriesList = new ArrayList<StaticTimezones>(cities.length);
-			for (int i = 0; i < cities.length; i++) {
-				StaticTimezones temp = new StaticTimezones();
-	
-				temp.id = StringValueUtils.valueOf(i);
-				temp.city = cities[i];
-				temp.country = countries[i];
-				temp.country2 = countries2[i];
-				temp.country_code = country_codes[i];
-				temp.timezone = timezones[i];
-				temp.altname = altnames[i];
-	
-				countriesList.add(temp);
-			}
-			// if (countriesList != null) {
-				countriesAdapter = new CountriesAdapter(NewEventActivity.this, R.layout.search_dialog_item, countriesList);
-			// }
-		}
-
+		List<StaticTimezone> countriesList = TimezoneUtils.getTimezones(this);
+		String countryCode = "";
 		if (!timezoneFound) {
 			String tmz = account.getTimezone();
-			String countryCode = "";
-			for (StaticTimezones item : countriesList) {
+			for (StaticTimezone item : countriesList) {
 				if (item.timezone.equalsIgnoreCase(tmz)) {
 					timezoneInUse = Integer.parseInt(item.id);
-					countryView.setText(countriesList.get(timezoneInUse).country2);
-					countryCode = countriesList.get(timezoneInUse).country_code;
+					StaticTimezone st = /*countriesList.get(timezoneInUse)*/item;
+					countryView.setText(st.country2);
+					countryCode = st.country_code;
+					// TODO: continue search? why?
 					timezoneFound = true;
 					continue;
 				}
 			}
-	
-			filteredCountriesList = new ArrayList<StaticTimezones>();
-	
-			for (StaticTimezones tz : countriesList) {
-				if (tz.country_code.equalsIgnoreCase(countryCode)) {
-					filteredCountriesList.add(tz);
-				}
-			}
 		}
-		timezonesAdapter = new TimezonesAdapter(NewEventActivity.this, R.layout.search_dialog_item, filteredCountriesList);
+		timezonesAdapter = new TimezonesAdapter(NewEventActivity.this, R.layout.search_dialog_item,
+				TimezoneUtils.getTimezonesByCc(this, countryCode));
 		timezonesAdapter.notifyDataSetChanged();
 
 		// INVITES SECTION

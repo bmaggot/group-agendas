@@ -11,13 +11,13 @@ import android.widget.Filterable;
 import android.widget.TextView;
 
 import com.groupagendas.groupagenda.calendar.adapters.AbstractAdapter;
-import com.groupagendas.groupagenda.events.EventActivity.StaticTimezones;
+import com.groupagendas.groupagenda.utils.TimezoneUtils.StaticTimezone;
 
-public class CountriesAdapter extends AbstractAdapter<StaticTimezones> implements Filterable {
+public class CountriesAdapter extends AbstractAdapter<StaticTimezone> implements Filterable {
 	public static final int COUNTRY = 1;
 	public static final int TIMEZONE = 2;
 	/** All adapter's ArrayList's items. */
-	private List<StaticTimezones> allItems;
+	private List<StaticTimezone> allItems;
 	/** Displayed layout's resource ID. */
 	private int textViewResourceId = 0;
 
@@ -33,20 +33,21 @@ public class CountriesAdapter extends AbstractAdapter<StaticTimezones> implement
 	 * @since 2012-10-09
 	 * @version 1.1
 	 */
-	public CountriesAdapter(Context context, int textViewResourceId, List<StaticTimezones> countries) {
+	public CountriesAdapter(Context context, int textViewResourceId, List<StaticTimezone> countries) {
 		super(context, filterDuplicateEntries(countries));
 		this.allItems = list;
 		this.textViewResourceId = textViewResourceId;
 	}
 
-	private static List<StaticTimezones> filterDuplicateEntries(
-			List<StaticTimezones> countries) {		
-		ArrayList<StaticTimezones> filteredList =  new ArrayList<StaticTimezones>();
+	private static List<StaticTimezone> filterDuplicateEntries(
+			List<StaticTimezone> countries) {		
+		ArrayList<StaticTimezone> filteredList = new ArrayList<StaticTimezone>();
 		
 		if (!countries.isEmpty()) {
 			for (int i = 1; i < countries.size(); i++) {
-				StaticTimezones entry = countries.get(i);
-				if (!entry.country.equalsIgnoreCase(countries.get(i - 1).country)) filteredList.add(entry); 
+				StaticTimezone entry = countries.get(i);
+				if (!entry.country.equalsIgnoreCase(countries.get(i - 1).country))
+					filteredList.add(entry); 
 			}
 		}
 		return filteredList ;
@@ -73,13 +74,13 @@ public class CountriesAdapter extends AbstractAdapter<StaticTimezones> implement
 			@SuppressWarnings("unchecked")
 			@Override
 			protected void publishResults(CharSequence constraint, FilterResults results) {
-				list = (List<StaticTimezones>) results.values;
+				list = (List<StaticTimezone>) results.values;
 				notifyDataSetChanged();
 			}
 
 			@Override
 			protected FilterResults performFiltering(CharSequence constraint) {
-				List<StaticTimezones> filteredResults = getFilteredResults(constraint);
+				List<StaticTimezone> filteredResults = getFilteredResults(constraint);
 
 				FilterResults results = new FilterResults();
 				results.values = filteredResults;
@@ -87,9 +88,9 @@ public class CountriesAdapter extends AbstractAdapter<StaticTimezones> implement
 				return results;
 			}
 
-			private List<StaticTimezones> getFilteredResults(CharSequence constraint) {
-				List<StaticTimezones> items = allItems;
-				List<StaticTimezones> filteredItems = new ArrayList<StaticTimezones>();
+			private List<StaticTimezone> getFilteredResults(CharSequence constraint) {
+				List<StaticTimezone> items = allItems;
+				List<StaticTimezone> filteredItems = new ArrayList<StaticTimezone>();
 
 				for (int i = 0; i < items.size() - 1; i++) {
 					if (items.get(i).country.toLowerCase().startsWith(constraint.toString().toLowerCase())) {

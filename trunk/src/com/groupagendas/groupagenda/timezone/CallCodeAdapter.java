@@ -11,20 +11,20 @@ import android.widget.Filterable;
 import android.widget.TextView;
 
 import com.groupagendas.groupagenda.calendar.adapters.AbstractAdapter;
-import com.groupagendas.groupagenda.events.EventActivity.StaticTimezones;
+import com.groupagendas.groupagenda.utils.TimezoneUtils.StaticTimezone;
 
-public class CallCodeAdapter extends AbstractAdapter<StaticTimezones> implements
+public class CallCodeAdapter extends AbstractAdapter<StaticTimezone> implements
 		Filterable {
 	public static final int COUNTRY = 1;
 	public static final int TIMEZONE = 2;
 	/** All adapter's ArrayList's items. */
-	private List<StaticTimezones> allItems;
+	private List<StaticTimezone> allItems;
 	/** Displayed layout's resource ID. */
 	private int textViewResourceId = 0;
 
 	/**
 	 * 
-	 * Custom adapter for ArrayList of StaticTimezones objects.
+	 * Custom adapter for ArrayList of StaticTimezone objects.
 	 * 
 	 * @author meska.lt@gmail.com
 	 * @author justinas.marcinka@gmail.com
@@ -35,19 +35,19 @@ public class CallCodeAdapter extends AbstractAdapter<StaticTimezones> implements
 	 * @version 1.1
 	 */
 	public CallCodeAdapter(Context context, int textViewResourceId,
-			List<StaticTimezones> countries) {
+			List<StaticTimezone> countries) {
 		super(context, filterDuplicateEntries(countries));
 		this.allItems = list;
 		this.textViewResourceId = textViewResourceId;
 	}
 
-	private static List<StaticTimezones> filterDuplicateEntries(
-			List<StaticTimezones> countries) {
-		ArrayList<StaticTimezones> filteredList = new ArrayList<StaticTimezones>();
+	private static List<StaticTimezone> filterDuplicateEntries(
+			List<StaticTimezone> countries) {
+		ArrayList<StaticTimezone> filteredList = new ArrayList<StaticTimezone>();
 
 		if (!countries.isEmpty()) {
 			for (int i = 1; i < countries.size(); i++) {
-				StaticTimezones entry = countries.get(i);
+				StaticTimezone entry = countries.get(i);
 				if (!entry.call_code
 						.equalsIgnoreCase(countries.get(i - 1).call_code))
 					filteredList.add(entry);
@@ -81,14 +81,14 @@ public class CallCodeAdapter extends AbstractAdapter<StaticTimezones> implements
 				if (constraint.length() < 1) {
 					list = allItems;
 				} else {
-					list = (List<StaticTimezones>) results.values;
+					list = (List<StaticTimezone>) results.values;
 				}
 				notifyDataSetChanged();
 			}
 
 			@Override
 			protected FilterResults performFiltering(CharSequence constraint) {
-				List<StaticTimezones> filteredResults = getFilteredResults(constraint);
+				List<StaticTimezone> filteredResults = getFilteredResults(constraint);
 
 				FilterResults results = new FilterResults();
 				results.values = filteredResults;
@@ -96,9 +96,9 @@ public class CallCodeAdapter extends AbstractAdapter<StaticTimezones> implements
 				return results;
 			}
 
-			private List<StaticTimezones> getFilteredResults(CharSequence constraint) {
-				List<StaticTimezones> items = allItems;
-				List<StaticTimezones> filteredItems = new ArrayList<StaticTimezones>();
+			private List<StaticTimezone> getFilteredResults(CharSequence constraint) {
+				List<StaticTimezone> items = allItems;
+				List<StaticTimezone> filteredItems = new ArrayList<StaticTimezone>();
 
 				if (constraint.length() < 1) {
 					filteredItems = allItems;

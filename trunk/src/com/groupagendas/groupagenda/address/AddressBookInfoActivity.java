@@ -1,6 +1,6 @@
 package com.groupagendas.groupagenda.address;
 
-import java.util.ArrayList;
+import java.util.List;
 
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -30,10 +30,10 @@ import com.groupagendas.groupagenda.data.DataManagement;
 import com.groupagendas.groupagenda.data.EventManagement;
 import com.groupagendas.groupagenda.events.Event;
 import com.groupagendas.groupagenda.events.EventActivity;
-import com.groupagendas.groupagenda.events.EventActivity.StaticTimezones;
 import com.groupagendas.groupagenda.timezone.CountriesAdapter;
 import com.groupagendas.groupagenda.timezone.TimezonesAdapter;
-import com.groupagendas.groupagenda.utils.StringValueUtils;
+import com.groupagendas.groupagenda.utils.TimezoneUtils;
+import com.groupagendas.groupagenda.utils.TimezoneUtils.StaticTimezone;
 
 public class AddressBookInfoActivity extends Activity {
 
@@ -57,8 +57,6 @@ public class AddressBookInfoActivity extends Activity {
 	private LinearLayout timezoneSpinnerBlock;
 	protected CountriesAdapter countriesAdapter = null;
 	protected TimezonesAdapter timezonesAdapter = null;
-	protected ArrayList<StaticTimezones> countriesList = null;
-	private ArrayList<StaticTimezones> filteredCountriesList;
 	private int timezoneInUse = 0;
 	Account account;
 
@@ -85,38 +83,9 @@ public class AddressBookInfoActivity extends Activity {
 		countrySpinnerBlock = (LinearLayout) findViewById(R.id.countrySpinnerBlock);
 		timezoneSpinnerBlock = (LinearLayout) findViewById(R.id.timezoneSpinnerBlock);
 
-		String[] cities;
-		String[] countries;
-		String[] countries2;
-		String[] country_codes;
-		String[] timezones;
-		String[] altnames;
-
-		cities = getResources().getStringArray(R.array.city);
-		countries = getResources().getStringArray(R.array.countries);
-		countries2 = getResources().getStringArray(R.array.countries2);
-		country_codes = getResources().getStringArray(R.array.country_codes);
-		timezones = getResources().getStringArray(R.array.timezones);
-		altnames = getResources().getStringArray(R.array.timezone_altnames);
-		
-		countriesList = new ArrayList<StaticTimezones>(cities.length);
-		for (int i = 0; i < cities.length; i++) {
-			StaticTimezones temp = new EventActivity().new StaticTimezones();
-
-			temp.id = StringValueUtils.valueOf(i);
-			temp.city = cities[i];
-			temp.country = countries[i];
-			temp.country2 = countries2[i];
-			temp.country_code = country_codes[i];
-			temp.timezone = timezones[i];
-			temp.altname = altnames[i];
-
-			countriesList.add(temp);
-		}
-		// if (countriesList != null) {
-			countriesAdapter = new CountriesAdapter(AddressBookInfoActivity.this, R.layout.search_dialog_item, countriesList);
-			timezonesAdapter = new TimezonesAdapter(AddressBookInfoActivity.this, R.layout.search_dialog_item, countriesList);
-		// }
+		final List<StaticTimezone> countriesList = TimezoneUtils.getTimezones(this);
+		countriesAdapter = new CountriesAdapter(AddressBookInfoActivity.this, R.layout.search_dialog_item, countriesList);
+		timezonesAdapter = new TimezonesAdapter(AddressBookInfoActivity.this, R.layout.search_dialog_item, countriesList);
 
 		action = getIntent().getBooleanExtra("action", true);
 		fill_info = getIntent().getBooleanExtra("fill_info", false);
@@ -127,21 +96,13 @@ public class AddressBookInfoActivity extends Activity {
 			address = AddressManagement.getAddressFromLocalDb(AddressBookInfoActivity.this, where);
 
 			if (address.getTimezone().length() > 0) {
-				for (StaticTimezones entry : countriesList) {
+				for (StaticTimezone entry : countriesList) {
 					if (entry.timezone.equalsIgnoreCase(address.getTimezone()))
 						timezoneInUse = Integer.parseInt(entry.id);
 				}
 				if (timezoneInUse > 0) {
-					filteredCountriesList = new ArrayList<StaticTimezones>();
-
-					for (StaticTimezones tz : countriesList) {
-						if (tz.country_code.equalsIgnoreCase(address.getCountry())) {
-							filteredCountriesList.add(tz);
-						}
-					}
-
 					timezonesAdapter = new TimezonesAdapter(AddressBookInfoActivity.this, R.layout.search_dialog_item,
-							filteredCountriesList);
+							TimezoneUtils.getTimezonesByCc(AddressBookInfoActivity.this, address.getCountry()));
 					timezonesAdapter.notifyDataSetChanged();
 
 					timezoneView.setText(countriesList.get(timezoneInUse).altname);
@@ -163,7 +124,7 @@ public class AddressBookInfoActivity extends Activity {
 			titleBlock.setVisibility(View.VISIBLE);
 			if(!fill_info){
 				String tmz = account.getTimezone();
-				for (StaticTimezones item : countriesList) {
+				for (StaticTimezone item : countriesList) {
 					if (item.timezone.equalsIgnoreCase(tmz)) {
 						timezoneInUse = Integer.parseInt(item.id);
 						countryView.setText(countriesList.get(timezoneInUse).country2);
@@ -172,12 +133,12 @@ public class AddressBookInfoActivity extends Activity {
 				}
 				timezoneView.setText(account.getTimezone());
 			} else {
-				for (StaticTimezones entry : countriesList) {
+				for (StaticTimezone entry : countriesList) {
 					if (entry.timezone.equalsIgnoreCase(EventActivity.timezoneView.getText().toString()))
 						timezoneInUse = Integer.parseInt(entry.id);
 				}
 				if(timezoneInUse == 0){
-					for (StaticTimezones entry : countriesList) {
+					for (StaticTimezone entry : countriesList) {
 						if (entry.country2.equalsIgnoreCase(EventActivity.countryView.getText().toString()))
 							timezoneInUse = Integer.parseInt(entry.id);
 					}
@@ -267,16 +228,8 @@ public class AddressBookInfoActivity extends Activity {
 						countryView.setText(countriesList.get(timezoneInUse).country2);
 						address.setCountry(countriesList.get(timezoneInUse).country_code);
 
-						filteredCountriesList = new ArrayList<StaticTimezones>();
-
-						for (StaticTimezones tz : countriesList) {
-							if (tz.country_code.equalsIgnoreCase(address.getCountry())) {
-								filteredCountriesList.add(tz);
-							}
-						}
-
 						timezonesAdapter = new TimezonesAdapter(AddressBookInfoActivity.this, R.layout.search_dialog_item,
-								filteredCountriesList);
+								TimezoneUtils.getTimezonesByCc(AddressBookInfoActivity.this, address.getCountry()));
 						timezonesAdapter.notifyDataSetChanged();
 
 						timezoneView.setText(countriesList.get(timezoneInUse).altname);
@@ -423,8 +376,10 @@ public class AddressBookInfoActivity extends Activity {
 			address.setUser_id(acc.getUser_id());
 			address.setState("");
 			address.setCountry_name(countryView.getText().toString());
-			address.setTimezone(countriesList.get(timezoneInUse).timezone);
-			address.setCountry(countriesList.get(timezoneInUse).country_code);
+			List<StaticTimezone> countriesList = TimezoneUtils.getTimezones(getApplicationContext());
+			StaticTimezone st = countriesList.get(timezoneInUse);
+			address.setTimezone(st.timezone);
+			address.setCountry(st.country_code);
 			super.onPreExecute();
 		}
 
