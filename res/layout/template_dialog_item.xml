@@ -6,6 +6,18 @@
     android:orientation="horizontal"
     android:background="@drawable/calendar_agenda_entry" >
     
+	<ImageView
+        android:id="@+id/template_remove"
+        android:layout_width="20dp"
+        android:layout_height="match_parent"
+        android:layout_marginLeft="5dp"
+        android:layout_marginRight="5dp"
+        android:contentDescription="@string/delete"
+        android:onClick="onClick"
+        android:scaleType="fitCenter"
+        android:src="@drawable/list_item_remove"
+        android:visibility="gone" />
+	
     <ImageView android:id="@+id/event_color_placeholder"
         android:layout_marginLeft="10dp"
         android:layout_width="wrap_content"
