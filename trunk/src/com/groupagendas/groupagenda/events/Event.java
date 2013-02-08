@@ -8,6 +8,8 @@ import android.content.Context;
 
 import com.groupagendas.groupagenda.data.DataManagement;
 import com.groupagendas.groupagenda.interfaces.Colored;
+import com.groupagendas.groupagenda.templates.Template;
+import com.groupagendas.groupagenda.utils.TimezoneUtils;
 
 public class Event implements Colored {
 private static final String DEFAULT_TITLE = "";
@@ -941,5 +943,35 @@ public String getEvents_day() {
 }
 public void setEvents_day(String events_day) {
 	this.events_day = events_day;
+}
+public Template toTemplate(Context context) {
+	Template template = new Template();
+	
+	template.setTitle(getActualTitle());
+	template.setColor(getColor());
+	template.setIcon(getIcon());
+	
+	template.setStartCalendar(getStartCalendar());
+	template.setEndCalendar(getEndCalendar());
+	template.setTimezone(getTimezone());
+	
+	template.setDescription_(getDescription());
+	
+	template.setCountry(getCountry());
+	template.setCity(getCity());
+	template.setStreet(getStreet());
+	template.setZip(getZip());
+	
+	template.setLocation(getLocation());
+	template.setGo_by(getGo_by());
+	template.setTake_with_you(getTake_with_you());
+	template.setCost(getCost());
+	template.setAccomodation(getAccomodation());
+	
+	template.setInvited(getInvited());
+	
+	template.setTimezoneInUse(TimezoneUtils.getCountryPositionByCc(context, template.getCountry()));
+	
+	return template;	
 }
 }
