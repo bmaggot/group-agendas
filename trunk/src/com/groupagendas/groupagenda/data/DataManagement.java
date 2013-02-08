@@ -3,6 +3,7 @@ package com.groupagendas.groupagenda.data;
 import java.io.DataOutputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.nio.charset.Charset;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -19,12 +20,14 @@ import org.apache.http.client.utils.URLEncodedUtils;
 import org.apache.http.entity.mime.HttpMultipartMode;
 import org.apache.http.entity.mime.MultipartEntity;
 import org.apache.http.entity.mime.content.ByteArrayBody;
+import org.apache.http.entity.mime.content.StringBody;
 import org.apache.http.util.EntityUtils;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import android.app.Activity;
+import android.content.ContentResolver;
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
@@ -44,6 +47,7 @@ import com.google.android.c2dm.C2DMessaging;
 import com.google.android.gcm.GCMRegistrar;
 import com.groupagendas.groupagenda.C2DMReceiver;
 import com.groupagendas.groupagenda.R;
+import com.groupagendas.groupagenda.SaveDeletedData;
 import com.groupagendas.groupagenda.account.Account;
 import com.groupagendas.groupagenda.account.AccountProvider;
 import com.groupagendas.groupagenda.address.Address;
@@ -69,13 +73,15 @@ import com.groupagendas.groupagenda.utils.StringValueUtils;
 import com.groupagendas.groupagenda.utils.Utils;
 
 public class DataManagement {
+	public static final int ID_INTERNAL = 0;
+	public static final int ID_EXTERNAL = 1;
+	
 	public static boolean networkAvailable = true;
 	public static boolean eventStatusChanged = false;
 	public static ArrayList<Event> contactsBirthdays = new ArrayList<Event>();
 
 	SimpleDateFormat day_index_formatter;
 	SimpleDateFormat month_index_formatter;
-	// private String user_timezone; TODO investigate if it's in use.
 
 	public static final String SERVER_TIMESTAMP_FORMAT = "yyyy-MM-dd HH:mm:ss";
 	public static final String ACCOUNT_BIRTHDATE_TIMESTAMP_FORMAT = "yyyy-MM-dd";
@@ -1458,7 +1464,7 @@ public class DataManagement {
 	}
 
 	/**
-	 * Upload Event object to remote database as a template.
+	 * Upload template to remote database.
 	 * 
 	 * Method creates a multipart entity object, fills it with submitted event's
 	 * data. Afterwards creates a connection to remote server and, if successful
@@ -1467,13 +1473,13 @@ public class DataManagement {
 	 * Note: still missing event field upload features.
 	 * 
 	 * @author meska.lt@gmail.com
-	 * @param event
+	 * @param template
 	 *            Event type object with validated data.
 	 * @version 1.1
 	 * @since 2012-09-24
 	 * @return Uploaded event's ID in remote database.
 	 */
-	public static int insertTemplateToRemoteDb(Context context, Event event) {
+	public static int insertTemplateToRemoteDb(Context context, Template template) {
 		int response = 0;
 		try {
 			WebService webService = new WebService(context);
@@ -1481,147 +1487,70 @@ public class DataManagement {
 
 			MultipartEntity reqEntity = new MultipartEntity(HttpMultipartMode.BROWSER_COMPATIBLE);
 
-			CharsetUtils.addAllParts(reqEntity, "token", Data.getToken(context),
-					"template_id", event.getEvent_id() > 0 ? event.getEvent_id() : "");
-
-			CharsetUtils.addPartNotNull(reqEntity, "icon", event.getIcon());
-			CharsetUtils.addPartNotNull(reqEntity, "color", event.getColor());
-
+			reqEntity.addPart("token", new StringBody(Data.getToken(context), Charset.forName("UTF-8")));
 			
-			if (event.getActualTitle() != null) {
-				CharsetUtils.addAllParts(reqEntity, "title", event.getActualTitle(), "template_title", event.getActualTitle());
-			} else {
-				CharsetUtils.addAllParts(reqEntity, "title", "", "template_title", "");
+			reqEntity.addPart(TemplatesMetaData.T_ID, new StringBody(""+template.getTemplate_id(), Charset.forName("UTF-8")));
+			reqEntity.addPart(TemplatesMetaData.T_TITLE, new StringBody(template.getTemplate_title(), Charset.forName("UTF-8")));
+			
+			reqEntity.addPart(TemplatesMetaData.TITLE, new StringBody(template.getTitle(), Charset.forName("UTF-8")));
+			reqEntity.addPart(TemplatesMetaData.ICON, new StringBody(template.getIcon(), Charset.forName("UTF-8")));
+			reqEntity.addPart(TemplatesMetaData.COLOR, new StringBody(template.getColor(), Charset.forName("UTF-8")));
+			reqEntity.addPart(TemplatesMetaData.DESC, new StringBody(template.getDescription_(), Charset.forName("UTF-8")));
+			
+			if (template.getStartCalendar() != null) {
+				reqEntity.addPart(TemplatesMetaData.TIME_START, new StringBody(Utils.formatCalendar(template.getStartCalendar(), SERVER_TIMESTAMP_FORMAT), Charset.forName("UTF-8")));
+			}
+			if (template.getEndCalendar() != null) {
+				reqEntity.addPart(TemplatesMetaData.TIME_END, new StringBody(Utils.formatCalendar(template.getEndCalendar(), SERVER_TIMESTAMP_FORMAT), Charset.forName("UTF-8")));
 			}
 
-			CharsetUtils.addPartEmptyIfNull(reqEntity, "description", event.getDescription());
-
-			CharsetUtils.addPartNotNull(reqEntity, "country", event.getCountry());
-			CharsetUtils.addPartNotNull(reqEntity, "city", event.getCity());
-			CharsetUtils.addPartNotNull(reqEntity, "street", event.getStreet());
-			CharsetUtils.addPartNotNull(reqEntity, "zip", event.getZip());
-			CharsetUtils.addPartNotNull(reqEntity, "timezone", event.getTimezone());
-
-			long timeInMillis = event.getStartCalendar().getTimeInMillis();
-			if (timeInMillis > 0)
-				CharsetUtils.addPart(reqEntity, "timestamp_start_utc", Utils.millisToUnixTimestamp(timeInMillis));
-
-			timeInMillis = event.getEndCalendar().getTimeInMillis();
-			if (timeInMillis > 0)
-				CharsetUtils.addPart(reqEntity, "timestamp_end_utc", Utils.millisToUnixTimestamp(timeInMillis));
-
-			// timeInMillis = event.getReminder1().getTimeInMillis();
-			// if (timeInMillis > 0)
-			// reqEntity.addPart("reminder_1_utc", new StringBody("" +
-			// Utils.millisToUnixTimestamp(timeInMillis)));
-
-			// timeInMillis = event.getReminder2().getTimeInMillis();
-			// if (timeInMillis > 0)
-			// reqEntity.addPart("reminder_2_utc", new StringBody("" +
-			// Utils.millisToUnixTimestamp(timeInMillis)));
-
-			// timeInMillis = event.getReminder3().getTimeInMillis();
-			// if (timeInMillis > 0)
-			// reqEntity.addPart("reminder_3_utc", new StringBody("" +
-			// Utils.millisToUnixTimestamp(timeInMillis)));
-
-			// timeInMillis = event.getAlarm1().getTimeInMillis();
-			// if (timeInMillis > 0)
-			// reqEntity.addPart("alarm_1_utc", new StringBody("" +
-			// Utils.millisToUnixTimestamp(timeInMillis)));
-
-			// timeInMillis = event.getAlarm2().getTimeInMillis();
-			// if (timeInMillis > 0)
-			// reqEntity.addPart("alarm_2_utc", new StringBody("" +
-			// Utils.millisToUnixTimestamp(timeInMillis)));
-
-			// timeInMillis = event.getAlarm3().getTimeInMillis();
-			// if (timeInMillis > 0)
-			// reqEntity.addPart("alarm_3_utc", new StringBody("" +
-			// Utils.millisToUnixTimestamp(timeInMillis)));
-
-			// if (event.getLocation() != null)
-			// reqEntity.addPart("location", new
-			// StringBody(event.getLocation()));
-			//
-			// if (event.go_by != null)
-			// reqEntity.addPart("go_by", new StringBody(event.go_by));
-			//
-			// if (event.take_with_you != null)
-			// reqEntity.addPart("take_with_you", new
-			// StringBody(event.take_with_you));
-			//
-			// if (event.cost != null)
-			// reqEntity.addPart("cost", new StringBody(event.cost));
-			//
-			// if (event.accomodation != null)
-			// reqEntity.addPart("accomodation", new
-			// StringBody(event.accomodation));
-			//
-			// if (Data.selectedContacts != null &&
-			// !Data.selectedContacts.isEmpty()) {
-			// event.assigned_contacts = new int[Data.selectedContacts.size()];
-			// int i = 0;
-			// for (Contact contact : Data.selectedContacts) {
-			// event.assigned_contacts[i] = contact.contact_id;
-			// i++;
-			// }
-			// }
-
-			// if (event.assigned_contacts != null) {
-			// for (int i = 0, l = event.assigned_contacts.length; i < l; i++) {
-			// reqEntity.addPart("contacts[]", new
-			// StringBody(String.valueOf(event.assigned_contacts[i])));
-			// }
-			// } else {
-			// reqEntity.addPart("contacts[]", new StringBody(""));
-			// }
-			//
-			// if (event.assigned_groups != null) {
-			// for (int i = 0, l = event.assigned_groups.length; i < l; i++) {
-			// reqEntity.addPart("groups[]", new
-			// StringBody(String.valueOf(event.assigned_groups[i])));
-			// }
-			// } else {
-			// reqEntity.addPart("groups[]", new StringBody(""));
-			// }
-
-			// if (event.reminder1 != null) {
-			// reqEntity.addPart("reminder1", new StringBody(event.reminder1));
-			// }
-			//
-			// if (event.reminder2 != null) {
-			// reqEntity.addPart("reminder2", new StringBody(event.reminder2));
-			// }
-			//
-			// if (event.reminder3 != null) {
-			// reqEntity.addPart("reminder3", new StringBody(event.reminder3));
-			// }
-
-			// TODO find out wtf is bd in event
-			// if (event.birthday) {
-			// reqEntity.addPart("bd", new StringBody("1"));
-			// }
-
+			reqEntity.addPart(TemplatesMetaData.IS_ALL_DAY, new StringBody(template.is_all_day() ? ""+1 : ""+0, Charset.forName("UTF-8")));
+			reqEntity.addPart(TemplatesMetaData.TIMEZONE, new StringBody(template.getTimezone(), Charset.forName("UTF-8")));
+			reqEntity.addPart(TemplatesMetaData.TIMEZONE_IN_USE, new StringBody(""+template.getTimezoneInUse(), Charset.forName("UTF-8")));
+			
+			reqEntity.addPart(TemplatesMetaData.COUNTRY, new StringBody(template.getCountry(), Charset.forName("UTF-8")));
+			reqEntity.addPart(TemplatesMetaData.CITY, new StringBody(template.getCity(), Charset.forName("UTF-8")));
+			reqEntity.addPart(TemplatesMetaData.STREET, new StringBody(template.getStreet(), Charset.forName("UTF-8")));
+			reqEntity.addPart(TemplatesMetaData.ZIP, new StringBody(template.getZip(), Charset.forName("UTF-8")));
+			
+			reqEntity.addPart(TemplatesMetaData.LOCATION, new StringBody(template.getLocation(), Charset.forName("UTF-8")));
+			reqEntity.addPart(TemplatesMetaData.GO_BY, new StringBody(template.getGo_by(), Charset.forName("UTF-8")));
+			reqEntity.addPart(TemplatesMetaData.TAKE_WITH_YOU, new StringBody(template.getTake_with_you(), Charset.forName("UTF-8")));
+			reqEntity.addPart(TemplatesMetaData.COST, new StringBody(template.getCost(), Charset.forName("UTF-8")));
+			reqEntity.addPart(TemplatesMetaData.ACCOMODATION, new StringBody(template.getAccomodation(), Charset.forName("UTF-8")));
+			
+			if (template.getInvited() != null) {
+				if (template.getMyInvite() != null) {
+					reqEntity.addPart(TemplatesMetaData.MY_INVITE, new StringBody(template.getMyInvite().toString(), Charset.forName("UTF-8")));
+					reqEntity.addPart(TemplatesMetaData.INVITED_TOTAL, new StringBody(""+(template.getInvited().size()+1), Charset.forName("UTF-8")));
+				} else {
+					reqEntity.addPart(TemplatesMetaData.INVITED_TOTAL, new StringBody(""+template.getInvited().size(), Charset.forName("UTF-8")));
+				}
+				reqEntity.addPart(TemplatesMetaData.INVITED, new StringBody(template.getInvited().toString(), Charset.forName("UTF-8")));
+			}
+			Account account = new Account(context);
+			reqEntity.addPart("session", new StringBody(account.getSessionId(), Charset.forName("UTF-8")));
+			
 			post.setEntity(reqEntity);
 
-			if (networkAvailable) {
+			if (DataManagement.networkAvailable) {
 				HttpResponse rp = webService.getResponseFromHttpPost(post);
 
 				if (rp.getStatusLine().getStatusCode() == HttpStatus.SC_OK) {
 					String resp = EntityUtils.toString(rp.getEntity());
 					if (resp != null) {
 						JSONObject object = new JSONObject(resp);
-						boolean success = object.getBoolean("success");
 
-						if (success == false) {
-							Log.e("Create event error", object.getJSONObject("error").getString("reason"));
+						if (object.getBoolean(SUCCESS)) {
+							Log.e("Create template error", object.getJSONObject("error").getString("reason"));
+							return 0;
+						} else {
+							response = object.optInt("template_id");
+							return response;
 						}
-						response = object.getInt("template_id");
-						// event.event_id = response;
 					}
 				} else {
-					Log.e("setTemplate - status", rp.getStatusLine().getStatusCode() + "");
+					Log.e("createTemplate - status", rp.getStatusLine().getStatusCode() + "");
 				}
 			}
 		} catch (Exception ex) {
@@ -1634,7 +1563,7 @@ public class DataManagement {
 	 * Upload Event object to local database as a template.
 	 * 
 	 * Method creates a ContentValues object, fills it with submitted event's
-	 * data. Afterwards gets a local daatabase content resolver and, if
+	 * data. Afterwards gets a local database content resolver and, if
 	 * successful - uploads data into it.
 	 * 
 	 * Note: still missing event field upload features.
@@ -1650,7 +1579,7 @@ public class DataManagement {
 	 */
 	public static boolean insertTemplateToLocalDb(Context context, Template template) {
 		boolean success = false;
-
+		
 		try {
 			ContentValues cv = template.toContentValues();
 
@@ -1672,13 +1601,17 @@ public class DataManagement {
 			else
 				cv.put(TemplatesMetaData.TITLE, "Untitled");
 
-//			long timeInMillis = template.getStartCalendar().getTimeInMillis();
-//			if (timeInMillis > 0)
-//				cv.put(TemplatesMetaData.TIME_START, Utils.millisToUnixTimestamp(timeInMillis));
+ 			if (template.getStartCalendar() != null) {
+				cv.put(TemplatesMetaData.TIME_START, Utils.formatCalendar(template.getStartCalendar(), SERVER_TIMESTAMP_FORMAT));
+ 			}
 
-//			timeInMillis = template.getEndCalendar().getTimeInMillis();
-//			if (timeInMillis > 0)
-//				cv.put(TemplatesMetaData.TIME_START, Utils.millisToUnixTimestamp(timeInMillis));
+ 			if (template.getEndCalendar() != null) {
+				cv.put(TemplatesMetaData.TIME_END, Utils.formatCalendar(template.getEndCalendar(), SERVER_TIMESTAMP_FORMAT));
+ 			}
+ 			
+ 			cv.put(TemplatesMetaData.IS_ALL_DAY, template.is_all_day() ? 1 : 0);
+			
+			cv.put(TemplatesMetaData.TIMEZONE_IN_USE, template.getTimezoneInUse());
 
 			if (template.getDescription_() != null)
 				cv.put(TemplatesMetaData.DESC, template.getDescription_());
@@ -1734,14 +1667,26 @@ public class DataManagement {
 				cv.put(TemplatesMetaData.ACCOMODATION, template.getAccomodation());
 			else
 				cv.put(TemplatesMetaData.ACCOMODATION, "");
+			
+			cv.put(TemplatesMetaData.CREATED, template.getCreated_millis_utc());
+			cv.put(TemplatesMetaData.MODIFIED, template.getModified_millis_utc());
 
 			context.getContentResolver().insert(TemplatesMetaData.CONTENT_URI, cv);
 			success = true;
 		} catch (Exception e) {
-			Log.e("uploadTemplateToLocalDb(context, template[event_id=" + template.getTemplate_id() + "])", "Sum shit has just failed!");
+			Log.e("insertTemplateToLocalDb(context, template[event_id=" + template.getTemplate_id() + "])", "Sum shit has just failed!");
 		}
 
 		return success;
+	}
+
+	public static void updateTemplateInLocalDb(Context context, Template template) {
+		Uri uri;
+		ContentResolver resolver = context.getContentResolver();
+		ContentValues cv = template.toContentValues();
+		uri = Uri.parse(TemplatesMetaData.CONTENT_URI + "/" + template.getInternalID());
+
+		resolver.update(uri, cv, null, null);
 	}
 
 	// TODO getTemplatesFromRemoteDb() documentation pending.
@@ -1792,21 +1737,46 @@ public class DataManagement {
 		}
 	}
 
-	public static Template getTemplateFromLocalDb(Context context, int template_id) {
+	public static Template getTemplateFromLocalDb(Context context, long template_id, int id_mode) {
+		String date_str;
+		Uri uri;
+		
+		int timezoneInUse = 0;
 		Template template = new Template();
-		Uri uri = Uri.parse(TemplatesMetaData.CONTENT_URI.toString() + "/" + template_id);
-		Cursor result = Data.getmContext().getContentResolver().query(uri, null, null, null, null);
+		
+		switch (id_mode) {
+		case (ID_INTERNAL):
+			uri = TemplatesMetaData.CONTENT_URI;
+			break;
+		case (ID_EXTERNAL):
+			uri = TemplatesMetaData.CONTENT_URI_EXTERNAL_ID;
+			break;
+		default:
+			throw new IllegalStateException("method getEventFromLocalDB: Unknown id mode");
+		}
+		
+		uri = Uri.parse(TemplatesMetaData.CONTENT_URI.toString() + "/" + template_id);
+		Cursor result = context.getContentResolver().query(uri, null, null, null, null);
 
 		if (result.moveToFirst()) {
+			template.setInternalID(result.getLong(result.getColumnIndex(TemplatesMetaData._ID)));
+			template.setTemplate_id(result.getInt(result.getColumnIndex(TemplatesMetaData.T_ID)));
 			template.setColor(result.getString(result.getColumnIndex(TemplatesMetaData.COLOR)));
 			template.setIcon(result.getString(result.getColumnIndex(TemplatesMetaData.ICON)));
 
 			template.setTitle(result.getString(result.getColumnIndex(TemplatesMetaData.TITLE)));
-//			template.setStartCalendar(Utils.createCalendar(result.getLong(result.getColumnIndex(TemplatesMetaData.TIME_START)),
-//					result.getString(result.getColumnIndex(TemplatesMetaData.TIMEZONE))));
-//			template.setEndCalendar(Utils.createCalendar(result.getLong(result.getColumnIndex(TemplatesMetaData.TIME_END)),
-//					result.getString(result.getColumnIndex(TemplatesMetaData.TIMEZONE))));
 			template.setTimezone(result.getString(result.getColumnIndex(TemplatesMetaData.TIMEZONE)));
+			try {
+				date_str = result.getString(result.getColumnIndex(TemplatesMetaData.TIME_START));
+				template.setStartCalendar(Utils.stringToCalendar(context, date_str, SERVER_TIMESTAMP_FORMAT));
+				date_str = result.getString(result.getColumnIndex(TemplatesMetaData.TIME_END));
+				template.setEndCalendar(Utils.stringToCalendar(context, date_str, SERVER_TIMESTAMP_FORMAT));
+			} catch (Exception e) {
+				Log.e("DataManagement.getTemplateFromLocalDb()", "Failed setting template's start/end time");
+			}
+			template.setIs_all_day(result.getInt(result.getColumnIndex(TemplatesMetaData.IS_ALL_DAY)) == 1);
+			timezoneInUse = result.getInt(result.getColumnIndex(TemplatesMetaData.TIMEZONE_IN_USE));
+			if (timezoneInUse > 0) { template.setTimezoneInUse(timezoneInUse); }
 			template.setDescription_(result.getString(result.getColumnIndex(TemplatesMetaData.DESC)));
 
 			template.setCountry(result.getString(result.getColumnIndex(TemplatesMetaData.COUNTRY)));
@@ -2083,11 +2053,106 @@ public class DataManagement {
 		return response;
 	}
 
-	public void createTemplate(Context context, Template template) {
-//		// TODO implement offline mode
-//		Integer templateId = uploadTemplateToRemoteDb(context, template);
-		insertTemplateToLocalDb(context, template);
+	// TODO javadoc
+	public static void createTemplate(Context context, Template template) {
+		if (DataManagement.networkAvailable) {
+			int id = insertTemplateToRemoteDb(context, template);
 
+			if (id > 0) {
+				template.setTemplate_id(id);
+				template.setUploadedToServer(true);
+			} else {
+				template.setUploadedToServer(false);
+				// TODO report error
+			}
+		} else {
+			template.setUploadedToServer(false);
+		}
+
+		insertTemplateToLocalDb(context, template);
+	}
+	
+	// TODO javadoc
+	public static void updateTemplate(Context context, Template template) {
+		if (DataManagement.networkAvailable) {
+			int id = insertTemplateToRemoteDb(context, template);
+
+			if (id == template.getTemplate_id()) {
+				template.setUploadedToServer(true);
+			} else {
+				template.setUploadedToServer(false);
+			}
+		} else {
+			template.setUploadedToServer(false);
+		}
+
+		updateTemplateInLocalDb(context, template);
+	}
+	
+	// TODO javadoc
+	public static void deleteTemplate(Context context, Template template) {
+		Boolean deletedFromRemote = false;
+		if (DataManagement.networkAvailable) {
+			deletedFromRemote = deleteTemplateFromRemoteDb(context, template.getTemplate_id());
+		}
+
+		if (!deletedFromRemote) {
+			SaveDeletedData offlineDeletedTemplates = new SaveDeletedData(context);
+			offlineDeletedTemplates.addTemplateForLaterDelete(template.getTemplate_id());
+
+		}
+
+		deleteTemplateFromLocalDb(context, template.getInternalID());
+	}
+
+	public static boolean deleteTemplateFromRemoteDb(Context context, int id) {
+		boolean success = false;
+
+		try {
+			Account account = new Account(context);
+			WebService webService = new WebService(context);
+			HttpPost post = new HttpPost(Data.getServerUrl() + "mobile/templates_remove");
+
+			MultipartEntity reqEntity = new MultipartEntity(HttpMultipartMode.BROWSER_COMPATIBLE);
+
+			reqEntity.addPart(TOKEN, new StringBody(Data.getToken(context), Charset.forName("UTF-8")));
+			reqEntity.addPart(TemplatesMetaData.T_ID, new StringBody(""+id, Charset.forName("UTF-8")));
+			reqEntity.addPart("session", new StringBody(account.getSessionId(), Charset.forName("UTF-8")));
+			
+			post.setEntity(reqEntity);
+
+			if (DataManagement.networkAvailable) {
+				HttpResponse rp = webService.getResponseFromHttpPost(post);
+
+				if (rp.getStatusLine().getStatusCode() == HttpStatus.SC_OK) {
+					String resp = EntityUtils.toString(rp.getEntity());
+					if (resp != null) {
+						JSONObject object = new JSONObject(resp);
+						String successStr = object.getString("success");
+
+						if (successStr.equals("null")) {
+							success = false;
+						} else {
+							success = object.getBoolean("success");
+						}
+
+						if (success == false) {
+							JSONObject errObj = object.getJSONObject("error");
+							EventManagement.error = (errObj.getString("reason"));
+							Log.e("removeEvent - error: ", Data.getERROR());
+						}
+					}
+				}
+			}
+		} catch (Exception ex) {
+			Reporter.reportError(context, "DataManagement", Thread.currentThread().getStackTrace()[2].getMethodName().toString(), ex.getMessage());
+		}
+		return success;
+	}
+
+	private static void deleteTemplateFromLocalDb(Context context, long internalID) {
+		String where = TemplatesMetaData._ID + "=" + internalID;
+		context.getContentResolver().delete(TemplatesMetaData.CONTENT_URI, where, null);
 	}
 
 	// TODO javadoc
@@ -2124,6 +2189,9 @@ public class DataManagement {
 		JSONArray deletedGroups = response.optJSONArray(GROUPS_REMOVED);
 		ContactManagement
 				.syncGroups(context, JSONUtils.JSONArrayToGroupsArray(groupChanges, context), JSONUtils.JSONArrayToLongArray(deletedGroups));
+		
+		context.getContentResolver().delete(TemplatesMetaData.CONTENT_URI, null, null);
+		DataManagement.getTemplatesFromRemoteDb(context);
 		
 		DataManagement.getAlarmsFromServer(context);
 
@@ -2258,4 +2326,59 @@ public class DataManagement {
 		
 		return object;
 	}
+	
+	protected static void syncTemplates(Context context, ArrayList<Template> templateChanges, long[] deletedTemplateIDs) {
+		StringBuilder sb;
+		if (!templateChanges.isEmpty()) {
+			// sb = new StringBuilder();
+			for (Template t : templateChanges) {
+				if (getTemplateFromLocalDb(context, t.getTemplate_id(), ID_EXTERNAL) == null) {
+					context.getContentResolver().insert(EventsProvider.EMetaData.EventsMetaData.CONTENT_URI, t.toContentValues());
+				} else {
+					t.setInternalID(getTemplateFromLocalDb(context, t.getTemplate_id(), ID_EXTERNAL).getInternalID());
+					updateTemplateInLocalDb(context, t);
+				}
+			}
+			// sb.deleteCharAt(sb.length() - 1);
+			// EventManagement.bulkDeleteEvents(context, sb.toString(),
+			// EventManagement.ID_EXTERNAL);
+			// for (Event e : eventChanges) {
+			// }
+		}
+
+		if (deletedTemplateIDs.length > 0) {
+			sb = new StringBuilder();
+			for (int i = 0; i < deletedTemplateIDs.length; i++) {
+				sb.append(deletedTemplateIDs[i]);
+				sb.append(',');
+			}
+			sb.deleteCharAt(sb.length() - 1);
+			DataManagement.bulkDeleteTemplates(context, sb.toString(), EventManagement.ID_EXTERNAL);
+
+			// TODO cia reikes realizuoti pazymetu template'u (kurios reikia sukurti
+			// RDB)
+
+		}
+	}
+	
+	protected static void bulkDeleteTemplates(Context context, String IDs, int id_mode) {
+		String where;
+		switch (id_mode) {
+		case (ID_INTERNAL):
+			where = TemplatesMetaData._ID;
+			break;
+		case (ID_EXTERNAL):
+			where = TemplatesMetaData.T_ID;
+			break;
+		default:
+			throw new IllegalStateException("method getEventFromLocalDB: Unknown id mode");
+		}
+		StringBuilder sb = new StringBuilder(where);
+		sb.append(" IN (");
+		sb.append(IDs);
+		sb.append(')');
+		where = sb.toString();
+		context.getContentResolver().delete(TemplatesMetaData.CONTENT_URI, where, null);
+	}
+
 }
