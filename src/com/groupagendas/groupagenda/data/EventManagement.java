@@ -40,6 +40,7 @@ import com.groupagendas.groupagenda.events.EventsProvider.EMetaData;
 import com.groupagendas.groupagenda.events.Invited;
 import com.groupagendas.groupagenda.events.NativeCalendarReader;
 import com.groupagendas.groupagenda.https.WebService;
+import com.groupagendas.groupagenda.timezone.LatestEventStructure;
 import com.groupagendas.groupagenda.utils.CharsetUtils;
 import com.groupagendas.groupagenda.utils.JSONUtils;
 import com.groupagendas.groupagenda.utils.StringValueUtils;
@@ -863,12 +864,15 @@ public class EventManagement {
 	 */
 	protected static long insertEventToLocalDB(Context context, Event event) {
 		// 1. ADD EVENT details to events table
+		LatestEventStructure les;
 		ContentValues cv = createCVforEventsTable(event);
 		Uri eventUri = context.getContentResolver().insert(EventsProvider.EMetaData.INDEXED_EVENTS_URI, cv);
 
 		long internalID = 0;
-		if (eventUri != null) {
+		if ((eventUri != null) && (event.is_owner())) {
 			internalID = ContentUris.parseId(eventUri);
+			les = new LatestEventStructure(context);
+			les.itemInsert((int) internalID);
 		}
 		return internalID;
 		// if (internalID >= 0){
@@ -1565,7 +1569,7 @@ public class EventManagement {
 		return cv;
 	}
 
-	private static String parseInvitedListToJSONArray(ArrayList<Invited> invited) {
+	public static String parseInvitedListToJSONArray(ArrayList<Invited> invited) {
 		if (invited.isEmpty())
 			return "[]";
 		StringBuilder sb = new StringBuilder();
