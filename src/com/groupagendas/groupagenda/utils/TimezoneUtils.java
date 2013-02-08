@@ -74,4 +74,26 @@ public final class TimezoneUtils {
 		public String altname;
 		public String call_code;
 	}
+	
+	public static String getCountryTitleByCc(Context context, String country_code) {
+		String filtered = new String();
+		for (StaticTimezone st : getTimezones(context)) {
+			if (st.country_code.equalsIgnoreCase(country_code)) {
+				filtered = st.country2;
+				break;
+			}
+		}
+		return filtered;
+	}
+
+	public static int getCountryPositionByCc(Context context, String country_code) {
+		int filtered = 0;
+		for (StaticTimezone st : getTimezones(context)) {
+			if (st.country_code.equalsIgnoreCase(country_code)) {
+				filtered = Integer.parseInt(st.id);
+				break;
+			}
+		}
+		return filtered;
+	}
 }
