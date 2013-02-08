@@ -582,14 +582,18 @@ public class EventActivity extends Activity {
 						COLOURED_BUBBLE_SIZE, 5,
 						selectedColor, false)));
 		EventActivity.selectedIcon = template.getIcon();
-		EventActivity.iconView.setImageResource(template.getIconId(context));		
-//		startCalendar = template.getStartCalendar();
-//		endCalendar = template.getEndCalendar();
+		EventActivity.iconView.setImageResource(template.getIconId(context));
+		if (template.getStartCalendar() != null) {
+			startCalendar = template.getStartCalendar();
+		}
+		if (template.getEndCalendar() != null) {
+			endCalendar = template.getEndCalendar();
+		}
 		EventActivity.timezoneView.setText(template.getTimezone());
 		
 		EventActivity.descView.setText(template.getDescription_());
 		
-//		countryView.setText(template.getCountry());
+//		EventActivity.countryView.setText(template.getCountry());
 		EventActivity.cityView.setText(template.getCity());
 		EventActivity.streetView.setText(template.getStreet());
 		EventActivity.zipView.setText(template.getZip());
