@@ -54,6 +54,7 @@ import com.groupagendas.groupagenda.utils.DateTimeSelectActivity;
 import com.groupagendas.groupagenda.utils.DateTimeUtils;
 import com.groupagendas.groupagenda.utils.DrawingUtils;
 import com.groupagendas.groupagenda.utils.Prefs;
+import com.groupagendas.groupagenda.utils.StringValueUtils;
 import com.groupagendas.groupagenda.utils.Utils;
 
 public class NewEventActivity extends EventActivity {
@@ -498,7 +499,7 @@ public class NewEventActivity extends EventActivity {
 			for (int i = 0; i < cities.length; i++) {
 				StaticTimezones temp = new StaticTimezones();
 	
-				temp.id = String.valueOf(i);
+				temp.id = StringValueUtils.valueOf(i);
 				temp.city = cities[i];
 				temp.country = countries[i];
 				temp.country2 = countries2[i];

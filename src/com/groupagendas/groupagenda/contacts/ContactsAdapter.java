@@ -18,6 +18,7 @@ import android.widget.TextView;
 import com.groupagendas.groupagenda.R;
 import com.groupagendas.groupagenda.calendar.adapters.AbstractAdapter;
 import com.groupagendas.groupagenda.utils.DrawingUtils;
+import com.groupagendas.groupagenda.utils.StringValueUtils;
 import com.groupagendas.groupagenda.utils.Utils;
 
 public class ContactsAdapter extends AbstractAdapter<Contact> implements Filterable {
@@ -73,10 +74,10 @@ public class ContactsAdapter extends AbstractAdapter<Contact> implements Filtera
 		 */
 		// if(contact.email != null && !contact.email.equals("null"))
 		// holder.email.setText(contact.email);
-		convertView.setTag(String.valueOf(contact.contact_id));
+		convertView.setTag(StringValueUtils.valueOf(contact.contact_id));
 
 		if (contact.contact_id == 0)
-			holder.email.setText(String.valueOf(contact.created));
+			holder.email.setText(StringValueUtils.valueOf(contact.created));
 
 		if (contact.image && contact.image_bytes != null) {
 			Bitmap bitmap = Utils.getResizedBitmap(BitmapFactory.decodeByteArray(contact.image_bytes, 0, contact.image_bytes.length), 72,

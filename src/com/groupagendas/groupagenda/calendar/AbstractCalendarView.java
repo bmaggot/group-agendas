@@ -34,6 +34,7 @@ import com.groupagendas.groupagenda.data.CalendarSettings;
 import com.groupagendas.groupagenda.events.Event;
 import com.groupagendas.groupagenda.events.EventsProvider;
 import com.groupagendas.groupagenda.utils.DateTimeUtils;
+import com.groupagendas.groupagenda.utils.StringValueUtils;
 import com.groupagendas.groupagenda.utils.TreeMapUtils;
 import com.groupagendas.groupagenda.utils.Utils;
 
@@ -364,7 +365,7 @@ public abstract class AbstractCalendarView extends LinearLayout {
 					}
 				}
 			}
-			Log.e("End Loading GA", String.valueOf((System.nanoTime() - start) / 1000000));
+			Log.e("End Loading GA", StringValueUtils.valueOf((System.nanoTime() - start) / 1000000));
 			// Log.e("End Loading GA", Calendar.getInstance().getTimeInMillis() - calendar.getTimeInMillis()+"");
 			// calendar = Calendar.getInstance();
 			start = System.nanoTime();
@@ -374,7 +375,7 @@ public abstract class AbstractCalendarView extends LinearLayout {
 					TreeMapUtils.putNativeEventsIntoTreeMap(context, sortedEvents, nativeEvent);
 				}
 			}
-			Log.e("End Loading NATIVE", String.valueOf((System.nanoTime() - start) / 1000000));
+			Log.e("End Loading NATIVE", StringValueUtils.valueOf((System.nanoTime() - start) / 1000000));
 			// Log.e("End Loading NATIVE", Calendar.getInstance().getTimeInMillis() - calendar.getTimeInMillis()+"");
 			// calendar = Calendar.getInstance();
 			start = System.nanoTime();
@@ -385,7 +386,7 @@ public abstract class AbstractCalendarView extends LinearLayout {
 							birthdayEvent);
 				}
 			}
-			Log.e("End Loading BIRTHDAYS", String.valueOf((System.nanoTime() - start) / 1000000));
+			Log.e("End Loading BIRTHDAYS", StringValueUtils.valueOf((System.nanoTime() - start) / 1000000));
 			// Log.e("End Loading BIRTHDAYS", Calendar.getInstance().getTimeInMillis() - calendar.getTimeInMillis()+"");
 			/*
 			 * if(account.getShow_ga_calendars()){ sortedEvents =

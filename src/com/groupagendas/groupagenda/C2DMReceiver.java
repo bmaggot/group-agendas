@@ -21,6 +21,7 @@ import com.groupagendas.groupagenda.events.Event;
 import com.groupagendas.groupagenda.events.EventsActivity;
 import com.groupagendas.groupagenda.events.EventsProvider;
 import com.groupagendas.groupagenda.events.EventsProvider.EMetaData;
+import com.groupagendas.groupagenda.utils.StringValueUtils;
 
 public class C2DMReceiver extends C2DMBaseReceiver {
 	private static boolean isChatMessage;
@@ -86,7 +87,7 @@ public class C2DMReceiver extends C2DMBaseReceiver {
 				doDataDelta = false;
 			} else {
 				if (receiveIntent.hasExtra(QUEUE_TOKEN)
-						&& receiveIntent.getStringExtra(QUEUE_TOKEN).equals(String.valueOf(last_queue_token))) {
+						&& receiveIntent.getStringExtra(QUEUE_TOKEN).equals(StringValueUtils.valueOf(last_queue_token))) {
 					doDataDelta = false;
 				} else {
 					if (receiveIntent.hasExtra(QUEUE_TOKEN)) {

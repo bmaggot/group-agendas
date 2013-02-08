@@ -12,6 +12,7 @@ import android.widget.TextView;
 import com.groupagendas.groupagenda.R;
 import com.groupagendas.groupagenda.chat.ChatThreadObject;
 import com.groupagendas.groupagenda.data.ChatManagement;
+import com.groupagendas.groupagenda.utils.StringValueUtils;
 import com.groupagendas.groupagenda.utils.Utils;
 
 public class ChatThreadAdapter extends AbstractAdapter<ChatThreadObject> {
@@ -29,8 +30,8 @@ public class ChatThreadAdapter extends AbstractAdapter<ChatThreadObject> {
 		
 		ChatThreadObject chatThread = (ChatThreadObject) this.getItem(i);
 		TextView chatMessagesCount = (TextView) view.findViewById(R.id.chat_thread_message_count);
-		if(chatThread.getNew_messages() > 0){
-			chatMessagesCount.setText(String.valueOf(chatThread.getNew_messages()));
+		if (chatThread.getNew_messages() > 0) {
+			chatMessagesCount.setText(StringValueUtils.valueOf(chatThread.getNew_messages()));
 		} else {
 			chatMessagesCount.setText("");
 		}

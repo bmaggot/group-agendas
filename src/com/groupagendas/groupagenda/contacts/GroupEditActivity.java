@@ -5,9 +5,10 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
+import java.util.Map.Entry;
 import java.util.concurrent.ExecutionException;
 
 import net.londatiga.android.CropOption;
@@ -47,6 +48,7 @@ import com.groupagendas.groupagenda.data.Data;
 import com.groupagendas.groupagenda.data.DataManagement;
 import com.groupagendas.groupagenda.error.report.Reporter;
 import com.groupagendas.groupagenda.utils.MapUtils;
+import com.groupagendas.groupagenda.utils.StringValueUtils;
 
 public class GroupEditActivity extends Activity implements OnClickListener {
 	public static ArrayList<Contact> selectedContacts;
@@ -223,7 +225,7 @@ public class GroupEditActivity extends Activity implements OnClickListener {
 			editedGroup.contacts = new HashMap<String, String>();
 
 			for (int i = 0, l = selectedContacts.size(); i < l; i++) {
-				editedGroup.contacts.put(String.valueOf(i), String.valueOf(selectedContacts.get(i).contact_id));
+				editedGroup.contacts.put(StringValueUtils.valueOf(i), StringValueUtils.valueOf(selectedContacts.get(i).contact_id));
 			}
 			editedGroup.contact_count = editedGroup.contacts.size();
 
@@ -293,7 +295,7 @@ public class GroupEditActivity extends Activity implements OnClickListener {
 			editedGroup.contacts = new HashMap<String, String>();
 
 			for (int i = 0, l = selectedContacts.size(); i < l; i++) {
-				editedGroup.contacts.put(String.valueOf(i), String.valueOf(selectedContacts.get(i).contact_id));
+				editedGroup.contacts.put(StringValueUtils.valueOf(i), StringValueUtils.valueOf(selectedContacts.get(i).contact_id));
 			}
 			editedGroup.contact_count = editedGroup.contacts.size();
 
@@ -322,19 +324,19 @@ public class GroupEditActivity extends Activity implements OnClickListener {
 					check = ContactManagement.editGroupOnRemoteDb(getApplicationContext(), editedGroup, 0, true);
 				}
 
-				for (String s : groupContactsMapTemp.keySet()) {
+				for (Entry<String, String> e : groupContactsMapTemp.entrySet()) {
 					Contact c = ContactManagement.getContactFromLocalDb(getApplicationContext(),
-							Integer.parseInt(groupContactsMapTemp.get(s)), 0);
+							Integer.parseInt(e.getValue()), 0);
 					if (c.groups != null) {
-						Set<String> keySet = c.groups.keySet();
-						for (String g : keySet) {
-							if (c.groups.get(g).equalsIgnoreCase(String.valueOf(editedGroup.group_id))) {
-								c.groups.remove(g);
-								if (c.groups.size() == 0) {
-									c.groups = new HashMap<String, String>();
-								}
+						for (Iterator<Entry<String, String>> it = c.groups.entrySet().iterator(); it.hasNext();) {
+							if (it.next().getValue().equalsIgnoreCase(StringValueUtils.valueOf(editedGroup.group_id))) {
+								it.remove();
+								// very arguable
+								// if (c.groups.size() == 0) {
+								//	c.groups = new HashMap<String, String>();
+								// }
 								ContactManagement.updateContactOnLocalDb(getApplicationContext(), c);
-								break;
+								break; // prevents CME when not using an iterator
 							}
 						}
 					}
@@ -343,11 +345,14 @@ public class GroupEditActivity extends Activity implements OnClickListener {
 				int max_key = 0;
 				if (editedGroup.contacts != null) {
 
-					for (String s : editedGroup.contacts.keySet()) {
+					for (Entry<String, String> e : editedGroup.contacts.entrySet()) {
 						Contact c = ContactManagement.getContactFromLocalDb(getApplicationContext(),
-								Integer.parseInt(editedGroup.contacts.get(s)), 0);
+								Integer.parseInt(e.getValue()), 0);
 
-						if (c.groups != null && !c.groups.isEmpty()) {
+						if (c.groups == null)
+							c.groups = new HashMap<String, String>();
+
+						if (!c.groups.isEmpty()) {
 							for (String key : c.groups.keySet()) {
 								if (!key.contentEquals("")) {
 									int temp2 = Integer.parseInt(key);
@@ -355,14 +360,17 @@ public class GroupEditActivity extends Activity implements OnClickListener {
 										max_key = temp2;
 									}
 								} else {
-									c.groups = new HashMap<String, String>();
+									// TODO: What is this and why is there no break?
+									// c.groups = new HashMap<String, String>();
+
+									// Suggested fix below
+									c.groups.clear();
+									break;
 								}
 							}
-							c.groups.put(String.valueOf(max_key + 1), String.valueOf(editedGroup.group_id));
-						} else {
-							c.groups = new HashMap<String, String>();
-							c.groups.put(String.valueOf(max_key), String.valueOf(editedGroup.group_id));
+							max_key++;
 						}
+						c.groups.put(StringValueUtils.valueOf(max_key), StringValueUtils.valueOf(editedGroup.group_id));
 
 						ContactManagement.updateContactOnLocalDb(getApplicationContext(), c);
 					}
@@ -414,14 +422,14 @@ public class GroupEditActivity extends Activity implements OnClickListener {
 
 		@Override
 		protected void onPostExecute(Group result) {
-			if (result.image) {
+			// if (result.image) {
 				// Bitmap bitmap =
 				// Utils.getResizedBitmap(BitmapFactory.decodeByteArray(result.image_bytes,
 				// 0, result.image_bytes.length), 120, 120);
 				// imageView.setImageBitmap(bitmap);
-			} else {
+			// } else {
 				// imageView.setImageResource(R.drawable.group_icon);
-			}
+			// }
 
 			pb.setVisibility(View.GONE);
 			super.onPostExecute(result);
@@ -460,12 +468,13 @@ public class GroupEditActivity extends Activity implements OnClickListener {
 		selections = new boolean[l];
 
 		for (int i = 0; i < l; i++) {
-			titles[i] = new StringBuilder(contacts.get(i).name).append(" ").append(contacts.get(i).lastname).toString();
-			ids[i] = contacts.get(i).contact_id;
+			Contact c = contacts.get(i);
+			titles[i] = new StringBuilder(c.name).append(" ").append(c.lastname).toString();
+			ids[i] = c.contact_id;
 			if (isFalse || editedGroup.contacts == null) {
 				selections[i] = false;
 			} else {
-				selections[i] = editedGroup.contacts.containsValue(String.valueOf(contacts.get(i).contact_id));
+				selections[i] = editedGroup.contacts.containsValue(StringValueUtils.valueOf(c.contact_id));
 				groupContactsMapTemp = editedGroup.contacts;
 			}
 		}
@@ -502,7 +511,7 @@ public class GroupEditActivity extends Activity implements OnClickListener {
 						Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
 
 						mImageCaptureUri = Uri.fromFile(new File(Environment.getExternalStorageDirectory(), "tmp_avatar_"
-								+ String.valueOf(System.currentTimeMillis()) + ".jpg"));
+								+ StringValueUtils.valueOf(System.currentTimeMillis()) + ".jpg"));
 
 						intent.putExtra(android.provider.MediaStore.EXTRA_OUTPUT, mImageCaptureUri);
 
@@ -545,7 +554,7 @@ public class GroupEditActivity extends Activity implements OnClickListener {
 
 				for (int i = 0, l = ids.length; i < l; i++) {
 					if (selections[i]) {
-						editedGroup.contacts.put(String.valueOf(i), String.valueOf(ids[i]));
+						editedGroup.contacts.put(StringValueUtils.valueOf(i), StringValueUtils.valueOf(ids[i]));
 					}
 				}
 				editedGroup.contact_count = editedGroup.contacts.size();
@@ -681,7 +690,8 @@ public class GroupEditActivity extends Activity implements OnClickListener {
 				contactsButton.setBackgroundResource(R.drawable.contact_edit_invitegroup_button_notalone);
 
 				for (int iterator = 0; iterator < groupAmount; iterator++) {
-					String fullname = selectedContacts.get(iterator).name + selectedContacts.get(iterator).lastname;
+					Contact c = selectedContacts.get(iterator);
+					String fullname = c.name + c.lastname;
 					TextView entry = (TextView) mInflater.inflate(R.layout.contact_edit_invited_entry, null);
 					entry.setText(fullname);
 

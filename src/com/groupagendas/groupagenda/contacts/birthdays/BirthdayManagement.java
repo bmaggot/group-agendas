@@ -9,6 +9,7 @@ import android.database.Cursor;
 
 import com.groupagendas.groupagenda.contacts.ContactsProvider;
 import com.groupagendas.groupagenda.events.Event;
+import com.groupagendas.groupagenda.utils.StringValueUtils;
 
 public class BirthdayManagement {
 	public static ArrayList<Event> readBirthdayEventsForTimeInterval(
@@ -44,7 +45,7 @@ public class BirthdayManagement {
 				event.setCountry(cursor.getString(3));
 				event.setTimezone(cursor.getString(4));
 				String[] date = cursor.getString(2).split("-");
-				age = String.valueOf(Integer.parseInt(sdfy.format(startTime))-Integer.parseInt(date[0]));
+				age = StringValueUtils.valueOf(Integer.parseInt(sdfy.format(startTime))-Integer.parseInt(date[0]));
 				event.setTitle(cursor.getString(1)+" (Age: "+ age +")");
 				if(Integer.parseInt(sdf.format(startTime)) == 12 && Integer.parseInt(date[1]) == 1){
 					calendar.set(Integer.parseInt(sdfy.format(startTime)) + 1, Integer.parseInt(date[1])-1,Integer.parseInt(date[2]));

@@ -21,6 +21,7 @@ import android.provider.BaseColumns;
 import android.text.TextUtils;
 
 import com.groupagendas.groupagenda.events.EventsProvider.EMetaData.AlarmsMetaData;
+import com.groupagendas.groupagenda.utils.StringValueUtils;
 
 @SuppressLint("SimpleDateFormat")
 public class EventsProvider extends ContentProvider{
@@ -527,7 +528,7 @@ public class EventsProvider extends ContentProvider{
 		if (rowId < 0) return null;
 		Uri insUri = ContentUris.withAppendedId(EMetaData.EventsMetaData.CONTENT_URI, rowId);
 		
-		String event_internal_id = String.valueOf(rowId);
+		String event_internal_id = StringValueUtils.valueOf(rowId);
 		String ext_id = values.getAsString(EMetaData.EventsMetaData.E_ID);
 
 			do {

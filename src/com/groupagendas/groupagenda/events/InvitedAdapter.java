@@ -19,6 +19,7 @@ import com.groupagendas.groupagenda.calendar.adapters.AbstractAdapter;
 import com.groupagendas.groupagenda.contacts.ContactInfoActivity;
 import com.groupagendas.groupagenda.data.ContactManagement;
 import com.groupagendas.groupagenda.utils.InviteDialog;
+import com.groupagendas.groupagenda.utils.StringValueUtils;
 
 public class InvitedAdapter extends AbstractAdapter<Invited> {
 	int listSize;
@@ -84,7 +85,7 @@ public class InvitedAdapter extends AbstractAdapter<Invited> {
 				view.setTag(Invited.OWN_INVITATION_ENTRY);
 				removeButton.setImageDrawable(null);
 			} else {
-				view.setTag(String.valueOf(i));
+				view.setTag(StringValueUtils.valueOf(i));
 				
 				removeButton.setOnClickListener(new OnClickListener() {
 					

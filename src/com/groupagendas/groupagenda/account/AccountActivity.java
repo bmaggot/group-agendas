@@ -63,6 +63,7 @@ import com.groupagendas.groupagenda.timezone.CountriesAdapter;
 import com.groupagendas.groupagenda.timezone.TimezonesAdapter;
 import com.groupagendas.groupagenda.utils.DateTimeUtils;
 import com.groupagendas.groupagenda.utils.LanguageCodeGetter;
+import com.groupagendas.groupagenda.utils.StringValueUtils;
 import com.groupagendas.groupagenda.utils.Utils;
 
 public class AccountActivity extends Activity implements OnClickListener {
@@ -181,7 +182,7 @@ public class AccountActivity extends Activity implements OnClickListener {
 				// TODO what have I done?!
 				StaticTimezones temp = new EventActivity().new StaticTimezones();
 	
-				temp.id = String.valueOf(i);
+				temp.id = StringValueUtils.valueOf(i);
 				temp.city = cities[i];
 				temp.country = countries[i];
 				temp.country2 = countries2[i];
@@ -946,7 +947,7 @@ public class AccountActivity extends Activity implements OnClickListener {
 						Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
 
 						mImageCaptureUri = Uri.fromFile(new File(Environment.getExternalStorageDirectory(), "tmp_avatar_"
-								+ String.valueOf(System.currentTimeMillis()) + ".jpg"));
+								+ System.currentTimeMillis() + ".jpg"));
 
 						intent.putExtra(android.provider.MediaStore.EXTRA_OUTPUT, mImageCaptureUri);
 

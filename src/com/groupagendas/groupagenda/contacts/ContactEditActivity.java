@@ -68,6 +68,7 @@ import com.groupagendas.groupagenda.events.EventActivity.StaticTimezones;
 import com.groupagendas.groupagenda.timezone.CountriesAdapter;
 import com.groupagendas.groupagenda.utils.DateTimeUtils;
 import com.groupagendas.groupagenda.utils.MapUtils;
+import com.groupagendas.groupagenda.utils.StringValueUtils;
 import com.groupagendas.groupagenda.utils.Utils;
 
 public class ContactEditActivity extends Activity implements OnClickListener, OnItemSelectedListener {
@@ -179,7 +180,7 @@ public class ContactEditActivity extends Activity implements OnClickListener, On
 			// TODO OMG WHAT HAVE I DONE AGAIN?! :|
 			StaticTimezones temp = new EventActivity().new StaticTimezones();
 
-			temp.id = String.valueOf(i);
+			temp.id = StringValueUtils.valueOf(i);
 			temp.country = countries[i];
 			temp.country_code = country_codes[i];
 			temp.call_code = call_codes[i];
@@ -287,7 +288,7 @@ public class ContactEditActivity extends Activity implements OnClickListener, On
 			// TODO OMG WHAT HAVE I DONE AGAIN?! :|
 			StaticTimezones temp = new EventActivity().new StaticTimezones();
 
-			temp.id = String.valueOf(i);
+			temp.id = StringValueUtils.valueOf(i);
 			temp.country = countries[i];
 			temp.country_code = country_codes[i];
 			temp.call_code = call_codes[i];
@@ -458,7 +459,7 @@ public class ContactEditActivity extends Activity implements OnClickListener, On
 						Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
 
 						mImageCaptureUri = Uri.fromFile(new File(Environment.getExternalStorageDirectory(), "tmp_avatar_"
-								+ String.valueOf(System.currentTimeMillis()) + ".jpg"));
+								+ StringValueUtils.valueOf(System.currentTimeMillis()) + ".jpg"));
 
 						intent.putExtra(android.provider.MediaStore.EXTRA_OUTPUT, mImageCaptureUri);
 
@@ -687,7 +688,7 @@ public class ContactEditActivity extends Activity implements OnClickListener, On
 				}
 				if (!selectedGroups.isEmpty()) {
 					for (Group g : selectedGroups) {
-						editedContact.groups.put(String.valueOf(i), String.valueOf(g.group_id));
+						editedContact.groups.put(StringValueUtils.valueOf(i), StringValueUtils.valueOf(g.group_id));
 						ContactManagement.updateGroupOnLocalDb(getApplicationContext(), g, editedContact.contact_id, true);
 						ContactManagement.editGroupOnRemoteDb(getApplicationContext(), g, editedContact.contact_id, true);
 						i++;
@@ -834,14 +835,12 @@ public class ContactEditActivity extends Activity implements OnClickListener, On
 
 			// groups
 			if (selectedGroups != null) {
-				int i = 0;
-				Map<String, String> map = new HashMap<String, String>();
-				editedContact.groups = map;
-				for (Group g : selectedGroups) {
-					editedContact.groups.put(String.valueOf(i), String.valueOf(g.group_id));
+				editedContact.groups = new HashMap<String, String>();
+				for (int i = 0; i < selectedGroups.size(); i++) {
+					Group g = selectedGroups.get(i);
+					editedContact.groups.put(StringValueUtils.valueOf(i), StringValueUtils.valueOf(g.group_id));
 					// ContactManagement.updateGroupOnLocalDb(getApplicationContext(),
 					// g, editedContact.contact_id);
-					i++;
 				}
 			}
 			cv.put(ContactsProvider.CMetaData.ContactsMetaData.GROUPS, MapUtils.mapToString(getApplicationContext(), editedContact.groups));
@@ -903,12 +902,13 @@ public class ContactEditActivity extends Activity implements OnClickListener, On
 		selections = new boolean[l];
 
 		for (int i = 0; i < l; i++) {
-			titles[i] = groups.get(i).title;
-			ids[i] = groups.get(i).group_id;
+			Group g = groups.get(i);
+			titles[i] = g.title;
+			ids[i] = g.group_id;
 			if (isFalse || editedContact.groups == null) {
 				selections[i] = false;
 			} else {
-				selections[i] = editedContact.groups.containsValue(String.valueOf(groups.get(i).group_id));
+				selections[i] = editedContact.groups.containsValue(StringValueUtils.valueOf(g.group_id));
 			}
 		}
 	}
@@ -929,7 +929,7 @@ public class ContactEditActivity extends Activity implements OnClickListener, On
 				if (ids != null) {
 					for (int i = 0, l = ids.length; i < l; i++) {
 						if (selections[i]) {
-							editedContact.groups.put(String.valueOf(i), String.valueOf(ids[i]));
+							editedContact.groups.put(StringValueUtils.valueOf(i), StringValueUtils.valueOf(ids[i]));
 						}
 					}
 				}

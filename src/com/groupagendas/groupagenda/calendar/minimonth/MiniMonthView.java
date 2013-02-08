@@ -32,6 +32,7 @@ import com.groupagendas.groupagenda.events.Event;
 import com.groupagendas.groupagenda.events.NativeCalendarReader;
 import com.groupagendas.groupagenda.events.NewEventActivity;
 import com.groupagendas.groupagenda.utils.DrawingUtils;
+import com.groupagendas.groupagenda.utils.StringValueUtils;
 import com.groupagendas.groupagenda.utils.TreeMapUtils;
 import com.groupagendas.groupagenda.utils.Utils;
 
@@ -284,7 +285,7 @@ public class MiniMonthView extends AbstractCalendarView {
 		for (AgendaFrame frame : daysList) {
 			TextView dayTitle = (TextView) frame.getDayContainer().findViewById(R.id.agenda_day_title);
 			TextView weekNum = (TextView) frame.getDayContainer().findViewById(R.id.agenda_week_title);
-			String title = String.valueOf(tmp.get(Calendar.DATE));
+			String title = StringValueUtils.valueOf(tmp.get(Calendar.DATE));
 			dayTitle.setText(title);
 			if (Utils.isToday(tmp)) {
 				dayTitle.setBackgroundColor(getResources().getColor(R.color.darker_gray));
@@ -296,7 +297,7 @@ public class MiniMonthView extends AbstractCalendarView {
 
 			if (tmp.get(Calendar.DAY_OF_WEEK) == firstDayOfWeek) {
 				weekNum.setVisibility(VISIBLE);
-				weekNum.setText(String.valueOf(tmp.get(Calendar.WEEK_OF_YEAR)));
+				weekNum.setText(StringValueUtils.valueOf(tmp.get(Calendar.WEEK_OF_YEAR)));
 			} else {
 				frame.getDayContainer().findViewById(R.id.agenda_week_title).setVisibility(GONE);
 			}
