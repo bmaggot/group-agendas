@@ -43,6 +43,7 @@
             android:layout_alignParentRight="true"
             android:layout_marginRight="5dp"
             android:layout_marginTop="8dp"
+            android:onClick="onClick"
             android:background="@drawable/contacts_save_import_button"
             android:gravity="center"
             android:paddingBottom="5dp"
@@ -53,7 +54,7 @@
             android:shadowDx="0"
             android:shadowDy="2"
             android:shadowRadius="1.5"
-            android:text="@string/clear"
+            android:text="@string/edit"
             android:textColor="@color/white"
             android:textSize="14sp"
             android:textStyle="bold" />
@@ -115,7 +116,8 @@
         android:layout_marginTop="10dp"
         android:layout_marginLeft="10dp"
         android:layout_marginRight="10dp"
-        android:background="@drawable/contact_edit_invitegroup_button_notalone_i"
+        android:layout_marginBottom="10dp"
+        android:background="@drawable/event_icon_placeholder"
         android:cacheColorHint="#00000000"
         android:longClickable="true"
         android:divider="@color/darker_gray"
@@ -127,11 +129,11 @@
         android:layout_height="40dp"
         android:background="@drawable/top_bar_background" >
         <com.makeramen.segmented.SegmentedRadioGroup
+            android:id="@+id/segmentedButtons"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_centerInParent="true"
             android:gravity="center_vertical"
-            android:checkedButton="@+id/sectionButton1"
             android:orientation="horizontal" >
             <RadioButton
                 android:id="@+id/sectionButton1"
