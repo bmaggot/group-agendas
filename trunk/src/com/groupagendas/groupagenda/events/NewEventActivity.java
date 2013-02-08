@@ -48,6 +48,7 @@ import com.groupagendas.groupagenda.data.ContactManagement;
 import com.groupagendas.groupagenda.data.Data;
 import com.groupagendas.groupagenda.data.DataManagement;
 import com.groupagendas.groupagenda.data.EventManagement;
+import com.groupagendas.groupagenda.templates.Template;
 import com.groupagendas.groupagenda.templates.TemplatesActivity;
 import com.groupagendas.groupagenda.timezone.TimezonesAdapter;
 import com.groupagendas.groupagenda.utils.DateTimeSelectActivity;
@@ -607,7 +608,6 @@ public class NewEventActivity extends EventActivity {
 				Toast.makeText(this, R.string.saving_new_template, Toast.LENGTH_SHORT).show();
 				try {
 					new NewTemplateTask().execute().get();
-					Toast.makeText(this, R.string.new_event_saved, Toast.LENGTH_SHORT).show();
 				} catch (InterruptedException e) {
 					e.printStackTrace();
 				} catch (ExecutionException e) {
@@ -884,15 +884,39 @@ public class NewEventActivity extends EventActivity {
 
 		@Override
 		protected Boolean doInBackground(Event... events) {
-			boolean success = false;
-
 			NewEventActivity.super.setEventData(event);
 			event.setStatus(Invited.ACCEPTED);
 
 			int testEvent = event.isValid();
 
 			if (testEvent == 0) {
-//				DataManagement.getInstance(NewEventActivity.this).createTemplate(getApplicationContext(), event);
+				Template template = new Template();
+				
+				template.setTitle(event.getActualTitle());
+				template.setTemplate_title(event.getActualTitle());
+				template.setIcon(event.getIcon());
+				template.setColor(event.getColor());
+				template.setDescription_(event.getDescription());
+				
+				template.setStartCalendar(event.getStartCalendar());
+				template.setEndCalendar(event.getEndCalendar());
+				template.setIs_all_day(event.is_all_day());
+				template.setTimezone(event.getTimezone());
+				template.setTimezoneInUse(timezoneInUse);
+
+				template.setCountry(event.getCountry());
+				template.setCity(event.getCity());
+				template.setStreet(event.getStreet());
+				template.setZip(event.getZip());
+				
+				template.setLocation(event.getLocation());
+				template.setAccomodation(event.getAccomodation());
+				template.setGo_by(event.getGo_by());
+				template.setTake_with_you(event.getTake_with_you());
+				template.setCost(event.getCost());
+				
+				template.setCreated_millis_utc(Calendar.getInstance().getTimeInMillis());
+				DataManagement.createTemplate(NewEventActivity.this, template);
 				return true;
 			} else {
 				switch (testEvent) {
@@ -919,9 +943,8 @@ public class NewEventActivity extends EventActivity {
 				default:
 					break;
 				}
+				return false;
 			}
-
-			return success;
 		}
 
 		@Override
@@ -934,7 +957,6 @@ public class NewEventActivity extends EventActivity {
 				pb.setVisibility(View.GONE);
 				saveButton.setText(getString(R.string.save));
 			}
-			super.onPostExecute(result);
 		}
 	}
 
