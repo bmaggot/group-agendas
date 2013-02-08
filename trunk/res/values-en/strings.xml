@@ -241,7 +241,7 @@
     <string name="contact_color_placeholder">Contact\'s color placeholder</string>
     <string name="contact_icon_placeholder">Contact\'s icon placeholder</string>
     <string name="event_save_as_template">Save as template</string>
-    <string name="new_template_saved">Your new event template is saved!</string>
+    <string name="new_template_saved">Your new template was saved!</string>
     <string name="saving_new_template">Saving new template…</string>
     <string name="templates">Templates</string>
     <string name="recent">Recent</string>
@@ -290,7 +290,7 @@
     <string name="email3_unverified">Email #3 need to be verified by link send to this email</string>
     <string name="email4_unverified">Email #4 need to be verified by link send to this email</string>
     <string name="email4">Email #4</string>
-    <string name="clear">clear</string>
+    <string name="clear">Clear</string>
     <string name="sex_male">Male</string>
     <string name="sex_female">Female</string>
     <string name="sex_none">None</string>
@@ -301,4 +301,6 @@
     <string name="start_and_end">Start &amp; end</string>
     <string name="select_poll_to_copy">Select date for copying event!</string>
     <string name="not_in_your_contact_list">Not in your contact list</string>
+    <string name="templates_were_cleared">List cleared successfully!</string>
+    <string name="templates_werent_cleared">Some error happened.</string>
 </resources>
