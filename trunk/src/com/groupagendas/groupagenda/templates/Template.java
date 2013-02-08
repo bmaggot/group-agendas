@@ -6,6 +6,7 @@ import java.util.Calendar;
 import android.content.ContentValues;
 import android.content.Context;
 
+import com.groupagendas.groupagenda.data.EventManagement;
 import com.groupagendas.groupagenda.events.Invited;
 import com.groupagendas.groupagenda.templates.TemplatesProvider.TMetaData.TemplatesMetaData;
 
@@ -25,7 +26,6 @@ public class Template {
 	private String title;
 	private String icon;
 	private String color;
-	private String displayColor;
 	private String description_;
 	private String location;
 	private String accomodation;
@@ -113,45 +113,83 @@ public class Template {
 	public String getColor() {
 		if (color == null || color.equalsIgnoreCase("null")) {
 			this.color = DEFAULT_COLOR;
-	}
+		}
 
-	return color;
-	}
-	public String getDisplayColor() {
-		return displayColor;
+		return color;
 	}
 	public String getDescription_() {
+		if (description_ == null || description_.equalsIgnoreCase("null")) description_ = "";
 		return description_;
 	}
 	public String getLocation() {
-		return location;
+		if(location != null){
+			return location;
+		} else {
+			return "";
+		}
 	}
 	public String getAccomodation() {
-		return accomodation;
+		if(accomodation != null){
+			return accomodation;
+		} else {
+			return "";
+		}
 	}
 	public String getCost() {
-		return cost;
+		if(cost != null){
+			return cost;
+		} else {
+			return "";
+		}
 	}
 	public String getTake_with_you() {
-		return take_with_you;
+		if(take_with_you != null){
+			return take_with_you;
+		} else {
+			return "";
+		}
 	}
 	public String getGo_by() {
-		return go_by;
+		if(go_by != null){
+			return go_by;
+		} else {
+			return "";
+		}
 	}
 	public String getCountry() {
-		return country;
+		if(country != null){
+			return country;
+		} else {
+			return "";
+		}
 	}
 	public String getCity() {
-		return city;
+		if(city != null){
+			return city;
+		} else {
+			return "";
+		}
 	}
 	public String getStreet() {
-		return street;
+		if(street != null){
+			return street;
+		} else {
+			return "";
+		}
 	}
 	public String getZip() {
-		return zip;
+		if(zip != null){
+			return zip;
+		} else {
+			return "";
+		}
 	}
 	public String getTimezone() {
-		return timezone;
+		if(timezone != null){
+			return timezone;
+		} else {
+			return "";
+		}
 	}
 	public Calendar getStartCalendar() {
 		return startCalendar;
@@ -193,6 +231,7 @@ public class Template {
 		return modified_millis_utc;
 	}
 	public ArrayList<Invited> getInvited() {
+		if (invited == null) invited = new ArrayList<Invited>();
 		return invited;
 	}
 	public long[] getAssigned_contacts() {
@@ -234,9 +273,6 @@ public class Template {
 	public void setColor(String color) {
 		this.color = color;
 	}
-	public void setDisplayColor(String displayColor) {
-		this.displayColor = displayColor;
-	}
 	public void setDescription_(String description_) {
 		this.description_ = description_;
 	}
@@ -271,10 +307,18 @@ public class Template {
 		this.timezone = timezone;
 	}
 	public void setStartCalendar(Calendar startCalendar) {
-		this.startCalendar = startCalendar;
+		if(startCalendar != null){
+			this.startCalendar = startCalendar;
+			this.startCalendar.clear(Calendar.SECOND);
+			this.startCalendar.clear(Calendar.MILLISECOND);
+		}
 	}
 	public void setEndCalendar(Calendar endCalendar) {
-		this.endCalendar = endCalendar;
+		if(endCalendar != null){
+			this.endCalendar = endCalendar;
+			this.endCalendar.clear(Calendar.SECOND);
+			this.endCalendar.clear(Calendar.MILLISECOND);
+		}
 	}
 	public void setReminder1(Calendar reminder1) {
 		this.reminder1 = reminder1;
@@ -382,7 +426,7 @@ public class Template {
 
 		cv.put(TemplatesMetaData.CREATED, this.getCreated_millis_utc());
 		cv.put(TemplatesMetaData.MODIFIED, this.getModified_millis_utc());
-//		cv.put(TemplatesMetaData.INVITED, parseInvitedListToJSONArray(this.getInvited()));
+		cv.put(TemplatesMetaData.INVITED, EventManagement.parseInvitedListToJSONArray(this.getInvited()));
 		// TODO IMPLEMENT INVITED
 		
 		return cv;
