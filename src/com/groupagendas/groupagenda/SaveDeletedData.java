@@ -9,12 +9,13 @@ public class SaveDeletedData {
 	Editor prefsEditor;
 	
 	public SaveDeletedData(Context context) {
-		prefs = context.getSharedPreferences("SAVE_DELETED_DATA", 0);
+		prefs = context.getSharedPreferences("SAVE_DELETED_DATA", Context.MODE_PRIVATE);
 	    prefsEditor = prefs.edit();
 	}
 	
 	public static class SDMetaData {
 		public static final String DELETED_EVENTS = "deleted_events";
+		public static final String DELETED_TEMPLATES = "deleted-templates";
 		public static final String DELETED_CONTACTS = "deleted_contacts";
 		public static final String DELETED_GROUPS = "deleted-groups";
 		public static final String DELETED_ADDRESSES = "deleted-addresses";
@@ -23,6 +24,10 @@ public class SaveDeletedData {
 	
 	public void addEventForLaterDelete(int external_id){
 		addIdToPrefs(SDMetaData.DELETED_EVENTS, external_id);
+	}
+	
+	public void addTemplateForLaterDelete(int external_id){
+		addIdToPrefs(SDMetaData.DELETED_TEMPLATES, external_id);
 	}
 	
 	public boolean addContactForLaterDelete(int external_id){
@@ -73,7 +78,9 @@ public class SaveDeletedData {
 			break;
 		case 4:
 			prefsEditor.putString(SaveDeletedData.SDMetaData.DELETED_ADDRESSES, "");
-			
+			break;
+		case 5:
+			prefsEditor.putString(SaveDeletedData.SDMetaData.DELETED_TEMPLATES, "");
 			break;
 		}
 	    
@@ -96,6 +103,8 @@ public class SaveDeletedData {
 		return prefs.getString(SaveDeletedData.SDMetaData.DELETED_ADDRESSES, "");
 	}
 	
-	
+	public String getDELETED_TEMPLATES() {
+		return prefs.getString(SaveDeletedData.SDMetaData.DELETED_TEMPLATES, "");
+	}
 	
 }
