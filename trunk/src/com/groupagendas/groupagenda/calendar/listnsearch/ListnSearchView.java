@@ -60,6 +60,8 @@ public class ListnSearchView extends LinearLayout {
 		listView = (SectionListView) findViewById(R.id.section_list_view);
 		new GetEventsInfoTask().execute();
 		listView.setDrawingCacheBackgroundColor(Color.TRANSPARENT);
+		listView.setDivider(getResources().getDrawable(R.drawable.calendar_listnsearch_divider));
+		listView.setDividerHeight(1);
 		searchField = (EditText) findViewById(R.id.listnsearch_search);
 		searchField.addTextChangedListener(new TextWatcher() {
 
@@ -216,9 +218,9 @@ public class ListnSearchView extends LinearLayout {
 					}
 
 					eventTitle.setText(event.getTitle());
+					int circlePx = Math.round(15*getResources().getDisplayMetrics().density);
 					
-					bubble.setBackgroundDrawable(new BitmapDrawable(
-						DrawingUtils.getCircleBitmap(getContext(), 15, 15, event.getColor(), true)));
+					bubble.setBackgroundDrawable(new BitmapDrawable(DrawingUtils.getCircleBitmap(getContext(), circlePx, circlePx, event.getColor(), true)));
 
 					ImageView icon = (ImageView) view.findViewById(R.id.listnsearch_entry_icon_placeholder);
 					
