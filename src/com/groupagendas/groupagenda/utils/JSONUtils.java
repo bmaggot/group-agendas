@@ -42,9 +42,14 @@ public class JSONUtils {
 	}
 
 	public static long[] JSONArrayToLongArray(JSONArray jsonArr) {
-		long[] result =  new long[jsonArr.length()];
-		for (int i = 0; i < result.length; i++) 
-			result[i] = jsonArr.optLong(i);
+		long[] result;
+		if (jsonArr != null) { 
+			result =  new long[jsonArr.length()];
+			for (int i = 0; i < result.length; i++) 
+				result[i] = jsonArr.optLong(i);
+		} else {
+			result =  new long[0];
+		}
 		return result;
 	}
 
@@ -778,17 +783,13 @@ public class JSONUtils {
 					e1.getMessage());
 		}
 			try {
-				if(e.getString(EventManagement.TYPE).contentEquals("v")){
-					template.setStartCalendar(Utils.stringToCalendar(context, "0", DataManagement.SERVER_TIMESTAMP_FORMAT));
-					template.setEndCalendar(Utils.stringToCalendar(context, "2100-01-01 00:00:00", DataManagement.SERVER_TIMESTAMP_FORMAT));
-				} else {
-					template.setStartCalendar(Utils.stringToCalendar(context, e.getString("time_start"), DataManagement.SERVER_TIMESTAMP_FORMAT));
-					template.setEndCalendar(Utils.stringToCalendar(context, e.getString("time_end"), DataManagement.SERVER_TIMESTAMP_FORMAT));
-				}
+				template.setStartCalendar(Utils.stringToCalendar(context, e.getString(TemplatesMetaData.TIME_START), DataManagement.SERVER_TIMESTAMP_FORMAT));
+				template.setEndCalendar(Utils.stringToCalendar(context, e.getString(TemplatesMetaData.TIME_END), DataManagement.SERVER_TIMESTAMP_FORMAT));
 			} catch (JSONException e2) {
 				e2.printStackTrace();
 			}
-
+			template.setTimezoneInUse(e.optInt(TemplatesMetaData.TIMEZONE_IN_USE));
+			
 			template.setTitle(e.optString(TemplatesMetaData.TITLE));
 			template.setIcon(e.optString(TemplatesMetaData.ICON));
 			template.setColor(e.optString(TemplatesMetaData.COLOR));
@@ -819,6 +820,18 @@ public class JSONUtils {
 			}
 
 		return template;
+	}
+
+	public static ArrayList<Template> JSONArrayToTemplatesArray(JSONArray templateChanges,
+			Context context) {
+		ArrayList<Template> result =  new ArrayList<Template>();
+		if (templateChanges != null){
+			for (int i = 0; i < templateChanges.length(); i++){
+				JSONObject o = templateChanges.optJSONObject(i);
+				if (o != null) result.add(JSONUtils.createTemplateFromJSON(context, o));
+			}
+		}
+		return result;
 	}
 
 }
