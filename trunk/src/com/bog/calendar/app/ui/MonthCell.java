@@ -15,6 +15,7 @@ import android.graphics.drawable.Drawable;
 import com.bog.calendar.app.model.CEvent;
 import com.bog.calendar.app.model.EventsHelper;
 import com.groupagendas.groupagenda.R;
+import com.groupagendas.groupagenda.utils.StringValueUtils;
 
 public class MonthCell {
     @SuppressWarnings("unused")
@@ -92,7 +93,7 @@ public class MonthCell {
             if (isDrawEventPoints) {
                 drawEventPoints(canvas);
             }
-            canvas.drawText(String.valueOf(mDayOfMonth), mBound.right - textMargin, mBound.bottom - textMargin, mPaint);
+            canvas.drawText(StringValueUtils.valueOf(mDayOfMonth), mBound.right - textMargin, mBound.bottom - textMargin, mPaint);
         }
     }
 
@@ -182,7 +183,12 @@ public class MonthCell {
 
     @Override
 	public String toString() {
-        return String.valueOf(mDayOfMonth) + "(" + mBound.toString() + ")";
+    	StringBuilder sb = new StringBuilder();
+    	sb.append(mDayOfMonth);
+    	sb.append('(');
+    	sb.append(mBound);
+    	sb.append(')');
+        return sb.toString();
     }
 
     public boolean isDrawBorders() {

@@ -245,7 +245,7 @@ public class JSONUtils {
 							}
 						}
 					}
-					event.setSelectedEventPollsTime(String.valueOf(selectedPollTime));
+					event.setSelectedEventPollsTime(StringValueUtils.valueOf(selectedPollTime));
 				} catch (JSONException e1) {
 					Reporter.reportError(context, EventManagement.CLASS_NAME, Thread.currentThread().getStackTrace()[2].getMethodName().toString(),
 							e1.getMessage());
@@ -593,7 +593,7 @@ public class JSONUtils {
 					if (groups != null) {
 						Map<String, String> set = new HashMap<String, String>();
 						for (int j = 0, l = groups.length(); j < l; j++) {
-							set.put(String.valueOf(j), groups.getString(j));
+							set.put(StringValueUtils.valueOf(j), groups.getString(j));
 						}
 						contact.groups = set;
 					}
@@ -718,7 +718,7 @@ public class JSONUtils {
 					if (contacts != null) {
 						Map<String, String> set = new HashMap<String, String>();
 						for (int j = 0, l = contacts.length(); j < l; j++) {
-							set.put(String.valueOf(j), contacts.getString(j));
+							set.put(StringValueUtils.valueOf(j), contacts.getString(j));
 						}
 						group.contacts = set;
 					}

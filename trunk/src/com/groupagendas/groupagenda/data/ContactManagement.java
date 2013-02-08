@@ -7,7 +7,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Map;
-import java.util.Set;
+import java.util.Map.Entry;
 
 import org.apache.http.HttpResponse;
 import org.apache.http.HttpStatus;
@@ -251,7 +251,7 @@ public class ContactManagement {
 										if (groups != null) {
 											Map<String, String> set = new HashMap<String, String>();
 											for (int j = 0, l = groups.length(); j < l; j++) {
-												set.put(String.valueOf(j), groups.optString(j));
+												set.put(StringValueUtils.valueOf(j), groups.optString(j));
 											}
 											contact.groups = set;
 										}
@@ -440,7 +440,7 @@ public class ContactManagement {
 						if (success) {
 							destination_id = object.getInt("contact_id");
 							DataManagement.synchronizeWithServer(context, null, account.getLatestUpdateUnixTimestamp());
-							Log.i("createContact - success", String.valueOf(success));
+							Log.i("createContact - success", StringValueUtils.valueOf(success));
 						}
 
 						if (success == false) {
@@ -886,8 +886,8 @@ public class ContactManagement {
 
 			if (group.contacts != null) {
 
-				for (String s : group.contacts.keySet()) {
-					Contact c = ContactManagement.getContactFromLocalDb(context, Integer.parseInt(group.contacts.get(s)), 0);
+				for (Entry<String, String> e : group.contacts.entrySet()) {
+					Contact c = ContactManagement.getContactFromLocalDb(context, Integer.parseInt(e.getValue()), 0);
 
 					if (c.groups != null) {
 						for (String key : c.groups.keySet()) {
@@ -896,10 +896,10 @@ public class ContactManagement {
 								max_key = temp;
 							}
 						}
-						c.groups.put(String.valueOf(max_key + 1), String.valueOf(destination_id));
+						c.groups.put(StringValueUtils.valueOf(max_key + 1), StringValueUtils.valueOf(destination_id));
 					} else {
 						c.groups = new HashMap<String, String>();
-						c.groups.put(String.valueOf(max_key), String.valueOf(destination_id));
+						c.groups.put(StringValueUtils.valueOf(max_key), StringValueUtils.valueOf(destination_id));
 					}
 
 					ContactManagement.updateContactOnLocalDb(context, c);
@@ -914,8 +914,8 @@ public class ContactManagement {
 
 			if (group.contacts != null) {
 
-				for (String s : group.contacts.keySet()) {
-					Contact c = ContactManagement.getContactFromLocalDb(context, Integer.parseInt(group.contacts.get(s)), 0);
+				for (Entry<String, String> e : group.contacts.entrySet()) {
+					Contact c = ContactManagement.getContactFromLocalDb(context, Integer.parseInt(e.getValue()), 0);
 
 					if (c.groups != null) {
 						for (String key : c.groups.keySet()) {
@@ -924,10 +924,10 @@ public class ContactManagement {
 								max_key = temp;
 							}
 						}
-						c.groups.put(String.valueOf(max_key + 1), String.valueOf(group.group_id));
+						c.groups.put(StringValueUtils.valueOf(max_key + 1), StringValueUtils.valueOf(group.group_id));
 					} else {
 						c.groups = new HashMap<String, String>();
-						c.groups.put(String.valueOf(max_key), String.valueOf(group.group_id));
+						c.groups.put(StringValueUtils.valueOf(max_key), StringValueUtils.valueOf(group.group_id));
 					}
 
 					ContactManagement.updateContactOnLocalDb(context, c);
@@ -1018,30 +1018,33 @@ public class ContactManagement {
 				map = new HashMap<String, String>();
 			}
 
-			for (String s : map.keySet()) {
-				int temp = Integer.parseInt(s);
+			for (Iterator<Entry<String, String>> it = map.entrySet().iterator(); it.hasNext();) {
+				final Entry<String, String> e = it.next();
+				final String k = e.getKey();
+
+				int temp = Integer.parseInt(k);
 				if (temp > max_key) {
 					max_key = temp;
 				}
-				if ((map.get(s) != null) && (map.get(s).equalsIgnoreCase(String.valueOf(contactID)))) {
+				String val = e.getValue();
+				if ((val != null) && (val.equalsIgnoreCase(StringValueUtils.valueOf(contactID)))) {
 					target = temp;
 					if (!insert) {
-						map.remove(s);
+						it.remove();
 						cv.put(ContactsProvider.CMetaData.GroupsMetaData.CONTACT_COUNT, (contact_count - 1));
 						cv.put(ContactsProvider.CMetaData.GroupsMetaData.CONTACTS, MapUtils.mapToString(context, map));
 						target = -1;
 					}
-					break;
+					break; // prevents CME when not using an iterator
 				}
 			}
 
-			if (insert && target == -1) {
-				map.put(String.valueOf(max_key + 1), String.valueOf(contactID));
-				cv.put(ContactsProvider.CMetaData.GroupsMetaData.CONTACT_COUNT, (contact_count + 1));
-				cv.put(ContactsProvider.CMetaData.GroupsMetaData.CONTACTS, MapUtils.mapToString(context, map));
-				target = -1;
-			} else {
-				if (insert) {
+			if (insert) {
+				if (target == -1) {
+					map.put(StringValueUtils.valueOf(max_key + 1), StringValueUtils.valueOf(contactID));
+					cv.put(ContactsProvider.CMetaData.GroupsMetaData.CONTACT_COUNT, (contact_count + 1));
+					cv.put(ContactsProvider.CMetaData.GroupsMetaData.CONTACTS, MapUtils.mapToString(context, map));
+				} else {
 					cv.put(ContactsProvider.CMetaData.GroupsMetaData.CONTACT_COUNT, contact_count);
 					cv.put(ContactsProvider.CMetaData.GroupsMetaData.CONTACTS, MapUtils.mapToString(context, map));
 					target = -1;
@@ -1118,8 +1121,8 @@ public class ContactManagement {
 
 		Map<String, String> contacts = group.contacts;
 		if (contacts != null) {
-			for (String s : contacts.keySet()) {
-				CharsetUtils.addPart(reqEntity, ContactsProvider.CMetaData.GroupsMetaData.CONTACTS + "[]", contacts.get(s));
+			for (Entry<String, String> e : contacts.entrySet()) {
+				CharsetUtils.addPart(reqEntity, ContactsProvider.CMetaData.GroupsMetaData.CONTACTS + "[]", e.getValue());
 			}
 		} else {
 			CharsetUtils.addPart(reqEntity, ContactsProvider.CMetaData.GroupsMetaData.CONTACTS + "[]", "");
@@ -1137,7 +1140,7 @@ public class ContactManagement {
 						success = object.getBoolean("success");
 						if (success)
 							destination_id = object.getInt("group_id");
-						Log.e("createGroup - success", String.valueOf(success));
+						Log.e("createGroup - success", StringValueUtils.valueOf(success));
 
 						if (success == false) {
 							Data.setERROR(object.getJSONObject("error").getString("reason"));
@@ -1183,33 +1186,33 @@ public class ContactManagement {
 				contacts = new HashMap<String, String>();
 			}
 
-			for (String k : contacts.keySet()) {
-				int temp2 = Integer.parseInt(k);
+			for (Iterator<Entry<String, String>> it = contacts.entrySet().iterator(); it.hasNext();) {
+				Entry<String, String> e = it.next();
+				int temp2 = Integer.parseInt(e.getKey());
 				if (temp2 > max_key) {
 					max_key = temp2;
 				}
-				final String val = contacts.get(k);
+				final String val = e.getValue();
 				if ((val != null) && (val.equalsIgnoreCase(StringValueUtils.valueOf(contactID)))) {
 					target = temp2;
 					if (!insert) {
-						contacts.remove(val);
+						it.remove();
 						group.contact_count -= 1;
 						target = -1;
 					}
-					break;
+					break; // prevents CME when not using an iterator
 				}
 			}
 
 			if (insert && target == -1) {
 				contacts.put(StringValueUtils.valueOf(max_key + 1), StringValueUtils.valueOf(contactID));
 				group.contact_count += 1;
-				target = -1;
 			}
 		}
 
 		if (contacts != null) {
-			for (String s : contacts.keySet()) {
-				CharsetUtils.addPart(reqEntity, ContactsProvider.CMetaData.GroupsMetaData.CONTACTS + "[]", contacts.get(s));
+			for (Entry<String, String> e : contacts.entrySet()) {
+				CharsetUtils.addPart(reqEntity, ContactsProvider.CMetaData.GroupsMetaData.CONTACTS + "[]", e.getValue());
 			}
 		} else {
 			CharsetUtils.addPart(reqEntity, ContactsProvider.CMetaData.GroupsMetaData.CONTACTS + "[]", "");
@@ -1396,7 +1399,7 @@ public class ContactManagement {
 								if (contacts != null) {
 									Map<String, String> set = new HashMap<String, String>();
 									for (int j = 0, l = contacts.length(); j < l; j++) {
-										set.put(String.valueOf(j), contacts.optString(j));
+										set.put(StringValueUtils.valueOf(j), contacts.optString(j));
 									}
 									group.contacts = set;
 								}
@@ -1550,7 +1553,7 @@ public class ContactManagement {
 
 						success = object.getBoolean("success");
 
-						Log.e("editContact - success", String.valueOf(success));
+						Log.e("editContact - success", StringValueUtils.valueOf(success));
 
 						if (success == false) {
 							Data.setERROR(object.getJSONObject("error").getString("reason"));
@@ -2024,9 +2027,9 @@ public class ContactManagement {
 					updateContactIdInLocalDb(context, c.getInternal_id(), destination_id);
 
 					if (c.groups != null) {
-						for (String key : c.groups.keySet()) {
-							if (!key.contentEquals("")) {
-								Group g = getGroupFromLocalDb(context, Integer.parseInt(c.groups.get(key)), 0);
+						for (Entry<String, String> e : c.groups.entrySet()) {
+							if (!e.getKey().contentEquals("")) {
+								Group g = getGroupFromLocalDb(context, Integer.parseInt(e.getValue()), 0);
 								editGroupOnRemoteDb(context, g, 0, true);
 							}
 						}
@@ -2101,14 +2104,14 @@ public class ContactManagement {
 
 		if (group.contacts != null) {
 
-			for (String s : group.contacts.keySet()) {
-				Contact c = ContactManagement.getContactFromLocalDb(context, Integer.parseInt(group.contacts.get(s)), 0);
+			for (Entry<String, String> e : group.contacts.entrySet()) {
+				Contact c = ContactManagement.getContactFromLocalDb(context, Integer.parseInt(e.getValue()), 0);
 				if (c != null) {
 					if (c.groups != null) {
-						Set<String> keySet = c.groups.keySet();
-						for (String g : keySet) {
-							if (c.groups.get(g).equalsIgnoreCase(String.valueOf(groupId))) {
-								c.groups.remove(g);
+						for (Iterator<Entry<String, String>> it = c.groups.entrySet().iterator(); it.hasNext();) {
+							Entry<String, String> en = it.next();
+							if (en.getValue().equalsIgnoreCase(StringValueUtils.valueOf(groupId))) {
+								it.remove();
 								ContactManagement.updateContactOnLocalDb(context, c);
 								break;
 							}
@@ -2212,31 +2215,28 @@ public class ContactManagement {
 					int max_key = 0;
 					if (group.contacts != null) {
 
-						for (String s : group.contacts.keySet()) {
-							Contact c = ContactManagement.getContactFromLocalDb(context, Integer.parseInt(group.contacts.get(s)), 0);
+						for (Entry<String, String> e : group.contacts.entrySet()) {
+							Contact c = ContactManagement.getContactFromLocalDb(context, Integer.parseInt(e.getValue()), 0);
 
 							if (c.groups != null) {
-								Set<String> keySet = c.groups.keySet();
-								for (String g : keySet) {
-									if (c.groups.get(g).equalsIgnoreCase(StringValueUtils.valueOf(group.group_id))) {
-										c.groups.remove(g);
-										ContactManagement.updateContactOnLocalDb(context, c);
-										break;
-									}
-								}
-							}
-
-							if (c.groups != null) {
-								for (String key : c.groups.keySet()) {
+								boolean found = false;
+								for (Iterator<Entry<String, String>> it = c.groups.entrySet().iterator(); it.hasNext();) {
+									Entry<String, String> en = it.next();
+									String key = en.getKey();
 									int temp = Integer.parseInt(key);
 									if (temp > max_key) {
 										max_key = temp;
 									}
+									if (!found && en.getValue().equalsIgnoreCase(StringValueUtils.valueOf(group.group_id))) {
+										it.remove();
+										ContactManagement.updateContactOnLocalDb(context, c);
+										found = true;
+									}
 								}
-								c.groups.put(StringValueUtils.valueOf(max_key + 1), String.valueOf(destination_id));
+								c.groups.put(StringValueUtils.valueOf(max_key + 1), StringValueUtils.valueOf(destination_id));
 							} else {
 								c.groups = new HashMap<String, String>();
-								c.groups.put(StringValueUtils.valueOf(max_key), String.valueOf(destination_id));
+								c.groups.put(StringValueUtils.valueOf(max_key), StringValueUtils.valueOf(destination_id));
 							}
 
 							ContactManagement.updateContactOnLocalDb(context, c);

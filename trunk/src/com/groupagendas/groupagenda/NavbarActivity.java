@@ -66,6 +66,7 @@ import com.groupagendas.groupagenda.events.Invited;
 import com.groupagendas.groupagenda.events.NewEventActivity;
 import com.groupagendas.groupagenda.settings.CalendarSettingsFragment;
 import com.groupagendas.groupagenda.utils.LanguageCodeGetter;
+import com.groupagendas.groupagenda.utils.StringValueUtils;
 import com.groupagendas.groupagenda.utils.Utils;
 
 @SuppressLint("ParserError")
@@ -224,7 +225,7 @@ public class NavbarActivity extends FragmentActivity {
 
 		if (new_invites > 0) {
 			logo.setVisibility(View.VISIBLE);
-			logo.setText(String.valueOf(new_invites));
+			logo.setText(StringValueUtils.valueOf(new_invites));
 		} else {
 			logo.setVisibility(View.GONE);
 		}
@@ -244,7 +245,7 @@ public class NavbarActivity extends FragmentActivity {
 
 		if (new_messages > 0) {
 			message.setVisibility(View.VISIBLE);
-			message.setText(String.valueOf(new_messages));
+			message.setText(StringValueUtils.valueOf(new_messages));
 		} else {
 			message.setVisibility(View.GONE);
 		}
@@ -282,7 +283,7 @@ public class NavbarActivity extends FragmentActivity {
 		super.onSaveInstanceState(outState);
 		outState.putBoolean("isDataLoaded", dataLoaded);
 		outState.putInt("loadPhase", loadPhase);
-		outState.putString("viewState", String.valueOf(viewState));
+		outState.putString("viewState", StringValueUtils.valueOf(viewState));
 		if (calendarContainer.getChildAt(0) instanceof AbstractCalendarView) {
 			selectedDate = ((AbstractCalendarView) calendarContainer.getChildAt(0)).getDateToResume();
 		}

@@ -14,6 +14,7 @@ import com.groupagendas.groupagenda.R;
 import com.groupagendas.groupagenda.calendar.MonthCellState;
 import com.groupagendas.groupagenda.data.CalendarSettings;
 import com.groupagendas.groupagenda.events.Event;
+import com.groupagendas.groupagenda.utils.StringValueUtils;
 import com.groupagendas.groupagenda.utils.TreeMapUtils;
 import com.groupagendas.groupagenda.utils.Utils;
 
@@ -101,7 +102,7 @@ public class MonthInstance implements OnTouchListener{
 		Calendar tmp = (Calendar) date.clone();
 		for (int i = 0; i < ROWS_COUNT; i++){
 			TextView weekNumber = (TextView) ((LinearLayout)daysTable.getChildAt(i)).getChildAt(0);
-			weekNumber.setText(String.valueOf(tmp.get(Calendar.WEEK_OF_YEAR)));
+			weekNumber.setText(StringValueUtils.valueOf(tmp.get(Calendar.WEEK_OF_YEAR)));
 			tmp.add(Calendar.DATE, DAYS_PER_WEEK);
 		}	
 	}
@@ -123,7 +124,7 @@ public class MonthInstance implements OnTouchListener{
 		
 		for (j = Utils.getDayOfWeek(tmp); j <= DAYS_PER_WEEK; j++){
 			dayCell = (YearViewMonthInnerCell) ((LinearLayout)daysTable.getChildAt(0)).getChildAt(j);
-			dayCell.setDayNum(String.valueOf(day));
+			dayCell.setDayNum(StringValueUtils.valueOf(day));
 			dayCell.setState(MonthCellState.DEFAULT);
 			dayCell.setHasEvents(!TreeMapUtils.getEventsFromTreemap(tmp, tm).isEmpty() && SHOW_BUBBLES);
 			tmp.add(Calendar.DATE, 1);
@@ -135,7 +136,7 @@ public class MonthInstance implements OnTouchListener{
 				for (j = 1; j <= DAYS_PER_WEEK; j++) {
 					dayCell = (YearViewMonthInnerCell) ((LinearLayout) daysTable
 							.getChildAt(i)).getChildAt(j);
-					dayCell.setDayNum(String.valueOf(day));
+					dayCell.setDayNum(StringValueUtils.valueOf(day));
 					dayCell.setState(MonthCellState.DEFAULT);
 					dayCell.setHasEvents(!TreeMapUtils.getEventsFromTreemap(tmp, tm).isEmpty() && SHOW_BUBBLES);
 					day++;

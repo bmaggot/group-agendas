@@ -48,6 +48,7 @@ import com.groupagendas.groupagenda.events.EventActivity.StaticTimezones;
 import com.groupagendas.groupagenda.timezone.CountriesAdapter;
 import com.groupagendas.groupagenda.timezone.TimezonesAdapter;
 import com.groupagendas.groupagenda.utils.LanguageCodeGetter;
+import com.groupagendas.groupagenda.utils.StringValueUtils;
 
 public class RegistrationActivity extends Activity {
 	private static final String SPREFS_TOKEN = "REGISTRATION_VALUES";
@@ -137,7 +138,7 @@ public class RegistrationActivity extends Activity {
 			// TODO OMG WHAT HAVE I DONE AGAIN?! :|
 			StaticTimezones temp = new EventActivity().new StaticTimezones();
 
-			temp.id = String.valueOf(i);
+			temp.id = StringValueUtils.valueOf(i);
 			temp.city = cities[i];
 			temp.country = countries[i];
 			temp.country2 = countries2[i];

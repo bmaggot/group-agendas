@@ -692,7 +692,7 @@ public class EventManagement {
 				if (resp != null) {
 					JSONObject object = new JSONObject(resp);
 					success = object.getBoolean("success");
-					account.setResponsesBadge(String.valueOf(object.getInt("count")));
+					account.setResponsesBadge(StringValueUtils.valueOf(object.getInt("count")));
 					account.setResponses(resp);
 
 					if (success == false) {

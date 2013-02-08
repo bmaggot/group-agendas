@@ -73,6 +73,7 @@ import com.groupagendas.groupagenda.utils.DateTimeSelectActivity;
 import com.groupagendas.groupagenda.utils.DateTimeUtils;
 import com.groupagendas.groupagenda.utils.DrawingUtils;
 import com.groupagendas.groupagenda.utils.SelectPollForCopyingDialog;
+import com.groupagendas.groupagenda.utils.StringValueUtils;
 import com.groupagendas.groupagenda.utils.Utils;
 
 public class EventEditActivity extends EventActivity {
@@ -193,7 +194,7 @@ public class EventEditActivity extends EventActivity {
 			for (int i = 0; i < cities.length; i++) {
 				StaticTimezones temp = new StaticTimezones();
 	
-				temp.id = String.valueOf(i);
+				temp.id = StringValueUtils.valueOf(i);
 				temp.city = cities[i];
 				temp.country = countries[i];
 				temp.country2 = countries2[i];
@@ -1401,7 +1402,7 @@ public class EventEditActivity extends EventActivity {
 				return true;
 			} else {
 				if (isInvited) {
-					if (EventManagement.inviteExtraContacts(EventEditActivity.this, String.valueOf(event.getEvent_id()), selectedContacts)) {
+					if (EventManagement.inviteExtraContacts(EventEditActivity.this, StringValueUtils.valueOf(event.getEvent_id()), selectedContacts)) {
 						return true;
 					} else {
 						errorStr = "Invite wasn't successfull.";

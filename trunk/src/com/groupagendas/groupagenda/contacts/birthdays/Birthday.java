@@ -6,6 +6,7 @@ import android.database.Cursor;
 import com.groupagendas.groupagenda.account.Account;
 import com.groupagendas.groupagenda.contacts.Contact;
 import com.groupagendas.groupagenda.contacts.ContactsProvider;
+import com.groupagendas.groupagenda.utils.StringValueUtils;
 
 public class Birthday {
 	private String birthday;
@@ -18,7 +19,7 @@ public class Birthday {
 
 	public Birthday(Context context, Contact contact) {
 		Account acc = new Account(context);
-		setContact_id(String.valueOf(contact.contact_id));
+		setContact_id(StringValueUtils.valueOf(contact.contact_id));
 		setName(contact.name);
 		setLastName(contact.lastname);
 		setBirthday(contact.birthdate);

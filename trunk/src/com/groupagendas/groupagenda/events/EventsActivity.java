@@ -27,6 +27,7 @@ import com.groupagendas.groupagenda.contacts.ContactsActivity;
 import com.groupagendas.groupagenda.data.Data;
 import com.groupagendas.groupagenda.data.EventManagement;
 import com.groupagendas.groupagenda.settings.SettingsActivity;
+import com.groupagendas.groupagenda.utils.StringValueUtils;
 
 public class EventsActivity extends ListActivity {
 
@@ -185,8 +186,8 @@ public class EventsActivity extends ListActivity {
 	}
 
 	private void filterEventsByStatus(int status) {
-		eventsAdapter.getFilter().filter(String.valueOf(status));
-		eventsAdapter.setFilter(String.valueOf(status));
+		eventsAdapter.getFilter().filter(StringValueUtils.valueOf(status));
+		eventsAdapter.setFilter(StringValueUtils.valueOf(status));
 	}
 
 	@Override

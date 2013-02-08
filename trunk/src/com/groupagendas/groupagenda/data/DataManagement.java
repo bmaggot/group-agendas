@@ -1150,7 +1150,7 @@ public class DataManagement {
 
 						success = object.getBoolean("success");
 
-						Log.e("editGroup - success", String.valueOf(success));
+						Log.e("editGroup - success", StringValueUtils.valueOf(success));
 
 						if (success == false) {
 							Data.setERROR(object.getJSONObject("error").getString("reason"));

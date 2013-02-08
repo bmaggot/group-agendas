@@ -27,6 +27,7 @@ import com.groupagendas.groupagenda.contacts.birthdays.BirthdayManagement;
 import com.groupagendas.groupagenda.data.EventManagement;
 import com.groupagendas.groupagenda.events.Event;
 import com.groupagendas.groupagenda.events.NativeCalendarReader;
+import com.groupagendas.groupagenda.utils.StringValueUtils;
 import com.groupagendas.groupagenda.utils.TreeMapUtils;
 import com.groupagendas.groupagenda.utils.Utils;
 
@@ -226,7 +227,7 @@ public class MonthView extends AbstractCalendarView {
 		new UpdateEventsInfoTask().execute();
 		Calendar tmp = (Calendar) firstShownDate.clone();
 		for (MonthDayFrame frame : daysList) {
-			String title = String.valueOf(tmp.get(Calendar.DATE));
+			String title = StringValueUtils.valueOf(tmp.get(Calendar.DATE));
 
 			frame.setDayTitle(title);
 
@@ -270,7 +271,7 @@ public class MonthView extends AbstractCalendarView {
 
 			TextView weekNum = (TextView) mInflater.inflate(
 					R.layout.calendar_month_week_container, null);
-			weekNum.setText(String.valueOf(tmp.get(Calendar.WEEK_OF_YEAR)));
+			weekNum.setText(StringValueUtils.valueOf(tmp.get(Calendar.WEEK_OF_YEAR)));
 			weekNum.setHeight(TABLE_ROW_HEIGHT);
 			weekNum.setBackgroundResource(R.drawable.calendar_month_day_inactive);
 			month_weeknumbers_container.addView(weekNum);

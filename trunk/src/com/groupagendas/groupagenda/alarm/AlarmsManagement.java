@@ -21,6 +21,7 @@ import com.groupagendas.groupagenda.events.EventsProvider;
 import com.groupagendas.groupagenda.events.EventsProvider.EMetaData.AlarmsMetaData;
 import com.groupagendas.groupagenda.https.WebService;
 import com.groupagendas.groupagenda.utils.CharsetUtils;
+import com.groupagendas.groupagenda.utils.StringValueUtils;
 import com.groupagendas.groupagenda.utils.Utils;
 
 public class AlarmsManagement {
@@ -131,7 +132,7 @@ public class AlarmsManagement {
 					}
 				}
 			} else {
-				Log.e("Get Alarms - status", String.valueOf(rp.getStatusLine().getStatusCode()));
+				Log.e("Get Alarms - status", StringValueUtils.valueOf(rp.getStatusLine().getStatusCode()));
 			}
 		} catch (Exception e){
 			e.printStackTrace();

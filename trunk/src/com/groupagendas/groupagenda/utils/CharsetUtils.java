@@ -71,7 +71,7 @@ public final class CharsetUtils {
 	 * @param value part value
 	 */
 	public static void addPart(MultipartEntity entity, Object key, Object value) {
-		entity.addPart(String.valueOf(key), encodeForWebService(value));
+		entity.addPart(StringValueUtils.valueOf(key), encodeForWebService(value));
 	}
 	
 	/**
@@ -84,7 +84,7 @@ public final class CharsetUtils {
 	 * @param value part value
 	 */
 	public static void addPart(MultipartEntity entity, String key, int value) {
-		entity.addPart(String.valueOf(key), encodeForWebService(value));
+		entity.addPart(StringValueUtils.valueOf(key), encodeForWebService(value));
 	}
 	
 	/**
@@ -97,7 +97,7 @@ public final class CharsetUtils {
 	 * @param value part value
 	 */
 	public static void addPart(MultipartEntity entity, String key, long value) {
-		entity.addPart(String.valueOf(key), encodeForWebService(value));
+		entity.addPart(StringValueUtils.valueOf(key), encodeForWebService(value));
 	}
 	
 	/**
@@ -110,7 +110,7 @@ public final class CharsetUtils {
 	 * @param value part value
 	 */
 	public static void addPart(MultipartEntity entity, String key, boolean value) {
-		entity.addPart(String.valueOf(key), encodeForWebService(value));
+		entity.addPart(StringValueUtils.valueOf(key), encodeForWebService(value));
 	}
 	
 	/**
@@ -160,7 +160,7 @@ public final class CharsetUtils {
 			throw new IllegalArgumentException("Invalid pairing: " + keyValuePairs);
 		
 		for (int i = 1; i < size; i += 2)
-			entity.addPart(String.valueOf(keyValuePairs[i - 1]), encodeForWebService(keyValuePairs[i]));
+			entity.addPart(StringValueUtils.valueOf(keyValuePairs[i - 1]), encodeForWebService(keyValuePairs[i]));
 	}
 	
 	static {

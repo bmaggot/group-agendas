@@ -16,6 +16,7 @@ import android.widget.TextView;
 
 import com.groupagendas.groupagenda.R;
 import com.groupagendas.groupagenda.calendar.adapters.AbstractAdapter;
+import com.groupagendas.groupagenda.utils.StringValueUtils;
 import com.groupagendas.groupagenda.utils.Utils;
 
 public class GroupsAdapter extends AbstractAdapter<Group> implements Filterable {
@@ -56,15 +57,15 @@ public class GroupsAdapter extends AbstractAdapter<Group> implements Filterable 
 		if (group.contact_count == 1) {
 			contactsText = new StringBuilder("1 ").append(getContext().getResources().getString(R.string.contact));
 		} else if (group.contact_count % 10 == 1) {
-			contactsText = new StringBuilder(String.valueOf(group.contact_count)).append(getContext().getResources().getString(
+			contactsText = new StringBuilder(StringValueUtils.valueOf(group.contact_count)).append(getContext().getResources().getString(
 					R.string.contact));
 		} else {
-			contactsText = new StringBuilder(String.valueOf(group.contact_count)).append(" ").append(
+			contactsText = new StringBuilder(StringValueUtils.valueOf(group.contact_count)).append(" ").append(
 					getContext().getResources().getString(R.string.contacts));
 		}
 		holder.contact.setText(contactsText.toString());
 
-		convertView.setTag(String.valueOf(group.group_id));
+		convertView.setTag(StringValueUtils.valueOf(group.group_id));
 
 		if (group.image && group.image_bytes != null) {
 			Bitmap bitmap = Utils.getResizedBitmap(BitmapFactory.decodeByteArray(group.image_bytes, 0, group.image_bytes.length), 72, 72);
