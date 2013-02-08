@@ -6,9 +6,9 @@ import android.content.Context;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.LinearLayout.LayoutParams;
 import android.widget.ListView;
 import android.widget.TextView;
-import android.widget.LinearLayout.LayoutParams;
 
 import com.groupagendas.groupagenda.R;
 import com.groupagendas.groupagenda.calendar.adapters.AbstractAdapter;
@@ -25,6 +25,7 @@ import com.groupagendas.groupagenda.utils.DrawingUtils;
  */
 public class TemplatesAdapter extends AbstractAdapter<Template> {
 	private static int COLOR_BUBBLE_DIAMETER;
+	private static int edit_mode = 0;
 	float density;
 
 	/**
@@ -60,36 +61,48 @@ public class TemplatesAdapter extends AbstractAdapter<Template> {
 	 */
 	@Override
 	public View getView(int i, View view, ViewGroup viewGroup) {
-		Template projection = list.get(i);
+		ViewHolder holder;
 		
 		if (view == null) {
 			view = mInflater.inflate(R.layout.template_dialog_item, null);
 			ListView.LayoutParams lParams = new ListView.LayoutParams(LayoutParams.FILL_PARENT, Math.round(40*density));
 			view.setLayoutParams(lParams);
+			
+			holder = new ViewHolder();
+			holder.removePlaceholder = (ImageView) view.findViewById(R.id.template_remove);
+			holder.colorPlaceholder = (ImageView) view.findViewById(R.id.event_color_placeholder);
+			holder.title = (TextView) view.findViewById(R.id.entry_title);
+			view.setTag(holder);
+		} else {
+			holder = (ViewHolder) view.getTag();
 		}
 		
-		ViewHolder holder = new ViewHolder();
-		holder.colorPlaceholder = (ImageView) view.findViewById(R.id.event_color_placeholder);
-		holder.title = (TextView) view.findViewById(R.id.entry_title);
-		holder.position = projection.getTemplate_id();
-		view.setTag(holder);
-		
-		holder.title.setText(projection.getTemplate_title());
-		holder.colorPlaceholder.setImageBitmap(
-				DrawingUtils.getCircleBitmap(
-						getContext(),
-						COLOR_BUBBLE_DIAMETER, 
-						COLOR_BUBBLE_DIAMETER, 
-						projection.getColor(), 
-						false
-				)
-		);
+		if (i < super.getCount()) {
+			Template projection = list.get(i);
+			if (edit_mode == TemplatesActivity.ActivityPrefs.EDIT_MODE_ON) {
+				holder.removePlaceholder.setVisibility(View.VISIBLE);
+			} else {
+				holder.removePlaceholder.setVisibility(View.GONE);
+			}
+			holder.position = projection.getInternalID();
+			holder.title.setText(projection.getTemplate_title());
+			holder.colorPlaceholder.setImageBitmap(
+					DrawingUtils.getCircleBitmap(
+							getContext(),
+							COLOR_BUBBLE_DIAMETER, 
+							COLOR_BUBBLE_DIAMETER, 
+							projection.getColor(), 
+							false
+					)
+			);
+		}
 
 		return view;
 	}
 	
 	class ViewHolder {
-		int position;
+		long position;
+		ImageView removePlaceholder;
 		ImageView colorPlaceholder;
 		TextView title;
 	}
@@ -103,11 +116,16 @@ public class TemplatesAdapter extends AbstractAdapter<Template> {
 	 * 			If successful - returns integer greater than -1;
 	 *  		If not - returns -1.
 	 */
-	public int getTemplateId(View view) {
+	public long getTemplateId(View view) {
 		if (view.getTag() != null) {
 			return ((ViewHolder) view.getTag()).position;
 		} else {
 			return -1;
 		}
+	}
+
+	public void toggleEdit(int edit_mode) {
+		TemplatesAdapter.edit_mode = edit_mode;
+		notifyDataSetChanged();
 	}
 }
