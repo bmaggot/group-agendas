@@ -1,8 +1,8 @@
 package com.groupagendas.groupagenda.registration;
 
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.List;
 import java.util.Locale;
 
 import android.accounts.AccountManager;
@@ -43,12 +43,11 @@ import com.groupagendas.groupagenda.NavbarActivity;
 import com.groupagendas.groupagenda.R;
 import com.groupagendas.groupagenda.account.Account;
 import com.groupagendas.groupagenda.data.DataManagement;
-import com.groupagendas.groupagenda.events.EventActivity;
-import com.groupagendas.groupagenda.events.EventActivity.StaticTimezones;
 import com.groupagendas.groupagenda.timezone.CountriesAdapter;
 import com.groupagendas.groupagenda.timezone.TimezonesAdapter;
 import com.groupagendas.groupagenda.utils.LanguageCodeGetter;
-import com.groupagendas.groupagenda.utils.StringValueUtils;
+import com.groupagendas.groupagenda.utils.TimezoneUtils;
+import com.groupagendas.groupagenda.utils.TimezoneUtils.StaticTimezone;
 
 public class RegistrationActivity extends Activity {
 	private static final String SPREFS_TOKEN = "REGISTRATION_VALUES";
@@ -84,8 +83,6 @@ public class RegistrationActivity extends Activity {
 
 	private static final int DIALOG_SUCCESS = 0;
 	private static final int DIALOG_ERROR = 1;
-	private ArrayList<StaticTimezones> countriesList;
-	private ArrayList<StaticTimezones> filteredCountriesList;
 	private CountriesAdapter countriesAdapter;
 	private TimezonesAdapter timezonesAdapter;
 	private int timezoneInUse = 0;
@@ -117,41 +114,8 @@ public class RegistrationActivity extends Activity {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.registration);
 
-		String[] cities;
-		String[] countries;
-		String[] countries2;
-		String[] country_codes;
-		String[] timezones;
-		String[] altnames;
-		String[] call_codes;
-
-		cities = getResources().getStringArray(R.array.city);
-		countries = getResources().getStringArray(R.array.countries);
-		countries2 = getResources().getStringArray(R.array.countries2);
-		country_codes = getResources().getStringArray(R.array.country_codes);
-		timezones = getResources().getStringArray(R.array.timezones);
-		altnames = getResources().getStringArray(R.array.timezone_altnames);
-		call_codes = getResources().getStringArray(R.array.call_codes);
-
-		countriesList = new ArrayList<StaticTimezones>(cities.length);
-		for (int i = 0; i < cities.length; i++) {
-			// TODO OMG WHAT HAVE I DONE AGAIN?! :|
-			StaticTimezones temp = new EventActivity().new StaticTimezones();
-
-			temp.id = StringValueUtils.valueOf(i);
-			temp.city = cities[i];
-			temp.country = countries[i];
-			temp.country2 = countries2[i];
-			temp.country_code = country_codes[i];
-			temp.timezone = timezones[i];
-			temp.altname = altnames[i];
-			temp.call_code = call_codes[i];
-
-			countriesList.add(temp);
-		}
-		// if (countriesList != null) {
-			countriesAdapter = new CountriesAdapter(RegistrationActivity.this, R.layout.search_dialog_item, countriesList);
-		// }
+		countriesAdapter = new CountriesAdapter(RegistrationActivity.this, R.layout.search_dialog_item,
+				TimezoneUtils.getTimezones(this));
 	}
 
 	@Override
@@ -201,6 +165,7 @@ public class RegistrationActivity extends Activity {
 			}
 		});
 
+		final List<StaticTimezone> countriesList = TimezoneUtils.getTimezones(this);
 		countrySpinnerBlock.setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View arg0) {
@@ -242,16 +207,8 @@ public class RegistrationActivity extends Activity {
 						countryView.setText(countriesList.get(timezoneInUse).country2);
 						String countryCode = countriesList.get(timezoneInUse).country_code;
 
-						filteredCountriesList = new ArrayList<StaticTimezones>();
-
-						for (StaticTimezones tz : countriesList) {
-							if (tz.country_code.equalsIgnoreCase(countryCode)) {
-								filteredCountriesList.add(tz);
-							}
-						}
-
 						timezonesAdapter = new TimezonesAdapter(RegistrationActivity.this, R.layout.search_dialog_item,
-								filteredCountriesList);
+								TimezoneUtils.getTimezonesByCc(RegistrationActivity.this, countryCode));
 						timezonesAdapter.notifyDataSetChanged();
 
 						timezoneView.setText(countriesList.get(timezoneInUse).altname);
@@ -341,7 +298,7 @@ public class RegistrationActivity extends Activity {
 			public void onClick(View v) {
 				String valRes = validateFields();
 				if (valRes == null) {
-					new RegistrationTask().execute();
+					new RegistrationTask(TimezoneUtils.getTimezones(RegistrationActivity.this)).execute();
 				} else {
 					AlertDialog.Builder builder = new AlertDialog.Builder(RegistrationActivity.this);
 					builder.setMessage(valRes).setTitle(getString(R.string.error)).setCancelable(false)
@@ -360,7 +317,7 @@ public class RegistrationActivity extends Activity {
 		prefillFields();
 		String countryCode = "";
 
-		for (StaticTimezones temp : countriesList) {
+		for (StaticTimezone temp : countriesList) {
 			if (temp.country_code.equalsIgnoreCase(localCountry)) {
 				timezoneInUse = Integer.parseInt(temp.id);
 				if (confirmView.getText().toString().length() == 0) {
@@ -377,15 +334,8 @@ public class RegistrationActivity extends Activity {
 			}
 		}
 
-		filteredCountriesList = new ArrayList<StaticTimezones>();
-
-		for (StaticTimezones tz : countriesList) {
-			if (tz.country_code.equalsIgnoreCase(countryCode)) {
-				filteredCountriesList.add(tz);
-			}
-		}
-
-		timezonesAdapter = new TimezonesAdapter(RegistrationActivity.this, R.layout.search_dialog_item, filteredCountriesList);
+		timezonesAdapter = new TimezonesAdapter(RegistrationActivity.this, R.layout.search_dialog_item,
+				TimezoneUtils.getTimezonesByCc(this, countryCode));
 		timezonesAdapter.notifyDataSetChanged();
 		int i = 0;
 		for (String tmp : getResources().getStringArray(R.array.timezones)) {
@@ -466,6 +416,11 @@ public class RegistrationActivity extends Activity {
 	}
 
 	class RegistrationTask extends AsyncTask<Void, Boolean, Boolean> {
+		private final List<StaticTimezone> countriesList;
+		
+		RegistrationTask(List<StaticTimezone> countriesList) {
+			this.countriesList = countriesList;
+		}
 
 		@Override
 		protected void onPreExecute() {
@@ -685,6 +640,7 @@ public class RegistrationActivity extends Activity {
 		Editor editor = prefs.edit();
 
 		if (prefs.getBoolean("saved", false)) {
+			List<StaticTimezone> countriesList = TimezoneUtils.getTimezones(this);
 			// ampm = prefs.getBoolean("am_pm", false);
 			// dateFormat = prefs.getString("date_format",
 			// DataManagement.ACCOUNT_BIRTHDATE_TIMESTAMP_FORMAT);

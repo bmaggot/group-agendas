@@ -56,14 +56,13 @@ import com.groupagendas.groupagenda.NavbarActivity;
 import com.groupagendas.groupagenda.R;
 import com.groupagendas.groupagenda.data.DataManagement;
 import com.groupagendas.groupagenda.error.report.Reporter;
-import com.groupagendas.groupagenda.events.EventActivity;
-import com.groupagendas.groupagenda.events.EventActivity.StaticTimezones;
 import com.groupagendas.groupagenda.timezone.CallCodeAdapter;
 import com.groupagendas.groupagenda.timezone.CountriesAdapter;
 import com.groupagendas.groupagenda.timezone.TimezonesAdapter;
 import com.groupagendas.groupagenda.utils.DateTimeUtils;
 import com.groupagendas.groupagenda.utils.LanguageCodeGetter;
-import com.groupagendas.groupagenda.utils.StringValueUtils;
+import com.groupagendas.groupagenda.utils.TimezoneUtils;
+import com.groupagendas.groupagenda.utils.TimezoneUtils.StaticTimezone;
 import com.groupagendas.groupagenda.utils.Utils;
 
 public class AccountActivity extends Activity implements OnClickListener {
@@ -120,10 +119,9 @@ public class AccountActivity extends Activity implements OnClickListener {
 	private final int DIALOG_ERROR = 5;
 	private String errorStr;
 
-	private ArrayList<StaticTimezones> countriesList = new ArrayList<StaticTimezones>(0);
-	private ArrayList<StaticTimezones> filteredCountriesList = new ArrayList<StaticTimezones>();
 	private CountriesAdapter countriesAdapter = null;
 	private TimezonesAdapter timezonesAdapter = null;
+	private CallCodeAdapter callcodesAdapter = null;
 	private int timezoneInUse = 0;
 	private LinearLayout countrySpinnerBlock;
 	private LinearLayout timezoneSpinnerBlock;
@@ -146,11 +144,17 @@ public class AccountActivity extends Activity implements OnClickListener {
 	private Button sex_button_female;
 	private Button sex_button_none;
 	private String sex = "";
-	private CallCodeAdapter callcodesAdapter;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+
+		if (countriesAdapter == null) {
+			List<StaticTimezone> countriesList = TimezoneUtils.getTimezones(this);
+			countriesAdapter = new CountriesAdapter(AccountActivity.this, R.layout.search_dialog_item, countriesList);
+			timezonesAdapter = new TimezonesAdapter(AccountActivity.this, R.layout.search_dialog_item, countriesList);
+			callcodesAdapter = new CallCodeAdapter(AccountActivity.this, R.layout.search_dialog_item, countriesList);
+		}
 	}
 
 	@Override
@@ -158,47 +162,6 @@ public class AccountActivity extends Activity implements OnClickListener {
 		super.onResume();
 		this.setContentView(R.layout.account);
 		final Account account = new Account(this);
-
-		// does not seem reasonable to re-initialize every single time
-		if (countriesList.isEmpty()) {
-			String[] cities;
-			String[] countries;
-			String[] countries2;
-			String[] country_codes;
-			String[] timezones;
-			String[] altnames;
-			String[] call_codes;
-
-			cities = getResources().getStringArray(R.array.city);
-			countries = getResources().getStringArray(R.array.countries);
-			countries2 = getResources().getStringArray(R.array.countries2);
-			country_codes = getResources().getStringArray(R.array.country_codes);
-			timezones = getResources().getStringArray(R.array.timezones);
-			altnames = getResources().getStringArray(R.array.timezone_altnames);
-			call_codes = getResources().getStringArray(R.array.call_codes);
-			
-			countriesList = new ArrayList<StaticTimezones>(cities.length);
-			for (int i = 0; i < cities.length; i++) {
-				// TODO what have I done?!
-				StaticTimezones temp = new EventActivity().new StaticTimezones();
-	
-				temp.id = StringValueUtils.valueOf(i);
-				temp.city = cities[i];
-				temp.country = countries[i];
-				temp.country2 = countries2[i];
-				temp.country_code = country_codes[i];
-				temp.timezone = timezones[i];
-				temp.altname = altnames[i];
-				temp.call_code = call_codes[i];
-	
-				countriesList.add(temp);
-			}
-			// if (countriesList != null) { // 
-				countriesAdapter = new CountriesAdapter(AccountActivity.this, R.layout.search_dialog_item, countriesList);
-				timezonesAdapter = new TimezonesAdapter(AccountActivity.this, R.layout.search_dialog_item, countriesList);
-				callcodesAdapter = new CallCodeAdapter(AccountActivity.this, R.layout.search_dialog_item, countriesList);
-			// }
-		}
 
 		email1View = (EditText) findViewById(R.id.email1View);
 		email2View = (EditText) findViewById(R.id.email2View);
@@ -459,19 +422,14 @@ public class AccountActivity extends Activity implements OnClickListener {
 
 					@Override
 					public void onItemClick(AdapterView<?> parent, View view, int pos, long arg3) {
+						List<StaticTimezone> countriesList = TimezoneUtils.getTimezones(AccountActivity.this);
+
 						timezoneInUse = Integer.parseInt(view.getTag().toString());
 						countryView.setText(countriesList.get(timezoneInUse).country2);
 						String countryCode = countriesList.get(timezoneInUse).country_code;
 
-						filteredCountriesList = new ArrayList<StaticTimezones>();
-
-						for (StaticTimezones tz : countriesList) {
-							if (tz.country_code.equalsIgnoreCase(countryCode)) {
-								filteredCountriesList.add(tz);
-							}
-						}
-
-						timezonesAdapter = new TimezonesAdapter(AccountActivity.this, R.layout.search_dialog_item, filteredCountriesList);
+						timezonesAdapter = new TimezonesAdapter(AccountActivity.this, R.layout.search_dialog_item,
+								TimezoneUtils.getTimezonesByCc(AccountActivity.this, countryCode));
 						timezonesAdapter.notifyDataSetChanged();
 
 						timezoneView.setText(countriesList.get(timezoneInUse).altname);
@@ -523,6 +481,7 @@ public class AccountActivity extends Activity implements OnClickListener {
 
 					@Override
 					public void onItemClick(AdapterView<?> arg0, View view, int pos, long arg3) {
+						List<StaticTimezone> countriesList = TimezoneUtils.getTimezones(AccountActivity.this);
 						timezoneInUse = Integer.parseInt(view.getTag().toString());
 						countryView.setText(countriesList.get(timezoneInUse).country2);
 						account.setCountry(countriesList.get(timezoneInUse).country_code);
@@ -673,10 +632,12 @@ public class AccountActivity extends Activity implements OnClickListener {
 			sex_button_none.setBackgroundResource(R.drawable.sex_button_right_c);
 		}
 
+		List<StaticTimezone> countriesList = TimezoneUtils.getTimezones(this);
+
 		// country
 		String country = account.getCountry(AccountActivity.this);
 		if (country.length() > 0) {
-			for (StaticTimezones entry : countriesList) {
+			for (StaticTimezone entry : countriesList) {
 				if (entry.country2.equalsIgnoreCase(country) || entry.country.equalsIgnoreCase(country)) {
 					timezoneInUse = Integer.parseInt(entry.id);
 				}
@@ -692,22 +653,15 @@ public class AccountActivity extends Activity implements OnClickListener {
 
 		// timezone
 		if (account.getTimezone().length() > 0) {
-			for (StaticTimezones entry : countriesList) {
+			for (StaticTimezone entry : countriesList) {
 				if (entry.timezone.equalsIgnoreCase(account.getTimezone()))
 					timezoneInUse = Integer.parseInt(entry.id);
 			}
 			// if (timezoneInUse > 0) {
 			String countryCode = countriesList.get(timezoneInUse).country_code;
 
-			filteredCountriesList = new ArrayList<StaticTimezones>();
-
-			for (StaticTimezones tz : countriesList) {
-				if (tz.country_code.equalsIgnoreCase(countryCode)) {
-					filteredCountriesList.add(tz);
-				}
-			}
-
-			timezonesAdapter = new TimezonesAdapter(AccountActivity.this, R.layout.search_dialog_item, filteredCountriesList);
+			timezonesAdapter = new TimezonesAdapter(AccountActivity.this, R.layout.search_dialog_item,
+					TimezoneUtils.getTimezonesByCc(this, countryCode));
 			timezonesAdapter.notifyDataSetChanged();
 
 			timezoneView.setText(countriesList.get(timezoneInUse).timezone);
@@ -876,11 +830,15 @@ public class AccountActivity extends Activity implements OnClickListener {
 		// Sex
 		mAccount.setSex(sex);
 
-		// Country
-		mAccount.setCountry(countriesList.get(timezoneInUse).country_code);
-
-		// Timezone
-		mAccount.setTimezone(countriesList.get(timezoneInUse).timezone);
+		{
+			List<StaticTimezone> countriesList = TimezoneUtils.getTimezones(this);
+	
+			// Country
+			mAccount.setCountry(countriesList.get(timezoneInUse).country_code);
+	
+			// Timezone
+			mAccount.setTimezone(countriesList.get(timezoneInUse).timezone);
+		}
 
 		// City, Street, Zip
 		temp = cityView.getText().toString();
@@ -1194,11 +1152,14 @@ public class AccountActivity extends Activity implements OnClickListener {
 		if(!account.getSex().equals(sex)){
 			chagesMade = true;
 		}
-		if(!account.getCountry(AccountActivity.this).equals("null") && !account.getCountry(AccountActivity.this).equals(countriesList.get(timezoneInUse).country_code)){
-			chagesMade = true;
-		}
-		if(!account.getTimezone().equals("null") && !account.getTimezone().equals(countriesList.get(timezoneInUse).timezone)){
-			chagesMade = true;
+		{
+			List<StaticTimezone> countriesList = TimezoneUtils.getTimezones(this);
+			if(!account.getCountry(AccountActivity.this).equals("null") && !account.getCountry(AccountActivity.this).equals(countriesList.get(timezoneInUse).country_code)){
+				chagesMade = true;
+			}
+			if(!account.getTimezone().equals("null") && !account.getTimezone().equals(countriesList.get(timezoneInUse).timezone)){
+				chagesMade = true;
+			}
 		}
 		if(!account.getCity().equals("null") && !account.getCity().equals(cityView.getText().toString())){
 			chagesMade = true;

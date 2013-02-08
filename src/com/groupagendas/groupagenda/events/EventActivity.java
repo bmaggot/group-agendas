@@ -2,6 +2,7 @@ package com.groupagendas.groupagenda.events;
 
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.List;
 
 import android.app.Activity;
 import android.app.DatePickerDialog;
@@ -37,6 +38,8 @@ import com.groupagendas.groupagenda.utils.DateTimeUtils;
 import com.groupagendas.groupagenda.utils.DrawingUtils;
 import com.groupagendas.groupagenda.utils.Prefs;
 import com.groupagendas.groupagenda.utils.StartEndDateTimeSelectDialog;
+import com.groupagendas.groupagenda.utils.TimezoneUtils;
+import com.groupagendas.groupagenda.utils.TimezoneUtils.StaticTimezone;
 
 public class EventActivity extends Activity {
 	public static final int DEFAULT_EVENT_DURATION_IN_MINS = 60;
@@ -146,10 +149,10 @@ public class EventActivity extends Activity {
 	protected static String selectedColor = Event.DEFAULT_COLOR;
 	
 	public static Event event;
-	public static ArrayList<StaticTimezones> countriesList = null;
-	public static ArrayList<StaticTimezones> filteredCountriesList = null;
+	// =========== REQUIRED FOR DateTimePicker ============
 	public static CountriesAdapter countriesAdapter = null;
 	public static TimezonesAdapter timezonesAdapter = null;
+	// ====================================================
 	protected InvitedAdapter invitedAdapter = null;
 	protected LinearLayout invitedPersonList;
 	protected ListView invitedPersonListView;
@@ -180,6 +183,10 @@ public class EventActivity extends Activity {
 		super.onCreate(savedInstanceState);
 		dtUtils = new DateTimeUtils(this);
 		newInvites = null;
+		
+		List<StaticTimezone> countriesList = TimezoneUtils.getTimezones(this);
+		countriesAdapter = new CountriesAdapter(this, R.layout.search_dialog_item, countriesList);
+		timezonesAdapter = new TimezonesAdapter(this, R.layout.search_dialog_item, countriesList);
 	}
 
 	@Override
@@ -188,6 +195,7 @@ public class EventActivity extends Activity {
 	}
 
 	protected Event setEventData(Event event) {
+		List<StaticTimezone> countriesList = TimezoneUtils.getTimezones(this);
 
 		if (timezoneInUse > 0) {
 			event.setTimezone(countriesList.get(timezoneInUse).timezone);
@@ -384,17 +392,6 @@ public class EventActivity extends Activity {
 		
 		accomodationViewBlock = (LinearLayout) findViewById(R.id.accomodationViewBlock);
 		accomodationViewBlock.setVisibility(View.GONE);
-	}
-
-	public class StaticTimezones {
-		public String id;
-		public String city;
-		public String country;
-		public String country2;
-		public String country_code;
-		public String timezone;
-		public String altname;
-		public String call_code;
 	}
 
 	protected void showInvitesView(Context context) {

@@ -1,7 +1,7 @@
 package com.groupagendas.groupagenda.utils;
 
-import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.List;
 
 import android.app.Activity;
 import android.app.DatePickerDialog;
@@ -23,11 +23,11 @@ import android.widget.ToggleButton;
 
 import com.groupagendas.groupagenda.R;
 import com.groupagendas.groupagenda.data.CalendarSettings;
-import com.groupagendas.groupagenda.events.EventActivity.StaticTimezones;
 import com.groupagendas.groupagenda.events.EventEditActivity;
 import com.groupagendas.groupagenda.events.NewEventActivity;
 import com.groupagendas.groupagenda.timezone.CountriesAdapter;
 import com.groupagendas.groupagenda.timezone.TimezonesAdapter;
+import com.groupagendas.groupagenda.utils.TimezoneUtils.StaticTimezone;
 
 public class DateTimeSelectActivity extends Activity implements OnClickListener {
 	public static final String ACTIVITY_TARGET_KEY = "ACTIVITY_TARGET";
@@ -57,8 +57,6 @@ public class DateTimeSelectActivity extends Activity implements OnClickListener 
 	private CountriesAdapter countriesAdapter;
 	private TimezonesAdapter timezonesAdapter;
 	private int timezoneInUse;
-	protected ArrayList<StaticTimezones> countriesList;
-	protected ArrayList<StaticTimezones> filteredCountriesList;
 	
 	private StartEndDateTimeSelectDialog dateTimeDialog;
 
@@ -116,6 +114,7 @@ public class DateTimeSelectActivity extends Activity implements OnClickListener 
 		countryView = (TextView) findViewById(R.id.countryView);
 		allDayToggleButton = (ToggleButton) findViewById(R.id.allDayToggleButton);
 
+		List<StaticTimezone> countriesList = TimezoneUtils.getTimezones(this);
 		switch (target) {
 		case TARGET_NEW_EVENT:
 			ACTIVITY_TARGET = TARGET_NEW_EVENT;
@@ -127,8 +126,6 @@ public class DateTimeSelectActivity extends Activity implements OnClickListener 
 					.getTime()));
 			endTimeView.setText(dtUtils.formatTime(NewEventActivity.endCalendar));
 			endCalendar = (Calendar) NewEventActivity.endCalendar.clone();
-			countriesList = NewEventActivity.countriesList;
-			filteredCountriesList = NewEventActivity.filteredCountriesList;
 			timezoneInUse = NewEventActivity.timezoneInUse;
 			timezonesAdapter = NewEventActivity.timezonesAdapter;
 			countriesAdapter = NewEventActivity.countriesAdapter;
@@ -150,8 +147,6 @@ public class DateTimeSelectActivity extends Activity implements OnClickListener 
 					.getTime()));
 			endTimeView.setText(dtUtils.formatTime(EventEditActivity.endCalendar));
 			endCalendar = (Calendar) EventEditActivity.endCalendar.clone();
-			countriesList = EventEditActivity.countriesList;
-			filteredCountriesList = EventEditActivity.filteredCountriesList;
 			timezoneInUse = EventEditActivity.timezoneInUse;
 			timezonesAdapter = EventEditActivity.timezonesAdapter;
 			countriesAdapter = EventEditActivity.countriesAdapter;
@@ -187,6 +182,7 @@ public class DateTimeSelectActivity extends Activity implements OnClickListener 
 
 		int id = v.getId();
 
+		final List<StaticTimezone> countriesList = TimezoneUtils.getTimezones(this);
 		switch (id) {
 		case R.id.startDateView:
 			this.setTargets(startCalendar, startDateView, startTimeView);
@@ -217,14 +213,14 @@ public class DateTimeSelectActivity extends Activity implements OnClickListener 
 			case TARGET_NEW_EVENT:
 				NewEventActivity.setCalendar(startCalendar, endCalendar);
 				NewEventActivity.setTimezone(timezoneInUse);
-				NewEventActivity.filteredCountriesList = filteredCountriesList;
+				// NewEventActivity.filteredCountriesList = filteredCountriesList;
 				NewEventActivity.event.setIs_all_day(allDayToggleButton.isChecked());
 				finish();
 				break;
 			case TARGET_EVENT_EDIT:
 				EventEditActivity.setCalendar(startCalendar, endCalendar);
 				EventEditActivity.setTimezone(timezoneInUse);
-				EventEditActivity.filteredCountriesList = filteredCountriesList;
+				// EventEditActivity.filteredCountriesList = filteredCountriesList;
 				EventEditActivity.event.setIs_all_day(allDayToggleButton.isChecked());
 				finish();
 				break;
@@ -326,19 +322,12 @@ public class DateTimeSelectActivity extends Activity implements OnClickListener 
 				public void onItemClick(AdapterView<?> arg0, View view,
 						int pos, long arg3) {
 					timezoneInUse = Integer.parseInt(view.getTag().toString());
-					countryView.setText(countriesList.get(timezoneInUse).country2);
-
-					filteredCountriesList = new ArrayList<StaticTimezones>();
-
-					for (StaticTimezones tz : countriesList) {
-						if (tz.country_code.equalsIgnoreCase(countriesList.get(timezoneInUse).country_code)) {
-							filteredCountriesList.add(tz);
-						}
-					}
+					StaticTimezone st = countriesList.get(timezoneInUse);
+					countryView.setText(st.country2);
 
 					timezonesAdapter = new TimezonesAdapter(
 							DateTimeSelectActivity.this, R.layout.search_dialog_item,
-							filteredCountriesList);
+							TimezoneUtils.getTimezonesByCc(DateTimeSelectActivity.this, st.country_code));
 					timezonesAdapter.notifyDataSetChanged();
 
 					timezoneView.setText(countriesList.get(timezoneInUse).altname);
@@ -383,17 +372,11 @@ public class DateTimeSelectActivity extends Activity implements OnClickListener 
 				@Override
 				public void onItemClick(AdapterView<?> arg0, View view, int pos, long arg3) {
 					timezoneInUse = Integer.parseInt(view.getTag().toString());
-					countryView.setText(countriesList.get(timezoneInUse).country2);
+					StaticTimezone st = countriesList.get(timezoneInUse);
+					countryView.setText(st.country2);
 
-					filteredCountriesList = new ArrayList<StaticTimezones>();
-
-					for (StaticTimezones tz : countriesList) {
-						if (tz.country_code.equalsIgnoreCase(countriesList.get(timezoneInUse).country_code)) {
-							filteredCountriesList.add(tz);
-						}
-					}
-
-					timezonesAdapter = new TimezonesAdapter(DateTimeSelectActivity.this, R.layout.search_dialog_item, filteredCountriesList);
+					timezonesAdapter = new TimezonesAdapter(DateTimeSelectActivity.this, R.layout.search_dialog_item,
+							TimezoneUtils.getTimezonesByCc(DateTimeSelectActivity.this, st.country_code));
 					timezonesAdapter.notifyDataSetChanged();
 
 					timezoneView.setText(countriesList.get(timezoneInUse).altname);
