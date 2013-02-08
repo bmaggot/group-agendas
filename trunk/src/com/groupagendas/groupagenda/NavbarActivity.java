@@ -790,10 +790,14 @@ public class NavbarActivity extends FragmentActivity {
 					System.gc();
 
 				case 4: // Load event templates
-					// if (DataManagement.networkAvailable)
-					// dm.getTemplates();
-					// else
-					// dm.getTemplateFromLocalDb(0);
+					if (DataManagement.networkAvailable) {
+						DataManagement.getTemplatesFromRemoteDb(NavbarActivity.this);
+					}
+					
+					if (doUneedSleep) {
+						try { Thread.sleep(3000); } catch(InterruptedException e) { e.printStackTrace(); }
+					}
+					
 					loadPhase++;
 					total = 60;
 					publishProgress(total);
@@ -847,7 +851,7 @@ public class NavbarActivity extends FragmentActivity {
 				progressDialog.setMessage(getString(R.string.loading_groups));
 				break;
 			case 50:
-				// progressDialog.setMessage(getString(R.string.loading_templates));
+				progressDialog.setMessage(getString(R.string.loading_templates));
 				break;
 			case 60:
 				progressDialog.setMessage(getString(R.string.loading_events));
