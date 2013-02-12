@@ -51,6 +51,7 @@ import com.groupagendas.groupagenda.SaveDeletedData;
 import com.groupagendas.groupagenda.account.Account;
 import com.groupagendas.groupagenda.account.AccountProvider;
 import com.groupagendas.groupagenda.address.Address;
+import com.groupagendas.groupagenda.address.AddressManagement;
 import com.groupagendas.groupagenda.address.AddressProvider;
 import com.groupagendas.groupagenda.address.AddressProvider.AMetaData.AddressesMetaData;
 import com.groupagendas.groupagenda.alarm.AlarmsManagement;
@@ -2194,6 +2195,9 @@ public class DataManagement {
 		DataManagement.getTemplatesFromRemoteDb(context);
 		
 		DataManagement.getAlarmsFromServer(context);
+		
+		AddressManagement.deleteAllAddressFromLocalDb(context);
+		AddressManagement.getAddressBookFromRemoteDb(context);
 
 	}
 	
