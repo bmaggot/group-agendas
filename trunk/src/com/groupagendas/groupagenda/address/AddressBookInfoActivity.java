@@ -30,12 +30,13 @@ import com.groupagendas.groupagenda.data.DataManagement;
 import com.groupagendas.groupagenda.data.EventManagement;
 import com.groupagendas.groupagenda.events.Event;
 import com.groupagendas.groupagenda.events.EventActivity;
+import com.groupagendas.groupagenda.metadata.impl.AddressMetaData.AddressTable;
 import com.groupagendas.groupagenda.timezone.CountriesAdapter;
 import com.groupagendas.groupagenda.timezone.TimezonesAdapter;
 import com.groupagendas.groupagenda.utils.TimezoneUtils;
 import com.groupagendas.groupagenda.utils.TimezoneUtils.StaticTimezone;
 
-public class AddressBookInfoActivity extends Activity {
+public class AddressBookInfoActivity extends Activity implements AddressTable {
 
 	private Address address;
 
@@ -92,7 +93,7 @@ public class AddressBookInfoActivity extends Activity {
 
 		if (action) {
 			long selectedAddressId = Long.parseLong(getIntent().getStringExtra("addressId"));
-			String where = AddressProvider.AMetaData.AddressesMetaData._ID + " = " + selectedAddressId;
+			String where = _ID + " = " + selectedAddressId;
 			address = AddressManagement.getAddressFromLocalDb(AddressBookInfoActivity.this, where);
 
 			if (address.getTimezone().length() > 0) {

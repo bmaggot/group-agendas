@@ -25,6 +25,8 @@ import com.groupagendas.groupagenda.events.Event;
 import com.groupagendas.groupagenda.events.EventsProvider;
 import com.groupagendas.groupagenda.events.EventsProvider.EMetaData.AlarmsMetaData;
 import com.groupagendas.groupagenda.events.Invited;
+import com.groupagendas.groupagenda.metadata.impl.AddressMetaData.AddressTable;
+import com.groupagendas.groupagenda.metadata.MetaUtils;
 import com.groupagendas.groupagenda.templates.Template;
 import com.groupagendas.groupagenda.templates.TemplatesProvider.TMetaData.TemplatesMetaData;
 
@@ -739,26 +741,13 @@ public class JSONUtils {
 	}
 	
 	public static Address createAddressFromJSON(Context context, JSONObject e) {
-		Address address = new Address();
 		try {
-			address.setId(e.getInt(AddressManagement.ADDRESS_ID));
-			address.setUser_id(e.getInt(AddressManagement.USER_ID));
-			address.setTitle(e.getString(AddressManagement.TITLE));
-			address.setStreet(e.getString(AddressManagement.STREET));
-			address.setCity(e.getString(AddressManagement.CITY));
-			address.setZip(e.getString(AddressManagement.ZIP));
-			address.setState(e.getString(AddressManagement.STATE));
-			address.setCountry(e.getString(AddressManagement.COUNTRY));
-			address.setTimezone(e.getString(AddressManagement.TIMEZONE));
-			address.setCountry_name(e.getString(AddressManagement.COUNTRY_NAME));
+			return MetaUtils.createFromJSON(e, AddressTable.class, Address.class);
 		} catch (JSONException e1) {
-			Reporter.reportError(context, AddressManagement.CLASS_NAME, Thread.currentThread().getStackTrace()[2].getMethodName().toString(),
+			Reporter.reportError(context, AddressManagement.class.getSimpleName(), Thread.currentThread().getStackTrace()[2].getMethodName().toString(),
 					e1.getMessage());
 		}
-		
-			
-			
-		return address;
+		return new Address();
 	}
 	
 	public static Alarm createAlarmFromJSONObject(JSONObject jsonObject, Context context) {

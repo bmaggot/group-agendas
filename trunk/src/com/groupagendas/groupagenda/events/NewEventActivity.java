@@ -39,7 +39,6 @@ import com.groupagendas.groupagenda.address.Address;
 import com.groupagendas.groupagenda.address.AddressBookActivity;
 import com.groupagendas.groupagenda.address.AddressBookInfoActivity;
 import com.groupagendas.groupagenda.address.AddressManagement;
-import com.groupagendas.groupagenda.address.AddressProvider;
 import com.groupagendas.groupagenda.alarm.AlarmsManagement;
 import com.groupagendas.groupagenda.contacts.Contact;
 import com.groupagendas.groupagenda.contacts.ContactsActivity;
@@ -48,6 +47,7 @@ import com.groupagendas.groupagenda.data.ContactManagement;
 import com.groupagendas.groupagenda.data.Data;
 import com.groupagendas.groupagenda.data.DataManagement;
 import com.groupagendas.groupagenda.data.EventManagement;
+import com.groupagendas.groupagenda.metadata.impl.AddressMetaData;
 import com.groupagendas.groupagenda.templates.Template;
 import com.groupagendas.groupagenda.templates.TemplatesActivity;
 import com.groupagendas.groupagenda.timezone.TimezonesAdapter;
@@ -59,7 +59,7 @@ import com.groupagendas.groupagenda.utils.TimezoneUtils;
 import com.groupagendas.groupagenda.utils.TimezoneUtils.StaticTimezone;
 import com.groupagendas.groupagenda.utils.Utils;
 
-public class NewEventActivity extends EventActivity {
+public class NewEventActivity extends EventActivity implements AddressMetaData {
 	private static boolean timezoneFound = false;
 	
 	@SuppressWarnings("unused")
@@ -582,7 +582,7 @@ public class NewEventActivity extends EventActivity {
 		}
 		
 		if(AddressBookActivity.selectedAddressId > 0){
-			String where = AddressProvider.AMetaData.AddressesMetaData._ID + " = " + AddressBookActivity.selectedAddressId;
+			String where = AddressTable._ID + " = " + AddressBookActivity.selectedAddressId;
 			Address address = AddressManagement.getAddressFromLocalDb(NewEventActivity.this, where);
 			cityView.setText(address.getCity());
 			streetView.setText(address.getStreet());

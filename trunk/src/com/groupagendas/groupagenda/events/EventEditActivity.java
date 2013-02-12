@@ -56,7 +56,6 @@ import com.groupagendas.groupagenda.address.Address;
 import com.groupagendas.groupagenda.address.AddressBookActivity;
 import com.groupagendas.groupagenda.address.AddressBookInfoActivity;
 import com.groupagendas.groupagenda.address.AddressManagement;
-import com.groupagendas.groupagenda.address.AddressProvider;
 import com.groupagendas.groupagenda.alarm.Alarm;
 import com.groupagendas.groupagenda.alarm.AlarmsManagement;
 import com.groupagendas.groupagenda.chat.ChatMessageActivity;
@@ -68,6 +67,7 @@ import com.groupagendas.groupagenda.data.ContactManagement;
 import com.groupagendas.groupagenda.data.Data;
 import com.groupagendas.groupagenda.data.DataManagement;
 import com.groupagendas.groupagenda.data.EventManagement;
+import com.groupagendas.groupagenda.metadata.impl.AddressMetaData;
 import com.groupagendas.groupagenda.timezone.TimezonesAdapter;
 import com.groupagendas.groupagenda.utils.DateTimeSelectActivity;
 import com.groupagendas.groupagenda.utils.DateTimeUtils;
@@ -78,7 +78,7 @@ import com.groupagendas.groupagenda.utils.TimezoneUtils;
 import com.groupagendas.groupagenda.utils.TimezoneUtils.StaticTimezone;
 import com.groupagendas.groupagenda.utils.Utils;
 
-public class EventEditActivity extends EventActivity {
+public class EventEditActivity extends EventActivity implements AddressMetaData {
 	private static boolean dataLoaded = false;
 
 	private class GenericTextWatcher implements TextWatcher {
@@ -267,7 +267,7 @@ public class EventEditActivity extends EventActivity {
 			changesMade = true;
 			enableDisableButtons(changesMade);
 			if (AddressBookActivity.selectedAddressId > 0) {
-				String where = AddressProvider.AMetaData.AddressesMetaData._ID + " = " + AddressBookActivity.selectedAddressId;
+				String where = AddressTable._ID + " = " + AddressBookActivity.selectedAddressId;
 				Address address = AddressManagement.getAddressFromLocalDb(EventEditActivity.this, where);
 				cityView.setText(address.getCity());
 				streetView.setText(address.getStreet());
