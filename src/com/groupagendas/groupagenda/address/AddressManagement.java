@@ -242,6 +242,10 @@ public class AddressManagement {
 		String where = AddressProvider.AMetaData.AddressesMetaData.A_ID + "=" + address_id;
 		context.getContentResolver().delete(AddressProvider.AMetaData.AddressesMetaData.CONTENT_URI, where, null);
 	}
+	
+	public static void deleteAllAddressFromLocalDb(Context context) {
+		context.getContentResolver().delete(AddressProvider.AMetaData.AddressesMetaData.CONTENT_URI, null, null);
+	}
 
 	public static void updateAddressInLocalDb(Context context, Address address) {
 		String where = AddressProvider.AMetaData.AddressesMetaData._ID + "=" + address.getIdInternal();
