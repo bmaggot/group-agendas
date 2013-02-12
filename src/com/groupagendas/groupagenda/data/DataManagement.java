@@ -52,8 +52,6 @@ import com.groupagendas.groupagenda.account.Account;
 import com.groupagendas.groupagenda.account.AccountProvider;
 import com.groupagendas.groupagenda.address.Address;
 import com.groupagendas.groupagenda.address.AddressManagement;
-import com.groupagendas.groupagenda.address.AddressProvider;
-import com.groupagendas.groupagenda.address.AddressProvider.AMetaData.AddressesMetaData;
 import com.groupagendas.groupagenda.alarm.AlarmsManagement;
 import com.groupagendas.groupagenda.contacts.ContactsProvider;
 import com.groupagendas.groupagenda.contacts.Group;
@@ -62,6 +60,8 @@ import com.groupagendas.groupagenda.events.Event;
 import com.groupagendas.groupagenda.events.EventsProvider;
 import com.groupagendas.groupagenda.events.Invited;
 import com.groupagendas.groupagenda.https.WebService;
+import com.groupagendas.groupagenda.metadata.MetaUtils;
+import com.groupagendas.groupagenda.metadata.impl.AddressMetaData;
 import com.groupagendas.groupagenda.settings.AutoColorItem;
 import com.groupagendas.groupagenda.settings.AutoIconItem;
 import com.groupagendas.groupagenda.templates.Template;
@@ -73,7 +73,7 @@ import com.groupagendas.groupagenda.utils.Prefs;
 import com.groupagendas.groupagenda.utils.StringValueUtils;
 import com.groupagendas.groupagenda.utils.Utils;
 
-public class DataManagement {
+public class DataManagement implements AddressMetaData {
 	public static final int ID_INTERNAL = 0;
 	public static final int ID_EXTERNAL = 1;
 	
@@ -1850,23 +1850,13 @@ public class DataManagement {
 
 	// Addresses
 	public Address getAddressFromLocalDb(int addressId) {
-		Address address = new Address();
-		Uri uri = Uri.parse(AddressesMetaData.CONTENT_URI.toString() + "/" + addressId);
+		Uri uri = Uri.parse(MetaUtils.getContentUri(AddressTable.class) + "/" + addressId);
 		Cursor result = Data.getmContext().getContentResolver().query(uri, null, null, null, null);
 		if (result.moveToFirst()) {
-			address.setId(result.getInt(result.getColumnIndex(AddressesMetaData.A_ID)));
-			address.setUser_id(result.getInt(result.getColumnIndex(AddressesMetaData.USER_ID)));
-			address.setTitle(result.getString(result.getColumnIndex(AddressesMetaData.TITLE)));
-			address.setStreet(result.getString(result.getColumnIndex(AddressesMetaData.STREET)));
-			address.setCity(result.getString(result.getColumnIndex(AddressesMetaData.CITY)));
-			address.setZip(result.getString(result.getColumnIndex(AddressesMetaData.ZIP)));
-			address.setState(result.getString(result.getColumnIndex(AddressesMetaData.STATE)));
-			address.setCountry(result.getString(result.getColumnIndex(AddressesMetaData.COUNTRY)));
-			address.setTimezone(result.getString(result.getColumnIndex(AddressesMetaData.TIMEZONE)));
-			address.setCountry_name(result.getString(result.getColumnIndex(AddressesMetaData.COUNTRY_NAME)));
+			return MetaUtils.createFromCursor(result, AddressTable.class, Address.class);
 		}
 		result.close();
-		return address;
+		return new Address();
 	}
 
 	public ArrayList<Address> getAddressesFromRemoteDb(Context context) {
@@ -1900,23 +1890,7 @@ public class DataManagement {
 						for (int i = 0; i < count; i++) {
 							JSONObject e = es.getJSONObject(i);
 
-							address = new Address();
-
-							try {
-								address.setId(e.getInt("id"));
-								address.setUser_id(e.getInt("user_id"));
-								address.setTitle(e.getString("title"));
-								address.setStreet(e.getString("street"));
-								address.setCity(e.getString("city"));
-								address.setZip(e.getString("zip"));
-								address.setState(e.getString("state"));
-								address.setCountry(e.getString("country"));
-								address.setTimezone(e.getString("timezone"));
-								address.setCountry_name(e.getString("country_name"));
-							} catch (JSONException ex) {
-								Reporter.reportError(context, this.getClass().toString(), Thread.currentThread().getStackTrace()[2]
-										.getMethodName().toString(), ex.getMessage());
-							}
+							address = JSONUtils.createAddressFromJSON(context, e);
 							addresses.add(address);
 						}
 					}
@@ -1935,63 +1909,63 @@ public class DataManagement {
 			ContentValues cv = new ContentValues(10);
 
 			if (addressId != 0)
-				cv.put(AddressesMetaData.A_ID, addressId);
+				cv.put(AddressTable.A_ID, addressId);
 			else if (address.getId() > 0)
-				cv.put(AddressesMetaData.A_ID, address.getId());
+				cv.put(AddressTable.A_ID, address.getId());
 			else
-				cv.put(AddressesMetaData.A_ID, 0);
+				cv.put(AddressTable.A_ID, 0);
 
-			cv.put(AddressesMetaData.USER_ID, address.getUser_id());
+			cv.put(AddressTable.USER_ID, address.getUser_id());
 
 			if (address.getTitle() != null) {
-				cv.put(AddressesMetaData.TITLE, address.getTitle());
+				cv.put(AddressTable.TITLE, address.getTitle());
 			} else {
-				cv.put(AddressesMetaData.TITLE, "");
+				cv.put(AddressTable.TITLE, "");
 			}
 
 			if (address.getStreet() != null) {
-				cv.put(AddressesMetaData.STREET, address.getStreet());
+				cv.put(AddressTable.STREET, address.getStreet());
 			} else {
-				cv.put(AddressesMetaData.STREET, "");
+				cv.put(AddressTable.STREET, "");
 			}
 
 			if (address.getCity() != null) {
-				cv.put(AddressesMetaData.CITY, address.getCity());
+				cv.put(AddressTable.CITY, address.getCity());
 			} else {
-				cv.put(AddressesMetaData.CITY, "");
+				cv.put(AddressTable.CITY, "");
 			}
 
 			if (address.getZip() != null) {
-				cv.put(AddressesMetaData.ZIP, address.getZip());
+				cv.put(AddressTable.ZIP, address.getZip());
 			} else {
-				cv.put(AddressesMetaData.ZIP, "");
+				cv.put(AddressTable.ZIP, "");
 			}
 
 			if (address.getState() != null) {
-				cv.put(AddressesMetaData.STATE, address.getState());
+				cv.put(AddressTable.STATE, address.getState());
 			} else {
-				cv.put(AddressesMetaData.STATE, "");
+				cv.put(AddressTable.STATE, "");
 			}
 
 			if (address.getCountry() != null) {
-				cv.put(AddressesMetaData.COUNTRY, address.getCountry());
+				cv.put(AddressTable.COUNTRY, address.getCountry());
 			} else {
-				cv.put(AddressesMetaData.COUNTRY, "");
+				cv.put(AddressTable.COUNTRY, "");
 			}
 
 			if (address.getTimezone() != null) {
-				cv.put(AddressesMetaData.TIMEZONE, address.getTimezone());
+				cv.put(AddressTable.TIMEZONE, address.getTimezone());
 			} else {
-				cv.put(AddressesMetaData.TIMEZONE, "");
+				cv.put(AddressTable.TIMEZONE, "");
 			}
 
 			if (address.getCountry_name() != null) {
-				cv.put(AddressesMetaData.COUNTRY_NAME, address.getCountry_name());
+				cv.put(AddressTable.COUNTRY_NAME, address.getCountry_name());
 			} else {
-				cv.put(AddressesMetaData.COUNTRY_NAME, "");
+				cv.put(AddressTable.COUNTRY_NAME, "");
 			}
 
-			Data.getmContext().getContentResolver().insert(AddressesMetaData.CONTENT_URI, cv);
+			Data.getmContext().getContentResolver().insert(MetaUtils.getContentUri(AddressTable.class), cv);
 			success = true;
 		} catch (Exception e) {
 
@@ -2265,7 +2239,7 @@ public class DataManagement {
 		context.getContentResolver().delete(EventsProvider.EMetaData.EventsMetaData.CONTENT_URI, "", null);
 		context.getContentResolver().delete(EventsProvider.EMetaData.EventsIndexesMetaData.CONTENT_URI, "", null);
 		context.getContentResolver().delete(ContactsProvider.CMetaData.BirthdaysMetaData.CONTENT_URI, "", null);
-		context.getContentResolver().delete(AddressProvider.AMetaData.AddressesMetaData.CONTENT_URI, "", null);
+		context.getContentResolver().delete(MetaUtils.getContentUri(AddressTable.class), "", null);
 		// getContentResolver().delete(EventsProvider.EMetaData.InvitedMetaData.CONTENT_URI,
 		// "", null);
 		context.getContentResolver().getType(EventsProvider.EMetaData.EventsMetaData.CONTENT_URI);

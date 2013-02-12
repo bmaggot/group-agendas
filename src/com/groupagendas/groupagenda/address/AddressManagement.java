@@ -22,27 +22,15 @@ import com.groupagendas.groupagenda.SaveDeletedData;
 import com.groupagendas.groupagenda.SaveDeletedData.SDMetaData;
 import com.groupagendas.groupagenda.account.Account;
 import com.groupagendas.groupagenda.data.Data;
-import com.groupagendas.groupagenda.events.EventsProvider;
 import com.groupagendas.groupagenda.https.WebService;
+import com.groupagendas.groupagenda.metadata.MetaUtils;
+import com.groupagendas.groupagenda.metadata.impl.AddressMetaData;
 import com.groupagendas.groupagenda.utils.CharsetUtils;
 import com.groupagendas.groupagenda.utils.JSONUtils;
 import com.groupagendas.groupagenda.utils.StringValueUtils;
 
-public class AddressManagement {
-
-	public static final String CLASS_NAME = "AddressManagement.class";
+public class AddressManagement implements AddressMetaData {
 	public static final String DATA = "data";
-
-	public static final String ADDRESS_ID = "id";
-	public static final String USER_ID = "user_id";
-	public static final String TITLE = "title";
-	public static final String STREET = "street";
-	public static final String CITY = "city";
-	public static final String ZIP = "zip";
-	public static final String STATE = "state";
-	public static final String COUNTRY = "country";
-	public static final String TIMEZONE = "timezone";
-	public static final String COUNTRY_NAME = "country_name";
 
 	public static final int ID_INTERNAL = 0;
 	public static final int ID_EXTERNAL = 1;
@@ -83,7 +71,7 @@ public class AddressManagement {
 							address = JSONUtils.createAddressFromJSON(context, g);
 							if (address != null) {
 								address.setUploadedToServer(true);
-								context.getContentResolver().insert(AddressProvider.AMetaData.AddressesMetaData.CONTENT_URI,
+								context.getContentResolver().insert(MetaUtils.getContentUri(AddressTable.class),
 										createCVforAddressTable(address));
 							}
 						}
@@ -97,31 +85,17 @@ public class AddressManagement {
 	}
 
 	protected static ContentValues createCVforAddressTable(Address address) {
-		ContentValues cv = new ContentValues();
-		if (address.getId() != 0) {
-			cv.put(AddressProvider.AMetaData.AddressesMetaData.A_ID, address.getId());
-		} else {
-			address.setId((((int) Calendar.getInstance().getTimeInMillis()) * -1));
-			cv.put(AddressProvider.AMetaData.AddressesMetaData.A_ID, address.getId());
-		}
-		cv.put(AddressProvider.AMetaData.AddressesMetaData.USER_ID, address.getUser_id());
-		cv.put(AddressProvider.AMetaData.AddressesMetaData.TITLE, address.getTitle());
-		cv.put(AddressProvider.AMetaData.AddressesMetaData.STREET, address.getStreet());
-		cv.put(AddressProvider.AMetaData.AddressesMetaData.CITY, address.getCity());
-		cv.put(AddressProvider.AMetaData.AddressesMetaData.ZIP, address.getZip());
-		cv.put(AddressProvider.AMetaData.AddressesMetaData.STATE, address.getState());
-		cv.put(AddressProvider.AMetaData.AddressesMetaData.COUNTRY, address.getCountry());
-		cv.put(AddressProvider.AMetaData.AddressesMetaData.TIMEZONE, address.getTimezone());
-		cv.put(AddressProvider.AMetaData.AddressesMetaData.COUNTRY_NAME, address.getCountry_name());
-		cv.put(AddressProvider.AMetaData.AddressesMetaData.UPLOADED_SUCCESSFULLY, address.isUploadedToServer() ? 1 : 0);
-		return cv;
+		if (address.getId() == 0)
+			address.setId(((int) Calendar.getInstance().getTimeInMillis()) * -1);
+		
+		return MetaUtils.getContentValues(AddressTable.class, address);
 	}
 
 	public static ArrayList<Address> getAddressesFromLocalDb(Context context, String where) {
 		Cursor cur;
 		Address temp;
 
-		cur = context.getContentResolver().query(AddressProvider.AMetaData.AddressesMetaData.CONTENT_URI, null, where, null, null);
+		cur = context.getContentResolver().query(MetaUtils.getContentUri(AddressTable.class), null, where, null, null);
 		if (cur.getCount() < 1) {
 			Log.i("getAddressFromLocalDb()", "Empty or no response from local db.");
 		}
@@ -138,27 +112,12 @@ public class AddressManagement {
 	}
 
 	private static Address createAddressFromCursor(Cursor cursor) {
-		Address address = new Address();
-
-		address.setIdInternal(cursor.getInt(cursor.getColumnIndex(AddressProvider.AMetaData.AddressesMetaData._ID)));
-		address.setId(cursor.getInt(cursor.getColumnIndex(AddressProvider.AMetaData.AddressesMetaData.A_ID)));
-		address.setUser_id(cursor.getInt(cursor.getColumnIndex(AddressProvider.AMetaData.AddressesMetaData.USER_ID)));
-		address.setTitle(cursor.getString(cursor.getColumnIndex(AddressProvider.AMetaData.AddressesMetaData.TITLE)));
-		address.setStreet(cursor.getString(cursor.getColumnIndex(AddressProvider.AMetaData.AddressesMetaData.STREET)));
-		address.setCity(cursor.getString(cursor.getColumnIndex(AddressProvider.AMetaData.AddressesMetaData.CITY)));
-		address.setZip(cursor.getString(cursor.getColumnIndex(AddressProvider.AMetaData.AddressesMetaData.ZIP)));
-		address.setState(cursor.getString(cursor.getColumnIndex(AddressProvider.AMetaData.AddressesMetaData.STATE)));
-		address.setCountry(cursor.getString(cursor.getColumnIndex(AddressProvider.AMetaData.AddressesMetaData.COUNTRY)));
-		address.setTimezone(cursor.getString(cursor.getColumnIndex(AddressProvider.AMetaData.AddressesMetaData.TIMEZONE)));
-		address.setCountry_name(cursor.getString(cursor.getColumnIndex(AddressProvider.AMetaData.AddressesMetaData.COUNTRY_NAME)));
-		address.setUploadedToServer(1 == cursor.getInt(cursor.getColumnIndex(EventsProvider.EMetaData.EventsMetaData.UPLOADED_SUCCESSFULLY)));
-
-		return address;
+		return MetaUtils.createFromCursor(cursor, AddressTable.class, Address.class);
 	}
 
 	public static Address getAddressFromLocalDb(Context context, String where) {
 		Address item = new Address();
-		Cursor cur = context.getContentResolver().query(AddressProvider.AMetaData.AddressesMetaData.CONTENT_URI, null, where, null, null);
+		Cursor cur = context.getContentResolver().query(MetaUtils.getContentUri(AddressTable.class), null, where, null, null);
 		if (cur.moveToFirst()) {
 			item = createAddressFromCursor(cur);
 		}
@@ -239,28 +198,28 @@ public class AddressManagement {
 	}
 
 	public static void deleteAddressFromLocalDb(Context context, int address_id) {
-		String where = AddressProvider.AMetaData.AddressesMetaData.A_ID + "=" + address_id;
-		context.getContentResolver().delete(AddressProvider.AMetaData.AddressesMetaData.CONTENT_URI, where, null);
+		String where = AddressTable.A_ID + "=" + address_id;
+		context.getContentResolver().delete(MetaUtils.getContentUri(AddressTable.class), where, null);
 	}
 	
 	public static void deleteAllAddressFromLocalDb(Context context) {
-		context.getContentResolver().delete(AddressProvider.AMetaData.AddressesMetaData.CONTENT_URI, null, null);
+		context.getContentResolver().delete(MetaUtils.getContentUri(AddressTable.class), null, null);
 	}
 
 	public static void updateAddressInLocalDb(Context context, Address address) {
-		String where = AddressProvider.AMetaData.AddressesMetaData._ID + "=" + address.getIdInternal();
-		context.getContentResolver().update(AddressProvider.AMetaData.AddressesMetaData.CONTENT_URI, createCVforAddressTable(address),
+		String where = AddressTable._ID + "=" + address.getIdInternal();
+		context.getContentResolver().update(MetaUtils.getContentUri(AddressTable.class), createCVforAddressTable(address),
 				where, null);
 	}
 
 	public static void insertAddressInLocalDb(Context context, Address address) {
-		context.getContentResolver().insert(AddressProvider.AMetaData.AddressesMetaData.CONTENT_URI, createCVforAddressTable(address));
+		context.getContentResolver().insert(MetaUtils.getContentUri(AddressTable.class), createCVforAddressTable(address));
 	}
 
 	public static void uploadOfflineAddresses(Context context) {
 		String projection[] = null;
-		Uri uri = AddressProvider.AMetaData.AddressesMetaData.CONTENT_URI;
-		String where = AddressProvider.AMetaData.AddressesMetaData.UPLOADED_SUCCESSFULLY + " = '0'";
+		Uri uri = MetaUtils.getContentUri(AddressTable.class);
+		String where = AddressTable.UPLOADED_SUCCESSFULLY + " = '0'";
 		Cursor result = context.getContentResolver().query(uri, projection, where, null, null);
 		while (result.moveToNext()) {
 			Address address = createAddressFromCursor(result);
