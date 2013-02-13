@@ -69,6 +69,32 @@ public final class MetaUtils {
 		return Collections.unmodifiableMap(allColumns);
 	}
 	
+	private static String valueOf(Field f) {
+		try {
+			return StringValueUtils.valueOf(f.get(null));
+		} catch (Exception e) {
+			Log.e(MetaUtils.class.getSimpleName(),
+					"An invalid field is annotated as TableColumn: " + f.getName() +
+					" in class " + f.getDeclaringClass().getName(), e);
+			return null;
+		}
+	}
+	
+	private static Method getSetter(Class<?> type, String name, Object val) throws NoSuchMethodException {
+		Method setter;
+		try {
+			setter = type.getMethod(name, val.getClass());
+		} catch (NoSuchMethodException e) {
+			try {
+				Field primitive = val.getClass().getField("TYPE");
+				setter = type.getMethod(name, (Class<?>) primitive.get(null));
+			} catch (Exception innerE) {
+				throw e;
+			}
+		}
+		return setter;
+	}
+	
 	@SuppressWarnings("unchecked")
 	public static <T> T createFromCursor(Cursor cur, Class<? extends ITable> meta, Class<T> type) {
 		Table t = meta.getAnnotation(Table.class);
@@ -96,15 +122,9 @@ public final class MetaUtils {
 			if (tc == null)
 				continue;
 			
-			String colName;
-			try {
-				colName = StringValueUtils.valueOf(f.get(null));
-			} catch (Exception e) {
-				Log.e(MetaUtils.class.getSimpleName(),
-						"An invalid field is annotated as TableColumn: " + f.getName() +
-						" in class " + meta.getName(), e);
+			String colName = valueOf(f);
+			if (colName == null)
 				continue;
-			}
 			
 			int idx = cur.getColumnIndex(colName);
 			
@@ -132,24 +152,12 @@ public final class MetaUtils {
 					}
 				}
 				
-				// TODO: TEST WITH TURKISH LOCALE (i->I)
 				String setName = tc.bindingSetterAlias();
 				if (setName.length() == 0)
 					setName = generateMethodName("set", colName);
-				Method setter;
-				try {
-					setter = type.getMethod(setName, val.getClass());
-				} catch (NoSuchMethodException e) {
-					try {
-						Field primitive = val.getClass().getField("TYPE");
-						setter = type.getMethod(setName, (Class<?>) primitive.get(null));
-					} catch (Exception innerE) {
-						throw e;
-					}
-				}
-				setter.invoke(result, val);
 				
-				// Log.d(MetaUtils.class.getSimpleName(), colName + " = " + val);
+				Method setter = getSetter(type, setName, val);
+				setter.invoke(result, val);
 			} catch (Exception e) {
 				Log.e(MetaUtils.class.getSimpleName(),
 						"Failed binding column " + colName + ", possibly invalid definition", e);
@@ -173,15 +181,9 @@ public final class MetaUtils {
 				if (tc == null || tc.excludeFromCV())
 					continue;
 				
-				String colName;
-				try {
-					colName = StringValueUtils.valueOf(f.get(null));
-				} catch (Exception e) {
-					Log.e(MetaUtils.class.getSimpleName(),
-							"An invalid field is annotated as TableColumn: " + f.getName() +
-							" in class " + meta.getName(), e);
+				String colName = valueOf(f);
+				if (colName == null)
 					continue;
-				}
 				
 				String getName = tc.bindingGetterAlias();
 				if (getName.length() == 0)
@@ -262,15 +264,9 @@ public final class MetaUtils {
 			if (tc == null)
 				continue;
 			
-			String colName;
-			try {
-				colName = StringValueUtils.valueOf(f.get(null));
-			} catch (Exception e) {
-				Log.e(MetaUtils.class.getSimpleName(),
-						"An invalid field is annotated as TableColumn: " + f.getName() +
-						" in class " + meta.getName(), e);
+			String colName = valueOf(f);
+			if (colName == null)
 				continue;
-			}
 			
 			JSONType jt = tc.jsonType();
 			if (jt == JSONType.TRANSIENT)
@@ -318,11 +314,10 @@ public final class MetaUtils {
 					}
 				}
 				
-				// TODO: TEST WITH TURKISH LOCALE (i->I)
 				String setName = tc.bindingSetterAlias();
 				if (setName.length() == 0) 
 					setName = generateMethodName("set", colName);
-				Method setter = type.getMethod(setName, val.getClass());
+				Method setter = getSetter(type, setName, val);
 				setter.invoke(result, val);
 			}
 			catch (JSONException e) {
