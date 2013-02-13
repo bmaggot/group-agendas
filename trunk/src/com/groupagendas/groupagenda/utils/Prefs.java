@@ -241,4 +241,13 @@ public class Prefs {
 			return;
 		this._editor.commit();
 	}
+	
+	public interface CalendarElements {		
+		String SETTING_MORNING_START = "morning_start";
+		String SETTING_MORNING_END = "morning_end";
+		String SETTING_AFTERNOON_START = "afternoon_start";
+		String SETTING_AFTERNOON_END = "afternoon_end";
+		String SETTING_EVENING_START = "evening_start";
+		String SETTING_EVENING_END = "evening_end";
+	}
 }

@@ -6,14 +6,15 @@ package com.groupagendas.groupagenda.data;
 
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.util.Locale;
 
 import android.content.Context;
 
 import com.groupagendas.groupagenda.account.Account;
-import com.groupagendas.groupagenda.account.AccountProvider;
 import com.groupagendas.groupagenda.utils.Prefs;
+import com.groupagendas.groupagenda.utils.Prefs.CalendarElements;
 
-public class CalendarSettings {
+public class CalendarSettings implements CalendarElements {
 
 	public static final int[] DEFAULT_WEEKENDS = {1,7};
 	
@@ -30,7 +31,7 @@ public class CalendarSettings {
 																	// VIEW
 //	private static final boolean DEFAULT_AM_PM_SETTING = false;
 
-	private static SimpleDateFormat dateFormatter = new SimpleDateFormat(DEFAULT_DATE_FORMAT);
+	private static SimpleDateFormat dateFormatter = new SimpleDateFormat(DEFAULT_DATE_FORMAT, Locale.US);
 
 	public static int[] getWeekends() {
 		// TODO get weekends from account settings
@@ -142,37 +143,37 @@ public class CalendarSettings {
 	
 	public static int getMorningStart(Context context) {
 		Prefs prefs = new Prefs(context);
-		int timeInMillis = Integer.parseInt(prefs.getValue(AccountProvider.AMetaData.AccountMetaData.SETTING_MORNING_START, "30600000"));
+		int timeInMillis = Integer.parseInt(prefs.getValue(SETTING_MORNING_START, "30600000"));
 		return timeInMillis;
 	}
 	
 	public static int getMorningEnd(Context context) {
 		Prefs prefs = new Prefs(context);
-		int timeInMillis = Integer.parseInt(prefs.getValue(AccountProvider.AMetaData.AccountMetaData.SETTING_MORNING_END, "45000000"));
+		int timeInMillis = Integer.parseInt(prefs.getValue(SETTING_MORNING_END, "45000000"));
 		return timeInMillis;
 	}
 	
 	public static int getAfternoonStart(Context context) {
 		Prefs prefs = new Prefs(context);
-		int timeInMillis = Integer.parseInt(prefs.getValue(AccountProvider.AMetaData.AccountMetaData.SETTING_AFTERNOON_START, "46800000"));
+		int timeInMillis = Integer.parseInt(prefs.getValue(SETTING_AFTERNOON_START, "46800000"));
 		return timeInMillis;
 	}
 	
 	public static int getAfternoonEnd(Context context) {
 		Prefs prefs = new Prefs(context);
-		int timeInMillis = Integer.parseInt(prefs.getValue(AccountProvider.AMetaData.AccountMetaData.SETTING_AFTERNOON_END, "63000000"));
+		int timeInMillis = Integer.parseInt(prefs.getValue(SETTING_AFTERNOON_END, "63000000"));
 		return timeInMillis;
 	}
 	
 	public static int getEveningStart(Context context) {
 		Prefs prefs = new Prefs(context);
-		int timeInMillis = Integer.parseInt(prefs.getValue(AccountProvider.AMetaData.AccountMetaData.SETTING_EVENING_START, "70200000"));
+		int timeInMillis = Integer.parseInt(prefs.getValue(SETTING_EVENING_START, "70200000"));
 		return timeInMillis;
 	}
 	
 	public static int getEveningEnd(Context context) {
 		Prefs prefs = new Prefs(context);
-		int timeInMillis = Integer.parseInt(prefs.getValue(AccountProvider.AMetaData.AccountMetaData.SETTING_EVENING_END, "86340000"));
+		int timeInMillis = Integer.parseInt(prefs.getValue(SETTING_EVENING_END, "86340000"));
 		return timeInMillis;
 	}
 }

@@ -21,10 +21,11 @@ import android.widget.ImageView;
 import android.widget.ProgressBar;
 
 import com.groupagendas.groupagenda.R;
-import com.groupagendas.groupagenda.account.AccountProvider;
 import com.groupagendas.groupagenda.events.IconsAdapter;
+import com.groupagendas.groupagenda.metadata.MetaUtils;
+import com.groupagendas.groupagenda.metadata.impl.AutoColorIconMetaData;
 
-public class EditAutoIconActivity extends Activity {
+public class EditAutoIconActivity extends Activity implements AutoColorIconMetaData {
 	
 	private ProgressBar pb;
 	
@@ -99,18 +100,19 @@ public class EditAutoIconActivity extends Activity {
 			super.onPreExecute();
 			pb.setVisibility(View.VISIBLE);
 		}
+		
 		@Override
 		protected Void doInBackground(Void... arg0) {
 			ContentValues values = new ContentValues();
-			values.put(AccountProvider.AMetaData.AutoiconMetaData.ICON, mItem.icon);
-			values.put(AccountProvider.AMetaData.AutoiconMetaData.KEYWORD, keywordView.getText().toString());
+			values.put(AutoIcon.ICON, mItem.icon);
+			values.put(AutoIcon.KEYWORD, keywordView.getText().toString());
 			
-			if(getIntent().getBooleanExtra("edit", false)){
-				Uri uri = Uri.parse(AccountProvider.AMetaData.AutoiconMetaData.CONTENT_URI+"/"+mItem.id);
+			if (getIntent().getBooleanExtra("edit", false)) {
+				Uri uri = Uri.parse(MetaUtils.getContentUri(AutoIcon.class) + "/" + mItem.id);
 				getContentResolver().update(uri, values, null, null);
-			}else{
-				values.put(AccountProvider.AMetaData.AutoiconMetaData.CONTEXT, "title");
-				getContentResolver().insert(AccountProvider.AMetaData.AutoiconMetaData.CONTENT_URI, values);
+			} else {
+				values.put(AutoIcon.CONTEXT, "title");
+				getContentResolver().insert(MetaUtils.getContentUri(AutoIcon.class), values);
 			}
 
 			Intent intent = new Intent();
@@ -118,6 +120,7 @@ public class EditAutoIconActivity extends Activity {
 			finish();
 			return null;
 		}
+		
 		@Override
 		protected void onPostExecute(Void result) {
 			super.onPostExecute(result);
@@ -136,7 +139,7 @@ public class EditAutoIconActivity extends Activity {
 	public boolean onOptionsItemSelected(MenuItem item) {
 	    switch (item.getItemId()) {
 	        case R.id.delete_icon:
-	        	Uri uri = Uri.parse(AccountProvider.AMetaData.AutoiconMetaData.CONTENT_URI+"/"+mItem.id);
+	        	Uri uri = Uri.parse(MetaUtils.getContentUri(AutoIcon.class) + "/" + mItem.id);
 	        	getContentResolver().delete(uri, null, null);
 	        	
 	        	Intent intent = new Intent();

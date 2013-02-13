@@ -1,120 +1,120 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="fill_parent"
-    android:layout_height="fill_parent"
-    android:background="@android:color/white" >
+	android:layout_width="fill_parent"
+	android:layout_height="fill_parent"
+	android:background="@android:color/white" >
 
-    <RelativeLayout
-        android:id="@+id/topBar"
-        android:layout_width="fill_parent"
-        android:layout_height="50dp"
-        android:layout_alignParentTop="true"
-        android:layout_centerHorizontal="true"
-        android:layout_centerVertical="true"
-        android:background="@drawable/top_bar_background" >
+	<RelativeLayout
+		android:id="@+id/topBar"
+		android:layout_width="fill_parent"
+		android:layout_height="50dp"
+		android:layout_alignParentTop="true"
+		android:layout_centerHorizontal="true"
+		android:layout_centerVertical="true"
+		android:background="@drawable/top_bar_background" >
 
-        <TextView
-            android:id="@+id/topText"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_centerInParent="true"
-            android:text="@string/auto_color"
-            android:textColor="@android:color/white"
-            android:textSize="20dp"
-            android:textStyle="bold" />
+		<TextView
+			android:id="@+id/topText"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:layout_centerInParent="true"
+			android:text="@string/auto_icon"
+			android:textColor="@android:color/white"
+			android:textSize="20dp"
+			android:textStyle="bold" />
 
-        <ProgressBar
-            android:id="@+id/progress"
-            style="@android:style/Widget.ProgressBar.Small"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentRight="true"
-            android:layout_centerInParent="true"
-            android:layout_marginRight="20dp"
-            android:visibility="gone" />
+		<ProgressBar
+			android:id="@+id/progress"
+			style="@android:style/Widget.ProgressBar.Small"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:layout_alignParentRight="true"
+			android:layout_centerInParent="true"
+			android:layout_marginRight="20dp"
+			android:visibility="gone" />
 
-        <Button
-            android:id="@+id/save_button"
-            android:layout_width="wrap_content"
-            android:layout_height="33dp"
-            android:layout_alignParentRight="true"
-            android:layout_marginRight="10dp"
-            android:layout_marginTop="8dp"
-            android:background="@drawable/contacts_save_import_button"
-            android:gravity="center"
-            android:paddingBottom="5dp"
-            android:paddingLeft="15dp"
-            android:paddingRight="15dp"
-            android:paddingTop="5dp"
-            android:shadowColor="@color/black"
-            android:shadowDx="0"
-            android:shadowDy="2"
-            android:shadowRadius="1.5"
-            android:text="@string/save"
-            android:textColor="@color/white"
-            android:textSize="14dp"
-            android:textStyle="bold"
-            android:visibility="gone" />
-    </RelativeLayout>
+		<Button
+			android:id="@+id/save_button"
+			android:layout_width="wrap_content"
+			android:layout_height="33dp"
+			android:layout_alignParentRight="true"
+			android:layout_marginRight="10dp"
+			android:layout_marginTop="8dp"
+			android:background="@drawable/contacts_save_import_button"
+			android:gravity="center"
+			android:paddingBottom="5dp"
+			android:paddingLeft="15dp"
+			android:paddingRight="15dp"
+			android:paddingTop="5dp"
+			android:shadowColor="@color/black"
+			android:shadowDx="0"
+			android:shadowDy="2"
+			android:shadowRadius="1.5"
+			android:text="@string/save"
+			android:textColor="@color/white"
+			android:textSize="14dp"
+			android:textStyle="bold"
+			android:visibility="gone" />
+	</RelativeLayout>
 
-    <LinearLayout
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/topBar"
-        android:focusableInTouchMode="true"
-        android:orientation="vertical"
-        android:padding="5dp" >
+	<LinearLayout
+		android:layout_width="fill_parent"
+		android:layout_height="wrap_content"
+		android:layout_below="@id/topBar"
+		android:focusableInTouchMode="true"
+		android:orientation="vertical"
+		android:padding="5dp" >
 
-        <LinearLayout
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:gravity="center_vertical"
-            android:orientation="horizontal"
-            android:paddingBottom="10dp"
-            android:paddingTop="10dp" >
+		<LinearLayout
+			android:layout_width="fill_parent"
+			android:layout_height="wrap_content"
+			android:gravity="center_vertical"
+			android:orientation="horizontal"
+			android:paddingBottom="10dp"
+			android:paddingTop="10dp" >
 
-            <ImageView
-                android:id="@+id/icon"
-                android:layout_width="40dp"
-                android:layout_height="40dp"
-                android:layout_marginRight="10dp"
-                android:background="@drawable/event_icon_placeholder"
-                android:scaleType="center"
-                android:contentDescription="@string/event_color_placeholder" />
+			<ImageView
+				android:id="@+id/icon"
+				android:layout_width="40dp"
+				android:layout_height="40dp"
+				android:layout_marginRight="10dp"
+				android:background="@drawable/event_icon_placeholder"
+				android:contentDescription="@string/event_color_placeholder"
+				android:scaleType="center" />
 
-            <EditText
-                android:id="@+id/keyword"
-                android:layout_width="0dp"
-                android:layout_height="40dp"
-                android:layout_weight="0.8"
-                android:background="@drawable/event_icon_placeholder"
-                android:hint="@string/title_desc"
-                android:inputType="text"
-                android:paddingTop="5dp"
-                android:paddingBottom="5dp"
-                android:paddingLeft="10dp"
-                android:paddingRight="10dp" />
-        </LinearLayout>
+			<EditText
+				android:id="@+id/keyword"
+				android:layout_width="0dp"
+				android:layout_height="40dp"
+				android:layout_weight="0.8"
+				android:background="@drawable/event_icon_placeholder"
+				android:hint="@string/title_desc"
+				android:inputType="text"
+				android:paddingBottom="5dp"
+				android:paddingLeft="10dp"
+				android:paddingRight="10dp"
+				android:paddingTop="5dp" />
+		</LinearLayout>
 
-        <TextView
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="15dp"
-            android:layout_marginRight="15dp"
-            android:gravity="center_horizontal"
-            android:text="@string/add_icon_text"
-            android:textColor="@android:color/black" />
+		<TextView
+			android:layout_width="fill_parent"
+			android:layout_height="wrap_content"
+			android:layout_marginLeft="15dp"
+			android:layout_marginRight="15dp"
+			android:gravity="center_horizontal"
+			android:text="@string/add_icon_text"
+			android:textColor="@android:color/black" />
 
-        <Button
-            android:id="@+id/saveButton"
-            android:layout_width="fill_parent"
-            android:layout_height="40dp"
-            android:layout_marginTop="5dp"
-            android:background="@drawable/event_invite_people_button_standalone"
-            android:text="@string/save"
-            android:textColor="@color/lighter_blue"
-            android:textSize="16dp"
-            android:textStyle="bold" />
-    </LinearLayout>
+		<Button
+			android:id="@+id/saveButton"
+			android:layout_width="fill_parent"
+			android:layout_height="40dp"
+			android:layout_marginTop="5dp"
+			android:background="@drawable/event_invite_people_button_standalone"
+			android:text="@string/save"
+			android:textColor="@color/lighter_blue"
+			android:textSize="16dp"
+			android:textStyle="bold" />
+	</LinearLayout>
 
 </RelativeLayout>
