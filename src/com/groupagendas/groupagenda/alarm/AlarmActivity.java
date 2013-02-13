@@ -130,7 +130,7 @@ public class AlarmActivity extends Activity {
 		protected Void doInBackground(Void... params) {
 			try {
 				WebService webService = new WebService(getApplicationContext());
-				HttpPost post = new HttpPost(Data.getServerUrl() + "mobile/alarms_dismiss");
+				HttpPost post = new HttpPost(Data.getServerUrl() + "mobile/alarms/dismiss");
 
 				MultipartEntity reqEntity = new MultipartEntity(HttpMultipartMode.BROWSER_COMPATIBLE);
 				CharsetUtils.addAllParts(reqEntity, "token", Data.getToken(getApplicationContext()), "event_id", eventId);
