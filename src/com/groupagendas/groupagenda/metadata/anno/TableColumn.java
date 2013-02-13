@@ -63,4 +63,5 @@ public @interface TableColumn {
 	//boolean jsonIgnoreMissing() default false;
 	//boolean constant() default false;
 	boolean excludeFromCV() default false;
+	boolean unbound() default false;
 }

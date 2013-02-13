@@ -49,7 +49,6 @@ import com.groupagendas.groupagenda.C2DMReceiver;
 import com.groupagendas.groupagenda.R;
 import com.groupagendas.groupagenda.SaveDeletedData;
 import com.groupagendas.groupagenda.account.Account;
-import com.groupagendas.groupagenda.account.AccountProvider;
 import com.groupagendas.groupagenda.address.Address;
 import com.groupagendas.groupagenda.address.AddressManagement;
 import com.groupagendas.groupagenda.alarm.AlarmsManagement;
@@ -62,6 +61,7 @@ import com.groupagendas.groupagenda.events.Invited;
 import com.groupagendas.groupagenda.https.WebService;
 import com.groupagendas.groupagenda.metadata.MetaUtils;
 import com.groupagendas.groupagenda.metadata.impl.AddressMetaData;
+import com.groupagendas.groupagenda.metadata.impl.AutoColorIconMetaData;
 import com.groupagendas.groupagenda.settings.AutoColorItem;
 import com.groupagendas.groupagenda.settings.AutoIconItem;
 import com.groupagendas.groupagenda.templates.Template;
@@ -73,7 +73,7 @@ import com.groupagendas.groupagenda.utils.Prefs;
 import com.groupagendas.groupagenda.utils.StringValueUtils;
 import com.groupagendas.groupagenda.utils.Utils;
 
-public class DataManagement implements AddressMetaData {
+public class DataManagement implements AddressMetaData, AutoColorIconMetaData {
 	public static final int ID_INTERNAL = 0;
 	public static final int ID_EXTERNAL = 1;
 	
@@ -762,31 +762,31 @@ public class DataManagement implements AddressMetaData {
 
 							// autoicons and autocolors
 							Data.getmContext().getContentResolver()
-									.delete(AccountProvider.AMetaData.AutoiconMetaData.CONTENT_URI, "", null);
+									.delete(MetaUtils.getContentUri(AutoIcon.class), "", null);
 							JSONArray autoicons = object.getJSONArray("custom_icons");
 							for (int i = 0, l = autoicons.length(); i < l; i++) {
 								final JSONObject autoicon = autoicons.getJSONObject(i);
 								ContentValues values = new ContentValues(3);
-								values.put(AccountProvider.AMetaData.AutoiconMetaData.ICON, autoicon.getString("icon"));
-								values.put(AccountProvider.AMetaData.AutoiconMetaData.KEYWORD, autoicon.getString("keyword"));
-								values.put(AccountProvider.AMetaData.AutoiconMetaData.CONTEXT, autoicon.getString("context"));
+								values.put(AutoIcon.ICON, autoicon.getString("icon"));
+								values.put(AutoIcon.KEYWORD, autoicon.getString("keyword"));
+								values.put(AutoIcon.CONTEXT, autoicon.getString("context"));
 
 								Data.getmContext().getContentResolver()
-										.insert(AccountProvider.AMetaData.AutoiconMetaData.CONTENT_URI, values);
+										.insert(MetaUtils.getContentUri(AutoIcon.class), values);
 							}
 
 							Data.getmContext().getContentResolver()
-									.delete(AccountProvider.AMetaData.AutocolorMetaData.CONTENT_URI, "", null);
+									.delete(MetaUtils.getContentUri(AutoColor.class), "", null);
 							JSONArray autocolors = object.getJSONArray("custom_colors");
 							for (int i = 0, l = autocolors.length(); i < l; i++) {
 								final JSONObject autocolor = autocolors.getJSONObject(i);
 								ContentValues values = new ContentValues(3);
-								values.put(AccountProvider.AMetaData.AutocolorMetaData.COLOR, autocolor.getString("color"));
-								values.put(AccountProvider.AMetaData.AutocolorMetaData.KEYWORD, autocolor.getString("keyword"));
-								values.put(AccountProvider.AMetaData.AutocolorMetaData.CONTEXT, autocolor.getString("context"));
+								values.put(AutoColor.COLOR, autocolor.getString("color"));
+								values.put(AutoColor.KEYWORD, autocolor.getString("keyword"));
+								values.put(AutoColor.CONTEXT, autocolor.getString("context"));
 
 								Data.getmContext().getContentResolver()
-										.insert(AccountProvider.AMetaData.AutocolorMetaData.CONTENT_URI, values);
+										.insert(MetaUtils.getContentUri(AutoColor.class), values);
 							}
 							registerPhone(context);
 						} else {
@@ -956,12 +956,12 @@ public class DataManagement implements AddressMetaData {
 			CharsetUtils.addPart(reqEntity, TOKEN, Data.getToken(context));
 
 			Cursor result = Data.getmContext().getContentResolver()
-					.query(AccountProvider.AMetaData.AutoiconMetaData.CONTENT_URI, null, null, null, null);
+					.query(MetaUtils.getContentUri(AutoIcon.class), null, null, null, null);
 
 			for (int i = 1; result.moveToNext(); i++) {
-				CharsetUtils.addAllParts(reqEntity, "autoicon[" + i + "][icon]", result.getString(result.getColumnIndex(AccountProvider.AMetaData.AutoiconMetaData.ICON)),
-					"autoicon[" + i + "][keyword]", result.getString(result.getColumnIndex(AccountProvider.AMetaData.AutoiconMetaData.KEYWORD)),
-					"autoicon[" + i + "][context]", result.getString(result.getColumnIndex(AccountProvider.AMetaData.AutoiconMetaData.CONTEXT)));
+				CharsetUtils.addAllParts(reqEntity, "autoicon[" + i + "][icon]", result.getString(result.getColumnIndex(AutoIcon.ICON)),
+					"autoicon[" + i + "][keyword]", result.getString(result.getColumnIndex(AutoIcon.KEYWORD)),
+					"autoicon[" + i + "][context]", result.getString(result.getColumnIndex(AutoIcon.CONTEXT)));
 			}
 
 			post.setEntity(reqEntity);
@@ -990,18 +990,11 @@ public class DataManagement implements AddressMetaData {
 	}
 
 	public static ArrayList<AutoIconItem> getAutoIcons(Context context) {
-		Cursor result = context.getContentResolver().query(AccountProvider.AMetaData.AutoiconMetaData.CONTENT_URI, null, null, null, null);
+		Cursor result = context.getContentResolver().query(MetaUtils.getContentUri(AutoIcon.class), null, null, null, null);
 		ArrayList<AutoIconItem> Items = new ArrayList<AutoIconItem>(result.getCount());
 
 		while (result.moveToNext()) {
-
-			final AutoIconItem item = new AutoIconItem();
-
-			item.id = result.getInt(result.getColumnIndex(AccountProvider.AMetaData.AutoiconMetaData.I_ID));
-			item.icon = result.getString(result.getColumnIndex(AccountProvider.AMetaData.AutoiconMetaData.ICON));
-			item.keyword = result.getString(result.getColumnIndex(AccountProvider.AMetaData.AutoiconMetaData.KEYWORD));
-			item.context = result.getString(result.getColumnIndex(AccountProvider.AMetaData.AutoiconMetaData.CONTEXT));
-
+			final AutoIconItem item = MetaUtils.createFromCursor(result, AutoIcon.class, AutoIconItem.class);
 			Items.add(item);
 		}
 		result.close();
@@ -1020,12 +1013,12 @@ public class DataManagement implements AddressMetaData {
 			CharsetUtils.addPart(reqEntity, TOKEN, Data.getToken(context));
 
 			Cursor result = Data.getmContext().getContentResolver()
-					.query(AccountProvider.AMetaData.AutocolorMetaData.CONTENT_URI, null, null, null, null);
+					.query(MetaUtils.getContentUri(AutoColor.class), null, null, null, null);
 
 			for (int i = 1; result.moveToNext(); i++) {
-				CharsetUtils.addAllParts(reqEntity, "autoicon[" + i + "][color]", result.getString(result.getColumnIndex(AccountProvider.AMetaData.AutocolorMetaData.COLOR)),
-					"autoicon[" + i + "][keyword]", result.getString(result.getColumnIndex(AccountProvider.AMetaData.AutocolorMetaData.KEYWORD)),
-					"autoicon[" + i + "][context]", result.getString(result.getColumnIndex(AccountProvider.AMetaData.AutocolorMetaData.CONTEXT)));
+				CharsetUtils.addAllParts(reqEntity, "autoicon[" + i + "][color]", result.getString(result.getColumnIndex(AutoColor.COLOR)),
+					"autoicon[" + i + "][keyword]", result.getString(result.getColumnIndex(AutoColor.KEYWORD)),
+					"autoicon[" + i + "][context]", result.getString(result.getColumnIndex(AutoColor.CONTEXT)));
 			}
 
 			post.setEntity(reqEntity);
@@ -1054,16 +1047,10 @@ public class DataManagement implements AddressMetaData {
 	}
 
 	public static ArrayList<AutoColorItem> getAutoColors(Context context) {
-		Cursor result = context.getContentResolver().query(AccountProvider.AMetaData.AutocolorMetaData.CONTENT_URI, null, null, null, null);
+		Cursor result = context.getContentResolver().query(MetaUtils.getContentUri(AutoColor.class), null, null, null, null);
 		ArrayList<AutoColorItem> Items = new ArrayList<AutoColorItem>(result.getCount());
 		while (result.moveToNext()) {
-			final AutoColorItem item = new AutoColorItem();
-
-			item.id = result.getInt(result.getColumnIndex(AccountProvider.AMetaData.AutocolorMetaData.C_ID));
-			item.color = result.getString(result.getColumnIndex(AccountProvider.AMetaData.AutocolorMetaData.COLOR));
-			item.keyword = result.getString(result.getColumnIndex(AccountProvider.AMetaData.AutocolorMetaData.KEYWORD));
-			item.context = result.getString(result.getColumnIndex(AccountProvider.AMetaData.AutocolorMetaData.CONTEXT));
-
+			final AutoColorItem item = MetaUtils.createFromCursor(result, AutoColor.class, AutoColorItem.class);
 			Items.add(item);
 		}
 		result.close();
@@ -2232,7 +2219,11 @@ public class DataManagement implements AddressMetaData {
 	public static void clearAllData(Context context) {
 		Log.d("DataManagement.class", "clearing data");
 		// Delete old data
-		context.getContentResolver().delete(AccountProvider.AMetaData.AccountMetaData.CONTENT_URI, "", null);
+		{
+			// earlier this data would not be deleted, only the account table (obsolete)
+			context.getContentResolver().delete(MetaUtils.getContentUri(AutoColor.class), "", null);
+			context.getContentResolver().delete(MetaUtils.getContentUri(AutoIcon.class), "", null);
+		}
 		context.getContentResolver().delete(ContactsProvider.CMetaData.ContactsMetaData.CONTENT_URI, "", null);
 		context.getContentResolver().delete(ContactsProvider.CMetaData.GroupsMetaData.CONTENT_URI, "", null);
 		context.getContentResolver().delete(TemplatesProvider.TMetaData.TemplatesMetaData.CONTENT_URI, "", null);

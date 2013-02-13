@@ -2,11 +2,11 @@ package com.groupagendas.groupagenda.settings;
 
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.util.Locale;
 
 import android.app.Activity;
 import android.app.TimePickerDialog;
 import android.app.TimePickerDialog.OnTimeSetListener;
-import android.content.ContentValues;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.view.View;
@@ -21,11 +21,11 @@ import android.widget.ToggleButton;
 
 import com.groupagendas.groupagenda.R;
 import com.groupagendas.groupagenda.account.Account;
-import com.groupagendas.groupagenda.account.AccountProvider;
 import com.groupagendas.groupagenda.data.CalendarSettings;
 import com.groupagendas.groupagenda.data.DataManagement;
 import com.groupagendas.groupagenda.utils.DateTimeUtils;
 import com.groupagendas.groupagenda.utils.Prefs;
+import com.groupagendas.groupagenda.utils.Prefs.CalendarElements;
 import com.groupagendas.groupagenda.utils.Utils;
 
 public class CalendarSettingsActivity extends Activity implements OnClickListener {
@@ -80,9 +80,9 @@ public class CalendarSettingsActivity extends Activity implements OnClickListene
 			tmpCal.set(Calendar.MINUTE, mMinute);
 			
 			if (acc.getSetting_ampm() == 1) {
-				sdf = new SimpleDateFormat("hh:mm a");
+				sdf = new SimpleDateFormat("hh:mm a", Locale.US);
 			} else {
-				sdf = new SimpleDateFormat("HH:mm");
+				sdf = new SimpleDateFormat("HH:mm", Locale.US);
 			}
 			
 			time = sdf.format(tmpCal.getTime());
@@ -192,7 +192,7 @@ public class CalendarSettingsActivity extends Activity implements OnClickListene
 		eveningEndView.setOnClickListener(this);
 	}
 
-	class SaveTask extends AsyncTask<Void, Boolean, Boolean> {
+	class SaveTask extends AsyncTask<Void, Boolean, Boolean> implements CalendarElements {
 
 		@Override
 		protected void onPreExecute() {
@@ -203,43 +203,26 @@ public class CalendarSettingsActivity extends Activity implements OnClickListene
 
 		@Override
 		protected Boolean doInBackground(Void... params) {
-			boolean success = true;
-			
 			Account account = new Account(CalendarSettingsActivity.this);
 
 			int am_pm = am_pmToggle.isChecked() ? 1 : 0;
-			String am_pmStr = am_pmToggle.isChecked() ? "true" : "false";
 			String dateformat = dateformatArray[dateformatSpinner.getSelectedItemPosition()];
 			String defaultview = defaultviewArray[defaultviewSpinner.getSelectedItemPosition()];
 			
-
-			ContentValues values = new ContentValues();
-			values.put(AccountProvider.AMetaData.AccountMetaData.SETTING_AMPM, am_pm);
-			prefs.setValue(AccountProvider.AMetaData.AccountMetaData.SETTING_AMPM, am_pmStr);
-			values.put(AccountProvider.AMetaData.AccountMetaData.SETTING_DATE_FORMAT, dateformat);
-			prefs.setValue(AccountProvider.AMetaData.AccountMetaData.SETTING_DATE_FORMAT, dateformat);
-			values.put(AccountProvider.AMetaData.AccountMetaData.SETTING_DEFAULT_VIEW, defaultview);
-			prefs.setValue(AccountProvider.AMetaData.AccountMetaData.SETTING_DEFAULT_VIEW, defaultview);
-
-			prefs.setValue(AccountProvider.AMetaData.AccountMetaData.SETTING_MORNING_START, ""+daytimes[0]);
-			prefs.setValue(AccountProvider.AMetaData.AccountMetaData.SETTING_MORNING_END, ""+daytimes[1]);
-			prefs.setValue(AccountProvider.AMetaData.AccountMetaData.SETTING_AFTERNOON_START, ""+daytimes[2]);
-			prefs.setValue(AccountProvider.AMetaData.AccountMetaData.SETTING_AFTERNOON_END, ""+daytimes[3]);
-			prefs.setValue(AccountProvider.AMetaData.AccountMetaData.SETTING_EVENING_START, ""+daytimes[4]);
-			prefs.setValue(AccountProvider.AMetaData.AccountMetaData.SETTING_EVENING_END, ""+daytimes[5]);
+			prefs.setValue(SETTING_MORNING_START, ""+daytimes[0]);
+			prefs.setValue(SETTING_MORNING_END, ""+daytimes[1]);
+			prefs.setValue(SETTING_AFTERNOON_START, ""+daytimes[2]);
+			prefs.setValue(SETTING_AFTERNOON_END, ""+daytimes[3]);
+			prefs.setValue(SETTING_EVENING_START, ""+daytimes[4]);
+			prefs.setValue(SETTING_EVENING_END, ""+daytimes[5]);
 			
 			prefs.save();
 
-			success = dm.changeCalendarSettings(getApplicationContext(), am_pm, defaultview, dateformat);
+			dm.changeCalendarSettings(getApplicationContext(), am_pm, defaultview, dateformat);
 			//TODO this is temporary workaround for current account update. We should not store data in RAM, but get data from sqlite via providers when needed.
 			CalendarSettings.setDateFormat(getApplicationContext(), dateformat);
 			CalendarSettings.setUsing_AM_PM(getApplicationContext(), am_pmToggle.isChecked());
 			account.setSetting_default_view(defaultview);
-
-			if (!success) {
-				values.put(AccountProvider.AMetaData.AccountMetaData.NEED_UPDATE, 2);
-			}
-			getContentResolver().update(AccountProvider.AMetaData.AccountMetaData.CONTENT_URI, values, null, null);
 			return true;
 		}
 
@@ -263,7 +246,6 @@ public class CalendarSettingsActivity extends Activity implements OnClickListene
 		if (!account.getSetting_default_view().equals("null")) {
 			int pos = Utils.getArrayIndex(defaultviewArray, account.getSetting_default_view());
 			defaultviewSpinner.setSelection(pos);
-			prefs.setValue(AccountProvider.AMetaData.AccountMetaData.SETTING_DEFAULT_VIEW, account.getSetting_default_view());
 		}
 
 		if (!account.getSetting_date_format().equals("null")) {

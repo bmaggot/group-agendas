@@ -17,10 +17,11 @@ import android.widget.ListView;
 import android.widget.ProgressBar;
 
 import com.groupagendas.groupagenda.R;
-import com.groupagendas.groupagenda.account.AccountProvider;
 import com.groupagendas.groupagenda.data.DataManagement;
+import com.groupagendas.groupagenda.metadata.MetaUtils;
+import com.groupagendas.groupagenda.metadata.impl.AutoColorIconMetaData;
 
-public class AutoIconActivity extends ListActivity{
+public class AutoIconActivity extends ListActivity implements AutoColorIconMetaData {
 	private ProgressBar pb;
 	private ArrayList<AutoIconItem> mItems;
 	
@@ -79,11 +80,11 @@ public class AutoIconActivity extends ListActivity{
 		@Override
 		protected void onPostExecute(Boolean success) {
 			super.onPostExecute(success);
-			if(!success){
+			if (!success) {
 				ContentValues values = new ContentValues();
 				
-				values.put(AccountProvider.AMetaData.AutoiconMetaData.NEED_UPDATE, 1);				
-				getContentResolver().update(AccountProvider.AMetaData.AutoiconMetaData.CONTENT_URI, values, "", null);
+				values.put(AutoIcon.NEED_UPDATE, 1);				
+				getContentResolver().update(MetaUtils.getContentUri(AutoIcon.class), values, "", null);
 			}
 		}
 	}

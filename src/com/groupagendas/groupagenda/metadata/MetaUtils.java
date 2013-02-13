@@ -119,7 +119,7 @@ public final class MetaUtils {
 		
 		for (Field f : meta.getFields()) {
 			TableColumn tc = f.getAnnotation(TableColumn.class);
-			if (tc == null)
+			if (tc == null || tc.unbound())
 				continue;
 			
 			String colName = valueOf(f);
@@ -178,7 +178,7 @@ public final class MetaUtils {
 			
 			for (Field f : meta.getFields()) {
 				TableColumn tc = f.getAnnotation(TableColumn.class);
-				if (tc == null || tc.excludeFromCV())
+				if (tc == null || tc.unbound() || tc.excludeFromCV())
 					continue;
 				
 				String colName = valueOf(f);
@@ -261,7 +261,7 @@ public final class MetaUtils {
 		
 		for (Field f : meta.getFields()) {
 			TableColumn tc = f.getAnnotation(TableColumn.class);
-			if (tc == null)
+			if (tc == null || tc.unbound())
 				continue;
 			
 			String colName = valueOf(f);

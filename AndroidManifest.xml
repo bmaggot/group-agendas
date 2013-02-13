@@ -1,366 +1,366 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
-    package="com.groupagendas.groupagenda"
-    android:versionCode="17"
-    android:versionName="0.96" >
+	xmlns:tools="http://schemas.android.com/tools"
+	package="com.groupagendas.groupagenda"
+	android:versionCode="17"
+	android:versionName="0.96" >
 
-    <uses-sdk
-        android:minSdkVersion="7"
-        android:targetSdkVersion="17"/>
+	<uses-sdk
+		android:minSdkVersion="7"
+		android:targetSdkVersion="17" />
 
-    <permission
-        android:name="com.groupagendas.groupagenda.permission.C2D_MESSAGE"
-        android:protectionLevel="signature" />
+	<permission
+		android:name="com.groupagendas.groupagenda.permission.C2D_MESSAGE"
+		android:protectionLevel="signature" />
 
-    <uses-permission android:name="com.groupagendas.groupagenda.permission.C2D_MESSAGE" />
-    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
-    <uses-permission android:name="com.google.android.c2dm.permission.RECEIVE" />
-    <uses-permission android:name="android.permission.WAKE_LOCK" />
-    <uses-permission android:name="android.permission.GET_ACCOUNTS" />
-    <uses-permission android:name="android.permission.INTERNET" />
-    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
-    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
-    <uses-permission android:name="android.permission.READ_CALENDAR" />
-    <uses-permission android:name="android.permission.READ_PHONE_STATE" />
-    <uses-permission android:name="android.permission.USE_CREDENTIALS" />
-    <uses-permission android:name="android.permission.VIBRATE" />
-    <uses-permission android:name="android.permission.READ_CONTACTS" />
-    <uses-permission android:name="android.permission.READ_CALENDAR" />
+	<uses-permission android:name="com.groupagendas.groupagenda.permission.C2D_MESSAGE" />
+	<uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+	<uses-permission android:name="com.google.android.c2dm.permission.RECEIVE" />
+	<uses-permission android:name="android.permission.WAKE_LOCK" />
+	<uses-permission android:name="android.permission.GET_ACCOUNTS" />
+	<uses-permission android:name="android.permission.INTERNET" />
+	<uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+	<uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+	<uses-permission android:name="android.permission.READ_CALENDAR" />
+	<uses-permission android:name="android.permission.READ_PHONE_STATE" />
+	<uses-permission android:name="android.permission.USE_CREDENTIALS" />
+	<uses-permission android:name="android.permission.VIBRATE" />
+	<uses-permission android:name="android.permission.READ_CONTACTS" />
+	<uses-permission android:name="android.permission.READ_CALENDAR" />
 
-    <application
-        android:name=".AgendaApplication"
-        android:icon="@drawable/ic_launcher"
-        android:allowBackup="false"
-        android:allowClearUserData="false"
-        android:label="@string/app_name" >
-        <service android:name=".C2DMReceiver" />
+	<application
+		android:name=".AgendaApplication"
+		android:allowBackup="false"
+		android:allowClearUserData="false"
+		android:icon="@drawable/ic_launcher"
+		android:label="@string/app_name" >
+		<service android:name=".C2DMReceiver" />
 
-        <receiver
-            android:name="com.google.android.c2dm.C2DMReceiver"
-            android:permission="com.google.android.c2dm.permission.SEND" >
-            <intent-filter>
-                <action android:name="com.google.android.c2dm.intent.RECEIVE" />
+		<receiver
+			android:name="com.google.android.c2dm.C2DMReceiver"
+			android:permission="com.google.android.c2dm.permission.SEND" >
+			<intent-filter>
+				<action android:name="com.google.android.c2dm.intent.RECEIVE" />
 
-                <category android:name="com.groupagendas.groupagenda" />
-            </intent-filter>
-            <intent-filter>
-                <action android:name="com.google.android.c2dm.intent.REGISTRATION" />
+				<category android:name="com.groupagendas.groupagenda" />
+			</intent-filter>
+			<intent-filter>
+				<action android:name="com.google.android.c2dm.intent.REGISTRATION" />
 
-                <category android:name="com.groupagendas.groupagenda" />
-            </intent-filter>
-        </receiver>
-        <receiver android:name=".alarm.AlarmReceiver" />
+				<category android:name="com.groupagendas.groupagenda" />
+			</intent-filter>
+		</receiver>
+		<receiver android:name=".alarm.AlarmReceiver" />
 
-        <activity
-            android:name=".GroupAgendasActivity"
-            android:configChanges="keyboardHidden|orientation"
-            android:screenOrientation="portrait"
-            android:theme="@android:style/Theme.NoTitleBar" >
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
+		<activity
+			android:name=".GroupAgendasActivity"
+			android:configChanges="keyboardHidden|orientation"
+			android:screenOrientation="portrait"
+			android:theme="@android:style/Theme.NoTitleBar" >
+			<intent-filter>
+				<action android:name="android.intent.action.MAIN" />
 
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
-        </activity>
-        <activity
-            android:name="LoginActivity"
-            android:configChanges="keyboardHidden|orientation"
-            android:screenOrientation="portrait"
-            android:theme="@android:style/Theme.NoTitleBar"
-            android:windowSoftInputMode="stateVisible" >
-        </activity>
-        <activity
-            android:name="EventActivity"
-            android:configChanges="keyboardHidden|orientation"
-            android:excludeFromRecents="true"
-            android:label="You have messages"
-            android:launchMode="singleTask"
-            android:screenOrientation="portrait"
-            android:taskAffinity="" >
-        </activity>
-        <activity
-            android:name=".contacts.ContactsActivity"
-            android:configChanges="keyboardHidden|orientation"
-            android:screenOrientation="portrait"
-            android:theme="@android:style/Theme.NoTitleBar" >
-        </activity>
-        <activity
-            android:name=".contacts.GroupContactsActivity"
-            android:configChanges="keyboardHidden|orientation"
-            android:screenOrientation="portrait"
-            android:theme="@android:style/Theme.NoTitleBar" >
-        </activity>
-        <activity
-            android:name=".contacts.ContactInfoActivity"
-            android:configChanges="keyboardHidden|orientation"
-            android:screenOrientation="portrait"
-            android:theme="@android:style/Theme.NoTitleBar" >
-        </activity>
-        <activity
-            android:name=".contacts.GroupEditActivity"
-            android:configChanges="keyboardHidden|orientation"
-            android:screenOrientation="portrait"
-            android:theme="@android:style/Theme.NoTitleBar" >
-        </activity>
-        <activity
-            android:name=".contacts.ContactEditActivity"
-            android:configChanges="keyboardHidden|orientation"
-            android:screenOrientation="portrait"
-            android:theme="@android:style/Theme.NoTitleBar" >
-        </activity>
-        <activity
-            android:name="NavbarActivity"
-            android:configChanges="keyboardHidden|orientation"
-            android:screenOrientation="portrait"
-            android:theme="@android:style/Theme.NoTitleBar" >
-        </activity>
-        <activity
-            android:name=".events.EventsActivity"
-            android:configChanges="keyboardHidden|orientation"
-            android:screenOrientation="portrait"
-            android:theme="@android:style/Theme.NoTitleBar" >
-        </activity>
-        <activity
-            android:name=".events.ResponsesActivity"
-            android:configChanges="keyboardHidden|orientation"
-            android:screenOrientation="portrait"
-            android:theme="@android:style/Theme.NoTitleBar" >
-        </activity>
-        <activity
-            android:name=".events.EventEditActivity"
-            android:configChanges="keyboardHidden|orientation"
-            android:screenOrientation="portrait"
-            android:theme="@android:style/Theme.NoTitleBar" >
-        </activity>
-        <activity
-            android:name=".settings.SettingsActivity"
-            android:configChanges="keyboardHidden|orientation"
-            android:screenOrientation="portrait"
-            android:theme="@android:style/Theme.NoTitleBar" >
-        </activity>
-        <activity
-            android:name=".account.AccountActivity"
-            android:configChanges="keyboardHidden|orientation"
-            android:screenOrientation="portrait"
-            android:theme="@android:style/Theme.NoTitleBar" >
-        </activity>
+				<category android:name="android.intent.category.LAUNCHER" />
+			</intent-filter>
+		</activity>
+		<activity
+			android:name="LoginActivity"
+			android:configChanges="keyboardHidden|orientation"
+			android:screenOrientation="portrait"
+			android:theme="@android:style/Theme.NoTitleBar"
+			android:windowSoftInputMode="stateVisible" >
+		</activity>
+		<activity
+			android:name="EventActivity"
+			android:configChanges="keyboardHidden|orientation"
+			android:excludeFromRecents="true"
+			android:label="You have messages"
+			android:launchMode="singleTask"
+			android:screenOrientation="portrait"
+			android:taskAffinity="" >
+		</activity>
+		<activity
+			android:name=".contacts.ContactsActivity"
+			android:configChanges="keyboardHidden|orientation"
+			android:screenOrientation="portrait"
+			android:theme="@android:style/Theme.NoTitleBar" >
+		</activity>
+		<activity
+			android:name=".contacts.GroupContactsActivity"
+			android:configChanges="keyboardHidden|orientation"
+			android:screenOrientation="portrait"
+			android:theme="@android:style/Theme.NoTitleBar" >
+		</activity>
+		<activity
+			android:name=".contacts.ContactInfoActivity"
+			android:configChanges="keyboardHidden|orientation"
+			android:screenOrientation="portrait"
+			android:theme="@android:style/Theme.NoTitleBar" >
+		</activity>
+		<activity
+			android:name=".contacts.GroupEditActivity"
+			android:configChanges="keyboardHidden|orientation"
+			android:screenOrientation="portrait"
+			android:theme="@android:style/Theme.NoTitleBar" >
+		</activity>
+		<activity
+			android:name=".contacts.ContactEditActivity"
+			android:configChanges="keyboardHidden|orientation"
+			android:screenOrientation="portrait"
+			android:theme="@android:style/Theme.NoTitleBar" >
+		</activity>
+		<activity
+			android:name="NavbarActivity"
+			android:configChanges="keyboardHidden|orientation"
+			android:screenOrientation="portrait"
+			android:theme="@android:style/Theme.NoTitleBar" >
+		</activity>
+		<activity
+			android:name=".events.EventsActivity"
+			android:configChanges="keyboardHidden|orientation"
+			android:screenOrientation="portrait"
+			android:theme="@android:style/Theme.NoTitleBar" >
+		</activity>
+		<activity
+			android:name=".events.ResponsesActivity"
+			android:configChanges="keyboardHidden|orientation"
+			android:screenOrientation="portrait"
+			android:theme="@android:style/Theme.NoTitleBar" >
+		</activity>
+		<activity
+			android:name=".events.EventEditActivity"
+			android:configChanges="keyboardHidden|orientation"
+			android:screenOrientation="portrait"
+			android:theme="@android:style/Theme.NoTitleBar" >
+		</activity>
+		<activity
+			android:name=".settings.SettingsActivity"
+			android:configChanges="keyboardHidden|orientation"
+			android:screenOrientation="portrait"
+			android:theme="@android:style/Theme.NoTitleBar" >
+		</activity>
+		<activity
+			android:name=".account.AccountActivity"
+			android:configChanges="keyboardHidden|orientation"
+			android:screenOrientation="portrait"
+			android:theme="@android:style/Theme.NoTitleBar" >
+		</activity>
 
-        <provider
-            android:name=".contacts.ContactsProvider"
-            android:authorities="com.groupagendas.groupagenda.contacts.ContactsProvider"
-            android:exported="false"
-            android:label="ContactsProvider" >
-        </provider>
-        <provider
-            android:name=".chat.ChatProvider"
-            android:authorities="com.groupagendas.groupagenda.chat.ChatProvider"
-            android:exported="false"
-            android:label="ChatProvider" >
-        </provider>
-        <provider
-            android:name=".account.AccountProvider"
-            android:authorities="com.groupagendas.groupagenda.account.AccountProvider"
-            android:exported="false"
-            android:label="AccountProvider" >
-        </provider>
-        <provider
-            android:name=".events.EventsProvider"
-            android:label="EventsProvider"
-            android:authorities="com.groupagendas.groupagenda.events.EventsProvider"
-            android:exported="false" >
-        </provider>
-        <provider
-            android:name=".templates.TemplatesProvider"
-            android:authorities="com.groupagendas.groupagenda.templates.TemplatesProvider"
-            android:exported="false" >
-        </provider>
-        <provider
-            android:name=".address.AddressProvider"
-            android:authorities="com.groupagendas.groupagenda.address.AddressProvider"
-            android:exported="false" >
-        </provider>
+		<provider
+			android:name=".contacts.ContactsProvider"
+			android:authorities="com.groupagendas.groupagenda.contacts.ContactsProvider"
+			android:exported="false"
+			android:label="ContactsProvider" >
+		</provider>
+		<provider
+			android:name=".chat.ChatProvider"
+			android:authorities="com.groupagendas.groupagenda.chat.ChatProvider"
+			android:exported="false"
+			android:label="ChatProvider" >
+		</provider>
+		<provider
+			android:name=".auto.AutoColorIconProvider"
+			android:authorities="com.groupagendas.groupagenda.auto.AutoColorIconProvider"
+			android:exported="false"
+			android:label="AutoColorIconProvider" >
+		</provider>
+		<provider
+			android:name=".events.EventsProvider"
+			android:authorities="com.groupagendas.groupagenda.events.EventsProvider"
+			android:exported="false"
+			android:label="EventsProvider" >
+		</provider>
+		<provider
+			android:name=".templates.TemplatesProvider"
+			android:authorities="com.groupagendas.groupagenda.templates.TemplatesProvider"
+			android:exported="false" >
+		</provider>
+		<provider
+			android:name=".address.AddressProvider"
+			android:authorities="com.groupagendas.groupagenda.address.AddressProvider"
+			android:exported="false" >
+		</provider>
 
-        <receiver
-            android:name=".ConnectReceiver"
-            android:exported="false" >
-            <intent-filter>
-                <action android:name="android.net.conn.CONNECTIVITY_CHANGE" />
-            </intent-filter>
-        </receiver>
+		<receiver
+			android:name=".ConnectReceiver"
+			android:exported="false" >
+			<intent-filter>
+				<action android:name="android.net.conn.CONNECTIVITY_CHANGE" />
+			</intent-filter>
+		</receiver>
 
-        <service
-            android:name=".UpdateService"
-            android:exported="false" >
-            <intent-filter>
-                <action android:name="com.groupagendas.groupagenda.UpdateService" />
-            </intent-filter>
-        </service>
+		<service
+			android:name=".UpdateService"
+			android:exported="false" >
+			<intent-filter>
+				<action android:name="com.groupagendas.groupagenda.UpdateService" />
+			</intent-filter>
+		</service>
 
-        <activity
-            android:name=".events.NewEventActivity"
-            android:configChanges="keyboardHidden|orientation"
-            android:screenOrientation="portrait"
-            android:theme="@android:style/Theme.NoTitleBar" >
-        </activity>
-        <activity
-            android:name=".registration.RegistrationActivity"
-            android:configChanges="keyboardHidden|orientation|locale"
-            android:screenOrientation="portrait"
-            android:theme="@android:style/Theme.NoTitleBar" >
-        </activity>
-        <activity
-            android:name=".settings.WhatsnewActivity"
-            android:configChanges="keyboardHidden|orientation"
-            android:screenOrientation="portrait"
-            android:theme="@android:style/Theme.NoTitleBar" >
-        </activity>
-        <activity
-            android:name=".settings.MoreEmailsActivity"
-            android:configChanges="keyboardHidden|orientation"
-            android:screenOrientation="portrait"
-            android:theme="@android:style/Theme.NoTitleBar" >
-        </activity>
-        <activity
-            android:name=".settings.CalendarSettingsActivity"
-            android:configChanges="keyboardHidden|orientation"
-            android:screenOrientation="portrait"
-            android:theme="@android:style/Theme.NoTitleBar" >
-        </activity>
-        <activity
-            android:name=".settings.AutoIconActivity"
-            android:configChanges="keyboardHidden|orientation"
-            android:screenOrientation="portrait"
-            android:theme="@android:style/Theme.NoTitleBar" >
-        </activity>
-        <activity
-            android:name=".settings.EditAutoIconActivity"
-            android:configChanges="keyboardHidden|orientation"
-            android:screenOrientation="portrait"
-            android:theme="@android:style/Theme.NoTitleBar" >
-        </activity>
-        <activity
-            android:name=".settings.AutoColorActivity"
-            android:configChanges="keyboardHidden|orientation"
-            android:exported="false"
-            android:screenOrientation="portrait"
-            android:theme="@android:style/Theme.NoTitleBar" >
-        </activity>
-        <activity
-            android:name=".settings.EditAutoColorActivity"
-            android:configChanges="keyboardHidden|orientation"
-            android:screenOrientation="portrait"
-            android:theme="@android:style/Theme.NoTitleBar" >
-        </activity>
+		<activity
+			android:name=".events.NewEventActivity"
+			android:configChanges="keyboardHidden|orientation"
+			android:screenOrientation="portrait"
+			android:theme="@android:style/Theme.NoTitleBar" >
+		</activity>
+		<activity
+			android:name=".registration.RegistrationActivity"
+			android:configChanges="keyboardHidden|orientation|locale"
+			android:screenOrientation="portrait"
+			android:theme="@android:style/Theme.NoTitleBar" >
+		</activity>
+		<activity
+			android:name=".settings.WhatsnewActivity"
+			android:configChanges="keyboardHidden|orientation"
+			android:screenOrientation="portrait"
+			android:theme="@android:style/Theme.NoTitleBar" >
+		</activity>
+		<activity
+			android:name=".settings.MoreEmailsActivity"
+			android:configChanges="keyboardHidden|orientation"
+			android:screenOrientation="portrait"
+			android:theme="@android:style/Theme.NoTitleBar" >
+		</activity>
+		<activity
+			android:name=".settings.CalendarSettingsActivity"
+			android:configChanges="keyboardHidden|orientation"
+			android:screenOrientation="portrait"
+			android:theme="@android:style/Theme.NoTitleBar" >
+		</activity>
+		<activity
+			android:name=".settings.AutoIconActivity"
+			android:configChanges="keyboardHidden|orientation"
+			android:screenOrientation="portrait"
+			android:theme="@android:style/Theme.NoTitleBar" >
+		</activity>
+		<activity
+			android:name=".settings.EditAutoIconActivity"
+			android:configChanges="keyboardHidden|orientation"
+			android:screenOrientation="portrait"
+			android:theme="@android:style/Theme.NoTitleBar" >
+		</activity>
+		<activity
+			android:name=".settings.AutoColorActivity"
+			android:configChanges="keyboardHidden|orientation"
+			android:exported="false"
+			android:screenOrientation="portrait"
+			android:theme="@android:style/Theme.NoTitleBar" >
+		</activity>
+		<activity
+			android:name=".settings.EditAutoColorActivity"
+			android:configChanges="keyboardHidden|orientation"
+			android:screenOrientation="portrait"
+			android:theme="@android:style/Theme.NoTitleBar" >
+		</activity>
 
-        <provider
-            android:name=".timezone.TimezoneProvider"
-            android:label="TimezoneProvider"
-            android:authorities="com.groupagendas.groupagenda.timezone.TimezoneProvider"
-            android:exported="false" >
-        </provider>
+		<provider
+			android:name=".timezone.TimezoneProvider"
+			android:authorities="com.groupagendas.groupagenda.timezone.TimezoneProvider"
+			android:exported="false"
+			android:label="TimezoneProvider" >
+		</provider>
 
-        <activity
-            android:name="CalendarsActivity"
-            android:configChanges="keyboardHidden|orientation"
-            android:screenOrientation="portrait"
-            android:theme="@android:style/Theme.NoTitleBar" >
-        </activity>
-        <activity
-            android:name="com.pass_retrieve.forgot_pass1"
-            android:configChanges="keyboardHidden|orientation"
-            android:screenOrientation="portrait"
-            android:theme="@android:style/Theme.NoTitleBar" />
-        <activity
-            android:name="com.pass_retrieve.forgot_pass2"
-            android:configChanges="keyboardHidden|orientation"
-            android:screenOrientation="portrait"
-            android:theme="@android:style/Theme.NoTitleBar" />
-        <activity
-            android:name="com.pass_retrieve.login2_set"
-            android:configChanges="keyboardHidden|orientation"
-            android:screenOrientation="portrait"
-            android:theme="@android:style/Theme.NoTitleBar"
-            android:windowSoftInputMode="stateVisible" />
-        <activity
-            android:name=".contacts.importer.ImportActivity"
-            android:configChanges="keyboardHidden|orientation"
-            android:exported="true"
-            android:screenOrientation="portrait"
-            android:theme="@android:style/Theme.NoTitleBar" >
-        </activity>
-        <activity
-            android:name=".chat.ChatThreadFragment"
-            android:configChanges="keyboardHidden|orientation"
-            android:screenOrientation="portrait"
-            android:theme="@android:style/Theme.NoTitleBar" >
-        </activity>
-        <activity
-            android:name=".chat.ChatMessageActivity"
-            android:configChanges="keyboardHidden|orientation"
-            android:launchMode="singleTask"
-            android:screenOrientation="portrait"
-            android:theme="@android:style/Theme.NoTitleBar"
-            android:windowSoftInputMode="stateHidden" >
-        </activity>
-        <activity
-            android:name=".contacts.importer.RequestTokenActivity"
-            android:exported="true"
-            android:launchMode="singleTask"
-            android:screenOrientation="portrait"
-            android:theme="@android:style/Theme.NoTitleBar" >
-            <intent-filter>
-                <action android:name="android.intent.action.VIEW" />
+		<activity
+			android:name="CalendarsActivity"
+			android:configChanges="keyboardHidden|orientation"
+			android:screenOrientation="portrait"
+			android:theme="@android:style/Theme.NoTitleBar" >
+		</activity>
+		<activity
+			android:name="com.pass_retrieve.forgot_pass1"
+			android:configChanges="keyboardHidden|orientation"
+			android:screenOrientation="portrait"
+			android:theme="@android:style/Theme.NoTitleBar" />
+		<activity
+			android:name="com.pass_retrieve.forgot_pass2"
+			android:configChanges="keyboardHidden|orientation"
+			android:screenOrientation="portrait"
+			android:theme="@android:style/Theme.NoTitleBar" />
+		<activity
+			android:name="com.pass_retrieve.login2_set"
+			android:configChanges="keyboardHidden|orientation"
+			android:screenOrientation="portrait"
+			android:theme="@android:style/Theme.NoTitleBar"
+			android:windowSoftInputMode="stateVisible" />
+		<activity
+			android:name=".contacts.importer.ImportActivity"
+			android:configChanges="keyboardHidden|orientation"
+			android:exported="true"
+			android:screenOrientation="portrait"
+			android:theme="@android:style/Theme.NoTitleBar" >
+		</activity>
+		<activity
+			android:name=".chat.ChatThreadFragment"
+			android:configChanges="keyboardHidden|orientation"
+			android:screenOrientation="portrait"
+			android:theme="@android:style/Theme.NoTitleBar" >
+		</activity>
+		<activity
+			android:name=".chat.ChatMessageActivity"
+			android:configChanges="keyboardHidden|orientation"
+			android:launchMode="singleTask"
+			android:screenOrientation="portrait"
+			android:theme="@android:style/Theme.NoTitleBar"
+			android:windowSoftInputMode="stateHidden" >
+		</activity>
+		<activity
+			android:name=".contacts.importer.RequestTokenActivity"
+			android:exported="true"
+			android:launchMode="singleTask"
+			android:screenOrientation="portrait"
+			android:theme="@android:style/Theme.NoTitleBar" >
+			<intent-filter>
+				<action android:name="android.intent.action.VIEW" />
 
-                <category android:name="android.intent.category.DEFAULT" />
-                <category android:name="android.intent.category.BROWSABLE" />
+				<category android:name="android.intent.category.DEFAULT" />
+				<category android:name="android.intent.category.BROWSABLE" />
 
-                <data android:scheme="import-activity" />
-            </intent-filter>
-        </activity>
-        <activity
-            android:name=".alarm.AlarmActivity"
-            android:configChanges="keyboardHidden|orientation"
-            android:screenOrientation="portrait"
-            android:theme="@android:style/Theme.NoTitleBar" >
-        </activity>
-        <activity
-            android:name=".account.verification.SmsVerificationCodeActivity"
-            android:configChanges="keyboardHidden|orientation"
-            android:screenOrientation="portrait"
-            android:theme="@android:style/Theme.NoTitleBar" >
-        </activity>
-        <activity
-            android:name=".events.PollResultsActivity"
-            android:configChanges="keyboardHidden|orientation"
-            android:screenOrientation="landscape"
-            android:theme="@android:style/Theme.NoTitleBar" >
-        </activity>
-        <activity
-            android:name=".address.AddressBookActivity"
-            android:configChanges="keyboardHidden|orientation"
-            android:screenOrientation="portrait"
-            android:theme="@android:style/Theme.NoTitleBar" >
-        </activity>
-        <activity
-            android:name=".address.AddressBookInfoActivity"
-            android:configChanges="keyboardHidden|orientation"
-            android:screenOrientation="portrait"
-            android:theme="@android:style/Theme.NoTitleBar" >
-        </activity>
-        <activity
-            android:name=".utils.DateTimeSelectActivity"
-            android:configChanges="keyboardHidden|orientation"
-            android:screenOrientation="portrait"
-            android:theme="@android:style/Theme.NoTitleBar" >
-        </activity>
-        <activity
-            android:name=".templates.TemplatesActivity"
-            android:exported="false"
-            android:configChanges="keyboardHidden|orientation"
-            android:screenOrientation="portrait"
-            android:theme="@android:style/Theme.NoTitleBar" >
-        </activity>
-        </application>
+				<data android:scheme="import-activity" />
+			</intent-filter>
+		</activity>
+		<activity
+			android:name=".alarm.AlarmActivity"
+			android:configChanges="keyboardHidden|orientation"
+			android:screenOrientation="portrait"
+			android:theme="@android:style/Theme.NoTitleBar" >
+		</activity>
+		<activity
+			android:name=".account.verification.SmsVerificationCodeActivity"
+			android:configChanges="keyboardHidden|orientation"
+			android:screenOrientation="portrait"
+			android:theme="@android:style/Theme.NoTitleBar" >
+		</activity>
+		<activity
+			android:name=".events.PollResultsActivity"
+			android:configChanges="keyboardHidden|orientation"
+			android:screenOrientation="landscape"
+			android:theme="@android:style/Theme.NoTitleBar" >
+		</activity>
+		<activity
+			android:name=".address.AddressBookActivity"
+			android:configChanges="keyboardHidden|orientation"
+			android:screenOrientation="portrait"
+			android:theme="@android:style/Theme.NoTitleBar" >
+		</activity>
+		<activity
+			android:name=".address.AddressBookInfoActivity"
+			android:configChanges="keyboardHidden|orientation"
+			android:screenOrientation="portrait"
+			android:theme="@android:style/Theme.NoTitleBar" >
+		</activity>
+		<activity
+			android:name=".utils.DateTimeSelectActivity"
+			android:configChanges="keyboardHidden|orientation"
+			android:screenOrientation="portrait"
+			android:theme="@android:style/Theme.NoTitleBar" >
+		</activity>
+		<activity
+			android:name=".templates.TemplatesActivity"
+			android:configChanges="keyboardHidden|orientation"
+			android:exported="false"
+			android:screenOrientation="portrait"
+			android:theme="@android:style/Theme.NoTitleBar" >
+		</activity>
+	</application>
 
 </manifest>

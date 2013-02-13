@@ -20,11 +20,12 @@ import android.widget.ImageView;
 import android.widget.ProgressBar;
 
 import com.groupagendas.groupagenda.R;
-import com.groupagendas.groupagenda.account.AccountProvider;
 import com.groupagendas.groupagenda.events.ColorsAdapter;
+import com.groupagendas.groupagenda.metadata.MetaUtils;
+import com.groupagendas.groupagenda.metadata.impl.AutoColorIconMetaData;
 import com.groupagendas.groupagenda.utils.DrawingUtils;
 
-public class EditAutoColorActivity extends Activity {
+public class EditAutoColorActivity extends Activity implements AutoColorIconMetaData {
 	
 	private static final int COLOURED_BUBBLE_SIZE = 20;
 
@@ -118,15 +119,15 @@ public class EditAutoColorActivity extends Activity {
 		@Override
 		protected Void doInBackground(Void... arg0) {
 			ContentValues values = new ContentValues();
-			values.put(AccountProvider.AMetaData.AutocolorMetaData.COLOR, mItem.color);
-			values.put(AccountProvider.AMetaData.AutocolorMetaData.KEYWORD, keywordView.getText().toString());
+			values.put(AutoColor.COLOR, mItem.color);
+			values.put(AutoColor.KEYWORD, keywordView.getText().toString());
 			
 			if(getIntent().getBooleanExtra("edit", false)){
-				Uri uri = Uri.parse(AccountProvider.AMetaData.AutocolorMetaData.CONTENT_URI+"/"+mItem.id);
+				Uri uri = Uri.parse(MetaUtils.getContentUri(AutoColor.class) + "/" + mItem.id);
 				getContentResolver().update(uri, values, null, null);
 			}else{
-				values.put(AccountProvider.AMetaData.AutocolorMetaData.CONTEXT, "title");
-				getContentResolver().insert(AccountProvider.AMetaData.AutocolorMetaData.CONTENT_URI, values);
+				values.put(AutoColor.CONTEXT, "title");
+				getContentResolver().insert(MetaUtils.getContentUri(AutoColor.class), values);
 			}
 			
 			
@@ -153,7 +154,7 @@ public class EditAutoColorActivity extends Activity {
 	public boolean onOptionsItemSelected(MenuItem item) {
 	    switch (item.getItemId()) {
 	        case R.id.delete_color:
-	        	Uri uri = Uri.parse(AccountProvider.AMetaData.AutocolorMetaData.CONTENT_URI+"/"+mItem.id);
+	        	Uri uri = Uri.parse(MetaUtils.getContentUri(AutoColor.class) + "/" + mItem.id);
 	        	getContentResolver().delete(uri, null, null);
 	        	
 	        	Intent intent = new Intent();
