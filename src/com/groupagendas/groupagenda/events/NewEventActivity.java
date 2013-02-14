@@ -47,6 +47,7 @@ import com.groupagendas.groupagenda.data.ContactManagement;
 import com.groupagendas.groupagenda.data.Data;
 import com.groupagendas.groupagenda.data.DataManagement;
 import com.groupagendas.groupagenda.data.EventManagement;
+import com.groupagendas.groupagenda.events.repeated.RepeatActivity;
 import com.groupagendas.groupagenda.metadata.impl.AddressMetaData;
 import com.groupagendas.groupagenda.templates.Template;
 import com.groupagendas.groupagenda.templates.TemplatesActivity;
@@ -388,6 +389,15 @@ public class NewEventActivity extends EventActivity implements AddressMetaData {
 				} else {
 					showDetailsPanel();
 				}
+			}
+		});
+		
+		repeatTrigger = (RelativeLayout) findViewById(R.id.repeat_trigger);
+		repeatTrigger.setOnClickListener(new OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				Intent i = new Intent(NewEventActivity.this, RepeatActivity.class);
+				startActivity(i);
 			}
 		});
 		
@@ -916,8 +926,7 @@ public class NewEventActivity extends EventActivity implements AddressMetaData {
 				template.setCost(event.getCost());
 				
 				template.setCreated_millis_utc(Calendar.getInstance().getTimeInMillis());
-				DataManagement.createTemplate(NewEventActivity.this, template);
-				return true;
+				return DataManagement.createTemplate(NewEventActivity.this, template);
 			} else {
 				switch (testEvent) {
 				case 1: // no title set
