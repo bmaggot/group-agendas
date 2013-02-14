@@ -22,9 +22,7 @@
                 android:bottomRightRadius="10dp"
                 android:topLeftRadius="0dp"
                 android:topRightRadius="0dp" />
-		    <gradient android:startColor="@color/event_invite_button_c_gradstart"
-		        	android:endColor="@color/event_invite_button_c_gradend"
-		        	android:angle="270" />
+            <solid android:color="@color/event_invite_button_i_background" />
         </shape>
     </item>
 </layer-list>

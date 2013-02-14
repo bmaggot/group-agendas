@@ -1,17 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
-<layer-list xmlns:android="http://schemas.android.com/apk/res/android" >
-    <item>
-        <shape>
-            <solid android:color="@color/darker_gray" />
-        </shape>
-    </item>
-    <item
-        android:bottom="2px"
-        android:left="2px"
-        android:right="2px"
-        android:top="0px">
-        <shape xmlns:android="http://schemas.android.com/apk/res/android" >
-            <solid android:color="@color/event_invite_button_i_background" />
-        </shape>
-    </item>
-</layer-list>
+<selector xmlns:android="http://schemas.android.com/apk/res/android" >
+	<!-- State: pressed (clicked) -->
+	<item android:state_pressed="true" android:drawable="@drawable/event_invited_entry_notalone_background_c" android:color="@color/white" />
+	<!-- State: focused (selected) -->
+	<item android:state_focused="true" android:drawable="@drawable/event_invited_entry_notalone_background_f" />
+	<!-- State: normal (default) -->
+	<item android:drawable="@drawable/event_invited_entry_notalone_background_i" />
+
+</selector>

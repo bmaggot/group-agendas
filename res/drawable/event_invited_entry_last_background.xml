@@ -1,28 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
-<layer-list xmlns:android="http://schemas.android.com/apk/res/android" >
-    <item>
-        <shape xmlns:android="http://schemas.android.com/apk/res/android" >
-            <corners
-                android:bottomLeftRadius="10dp"
-                android:bottomRightRadius="10dp"
-                android:topLeftRadius="0dp"
-                android:topRightRadius="0dp" />
+<selector xmlns:android="http://schemas.android.com/apk/res/android" >
+	<!-- State: pressed (clicked) -->
+	<item android:state_pressed="true" android:drawable="@drawable/event_invited_entry_last_background_c" android:color="@color/white" />
+	<!-- State: focused (selected) -->
+	<item android:state_focused="true" android:drawable="@drawable/event_invited_entry_last_background_f" />
+	<!-- State: normal (default) -->
+	<item android:drawable="@drawable/event_invited_entry_last_background_i" />
 
-            <solid android:color="@color/darker_gray" />
-        </shape>
-    </item>
-    <item
-        android:top="0px"
-        android:left="2px"
-        android:right="2px"
-        android:bottom="2px" >
-        <shape>
-            <corners
-                android:bottomLeftRadius="10dp"
-                android:bottomRightRadius="10dp"
-                android:topLeftRadius="0dp"
-                android:topRightRadius="0dp" />
-            <solid android:color="@color/event_invite_button_i_background" />
-        </shape>
-    </item>
-</layer-list>
+</selector>
