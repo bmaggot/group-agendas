@@ -775,11 +775,12 @@ public class JSONUtils {
 				template.setStartCalendar(Utils.stringToCalendar(context, e.getString(TemplatesMetaData.TIME_START), DataManagement.SERVER_TIMESTAMP_FORMAT));
 				template.setEndCalendar(Utils.stringToCalendar(context, e.getString(TemplatesMetaData.TIME_END), DataManagement.SERVER_TIMESTAMP_FORMAT));
 			} catch (JSONException e2) {
-				e2.printStackTrace();
+				Log.i("createTemplateFromJSON(context, JSONObject)", "Failed parsing start/end time for template " + template.getTemplate_id());
 			}
 			template.setTimezoneInUse(e.optInt(TemplatesMetaData.TIMEZONE_IN_USE));
 			
 			template.setTitle(e.optString(TemplatesMetaData.TITLE));
+			template.setTemplate_title(e.optString(TemplatesMetaData.T_TITLE));
 			template.setIcon(e.optString(TemplatesMetaData.ICON));
 			template.setColor(e.optString(TemplatesMetaData.COLOR));
 			template.setDescription_(e.optString(TemplatesMetaData.DESC));
@@ -807,6 +808,8 @@ public class JSONUtils {
 			} catch (JSONException e1) {
 				template.setInvited(new ArrayList<Invited>());
 			}
+			
+			template.setUploadedToServer(true);
 
 		return template;
 	}
