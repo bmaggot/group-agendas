@@ -6,9 +6,11 @@ import java.util.Calendar;
 import android.content.ContentValues;
 import android.content.Context;
 
+import com.groupagendas.groupagenda.data.DataManagement;
 import com.groupagendas.groupagenda.data.EventManagement;
 import com.groupagendas.groupagenda.events.Invited;
 import com.groupagendas.groupagenda.templates.TemplatesProvider.TMetaData.TemplatesMetaData;
+import com.groupagendas.groupagenda.utils.Utils;
 
 public class Template {
 	private static final String DEFAULT_TITLE = "Untitled";
@@ -111,7 +113,7 @@ public class Template {
 	}
 	
 	public String getColor() {
-		if (color == null || color.equalsIgnoreCase("null")) {
+		if (color == null || color.equalsIgnoreCase("null") || color.length() < 1) {
 			this.color = DEFAULT_COLOR;
 		}
 
@@ -368,26 +370,16 @@ public class Template {
 	public ContentValues toContentValues() {
 		ContentValues cv = new ContentValues();
 		
-		if(this.getTemplate_id() != 0){
-			cv.put(TemplatesMetaData.T_ID, this.getTemplate_id());
-		} else {
-			this.setTemplate_id((int)Calendar.getInstance().getTimeInMillis());
-			cv.put(TemplatesMetaData.T_ID, this.getTemplate_id());
-		}
-
+		cv.put(TemplatesMetaData.T_ID, this.getTemplate_id());
 		cv.put(TemplatesMetaData.UPLOADED_SUCCESSFULLY, this.isUploadedToServer() ? 1 : 0);
 
-		// native events are not held in GA local db so we do not put
-		// Event.isNative
 		cv.put(TemplatesMetaData.IS_SPORTS_EVENT, this.is_sports_event() ? 1 : 0);
 		cv.put(TemplatesMetaData.IS_ALL_DAY, this.is_all_day() ? 1 : 0);
 
 		cv.put(TemplatesMetaData.TITLE, this.getTitle());
-//		System.out.println(event.getTitle());
+		cv.put(TemplatesMetaData.T_TITLE, this.getTemplate_title());
 		cv.put(TemplatesMetaData.ICON, this.getIcon());
 		cv.put(TemplatesMetaData.COLOR, this.getColor());
-		// cv.put(TemplatesMetaData.TEXT_COLOR,
-		// event.getTextColor());//2012-10-24
 		cv.put(TemplatesMetaData.DESC, this.getDescription_());
 		cv.put(TemplatesMetaData.LOCATION, this.getLocation());
 		cv.put(TemplatesMetaData.ACCOMODATION, this.getAccomodation());
@@ -404,9 +396,9 @@ public class Template {
 		cv.put(TemplatesMetaData.TIMEZONE, this.getTimezone());
 		cv.put(TemplatesMetaData.TIMEZONE_IN_USE, this.getTimezoneInUse());
 		if (this.getStartCalendar() != null)
-			cv.put(TemplatesMetaData.TIME_START, this.getStartCalendar().getTimeInMillis());
+			cv.put(TemplatesMetaData.TIME_START, Utils.formatCalendar(this.getStartCalendar(), DataManagement.SERVER_TIMESTAMP_FORMAT));
 		if (this.getEndCalendar() != null)
-			cv.put(TemplatesMetaData.TIME_END, this.getEndCalendar().getTimeInMillis());
+			cv.put(TemplatesMetaData.TIME_END, Utils.formatCalendar(this.getEndCalendar(), DataManagement.SERVER_TIMESTAMP_FORMAT));
 
 		// reminders
 		if (this.getReminder1() != null)
@@ -427,7 +419,6 @@ public class Template {
 		cv.put(TemplatesMetaData.CREATED, this.getCreated_millis_utc());
 		cv.put(TemplatesMetaData.MODIFIED, this.getModified_millis_utc());
 		cv.put(TemplatesMetaData.INVITED, EventManagement.parseInvitedListToJSONArray(this.getInvited()));
-		// TODO IMPLEMENT INVITED
 		
 		return cv;
 	}
