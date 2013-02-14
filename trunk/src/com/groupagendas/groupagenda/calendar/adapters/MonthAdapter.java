@@ -17,6 +17,7 @@ import android.widget.LinearLayout.LayoutParams;
 import com.groupagendas.groupagenda.EventActivityOnClickListener;
 import com.groupagendas.groupagenda.R;
 import com.groupagendas.groupagenda.events.Event;
+import com.groupagendas.groupagenda.events.EventsProvider;
 import com.groupagendas.groupagenda.utils.DrawingUtils;
 import com.groupagendas.groupagenda.utils.TreeMapUtils;
 import com.groupagendas.groupagenda.utils.Utils;
@@ -90,37 +91,48 @@ public class MonthAdapter extends AbstractAdapter<Event> {
 			TextView startTime = (TextView) view.findViewById(R.id.month_entry_start);
 			TextView endTime = (TextView) view.findViewById(R.id.month_entry_end);
 			
-			String dayStr = new SimpleDateFormat("yyyy-MM-dd").format(selectedDate.getTime());
-			Calendar date = Utils.stringToCalendar(context, dayStr + " 00:00:00", SERVER_TIMESTAMP_FORMAT);
-			
 			colourBubble.setImageBitmap(DrawingUtils.getCircleBitmap(context, circlePx, circlePx, event.getDisplayColor(), false));
 //			colourBubble.setImageBitmap(DrawingUtils.getColoredRoundRectangle(context, 20, event.getDisplayColor(), true));
 
-			if (sortedEvents != null) {
-				date.add(Calendar.DAY_OF_YEAR, -1);
-				events = TreeMapUtils.getEventsFromTreemap(date, sortedEvents);
-				if (events != null) {
-					for (Event e : events) {
-						if (event.getEvent_id() == e.getEvent_id() && event.getTitle().equals(e.getTitle())
-								&& (event.getEndCalendar().getTime().toString().equals(e.getEndCalendar().getTime().toString()))
-								&& (event.getStartCalendar().getTime().toString().equals(e.getStartCalendar().getTime().toString()))) {
-							isYesterday = true;
-							break;
+			if (event.getType().equalsIgnoreCase("v") || event.isNative()) {
+				String dayStr = new SimpleDateFormat("yyyy-MM-dd").format(selectedDate.getTime());
+				Calendar date = Utils.stringToCalendar(context, dayStr + " 00:00:00", SERVER_TIMESTAMP_FORMAT);
+				if (sortedEvents != null) {
+					date.add(Calendar.DAY_OF_YEAR, -1);
+					events = TreeMapUtils.getEventsFromTreemap(date, sortedEvents);
+					if (events != null) {
+						for (Event e : events) {
+							if (event.getEvent_id() == e.getEvent_id() && event.getTitle().equals(e.getTitle())
+									&& (event.getEndCalendar().getTime().toString().equals(e.getEndCalendar().getTime().toString()))
+									&& (event.getStartCalendar().getTime().toString().equals(e.getStartCalendar().getTime().toString()))) {
+								isYesterday = true;
+								break;
+							}
+						}
+					}
+
+					date.add(Calendar.DAY_OF_YEAR, 2);
+					events = TreeMapUtils.getEventsFromTreemap(date, sortedEvents);
+					if (events != null) {
+						for (Event e : events) {
+							if (event.getEvent_id() == e.getEvent_id() && event.getTitle().equals(e.getTitle())
+									&& (event.getEndCalendar().getTime().toString().equals(e.getEndCalendar().getTime().toString()))
+									&& (event.getStartCalendar().getTime().toString().equals(e.getStartCalendar().getTime().toString()))) {
+								isTomorrow = true;
+								break;
+							}
 						}
 					}
 				}
-				
-				date.add(Calendar.DAY_OF_YEAR, 2);
-				events = TreeMapUtils.getEventsFromTreemap(date, sortedEvents);
-				if (events != null) {
-					for (Event e : events) {
-						if (event.getEvent_id() == e.getEvent_id() && event.getTitle().equals(e.getTitle()) 
-								&& (event.getEndCalendar().getTime().toString().equals(e.getEndCalendar().getTime().toString()))
-								&& (event.getStartCalendar().getTime().toString().equals(e.getStartCalendar().getTime().toString()))) {
-							isTomorrow = true;
-							break;
-						}
-					}
+			} else {
+				if (event.getEvent_day_start() != null
+						&& event.getEvent_day_start().equals(EventsProvider.EMetaData.EventsIndexesMetaData.NOT_TODAY)) {
+					isYesterday = true;
+				}
+
+				if (event.getEvent_day_end() != null
+						&& event.getEvent_day_end().equals(EventsProvider.EMetaData.EventsIndexesMetaData.NOT_TODAY)) {
+					isTomorrow = true;
 				}
 			}
 			
@@ -136,7 +148,11 @@ public class MonthAdapter extends AbstractAdapter<Event> {
 				if (isYesterday) {
 					startTime.setText(R.string.three_dots);
 				} else {
-					startTime.setText(timeFormat.format(event.getStartCalendar().getTime()));
+					if (event.getType().equalsIgnoreCase("v") || event.isNative()) {
+						startTime.setText(timeFormat.format(event.getStartCalendar().getTime()));
+					} else {
+						startTime.setText(event.getEvent_day_start());
+					}
 				}
 				
 				if (isTomorrow) {
@@ -144,7 +160,11 @@ public class MonthAdapter extends AbstractAdapter<Event> {
 					endTime.setText(R.string.three_dots);
 				} else {
 					endTime.setVisibility(View.VISIBLE);
-					endTime.setText(timeFormat.format(event.getEndCalendar().getTime()));
+					if (event.getType().equalsIgnoreCase("v") || event.isNative()) {
+						endTime.setText(timeFormat.format(event.getEndCalendar().getTime()));
+					} else {
+						endTime.setText(event.getEvent_day_end());
+					}
 				}
 			}
 			

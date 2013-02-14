@@ -103,6 +103,9 @@ private static final String TIMESTAMP_FORMAT = DataManagement.SERVER_TIMESTAMP_F
 	private String selected_event_polls_time;
 	private String events_day;
 	
+	private String event_day_start;
+	private String event_day_end;
+	
 	//TODO implement event missing attributes 
 	/* public String confirmed;
 	 * public Calendar createdCalendar;
@@ -973,5 +976,17 @@ public Template toTemplate(Context context) {
 	template.setTimezoneInUse(TimezoneUtils.getCountryPositionByCc(context, template.getCountry()));
 	
 	return template;	
+}
+public String getEvent_day_start() {
+	return event_day_start;
+}
+public void setEvent_day_start(String event_day_start) {
+	this.event_day_start = event_day_start;
+}
+public String getEvent_day_end() {
+	return event_day_end;
+}
+public void setEvent_day_end(String event_day_end) {
+	this.event_day_end = event_day_end;
 }
 }

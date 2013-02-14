@@ -6,8 +6,8 @@ import java.util.Calendar;
 import java.util.TreeMap;
 
 import android.content.Context;
+import android.util.Log;
 
-import com.groupagendas.groupagenda.data.DataManagement;
 import com.groupagendas.groupagenda.data.EventManagement;
 import com.groupagendas.groupagenda.events.Event;
 
@@ -38,7 +38,7 @@ public class TreeMapUtils {
 				event_end = (Calendar) event.getEndCalendar().clone();
 				tmp_event_start = (Calendar) event_start.clone();
 				int difference = 0;
-				if(event_end.equals(Utils.stringToCalendar(context, "2100-01-01 00:00:00", DataManagement.SERVER_TIMESTAMP_FORMAT))){
+				if(event_end.getTime().toString().equals("Fri Jan 01 00:00:00 EET 2100")){
 					continue;
 				}
 				while (tmp_event_start.before(event_end)) {
@@ -58,10 +58,13 @@ public class TreeMapUtils {
 					String dayStr = formatter.format(event_end.getTime());
 					Calendar eventTmpEnd = Utils.stringToCalendar(context, dayStr + " 00:00:00", SERVER_TIMESTAMP_FORMAT);
 					if (eventTmpEnd.after(eventDay) && event_end.after(eventTmpEnd)) {
+						Log.e("Not", "Fucked sortEvents");
 						dayStr = formatter.format(event_start.getTime());
 						putValueIntoTreeMap(tm, dayStr, event);
 					}
 				}
+			} else {
+				putNewEventIntoTreeMap(context, tm, event);
 			}
 		}
 		for(Event event : pollEvents){
@@ -132,16 +135,15 @@ public class TreeMapUtils {
 	}
 
 	public static void putNewEventIntoTreeMap(Context context, TreeMap<String, ArrayList<Event>> tm, Event event) {
-		
-		Calendar event_start = null;
-			event_start = (Calendar) event.getStartCalendar().clone();
-			String dayStr = "";
-			if(event.getEvents_day() != null){
-				dayStr = event.getEvents_day();
-			} else {
-				dayStr = formatter.format(event_start.getTime());
-			}
-				tm = putValueIntoTreeMap(tm, dayStr, event);
+
+		String dayStr = "";
+		if (event.getEvents_day() != null) {
+			dayStr = event.getEvents_day();
+		} else {
+			Log.e("FUCKED", event.getEvent_id() + "");
+			// dayStr = formatter.format(event_start.getTime());
+		}
+		tm = putValueIntoTreeMap(tm, dayStr, event);
 	}
 	
 public static void putNewEventPollsIntoTreeMap(Context context, TreeMap<String, ArrayList<Event>> tm, Event event) {
@@ -182,6 +184,7 @@ public static void putNewEventPollsIntoTreeMap(Context context, TreeMap<String, 
 				String dayStr = formatter.format(event_end.getTime());
 				Calendar eventTmpEnd = Utils.stringToCalendar(context, dayStr + " 00:00:00", SERVER_TIMESTAMP_FORMAT);
 				if (eventTmpEnd.after(eventDay) && event_end.after(eventTmpEnd)) {
+					Log.e("Not", "Fucked putNewEventPollsIntoTreeMap");
 					dayStr = formatter.format(event_start.getTime());
 					if(event_start.getTimeInMillis() > nowCal.getTimeInMillis()){
 						tm = putValueIntoTreeMap(tm, dayStr, event);
@@ -224,6 +227,7 @@ public static void putNativeEventsIntoTreeMap(Context context, TreeMap<String, A
 			String dayStr = formatter.format(event_end.getTime());
 			Calendar eventTmpEnd = Utils.stringToCalendar(context, dayStr + " 00:00:00", SERVER_TIMESTAMP_FORMAT);
 			if (eventTmpEnd.after(eventDay) && event_end.after(eventTmpEnd)) {
+				Log.e("Not", "Fucked putNativeEventsIntoTreeMap");
 				dayStr = formatter.format(event_start.getTime());
 				tm = putValueIntoTreeMap(tm, dayStr, event);
 			}

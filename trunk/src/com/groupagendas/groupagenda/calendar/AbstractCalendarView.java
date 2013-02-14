@@ -31,6 +31,7 @@ import com.groupagendas.groupagenda.NavbarActivity;
 import com.groupagendas.groupagenda.R;
 import com.groupagendas.groupagenda.account.Account;
 import com.groupagendas.groupagenda.data.CalendarSettings;
+import com.groupagendas.groupagenda.data.DataManagement;
 import com.groupagendas.groupagenda.events.Event;
 import com.groupagendas.groupagenda.events.EventsProvider;
 import com.groupagendas.groupagenda.utils.DateTimeUtils;
@@ -425,18 +426,28 @@ public abstract class AbstractCalendarView extends LinearLayout {
 				eventProjection
 						.setDisplayColor(result.getString(result
 								.getColumnIndexOrThrow(EventsProvider.EMetaData.EventsMetaData.EVENT_DISPLAY_COLOR))); // 2012-10-29
-				String user_timezone = CalendarSettings
-						.getTimeZone(context);
-				long timeinMillis = result
-						.getLong(result
-								.getColumnIndexOrThrow(EventsProvider.EMetaData.EventsMetaData.TIME_START_UTC_MILLISECONDS));
-				eventProjection.setStartCalendar(Utils.createCalendar(
-						timeinMillis, user_timezone));
-				timeinMillis = result
-						.getLong(result
-								.getColumnIndexOrThrow(EventsProvider.EMetaData.EventsMetaData.TIME_END_UTC_MILLISECONDS));
-				eventProjection.setEndCalendar(Utils.createCalendar(
-						timeinMillis, user_timezone));
+				
+				
+				if (!DataManagement.monthViewRunning) {
+					String user_timezone = CalendarSettings.getTimeZone(context);
+					long timeinMillis = result.getLong(result
+							.getColumnIndexOrThrow(EventsProvider.EMetaData.EventsMetaData.TIME_START_UTC_MILLISECONDS));
+					eventProjection.setStartCalendar(Utils.createCalendar(timeinMillis, user_timezone));
+					timeinMillis = result.getLong(result
+							.getColumnIndexOrThrow(EventsProvider.EMetaData.EventsMetaData.TIME_END_UTC_MILLISECONDS));
+					eventProjection.setEndCalendar(Utils.createCalendar(timeinMillis, user_timezone));
+				} else {
+					if (result.getColumnIndex(EventsProvider.EMetaData.EventsIndexesMetaData.DAY_TIME_START) > 0) {
+						eventProjection.setEvent_day_start(result.getString(result
+								.getColumnIndexOrThrow(EventsProvider.EMetaData.EventsIndexesMetaData.DAY_TIME_START)));
+					}
+					if (result.getColumnIndex(EventsProvider.EMetaData.EventsIndexesMetaData.DAY_TIME_END) > 0) {
+						eventProjection.setEvent_day_end(result.getString(result
+								.getColumnIndexOrThrow(EventsProvider.EMetaData.EventsIndexesMetaData.DAY_TIME_END)));
+					}
+				}
+				
+				
 				eventProjection
 						.setIs_all_day(result.getInt(result
 								.getColumnIndexOrThrow(EventsProvider.EMetaData.EventsMetaData.IS_ALL_DAY)) == 1);
@@ -448,7 +459,6 @@ public abstract class AbstractCalendarView extends LinearLayout {
 							.setEvents_day(result.getString(result
 									.getColumnIndexOrThrow(EventsProvider.EMetaData.EventsIndexesMetaData.DAY)));
 				}
-
 				list.add(eventProjection);
 			}
 			return list;
