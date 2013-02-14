@@ -1570,95 +1570,6 @@ public class DataManagement implements AddressMetaData, AutoColorIconMetaData {
 		
 		try {
 			ContentValues cv = template.toContentValues();
-
-			if (template.getTemplate_id() > 0)
-				cv.put(TemplatesMetaData.T_ID, template.getTemplate_id());
-			else
-				cv.put(TemplatesMetaData.T_ID, 0);
-
-			if (template.getIcon() != null)
-				cv.put(TemplatesMetaData.ICON, template.getIcon());
-			else
-				cv.put(TemplatesMetaData.ICON, "");
-
-			if (template.getColor() != null)
-				cv.put(TemplatesMetaData.COLOR, template.getColor());
-
-			if (template.getTitle() != null)
-				cv.put(TemplatesMetaData.TITLE, template.getTitle());
-			else
-				cv.put(TemplatesMetaData.TITLE, "Untitled");
-
- 			if (template.getStartCalendar() != null) {
-				cv.put(TemplatesMetaData.TIME_START, Utils.formatCalendar(template.getStartCalendar(), SERVER_TIMESTAMP_FORMAT));
- 			}
-
- 			if (template.getEndCalendar() != null) {
-				cv.put(TemplatesMetaData.TIME_END, Utils.formatCalendar(template.getEndCalendar(), SERVER_TIMESTAMP_FORMAT));
- 			}
- 			
- 			cv.put(TemplatesMetaData.IS_ALL_DAY, template.is_all_day() ? 1 : 0);
-			
-			cv.put(TemplatesMetaData.TIMEZONE_IN_USE, template.getTimezoneInUse());
-
-			if (template.getDescription_() != null)
-				cv.put(TemplatesMetaData.DESC, template.getDescription_());
-			else
-				cv.put(TemplatesMetaData.DESC, "");
-
-			if (template.getCountry() != null)
-				cv.put(TemplatesMetaData.COUNTRY, template.getCountry());
-			else
-				cv.put(TemplatesMetaData.COUNTRY, "");
-
-			if (template.getCity() != null)
-				cv.put(TemplatesMetaData.CITY, template.getCity());
-			else
-				cv.put(TemplatesMetaData.CITY, "");
-
-			if (template.getStreet() != null)
-				cv.put(TemplatesMetaData.STREET, template.getStreet());
-			else
-				cv.put(TemplatesMetaData.STREET, "");
-
-			if (template.getZip() != null)
-				cv.put(TemplatesMetaData.ZIP, template.getZip());
-			else
-				cv.put(TemplatesMetaData.ZIP, "");
-
-			if (template.getTimezone() != null)
-				cv.put(TemplatesMetaData.TIMEZONE, template.getTimezone());
-			else
-				cv.put(TemplatesMetaData.TIMEZONE, "");
-
-			if (template.getLocation() != null)
-				cv.put(TemplatesMetaData.LOCATION, template.getLocation());
-			else
-				cv.put(TemplatesMetaData.LOCATION, "");
-
-			if (template.getGo_by() != null)
-				cv.put(TemplatesMetaData.GO_BY, template.getGo_by());
-			else
-				cv.put(TemplatesMetaData.GO_BY, "");
-
-			if (template.getTake_with_you() != null)
-				cv.put(TemplatesMetaData.TAKE_WITH_YOU, template.getTake_with_you());
-			else
-				cv.put(TemplatesMetaData.TAKE_WITH_YOU, "");
-
-			if (template.getCost() != null)
-				cv.put(TemplatesMetaData.COST, template.getCost());
-			else
-				cv.put(TemplatesMetaData.COST, "");
-
-			if (template.getAccomodation() != null)
-				cv.put(TemplatesMetaData.ACCOMODATION, template.getAccomodation());
-			else
-				cv.put(TemplatesMetaData.ACCOMODATION, "");
-			
-			cv.put(TemplatesMetaData.CREATED, template.getCreated_millis_utc());
-			cv.put(TemplatesMetaData.MODIFIED, template.getModified_millis_utc());
-
 			context.getContentResolver().insert(TemplatesMetaData.CONTENT_URI, cv);
 			success = true;
 		} catch (Exception e) {
@@ -1672,6 +1583,7 @@ public class DataManagement implements AddressMetaData, AutoColorIconMetaData {
 		Uri uri;
 		ContentResolver resolver = context.getContentResolver();
 		ContentValues cv = template.toContentValues();
+		
 		uri = Uri.parse(TemplatesMetaData.CONTENT_URI + "/" + template.getInternalID());
 
 		resolver.update(uri, cv, null, null);
@@ -1749,6 +1661,7 @@ public class DataManagement implements AddressMetaData, AutoColorIconMetaData {
 		if (result.moveToFirst()) {
 			template.setInternalID(result.getLong(result.getColumnIndex(TemplatesMetaData._ID)));
 			template.setTemplate_id(result.getInt(result.getColumnIndex(TemplatesMetaData.T_ID)));
+			template.setTemplate_title(result.getString(result.getColumnIndex(TemplatesMetaData.T_TITLE)));
 			template.setColor(result.getString(result.getColumnIndex(TemplatesMetaData.COLOR)));
 			template.setIcon(result.getString(result.getColumnIndex(TemplatesMetaData.ICON)));
 
@@ -1825,10 +1738,79 @@ public class DataManagement implements AddressMetaData, AutoColorIconMetaData {
 			
 			templateProjection.setInternalID(result.getLong(result.getColumnIndexOrThrow(TemplatesProvider.TMetaData.TemplatesMetaData._ID)));
 			templateProjection.setTemplate_id(result.getInt(result.getColumnIndexOrThrow(TemplatesProvider.TMetaData.TemplatesMetaData.T_ID)));
-			templateProjection.setTitle(result.getString(result.getColumnIndexOrThrow(TemplatesProvider.TMetaData.TemplatesMetaData.T_TITLE)));
+			templateProjection.setTemplate_title(result.getString(result.getColumnIndexOrThrow(TemplatesProvider.TMetaData.TemplatesMetaData.T_TITLE)));
 			templateProjection.setColor(result.getString(result.getColumnIndexOrThrow(TemplatesProvider.TMetaData.TemplatesMetaData.COLOR)));
 			
 			list.add(templateProjection);
+		}
+		
+		result.close();
+		return list;
+	}
+	
+	public static ArrayList<Template> getTemplatesUnuploadedFromLocalDb(Context context) {
+		String date_str;
+		int timezoneInUse = 0;
+		
+		if (TemplatesProvider.mOpenHelper == null)
+			TemplatesProvider.mOpenHelper = new TemplatesProvider.DatabaseHelper(context);
+		
+		Cursor result = TemplatesProvider.mOpenHelper.getReadableDatabase().rawQuery("SELECT "
+			+ "* "
+			+ "FROM "
+			+ TemplatesProvider.TMetaData.TEMPLATES_TABLE + " "
+			+ "WHERE "
+			+ TemplatesProvider.TMetaData.TemplatesMetaData.UPLOADED_SUCCESSFULLY
+			+ " = 0"
+			, null
+		);
+		
+		ArrayList<Template> list = new ArrayList<Template>(result.getCount());
+		while (result.moveToNext()) {
+			Template template = new Template();
+			
+			template.setInternalID(result.getLong(result.getColumnIndex(TemplatesMetaData._ID)));
+			template.setTemplate_title(result.getString(result.getColumnIndex(TemplatesMetaData.T_TITLE)));
+			template.setColor(result.getString(result.getColumnIndex(TemplatesMetaData.COLOR)));
+			template.setIcon(result.getString(result.getColumnIndex(TemplatesMetaData.ICON)));
+
+			template.setTitle(result.getString(result.getColumnIndex(TemplatesMetaData.TITLE)));
+			template.setTimezone(result.getString(result.getColumnIndex(TemplatesMetaData.TIMEZONE)));
+			try {
+				date_str = result.getString(result.getColumnIndex(TemplatesMetaData.TIME_START));
+				template.setStartCalendar(Utils.stringToCalendar(context, date_str, SERVER_TIMESTAMP_FORMAT));
+				date_str = result.getString(result.getColumnIndex(TemplatesMetaData.TIME_END));
+				template.setEndCalendar(Utils.stringToCalendar(context, date_str, SERVER_TIMESTAMP_FORMAT));
+			} catch (Exception e) {
+				Log.e("DataManagement.getTemplateFromLocalDb()", "Failed setting template's start/end time");
+			}
+			template.setIs_all_day(result.getInt(result.getColumnIndex(TemplatesMetaData.IS_ALL_DAY)) == 1);
+			timezoneInUse = result.getInt(result.getColumnIndex(TemplatesMetaData.TIMEZONE_IN_USE));
+			if (timezoneInUse > 0) { template.setTimezoneInUse(timezoneInUse); }
+			template.setDescription_(result.getString(result.getColumnIndex(TemplatesMetaData.DESC)));
+
+			template.setCountry(result.getString(result.getColumnIndex(TemplatesMetaData.COUNTRY)));
+			template.setCity(result.getString(result.getColumnIndex(TemplatesMetaData.CITY)));
+			template.setStreet(result.getString(result.getColumnIndex(TemplatesMetaData.STREET)));
+			template.setZip(result.getString(result.getColumnIndex(TemplatesMetaData.ZIP)));
+
+			template.setLocation(result.getString(result.getColumnIndex(TemplatesMetaData.LOCATION)));
+			template.setGo_by(result.getString(result.getColumnIndex(TemplatesMetaData.GO_BY)));
+			template.setTake_with_you(result.getString(result.getColumnIndex(TemplatesMetaData.TAKE_WITH_YOU)));
+			template.setCost(result.getString(result.getColumnIndex(TemplatesMetaData.COST)));
+			template.setAccomodation(result.getString(result.getColumnIndex(TemplatesMetaData.ACCOMODATION)));
+			
+			try {
+				ArrayList<Invited> invites = new ArrayList<Invited>();
+
+				template.setMyInvite(JSONUtils.createInvitedListFromJSONArrayString(context,
+						result.getString(result.getColumnIndex(TemplatesMetaData.INVITED)), invites));
+				template.setInvited(invites);
+			} catch (Exception e) {
+				Log.e("getTemplateFromLocalDb", "Error parsing invited array for T_ID: " + template.getTemplate_id());
+			}
+			
+			list.add(template);
 		}
 		
 		result.close();
@@ -2016,7 +1998,7 @@ public class DataManagement implements AddressMetaData, AutoColorIconMetaData {
 	}
 
 	// TODO javadoc
-	public static void createTemplate(Context context, Template template) {
+	public static boolean createTemplate(Context context, Template template) {
 		if (DataManagement.networkAvailable) {
 			int id = insertTemplateToRemoteDb(context, template);
 
@@ -2031,7 +2013,7 @@ public class DataManagement implements AddressMetaData, AutoColorIconMetaData {
 			template.setUploadedToServer(false);
 		}
 
-		insertTemplateToLocalDb(context, template);
+		return insertTemplateToLocalDb(context, template);
 	}
 	
 	// TODO javadoc
@@ -2152,6 +2134,7 @@ public class DataManagement implements AddressMetaData, AutoColorIconMetaData {
 		ContactManagement
 				.syncGroups(context, JSONUtils.JSONArrayToGroupsArray(groupChanges, context), JSONUtils.JSONArrayToLongArray(deletedGroups));
 		
+		DataManagement.syncTemplates(context);
 		context.getContentResolver().delete(TemplatesMetaData.CONTENT_URI, null, null);
 		DataManagement.getTemplatesFromRemoteDb(context);
 		
@@ -2296,37 +2279,12 @@ public class DataManagement implements AddressMetaData, AutoColorIconMetaData {
 		return object;
 	}
 	
-	protected static void syncTemplates(Context context, ArrayList<Template> templateChanges, long[] deletedTemplateIDs) {
-		StringBuilder sb;
-		if (!templateChanges.isEmpty()) {
-			// sb = new StringBuilder();
-			for (Template t : templateChanges) {
-				if (getTemplateFromLocalDb(context, t.getTemplate_id(), ID_EXTERNAL) == null) {
-					context.getContentResolver().insert(EventsProvider.EMetaData.EventsMetaData.CONTENT_URI, t.toContentValues());
-				} else {
-					t.setInternalID(getTemplateFromLocalDb(context, t.getTemplate_id(), ID_EXTERNAL).getInternalID());
-					updateTemplateInLocalDb(context, t);
-				}
-			}
-			// sb.deleteCharAt(sb.length() - 1);
-			// EventManagement.bulkDeleteEvents(context, sb.toString(),
-			// EventManagement.ID_EXTERNAL);
-			// for (Event e : eventChanges) {
-			// }
-		}
-
-		if (deletedTemplateIDs.length > 0) {
-			sb = new StringBuilder();
-			for (int i = 0; i < deletedTemplateIDs.length; i++) {
-				sb.append(deletedTemplateIDs[i]);
-				sb.append(',');
-			}
-			sb.deleteCharAt(sb.length() - 1);
-			DataManagement.bulkDeleteTemplates(context, sb.toString(), EventManagement.ID_EXTERNAL);
-
-			// TODO cia reikes realizuoti pazymetu template'u (kurios reikia sukurti
-			// RDB)
-
+	protected static void syncTemplates(Context context) {
+		ArrayList<Template> unuploadedTemplates;
+		
+		unuploadedTemplates = getTemplatesUnuploadedFromLocalDb(context);
+		for (Template t : unuploadedTemplates) {
+			insertTemplateToRemoteDb(context, t);
 		}
 	}
 	
