@@ -358,4 +358,5 @@
     <string name="not_in_your_contact_list">Not in your contact list</string>
     <string name="templates_were_cleared">List cleared successfully!</string>
     <string name="templates_werent_cleared">Some error happened.</string>
+    <string name="address_list_refresh">List refreshed, please select address.</string>
 </resources>
