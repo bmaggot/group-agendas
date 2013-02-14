@@ -736,7 +736,7 @@ public class ContactEditActivity extends Activity implements OnClickListener, On
 			editedContact.lastname = temp;
 			cv.put(ContactsProvider.CMetaData.ContactsMetaData.LASTNAME, temp);
 
-			editedContact.contact_id = (int) Calendar.getInstance().getTimeInMillis();
+			editedContact.contact_id = ((int) Calendar.getInstance().getTimeInMillis()) * -1;
 
 			temp = emailView.getText().toString();
 			editedContact.email = temp;
