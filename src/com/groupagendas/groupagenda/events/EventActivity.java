@@ -144,6 +144,7 @@ public class EventActivity extends Activity {
 	protected TextView addressTrigger;
 	protected TextView detailsTrigger;
 	protected RelativeLayout alarmTrigger;
+	protected RelativeLayout repeatTrigger;
 	protected ProgressBar pb;
 	protected static String selectedIcon = Event.DEFAULT_ICON;
 	protected static String selectedColor = Event.DEFAULT_COLOR;
