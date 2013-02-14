@@ -315,52 +315,59 @@
 				<category android:name="android.intent.category.DEFAULT" />
 				<category android:name="android.intent.category.BROWSABLE" />
 
-				<data android:scheme="import-activity" />
-			</intent-filter>
-		</activity>
-		<activity
-			android:name=".alarm.AlarmActivity"
-			android:configChanges="keyboardHidden|orientation"
-			android:screenOrientation="portrait"
-			android:theme="@android:style/Theme.NoTitleBar" >
-		</activity>
-		<activity
-			android:name=".account.verification.SmsVerificationCodeActivity"
-			android:configChanges="keyboardHidden|orientation"
-			android:screenOrientation="portrait"
-			android:theme="@android:style/Theme.NoTitleBar" >
-		</activity>
-		<activity
-			android:name=".events.PollResultsActivity"
-			android:configChanges="keyboardHidden|orientation"
-			android:screenOrientation="landscape"
-			android:theme="@android:style/Theme.NoTitleBar" >
-		</activity>
-		<activity
-			android:name=".address.AddressBookActivity"
-			android:configChanges="keyboardHidden|orientation"
-			android:screenOrientation="portrait"
-			android:theme="@android:style/Theme.NoTitleBar" >
-		</activity>
-		<activity
-			android:name=".address.AddressBookInfoActivity"
-			android:configChanges="keyboardHidden|orientation"
-			android:screenOrientation="portrait"
-			android:theme="@android:style/Theme.NoTitleBar" >
-		</activity>
-		<activity
-			android:name=".utils.DateTimeSelectActivity"
-			android:configChanges="keyboardHidden|orientation"
-			android:screenOrientation="portrait"
-			android:theme="@android:style/Theme.NoTitleBar" >
-		</activity>
-		<activity
-			android:name=".templates.TemplatesActivity"
-			android:configChanges="keyboardHidden|orientation"
-			android:exported="false"
-			android:screenOrientation="portrait"
-			android:theme="@android:style/Theme.NoTitleBar" >
-		</activity>
-	</application>
+                <data android:scheme="import-activity" />
+            </intent-filter>
+        </activity>
+        <activity
+            android:name=".alarm.AlarmActivity"
+            android:configChanges="keyboardHidden|orientation"
+            android:screenOrientation="portrait"
+            android:theme="@android:style/Theme.NoTitleBar" >
+        </activity>
+        <activity
+            android:name=".account.verification.SmsVerificationCodeActivity"
+            android:configChanges="keyboardHidden|orientation"
+            android:screenOrientation="portrait"
+            android:theme="@android:style/Theme.NoTitleBar" >
+        </activity>
+        <activity
+            android:name=".events.PollResultsActivity"
+            android:configChanges="keyboardHidden|orientation"
+            android:screenOrientation="landscape"
+            android:theme="@android:style/Theme.NoTitleBar" >
+        </activity>
+        <activity
+            android:name=".address.AddressBookActivity"
+            android:configChanges="keyboardHidden|orientation"
+            android:screenOrientation="portrait"
+            android:theme="@android:style/Theme.NoTitleBar" >
+        </activity>
+        <activity
+            android:name=".address.AddressBookInfoActivity"
+            android:configChanges="keyboardHidden|orientation"
+            android:screenOrientation="portrait"
+            android:theme="@android:style/Theme.NoTitleBar" >
+        </activity>
+        <activity
+            android:name=".utils.DateTimeSelectActivity"
+            android:configChanges="keyboardHidden|orientation"
+            android:screenOrientation="portrait"
+            android:theme="@android:style/Theme.NoTitleBar" >
+        </activity>
+        <activity
+            android:name=".templates.TemplatesActivity"
+            android:exported="false"
+            android:configChanges="keyboardHidden|orientation"
+            android:screenOrientation="portrait"
+            android:theme="@android:style/Theme.NoTitleBar" >
+        </activity>
+        <activity
+            android:name=".events.repeated.RepeatActivity"
+            android:exported="false"
+            android:configChanges="keyboardHidden|orientation"
+            android:screenOrientation="portrait"
+            android:theme="@android:style/Theme.NoTitleBar" >
+        </activity>
+        </application>
 
 </manifest>
