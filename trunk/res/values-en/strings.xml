@@ -303,4 +303,13 @@
     <string name="not_in_your_contact_list">Not in your contact list</string>
     <string name="templates_were_cleared">List cleared successfully!</string>
     <string name="templates_werent_cleared">Some error happened.</string>
+    <string name="done">Done</string>
+    <string name="none">None</string>
+    <string name="daily">Daily</string>
+    <string name="weekly">Weekly</string>
+    <string name="monthly">Monthly</string>
+    <string name="yearly">Yearly</string>
+    <string name="repeat_explained">To repeat an event every 2 weeks, select \'Weekly\' and set \'Repeat every\' to \'2 weeks\'.</string>
+    <string name="save_as_template">Save as template</string>
+    
 </resources>
