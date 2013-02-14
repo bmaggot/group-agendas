@@ -20,7 +20,9 @@ import android.net.Uri;
 import android.provider.BaseColumns;
 import android.text.TextUtils;
 
+import com.groupagendas.groupagenda.data.DataManagement;
 import com.groupagendas.groupagenda.events.EventsProvider.EMetaData.AlarmsMetaData;
+import com.groupagendas.groupagenda.utils.DateTimeUtils;
 import com.groupagendas.groupagenda.utils.StringValueUtils;
 
 @SuppressLint("SimpleDateFormat")
@@ -30,6 +32,8 @@ public class EventsProvider extends ContentProvider{
 	private SimpleDateFormat day_index_formatter = new SimpleDateFormat(EMetaData.EventsIndexesMetaData.DAY_COLUMN_FORMAT);
 
 	private SimpleDateFormat month_index_formatter = new SimpleDateFormat(EMetaData.EventsIndexesMetaData.MONTH_COLUMN_FORMAT);
+	
+	private SimpleDateFormat time_index_formatter = new SimpleDateFormat("");
 	
 	public static class EMetaData {
 		public static final String AUTHORITY = "com.groupagendas.groupagenda.events.EventsProvider";
@@ -60,6 +64,9 @@ public class EventsProvider extends ContentProvider{
 			public static final String EVENT_EXTERNAL_ID = EventsMetaData.E_ID;
 			public static final String DAY = "day";
 			public static final String MONTH = "month";
+			public static final String DAY_TIME_START = "day_time_start";
+			public static final String DAY_TIME_END = "day_time_end";
+			public static final String NOT_TODAY = "...";
 			
 		}
 		
@@ -511,18 +518,26 @@ public class EventsProvider extends ContentProvider{
 	private Uri insertIndexedEvent(SQLiteDatabase db, ContentValues values) {
 		Calendar eventDayStart = Calendar.getInstance();
 		Calendar eventTimeEnd = Calendar.getInstance();
+		DateTimeUtils dateTimeUtils = new DateTimeUtils(getContext());
 		
 		Long millisStart = values.getAsLong(EMetaData.EventsMetaData.TIME_START_UTC_MILLISECONDS);
 		Long millisEnd = values.getAsLong(EMetaData.EventsMetaData.TIME_END_UTC_MILLISECONDS);
 		
 		if(millisStart == null || millisEnd == null) return null; //dont insert if crucial parts are missing
 		eventTimeEnd.setTimeInMillis(millisEnd);
-		eventTimeEnd.add(Calendar.MILLISECOND, 1);
+//		eventTimeEnd.add(Calendar.MILLISECOND, 1);
 		eventDayStart.setTimeInMillis(millisStart);
+		Calendar eventTimeStart = (Calendar) eventDayStart.clone();
 		eventDayStart.set(Calendar.HOUR_OF_DAY, 0);
 		eventDayStart.set(Calendar.MINUTE, 0);
 		eventDayStart.set(Calendar.SECOND, 0);
 		eventDayStart.set(Calendar.MILLISECOND, 0);
+		
+		Calendar eventDayEnd = (Calendar) eventDayStart.clone();
+		eventDayEnd.set(Calendar.HOUR_OF_DAY, eventDayEnd.getActualMaximum(Calendar.HOUR_OF_DAY));
+		eventDayEnd.set(Calendar.MINUTE, eventDayEnd.getActualMaximum(Calendar.MINUTE));
+		eventDayEnd.set(Calendar.SECOND, eventDayEnd.getActualMaximum(Calendar.SECOND));
+		eventDayEnd.set(Calendar.MILLISECOND, eventDayEnd.getActualMaximum(Calendar.MILLISECOND));
 		
 		long rowId = db.insert(EMetaData.EVENTS_TABLE, null, values);
 		if (rowId < 0) return null;
@@ -532,20 +547,23 @@ public class EventsProvider extends ContentProvider{
 		String ext_id = values.getAsString(EMetaData.EventsMetaData.E_ID);
 
 			do {
-				insertEventDayIndexRow(db, event_internal_id, ext_id, eventDayStart);
+				insertEventDayIndexRow(db, event_internal_id, ext_id, eventDayStart, eventTimeStart.before(eventDayStart), eventTimeEnd.after(eventDayEnd), millisStart, millisEnd, dateTimeUtils);
 				eventDayStart.add(Calendar.DAY_OF_MONTH, 1);
 			} while (eventDayStart.before(eventTimeEnd));
 		return insUri;
 	}
 
 	private void insertEventDayIndexRow(SQLiteDatabase db,
-		String event_internal_id, String ext_id, Calendar eventDayStart) {
+		String event_internal_id, String ext_id, Calendar eventDayStart, boolean yesterday, boolean tomorrow, long startTime, long endTime, DateTimeUtils dateTimeUtils) {
 		ContentValues cv = new ContentValues();
 		cv.put(EventsProvider.EMetaData.EventsIndexesMetaData.EVENT_EXTERNAL_ID, ext_id);
 		Date time = eventDayStart.getTime();
+		
 
 		cv.put(EventsProvider.EMetaData.EventsIndexesMetaData.DAY, day_index_formatter.format(time));
 		cv.put(EventsProvider.EMetaData.EventsIndexesMetaData.MONTH, month_index_formatter.format(time));
+		cv.put(EventsProvider.EMetaData.EventsIndexesMetaData.DAY_TIME_START, yesterday ? EventsProvider.EMetaData.EventsIndexesMetaData.NOT_TODAY  : dateTimeUtils.formatTime(startTime).equals("00:00") ? EventsProvider.EMetaData.EventsIndexesMetaData.NOT_TODAY  : dateTimeUtils.formatTime(startTime));
+		cv.put(EventsProvider.EMetaData.EventsIndexesMetaData.DAY_TIME_END, tomorrow ? EventsProvider.EMetaData.EventsIndexesMetaData.NOT_TODAY : dateTimeUtils.formatTime(endTime).equals("00:00") ? EventsProvider.EMetaData.EventsIndexesMetaData.NOT_TODAY  : dateTimeUtils.formatTime(endTime));
 		db.insert(EventsProvider.EMetaData.EVENT_DAY_INDEX_TABLE, null, cv);
 	}
 
@@ -704,6 +722,8 @@ public class EventsProvider extends ContentProvider{
 					+ EMetaData.EventsIndexesMetaData.EVENT_EXTERNAL_ID + " TEXT ,"
 					+ EMetaData.EventsIndexesMetaData.DAY + " TEXT , "
 					+ EMetaData.EventsIndexesMetaData.MONTH + " TEXT , "
+					+ EMetaData.EventsIndexesMetaData.DAY_TIME_START + " TEXT , "
+					+ EMetaData.EventsIndexesMetaData.DAY_TIME_END + " TEXT , "
 					+ "PRIMARY KEY (" + EMetaData.EventsIndexesMetaData.EVENT_INTERNAL_ID + "),"
 					+ "UNIQUE (" + EMetaData.EventsIndexesMetaData.EVENT_INTERNAL_ID + ", " + EMetaData.EventsIndexesMetaData.DAY + ") ON CONFLICT IGNORE"
 					+")";

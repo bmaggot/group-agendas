@@ -296,7 +296,6 @@ public class Utils {
 public static long unixTimestampToMilis(long timestamp) {
 	return timestamp * 1000;
 }
-
 /**
  * @author justinas.marcinka@gmail.com
  * @return unix timestamp

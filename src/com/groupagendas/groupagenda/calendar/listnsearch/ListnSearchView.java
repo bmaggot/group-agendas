@@ -171,28 +171,39 @@ public class ListnSearchView extends LinearLayout {
 					TextView timeStartText = (TextView) view.findViewById(R.id.month_entry_start);
 					TextView timeEndText = (TextView) view.findViewById(R.id.month_entry_end);
 					TextView eventTitle = (TextView) view.findViewById(R.id.event_title);
-					
-					if (sortedEvents != null) {
-						selectedDate.add(Calendar.DAY_OF_YEAR, -1);
-						events = TreeMapUtils.getEventsFromTreemap(selectedDate, sortedEvents);
-						if (events != null) {
-							for (Event e : events) {
-								if (event.getEvent_id() == e.getEvent_id()) {
-									isYesterday = true;
-									break;
+					if (event.getType().equalsIgnoreCase("v") || event.isNative()) {
+						if (sortedEvents != null) {
+							selectedDate.add(Calendar.DAY_OF_YEAR, -1);
+							events = TreeMapUtils.getEventsFromTreemap(selectedDate, sortedEvents);
+							if (events != null) {
+								for (Event e : events) {
+									if (event.getEvent_id() == e.getEvent_id()) {
+										isYesterday = true;
+										break;
+									}
+								}
+							}
+
+							selectedDate.add(Calendar.DAY_OF_YEAR, 2);
+							events = TreeMapUtils.getEventsFromTreemap(selectedDate, sortedEvents);
+							if (events != null) {
+								for (Event e : events) {
+									if (event.getEvent_id() == e.getEvent_id()) {
+										isTomorrow = true;
+										break;
+									}
 								}
 							}
 						}
-						
-						selectedDate.add(Calendar.DAY_OF_YEAR, 2);
-						events = TreeMapUtils.getEventsFromTreemap(selectedDate, sortedEvents);
-						if (events != null) {
-							for (Event e : events) {
-								if (event.getEvent_id() == e.getEvent_id()) {
-									isTomorrow = true;
-									break;
-								}
-							}
+					} else {
+						if (event.getEvent_day_start() != null
+								&& event.getEvent_day_start().equals(EventsProvider.EMetaData.EventsIndexesMetaData.NOT_TODAY)) {
+							isYesterday = true;
+						}
+
+						if (event.getEvent_day_end() != null
+								&& event.getEvent_day_end().equals(EventsProvider.EMetaData.EventsIndexesMetaData.NOT_TODAY)) {
+							isTomorrow = true;
 						}
 					}
 					
@@ -205,7 +216,11 @@ public class ListnSearchView extends LinearLayout {
 						if (isYesterday) {
 							timeStartText.setText(R.string.three_dots);
 						} else {
-							timeStartText.setText(df.format(event.getStartCalendar().getTime()));
+							if (event.getType().equalsIgnoreCase("v") || event.isNative()) {
+								timeStartText.setText(df.format(event.getStartCalendar().getTime()));
+							} else {
+								timeStartText.setText(event.getEvent_day_start());
+							}
 						}
 						
 						if (isTomorrow) {
@@ -213,7 +228,11 @@ public class ListnSearchView extends LinearLayout {
 							timeEndText.setText(R.string.three_dots);
 						} else {
 							timeEndText.setVisibility(View.VISIBLE);
-							timeEndText.setText(df.format(event.getEndCalendar().getTime()));
+							if (event.getType().equalsIgnoreCase("v") || event.isNative()) {
+								timeEndText.setText(df.format(event.getEndCalendar().getTime()));
+							} else {
+								timeEndText.setText(event.getEvent_day_end());
+							}
 						}
 					}
 
@@ -261,23 +280,38 @@ public class ListnSearchView extends LinearLayout {
 					EventsProvider.EMetaData.EventsMetaData.TIME_END_UTC_MILLISECONDS,
 					EventsProvider.EMetaData.EventsMetaData.ICON,
 					EventsProvider.EMetaData.EventsMetaData.TITLE,
-					EventsProvider.EMetaData.EventsMetaData.IS_ALL_DAY, };
+					EventsProvider.EMetaData.EventsMetaData.IS_ALL_DAY };
 			
 			Cursor result = EventManagement.createEventProjectionByDateFromLocalDb(context, projection, date, 0, EventManagement.TM_EVENTS_FROM_GIVEN_DATE, null, true);
 			ArrayList<Event> list = new ArrayList<Event>(result.getCount());
 			while (result.moveToNext()) {
 				Event eventProjection = new Event();
-				
 				eventProjection.setInternalID(result.getLong(result.getColumnIndexOrThrow(EventsProvider.EMetaData.EventsMetaData._ID)));
 				eventProjection.setEvent_id(result.getInt(result.getColumnIndexOrThrow(EventsProvider.EMetaData.EventsMetaData.E_ID)));
 				eventProjection.setTitle(result.getString(result.getColumnIndexOrThrow(EventsProvider.EMetaData.EventsMetaData.TITLE)));
+				Log.e("Event", eventProjection.getTitle());
 				eventProjection.setIcon(result.getString(result.getColumnIndexOrThrow(EventsProvider.EMetaData.EventsMetaData.ICON)));
 				eventProjection.setColor(result.getString(result.getColumnIndexOrThrow(EventsProvider.EMetaData.EventsMetaData.COLOR)));
-				String user_timezone = CalendarSettings.getTimeZone(context);
-				long timeinMillis = result.getLong(result.getColumnIndexOrThrow(EventsProvider.EMetaData.EventsMetaData.TIME_START_UTC_MILLISECONDS));
-				eventProjection.setStartCalendar(Utils.createCalendar(timeinMillis, user_timezone));
-				timeinMillis = result.getLong(result.getColumnIndexOrThrow(EventsProvider.EMetaData.EventsMetaData.TIME_END_UTC_MILLISECONDS));
-				eventProjection.setEndCalendar(Utils.createCalendar(timeinMillis, user_timezone));
+//				String user_timezone = CalendarSettings.getTimeZone(context);
+//				long timeinMillis = result.getLong(result.getColumnIndexOrThrow(EventsProvider.EMetaData.EventsMetaData.TIME_START_UTC_MILLISECONDS));
+//				eventProjection.setStartCalendar(Utils.createCalendar(timeinMillis, user_timezone));
+//				timeinMillis = result.getLong(result.getColumnIndexOrThrow(EventsProvider.EMetaData.EventsMetaData.TIME_END_UTC_MILLISECONDS));
+//				eventProjection.setEndCalendar(Utils.createCalendar(timeinMillis, user_timezone));
+				if (result.getColumnIndex(EventsProvider.EMetaData.EventsIndexesMetaData.DAY) > 0) {
+					eventProjection.setEvents_day(result.getString(result
+							.getColumnIndexOrThrow(EventsProvider.EMetaData.EventsIndexesMetaData.DAY)));
+					Log.e("Day", eventProjection.getEvents_day());
+				}
+				if (result.getColumnIndex(EventsProvider.EMetaData.EventsIndexesMetaData.DAY_TIME_START) > 0) {
+					eventProjection.setEvent_day_start(result.getString(result
+							.getColumnIndexOrThrow(EventsProvider.EMetaData.EventsIndexesMetaData.DAY_TIME_START)));
+					Log.e("Start", eventProjection.getEvent_day_start());
+				}
+				if (result.getColumnIndex(EventsProvider.EMetaData.EventsIndexesMetaData.DAY_TIME_END) > 0) {
+					eventProjection.setEvent_day_end(result.getString(result
+							.getColumnIndexOrThrow(EventsProvider.EMetaData.EventsIndexesMetaData.DAY_TIME_END)));
+					Log.e("Start", eventProjection.getEvent_day_end());
+				}
 				eventProjection.setIs_all_day(result.getInt(result.getColumnIndexOrThrow(EventsProvider.EMetaData.EventsMetaData.IS_ALL_DAY)) == 1);
 				
 				list.add(eventProjection);

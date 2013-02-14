@@ -486,16 +486,15 @@ public class EventManagement {
 					sb.append(')');
 					String inStringDay = sb.toString();
 					return EventsProvider.mOpenHelper.getReadableDatabase().rawQuery(
-							"SELECT events.event_id, events._id, color, event_display_color, is_all_day, time_start_utc, "
-									+ "time_end_utc, icon, title, status, is_owner, day " + "FROM events_days "
-									+ "LEFT JOIN events ON (events_days.event_id = events.event_id) " + "WHERE `day` IN " + inStringDay
-									+ " ", null);
+							"SELECT events.event_id, events._id, color, event_display_color, is_all_day, time_start_utc, time_end_utc, icon, title, status, is_owner, day, day_time_start, day_time_end" +
+							" FROM events_days LEFT JOIN events USING(event_id) WHERE `day` IN " + inStringDay + " ",
+							null);
 				} else {
-					uri = EventsProvider.EMetaData.EventsMetaData.CONTENT_URI;
-					where = EventsProvider.EMetaData.EventsMetaData.TIME_END_UTC_MILLISECONDS + ">" + date.getTimeInMillis();
+					return EventsProvider.mOpenHelper.getReadableDatabase().rawQuery(
+							"SELECT events.event_id, events._id, color, event_display_color, is_all_day, time_start_utc, time_end_utc, icon, title, status, is_owner, day, day_time_start, day_time_end" +
+							" FROM events_days LEFT JOIN events USING(event_id) WHERE "+ EventsProvider.EMetaData.EventsMetaData.TIME_END_UTC_MILLISECONDS + ">" + date.getTimeInMillis() + " ORDER BY time_start_utc ", null);
 				}
 
-				break;
 			case TM_EVENTS_ON_GIVEN_DAY:
 
 				uri = EventsProvider.EMetaData.EVENTS_ON_DATE_URI;
@@ -534,32 +533,10 @@ public class EventManagement {
 			uri = EventsProvider.EMetaData.EventsMetaData.CONTENT_URI;
 		}
 
-		// String rejectedFilter = " AND " +
-		// EventsProvider.EMetaData.EventsMetaData.STATUS + "!=" +
-		// Invited.REJECTED;
-		//
-		// String pendingFilter = " AND (" +
-		// EventsProvider.EMetaData.EventsMetaData.STATUS + "!=" +
-		// Invited.PENDING + " OR ("
-		// + EventsProvider.EMetaData.EventsMetaData.STATUS + " == " +
-		// Invited.PENDING + " AND "
-		// + EventsProvider.EMetaData.EventsMetaData.TIME_END_UTC_MILLISECONDS +
-		// " >= " + Calendar.getInstance().getTimeInMillis()
-		// + ")" + ")";
-		//
-		// if (filterRejected) {
-		// where += rejectedFilter;
-		// where += pendingFilter;
-		// }
-
-		// for don't get pool
-		// where += " AND " + (EventsProvider.EMetaData.EventsMetaData.TYPE +
-		// " != 'v'");
-
 		if (eventTimeMode == TM_EVENTS_ON_GIVEN_MONTH) {
 			return EventsProvider.mOpenHelper.getReadableDatabase().rawQuery(
 					"SELECT events.event_id, events._id, color, "
-							+ "event_display_color, is_all_day, time_start_utc, time_end_utc, icon, title, status, is_owner, day "
+							+ "event_display_color, is_all_day, time_start_utc, time_end_utc, icon, title, status, is_owner, day, day_time_start, day_time_end "
 							+ "FROM events_days LEFT JOIN events USING(event_id) WHERE month = '"
 							// TODO: revise this NPE workaround
 							+ month_index_formatter.format(date != null ? date.getTime() : new Date()) + "'", null);

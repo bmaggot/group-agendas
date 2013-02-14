@@ -24,6 +24,7 @@ import com.groupagendas.groupagenda.calendar.AbstractCalendarView;
 import com.groupagendas.groupagenda.calendar.MonthCellState;
 import com.groupagendas.groupagenda.calendar.adapters.MonthAdapter;
 import com.groupagendas.groupagenda.contacts.birthdays.BirthdayManagement;
+import com.groupagendas.groupagenda.data.DataManagement;
 import com.groupagendas.groupagenda.data.EventManagement;
 import com.groupagendas.groupagenda.events.Event;
 import com.groupagendas.groupagenda.events.NativeCalendarReader;
@@ -322,12 +323,14 @@ public class MonthView extends AbstractCalendarView {
 				tmp.add(Calendar.DATE, 1);
 			}
 			stillLoading = false;
+			DataManagement.monthViewRunning = false;
 //			Log.e("onPostExecute", Calendar.getInstance().getTimeInMillis() - calendar.getTimeInMillis()+"");
 		}
 
 		@Override
 		protected void onPreExecute() {
 			stillLoading = true;
+			DataManagement.monthViewRunning = true;
 		}
 
 		@Override
