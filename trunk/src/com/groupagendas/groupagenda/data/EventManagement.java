@@ -173,6 +173,7 @@ public class EventManagement {
 	 * @version 1.0
 	 */
 	public static void createNewEvent(Context context, Event event) {
+		LatestEventStructure les = new LatestEventStructure(context);
 		initUserTimezone(context);
 //		for (int i = 1; i < 31; i++) {
 //			Log.e("DAY", i + "");
@@ -194,10 +195,10 @@ public class EventManagement {
 					event.setUploadedToServer(false);
 				}
 
-				insertEventToLocalDB(context, event);
+				les.itemInsert(Integer.parseInt(""+insertEventToLocalDB(context, event)));
+//				insertEventToLocalDB(context, event);
 //			}
 //		}
-
 	}
 
 	/**
@@ -864,15 +865,12 @@ public class EventManagement {
 	 */
 	protected static long insertEventToLocalDB(Context context, Event event) {
 		// 1. ADD EVENT details to events table
-		LatestEventStructure les;
 		ContentValues cv = createCVforEventsTable(event);
 		Uri eventUri = context.getContentResolver().insert(EventsProvider.EMetaData.INDEXED_EVENTS_URI, cv);
 
 		long internalID = 0;
 		if ((eventUri != null) && (event.is_owner())) {
 			internalID = ContentUris.parseId(eventUri);
-			les = new LatestEventStructure(context);
-			les.itemInsert((int) internalID);
 		}
 		return internalID;
 		// if (internalID >= 0){
