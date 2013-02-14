@@ -417,7 +417,7 @@
                 android:layout_marginBottom="5dp"
                 android:baselineAligned="false"
                 android:orientation="horizontal"
-                android:visibility="visible" >
+                android:visibility="gone" >
 
                 <RelativeLayout
                     android:id="@+id/reminder_trigger"
@@ -1017,7 +1017,7 @@
                 android:textColor="@color/black"
                 android:textSize="16sp"
                 android:textStyle="bold"
-                android:visibility="visible" />
+                android:visibility="gone" />
 
             <Button
                 android:id="@+id/messenger_button"
