@@ -46,8 +46,8 @@ public class SettingsActivity extends ListActivity{
 				getString(R.string.more_emails),
 				getString(R.string.whats_new),
 				getString(R.string.provide_feedback),
-				getString(R.string.write_review),
-				getString(R.string.address_book)
+				getString(R.string.write_review)/*,
+				getString(R.string.address_book)*/
 		};
 		
 		setListAdapter(new SettingsAdapter(this, settings));
