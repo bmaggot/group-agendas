@@ -100,7 +100,7 @@ public class EventEditActivity extends EventActivity implements AddressMetaData 
 				changesMade = true;
 				saveButton.setEnabled(changesMade);
 				if (cityView.getText().length() > 0 || streetView.getText().length() > 0 || zipView.getText().length() > 0) {
-					save_address.setVisibility(View.VISIBLE);
+					//save_address.setVisibility(View.VISIBLE);
 				}
 				//AddressBookActivity.selectedAddressId = 0;
 			}
@@ -752,7 +752,7 @@ public class EventEditActivity extends EventActivity implements AddressMetaData 
 			selectedIcon = event.getIcon();
 
 			if (!event.getStreet().contentEquals("") && !event.getCity().contentEquals("")) {
-				navigation.setVisibility(View.VISIBLE);
+				//navigation.setVisibility(View.VISIBLE);
 			}
 
 			if (event.getType().contentEquals("v") && !intent.getBooleanExtra(copy, false)) {
@@ -768,7 +768,7 @@ public class EventEditActivity extends EventActivity implements AddressMetaData 
 
 				descView.setEnabled(false);
 				inviteButton.setEnabled(false);
-				see_results.setVisibility(View.VISIBLE);
+				//see_results.setVisibility(View.VISIBLE);
 
 				if (event.getStatus() == Invited.REJECTED) {
 					reject_poll.setVisibility(View.INVISIBLE);
