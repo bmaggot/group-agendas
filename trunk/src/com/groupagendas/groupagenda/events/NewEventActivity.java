@@ -661,9 +661,9 @@ public class NewEventActivity extends EventActivity implements AddressMetaData {
 
 		zipViewBlock = (LinearLayout) findViewById(R.id.zipViewBlock);
 		zipViewBlock.setVisibility(View.VISIBLE);
-		address.setVisibility(View.VISIBLE);
+		//address.setVisibility(View.VISIBLE);
 		if(cityView.getText().length() > 0 || streetView.getText().length() > 0 || zipView.getText().length() > 0){
-			save_address.setVisibility(View.VISIBLE);
+			//save_address.setVisibility(View.VISIBLE);
 		}
 	}
 
@@ -1065,7 +1065,7 @@ public class NewEventActivity extends EventActivity implements AddressMetaData {
 				changesMade = true;
 				saveButton.setEnabled(changesMade);
 				if(cityView.getText().length() > 0 || streetView.getText().length() > 0 || zipView.getText().length() > 0){
-					save_address.setVisibility(View.VISIBLE);
+					//save_address.setVisibility(View.VISIBLE);
 				}
 			}
 		}
