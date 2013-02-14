@@ -734,22 +734,19 @@ public class ContactManagement {
 		if (id > 0) {
 			Uri uri = Uri.parse(ContactsProvider.CMetaData.ContactsMetaData.CONTENT_URI + "/" + id);
 			cur = context.getContentResolver().query(uri, null, null, null, null);
-			if (cur.moveToFirst()) {
+			if (cur.moveToFirst())
 				temp = new Contact(context, cur);
-				cur.close();
-			}
 		} else {
 			if (created > 0) {
 				String where = ContactsProvider.CMetaData.ContactsMetaData.CREATED + "=" + created;
 				cur = context.getContentResolver().query(ContactsProvider.CMetaData.ContactsMetaData.CONTENT_URI, null, where, null, null);
 				if (cur.moveToFirst())
 					temp = new Contact(context, cur);
-				cur.close();
 			}
 		}
-		if (cur != null) {
+		if (cur != null)
 			cur.close();
-		}
+		
 		return temp;
 	}
 
