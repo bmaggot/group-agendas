@@ -11,8 +11,10 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ListView;
+import android.widget.Toast;
 
 import com.groupagendas.groupagenda.R;
+import com.groupagendas.groupagenda.metadata.impl.AddressMetaData.AddressTable;
 
 public class AddressBookActivity extends ListActivity {
 	private boolean action;
@@ -33,13 +35,22 @@ public class AddressBookActivity extends ListActivity {
 		Intent addressBookInfoIntent = new Intent(AddressBookActivity.this, AddressBookInfoActivity.class);
 		if (v.getTag() != null) {
 			String a_id = v.getTag().toString();
-			if(!action){
-				addressBookInfoIntent.putExtra("addressId", a_id);
-				startActivity(addressBookInfoIntent);
+			String where = AddressTable._ID + " = " + a_id;
+			Address address = AddressManagement.getAddressFromLocalDb(AddressBookActivity.this, where);
+			if(address.getIdInternal() != Integer.valueOf(a_id)){
+				// tipo refrech
+				ArrayList<Address> addresses = AddressManagement.getAddressesFromLocalDb(AddressBookActivity.this, null);
+				setListAdapter(new AddressAdapter(this, addresses));
+				Toast.makeText(AddressBookActivity.this, AddressBookActivity.this.getString(R.string.address_list_refresh), Toast.LENGTH_SHORT).show();
 			} else {
-				selectedAddressId = Long.parseLong(a_id);
-				Log.e("address id", ""+selectedAddressId);
-				finish();
+				if(!action){
+					addressBookInfoIntent.putExtra("addressId", a_id);
+					startActivity(addressBookInfoIntent);
+				} else {
+					selectedAddressId = Long.parseLong(a_id);
+					Log.e("address id", ""+selectedAddressId);
+					finish();
+				}
 			}
 		}
 	}
