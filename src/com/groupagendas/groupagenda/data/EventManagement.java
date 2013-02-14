@@ -174,29 +174,29 @@ public class EventManagement {
 	 */
 	public static void createNewEvent(Context context, Event event) {
 		initUserTimezone(context);
-		// for(int i = 1; i < 32; i++){
-		// Log.e("DAY", i+"");
-		// event.getStartCalendar().set(Calendar.DAY_OF_MONTH, i);
-		// event.getEndCalendar().set(Calendar.DAY_OF_MONTH, i);
-		// for(int n = 0; n < 24; n++){
-		if (DataManagement.networkAvailable) {
-			// Log.e("COUNT", n+"");
-			int id = createEventInRemoteDb(context, event);
+//		for (int i = 1; i < 31; i++) {
+//			Log.e("DAY", i + "");
+//			event.getStartCalendar().set(Calendar.DAY_OF_MONTH, i);
+//			event.getEndCalendar().set(Calendar.DAY_OF_MONTH, i);
+//			for (int n = 0; n < 12; n++) {
+				if (DataManagement.networkAvailable) {
+//					Log.e("COUNT", n+"");
+					int id = createEventInRemoteDb(context, event);
 
-			if (id > 0) {
-				event.setEvent_id(id);
-				event.setUploadedToServer(true);
-			} else {
-				event.setUploadedToServer(false);
-				// TODO report error
-			}
-		} else {
-			event.setUploadedToServer(false);
-		}
+					if (id > 0) {
+						event.setEvent_id(id);
+						event.setUploadedToServer(true);
+					} else {
+						event.setUploadedToServer(false);
+						// TODO report error
+					}
+				} else {
+					event.setUploadedToServer(false);
+				}
 
-		insertEventToLocalDB(context, event);
-		// }
-		// }
+				insertEventToLocalDB(context, event);
+//			}
+//		}
 
 	}
 
