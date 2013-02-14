@@ -232,7 +232,7 @@ public class GroupEditActivity extends Activity implements OnClickListener {
 			cv.put(ContactsProvider.CMetaData.GroupsMetaData.CONTACTS, MapUtils.mapToString(getApplicationContext(), editedGroup.contacts));
 			cv.put(ContactsProvider.CMetaData.GroupsMetaData.CONTACT_COUNT, editedGroup.contacts.size());
 
-			editedGroup.group_id = (int) Calendar.getInstance().getTimeInMillis();
+			editedGroup.group_id = ((int) Calendar.getInstance().getTimeInMillis()) * -1;
 			editedGroup.created = Calendar.getInstance().getTimeInMillis();
 			cv.put(ContactsProvider.CMetaData.GroupsMetaData.CREATED, editedGroup.created);
 			editedGroup.modified = editedGroup.created;
