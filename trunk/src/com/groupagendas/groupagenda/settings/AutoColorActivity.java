@@ -3,6 +3,7 @@ package com.groupagendas.groupagenda.settings;
 import java.util.ArrayList;
 
 import android.app.ListActivity;
+import android.content.ContentValues;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -18,6 +19,8 @@ import android.widget.ProgressBar;
 import com.groupagendas.groupagenda.R;
 import com.groupagendas.groupagenda.account.Account;
 import com.groupagendas.groupagenda.data.DataManagement;
+import com.groupagendas.groupagenda.metadata.MetaUtils;
+import com.groupagendas.groupagenda.metadata.impl.AutoColorIconMetaData.AutoColor;
 
 public class AutoColorActivity extends ListActivity {
 	private ProgressBar pb;
@@ -77,6 +80,14 @@ public class AutoColorActivity extends ListActivity {
 		@Override
 		protected void onPostExecute(Boolean success) {
 			super.onPostExecute(success);
+			// new style?!!
+			if (!success) {
+				ContentValues values = new ContentValues();
+				
+				values.put(AutoColor.NEED_UPDATE, 1);				
+				getContentResolver().update(MetaUtils.getContentUri(AutoColor.class), values, "", null);
+			}
+			// old style...
 			if(!success){
 				Account account = new Account(AutoColorActivity.this);
 				account.setNeed_update(1);

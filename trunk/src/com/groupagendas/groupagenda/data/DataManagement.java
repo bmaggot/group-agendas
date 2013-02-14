@@ -1016,9 +1016,9 @@ public class DataManagement implements AddressMetaData, AutoColorIconMetaData {
 					.query(MetaUtils.getContentUri(AutoColor.class), null, null, null, null);
 
 			for (int i = 1; result.moveToNext(); i++) {
-				CharsetUtils.addAllParts(reqEntity, "autoicon[" + i + "][color]", result.getString(result.getColumnIndex(AutoColor.COLOR)),
-					"autoicon[" + i + "][keyword]", result.getString(result.getColumnIndex(AutoColor.KEYWORD)),
-					"autoicon[" + i + "][context]", result.getString(result.getColumnIndex(AutoColor.CONTEXT)));
+				CharsetUtils.addAllParts(reqEntity, "autocolor[" + i + "][color]", result.getString(result.getColumnIndex(AutoColor.COLOR)),
+					"autocolor[" + i + "][keyword]", result.getString(result.getColumnIndex(AutoColor.KEYWORD)),
+					"autocolor[" + i + "][context]", result.getString(result.getColumnIndex(AutoColor.CONTEXT)));
 			}
 
 			post.setEntity(reqEntity);
@@ -2202,11 +2202,6 @@ public class DataManagement implements AddressMetaData, AutoColorIconMetaData {
 	public static void clearAllData(Context context) {
 		Log.d("DataManagement.class", "clearing data");
 		// Delete old data
-		{
-			// earlier this data would not be deleted, only the account table (obsolete)
-			context.getContentResolver().delete(MetaUtils.getContentUri(AutoColor.class), "", null);
-			context.getContentResolver().delete(MetaUtils.getContentUri(AutoIcon.class), "", null);
-		}
 		context.getContentResolver().delete(ContactsProvider.CMetaData.ContactsMetaData.CONTENT_URI, "", null);
 		context.getContentResolver().delete(ContactsProvider.CMetaData.GroupsMetaData.CONTENT_URI, "", null);
 		context.getContentResolver().delete(TemplatesProvider.TMetaData.TemplatesMetaData.CONTENT_URI, "", null);
