@@ -16,7 +16,7 @@ import com.groupagendas.groupagenda.utils.DrawingUtils;
 
 /*
  * @author meska.lt@gmail.com
- * @version 0.7
+ * @version 0.8
  * @since	2012-09-24
  * 
  * Extended Adapter that is the bridge between a ListView and the TemplatesDialogData that

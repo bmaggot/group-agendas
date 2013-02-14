@@ -274,6 +274,12 @@ public class TemplatesActivity extends ListActivity implements OnCheckedChangeLi
 	class DeleteTemplateTask extends AsyncTask<Template, Void, Void> {
 
 		@Override
+		protected void onPreExecute() {
+			Toast.makeText(TemplatesActivity.this, R.string.deleting_template, Toast.LENGTH_SHORT);
+			super.onPreExecute();
+		}
+		
+		@Override
 		protected Void doInBackground(Template... params) {
 			ArrayList<Template> nuContent = new ArrayList<Template>();
 			

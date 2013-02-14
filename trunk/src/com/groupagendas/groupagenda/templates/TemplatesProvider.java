@@ -303,7 +303,7 @@ public class TemplatesProvider extends ContentProvider {
 				+TMetaData.TemplatesMetaData.TIMEZONE+" TEXT ,"
 				+TMetaData.TemplatesMetaData.TIMEZONE_IN_USE+" TEXT ,"
 				+TMetaData.TemplatesMetaData.TIME_START+" TEXT ,"
-				+TMetaData.TemplatesMetaData.TIME_END+" INTEGER ,"
+				+TMetaData.TemplatesMetaData.TIME_END+" TEXT ,"
 				
 				+TMetaData.TemplatesMetaData.REMINDER1+" INTEGER ,"
 				+TMetaData.TemplatesMetaData.REMINDER2+" INTEGER ,"
