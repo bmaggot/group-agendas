@@ -20,7 +20,6 @@ import android.net.Uri;
 import android.provider.BaseColumns;
 import android.text.TextUtils;
 
-import com.groupagendas.groupagenda.data.DataManagement;
 import com.groupagendas.groupagenda.events.EventsProvider.EMetaData.AlarmsMetaData;
 import com.groupagendas.groupagenda.utils.DateTimeUtils;
 import com.groupagendas.groupagenda.utils.StringValueUtils;
@@ -33,7 +32,7 @@ public class EventsProvider extends ContentProvider{
 
 	private SimpleDateFormat month_index_formatter = new SimpleDateFormat(EMetaData.EventsIndexesMetaData.MONTH_COLUMN_FORMAT);
 	
-	private SimpleDateFormat time_index_formatter = new SimpleDateFormat("");
+//	private SimpleDateFormat time_index_formatter = new SimpleDateFormat("");
 	
 	public static class EMetaData {
 		public static final String AUTHORITY = "com.groupagendas.groupagenda.events.EventsProvider";
