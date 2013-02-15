@@ -1652,28 +1652,86 @@ public class EventManagement {
 				.getColumnIndex(EventsProvider.EMetaData.EventsMetaData.SELECTED_EVENT_POLLS_TIME)));
 		return item;
 	}
+	
+	protected static Event createEventFromCursorForEventsActivity(Context context, Cursor result) {
+		initUserTimezone(context);
+		Event item = new Event();
+		if(result.getColumnIndex(EventsProvider.EMetaData.EventsMetaData.E_ID) > 0)
+		item.setEvent_id(result.getInt(result.getColumnIndex(EventsProvider.EMetaData.EventsMetaData.E_ID)));
+		if(result.getColumnIndex(EventsProvider.EMetaData.EventsMetaData.USER_ID) > 0)
+		item.setUser_id(result.getInt(result.getColumnIndex(EventsProvider.EMetaData.EventsMetaData.USER_ID)));
+		if(result.getColumnIndex(EventsProvider.EMetaData.EventsMetaData.STATUS) > 0)
+		item.setStatus(result.getInt(result.getColumnIndex(EventsProvider.EMetaData.EventsMetaData.STATUS)));
+		if(result.getColumnIndex(EventsProvider.EMetaData.EventsMetaData.CREATOR_CONTACT_ID) > 0)
+		item.setCreator_contact_id(result.getInt(result.getColumnIndex(EventsProvider.EMetaData.EventsMetaData.CREATOR_CONTACT_ID)));
+		if(result.getColumnIndex(EventsProvider.EMetaData.EventsMetaData.ATTENDANT_1_COUNT) > 0)
+		item.setAttendant_1_count(result.getInt(result.getColumnIndex(EventsProvider.EMetaData.EventsMetaData.ATTENDANT_1_COUNT)));
+		if(result.getColumnIndex(EventsProvider.EMetaData.EventsMetaData.ATTENDANT_2_COUNT) > 0)
+		item.setAttendant_2_count(result.getInt(result.getColumnIndex(EventsProvider.EMetaData.EventsMetaData.ATTENDANT_2_COUNT)));
+		if(result.getColumnIndex(EventsProvider.EMetaData.EventsMetaData.ATTENDANT_0_COUNT) > 0)
+		item.setAttendant_0_count(result.getInt(result.getColumnIndex(EventsProvider.EMetaData.EventsMetaData.ATTENDANT_0_COUNT)));
+		if(result.getColumnIndex(EventsProvider.EMetaData.EventsMetaData.ATTENDANT_4_COUNT) > 0)
+		item.setAttendant_4_count(result.getInt(result.getColumnIndex(EventsProvider.EMetaData.EventsMetaData.ATTENDANT_4_COUNT)));
+		if(result.getColumnIndex(EventsProvider.EMetaData.EventsMetaData.IS_OWNER) > 0){
+			final int is_owner = result.getInt(result.getColumnIndex(EventsProvider.EMetaData.EventsMetaData.IS_OWNER));
+			item.setIs_owner(is_owner == 1);
+		}
+		if(result.getColumnIndex(EventsProvider.EMetaData.EventsMetaData.IS_ALL_DAY) > 0)
+		item.setIs_all_day(result.getInt(result.getColumnIndex(EventsProvider.EMetaData.EventsMetaData.IS_ALL_DAY)) == 1);
+		if(result.getColumnIndex(EventsProvider.EMetaData.EventsMetaData.IS_BIRTHDAY) > 0)
+		item.setBirthday(result.getInt(result.getColumnIndex(EventsProvider.EMetaData.EventsMetaData.IS_BIRTHDAY)) == 1);
+		item.setNative(false); // native events are not stored in local DB, so
+								// they cant be restored also
+
+		if(result.getColumnIndex(EventsProvider.EMetaData.EventsMetaData.TYPE) > 0)
+		item.setType(result.getString(result.getColumnIndex(EventsProvider.EMetaData.EventsMetaData.TYPE)));
+		if(result.getColumnIndex(EventsProvider.EMetaData.EventsMetaData.CREATOR_FULLNAME) > 0)
+		item.setCreator_fullname(result.getString(result.getColumnIndex(EventsProvider.EMetaData.EventsMetaData.CREATOR_FULLNAME)));
+		if(result.getColumnIndex(EventsProvider.EMetaData.EventsMetaData.TITLE) > 0)
+		item.setTitle(result.getString(result.getColumnIndex(EventsProvider.EMetaData.EventsMetaData.TITLE)));
+		if(item.getType().equals("v")){
+			Log.e("Title", item.getTitle());
+			Log.e("Type", item.getType());
+		}
+		if(result.getColumnIndex(EventsProvider.EMetaData.EventsMetaData.POLL) > 0)
+		item.setPoll(result.getString(result.getColumnIndex(EventsProvider.EMetaData.EventsMetaData.POLL)));
+		if (result.getColumnIndex(EventsProvider.EMetaData.EventsIndexesMetaData.DAY) > 0) {
+			item.setEvents_day(result.getString(result
+					.getColumnIndexOrThrow(EventsProvider.EMetaData.EventsIndexesMetaData.DAY)));
+		}
+		if (result.getColumnIndex(EventsProvider.EMetaData.EventsIndexesMetaData.DAY_TIME_START) > 0) {
+			item.setEvent_day_start(result.getString(result
+					.getColumnIndexOrThrow(EventsProvider.EMetaData.EventsIndexesMetaData.DAY_TIME_START)));
+		}
+		if (result.getColumnIndex(EventsProvider.EMetaData.EventsIndexesMetaData.DAY_TIME_END) > 0) {
+			item.setEvent_day_end(result.getString(result
+					.getColumnIndexOrThrow(EventsProvider.EMetaData.EventsIndexesMetaData.DAY_TIME_END)));
+		}
+		return item;
+	}
 
 	// TODO document
 	public static ArrayList<Event> getEventsFromLocalDb(Context context, boolean filterActual) {
 		Event item;
-		String where = null;
 
 		Calendar today = Calendar.getInstance();
 		today.set(Calendar.HOUR_OF_DAY, 0);
 		today.set(Calendar.MINUTE, 0);
 		today.set(Calendar.SECOND, 0);
 		today.set(Calendar.MILLISECOND, 0);
-		if (filterActual)
-			where = EventsProvider.EMetaData.EventsMetaData.TIME_END_UTC_MILLISECONDS + " >= " + today.getTimeInMillis();
-
-		Cursor result = context.getContentResolver().query(EventsProvider.EMetaData.EventsMetaData.CONTENT_URI, null, where, null, null);
+		
+		Cursor result = EventsProvider.mOpenHelper.getReadableDatabase().rawQuery("SELECT events.event_id, user_id, status, attendant_0_count, attendant_1_count, attendant_2_count, attendant_4_count, " +
+				"is_owner, is_all_day, is_all_day, is_birthday, type, creator_fullname, title, poll, day, day_time_start, day_time_end" +
+				" FROM events_days LEFT JOIN events USING(event_id) WHERE "+ EventsProvider.EMetaData.EventsMetaData.TIME_END_UTC_MILLISECONDS + ">" + today.getTimeInMillis() + " ORDER BY time_start_utc ", null);
 		ArrayList<Event> items = new ArrayList<Event>(result.getCount());
 
 		while (result.moveToNext()) {
-			item = EventManagement.createEventFromCursor(context, result);
+			item = EventManagement.createEventFromCursorForEventsActivity(context, result);
 			items.add(item);
 		}
 		result.close();
+		
+		items.addAll(getPollEventsFromLocalDbForDisplay(context));
 
 		return (items);
 	}
@@ -1942,5 +2000,17 @@ public class EventManagement {
 		result.close();
 
 		return (items);
+	}
+	
+	public static ArrayList<Event> getPollEventsFromLocalDbForDisplay(Context context) {
+		Event item;
+		String where = (EventsProvider.EMetaData.EventsMetaData.TYPE + " = 'v'" + " AND " + EventsProvider.EMetaData.EventsMetaData.STATUS + " != '0'");
+		Cursor result = context.getContentResolver().query(EventsProvider.EMetaData.EventsMetaData.CONTENT_URI, null, where, null, null);
+		ArrayList<Event> results = new ArrayList<Event>(result.getCount());
+		while (result.moveToNext()) {
+			item = EventManagement.createEventFromCursor(context, result);
+			results.add(item);
+		}
+		return results;
 	}
 }

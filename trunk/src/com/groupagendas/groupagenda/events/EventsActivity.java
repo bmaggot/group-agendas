@@ -90,7 +90,7 @@ public class EventsActivity extends ListActivity {
 		try {
 			EventManagement.loadEvents(this, eventsAdapter);
 		} catch (Exception e) {
-			Log.e("EventsActivity", "load events failed on resume");
+			Log.e("EventsActivity", e.toString());
 		}
 		
 		//filter events to new invites if there are such

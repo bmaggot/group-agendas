@@ -289,33 +289,26 @@ public class ListnSearchView extends LinearLayout {
 				eventProjection.setInternalID(result.getLong(result.getColumnIndexOrThrow(EventsProvider.EMetaData.EventsMetaData._ID)));
 				eventProjection.setEvent_id(result.getInt(result.getColumnIndexOrThrow(EventsProvider.EMetaData.EventsMetaData.E_ID)));
 				eventProjection.setTitle(result.getString(result.getColumnIndexOrThrow(EventsProvider.EMetaData.EventsMetaData.TITLE)));
-				Log.e("Event", eventProjection.getTitle());
 				eventProjection.setIcon(result.getString(result.getColumnIndexOrThrow(EventsProvider.EMetaData.EventsMetaData.ICON)));
 				eventProjection.setColor(result.getString(result.getColumnIndexOrThrow(EventsProvider.EMetaData.EventsMetaData.COLOR)));
-//				String user_timezone = CalendarSettings.getTimeZone(context);
-//				long timeinMillis = result.getLong(result.getColumnIndexOrThrow(EventsProvider.EMetaData.EventsMetaData.TIME_START_UTC_MILLISECONDS));
-//				eventProjection.setStartCalendar(Utils.createCalendar(timeinMillis, user_timezone));
-//				timeinMillis = result.getLong(result.getColumnIndexOrThrow(EventsProvider.EMetaData.EventsMetaData.TIME_END_UTC_MILLISECONDS));
-//				eventProjection.setEndCalendar(Utils.createCalendar(timeinMillis, user_timezone));
 				if (result.getColumnIndex(EventsProvider.EMetaData.EventsIndexesMetaData.DAY) > 0) {
 					eventProjection.setEvents_day(result.getString(result
 							.getColumnIndexOrThrow(EventsProvider.EMetaData.EventsIndexesMetaData.DAY)));
-					Log.e("Day", eventProjection.getEvents_day());
 				}
 				if (result.getColumnIndex(EventsProvider.EMetaData.EventsIndexesMetaData.DAY_TIME_START) > 0) {
 					eventProjection.setEvent_day_start(result.getString(result
 							.getColumnIndexOrThrow(EventsProvider.EMetaData.EventsIndexesMetaData.DAY_TIME_START)));
-					Log.e("Start", eventProjection.getEvent_day_start());
 				}
 				if (result.getColumnIndex(EventsProvider.EMetaData.EventsIndexesMetaData.DAY_TIME_END) > 0) {
 					eventProjection.setEvent_day_end(result.getString(result
 							.getColumnIndexOrThrow(EventsProvider.EMetaData.EventsIndexesMetaData.DAY_TIME_END)));
-					Log.e("Start", eventProjection.getEvent_day_end());
 				}
 				eventProjection.setIs_all_day(result.getInt(result.getColumnIndexOrThrow(EventsProvider.EMetaData.EventsMetaData.IS_ALL_DAY)) == 1);
 				
 				list.add(eventProjection);
 			}
+			
+			list.addAll(EventManagement.getPollEventsFromLocalDbForDisplay(context));
 			result.close();
 			return list;
 
