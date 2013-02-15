@@ -264,7 +264,6 @@ public class EventEditActivity extends EventActivity implements AddressMetaData 
 			timezoneView.setText(countriesList.get(timezoneInUse).altname);
 			startView.setText(dtUtils.formatDateTime(startCalendar.getTime()));
 			endView.setText(dtUtils.formatDateTime(endCalendar.getTime()));
-			changesMade = true;
 			enableDisableButtons(changesMade);
 			if (AddressBookActivity.selectedAddressId > 0) {
 				String where = AddressTable._ID + " = " + AddressBookActivity.selectedAddressId;

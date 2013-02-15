@@ -20,14 +20,13 @@ import android.widget.TextView;
 
 import com.groupagendas.groupagenda.R;
 import com.groupagendas.groupagenda.data.EventManagement;
-import com.groupagendas.groupagenda.utils.DateTimeUtils;
 
 public class EventsAdapter extends BaseAdapter implements Filterable{
 	private List<Event> events;
 	private List<Event> eventsAll;
 	private LayoutInflater mInflater;
 	private Context mContext;
-	private DateTimeUtils dtUtils;
+//	private DateTimeUtils dtUtils;
 	private String mFilter = null;
 	private Filter filter = null;
 	private int newInvitesCount;
@@ -40,7 +39,7 @@ public class EventsAdapter extends BaseAdapter implements Filterable{
 		eventsAll = objects;
 		mInflater = LayoutInflater.from(activity);
 		mContext = activity;
-		dtUtils = new DateTimeUtils(activity);
+//		dtUtils = new DateTimeUtils(activity);
 		setNewInvitesCount(events);
 		
 	}
