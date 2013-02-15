@@ -2011,6 +2011,7 @@ public class EventManagement {
 			item = EventManagement.createEventFromCursor(context, result);
 			results.add(item);
 		}
+		result.close();
 		return results;
 	}
 }
