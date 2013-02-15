@@ -48,7 +48,7 @@ public class EditAutoColorActivity extends Activity implements AutoColorIconMeta
 		mItem.id = getIntent().getIntExtra("id", 0);
 		mItem.context = getIntent().getStringExtra("context");
 		mItem.color = getIntent().getStringExtra("color");
-		if ((mItem.color != null) && !mItem.color.equals("")) {
+		if ((mItem.color != null) && !mItem.color.equals("") && !mItem.color.equals("null")) {
 			colorView.setImageBitmap(DrawingUtils.getColoredRoundRectangle(EditAutoColorActivity.this, COLOURED_BUBBLE_SIZE, mItem.color, true));
 		}
 		

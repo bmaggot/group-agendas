@@ -43,7 +43,7 @@ public class AutoColorAdapter extends BaseAdapter{
 		
 		holder.text.setText(item.keyword);
 		
-		if (item.color != null && !item.color.equals("")) {
+		if (item.color != null && !item.color.equals("") && !item.color.equals("null")) {
 			holder.image.setImageBitmap(DrawingUtils.getColoredRoundRectangle(mContext, COLOURED_BUBBLE_SIZE, item.color, true));
 		}
 
