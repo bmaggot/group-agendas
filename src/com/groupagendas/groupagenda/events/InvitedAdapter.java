@@ -136,8 +136,14 @@ public class InvitedAdapter extends AbstractAdapter<Invited> {
 			if (i == listSize - 1)
 				view.setBackgroundResource(R.drawable.event_invited_entry_last_background);
 	
-			if ((((invited.getGuid() != myID) && (invited.getMy_contact_id() < 1)) || ((invited.getGcid() > 0) && invited.getMy_contact_id() < 1))
-					&& ContactManagement.getContactFromLocalDb(context, invited.getMy_contact_id(), 0) == null) {
+//			if ((((invited.getGuid() != myID) && (invited.getMy_contact_id() < 1)) || ((invited.getGcid() > 0) && invited.getMy_contact_id() < 1))
+//					&& ContactManagement.getContactFromLocalDb(context, invited.getMy_contact_id(), 0) == null) {
+			if (
+					(invited.getGuid() != myID) &&
+					(invited.getGuid() > 0) &&
+					(ContactManagement.getContactFromLocalDbByExternalId(context, invited.getGuid()) == null)
+					
+			) {
 				addToContactView.setVisibility(View.VISIBLE);
 				view.setOnClickListener(new OnClickListener() {
 					@Override

@@ -30,6 +30,7 @@ public class ContactsProvider extends ContentProvider{
 
 		public static final class ContactsMetaData implements BaseColumns {
 			public static final Uri CONTENT_URI = Uri.parse("content://" + AUTHORITY + "/" + CONTACTS_TABLE);
+			public static final Uri CONTENT_URI_EXT = Uri.parse("content://" + AUTHORITY + "/" + CONTACTS_TABLE + "/external");
 			public static final String CONTENT_TYPE = "vnd.android.cursor.dir/vnd.formula.contact_item";
 			public static final String CONTENT_ITEM_TYPE = "vnd.android.cursor.item/vnd.formula.contact_item";
             
@@ -212,6 +213,7 @@ public class ContactsProvider extends ContentProvider{
 	private static final int GROUPS_ONE = 3;
 	private static final int BIRTHDAYS_ALL = 4;
 	private static final int BIRTHDAYS_ONE = 5;
+	private static final int CONTACTS_ONE_BY_EXT = 6;
 
 	static {
 		mUriMatcher = new UriMatcher(UriMatcher.NO_MATCH);
@@ -221,6 +223,7 @@ public class ContactsProvider extends ContentProvider{
 		mUriMatcher.addURI(CMetaData.AUTHORITY, CMetaData.GROUPS_TABLE + "/#",GROUPS_ONE);
 		mUriMatcher.addURI(CMetaData.AUTHORITY, CMetaData.BIRTHDAYS_TABLE, BIRTHDAYS_ALL);
 		mUriMatcher.addURI(CMetaData.AUTHORITY, CMetaData.BIRTHDAYS_TABLE + "/#",BIRTHDAYS_ONE);
+		mUriMatcher.addURI(CMetaData.AUTHORITY, CMetaData.CONTACTS_TABLE + "/external/#", CONTACTS_ONE_BY_EXT);
 	}
 	// END UriMatcher
 	
@@ -235,6 +238,8 @@ public class ContactsProvider extends ContentProvider{
 		switch (mUriMatcher.match(uri)) {
 		case CONTACTS_ALL:
 		case CONTACTS_ONE:
+			return CMetaData.ContactsMetaData.CONTENT_TYPE;
+		case CONTACTS_ONE_BY_EXT:
 			return CMetaData.ContactsMetaData.CONTENT_TYPE;
 		case GROUPS_ALL:
 		case GROUPS_ONE:
@@ -263,7 +268,12 @@ public class ContactsProvider extends ContentProvider{
 			qb.appendWhere(CMetaData.ContactsMetaData.C_ID + "=" + uri.getPathSegments().get(1));
 			orderBy = (TextUtils.isEmpty(sortOrder)) ? CMetaData.ContactsMetaData.DEFAULT_SORT_ORDER : sortOrder;
 			break;
-			
+		case CONTACTS_ONE_BY_EXT:
+			qb.setTables(CMetaData.CONTACTS_TABLE);
+			qb.setProjectionMap(CM);
+			qb.appendWhere(CMetaData.ContactsMetaData.REG_USER_ID + "=" + uri.getPathSegments().get(2));
+			orderBy = (TextUtils.isEmpty(sortOrder)) ? CMetaData.ContactsMetaData.DEFAULT_SORT_ORDER : sortOrder;
+			break;
 		case GROUPS_ALL:
 			qb.setTables(CMetaData.GROUPS_TABLE);
 			qb.setProjectionMap(GM);
