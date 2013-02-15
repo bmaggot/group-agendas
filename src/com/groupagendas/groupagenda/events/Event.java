@@ -136,14 +136,17 @@ private static final String TIMESTAMP_FORMAT = DataManagement.SERVER_TIMESTAMP_F
 	
 
 	@Override
-	public String toString(){
-		String text = this.title;
+	public String toString() {
+		StringBuilder sb = new StringBuilder(title);
 		SimpleDateFormat df = new SimpleDateFormat(TIMESTAMP_FORMAT);
-		text += "\n";
-		text += "Start time:" + df.format(startCalendar.getTime());
-		text += "\n";
-		text += "End time:" + df.format(endCalendar.getTime());
-		return text;
+		Calendar c;
+		if ((c = startCalendar) != null) {
+			sb.append('\n').append("Start time:").append(df.format(c.getTime()));
+		}
+		if ((c = endCalendar) != null) {
+			sb.append('\n').append("End time:").append(df.format(c.getTime()));
+		}
+		return sb.toString();
 	}
 	/**
 	 * @author justinas.marcinka@gmail.com

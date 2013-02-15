@@ -81,6 +81,18 @@ public final class MetaUtils {
 	}
 	
 	private static Method getSetter(Class<?> type, String name, Object val) throws NoSuchMethodException {
+		if (val == null) {
+			for (Method m : type.getMethods()) {
+				if (!name.equals(m.getName()))
+					continue;
+				Class<?>[] params = m.getParameterTypes();
+				if (params.length != 1 || params[0].isPrimitive())
+					continue;
+				return m;
+			}
+			throw new NoSuchMethodException(name + "(null) cannot be inferred");
+		}
+		
 		Method setter;
 		try {
 			setter = type.getMethod(name, val.getClass());
