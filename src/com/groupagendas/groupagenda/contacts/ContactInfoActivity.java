@@ -216,7 +216,7 @@ public class ContactInfoActivity extends Activity {
 			toast.setText(getString(R.string.contact_deleted));
 			toast.show();
 			super.onPostExecute(result);
-			onBackPressed();
+			finish();
 		}
 
 	}
