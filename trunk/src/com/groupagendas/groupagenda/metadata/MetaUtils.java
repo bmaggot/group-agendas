@@ -143,7 +143,11 @@ public final class MetaUtils {
 			SQLiteType dbt = tc.databaseType();
 			Method getter = dbt.getGetter();
 			try {
-				Object val = getter.invoke(cur, idx);
+				Object val;
+				if (cur.isNull(idx))
+					val = null;
+				else
+					val = getter.invoke(cur, idx);
 				TypeConversion converter = tc.converter();
 				if (converter != TypeConversion.NONE) {
 					for (Method conv : converter.getConverter().getClass().getMethods()) {
@@ -157,10 +161,17 @@ public final class MetaUtils {
 							continue;
 						}
 						
-						if (params[0] != val.getClass())
+						Class<?> target;
+						if (val == null)
+							target = getter.getReturnType();
+						else
+							target = val.getClass();
+						
+						if (params[0] != target)
 							continue;
 						
 						val = conv.invoke(converter.getConverter(), val);
+						break;
 					}
 				}
 				
