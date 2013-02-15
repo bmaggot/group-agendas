@@ -750,6 +750,22 @@ public class ContactManagement {
 		return temp;
 	}
 
+	public static Contact getContactFromLocalDbByExternalId(Context context, int id) {
+		Cursor cur = null;
+		Contact temp = null;
+
+		if (id > 0) {
+			Uri uri = Uri.parse(ContactsProvider.CMetaData.ContactsMetaData.CONTENT_URI_EXT + "/" + id);
+			cur = context.getContentResolver().query(uri, null, null, null, null);
+			if (cur.moveToFirst())
+				temp = new Contact(context, cur);
+		}
+		if (cur != null)
+			cur.close();
+		
+		return temp;
+	}
+	
 	public static Birthday getBirthdayFromLocalDb(Context context, int id) {
 		Cursor cur;
 		Birthday temp = null;
