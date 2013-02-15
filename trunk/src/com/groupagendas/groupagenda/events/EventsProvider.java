@@ -525,7 +525,7 @@ public class EventsProvider extends ContentProvider{
 		
 		if(millisStart == null || millisEnd == null) return null; //dont insert if crucial parts are missing
 		eventTimeEnd.setTimeInMillis(millisEnd);
-//		eventTimeEnd.add(Calendar.MILLISECOND, 1);
+		eventTimeEnd.add(Calendar.MILLISECOND, -1);
 		eventDayStart.setTimeInMillis(millisStart);
 		Calendar eventTimeStart = (Calendar) eventDayStart.clone();
 		eventDayStart.set(Calendar.HOUR_OF_DAY, 0);
