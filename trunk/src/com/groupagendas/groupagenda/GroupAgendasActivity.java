@@ -10,7 +10,6 @@ public class GroupAgendasActivity extends Activity {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 		SharedPreferences prefs = getSharedPreferences("LATEST_CREDENTIALS", MODE_PRIVATE);
-        
 	    if ((getIntent().getFlags() & Intent.FLAG_ACTIVITY_BROUGHT_TO_FRONT) != 0) {
 	        if (prefs.getBoolean("logged", false)) {
 	        	finish();
@@ -22,8 +21,13 @@ public class GroupAgendasActivity extends Activity {
 	            return;
 	        }
 	    } else {
-        	startActivity(new Intent(GroupAgendasActivity.this, LoginActivity.class));
-            finish();
+	    	if(prefs.getBoolean("logged", false)){
+	    		startActivity(new Intent(GroupAgendasActivity.this, NavbarActivity.class));
+	    		finish();
+	    	} else {
+	        	startActivity(new Intent(GroupAgendasActivity.this, LoginActivity.class));
+	            finish();
+	    	}
             return;
 	    }
     }
