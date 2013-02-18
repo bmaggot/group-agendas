@@ -1,5 +1,7 @@
 package com.groupagendas.groupagenda;
 
+import java.util.Calendar;
+
 import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
@@ -212,11 +214,11 @@ public class C2DMReceiver extends C2DMBaseReceiver {
 			Context context, String text, String title) {
 		if (!text.equals("")) {
 			notificationIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-			PendingIntent contentIntent = PendingIntent.getActivity(context, 0, notificationIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+			PendingIntent contentIntent = PendingIntent.getActivity(context, 0, notificationIntent, 0);
 
 			notification.setLatestEventInfo(context, title, text, contentIntent);
 
-			notificationManager.notify(1, notification);
+			notificationManager.notify((int)Calendar.getInstance().getTimeInMillis(), notification);
 		}
 	}
 }
