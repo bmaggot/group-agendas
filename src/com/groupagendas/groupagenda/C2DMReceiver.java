@@ -214,11 +214,14 @@ public class C2DMReceiver extends C2DMBaseReceiver {
 			Context context, String text, String title) {
 		if (!text.equals("")) {
 			notificationIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-			PendingIntent contentIntent = PendingIntent.getActivity(context, 0, notificationIntent, 0);
+//			Ready for many msg
+//			PendingIntent contentIntent = PendingIntent.getActivity(context, 0, notificationIntent, 0);
+			PendingIntent contentIntent = PendingIntent.getActivity(context, 0, notificationIntent, PendingIntent.FLAG_UPDATE_CURRENT);
 
 			notification.setLatestEventInfo(context, title, text, contentIntent);
-
-			notificationManager.notify((int)Calendar.getInstance().getTimeInMillis(), notification);
+//			
+//			notificationManager.notify((int)Calendar.getInstance().getTimeInMillis(), notification);
+			notificationManager.notify(1, notification);
 		}
 	}
 }
