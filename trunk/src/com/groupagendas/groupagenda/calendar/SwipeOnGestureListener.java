@@ -1,9 +1,9 @@
 package com.groupagendas.groupagenda.calendar;
 
-import com.groupagendas.groupagenda.calendar.month.MonthView;
-
 import android.view.GestureDetector.SimpleOnGestureListener;
 import android.view.MotionEvent;
+
+import com.groupagendas.groupagenda.calendar.month.MonthView;
 
 public class SwipeOnGestureListener extends SimpleOnGestureListener {
 
@@ -24,11 +24,23 @@ public class SwipeOnGestureListener extends SimpleOnGestureListener {
 		}
 		if (e1.getX() - e2.getX() > SWIPE_MIN_DISTANCE && Math.abs(velocityX) > SWIPE_THRESHOLD_VELOCITY) {
 			if (!(parentView instanceof MonthView )) {
-				parentView.goNext();
+				GenericSwipeAnimator.startAnimation(parentView, true, new Runnable() {
+					@Override
+					public void run() {
+						parentView.goNext();
+					}
+				});
+				// parentView.goNext();
 			}
 		} else if (e2.getX() - e1.getX() > SWIPE_MIN_DISTANCE && Math.abs(velocityX) > SWIPE_THRESHOLD_VELOCITY) {
 			if (!(parentView instanceof MonthView )) {
-				parentView.goPrev();
+				GenericSwipeAnimator.startAnimation(parentView, false, new Runnable() {
+					@Override
+					public void run() {
+						parentView.goPrev();
+					}
+				});
+				// parentView.goPrev();
 			}
 		}
 		return super.onFling(e1, e2, velocityX, velocityY);
