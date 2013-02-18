@@ -141,7 +141,8 @@ public class TreeMapUtils {
 			dayStr = event.getEvents_day();
 		} else {
 			Log.e("FUCKED", event.getEvent_id() + "");
-			// dayStr = formatter.format(event_start.getTime());
+			if(event.getStartCalendar() != null)
+			dayStr = formatter.format(event.getStartCalendar().getTime());
 		}
 		tm = putValueIntoTreeMap(tm, dayStr, event);
 	}
