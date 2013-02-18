@@ -24,7 +24,7 @@ public class GenericSwipeAnimator {
 			@Override
 			public void onAnimationEnd(Animation animation) {
 				Animation anim = AnimationUtils.loadAnimation(ctx,
-						rtl ? R.anim.swipe_ltr_enter : R.anim.swipe_ltr_enter);
+						rtl ? R.anim.swipe_rtl_enter : R.anim.swipe_ltr_enter);
 				anim.setFillAfter(true);
 				view.startAnimation(anim);
 				view.post(viewUpdater);
