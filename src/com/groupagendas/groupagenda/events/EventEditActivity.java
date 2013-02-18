@@ -765,9 +765,30 @@ public class EventEditActivity extends EventActivity implements AddressMetaData 
 				to_reject_poll = false;
 				to_rejoin_poll = false;
 
-				descView.setEnabled(false);
 				inviteButton.setEnabled(false);
+				
+				inviteDelegate1.setEnabled(false);
+				inviteDelegate2.setEnabled(false);
+				inviteEditButton.setEnabled(false);
+				descView.setEnabled(false);
+				titleView.setEnabled(false);
+				endView.setEnabled(false);
+				timezoneView.setEnabled(false);
+				startView.setEnabled(false);
+				cityView.setEnabled(false);
+				streetView.setEnabled(false);
+				zipView.setEnabled(false);
+				locationView.setEnabled(false);
+				gobyView.setEnabled(false);
+				takewithyouView.setEnabled(false);
+				costView.setEnabled(false);
+				accomodationView.setEnabled(false);
+				timezoneSpinnerBlock.setEnabled(false);
+				countrySpinnerBlock.setEnabled(false);
+				
 				//see_results.setVisibility(View.VISIBLE);
+				
+				poll_status = event.getStatus();
 
 				if (event.getStatus() == Invited.REJECTED) {
 					reject_poll.setVisibility(View.INVISIBLE);
@@ -1353,6 +1374,7 @@ public class EventEditActivity extends EventActivity implements AddressMetaData 
 //				}
 
 				EventManagement.updateEventInLocalDb(EventEditActivity.this, event);
+//				EventManagement.updateEvent(EventEditActivity.this, event); // atkomentuoti kai Lukas sutvarkys del poll'u
 
 				return true;
 			} else {
