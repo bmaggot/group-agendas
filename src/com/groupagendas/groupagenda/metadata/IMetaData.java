@@ -1,5 +1,7 @@
 package com.groupagendas.groupagenda.metadata;
 
+import android.provider.BaseColumns;
+
 /**
  * Each metadata class in this package must implement this interface for correct operation.
  * 
@@ -15,7 +17,7 @@ public interface IMetaData {
 	 * 
 	 * @author Tadas
 	 */
-	public interface ITable {
+	public interface ITable extends BaseColumns {
 		// marker interface
 	}
 }

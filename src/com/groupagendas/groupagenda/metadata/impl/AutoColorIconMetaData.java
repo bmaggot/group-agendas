@@ -1,5 +1,7 @@
 package com.groupagendas.groupagenda.metadata.impl;
 
+import android.provider.BaseColumns;
+
 import com.groupagendas.groupagenda.auto.AutoColorIconProvider;
 import com.groupagendas.groupagenda.metadata.IMetaData;
 import com.groupagendas.groupagenda.metadata.anno.Database;
@@ -24,7 +26,7 @@ public interface AutoColorIconMetaData extends IMetaData {
 		
 		@TableColumn(databaseType = SQLiteType.INT, databaseConstraints = "PRIMARY KEY",
 				bindingGetterAlias = "getId", bindingSetterAlias = "setId")
-		String C_ID = "_id";
+		String C_ID = BaseColumns._ID;
 		
 		@TableColumn(databaseType = SQLiteType.STRING)
 		String COLOR = "color";
@@ -45,7 +47,7 @@ public interface AutoColorIconMetaData extends IMetaData {
 		
 		@TableColumn(databaseType = SQLiteType.INT, databaseConstraints = "PRIMARY KEY",
 				bindingGetterAlias = "getId", bindingSetterAlias = "setId")
-		String I_ID = "_id";
+		String I_ID = BaseColumns._ID;
 		
 		@TableColumn(databaseType = SQLiteType.STRING)
 		String ICON = "icon";
