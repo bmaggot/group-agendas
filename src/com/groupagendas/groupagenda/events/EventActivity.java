@@ -11,6 +11,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.drawable.BitmapDrawable;
+import android.net.Uri;
 import android.os.Bundle;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -512,40 +513,51 @@ public class EventActivity extends Activity {
 		}
 	}
 	
-	public void sendSms(){
-		if(selectedContacts != null && selectedContacts.size() > 0){
-			Account acc = new Account(getApplicationContext());
-			Intent smsIntent = new Intent(Intent.ACTION_VIEW);
-			smsIntent.setType("vnd.android-dir/mms-sms");
-			String tempNumber = "";
-			DateTimeUtils dateTimeUtils = new DateTimeUtils(getApplicationContext());
-			for(Contact con : selectedContacts){
-				//if(!con.getColor().contentEquals("00a759")){
-				if(con.registered != null){
-					if(!con.registered.contentEquals("true")){
-						if(con.email != null && con.email.contentEquals("")){
-							tempNumber += con.phone1_code + con.phone1 + ",";
-						}
-					}
-				} else {
-					if(con.email != null && con.email.contentEquals("")){
-						tempNumber += con.phone1_code + con.phone1 + ",";
-					}
-				}
+	public void sendSms() {
+		if (selectedContacts == null || selectedContacts.isEmpty())
+			return;
+		
+		Account acc = new Account(this);
+		DateTimeUtils dateTimeUtils = new DateTimeUtils(this);
+		
+		StringBuilder rec = new StringBuilder("smsto:");
+		final int empty = rec.length();
+		for (Contact con : selectedContacts) {
+			boolean sendSms = false;
+			if (con.registered != null) {
+				sendSms = (!con.registered.contentEquals("true") &&
+						(con.email == null || con.email.length() == 0));
+			} else {
+				sendSms = (con.email == null || con.email.length() == 0);
 			}
-			if(!tempNumber.contentEquals("")){
-				String smsBody = acc.getFullname() + " " + getString(R.string.sms_invited) + "\n\n"
-						+ event.getTitle() + "\n\n"
-						+ getString(R.string.sms_begins) + " " +dateTimeUtils.formatDate(event.getStartCalendar()) + " " 
-						+ dateTimeUtils.formatTime(event.getStartCalendar()) + " "
-						+ getString(R.string.sms_till) + " " + dateTimeUtils.formatDate(event.getEndCalendar()) + " "
-						+ dateTimeUtils.formatTime(event.getEndCalendar()) + "\n\n"
-						+ getString(R.string.sms_end_1) + " " + acc.getFullname() + " " + getString(R.string.sms_end_2);
-				smsIntent.putExtra("address", tempNumber);
-				smsIntent.putExtra("sms_body", smsBody);
-				startActivity(smsIntent);
+			
+			if (sendSms) {
+				if (rec.length() > empty)
+					rec.append(';');
+				rec.append(con.phone1_code).append(con.phone1);
 			}
 		}
+		
+		if (rec.length() == empty) {
+			// nobody needs a sms
+			return;
+		}
+		
+		StringBuilder body = new StringBuilder(acc.getFullname());
+		body.append(' ').append(getString(R.string.sms_invited)).append("\n\n");
+		body.append(event.getTitle()).append("\n\n");
+		body.append(getString(R.string.sms_begins)).append(' ');
+		body.append(dateTimeUtils.formatDate(event.getStartCalendar())).append(' ');
+		body.append(dateTimeUtils.formatTime(event.getStartCalendar())).append(' ');
+		body.append(getString(R.string.sms_till)).append(' ');
+		body.append(dateTimeUtils.formatDate(event.getEndCalendar())).append(' ');
+		body.append(dateTimeUtils.formatTime(event.getEndCalendar())).append("\n\n");
+		body.append(getString(R.string.sms_end_1)).append(' ');
+		body.append(acc.getFullname()).append(' ').append(getString(R.string.sms_end_2));
+		
+		Intent sms = new Intent(Intent.ACTION_SENDTO, Uri.parse(rec.toString()));
+		sms.putExtra("sms_body", body.toString());
+		startActivity(sms);
 	}
 	
 	public static void setCalendar (Calendar startTime, Calendar endTime) {
