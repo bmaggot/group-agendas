@@ -561,8 +561,8 @@ public class EventsProvider extends ContentProvider{
 
 		cv.put(EventsProvider.EMetaData.EventsIndexesMetaData.DAY, day_index_formatter.format(time));
 		cv.put(EventsProvider.EMetaData.EventsIndexesMetaData.MONTH, month_index_formatter.format(time));
-		cv.put(EventsProvider.EMetaData.EventsIndexesMetaData.DAY_TIME_START, yesterday ? EventsProvider.EMetaData.EventsIndexesMetaData.NOT_TODAY  : dateTimeUtils.formatTime(startTime).equals("00:00") ? EventsProvider.EMetaData.EventsIndexesMetaData.NOT_TODAY  : dateTimeUtils.formatTime(startTime));
-		cv.put(EventsProvider.EMetaData.EventsIndexesMetaData.DAY_TIME_END, tomorrow ? EventsProvider.EMetaData.EventsIndexesMetaData.NOT_TODAY : dateTimeUtils.formatTime(endTime).equals("00:00") ? EventsProvider.EMetaData.EventsIndexesMetaData.NOT_TODAY  : dateTimeUtils.formatTime(endTime));
+		cv.put(EventsProvider.EMetaData.EventsIndexesMetaData.DAY_TIME_START, yesterday ? EventsProvider.EMetaData.EventsIndexesMetaData.NOT_TODAY  : dateTimeUtils.formatTime(startTime));
+		cv.put(EventsProvider.EMetaData.EventsIndexesMetaData.DAY_TIME_END, tomorrow ? EventsProvider.EMetaData.EventsIndexesMetaData.NOT_TODAY : dateTimeUtils.formatTime(endTime));
 		db.insert(EventsProvider.EMetaData.EVENT_DAY_INDEX_TABLE, null, cv);
 	}
 
