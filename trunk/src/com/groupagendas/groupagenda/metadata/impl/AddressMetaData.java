@@ -1,5 +1,7 @@
 package com.groupagendas.groupagenda.metadata.impl;
 
+import android.provider.BaseColumns;
+
 import com.groupagendas.groupagenda.address.Address;
 import com.groupagendas.groupagenda.address.AddressProvider;
 import com.groupagendas.groupagenda.metadata.IMetaData;
@@ -30,7 +32,7 @@ public interface AddressMetaData extends IMetaData {
 		@TableColumn(databaseType = SQLiteType.INT, databaseConstraints = "PRIMARY KEY AUTOINCREMENT",
 				excludeFromCV = true, jsonType = JSONType.TRANSIENT,
 				bindingGetterAlias = "getIdInternal", bindingSetterAlias = "setIdInternal")
-		String _ID = "_id";
+		String _ID = BaseColumns._ID;
 		@TableColumn(databaseType = SQLiteType.INT)
 		String A_ID = "id";
 		@TableColumn(databaseType = SQLiteType.INT)
