@@ -1,14 +1,11 @@
 package com.groupagendas.groupagenda.boot;
 
-import com.groupagendas.groupagenda.GroupAgendasActivity;
-import com.groupagendas.groupagenda.LoginActivity;
-
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
-import android.os.Debug;
-import android.util.Log;
 import android.widget.Toast;
+
+import com.groupagendas.groupagenda.GroupAgendasActivity;
 
 public class BootReceiver extends BroadcastReceiver {
 
