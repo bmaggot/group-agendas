@@ -21,6 +21,7 @@ import android.widget.TextView;
 
 import com.groupagendas.groupagenda.R;
 import com.groupagendas.groupagenda.calendar.AbstractCalendarView;
+import com.groupagendas.groupagenda.calendar.GenericSwipeAnimator;
 import com.groupagendas.groupagenda.calendar.MonthCellState;
 import com.groupagendas.groupagenda.calendar.adapters.MonthAdapter;
 import com.groupagendas.groupagenda.contacts.birthdays.BirthdayManagement;
@@ -81,9 +82,8 @@ public class MonthView extends AbstractCalendarView {
 		int FRAMES_PER_ROW = selectedDate.getMaximum(Calendar.DAY_OF_WEEK);
 		int FRAME_WIDTH = VIEW_WIDTH / FRAMES_PER_ROW;
 
-		String title = MonthNames[selectedDate.get(Calendar.MONTH)];
-		title += " ";
-		title += selectedDate.get(Calendar.YEAR);
+		StringBuilder title = new StringBuilder(MonthNames[selectedDate.get(Calendar.MONTH)]);
+		title.append(' ').append(selectedDate.get(Calendar.YEAR));
 		this.getTopPanelTitle().setText(title);
 		this.getTopPanelTitle().setTextSize(TypedValue.COMPLEX_UNIT_SP, 22);
 		this.getTopPanelTitle().setPadding(0, 4, 0, 0);
@@ -456,11 +456,21 @@ public class MonthView extends AbstractCalendarView {
 		protected void onSwipe(View v, MotionEvent event) {
 			switch (ACTION) {
 			case ACTION_SWIPE_LTR:
-				parentView.goPrev();
+				GenericSwipeAnimator.startAnimation(parentView, false, new Runnable() {
+					@Override
+					public void run() {
+						parentView.goPrev();
+					}
+				});
 				break;
 				
 			case ACTION_SWIPE_RTL:
-				parentView.goNext();
+				GenericSwipeAnimator.startAnimation(parentView, true, new Runnable() {
+					@Override
+					public void run() {
+						parentView.goNext();
+					}
+				});
 				break;
 				
 			case ACTION_CLICK:
