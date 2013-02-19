@@ -7,6 +7,7 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.TreeMap;
 
+import android.app.Activity;
 import android.content.Context;
 import android.database.Cursor;
 import android.graphics.Color;
@@ -19,6 +20,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -28,7 +30,6 @@ import android.widget.TextView;
 import com.groupagendas.groupagenda.EventActivityOnClickListener;
 import com.groupagendas.groupagenda.R;
 import com.groupagendas.groupagenda.data.CalendarSettings;
-import com.groupagendas.groupagenda.data.DataManagement;
 import com.groupagendas.groupagenda.data.EventManagement;
 import com.groupagendas.groupagenda.events.Event;
 import com.groupagendas.groupagenda.events.EventsProvider;
@@ -87,6 +88,7 @@ public class ListnSearchView extends LinearLayout {
 				}
 			}
 		});
+		hideSoftKeyboard(getContext(), this);
 
 	}
 
@@ -363,4 +365,9 @@ public class ListnSearchView extends LinearLayout {
 		}
 
 	}
+	
+	public static void hideSoftKeyboard (Context context, View view) {
+		  InputMethodManager imm = (InputMethodManager)context.getSystemService(Context.INPUT_METHOD_SERVICE);
+		  imm.hideSoftInputFromWindow(view.getApplicationWindowToken(), 0);
+		}
 }
