@@ -28,6 +28,7 @@ import android.widget.TextView;
 import com.groupagendas.groupagenda.EventActivityOnClickListener;
 import com.groupagendas.groupagenda.R;
 import com.groupagendas.groupagenda.data.CalendarSettings;
+import com.groupagendas.groupagenda.data.DataManagement;
 import com.groupagendas.groupagenda.data.EventManagement;
 import com.groupagendas.groupagenda.events.Event;
 import com.groupagendas.groupagenda.events.EventsProvider;
@@ -326,7 +327,7 @@ public class ListnSearchView extends LinearLayout {
 			SimpleDateFormat sdf = new SimpleDateFormat("E, d MMMMM yyyy", getResources().getConfiguration().locale);
 			
 			ArrayList<SectionListItem> list = new ArrayList<SectionListItem>();
-			if (!sortedEvents.isEmpty()) {
+			if (!sortedEvents.isEmpty() && date.before(Utils.stringToCalendar(context, sortedEvents.lastKey(), "yyyy-MM-dd"))) {
 				do {
 					section = sdf.format(date.getTime());
 
