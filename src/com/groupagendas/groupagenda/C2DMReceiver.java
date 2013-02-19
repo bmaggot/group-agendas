@@ -1,7 +1,5 @@
 package com.groupagendas.groupagenda;
 
-import java.util.Calendar;
-
 import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;

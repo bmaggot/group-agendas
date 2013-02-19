@@ -7,6 +7,7 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.TreeMap;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.database.Cursor;
 import android.graphics.Color;
@@ -36,6 +37,7 @@ import com.groupagendas.groupagenda.utils.DrawingUtils;
 import com.groupagendas.groupagenda.utils.TreeMapUtils;
 import com.groupagendas.groupagenda.utils.Utils;
 
+@SuppressLint("SimpleDateFormat")
 public class ListnSearchView extends LinearLayout {
 
 	private StandardArrayAdapter arrayAdapter;
