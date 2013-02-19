@@ -207,12 +207,11 @@ public class AgendaView extends AbstractCalendarView {
 			@Override
 			public boolean onLongClick(View v) {
 				String date = titleTime.getText().toString();
-				date = date.replace(" ", "");
 				final String[] splitDate = date.split(",");
 				String year = splitDate[2].replace(" ", "");
 				String[] splitMonth = splitDate[1].split(" ");
-				cal.set(Calendar.DAY_OF_MONTH, Integer.valueOf(splitMonth[2]));
-				cal.set(Calendar.YEAR, Integer.valueOf(year));
+				cal.set(Calendar.DAY_OF_MONTH, Integer.parseInt(splitMonth[2]));
+				cal.set(Calendar.YEAR, Integer.parseInt(year));
 				cal.set(Calendar.HOUR_OF_DAY, 12);
 				cal.set(Calendar.MINUTE, 0);
 				cal.clear(Calendar.MILLISECOND);
