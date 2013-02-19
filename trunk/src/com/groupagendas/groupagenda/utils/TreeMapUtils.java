@@ -66,8 +66,9 @@ public class TreeMapUtils {
 					Log.e("Not", "Fucked sortEvents");
 					dayStr = formatter.format(event_start.getTime());
 					putValueIntoTreeMap(tm, dayStr, event);
-				} else
+				} else {
 					Log.d("Not v2", "sortEvents: eventDay = " + eventDay);
+				}
 			}
 		}
 		
