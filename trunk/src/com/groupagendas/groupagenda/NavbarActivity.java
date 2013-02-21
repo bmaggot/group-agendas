@@ -199,6 +199,7 @@ public class NavbarActivity extends FragmentActivity {
 		radioButton = (RadioButton) findViewById(R.id.btnEvents);
 		radioButton.setChecked(false);
 		radioButton.setOnCheckedChangeListener(btnNavBarOnCheckedChangeListener);
+		
 		radioButton = (RadioButton) findViewById(R.id.btnNewevent);
 		radioButton.setChecked(false);
 		radioButton.setOnCheckedChangeListener(btnNavBarOnCheckedChangeListener);
@@ -556,17 +557,21 @@ public class NavbarActivity extends FragmentActivity {
 					buttonView.setChecked(false);
 					break;
 				case R.id.btnCalendarSetings:
+					buttonView.setChecked(false);
 					viewState = ViewState.CALENDAR_SETTINGS;
 					showCalendarSettingsFragment();
 					break;
 				case R.id.btnChatThreads:
+					buttonView.setChecked(false);
 					viewState = ViewState.CHAT_THREADS;
 					showChatFragment();
 					break;
 				case R.id.btnEvents:
+					buttonView.setChecked(false);
 					new StartEventsActivity().execute();
 					break;
 				case R.id.btnNewevent:
+					buttonView.setChecked(false);
 					new StartNewEventActivity().execute();
 					break;
 				}
