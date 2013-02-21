@@ -462,10 +462,10 @@ public class NavbarActivity extends FragmentActivity {
 		calendarContainer.removeAllViews();
 		MonthView view = MonthViewCache.getInstance().getView(selectedDate, mInflater);
 		if (view.getParent() != null) {
-			Log.e("NA", "WTF?");
+			Log.e(getClass().getSimpleName(), "A majestic failure", new RuntimeException("Please report this issue immediately: " + (view.getParent() == calendarContainer)));
 		} else
 			calendarContainer.addView(view);
-		MonthViewCache.getInstance().prefetch(calendarContainer, view.getSelectedDate(), mInflater);
+		MonthViewCache.getInstance().prefetchInUiThread(view.getSelectedDate(), mInflater);
 		// view.initPreview();
 
 	}
