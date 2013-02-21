@@ -487,7 +487,7 @@ public class EventManagement {
 					String inStringDay = sb.toString();
 					return EventsProvider.mOpenHelper.getReadableDatabase().rawQuery(
 							"SELECT events.event_id, events._id, color, event_display_color, is_all_day, time_start_utc, time_end_utc, icon, title, status, is_owner, day, day_time_start, day_time_end" +
-							" FROM events_days LEFT JOIN events USING(event_id) WHERE `day` IN " + inStringDay + " ",
+							" FROM events_days LEFT JOIN events USING(event_id) WHERE `day` IN " + inStringDay + "  ORDER BY time_start_utc ",
 							null);
 				} else {
 					return EventsProvider.mOpenHelper.getReadableDatabase().rawQuery(
@@ -539,7 +539,7 @@ public class EventManagement {
 							+ "event_display_color, is_all_day, time_start_utc, time_end_utc, icon, title, status, is_owner, day, day_time_start, day_time_end "
 							+ "FROM events_days LEFT JOIN events USING(event_id) WHERE month = '"
 							// TODO: revise this NPE workaround
-							+ month_index_formatter.format(date != null ? date.getTime() : new Date()) + "'", null);
+							+ month_index_formatter.format(date != null ? date.getTime() : new Date()) + "'  ORDER BY time_start_utc  ", null);
 		} else {
 			return context.getContentResolver().query(uri, projection, where, null, sortOrder);
 		}
