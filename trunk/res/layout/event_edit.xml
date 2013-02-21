@@ -108,7 +108,7 @@
                     android:id="@+id/iconView"
                     android:layout_width="40dp"
                     android:layout_height="40dp"
-                    android:layout_gravity="center_vertical"
+                    android:layout_gravity="top"
                     android:background="@drawable/account_dropdown_button_round"
                     android:contentDescription="@string/event_icons_placeholder"
                     android:padding="0dp" />
@@ -120,7 +120,6 @@
                     android:layout_gravity="top"
                     android:layout_marginLeft="2dp"
                     android:layout_marginRight="5dp"
-                    android:layout_marginTop="1dp"
                     android:background="@drawable/account_dropdown_button_round"
                     android:contentDescription="@string/event_color_placeholder"
                     android:padding="0dp" />
@@ -128,7 +127,7 @@
                 <EditText
                     android:id="@+id/title"
                     android:layout_width="fill_parent"
-                    android:layout_height="match_parent"
+                    android:layout_height="wrap_content"
                     android:layout_marginLeft="6dp"
                     android:background="@drawable/event_icon_placeholder"
                     android:gravity="center_vertical"
