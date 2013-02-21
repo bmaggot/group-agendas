@@ -346,6 +346,7 @@ public abstract class AbstractCalendarView extends LinearLayout {
 			if(NavbarActivity.doUneedSleep){
 				try{ Thread.sleep(1200); }catch(InterruptedException e){ e.printStackTrace(); }
 			}
+			// Process.setThreadPriority(Process.THREAD_PRIORITY_BACKGROUND + Process.THREAD_PRIORITY_LESS_FAVORABLE);
 			// Calendar calendar = Calendar.getInstance();
 			long start = System.nanoTime();
 			Account account = new Account(context);
@@ -401,6 +402,7 @@ public abstract class AbstractCalendarView extends LinearLayout {
 			 * TreeMapUtils.putNewEventIntoTreeMap(context, sortedEvents,
 			 * nativeEvent); } }
 			 */
+			// Process.setThreadPriority(Process.THREAD_PRIORITY_BACKGROUND);
 			return null;
 		}
 

@@ -2,6 +2,8 @@ package com.groupagendas.groupagenda.calendar.month;
 
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Collection;
+import java.util.List;
 
 import android.content.Context;
 import android.database.Cursor;
@@ -12,12 +14,15 @@ import android.view.Gravity;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.ViewParent;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
 import android.widget.TableLayout;
 import android.widget.TableRow;
 import android.widget.TextView;
+import android.widget.Toast;
+import android.widget.ViewAnimator;
 
 import com.groupagendas.groupagenda.R;
 import com.groupagendas.groupagenda.calendar.AbstractCalendarView;
@@ -54,10 +59,13 @@ public class MonthView extends AbstractCalendarView {
 	private LocalTouchListener localHero;
 	private LinearLayout wrapper;
 
+	// private MonthView[] preview;
+	// private int lastIgnoredEvent = -1;
+
 	public MonthView(Context context) {
 		this(context, null);
 	}
-
+	
 	public MonthView(Context context, AttributeSet attrs) {
 		super(context, attrs);
 		initDefaultWmNames();
@@ -118,30 +126,88 @@ public class MonthView extends AbstractCalendarView {
 		}
 	}
 
+	public void goPrev(Calendar from) {
+		if (stillLoading)
+			return;
+		
+		ViewParent actNavBar = getParent();
+		if (!(actNavBar instanceof ViewAnimator)) {
+			GenericSwipeAnimator.startAnimation(this, true, new Runnable() {
+				@Override
+				public void run() {
+					redrawBubbles = true;
+					selectedDate.add(Calendar.MONTH, -1);
+					updateShownDate();
+					setTopPanel();
+					paintTable(selectedDate);
+					setDayFrames();
+					// updateEventLists();
+				}
+			});
+			return;
+		}
+		
+		if (!MonthSwipeHandler.IN_PROGRESS.compareAndSet(false, true))
+			return;
+		
+		ViewAnimator va = (ViewAnimator) actNavBar;
+		// v.setOnTouchListener(null);
+		Runnable r = new MonthSwipeHandler(va, from, mInflater, true);
+		if (va.getChildCount() < 3) {
+			Log.w("MV", "not prefetched yet");
+			Toast.makeText(getContext(), "Loading events...", Toast.LENGTH_SHORT);
+			postDelayed(r, 100);
+		} else {
+			// Log.e("MV", "will switch view");
+			r.run();
+		}
+	}
+
 	@Override
 	public void goPrev() {
-		if (!stillLoading) {
-			redrawBubbles = true;
-			selectedDate.add(Calendar.MONTH, -1);
-			updateShownDate();
-			setTopPanel();
-			paintTable(selectedDate);
-			setDayFrames();
-			// updateEventLists();
+		goPrev(getSelectedDate());
+	}
+
+	public void goNext(Calendar from) {
+		if (stillLoading)
+			return;
+		
+		ViewParent actNavBar = getParent();
+		if (!(actNavBar instanceof ViewAnimator)) {
+			GenericSwipeAnimator.startAnimation(this, true, new Runnable() {
+				@Override
+				public void run() {
+					redrawBubbles = true;
+					selectedDate.add(Calendar.MONTH, 1);
+					updateShownDate();
+					setTopPanel();
+					paintTable(selectedDate);
+					setDayFrames();
+					// updateEventLists();
+				}
+			});
+			return;
+		}
+		
+		if (!MonthSwipeHandler.IN_PROGRESS.compareAndSet(false, true))
+			return;
+		
+		ViewAnimator va = (ViewAnimator) actNavBar;
+		// v.setOnTouchListener(null);
+		Runnable r = new MonthSwipeHandler(va, from, mInflater, false);
+		if (va.getChildCount() < 3) {
+			Log.w("MV", "not prefetched yet");
+			Toast.makeText(getContext(), "Loading events...", Toast.LENGTH_SHORT);
+			postDelayed(r, 100);
+		} else {
+			// Log.e("MV", "will switch view");
+			r.run();
 		}
 	}
 
 	@Override
 	public void goNext() {
-		if (!stillLoading) {
-			redrawBubbles = true;
-			selectedDate.add(Calendar.MONTH, 1);
-			updateShownDate();
-			setTopPanel();
-			paintTable(selectedDate);
-			setDayFrames();
-			// updateEventLists();
-		}
+		goNext(getSelectedDate());
 	}
 
 	@Override
@@ -179,12 +245,9 @@ public class MonthView extends AbstractCalendarView {
 		wrapper.setOrientation(LinearLayout.VERTICAL);
 		
 		if ((sortedEvents != null) && (selectedDate != null)) {
-			if (TreeMapUtils.getEventsFromTreemap(selectedDate, sortedEvents) != null) {
-				try{
-					i = i - TreeMapUtils.getEventsFromTreemap(selectedDate, sortedEvents).size();
-				} catch (Exception e){
-					Log.e("fillBottomSpace()","kazkodel null");
-				}
+			Collection<Event> evts = TreeMapUtils.getEventsFromTreemap(selectedDate, sortedEvents);
+			if (evts != null) {
+				i = i - evts.size();
 			}
 		}
 		
@@ -225,7 +288,14 @@ public class MonthView extends AbstractCalendarView {
 	}
 
 	private void setDayFrames() {
-		new UpdateEventsInfoTask().execute();
+		setDayFrames(daysList);
+	}
+
+	private void setDayFrames(List<MonthDayFrame> daysList) {
+		// if (preview == null) {
+		// 	new FetchBubbleInfo().execute();
+		// } else
+			new UpdateEventsInfoTask(monthTable, daysList).execute();
 		Calendar tmp = (Calendar) firstShownDate.clone();
 		for (MonthDayFrame frame : daysList) {
 			String title = StringValueUtils.valueOf(tmp.get(Calendar.DATE));
@@ -249,8 +319,12 @@ public class MonthView extends AbstractCalendarView {
 	}
 
 	private void paintTable(Calendar date) {
+		paintTable(date, monthTable, daysList);
+	}
+
+	private void paintTable(Calendar date, TableLayout monthTable, List<MonthDayFrame> daysList) {
 		monthTable.removeAllViews();
-		daysList = new ArrayList<MonthDayFrame>();
+		daysList.clear();
 		int FRAMES_PER_ROW = date.getMaximum(Calendar.DAY_OF_WEEK);
 		int TABLE_ROWS_COUNT = date.getActualMaximum(Calendar.WEEK_OF_MONTH);
 		FRAME_WIDTH = VIEW_WIDTH / FRAMES_PER_ROW;
@@ -281,7 +355,7 @@ public class MonthView extends AbstractCalendarView {
 					null);
 
 			for (int j = 0; j < FRAMES_PER_ROW; j++) {
-				addDay(row, cellLp);
+				addDay(row, cellLp, daysList);
 				tmp.add(Calendar.DATE, 1);
 			}
 
@@ -290,7 +364,7 @@ public class MonthView extends AbstractCalendarView {
 	}
 
 	private void addDay(TableRow row,
-			android.widget.TableRow.LayoutParams cellLp) {
+			android.widget.TableRow.LayoutParams cellLp, List<MonthDayFrame> daysList) {
 		MonthDayFrame dayFrame = (MonthDayFrame) mInflater.inflate(
 				R.layout.calendar_month_day_container, null);
 
@@ -306,9 +380,45 @@ public class MonthView extends AbstractCalendarView {
 		Utils.setCalendarToFirstDayOfMonth(firstShownDate);
 		Utils.setCalendarToFirstDayOfWeek(firstShownDate);
 	}
-
+	
+	public void refresh(Calendar from) {
+		if (!stillLoading) {
+			{
+				View pb = findViewById(R.id.top_panel_pb);
+				pb.setVisibility(VISIBLE);
+				// Toast.makeText(getContext(), "Fetching event data...", Toast.LENGTH_SHORT).show();
+			}
+			redrawBubbles = true;
+			MonthViewCache.getInstance().inheritDay(from, selectedDate);
+			updateShownDate();
+			setTopPanel();
+			
+			// paintTable(selectedDate);
+			// setDayFrames();
+			TableLayout newTable = new TableLayout(getContext());
+			newTable.setLayoutParams(monthTable.getLayoutParams());
+			
+			ArrayList<MonthDayFrame> newList = new ArrayList<MonthDayFrame>(40);
+			paintTable(selectedDate, newTable, newList);
+			setDayFrames(newList); // will update frames and event lists
+			daysList = newList;
+			monthTable = newTable;
+		}
+	}
+	
 	private class UpdateEventsInfoTask extends
 			AbstractCalendarView.UpdateEventsInfoTask {
+		private final TableLayout oldLayout;
+		private final List<MonthDayFrame> daysList;
+/*
+		public UpdateEventsInfoTask() {
+			this.daysList = MonthView.this.daysList;
+		}
+*/
+		public UpdateEventsInfoTask(TableLayout oldLayout, List<MonthDayFrame> daysList) {
+			this.oldLayout = oldLayout;
+			this.daysList = daysList;
+		}
 
 		@Override
 		protected void onPostExecute(Void result) {
@@ -322,7 +432,26 @@ public class MonthView extends AbstractCalendarView {
 				}
 				tmp.add(Calendar.DATE, 1);
 			}
+			if (oldLayout != null) {
+				ViewParent parent = oldLayout.getParent();
+				if (parent instanceof ViewGroup) {
+					ViewGroup layout = (ViewGroup) parent;
+					// layout dependent code...
+					layout.removeView(oldLayout);
+					layout.addView(monthTable);
+				} else {
+					Log.e(MonthView.class.getSimpleName(), "Terrible failure during refresh.");
+				}
+				View pb = findViewById(R.id.top_panel_pb);
+				pb.setVisibility(INVISIBLE);
+			}
 			stillLoading = false;
+			/*
+			if (lastIgnoredEvent != -1) {
+				localHero.onSwipe(null, null);
+				lastIgnoredEvent = -1;
+			}
+			*/
 			DataManagement.monthViewRunning = false;
 //			Log.e("onPostExecute", Calendar.getInstance().getTimeInMillis() - calendar.getTimeInMillis()+"");
 		}
@@ -454,23 +583,36 @@ public class MonthView extends AbstractCalendarView {
 		}
 		
 		protected void onSwipe(View v, MotionEvent event) {
+			/*
+			final View v;
+			if (view == null) {
+				ACTION = ACTION_CLICK;
+				v = daysList.get(lastIgnoredEvent);
+				Log.e("MV", "Handling ignored event: " + lastIgnoredEvent);
+			} else
+				v = view;
+			*/
 			switch (ACTION) {
 			case ACTION_SWIPE_LTR:
-				GenericSwipeAnimator.startAnimation(parentView, false, new Runnable() {
-					@Override
-					public void run() {
-						parentView.goPrev();
-					}
-				});
+				Calendar old = parentView.getSelectedDate();
+				if (event == null) {
+					MonthDayFrame frame = (MonthDayFrame) v;
+					int clickedDayPos = daysList.indexOf(frame);
+					old = (Calendar) firstShownDate.clone();
+					old.add(Calendar.DATE, clickedDayPos);
+				}
+				parentView.goPrev(old);
 				break;
 				
 			case ACTION_SWIPE_RTL:
-				GenericSwipeAnimator.startAnimation(parentView, true, new Runnable() {
-					@Override
-					public void run() {
-						parentView.goNext();
-					}
-				});
+				old = parentView.getSelectedDate();
+				if (event == null) {
+					MonthDayFrame frame = (MonthDayFrame) v;
+					int clickedDayPos = daysList.indexOf(frame);
+					old = (Calendar) firstShownDate.clone();
+					old.add(Calendar.DATE, clickedDayPos);
+				}
+				parentView.goNext(old);
 				break;
 				
 			case ACTION_CLICK:
@@ -483,12 +625,32 @@ public class MonthView extends AbstractCalendarView {
 						clickedDate.add(Calendar.DATE, clickedDayPos);
 	
 						if (!frame.isSelected()) {
+							if (frame.isOtherMonth()) {
+								ViewParent parent = parentView.getParent();
+								if (parent instanceof ViewAnimator) {
+									ACTION = (clickedDayPos < 7) ? ACTION_SWIPE_LTR : ACTION_SWIPE_RTL;
+									onSwipe(v, null);
+									return;
+								}
+							}
+							
 							selectedDate = clickedDate;
 							updateShownDate();
+							
+							/*
+							if (preview != null) {
+								preview[0].selectedDate.set(Calendar.DAY_OF_MONTH,
+										Math.min(selectedDate.get(Calendar.DAY_OF_MONTH),
+												preview[0].selectedDate.getActualMaximum(Calendar.DAY_OF_MONTH)));
+								preview[1].selectedDate.set(Calendar.DAY_OF_MONTH,
+										Math.min(selectedDate.get(Calendar.DAY_OF_MONTH),
+												preview[1].selectedDate.getActualMaximum(Calendar.DAY_OF_MONTH)));
+							}
+							*/
 	
 							if (frame.isOtherMonth()) {
 								redrawBubbles = true;
-	
+
 								setTopPanel();
 								paintTable(selectedDate);
 							}
@@ -497,6 +659,13 @@ public class MonthView extends AbstractCalendarView {
 							// updateEventLists();
 						}
 					}
+					/*
+					else {
+						MonthDayFrame frame = (MonthDayFrame) v;
+						lastIgnoredEvent = daysList.indexOf(frame);
+						Log.e("MV", "Ignored event: " + lastIgnoredEvent);
+					}
+					*/
 				}
 				break;
 				

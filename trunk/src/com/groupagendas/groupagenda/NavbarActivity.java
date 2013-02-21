@@ -51,6 +51,7 @@ import com.groupagendas.groupagenda.calendar.dayandweek.DayWeekView;
 import com.groupagendas.groupagenda.calendar.listnsearch.ListnSearchView;
 import com.groupagendas.groupagenda.calendar.minimonth.MiniMonthView;
 import com.groupagendas.groupagenda.calendar.month.MonthView;
+import com.groupagendas.groupagenda.calendar.month.MonthViewCache;
 import com.groupagendas.groupagenda.calendar.year.YearView;
 import com.groupagendas.groupagenda.chat.ChatThreadFragment;
 import com.groupagendas.groupagenda.data.CalendarSettings;
@@ -258,7 +259,7 @@ public class NavbarActivity extends FragmentActivity {
 		int newResponses = 0;
 		String tempResponses = "";
 		if (DataManagement.networkAvailable){
-			tempResponses = ""+EventManagement.getResponsesFromRemoteDb(getApplicationContext());
+			tempResponses = EventManagement.getResponsesFromRemoteDb(getApplicationContext());
 			acc.setResponses(tempResponses);
 		} else{
 			tempResponses = acc.getResponses();
@@ -459,9 +460,13 @@ public class NavbarActivity extends FragmentActivity {
 
 	private void showMonthView() {
 		calendarContainer.removeAllViews();
-		mInflater.inflate(R.layout.calendar_month, calendarContainer);
-		MonthView view = (MonthView) calendarContainer.getChildAt(0);
-		view.init(selectedDate);
+		MonthView view = MonthViewCache.getInstance().getView(selectedDate, mInflater);
+		if (view.getParent() != null) {
+			Log.e("NA", "WTF?");
+		} else
+			calendarContainer.addView(view);
+		MonthViewCache.getInstance().prefetch(calendarContainer, view.getSelectedDate(), mInflater);
+		// view.initPreview();
 
 	}
 
