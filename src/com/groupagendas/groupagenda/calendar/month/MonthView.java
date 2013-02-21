@@ -439,6 +439,7 @@ public class MonthView extends AbstractCalendarView {
 					// layout dependent code...
 					layout.removeView(oldLayout);
 					layout.addView(monthTable);
+					layout.invalidate();
 				} else {
 					Log.e(MonthView.class.getSimpleName(), "Terrible failure during refresh.");
 				}
