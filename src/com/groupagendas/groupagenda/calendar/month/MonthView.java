@@ -393,8 +393,9 @@ public class MonthView extends AbstractCalendarView {
 			updateShownDate();
 			setTopPanel();
 			
-			// paintTable(selectedDate);
-			// setDayFrames();
+			paintTable(selectedDate);
+			setDayFrames();
+			/*
 			TableLayout newTable = new TableLayout(getContext());
 			newTable.setLayoutParams(monthTable.getLayoutParams());
 			
@@ -403,6 +404,7 @@ public class MonthView extends AbstractCalendarView {
 			setDayFrames(newList); // will update frames and event lists
 			daysList = newList;
 			monthTable = newTable;
+			*/
 		}
 	}
 	
