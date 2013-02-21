@@ -6,13 +6,13 @@
 
 	<!-- to disable swipe animations, change back to FrameLayout -->
 
-	<ViewAnimator
+	<FrameLayout
 		android:id="@+id/calendarContainer"
 		android:layout_width="fill_parent"
 		android:layout_height="fill_parent"
 		android:layout_above="@+id/radiogroup"
 		android:layout_alignParentTop="true" >
-	</ViewAnimator>
+	</FrameLayout>
 
 	<include
 		android:id="@+id/radiogroup"
