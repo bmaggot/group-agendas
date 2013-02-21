@@ -99,6 +99,7 @@
 
         <EditText
 	        android:drawableLeft="@drawable/magnifying_glass"
+	        android:drawablePadding="5dp"
 	        android:background="@drawable/search_field_background_rounded"
 	        android:paddingLeft="15dp"
 	        android:paddingRight="15dp"
