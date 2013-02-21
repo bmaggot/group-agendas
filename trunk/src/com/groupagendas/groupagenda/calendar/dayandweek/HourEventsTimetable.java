@@ -110,11 +110,14 @@ public class HourEventsTimetable {
 	public int getLeftNeighbourId(Event event){
 		int eventStartIndex = getStartTimetableIndex(event);  // we get number of row, where starts our event
 		ArrayList<Event> hourEvents = eventsTimetable[eventStartIndex]; // we get all events of that hour
-
-		int eventIndexInRow = hourEvents.indexOf(event); // we get our event position in table row
-//		We use event object JAVA HASH code for Relative Layout id;
-		if (eventIndexInRow > 0) return hourEvents.get(eventIndexInRow - 1).hashCode();  // if our event is not the first from left event, we return his left neighbour hashcode
-		else return 0; // else return zero id;
+		
+		if(hourEvents != null){
+			int eventIndexInRow = hourEvents.indexOf(event); // we get our event position in table row
+		//		We use event object JAVA HASH code for Relative Layout id;
+				if (eventIndexInRow > 0) return hourEvents.get(eventIndexInRow - 1).hashCode();  // if our event is not the first from left event, we return his left neighbour hashcode
+			else return 0; // else return zero id;
+		}
+		else return 0;
 	}
 
 	public boolean hasEvents(int hour) {
