@@ -8,6 +8,7 @@ import java.util.Date;
 import java.util.TreeMap;
 
 import android.annotation.SuppressLint;
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.database.Cursor;
 import android.graphics.Color;
@@ -28,6 +29,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.groupagendas.groupagenda.EventActivityOnClickListener;
+import com.groupagendas.groupagenda.NavbarActivity;
 import com.groupagendas.groupagenda.R;
 import com.groupagendas.groupagenda.data.CalendarSettings;
 import com.groupagendas.groupagenda.data.EventManagement;
@@ -48,6 +50,7 @@ public class ListnSearchView extends LinearLayout {
 	private SectionListItem[] eventsArray;
 	private TreeMap<String, ArrayList<Event>> sortedEvents;
 	public static final SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
+	public static ProgressDialog progressDialog;
 
 	public ListnSearchView(Context context) {
 		this(context, null);
@@ -59,7 +62,10 @@ public class ListnSearchView extends LinearLayout {
 	}
 
 	public void init() {
-
+		progressDialog = new ProgressDialog(getContext());
+		progressDialog.setMessage(getContext().getResources().getString(R.string.loading));
+		progressDialog.setCancelable(false);
+		progressDialog.show();
 		listView = (SectionListView) findViewById(R.id.section_list_view);
 		new GetEventsInfoTask().execute();
 		listView.setDrawingCacheBackgroundColor(Color.TRANSPARENT);
@@ -363,6 +369,7 @@ public class ListnSearchView extends LinearLayout {
 			if (listView != null) {
 				listView.setAdapter(sectionAdapter);
 			}
+			progressDialog.dismiss();
 		}
 
 	}
