@@ -123,7 +123,6 @@ public class NavbarActivity extends FragmentActivity {
 	public static ArrayList<Event> pollsListToDelete = new ArrayList<Event>();
 	public static boolean updateResponsesLastView = false;
 	
-	public static ProgressDialog loadingProgressDialog;
 	public static boolean smthClicked = false;
 
 	private int mYear = 1970;
