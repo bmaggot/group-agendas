@@ -4,6 +4,7 @@ import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 import android.annotation.SuppressLint;
 import android.content.ContentProvider;
@@ -383,6 +384,9 @@ public class EventsProvider extends ContentProvider{
 	}
 	// END UriMatcher
 	
+	// QUICK HACK
+	public static final AtomicBoolean OUT_OF_DATE = new AtomicBoolean(false);
+	
 	@Override
 	public String getType(Uri uri) {
 		switch (mUriMatcher.match(uri)) {
@@ -479,6 +483,7 @@ public class EventsProvider extends ContentProvider{
 				
 				throw new IllegalArgumentException("Unknow URI "+uri);
 		}
+		OUT_OF_DATE.set(true);
 		getContext().getContentResolver().notifyChange(uri, null);
 		return count;
 	}
@@ -507,7 +512,8 @@ public class EventsProvider extends ContentProvider{
 		default:
 			throw new IllegalArgumentException("Unknow URI " + uri);
 		}
-		if(insUri != null){
+		if (insUri != null) {
+			OUT_OF_DATE.set(true);
 			getContext().getContentResolver().notifyChange(insUri, null);
 		}
 		return insUri;
@@ -601,6 +607,7 @@ public class EventsProvider extends ContentProvider{
 		default:
 			throw new IllegalArgumentException("Unknow URI " + uri);
 		}
+		OUT_OF_DATE.set(true);
 		getContext().getContentResolver().notifyChange(uri, null);
 
 		return count;
@@ -622,6 +629,7 @@ public class EventsProvider extends ContentProvider{
 		            }
 		        }
 		        sqlDB.setTransactionSuccessful();
+				OUT_OF_DATE.set(true);
 		        getContext().getContentResolver().notifyChange(EMetaData.EventsMetaData.CONTENT_URI, null);
 		        getContext().getContentResolver().notifyChange(EMetaData.EventsIndexesMetaData.CONTENT_URI, null);
 		        numIns = values.length;

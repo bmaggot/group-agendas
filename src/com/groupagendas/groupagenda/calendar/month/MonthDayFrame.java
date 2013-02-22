@@ -44,25 +44,39 @@ public class MonthDayFrame extends RelativeLayout {
 		dayTitle.setText(title);
 	}
 	
+	public int getDayNo() {
+		if (dayTitle == null)
+			return -1;
+		
+		return Integer.parseInt(dayTitle.getText().toString());
+	}
+	
 	public void DrawColourBubbles (ArrayList<Event> eventColorsArray, int frameWidth){
+		
 		allBubblesContainer = (LinearLayout) findViewById(R.id.month_bubble_megacontainer);
 		allBubblesContainer.removeAllViews();
-		if (eventColorsArray == null || eventColorsArray.isEmpty()) return;
+		if (eventColorsArray == null || eventColorsArray.isEmpty()) {
+//			Log.d("MDF", "No events, no bubbles on day " + dayTitle.getText() + " ... " + eventColorsArray);
+			return;
+		}
 		
 		LinearLayout line =  createBubbleContainerLine();
 		allBubblesContainer.addView(line);
 		
 		int maxChildren = frameWidth / (BUBBLE_WIDTH_PX + BUBBLE_MARGIN_PX); 
 		
+//		int lines = 1;
 		for (Event event : eventColorsArray) {
 //			if (event.getStatus() != Invited.PENDING || event.is_owner()) {
 				while (!addBubbleToLine(line, maxChildren, event)){
 					line = createBubbleContainerLine();
 					addBubbleToLine(line, maxChildren, event);
 					allBubblesContainer.addView(line);
+//					lines++;
 				}
 //			}
 		}
+//		Log.d("MDF", "Drawing " + eventColorsArray.size() + " bubbles on " + lines + " lines. Day " + dayTitle.getText());
 
 	}
 	
@@ -74,6 +88,7 @@ public class MonthDayFrame extends RelativeLayout {
 	public boolean addBubbleToLine(LinearLayout line, int maxChildren, Event event){
 		if (line.getChildCount() >= maxChildren) return false;
 		line.addView(drawCircle(BUBBLE_WIDTH_PX, event));
+		// Log.w("MDF", "Added circle to line " + line);
 		return true;
 	}
 	

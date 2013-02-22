@@ -6,13 +6,13 @@
 
 	<!-- to disable swipe animations, change back to FrameLayout -->
 
-	<FrameLayout
+	<com.groupagendas.groupagenda.CustomAnimator
 		android:id="@+id/calendarContainer"
 		android:layout_width="fill_parent"
 		android:layout_height="fill_parent"
 		android:layout_above="@+id/radiogroup"
 		android:layout_alignParentTop="true" >
-	</FrameLayout>
+	</com.groupagendas.groupagenda.CustomAnimator>
 
 	<include
 		android:id="@+id/radiogroup"
