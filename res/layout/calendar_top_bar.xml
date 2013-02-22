@@ -63,7 +63,8 @@
 		android:id="@+id/top_bar_bottom_line_frame"
 		android:layout_width="fill_parent"
 		android:layout_height="13dp"
-		android:layout_alignParentBottom="true"
+		android:layout_alignParentBottom="false"
+		android:layout_below="@+id/prevView"
 		android:orientation="horizontal" />
 
 </RelativeLayout>
