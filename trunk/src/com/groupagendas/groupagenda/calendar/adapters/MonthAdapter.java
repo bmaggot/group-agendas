@@ -10,11 +10,12 @@ import android.content.Context;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.LinearLayout.LayoutParams;
 import android.widget.ListView;
 import android.widget.TextView;
-import android.widget.LinearLayout.LayoutParams;
 
 import com.groupagendas.groupagenda.EventActivityOnClickListener;
+import com.groupagendas.groupagenda.EventActivityOnClickListener.TestCondition;
 import com.groupagendas.groupagenda.R;
 import com.groupagendas.groupagenda.events.Event;
 import com.groupagendas.groupagenda.events.EventsProvider;
@@ -30,6 +31,7 @@ public class MonthAdapter extends AbstractAdapter<Event> {
 	TreeMap<String, ArrayList<Event>> sortedEvents;
 	Calendar selectedDate;
 	float density;
+	TestCondition test;
 
 	public MonthAdapter(Context context, List<Event> list) {
 		super(context, list);
@@ -53,6 +55,11 @@ public class MonthAdapter extends AbstractAdapter<Event> {
 		this.sortedEvents = sortedEvents;
 		this.selectedDate = selectedDate;
 		this.density = context.getResources().getDisplayMetrics().density;
+	}
+	
+	public MonthAdapter setInvokeCondition(TestCondition test) {
+		this.test = test;
+		return this;
 	}
 	
 	public void setAMPM(boolean usesAMPM) {
@@ -184,7 +191,7 @@ public class MonthAdapter extends AbstractAdapter<Event> {
 			TextView title = (TextView) view.findViewById(R.id.month_entry_title);
 			title.setText(event.getTitle());
 			
-			view.setOnClickListener(new EventActivityOnClickListener(getContext(), event));
+			view.setOnClickListener(new EventActivityOnClickListener(getContext(), event, test));
 		}
 		return view;
 	}
