@@ -40,7 +40,7 @@ public class InvitedAdapter extends AbstractAdapter<Invited> {
 	}
 
 	@Override
-	public View getView(final int i, View view, final ViewGroup viewGroup) {
+	public View getView(int i, View view, final ViewGroup viewGroup) {
 		final Invited invited;
 		String temp = "";
 
@@ -94,12 +94,11 @@ public class InvitedAdapter extends AbstractAdapter<Invited> {
 						int i = Integer.parseInt(((View) v.getParent()).getTag().toString());
 						if ((i > -1) && (i < list.size())) {
 							list.remove(i);
-							((View) v.getParent()).setVisibility(View.GONE);
 						}
 						
 						if (activity instanceof EventActivity) {
 							((EventActivity) activity).setEditInvited(true);
-							((EventActivity) activity).showInvitesView(activity);
+							((EventActivity) activity).showInvitesView(activity, false);
 						}
 						
 						if (activity instanceof EventEditActivity) {
@@ -138,12 +137,14 @@ public class InvitedAdapter extends AbstractAdapter<Invited> {
 	
 //			if ((((invited.getGuid() != myID) && (invited.getMy_contact_id() < 1)) || ((invited.getGcid() > 0) && invited.getMy_contact_id() < 1))
 //					&& ContactManagement.getContactFromLocalDb(context, invited.getMy_contact_id(), 0) == null) {
-			if (
+			if ((
 					(invited.getGuid() != myID) &&
 					(invited.getGuid() > 0) &&
 					(ContactManagement.getContactFromLocalDbByExternalId(context, invited.getGuid()) == null)
-					
-			) {
+			) || (
+					(invited.getGcid() > 0) &&
+					(ContactManagement.getContactFromLocalDb(context, invited.getMy_contact_id(), 0) == null)
+			)) {
 				addToContactView.setVisibility(View.VISIBLE);
 				view.setOnClickListener(new OnClickListener() {
 					@Override
@@ -152,7 +153,10 @@ public class InvitedAdapter extends AbstractAdapter<Invited> {
 						dia.show();
 					}
 				});
-			} else if (ContactManagement.getContactFromLocalDb(context, invited.getMy_contact_id(), 0) != null){
+			} else if (
+					(ContactManagement.getContactFromLocalDb(context, invited.getMy_contact_id(), 0) != null) ||
+					(ContactManagement.getContactFromLocalDbByExternalId(context, invited.getGuid()) != null)
+			) {
 				view.setOnClickListener(new OnClickListener() {
 					
 					@Override
@@ -163,7 +167,7 @@ public class InvitedAdapter extends AbstractAdapter<Invited> {
 						context.startActivity(contactIntent);
 					}
 				});
-			} else if (invited.getGuid() == new Account(context).getUser_id()) {
+			} else if (invited.getGuid() == myID) {
 				view.setOnClickListener(new OnClickListener() {
 					
 					@Override
