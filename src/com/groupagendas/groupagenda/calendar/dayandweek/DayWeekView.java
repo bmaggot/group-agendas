@@ -9,7 +9,9 @@ import android.database.Cursor;
 import android.graphics.Color;
 import android.graphics.drawable.GradientDrawable;
 import android.util.AttributeSet;
+import android.util.TypedValue;
 import android.view.GestureDetector;
+import android.view.Gravity;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.LinearLayout;
@@ -228,7 +230,9 @@ public class DayWeekView extends AbstractCalendarView {
 	@Override
 	protected void instantiateTopPanelBottomLine() {
 		LinearLayout calendarTopPanelBottomLine = new LinearLayout(getContext());
-		LayoutParams params = new LayoutParams(android.view.ViewGroup.LayoutParams.MATCH_PARENT, android.view.ViewGroup.LayoutParams.MATCH_PARENT);
+		LayoutParams params = new LayoutParams(android.view.ViewGroup.LayoutParams.MATCH_PARENT, Math.round(20*getResources().getDisplayMetrics().density));
+		params.setMargins(0, 0, 0, 0);
+		params.gravity = Gravity.TOP;
 		calendarTopPanelBottomLine.setOrientation(LinearLayout.HORIZONTAL);
 		calendarTopPanelBottomLine.setLayoutParams(params);
 		getTopPanelBottomLine().addView(calendarTopPanelBottomLine);	
@@ -260,6 +264,9 @@ public class DayWeekView extends AbstractCalendarView {
 				
 				// Setting bottom bar
 				TextView entry = new TextView(getContext());
+				LayoutParams eParams = new LayoutParams(Math.round(EVENTS_COLUMN_WIDTH / (float)daysShown.getDaysToShow()), LayoutParams.MATCH_PARENT);
+				eParams.setMargins(0, 0, 0, 0);
+				eParams.gravity = Gravity.TOP;
 //				Add empty space
 				entry.setWidth(Math.round(HOUR_COLUMN_WIDTH));
 				bottomBar.addView(entry);
@@ -267,12 +274,16 @@ public class DayWeekView extends AbstractCalendarView {
 				Calendar tmp = (Calendar) daysShown.getShownDate().clone();
 //				add view for every day
 				for (int i = 0; i < daysShown.getDaysToShow(); i++){
-					entry = (TextView) mInflater.inflate(R.layout.calendar_top_bar_bottomline_entry, null);
-					
 					String text = (tmp.get(Calendar.DATE) + " " + WeekDayNamesShort[tmp.get(Calendar.DAY_OF_WEEK) - 1]);
+					
+					entry = new TextView(getContext());
 					tmp.add(Calendar.DATE, 1);
 					entry.setText(text);
-					entry.setWidth(Math.round(EVENTS_COLUMN_WIDTH / (float)daysShown.getDaysToShow()));
+					entry.setGravity(Gravity.CENTER_HORIZONTAL);
+					entry.setTextColor(Color.parseColor("#3B4959"));
+					entry.setTextSize(TypedValue.COMPLEX_UNIT_SP, 9);
+					entry.setIncludeFontPadding(false);
+					entry.setLayoutParams(eParams);
 					bottomBar.addView(entry);
 				}
 			}
@@ -280,7 +291,8 @@ public class DayWeekView extends AbstractCalendarView {
 			this.getTopPanelTitle().setText(title);
 			RelativeLayout topBar = (RelativeLayout) findViewById(R.id.calendar_navbar);
 			LayoutParams lParams = (LayoutParams) topBar.getLayoutParams();
-			lParams.height = Math.round(35 * densityFactor);
+			lParams.setMargins(0, 0, 0, 0);
+			lParams.height = Math.round(45 * densityFactor);
 			topBar.setLayoutParams(lParams);
 		}
 		
