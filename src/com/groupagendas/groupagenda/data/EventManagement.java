@@ -541,7 +541,7 @@ public class EventManagement {
 							// TODO: revise this NPE workaround
 							+ month_index_formatter.format(date != null ? date.getTime() : new Date()) + "'  ORDER BY time_start_utc  ", null);
 		} else {
-			return context.getContentResolver().query(uri, projection, where, null, sortOrder);
+			return context.getContentResolver().query(uri, projection, where, null, sortOrder != null ? sortOrder : "time_start_utc");
 		}
 
 	}
