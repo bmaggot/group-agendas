@@ -1,6 +1,7 @@
 package com.groupagendas.groupagenda.events.repeated;
 
-import com.groupagendas.groupagenda.R;
+import java.util.Calendar;
+import java.util.Locale;
 
 import android.app.Activity;
 import android.content.SharedPreferences;
@@ -8,8 +9,13 @@ import android.content.SharedPreferences.Editor;
 import android.os.Bundle;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.ScrollView;
+import android.widget.TextView;
+import android.widget.Toast;
+
+import com.groupagendas.groupagenda.R;
 
 public class RepeatActivity extends Activity implements OnClickListener {
 	public class ActivityPrefs {
@@ -51,20 +57,43 @@ public class RepeatActivity extends Activity implements OnClickListener {
 		switch (v_id) {
 		case R.id.button_repeat_never:
 			ACTIVITY_MODE = ActivityPrefs.ACTIVITY_MODE_MAIN;
+			loadBody();
 			break;
 		case R.id.button_repeat_daily:
 			ACTIVITY_MODE = ActivityPrefs.ACTIVITY_MODE_DAILY;
+			loadBody();
 			break;
 		case R.id.button_repeat_weekly:
 			ACTIVITY_MODE = ActivityPrefs.ACTIVITY_MODE_WEEKLY;
+			loadBody();
+			break;
+		case R.id.button_repeat_week_select:
+			loadWeekList();
 			break;
 		case R.id.button_repeat_monthly:
 			ACTIVITY_MODE = ActivityPrefs.ACTIVITY_MODE_MONTHLY;
+			loadBody();
+			break;
+		case R.id.cancel:
+			finish();
+			break;
+		case R.id.save:
+			finish();
 			break;
 		case R.id.button_repeat_yearly:
 			ACTIVITY_MODE = ActivityPrefs.ACTIVITY_MODE_YEARLY;
+			loadBody();
+			break;
+		case R.id.button_repeat_each:
+			((View) findViewById(R.id.repeat_month_table)).setVisibility(View.VISIBLE);
+			((View) findViewById(R.id.repeat_onthe_spinners)).setVisibility(View.GONE);
+			break;
+		case R.id.button_repeat_on:
+			((View) findViewById(R.id.repeat_month_table)).setVisibility(View.GONE);
+			((View) findViewById(R.id.repeat_onthe_spinners)).setVisibility(View.VISIBLE);
 			break;
 		default:
+			Toast.makeText(RepeatActivity.this, "Boobs!", Toast.LENGTH_SHORT).show();
 			break;
 		}
 	}
@@ -81,6 +110,8 @@ public class RepeatActivity extends Activity implements OnClickListener {
 	public void onStop() {
 		editor.putInt(ActivityPrefs.ACTIVITY_MODE_KEY, ActivityPrefs.ACTIVITY_MODE_MAIN);
 		editor.commit();
+		
+		super.onStop();
 	}
 	
 	private void loadBody() {
@@ -90,19 +121,17 @@ public class RepeatActivity extends Activity implements OnClickListener {
 		switch (ACTIVITY_MODE) {
 		case ActivityPrefs.ACTIVITY_MODE_MAIN:
 			activityBody = (LinearLayout) View.inflate(RepeatActivity.this, R.layout.repeat_main_menu, null);
+			((TextView) findViewById(R.id.topText)).setText(R.string.repeat); 
 			activityScrollWrapper.addView(activityBody);
 			break;
 		case ActivityPrefs.ACTIVITY_MODE_DAILY:
-			activityBody = (LinearLayout) View.inflate(RepeatActivity.this, R.layout.repeat_main_menu, null);
-			activityScrollWrapper.addView(activityBody);
+			loadDailyMenu();
 			break;
 		case ActivityPrefs.ACTIVITY_MODE_WEEKLY:
-			activityBody = (LinearLayout) View.inflate(RepeatActivity.this, R.layout.repeat_main_menu, null);
-			activityScrollWrapper.addView(activityBody);
+			loadWeeklyMenu();
 			break;
 		case ActivityPrefs.ACTIVITY_MODE_MONTHLY:
-			activityBody = (LinearLayout) View.inflate(RepeatActivity.this, R.layout.repeat_main_menu, null);
-			activityScrollWrapper.addView(activityBody);
+			loadMonthlyMenu();
 			break;
 		case ActivityPrefs.ACTIVITY_MODE_YEARLY:
 			activityBody = (LinearLayout) View.inflate(RepeatActivity.this, R.layout.repeat_main_menu, null);
@@ -122,4 +151,75 @@ public class RepeatActivity extends Activity implements OnClickListener {
 			loadBody();
 		}
 	}
+	
+	private void loadDailyMenu() {
+		activityBody = (LinearLayout) View.inflate(RepeatActivity.this, R.layout.repeat_daily_menu, null);
+		((TextView) findViewById(R.id.topText)).setText(R.string.daily); 
+		
+		for (int iterator = 0; iterator < activityBody.getChildCount(); iterator++) {
+			((Button) activityBody.getChildAt(iterator)).setText((iterator+1) + " " + getString(R.string.day));
+			activityBody.getChildAt(iterator).setTag(""+(iterator+1));
+		}
+		activityScrollWrapper.addView(activityBody);
+	}
+	
+	private void loadWeeklyMenu() {
+		activityBody = (LinearLayout) View.inflate(RepeatActivity.this, R.layout.repeat_weekly_menu, null);
+		((TextView) findViewById(R.id.topText)).setText(R.string.weekly); 
+		
+		for (int iterator = 0; iterator < activityBody.getChildCount(); iterator++) {
+			if (iterator == 0) {
+				((Button) activityBody.getChildAt(iterator)).setText(getString(R.string.repeat_every) + " " + " " + getString(R.string.week).toLowerCase(Locale.ENGLISH));
+			}
+			
+			if (iterator > 1) {
+				((Button) activityBody.getChildAt(iterator)).setText(getResources().getStringArray(R.array.week_days_names)[(iterator-2)]);
+				activityBody.getChildAt(iterator).setTag(""+(iterator-1));
+			}
+		}
+		activityScrollWrapper.addView(activityBody);
+	}
+	
+	private void loadWeekList() {
+		Calendar cal = Calendar.getInstance();
+		int weekAmount = cal.getActualMaximum(Calendar.WEEK_OF_YEAR);
+		int paddingSize = Math.round(10*getResources().getDisplayMetrics().density);
+		((TextView) findViewById(R.id.topText)).setText(R.string.repeat_every); 
+		
+		activityScrollWrapper.removeAllViews();
+		activityBody.removeAllViews();
+		
+		for (int iterator = 0; iterator < weekAmount; iterator++) {
+			Button b = (Button) View.inflate(RepeatActivity.this, R.layout.repeat_week_list_entry, null);
+			
+			if (iterator == 0) {
+				b.setBackgroundResource(R.drawable.event_invite_people_button_notalone);
+			}
+			if (iterator > 0) {
+				b.setBackgroundResource(R.drawable.event_invited_entry_notalone_background);
+				b.setPadding(paddingSize, paddingSize, paddingSize, paddingSize);
+			}
+			if (iterator == (weekAmount-1)) {
+				b.setBackgroundResource(R.drawable.event_invited_entry_last_background);
+				b.setPadding(paddingSize, paddingSize, paddingSize, paddingSize);
+			}
+			b.setText((iterator+1) + " " + getString(R.string.week).toLowerCase(Locale.ENGLISH));
+			b.setTag("" + (iterator+1));
+			
+			activityBody.addView(b);
+		}
+		activityScrollWrapper.addView(activityBody);
+	}
+	
+	private void loadMonthlyMenu() {
+		activityBody = (LinearLayout) View.inflate(RepeatActivity.this, R.layout.repeat_monthly_menu, null);
+		((TextView) findViewById(R.id.topText)).setText(R.string.monthly); 
+		
+//		for (int iterator = 0; iterator < activityBody.getChildCount(); iterator++) {
+//			((Button) activityBody.getChildAt(iterator)).setText((iterator+1) + " " + getString(R.string.day));
+//			activityBody.getChildAt(iterator).setTag(""+(iterator+1));
+//		}
+		activityScrollWrapper.addView(activityBody);
+	}
+	
 }
