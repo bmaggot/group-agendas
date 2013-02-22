@@ -271,6 +271,8 @@ public class ListnSearchView extends LinearLayout {
 
 		@Override
 		protected void onPreExecute() {
+			if(progressDialog != null)
+				progressDialog.dismiss();
 			progressDialog = new ProgressDialog(getContext());
 			progressDialog.setMessage(getContext().getResources().getString(R.string.loading));
 			progressDialog.setCancelable(false);
