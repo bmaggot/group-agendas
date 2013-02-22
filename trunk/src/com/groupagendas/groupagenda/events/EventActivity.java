@@ -228,6 +228,10 @@ public class EventActivity extends Activity {
 		event.setIcon(selectedIcon);
 		event.setColor(selectedColor);
 
+		if (newInvites != null) {
+			event.setInvited(newInvites);
+		}
+		
 		if (event.getInvited().size() > 0) {
 			event.setType(Event.SHARED_EVENT);
 		} else {
@@ -397,12 +401,15 @@ public class EventActivity extends Activity {
 	}
 
 	protected void showInvitesView(Context context) {
-		if (newInvites != null) {
-			event.getInvited().addAll(newInvites);
-			newInvites = null;
+		showInvitesView(context, true);
+	}
+	
+	protected void showInvitesView(Context context, boolean reloadInvited) {
+		if ((newInvites != null) && (reloadInvited)) {
+			newInvites.addAll(event.getInvited());
 		}
 
-		int invitedListSize = event.getInvited().size();
+		int invitedListSize = newInvites.size();
 		invitedPersonList.removeAllViews();
 		if (invitedListSize == 0) {
 			((View) inviteButton.getParent()).setBackgroundResource(R.drawable.event_invite_people_button_standalone);
@@ -423,19 +430,16 @@ public class EventActivity extends Activity {
 				me.setName(fullname);
 				me.setStatus(Invited.ACCEPTED);
 				event.setStatus(Invited.ACCEPTED);
-				event.getInvited().add(me);
+				newInvites.add(me);
 				invitedListSize++;
 			}
 
 			((View) inviteButton.getParent()).setBackgroundResource(R.drawable.event_invite_people_button_notalone);
-			invitedAdapter = new InvitedAdapter(this, event.getInvited(), event.getEvent_id(), this);
+			invitedAdapter = new InvitedAdapter(this, newInvites, event.getEvent_id(), this);
 			for (int i = 0; i < invitedListSize; i++) {
 				View view = invitedAdapter.getView(i, null, null);
 				invitedPersonList.addView(view);
 			}
-//			invitedPersonListView.setAdapter(invitedAdapter);
-			
-//			invitedAdapter.notifyDataSetChanged();
 		}
 
 	}
@@ -508,6 +512,7 @@ public class EventActivity extends Activity {
 		for (AutoColorItem autoColor : autoColors) {
 			if (event.getTitle().contains(autoColor.keyword)) {
 				event.setColor(autoColor.color);
+				event.setDisplayColor(autoColor.color);
 				break;
 			}
 		}
