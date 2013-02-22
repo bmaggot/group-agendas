@@ -370,5 +370,10 @@
     <string name="template_delete_failed">Failed to remove template</string>
     <string name="save_as_template">Save as template</string>
     <string name="address_list_refresh">List refreshed, please select address.</string>
+    <string name="repeat_weekly_explained">Select days to repeat on</string>
+    <string name="repeat_every">Repeat every</string>
+    <string name="repeat_on">Repeat on</string>
+    <string name="each">Each</string>
+    <string name="on_the">On the</string>
     
 </resources>
