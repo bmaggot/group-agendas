@@ -1464,6 +1464,7 @@ public class EventEditActivity extends EventActivity implements AddressMetaData 
 					.setPositiveButton(getString(R.string.yes), new DialogInterface.OnClickListener() {
 						@Override
 						public void onClick(DialogInterface dialog, int id) {
+							saveButton.setEnabled(false);
 							new DeleteEventTask().execute();
 						}
 					}).setNegativeButton(getString(R.string.no), new DialogInterface.OnClickListener() {
@@ -1499,6 +1500,7 @@ public class EventEditActivity extends EventActivity implements AddressMetaData 
 				toast.setText(EventManagement.getError());
 			}
 			toast.show();
+			saveButton.setEnabled(true);
 
 			super.onPostExecute(result);
 			onBackPressed();
