@@ -29,7 +29,6 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.groupagendas.groupagenda.EventActivityOnClickListener;
-import com.groupagendas.groupagenda.NavbarActivity;
 import com.groupagendas.groupagenda.R;
 import com.groupagendas.groupagenda.data.CalendarSettings;
 import com.groupagendas.groupagenda.data.EventManagement;
@@ -62,10 +61,6 @@ public class ListnSearchView extends LinearLayout {
 	}
 
 	public void init() {
-		progressDialog = new ProgressDialog(getContext());
-		progressDialog.setMessage(getContext().getResources().getString(R.string.loading));
-		progressDialog.setCancelable(false);
-		progressDialog.show();
 		listView = (SectionListView) findViewById(R.id.section_list_view);
 		new GetEventsInfoTask().execute();
 		listView.setDrawingCacheBackgroundColor(Color.TRANSPARENT);
@@ -274,6 +269,14 @@ public class ListnSearchView extends LinearLayout {
 		protected Calendar listStartDate = Utils.createNewTodayCalendar();
 		protected TreeMap<String, ArrayList<Event>> sortedEvents;
 
+		@Override
+		protected void onPreExecute() {
+			progressDialog = new ProgressDialog(getContext());
+			progressDialog.setMessage(getContext().getResources().getString(R.string.loading));
+			progressDialog.setCancelable(false);
+			progressDialog.show();
+		}
+		
 		/**
 		 * @author justinas.marcinka@gmail.com Returns event projection in: id,
 		 *         color, icon, title, start and end calendars. Other fields are
