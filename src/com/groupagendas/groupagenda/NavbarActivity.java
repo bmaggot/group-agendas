@@ -627,7 +627,10 @@ public class NavbarActivity extends FragmentActivity {
 			Intent intent = new Intent(NavbarActivity.this, NewEventActivity.class);
 			View view = calendarContainer.getChildAt(0);
 			if (view instanceof AbstractCalendarView) {
+				Calendar now = Calendar.getInstance();
 				Calendar cal = ((AbstractCalendarView) view).getDateToResume();
+				cal.set(Calendar.HOUR_OF_DAY, now.get(Calendar.HOUR_OF_DAY));
+				cal.set(Calendar.MINUTE, now.get(Calendar.MINUTE));
 				intent.putExtra(NewEventActivity.EXTRA_STRING_FOR_START_CALENDAR,
 						Utils.formatCalendar(cal, DataManagement.SERVER_TIMESTAMP_FORMAT));
 			}
