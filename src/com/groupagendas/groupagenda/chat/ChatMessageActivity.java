@@ -1,6 +1,7 @@
 package com.groupagendas.groupagenda.chat;
 
-import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
 import android.app.Activity;
 import android.content.BroadcastReceiver;
@@ -36,7 +37,7 @@ public class ChatMessageActivity extends Activity {
 	Button chatSend;
 	static ChatMessageAdapter adapter;
 	ListView chat_message_list;
-	ArrayList<ChatMessageObject> chatMessages;
+	List<ChatMessageObject> chatMessages = Collections.emptyList();
 	ChatMessageObject chatMessageObject;
 
 	@Override
