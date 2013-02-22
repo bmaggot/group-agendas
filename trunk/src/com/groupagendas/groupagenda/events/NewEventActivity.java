@@ -163,7 +163,7 @@ public class NewEventActivity extends EventActivity implements AddressMetaData {
 
 		String strStartTime = getIntent().getStringExtra(EXTRA_STRING_FOR_START_CALENDAR);
 		if (strStartTime != null) {
-			startCalendar = Utils.stringToCalendar(getApplicationContext(), strStartTime, DataManagement.SERVER_TIMESTAMP_FORMAT);
+			startCalendar = Utils.stringToCalendar(NewEventActivity.this, strStartTime, DataManagement.SERVER_TIMESTAMP_FORMAT);
 			startCalendar.clear(Calendar.SECOND);
 			endCalendar.setTime(startCalendar.getTime());
 			endCalendar.add(Calendar.MINUTE, DEFAULT_EVENT_DURATION_IN_MINS);
