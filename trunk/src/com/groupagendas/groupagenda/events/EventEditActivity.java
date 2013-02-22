@@ -198,7 +198,7 @@ public class EventEditActivity extends EventActivity implements AddressMetaData 
 			saveButton.setEnabled(changesMade);
 		}
 
-		if (newInvites == null)
+//		if (newInvites == null)
 			newInvites = new ArrayList<Invited>();
 
 		for (Contact temp : EventActivity.selectedContacts) {
