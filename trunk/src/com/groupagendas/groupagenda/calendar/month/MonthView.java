@@ -20,7 +20,6 @@ import android.widget.RelativeLayout;
 import android.widget.TableLayout;
 import android.widget.TableRow;
 import android.widget.TextView;
-import android.widget.ViewAnimator;
 
 import com.groupagendas.groupagenda.CustomAnimator;
 import com.groupagendas.groupagenda.R;
@@ -350,9 +349,33 @@ public class MonthView extends AbstractCalendarView {
 		Utils.setCalendarToFirstDayOfWeek(firstShownDate);
 	}
 	
+	@Override
+	public void setupDelegates() {
+		super.setupDelegates();
+	}
+	
+	public void redrawInheritedDate() {
+//		MonthViewCache.getInstance().inheritDay(from, selectedDate);
+		int selectedDay = selectedDate.get(Calendar.DAY_OF_MONTH);
+		for (MonthDayFrame mdf : dayFrames) {
+			if (mdf.isOtherMonth())
+				continue;
+			
+			if (mdf.getDayNo() == selectedDay) {
+				mdf.setState(MonthCellState.SELECTED);
+			} else if (mdf.isSelected()) {
+				Calendar tmp = (Calendar) selectedDate.clone();
+				tmp.set(Calendar.DAY_OF_MONTH, mdf.getDayNo());
+				mdf.setState(Utils.isToday(tmp) ? MonthCellState.TODAY : MonthCellState.DEFAULT);
+			}
+		}
+	}
+	
 	public void refresh(Calendar from) {
 		if (stillLoading)
 			return;
+		
+//		Log.d("MVC", "==== START ==== MV refresh (random events)");
 		
 		MonthViewCache.getInstance().inheritDay(from, selectedDate);
 		
@@ -371,6 +394,7 @@ public class MonthView extends AbstractCalendarView {
 		}
 		repaintTable(selectedDate, newLayout, frames);
 		setDayFrames(frames, dayTable, newLayout);
+//		Log.d("MVC", "===== END ===== MV refresh (random events)");
 		// updateEventLists();
 	}
 	
@@ -399,9 +423,14 @@ public class MonthView extends AbstractCalendarView {
 		@Override
 		protected void onPostExecute(Void result) {
 //			Calendar calendar = Calendar.getInstance();
+//			if (newLayout != oldLayout) {
+//				Log.w("MVC", "== S onPostExec == MV refresh (RANDOM EVENTS)");
+//			}
+			
 			updateEventLists();
 			Calendar tmp = (Calendar) firstShownDate.clone();
 			for (MonthDayFrame frame : frames) {
+				// Log.d("FRAME", "HAS: " + frame.hasBubbles());
 				if (!frame.hasBubbles) {
 					frame.DrawColourBubbles(TreeMapUtils.getEventsFromTreemap(
 							tmp, sortedEvents), FRAME_WIDTH);
@@ -417,6 +446,7 @@ public class MonthView extends AbstractCalendarView {
 				dayTable = newLayout;
 				dayFrames = frames;
 				parent.addView(newLayout);
+//				Log.w("MVC", "== E onPostExec == MV refresh (RANDOM EVENTS)");
 			}
 //			Log.e("onPostExecute", Calendar.getInstance().getTimeInMillis() - calendar.getTimeInMillis()+"");
 		}
@@ -576,30 +606,33 @@ public class MonthView extends AbstractCalendarView {
 					if (!stillLoading) {
 						MonthDayFrame frame = (MonthDayFrame) v;
 						int clickedDayPos = dayFrames.indexOf(frame);
-	
+
 						Calendar clickedDate = (Calendar) firstShownDate.clone();
 						clickedDate.add(Calendar.DATE, clickedDayPos);
-	
+
 						if (!frame.isSelected()) {
 							if (frame.isOtherMonth()) {
 								ViewParent parent = parentView.getParent();
-								if (parent instanceof ViewAnimator) {
+								if (parent instanceof CustomAnimator) {
 									ACTION = (clickedDayPos < 7) ? ACTION_SWIPE_LTR : ACTION_SWIPE_RTL;
 									onSwipe(v, null);
 									return;
 								}
 							}
-							
+
+//							Log.d("MVC", "==== START ==== MV day click (bugless)");
+
 							selectedDate = clickedDate;
 							updateShownDate();
-	
+
 							if (frame.isOtherMonth()) {
 								setTopPanel();
 								repaintTable(selectedDate, dayTable, dayFrames);
 							}
-	
+
 							setDayFrames(dayFrames); // TODO optimize: now all day frames are redrawn
 							// updateEventLists();
+//							Log.d("MVC", "==== END ==== MV day click (bugless)");
 						}
 					}
 				}

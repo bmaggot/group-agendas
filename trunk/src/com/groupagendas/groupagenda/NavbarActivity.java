@@ -32,6 +32,7 @@ import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.view.ViewParent;
 import android.widget.CompoundButton;
 import android.widget.DatePicker;
 import android.widget.FrameLayout;
@@ -278,6 +279,18 @@ public class NavbarActivity extends FragmentActivity {
 		
 	}
 
+	private <T> T getCurrentView(Class<T> type) {
+		View view;
+		if (calendarContainer instanceof CustomAnimator)
+			view = ((CustomAnimator) calendarContainer).getCurrentView();
+		else
+			view = calendarContainer.getChildAt(0);
+		if (type.isInstance(view))
+			return type.cast(view);
+		
+		return null;
+	}
+
 	@SuppressLint("SimpleDateFormat")
 	@Override
 	protected void onSaveInstanceState(Bundle outState) {
@@ -285,9 +298,9 @@ public class NavbarActivity extends FragmentActivity {
 		outState.putBoolean("isDataLoaded", dataLoaded);
 		outState.putInt("loadPhase", loadPhase);
 		outState.putString("viewState", StringValueUtils.valueOf(viewState));
-		if (calendarContainer.getChildAt(0) instanceof AbstractCalendarView) {
-			selectedDate = ((AbstractCalendarView) calendarContainer.getChildAt(0)).getDateToResume();
-		}
+		AbstractCalendarView view = getCurrentView(AbstractCalendarView.class);
+		if (view != null)
+			selectedDate = view.getDateToResume();
 		if (viewState == ViewState.DAY || viewState == ViewState.WEEK) {
 			outState.putBoolean("resumeDayWeekView", true);
 			outState.putInt("dayWeekViewShowDays", DayWeekView.getDaysToShow());
@@ -396,17 +409,18 @@ public class NavbarActivity extends FragmentActivity {
 	private void showListSearchView() {
 		calendarContainer.removeAllViews();
 		mInflater.inflate(R.layout.calendar_listnsearch, calendarContainer);
-		ListnSearchView view = (ListnSearchView) calendarContainer.getChildAt(0);
-		view.init();
+		ListnSearchView view = getCurrentView(ListnSearchView.class);
+		if (view != null)
+			view.init();
 	}
 
 	private void showWeekView() {
 		calendarContainer.removeAllViews();
 		mInflater.inflate(R.layout.calendar_week, calendarContainer);
-		if (calendarContainer.getChildAt(0) instanceof DayWeekView) {
-			DayWeekView view = (DayWeekView) calendarContainer.getChildAt(0);
+		DayWeekView view = getCurrentView(DayWeekView.class);
+		if (view != null) {
 			int daysToShow = 0; // if we want to resume with default shown days
-								// number we call init with param 0
+			// number we call init with param 0
 			if (this.resumeDayWeekView) {
 				daysToShow = this.dayWeekViewShowDays;
 				resumeDayWeekView = false;
@@ -415,30 +429,30 @@ public class NavbarActivity extends FragmentActivity {
 			}
 			view.init(selectedDate, daysToShow);
 		}
-
 	}
 
 	private void showMiniMonthView() {
 		calendarContainer.removeAllViews();
 		mInflater.inflate(R.layout.calendar_mm, calendarContainer);
-		MiniMonthView view = (MiniMonthView) calendarContainer.getChildAt(0);
-		view.init(selectedDate);
-
+		MiniMonthView view = getCurrentView(MiniMonthView.class);
+		if (view != null)
+			view.init(selectedDate);
 	}
 
 	private void showYearView() {
 		calendarContainer.removeAllViews();
 		mInflater.inflate(R.layout.calendar_year, calendarContainer);
-		YearView view = (YearView) calendarContainer.getChildAt(0);
-		view.init(selectedDate);
+		YearView view = getCurrentView(YearView.class);
+		if (view != null)
+			view.init(selectedDate);
 	}
 
 	private void showAgendaView() {
 		calendarContainer.removeAllViews();
 		mInflater.inflate(R.layout.calendar_agenda, calendarContainer);
-		AgendaView view = (AgendaView) calendarContainer.getChildAt(0);
-		view.init(selectedDate);
-
+		AgendaView view = getCurrentView(AgendaView.class);
+		if (view != null)
+			view.init(selectedDate);
 	}
 
 	private void showDayView() {
@@ -446,8 +460,8 @@ public class NavbarActivity extends FragmentActivity {
 									// state we show only one day
 			calendarContainer.removeAllViews();
 			mInflater.inflate(R.layout.calendar_week, calendarContainer);
-			if (calendarContainer.getChildAt(0) instanceof DayWeekView) {
-				DayWeekView view = (DayWeekView) calendarContainer.getChildAt(0);
+			DayWeekView view = getCurrentView(DayWeekView.class);
+			if (view != null) {
 				int daysToShow = 1;
 				DayWeekView.setDaysToShow(daysToShow);
 				view.init(selectedDate, daysToShow);
@@ -461,17 +475,25 @@ public class NavbarActivity extends FragmentActivity {
 	private void showMonthView() {
 		calendarContainer.removeAllViews();
 		
+		
 		if (calendarContainer instanceof CustomAnimator) {
 			MonthView view = MonthViewCache.getInstance().getView(selectedDate, mInflater);
-			if (view.getParent() != null) {
-				Log.e(getClass().getSimpleName(), "A majestic failure", new RuntimeException("Please report this issue immediately: " + (view.getParent() == calendarContainer)));
-			} else
+			ViewParent parent;
+			if ((parent = view.getParent()) != null) {
+				Log.e(getClass().getSimpleName(), "A majestic failure", new RuntimeException("Expected parent: " + calendarContainer + ", actual: " + parent));
+			} else {
 				calendarContainer.addView(view);
+				view.setupDelegates();
+			}
+			if (EventsProvider.OUT_OF_DATE.compareAndSet(true, false))
+				view.refresh(selectedDate);
 			MonthViewCache.getInstance().prefetchInUiThread(view.getSelectedDate(), mInflater);
 		} else {
 			mInflater.inflate(R.layout.calendar_month, calendarContainer);
-			MonthView view = (MonthView) calendarContainer.getChildAt(0);
-			view.init(selectedDate);
+			
+			MonthView view = getCurrentView(MonthView.class);
+			if (view != null)
+				view.init(selectedDate);
 		}
 
 	}
@@ -625,10 +647,10 @@ public class NavbarActivity extends FragmentActivity {
 		@Override
 		protected Void doInBackground(Void... params) {
 			Intent intent = new Intent(NavbarActivity.this, NewEventActivity.class);
-			View view = calendarContainer.getChildAt(0);
-			if (view instanceof AbstractCalendarView) {
+			AbstractCalendarView view = getCurrentView(AbstractCalendarView.class);
+			if (view != null) {
 				Calendar now = Calendar.getInstance();
-				Calendar cal = ((AbstractCalendarView) view).getDateToResume();
+				Calendar cal = view.getDateToResume();
 				cal.set(Calendar.HOUR_OF_DAY, now.get(Calendar.HOUR_OF_DAY));
 				cal.set(Calendar.MINUTE, now.get(Calendar.MINUTE));
 				intent.putExtra(NewEventActivity.EXTRA_STRING_FOR_START_CALENDAR,
@@ -693,10 +715,9 @@ public class NavbarActivity extends FragmentActivity {
 	public boolean dispatchTouchEvent(MotionEvent ev) {
 		try{
 			super.dispatchTouchEvent(ev);
-			if (calendarContainer.getChildAt(0) instanceof AbstractCalendarView) {
-				AbstractCalendarView view = (AbstractCalendarView) calendarContainer.getChildAt(0);
+			AbstractCalendarView view = getCurrentView(AbstractCalendarView.class);
+			if (view != null)
 				return view.getSwipeGestureDetector().onTouchEvent(ev);
-			}
 		} catch (Exception e) {
 			Log.e("navbar dispatchTouchEvent()", "3 fingers");
 		}
@@ -765,6 +786,7 @@ public class NavbarActivity extends FragmentActivity {
 					loadPhase++;
 					total = 10;
 					publishProgress(total);
+				//$FALL-THROUGH$
 				case 1: // Load account
 					Account acc = new Account(NavbarActivity.this);
 	
@@ -781,6 +803,7 @@ public class NavbarActivity extends FragmentActivity {
 						publishProgress(total);
 					} 
 					System.gc();
+				//$FALL-THROUGH$
 				case 2:// Load contacts
 					if (DataManagement.networkAvailable){
 						ContactManagement.getContactsFromRemoteDb(NavbarActivity.this, null);
@@ -793,6 +816,7 @@ public class NavbarActivity extends FragmentActivity {
 					total = 40;
 					publishProgress(total);
 					System.gc();
+				//$FALL-THROUGH$
 				case 3:// Load groups
 					if (DataManagement.networkAvailable){
 						ContactManagement.getGroupsFromRemoteDb(NavbarActivity.this, null);
@@ -807,6 +831,7 @@ public class NavbarActivity extends FragmentActivity {
 					publishProgress(total);
 					System.gc();
 
+				//$FALL-THROUGH$
 				case 4: // Load event templates
 					if (DataManagement.networkAvailable) {
 //						DataManagement.getTemplatesFromRemoteDb(NavbarActivity.this);
@@ -821,6 +846,7 @@ public class NavbarActivity extends FragmentActivity {
 					publishProgress(total);
 					System.gc();
 
+				//$FALL-THROUGH$
 				case 5: // Load events
 					if (DataManagement.networkAvailable){
 						EventManagement.getEventsFromRemoteDb(NavbarActivity.this, "", 0, 0);
@@ -835,6 +861,7 @@ public class NavbarActivity extends FragmentActivity {
 					publishProgress(total);
 					System.gc();
 
+				//$FALL-THROUGH$
 				case 6: // Load chat threads if network available
 					if (DataManagement.networkAvailable) {
 						dm.getAddressesFromRemoteDb(getApplicationContext());

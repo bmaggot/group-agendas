@@ -55,6 +55,7 @@ public class CustomAnimator extends ViewAnimator {
 		MonthViewCache.getInstance().inheritDay(oldDate, state.newDate);
 		state.inflater = inflater;
 		state.view = MonthViewCache.getInstance().getView(state.newDate, state.inflater);
+		state.view.redrawInheritedDate();
 		ViewParent parent = state.view.getParent();
 		if (parent != null) {
 			if (parent == this)
@@ -86,6 +87,7 @@ public class CustomAnimator extends ViewAnimator {
 		setOutAnimation(null);
 		// removeViewAt(0); causes a NPE, so we move it to setup
 		
+		state.view.setupDelegates();
 		state.view.refresh(state.newDate);
 		MonthViewCache.getInstance().prefetchInUiThread(state.newDate, state.inflater);
 

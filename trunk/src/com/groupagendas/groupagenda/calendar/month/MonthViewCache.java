@@ -39,7 +39,9 @@ public final class MonthViewCache {
 			view = ref.get();
 		if (view == null) {
 			view = (MonthView) inflater.inflate(R.layout.calendar_month, null);
-			view.init(id);
+//			Log.d("MVC", "==== START ==== MVC default initialization (bugless)");
+			view.init(id, false);
+//			Log.d("MVC", "===== END ===== MVC default initialization (bugless)");
 			previews.put(key, createRef(view));
 		} else
 			inheritDay(id, view.getSelectedDate());

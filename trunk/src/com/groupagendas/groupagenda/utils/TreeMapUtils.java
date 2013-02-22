@@ -1,5 +1,6 @@
 package com.groupagendas.groupagenda.utils;
 
+import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -14,12 +15,17 @@ import com.groupagendas.groupagenda.events.Event;
 
 public class TreeMapUtils {
 	public static final String SERVER_TIMESTAMP_FORMAT = "yyyy-MM-dd HH:mm:ss";
-	// ascii date, so Locale = US
-	public static final SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd", Locale.US);
+	
+	private static final DateFormat createFormatter() {
+		return new SimpleDateFormat("yyyy-MM-dd", Locale.US); // ascii date, so Locale = US
+	}
 	
 	public static ArrayList<Event> getEventsFromTreemap(Calendar date, TreeMap<String, ArrayList<Event>> tm) {
 		if (date != null && tm != null) {
-			ArrayList<Event> stored = tm.get(formatter.format(date.getTime()));
+			String key = createFormatter().format(date.getTime());
+			ArrayList<Event> stored = tm.get(key);
+			// Log.d("TMU", "Looking for " + key + " returned " + (stored != null ? stored.size() : -1));
+			// Log.d("TMU", "Date: " + date.getTime().toString());
 			// if it was present inside the map, return it
 			if (stored != null)
 				return stored;
@@ -50,6 +56,7 @@ public class TreeMapUtils {
 			for (difference = 0; tmp_event_start.before(event_end); ++difference) {
 				tmp_event_start.add(Calendar.DAY_OF_MONTH, 1);
 			}
+			DateFormat formatter = createFormatter();
 			if (difference == 0) {
 				String dayStr = formatter.format(event_start.getTime());
 				tm = putValueIntoTreeMap(tm, dayStr, event);
@@ -84,6 +91,7 @@ public class TreeMapUtils {
 			tm = new TreeMap<String, ArrayList<Event>>();
 		}
 		
+		// Log.d("TMU", "Adding event with key " + eventDay);
 		ArrayList<Event> tmpArrayList = tm.get(eventDay);
 		if (tmpArrayList == null) {
 			tmpArrayList = new ArrayList<Event>(1);
@@ -96,7 +104,7 @@ public class TreeMapUtils {
 
 	public static void putEventIntoTreeMap(Context context, TreeMap<String, ArrayList<Event>> tm,Event event) {
 		Calendar event_start = (Calendar) event.getStartCalendar().clone();
-		String dayStr = formatter.format(event_start.getTime());
+		String dayStr = createFormatter().format(event_start.getTime());
 		tm = putValueIntoTreeMap(tm, dayStr, event);
 	}
 
@@ -114,6 +122,7 @@ public class TreeMapUtils {
 		for (difference = 0; tmp_event_start.before(event_end); ++difference) {
 			tmp_event_start.add(Calendar.DAY_OF_MONTH, 1);
 		}
+		DateFormat formatter = createFormatter();
 		if (difference == 0) {
 			String dayStr = formatter.format(event_start.getTime());
 			Calendar eventDay = Utils.stringToCalendar(context, dayStr + " 00:00:00", SERVER_TIMESTAMP_FORMAT);
@@ -144,7 +153,7 @@ public class TreeMapUtils {
 		} else {
 			Log.e("FUCKED", event.getEvent_id() + "");
 			if(event.getStartCalendar() != null)
-			dayStr = formatter.format(event.getStartCalendar().getTime());
+			dayStr = createFormatter().format(event.getStartCalendar().getTime());
 		}
 		tm = putValueIntoTreeMap(tm, dayStr, event);
 	}
@@ -164,6 +173,7 @@ public class TreeMapUtils {
 		for (difference = 0; tmp_event_start.before(event_end); ++difference) {
 			tmp_event_start.add(Calendar.DAY_OF_MONTH, 1);
 		}
+		DateFormat formatter = createFormatter();
 		if (difference == 0) {
 			String dayStr = "";
 			if (event.getEvents_day() != null) {
@@ -213,6 +223,7 @@ public class TreeMapUtils {
 		for (difference = 0; tmp_event_start.before(event_end); ++difference) {
 			tmp_event_start.add(Calendar.DAY_OF_MONTH, 1);
 		}
+		DateFormat formatter = createFormatter();
 		if (difference == 0) {
 			String dayStr = "";
 			if (event.getEvents_day() != null) {

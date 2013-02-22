@@ -22,6 +22,7 @@ import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.TouchDelegate;
 import android.view.View;
+import android.view.ViewParent;
 import android.widget.FrameLayout;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
@@ -194,15 +195,18 @@ public abstract class AbstractCalendarView extends LinearLayout {
 		return topPanelBottomLineFrame;
 	}
 
-	public void init(Calendar initializationDate) {
+	public void init(Calendar initializationDate, boolean onScreen) {
 		setupSelectedDate(initializationDate);
-		setupTopPanel();
+		setupTopPanel(onScreen);
 		setUpSwipeGestureListener();
 		setupView();
-
+	}
+	
+	public void init(Calendar initializationDate) {
+		init(initializationDate, true);
 	}
 
-	private final void setupTopPanel() {
+	private final void setupTopPanel(boolean onScreen) {
 
 		prevButton = (ImageButton) findViewById(R.id.prevView);
 		nextButton = (ImageButton) findViewById(R.id.nextView);
@@ -231,11 +235,21 @@ public abstract class AbstractCalendarView extends LinearLayout {
 			}
 		});
 
-		setupDelegates();
+		if (onScreen)
+			setupDelegates();
 
 	}
 
-	private void setupDelegates() {
+	// requires view to be on screen
+	protected void setupDelegates() {
+		ViewParent parent = prevButton.getParent();
+		if (!(parent instanceof View))
+			return;
+		
+		View topBar = (View) parent;
+		if (topBar.getTouchDelegate() != null)
+			return;
+		
 		// Debug.waitForDebugger();
 		int[] tmpCoords = new int[2];
 		int screenWidth = getResources().getDisplayMetrics().widthPixels;
@@ -258,11 +272,8 @@ public abstract class AbstractCalendarView extends LinearLayout {
 		touchDelegates = new TouchDelegateGroup(calNavbar);
 		touchDelegates.addTouchDelegate(prevButtonDelegate);
 		touchDelegates.addTouchDelegate(nextButtonDelegate);
-
-		if (View.class.isInstance(prevButton.getParent())) {
-			((View) prevButton.getParent()).setTouchDelegate(touchDelegates);
-		}
-
+		
+		topBar.setTouchDelegate(touchDelegates);
 	}
 
 	protected void setUpSwipeGestureListener() {
@@ -361,10 +372,12 @@ public abstract class AbstractCalendarView extends LinearLayout {
 					}
 				}
 				if(events != null){
+//					Log.d("ADDING GA EVENTS", "= START To map " + sortedEvents + ", total: " + events.size());
 					for (Event event : events) {
 						TreeMapUtils.putNewEventIntoTreeMap(context, sortedEvents,
 								event);
 					}
+//					Log.d("ADDING GA EVENTS", "=== END To map " + sortedEvents + ", total: " + events.size());
 				}
 			}
 			Log.e("End Loading GA", StringValueUtils.valueOf((System.nanoTime() - start) / 1000000));
