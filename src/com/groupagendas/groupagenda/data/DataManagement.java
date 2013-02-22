@@ -995,7 +995,7 @@ public class DataManagement implements AddressMetaData, AutoColorIconMetaData {
 		ArrayList<AutoIconItem> Items = new ArrayList<AutoIconItem>(result.getCount());
 
 		while (result.moveToNext()) {
-			final AutoIconItem item = MetaUtils.createFromCursor(result, AutoIcon.class, AutoIconItem.class);
+			AutoIconItem item = MetaUtils.createFromCursor(result, AutoIcon.class, AutoIconItem.class);
 			Items.add(item);
 		}
 		result.close();
@@ -1051,7 +1051,7 @@ public class DataManagement implements AddressMetaData, AutoColorIconMetaData {
 		Cursor result = context.getContentResolver().query(MetaUtils.getContentUri(AutoColor.class), null, null, null, null);
 		ArrayList<AutoColorItem> Items = new ArrayList<AutoColorItem>(result.getCount());
 		while (result.moveToNext()) {
-			final AutoColorItem item = MetaUtils.createFromCursor(result, AutoColor.class, AutoColorItem.class);
+			AutoColorItem item = MetaUtils.createFromCursor(result, AutoColor.class, AutoColorItem.class);
 			Items.add(item);
 		}
 		result.close();
