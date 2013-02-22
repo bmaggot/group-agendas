@@ -311,5 +311,9 @@
     <string name="yearly">Yearly</string>
     <string name="repeat_explained">To repeat an event every 2 weeks, select \'Weekly\' and set \'Repeat every\' to \'2 weeks\'.</string>
     <string name="save_as_template">Save as template</string>
+    <string name="repeat_weekly_explained">Select days to repeat on</string>
+    <string name="repeat_on">Repeat on</string>
+    <string name="each">Each</string>
+    <string name="on_the">On the</string>
     
 </resources>
