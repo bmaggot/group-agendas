@@ -460,13 +460,19 @@ public class NavbarActivity extends FragmentActivity {
 
 	private void showMonthView() {
 		calendarContainer.removeAllViews();
-		MonthView view = MonthViewCache.getInstance().getView(selectedDate, mInflater);
-		if (view.getParent() != null) {
-			Log.e(getClass().getSimpleName(), "A majestic failure", new RuntimeException("Please report this issue immediately: " + (view.getParent() == calendarContainer)));
-		} else
-			calendarContainer.addView(view);
-		MonthViewCache.getInstance().prefetchInUiThread(view.getSelectedDate(), mInflater);
-		// view.initPreview();
+		
+		if (calendarContainer instanceof CustomAnimator) {
+			MonthView view = MonthViewCache.getInstance().getView(selectedDate, mInflater);
+			if (view.getParent() != null) {
+				Log.e(getClass().getSimpleName(), "A majestic failure", new RuntimeException("Please report this issue immediately: " + (view.getParent() == calendarContainer)));
+			} else
+				calendarContainer.addView(view);
+			MonthViewCache.getInstance().prefetchInUiThread(view.getSelectedDate(), mInflater);
+		} else {
+			mInflater.inflate(R.layout.calendar_month, calendarContainer);
+			MonthView view = (MonthView) calendarContainer.getChildAt(0);
+			view.init(selectedDate);
+		}
 
 	}
 
