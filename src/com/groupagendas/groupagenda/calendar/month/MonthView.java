@@ -22,6 +22,7 @@ import android.widget.TableRow;
 import android.widget.TextView;
 
 import com.groupagendas.groupagenda.CustomAnimator;
+import com.groupagendas.groupagenda.EventActivityOnClickListener.TestCondition;
 import com.groupagendas.groupagenda.R;
 import com.groupagendas.groupagenda.calendar.AbstractCalendarView;
 import com.groupagendas.groupagenda.calendar.GenericSwipeAnimator;
@@ -197,7 +198,12 @@ public class MonthView extends AbstractCalendarView {
 		calendarTable.setOnTouchListener(localHero);
 
 		eventsAdapter = new MonthAdapter(getContext(), null, am_pmEnabled,
-				sortedEvents, selectedDate);
+				sortedEvents, selectedDate).setInvokeCondition(new TestCondition() {
+					@Override
+					public boolean test() {
+						return !stillLoading;
+					}
+				});
 		eventsList = (ListView) findViewById(R.id.month_list);
 		fillBottomSpace();
 		eventsList.setAdapter(eventsAdapter);

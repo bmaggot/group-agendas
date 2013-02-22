@@ -1712,6 +1712,41 @@ public class EventManagement {
 		return item;
 	}
 
+	public static ArrayList<Event> getEventBubblesFromLocalDb(Context context) {
+		Calendar today = Calendar.getInstance();
+		today.set(Calendar.HOUR_OF_DAY, 0);
+		today.set(Calendar.MINUTE, 0);
+		today.set(Calendar.SECOND, 0);
+		today.set(Calendar.MILLISECOND, 0);
+		
+		Cursor result = EventsProvider.mOpenHelper.getReadableDatabase().rawQuery(
+				"SELECT color, event_display_color, status, is_all_day, is_birthday, type, day, day_time_start, day_time_end " +
+				"FROM events_days LEFT JOIN events USING(event_id) WHERE time_end_utc > " +
+				today.getTimeInMillis() + " ORDER BY time_start_utc", null);
+		ArrayList<Event> list = new ArrayList<Event>(result.getCount());
+		while (result.moveToNext()) {
+			list.add(createBubbleEventFromCursor(result));
+		}
+		return list;
+	}
+	
+	private static Event createBubbleEventFromCursor(Cursor c) {
+		Event bubble = new Event();
+		{
+			bubble.setColor(c.getString(c.getColumnIndexOrThrow(EventsProvider.EMetaData.EventsMetaData.COLOR)));
+			bubble.setDisplayColor(c.getString(c.getColumnIndexOrThrow(EventsProvider.EMetaData.EventsMetaData.EVENT_DISPLAY_COLOR)));
+			bubble.setStatus(c.getInt(c.getColumnIndexOrThrow(EventsProvider.EMetaData.EventsMetaData.STATUS)));
+			bubble.setIs_all_day(c.getInt(c.getColumnIndex(EventsProvider.EMetaData.EventsMetaData.IS_ALL_DAY)) != 0);
+			bubble.setBirthday(c.getInt(c.getColumnIndex(EventsProvider.EMetaData.EventsMetaData.IS_BIRTHDAY)) != 0);
+			bubble.setType(c.getString(c.getColumnIndexOrThrow(EventsProvider.EMetaData.EventsMetaData.TYPE)));
+			bubble.setEvents_day(c.getString(c.getColumnIndexOrThrow(EventsProvider.EMetaData.EventsIndexesMetaData.DAY)));
+			bubble.setEvent_day_start(c.getString(c.getColumnIndexOrThrow(EventsProvider.EMetaData.EventsIndexesMetaData.DAY_TIME_START)));
+			bubble.setEvent_day_end(c.getString(c.getColumnIndexOrThrow(EventsProvider.EMetaData.EventsIndexesMetaData.DAY_TIME_END)));
+			bubble.setNative(false);
+		}
+		return bubble;
+	}
+
 	// TODO document
 	public static ArrayList<Event> getEventsFromLocalDb(Context context, boolean filterActual) {
 		Event item;
@@ -1723,7 +1758,7 @@ public class EventManagement {
 		today.set(Calendar.MILLISECOND, 0);
 		
 		Cursor result = EventsProvider.mOpenHelper.getReadableDatabase().rawQuery("SELECT events._id AS _id, events.event_id, user_id, status, attendant_0_count, attendant_1_count, attendant_2_count, attendant_4_count, " +
-				"is_owner, is_all_day, is_all_day, is_birthday, type, creator_fullname, title, poll, day, day_time_start, day_time_end" +
+				"is_owner, is_all_day, is_birthday, type, creator_fullname, title, poll, day, day_time_start, day_time_end" +
 				" FROM events_days LEFT JOIN events USING(event_id) WHERE "+ EventsProvider.EMetaData.EventsMetaData.TIME_END_UTC_MILLISECONDS + ">" + today.getTimeInMillis() + " ORDER BY time_start_utc ", null);
 		ArrayList<Event> items = new ArrayList<Event>(result.getCount());
 

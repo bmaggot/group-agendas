@@ -1464,8 +1464,11 @@ public class EventEditActivity extends EventActivity implements AddressMetaData 
 					.setPositiveButton(getString(R.string.yes), new DialogInterface.OnClickListener() {
 						@Override
 						public void onClick(DialogInterface dialog, int id) {
-							saveButton.setEnabled(false);
-							new DeleteEventTask().execute();
+							ProgressDialog dlg = new ProgressDialog(EventEditActivity.this);
+							dlg.setCancelable(false);
+							dlg.setTitle(R.string.deleting);
+							dlg.show();
+							new DeleteEventTask(dlg).execute();
 						}
 					}).setNegativeButton(getString(R.string.no), new DialogInterface.OnClickListener() {
 						@Override
@@ -1479,6 +1482,12 @@ public class EventEditActivity extends EventActivity implements AddressMetaData 
 	}
 
 	class DeleteEventTask extends AsyncTask<Void, Boolean, Boolean> {
+		private ProgressDialog dlg;
+		
+		public DeleteEventTask(ProgressDialog dlg) {
+			this.dlg = dlg;
+		}
+		
 		@Override
 		protected Boolean doInBackground(Void... type) {
 			if (event_internal_id > 0) {
@@ -1493,6 +1502,9 @@ public class EventEditActivity extends EventActivity implements AddressMetaData 
 
 		@Override
 		protected void onPostExecute(Boolean result) {
+			if (dlg != null)
+				dlg.dismiss();
+			
 			Toast toast = Toast.makeText(EventEditActivity.this, "", Toast.LENGTH_LONG);
 			if (result) {
 				toast.setText(getString(R.string.event_deleted));
@@ -1500,7 +1512,6 @@ public class EventEditActivity extends EventActivity implements AddressMetaData 
 				toast.setText(EventManagement.getError());
 			}
 			toast.show();
-			saveButton.setEnabled(true);
 
 			super.onPostExecute(result);
 			onBackPressed();
@@ -1565,7 +1576,12 @@ public class EventEditActivity extends EventActivity implements AddressMetaData 
 					}).setCancelable(false).show();
 		} else {
 			dataLoaded = false;
-			super.onBackPressed();
+			try {
+				super.onBackPressed();
+			} catch (IllegalStateException e) {
+				Log.w("onBackPressed()", "Invalid call, most likely from onPostExecute()");
+				// ignore, for now
+			}
 		}
 	}
 

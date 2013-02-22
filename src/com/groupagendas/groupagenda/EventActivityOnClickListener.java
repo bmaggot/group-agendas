@@ -11,12 +11,21 @@ import com.groupagendas.groupagenda.events.EventEditActivity;
 public class EventActivityOnClickListener implements View.OnClickListener{
 	Event event;
 	Context context;
+	TestCondition test;
 	public EventActivityOnClickListener (Context context, Event event){
+		this(context, event, null);
+	}
+	public EventActivityOnClickListener (Context context, Event event, TestCondition test){
 		this.event = event;
 		this.context = context;
+		this.test = test;
 	}
+	
 	@Override
   public void onClick(View view) {
+		if (test != null && !test.test())
+			return;
+		
 		if(event.isBirthday()){
 			Intent intent = new Intent(context, ContactInfoActivity.class);
 			intent.putExtra("contactId", Integer.valueOf(""+event.getInternalID()));
@@ -31,4 +40,7 @@ public class EventActivityOnClickListener implements View.OnClickListener{
 		
 	}
   	
+	public interface TestCondition {
+		boolean test();
+	}
 }
