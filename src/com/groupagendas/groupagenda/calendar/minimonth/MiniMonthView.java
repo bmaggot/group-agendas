@@ -42,7 +42,7 @@ import com.groupagendas.groupagenda.utils.Utils;
 
 public class MiniMonthView extends AbstractCalendarView {
 
-	ArrayList<AgendaFrame> daysList = new ArrayList<AgendaFrame>();
+	ArrayList<AgendaFrame> daysList = new ArrayList<AgendaFrame>(43);
 
 	private TableLayout miniMonthTable;
 
@@ -203,7 +203,7 @@ public class MiniMonthView extends AbstractCalendarView {
 
 	private void paintTable(Calendar date) {
 		miniMonthTable.removeAllViews();
-		daysList = new ArrayList<AgendaFrame>(43);
+		daysList.clear();
 
 		TableLayout.LayoutParams rowLp = new TableLayout.LayoutParams(ViewGroup.LayoutParams.FILL_PARENT,
 				ViewGroup.LayoutParams.FILL_PARENT, 1.0f);

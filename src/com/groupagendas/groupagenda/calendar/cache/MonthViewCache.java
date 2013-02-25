@@ -15,7 +15,7 @@ public final class MonthViewCache extends MonthCache<MonthView> {
 	}
 	
 	@Override
-	protected int getLayoutId() {
+	public int getLayoutId() {
 		return R.layout.calendar_month;
 	}
 	

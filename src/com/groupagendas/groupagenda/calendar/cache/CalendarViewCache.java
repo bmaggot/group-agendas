@@ -23,20 +23,18 @@ public abstract class CalendarViewCache<E extends AbstractCalendarView> {
 		preview = new HashMap<Integer, Reference<E>>();
 	}
 	
-	protected abstract int getLayoutId();
+	public abstract int getLayoutId();
 	
 	public Reference<E> createRef(E view) {
 		return new SoftReference<E>(view);
 	}
 	
-	protected Integer getKey(int year, int month) {
-		return (year << 8) | month;
-	}
+	protected abstract Integer getKey(Calendar date);
 	
 	@SuppressWarnings("unchecked")
 	public synchronized E getView(Calendar id, LayoutInflater inflater) {
 		E view = null;
-		final Integer key = getKey(id.get(Calendar.YEAR), id.get(Calendar.MONTH));
+		final Integer key = getKey(id);
 		Reference<E> ref = preview.get(key);
 		if (ref != null)
 			view = ref.get();

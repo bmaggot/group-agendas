@@ -2,6 +2,7 @@ package com.groupagendas.groupagenda.calendar.agenda;
 
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.List;
 
 import android.content.Context;
 import android.content.Intent;
@@ -10,6 +11,7 @@ import android.graphics.drawable.BitmapDrawable;
 import android.util.AttributeSet;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.ViewParent;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
@@ -20,8 +22,11 @@ import android.widget.TextView;
 import az.mecid.android.ActionItem;
 import az.mecid.android.QuickAction;
 
+import com.groupagendas.groupagenda.CustomAnimator;
 import com.groupagendas.groupagenda.R;
 import com.groupagendas.groupagenda.calendar.AbstractCalendarView;
+import com.groupagendas.groupagenda.calendar.GenericSwipeAnimator;
+import com.groupagendas.groupagenda.calendar.cache.AgendaViewCache;
 import com.groupagendas.groupagenda.contacts.birthdays.BirthdayManagement;
 import com.groupagendas.groupagenda.data.DataManagement;
 import com.groupagendas.groupagenda.data.EventManagement;
@@ -37,14 +42,14 @@ public class AgendaView extends AbstractCalendarView {
 	private static final int FRAMES_PER_ROW = 2;
 	private Calendar shownDate;
 	private static final int TABLE_ROWS_COUNT = 3;
-	private static final int SHOWN_DAYS_COUNT = 7;
+	public static final int SHOWN_DAYS_COUNT = 7;
 	public boolean stillLoading = true;
 
 	private QuickAction qa;
 	private ActionItem New;
 	private Calendar cal = Calendar.getInstance();
 
-	ArrayList<AgendaFrame> daysList = new ArrayList<AgendaFrame>();
+	List<AgendaFrame> daysList = new ArrayList<AgendaFrame>(SHOWN_DAYS_COUNT);
 
 	private TableLayout agendaTable;
 
@@ -59,33 +64,70 @@ public class AgendaView extends AbstractCalendarView {
 
 	@Override
 	protected void setTopPanel() {
-		String title = getResources().getString(R.string.week);
-		title += " ";
-		title += shownDate.get(Calendar.WEEK_OF_YEAR);
-		this.getTopPanelTitle().setText(title);
-
+		StringBuilder title = new StringBuilder(getResources().getString(R.string.week));
+		title.append(' ').append(shownDate.get(Calendar.WEEK_OF_YEAR));
+		getTopPanelTitle().setText(title);
 	}
 
 	@Override
 	public void goPrev() {
-		if(!stillLoading){
-			shownDate.add(Calendar.DATE, (-1 * SHOWN_DAYS_COUNT));
-			setTopPanel();
-			setDaysTitles();
-			updateEventLists();
+		if (stillLoading)
+			return;
+		
+		ViewParent actNavBar = getParent();
+		if (!(actNavBar instanceof CustomAnimator)) {
+			GenericSwipeAnimator.startAnimation(this, false, new Runnable() {
+				@Override
+				public void run() {
+					shownDate.add(Calendar.DATE, -SHOWN_DAYS_COUNT);
+					setTopPanel();
+					setDaysTitles();
+					updateEventLists();
+				}
+			});
+			return;
 		}
-
+		
+		CustomAnimator ca = (CustomAnimator) actNavBar;
+		if (!ca.setupAnimator(AgendaViewCache.getInstance(), selectedDate, mInflater, true)) {
+			// Log.w(getClass().getSimpleName(), "Attempt to setup an active animator?!");
+			return;
+		}
 	}
 
 	@Override
 	public void goNext() {
-		if(!stillLoading){
-			shownDate.add(Calendar.DATE, SHOWN_DAYS_COUNT);
-			setTopPanel();
-			setDaysTitles();
-			updateEventLists();
+		if (stillLoading)
+			return;
+		
+		ViewParent actNavBar = getParent();
+		if (!(actNavBar instanceof CustomAnimator)) {
+			GenericSwipeAnimator.startAnimation(this, true, new Runnable() {
+				@Override
+				public void run() {
+					shownDate.add(Calendar.DATE, SHOWN_DAYS_COUNT);
+					setTopPanel();
+					setDaysTitles();
+					updateEventLists();
+				}
+			});
+			return;
 		}
+		
+		CustomAnimator ca = (CustomAnimator) actNavBar;
+		if (!ca.setupAnimator(AgendaViewCache.getInstance(), selectedDate, mInflater, false)) {
+			// Log.w(getClass().getSimpleName(), "Attempt to setup an active animator?!");
+			return;
+		}
+	}
 
+	@Override
+	public void refresh(Calendar from) {
+		if (stillLoading)
+			return;
+		
+		setDaysTitles();
+		updateEventLists();
 	}
 
 	@Override
