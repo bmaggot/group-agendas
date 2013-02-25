@@ -28,6 +28,7 @@ import com.groupagendas.groupagenda.calendar.AbstractCalendarView;
 import com.groupagendas.groupagenda.calendar.GenericSwipeAnimator;
 import com.groupagendas.groupagenda.calendar.MonthCellState;
 import com.groupagendas.groupagenda.calendar.adapters.MonthAdapter;
+import com.groupagendas.groupagenda.calendar.cache.MonthViewCache;
 import com.groupagendas.groupagenda.contacts.birthdays.BirthdayManagement;
 import com.groupagendas.groupagenda.data.DataManagement;
 import com.groupagendas.groupagenda.data.EventManagement;
@@ -127,7 +128,7 @@ public class MonthView extends AbstractCalendarView {
 		
 		ViewParent actNavBar = getParent();
 		if (!(actNavBar instanceof CustomAnimator)) {
-			GenericSwipeAnimator.startAnimation(this, true, new Runnable() {
+			GenericSwipeAnimator.startAnimation(this, false, new Runnable() {
 				@Override
 				public void run() {
 					selectedDate.add(Calendar.MONTH, -1);
@@ -142,7 +143,7 @@ public class MonthView extends AbstractCalendarView {
 		}
 		
 		CustomAnimator ca = (CustomAnimator) actNavBar;
-		if (!ca.setupAnimator(from, mInflater, true, useGivenDate)) {
+		if (!ca.setupAnimator(MonthViewCache.getInstance(), from, mInflater, true, useGivenDate)) {
 			// Log.w(getClass().getSimpleName(), "Attempt to setup an active animator?!");
 			return;
 		}
@@ -174,7 +175,7 @@ public class MonthView extends AbstractCalendarView {
 		}
 		
 		CustomAnimator ca = (CustomAnimator) actNavBar;
-		if (!ca.setupAnimator(from, mInflater, false, useGivenDate)) {
+		if (!ca.setupAnimator(MonthViewCache.getInstance(), from, mInflater, false, useGivenDate)) {
 			// Log.w(getClass().getSimpleName(), "Attempt to setup an active animator?!");
 			return;
 		}
@@ -355,13 +356,7 @@ public class MonthView extends AbstractCalendarView {
 		Utils.setCalendarToFirstDayOfWeek(firstShownDate);
 	}
 	
-	@Override
-	public void setupDelegates() {
-		super.setupDelegates();
-	}
-	
 	public void redrawInheritedDate() {
-//		MonthViewCache.getInstance().inheritDay(from, selectedDate);
 		int selectedDay = selectedDate.get(Calendar.DAY_OF_MONTH);
 		for (MonthDayFrame mdf : dayFrames) {
 			if (mdf.isOtherMonth())
@@ -377,6 +372,7 @@ public class MonthView extends AbstractCalendarView {
 		}
 	}
 	
+	@Override
 	public void refresh(Calendar from) {
 		if (stillLoading)
 			return;
@@ -385,8 +381,12 @@ public class MonthView extends AbstractCalendarView {
 		
 		MonthViewCache.getInstance().inheritDay(from, selectedDate);
 		
-		updateShownDate();
-		setTopPanel();
+		// updateShownDate();
+		// setTopPanel();
+		// do not redraw the table
+		setDayFrames(dayFrames);
+		
+		/* refresh is called from animation-related code only, so checks are useless
 		List<MonthDayFrame> frames;
 		TableLayout newLayout;
 		if (getParent() instanceof CustomAnimator)
@@ -400,18 +400,9 @@ public class MonthView extends AbstractCalendarView {
 		}
 		repaintTable(selectedDate, newLayout, frames);
 		setDayFrames(frames, dayTable, newLayout);
+		*/
 //		Log.d("MVC", "===== END ===== MV refresh (random events)");
 		// updateEventLists();
-	}
-	
-	@Override
-	public void onAnimationEnd() {
-		super.onAnimationEnd();
-		
-		ViewParent parent = getParent();
-		if (parent instanceof CustomAnimator) {
-			((CustomAnimator) parent).onAnimationEnd(this);
-		}
 	}
 	
 	private class UpdateEventsInfoTask extends
@@ -437,10 +428,10 @@ public class MonthView extends AbstractCalendarView {
 			Calendar tmp = (Calendar) firstShownDate.clone();
 			for (MonthDayFrame frame : frames) {
 				// Log.d("FRAME", "HAS: " + frame.hasBubbles());
-				if (!frame.hasBubbles) {
+				//if (!frame.hasBubbles) {
 					frame.DrawColourBubbles(TreeMapUtils.getEventsFromTreemap(
 							tmp, sortedEvents), FRAME_WIDTH);
-				}
+				//}
 				tmp.add(Calendar.DATE, 1);
 			}
 			stillLoading = false;
