@@ -37,7 +37,7 @@ public class CustomAnimator extends ViewAnimator {
 		super(context, attrs);
 	}
 	
-	public boolean setupAnimator(Calendar oldDate, LayoutInflater inflater, boolean ltr) {
+	public boolean setupAnimator(Calendar oldDate, LayoutInflater inflater, boolean ltr, boolean useGivenDate) {
 		if (!animating.compareAndSet(false, true))
 			return false;
 		
@@ -50,9 +50,11 @@ public class CustomAnimator extends ViewAnimator {
 		state.targetOld = (getInAnimation().getDuration() < getOutAnimation().getDuration());
 		
 		state.newDate = (Calendar) oldDate.clone();
-		state.newDate.set(Calendar.DAY_OF_MONTH, 1);
-		state.newDate.add(Calendar.MONTH, ltr ? -1 : 1);
-		MonthViewCache.getInstance().inheritDay(oldDate, state.newDate);
+		if (!useGivenDate) {
+			state.newDate.set(Calendar.DAY_OF_MONTH, 1);
+			state.newDate.add(Calendar.MONTH, ltr ? -1 : 1);
+			MonthViewCache.getInstance().inheritDay(oldDate, state.newDate);
+		}
 		state.inflater = inflater;
 		state.view = MonthViewCache.getInstance().getView(state.newDate, state.inflater);
 		state.view.redrawInheritedDate();
@@ -62,6 +64,7 @@ public class CustomAnimator extends ViewAnimator {
 				Log.w(getClass().getSimpleName(), "Concurrent swipes must not be allowed.");
 			else
 				Log.w(getClass().getSimpleName(), "MonthViewCache#getView() must not be added to layouts manually.");
+			// try to recover
 			if (parent instanceof ViewGroup)
 				((ViewGroup) parent).removeView(state.view);
 			else

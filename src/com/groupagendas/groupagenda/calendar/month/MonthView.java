@@ -121,7 +121,7 @@ public class MonthView extends AbstractCalendarView {
 		}
 	}
 
-	public void goPrev(Calendar from) {
+	public void goPrev(Calendar from, boolean useGivenDate) {
 		if (stillLoading)
 			return;
 		
@@ -142,7 +142,7 @@ public class MonthView extends AbstractCalendarView {
 		}
 		
 		CustomAnimator ca = (CustomAnimator) actNavBar;
-		if (!ca.setupAnimator(from, mInflater, true)) {
+		if (!ca.setupAnimator(from, mInflater, true, useGivenDate)) {
 			// Log.w(getClass().getSimpleName(), "Attempt to setup an active animator?!");
 			return;
 		}
@@ -150,10 +150,10 @@ public class MonthView extends AbstractCalendarView {
 
 	@Override
 	public void goPrev() {
-		goPrev(getSelectedDate());
+		goPrev(getSelectedDate(), false);
 	}
 
-	public void goNext(Calendar from) {
+	public void goNext(Calendar from, boolean useGivenDate) {
 		if (stillLoading)
 			return;
 		
@@ -174,7 +174,7 @@ public class MonthView extends AbstractCalendarView {
 		}
 		
 		CustomAnimator ca = (CustomAnimator) actNavBar;
-		if (!ca.setupAnimator(from, mInflater, false)) {
+		if (!ca.setupAnimator(from, mInflater, false, useGivenDate)) {
 			// Log.w(getClass().getSimpleName(), "Attempt to setup an active animator?!");
 			return;
 		}
@@ -182,7 +182,7 @@ public class MonthView extends AbstractCalendarView {
 
 	@Override
 	public void goNext() {
-		goNext(getSelectedDate());
+		goNext(getSelectedDate(), false);
 	}
 
 	@Override
@@ -593,7 +593,7 @@ public class MonthView extends AbstractCalendarView {
 					old = (Calendar) firstShownDate.clone();
 					old.add(Calendar.DATE, clickedDayPos);
 				}
-				parentView.goPrev(old);
+				parentView.goPrev(old, true);
 				break;
 				
 			case ACTION_SWIPE_RTL:
@@ -604,7 +604,7 @@ public class MonthView extends AbstractCalendarView {
 					old = (Calendar) firstShownDate.clone();
 					old.add(Calendar.DATE, clickedDayPos);
 				}
-				parentView.goNext(old);
+				parentView.goNext(old, true);
 				break;
 				
 			case ACTION_CLICK:
