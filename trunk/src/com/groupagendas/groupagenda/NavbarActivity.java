@@ -22,6 +22,7 @@ import android.content.res.Resources;
 import android.database.Cursor;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.Debug;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentTransaction;
@@ -274,6 +275,7 @@ public class NavbarActivity extends FragmentActivity {
 			newResponsesBadges = newResponses;
 			restoreResponresBadge = false;
 		} catch (Exception ex) {
+			Debug.waitForDebugger();
 			Log.e("Badge JSON err", ex.getMessage());
 		}
 		
