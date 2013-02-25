@@ -277,7 +277,6 @@ public class NavbarActivity extends FragmentActivity {
 			newResponsesBadges = newResponses;
 			restoreResponresBadge = false;
 		} catch (Exception ex) {
-			Debug.waitForDebugger();
 			Log.e("Badge JSON err", ex.getMessage());
 		}
 		
