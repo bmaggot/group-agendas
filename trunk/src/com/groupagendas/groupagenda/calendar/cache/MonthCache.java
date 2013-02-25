@@ -15,4 +15,9 @@ public abstract class MonthCache<E extends AbstractCalendarView> extends Calenda
 	public void adjustDate(Calendar oldDate, Calendar date, boolean ltr) {
 		date.add(Calendar.MONTH, ltr ? -1 : 1);
 	}
+	
+	@Override
+	protected Integer getKey(Calendar date) {
+		return (date.get(Calendar.YEAR) << 8) | date.get(Calendar.MONTH);
+	}
 }

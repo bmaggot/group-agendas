@@ -9,7 +9,7 @@ import com.groupagendas.groupagenda.calendar.minimonth.MiniMonthView;
  */
 public class MiniMonthViewCache extends MonthCache<MiniMonthView> {
 	@Override
-	protected int getLayoutId() {
+	public int getLayoutId() {
 		return R.layout.calendar_mm;
 	}
 	
