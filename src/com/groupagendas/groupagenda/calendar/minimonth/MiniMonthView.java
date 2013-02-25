@@ -12,6 +12,7 @@ import android.graphics.drawable.BitmapDrawable;
 import android.util.AttributeSet;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.ViewParent;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
@@ -22,9 +23,12 @@ import android.widget.TextView;
 import az.mecid.android.ActionItem;
 import az.mecid.android.QuickAction;
 
+import com.groupagendas.groupagenda.CustomAnimator;
 import com.groupagendas.groupagenda.R;
 import com.groupagendas.groupagenda.calendar.AbstractCalendarView;
+import com.groupagendas.groupagenda.calendar.GenericSwipeAnimator;
 import com.groupagendas.groupagenda.calendar.agenda.AgendaFrame;
+import com.groupagendas.groupagenda.calendar.cache.MiniMonthViewCache;
 import com.groupagendas.groupagenda.contacts.birthdays.BirthdayManagement;
 import com.groupagendas.groupagenda.data.DataManagement;
 import com.groupagendas.groupagenda.data.EventManagement;
@@ -81,10 +85,9 @@ public class MiniMonthView extends AbstractCalendarView {
 		int FRAMES_PER_ROW = selectedDate.getMaximum(Calendar.DAY_OF_WEEK);
 		int FRAME_WIDTH = VIEW_WIDTH / FRAMES_PER_ROW;
 		
-		String title = MonthNames[selectedDate.get(Calendar.MONTH)];
-		title += " ";
-		title += selectedDate.get(Calendar.YEAR);
-		this.getTopPanelTitle().setText(title);
+		StringBuilder title = new StringBuilder(MonthNames[selectedDate.get(Calendar.MONTH)]);
+		title.append(' ').append(selectedDate.get(Calendar.YEAR));
+		getTopPanelTitle().setText(title);
 
 		LinearLayout bottomBar = (LinearLayout) getTopPanelBottomLine().getChildAt(0);
 		bottomBar.removeAllViews();
@@ -124,35 +127,70 @@ public class MiniMonthView extends AbstractCalendarView {
 
 	@Override
 	public void goPrev() {
-		if (!stillLoading) {
-			int LastMonthWeeksCount = selectedDate.getActualMaximum(Calendar.WEEK_OF_MONTH);
-			selectedDate.add(Calendar.MONTH, -1);
-			firstShownDate = updateShownDate();
-			setTopPanel();
-			if (LastMonthWeeksCount != selectedDate.getActualMaximum(Calendar.WEEK_OF_MONTH)) {
-				paintTable(selectedDate);
-			}
-			setDaysTitles();
-			updateEventLists();
+		if (stillLoading)
+			return;
+		
+		ViewParent actNavBar = getParent();
+		if (!(actNavBar instanceof CustomAnimator)) {
+			GenericSwipeAnimator.startAnimation(this, false, new Runnable() {
+				@Override
+				public void run() {
+					int LastMonthWeeksCount = selectedDate.getActualMaximum(Calendar.WEEK_OF_MONTH);
+					selectedDate.add(Calendar.MONTH, -1);
+					firstShownDate = updateShownDate();
+					setTopPanel();
+					if (LastMonthWeeksCount != selectedDate.getActualMaximum(Calendar.WEEK_OF_MONTH)) {
+						paintTable(selectedDate);
+					}
+					setDaysTitles();
+					updateEventLists();
+				}
+			});
+			return;
 		}
-
+		
+		CustomAnimator ca = (CustomAnimator) actNavBar;
+		if (!ca.setupAnimator(MiniMonthViewCache.getInstance(), selectedDate, mInflater, true)) {
+			// Log.w(getClass().getSimpleName(), "Attempt to setup an active animator?!");
+			return;
+		}
 	}
 
 	@Override
 	public void goNext() {
-		if (!stillLoading) {
-			int LastMonthWeeksCount = selectedDate.getActualMaximum(Calendar.WEEK_OF_MONTH);
-			selectedDate.add(Calendar.MONTH, 1);
-			firstShownDate = updateShownDate();
-			setTopPanel();
-			if (LastMonthWeeksCount != selectedDate.getActualMaximum(Calendar.WEEK_OF_MONTH)) {
-				paintTable(selectedDate);
-			}
-
-			setDaysTitles();
-			updateEventLists();
+		if (stillLoading)
+			return;
+		
+		ViewParent actNavBar = getParent();
+		if (!(actNavBar instanceof CustomAnimator)) {
+			GenericSwipeAnimator.startAnimation(this, true, new Runnable() {
+				@Override
+				public void run() {
+					int LastMonthWeeksCount = selectedDate.getActualMaximum(Calendar.WEEK_OF_MONTH);
+					selectedDate.add(Calendar.MONTH, 1);
+					firstShownDate = updateShownDate();
+					setTopPanel();
+					if (LastMonthWeeksCount != selectedDate.getActualMaximum(Calendar.WEEK_OF_MONTH)) {
+						paintTable(selectedDate);
+					}
+					setDaysTitles();
+					updateEventLists();
+				}
+			});
+			return;
 		}
+		
+		CustomAnimator ca = (CustomAnimator) actNavBar;
+		if (!ca.setupAnimator(MiniMonthViewCache.getInstance(), selectedDate, mInflater, false)) {
+			// Log.w(getClass().getSimpleName(), "Attempt to setup an active animator?!");
+			return;
+		}
+	}
 
+	@Override
+	public void refresh(Calendar from) {
+		setDaysTitles();
+		updateEventLists();
 	}
 
 	@Override
@@ -165,7 +203,7 @@ public class MiniMonthView extends AbstractCalendarView {
 
 	private void paintTable(Calendar date) {
 		miniMonthTable.removeAllViews();
-		daysList = new ArrayList<AgendaFrame>();
+		daysList = new ArrayList<AgendaFrame>(43);
 
 		TableLayout.LayoutParams rowLp = new TableLayout.LayoutParams(ViewGroup.LayoutParams.FILL_PARENT,
 				ViewGroup.LayoutParams.FILL_PARENT, 1.0f);

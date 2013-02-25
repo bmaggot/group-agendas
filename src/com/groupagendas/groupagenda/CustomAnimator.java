@@ -11,33 +11,31 @@ import android.view.ViewGroup;
 import android.view.ViewParent;
 import android.widget.ViewAnimator;
 
+import com.groupagendas.groupagenda.calendar.AbstractCalendarView;
+import com.groupagendas.groupagenda.calendar.cache.CalendarViewCache;
 import com.groupagendas.groupagenda.calendar.month.MonthView;
-import com.groupagendas.groupagenda.calendar.month.MonthViewCache;
 
 /**
+ * Enables translate animations on swipe (or other transition) actions.
  * @author Tadas
- * 
  */
 public class CustomAnimator extends ViewAnimator {
 	private final AtomicBoolean animating = new AtomicBoolean(false);
 	private AnimatorState state = new AnimatorState();
 	
-	/**
-	 * @param context
-	 */
 	public CustomAnimator(Context context) {
 		super(context);
 	}
 	
-	/**
-	 * @param context
-	 * @param attrs
-	 */
 	public CustomAnimator(Context context, AttributeSet attrs) {
 		super(context, attrs);
 	}
 	
-	public boolean setupAnimator(Calendar oldDate, LayoutInflater inflater, boolean ltr, boolean useGivenDate) {
+	public boolean setupAnimator(CalendarViewCache<?> cache, Calendar oldDate, LayoutInflater inflater, boolean ltr) {
+		return setupAnimator(cache, oldDate, inflater, ltr, false);
+	}
+	
+	public boolean setupAnimator(CalendarViewCache<?> cache, Calendar oldDate, LayoutInflater inflater, boolean ltr, boolean useGivenDate) {
 		if (!animating.compareAndSet(false, true))
 			return false;
 		
@@ -50,18 +48,17 @@ public class CustomAnimator extends ViewAnimator {
 		state.targetOld = (getInAnimation().getDuration() < getOutAnimation().getDuration());
 		
 		state.newDate = (Calendar) oldDate.clone();
-		if (!useGivenDate) {
-			state.newDate.set(Calendar.DAY_OF_MONTH, 1);
-			state.newDate.add(Calendar.MONTH, ltr ? -1 : 1);
-			MonthViewCache.getInstance().inheritDay(oldDate, state.newDate);
-		}
+		if (!useGivenDate)
+			cache.adjustDate(oldDate, state.newDate, ltr);
 		state.inflater = inflater;
-		state.view = MonthViewCache.getInstance().getView(state.newDate, state.inflater);
-		state.view.redrawInheritedDate();
+		state.cache = cache;
+		state.view = state.cache.getView(state.newDate, state.inflater);
+		if (state.view instanceof MonthView)
+			((MonthView) state.view).redrawInheritedDate();
 		ViewParent parent = state.view.getParent();
 		if (parent != null) {
 			if (parent == this)
-				Log.w(getClass().getSimpleName(), "Concurrent swipes must not be allowed.");
+				Log.w(getClass().getSimpleName(), "Concurrent swipes must not be allowed. [3 finger?]");
 			else
 				Log.w(getClass().getSimpleName(), "MonthViewCache#getView() must not be added to layouts manually.");
 			// try to recover
@@ -75,7 +72,7 @@ public class CustomAnimator extends ViewAnimator {
 		return true;
 	}
 	
-	public void onAnimationEnd(MonthView view) {
+	public void onAnimationEnd(AbstractCalendarView view) {
 		{
 			boolean ok;
 			if (state.targetOld)
@@ -92,7 +89,7 @@ public class CustomAnimator extends ViewAnimator {
 		
 		state.view.setupDelegates();
 		state.view.refresh(state.newDate);
-		MonthViewCache.getInstance().prefetchInUiThread(state.newDate, state.inflater);
+		state.cache.prefetchInUiThread(state.newDate, state.inflater);
 
 		state = new AnimatorState();		
 		animating.set(false);
@@ -101,7 +98,8 @@ public class CustomAnimator extends ViewAnimator {
 	private static class AnimatorState {
 		private boolean targetOld;
 		private Calendar newDate;
-		private MonthView view;
+		private CalendarViewCache<?> cache;
+		private AbstractCalendarView view;
 		private LayoutInflater inflater;
 	}
 }

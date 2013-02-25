@@ -48,11 +48,12 @@ import com.groupagendas.groupagenda.address.AddressManagement;
 import com.groupagendas.groupagenda.alarm.AlarmReceiver;
 import com.groupagendas.groupagenda.calendar.AbstractCalendarView;
 import com.groupagendas.groupagenda.calendar.agenda.AgendaView;
+import com.groupagendas.groupagenda.calendar.cache.MiniMonthViewCache;
+import com.groupagendas.groupagenda.calendar.cache.MonthViewCache;
 import com.groupagendas.groupagenda.calendar.dayandweek.DayWeekView;
 import com.groupagendas.groupagenda.calendar.listnsearch.ListnSearchView;
 import com.groupagendas.groupagenda.calendar.minimonth.MiniMonthView;
 import com.groupagendas.groupagenda.calendar.month.MonthView;
-import com.groupagendas.groupagenda.calendar.month.MonthViewCache;
 import com.groupagendas.groupagenda.calendar.year.YearView;
 import com.groupagendas.groupagenda.chat.ChatThreadFragment;
 import com.groupagendas.groupagenda.data.CalendarSettings;
@@ -433,10 +434,27 @@ public class NavbarActivity extends FragmentActivity {
 
 	private void showMiniMonthView() {
 		calendarContainer.removeAllViews();
-		mInflater.inflate(R.layout.calendar_mm, calendarContainer);
-		MiniMonthView view = getCurrentView(MiniMonthView.class);
-		if (view != null)
-			view.init(selectedDate);
+		
+		if (calendarContainer instanceof CustomAnimator) {
+			MiniMonthView view = MiniMonthViewCache.getInstance().getView(selectedDate, mInflater);
+			ViewParent parent;
+			if ((parent = view.getParent()) != null) {
+				Log.e(getClass().getSimpleName(), "A majestic failure",
+						new RuntimeException("Expected parent: " + calendarContainer + ", actual: " + parent));
+			} else {
+				calendarContainer.addView(view);
+				view.setupDelegates();
+			}
+			if (EventsProvider.OUT_OF_DATE.compareAndSet(true, false))
+				view.refresh(selectedDate);
+			MiniMonthViewCache.getInstance().prefetchInUiThread(view.getSelectedDate(), mInflater);
+		} else {
+			mInflater.inflate(R.layout.calendar_mm, calendarContainer);
+			
+			MiniMonthView view = getCurrentView(MiniMonthView.class);
+			if (view != null)
+				view.init(selectedDate);
+		}
 	}
 
 	private void showYearView() {
@@ -469,18 +487,17 @@ public class NavbarActivity extends FragmentActivity {
 		} else
 			showWeekView(); // else we call show weekView, which shows restored
 							// number of days
-
 	}
 
 	private void showMonthView() {
 		calendarContainer.removeAllViews();
 		
-		
 		if (calendarContainer instanceof CustomAnimator) {
 			MonthView view = MonthViewCache.getInstance().getView(selectedDate, mInflater);
 			ViewParent parent;
 			if ((parent = view.getParent()) != null) {
-				Log.e(getClass().getSimpleName(), "A majestic failure", new RuntimeException("Expected parent: " + calendarContainer + ", actual: " + parent));
+				Log.e(getClass().getSimpleName(), "A majestic failure",
+						new RuntimeException("Expected parent: " + calendarContainer + ", actual: " + parent));
 			} else {
 				calendarContainer.addView(view);
 				view.setupDelegates();
@@ -495,7 +512,6 @@ public class NavbarActivity extends FragmentActivity {
 			if (view != null)
 				view.init(selectedDate);
 		}
-
 	}
 
 	// class GetAllEventsTask extends
@@ -719,7 +735,7 @@ public class NavbarActivity extends FragmentActivity {
 			if (view != null)
 				return view.getSwipeGestureDetector().onTouchEvent(ev);
 		} catch (Exception e) {
-			Log.e("navbar dispatchTouchEvent()", "3 fingers");
+			Log.e("navbar dispatchTouchEvent()", "3 fingers", e);
 		}
 		return false;
 	}

@@ -1,4 +1,4 @@
-package com.groupagendas.groupagenda.calendar.month;
+package com.groupagendas.groupagenda.calendar.cache;
 
 import java.lang.ref.Reference;
 import java.lang.ref.SoftReference;
@@ -9,56 +9,74 @@ import java.util.Map;
 import android.annotation.SuppressLint;
 import android.view.LayoutInflater;
 
-import com.groupagendas.groupagenda.R;
+import com.groupagendas.groupagenda.calendar.AbstractCalendarView;
 
 /**
  * @author Tadas
  *
  */
-public final class MonthViewCache {
-	private final Map<Integer, Reference<MonthView>> previews;
+public abstract class CalendarViewCache<E extends AbstractCalendarView> {
+	private final Map<Integer, Reference<E>> preview;
 	
 	@SuppressLint("UseSparseArrays")
-	private MonthViewCache() {
-		previews = new HashMap<Integer, Reference<MonthView>>();
+	protected CalendarViewCache() {
+		preview = new HashMap<Integer, Reference<E>>();
 	}
 	
-	public Reference<MonthView> createRef(MonthView view) {
-		return new SoftReference<MonthView>(view);
+	protected abstract int getLayoutId();
+	
+	public Reference<E> createRef(E view) {
+		return new SoftReference<E>(view);
 	}
 	
-	private Integer getKey(int year, int month) {
+	protected Integer getKey(int year, int month) {
 		return (year << 8) | month;
 	}
 	
-	public synchronized MonthView getView(Calendar id, LayoutInflater inflater) {
-		MonthView view = null;
+	@SuppressWarnings("unchecked")
+	public synchronized E getView(Calendar id, LayoutInflater inflater) {
+		E view = null;
 		final Integer key = getKey(id.get(Calendar.YEAR), id.get(Calendar.MONTH));
-		Reference<MonthView> ref = previews.get(key);
+		Reference<E> ref = preview.get(key);
 		if (ref != null)
 			view = ref.get();
 		if (view == null) {
-			view = (MonthView) inflater.inflate(R.layout.calendar_month, null);
-//			Log.d("MVC", "==== START ==== MVC default initialization (bugless)");
+			view = (E) inflater.inflate(getLayoutId(), null);
 			view.init(id, false);
-//			Log.d("MVC", "===== END ===== MVC default initialization (bugless)");
-			previews.put(key, createRef(view));
+			preview.put(key, createRef(view));
 		} else
 			inheritDay(id, view.getSelectedDate());
 		return view;
 	}
+	
+	public abstract void adjustDate(Calendar oldDate, Calendar date, boolean ltr);
 	
 	public void inheritDay(Calendar from, Calendar to) {
 		final int selected = from.get(Calendar.DAY_OF_MONTH);
 		final int max = to.getActualMaximum(Calendar.DAY_OF_MONTH);
 		to.set(Calendar.DAY_OF_MONTH, Math.min(selected, max));
 	}
+	
+	public void prefetchInUiThread(Calendar selected, LayoutInflater inflater) {
+		Calendar c = (Calendar) selected.clone();
+		{
+			Calendar p = (Calendar) c.clone();
+			adjustDate(selected, p, true);
+			getView(p, inflater);
+		}
+		{
+			Calendar n = (Calendar) c.clone();
+			adjustDate(selected, n, false);
+			getView(n, inflater);
+		}
+	}
+	
 	/*
-	private static class UiThreadProbe extends Thread {
+	private static class UiProbeThread extends Thread {
 		private final Thread uiThread;
 		
-		private UiThreadProbe(Thread uiThread) {
-			super("UiThreadProbe");
+		private UiProbeThread(Thread uiThread) {
+			super("UiProbeThread");
 			this.uiThread = uiThread;
 			setDaemon(true);
 			setPriority(MAX_PRIORITY);
@@ -103,30 +121,4 @@ public final class MonthViewCache {
 		}
 	}
 	*/
-	public void prefetchInUiThread(Calendar selected, LayoutInflater inflater) {
-		MonthViewCache mvc = getInstance();
-		Calendar c = (Calendar) selected.clone();
-		{
-			Calendar p = (Calendar) c.clone();
-			p.set(Calendar.DAY_OF_MONTH, 1);
-			p.add(Calendar.MONTH, -1);
-			mvc.inheritDay(selected, p);
-			mvc.getView(p, inflater);
-		}
-		{
-			Calendar n = (Calendar) c.clone();
-			n.set(Calendar.DAY_OF_MONTH, 1);
-			n.add(Calendar.MONTH, 1);
-			mvc.inheritDay(selected, n);
-			mvc.getView(n, inflater);
-		}
-	}
-	
-	public static MonthViewCache getInstance() {
-		return SingletonHolder.INSTANCE;
-	}
-	
-	private static class SingletonHolder {
-		private static final MonthViewCache INSTANCE = new MonthViewCache();
-	}
 }

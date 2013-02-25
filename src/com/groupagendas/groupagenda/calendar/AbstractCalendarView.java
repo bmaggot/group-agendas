@@ -28,6 +28,7 @@ import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.groupagendas.groupagenda.CustomAnimator;
 import com.groupagendas.groupagenda.NavbarActivity;
 import com.groupagendas.groupagenda.R;
 import com.groupagendas.groupagenda.account.Account;
@@ -187,6 +188,20 @@ public abstract class AbstractCalendarView extends LinearLayout {
 
 	}
 
+	public void refresh(Calendar previous) {
+		// overridden by cached elements
+	}
+
+	@Override
+	public void onAnimationEnd() {
+		super.onAnimationEnd();
+		
+		ViewParent parent = getParent();
+		if (parent instanceof CustomAnimator) {
+			((CustomAnimator) parent).onAnimationEnd(this);
+		}
+	}
+
 	public TextView getTopPanelTitle() {
 		return topPanelTitle;
 	}
@@ -241,7 +256,7 @@ public abstract class AbstractCalendarView extends LinearLayout {
 	}
 
 	// requires view to be on screen
-	protected void setupDelegates() {
+	public void setupDelegates() {
 		ViewParent parent = prevButton.getParent();
 		if (!(parent instanceof View))
 			return;
