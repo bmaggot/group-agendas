@@ -332,6 +332,7 @@ public class EventEditActivity extends EventActivity implements AddressMetaData 
 			}
 		});
 
+
 		endView = (TextView) findViewById(R.id.endView);
 		endView.setOnClickListener(new OnClickListener() {
 			@Override
@@ -1291,6 +1292,8 @@ public class EventEditActivity extends EventActivity implements AddressMetaData 
 			}
 
 			dataLoaded = true;
+			startView.addTextChangedListener(watcher);
+			endView.addTextChangedListener(watcher);
 			pd.dismiss();
 		}
 	}
