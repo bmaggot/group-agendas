@@ -593,7 +593,7 @@ public class MonthView extends AbstractCalendarView {
 					old = (Calendar) firstShownDate.clone();
 					old.add(Calendar.DATE, clickedDayPos);
 				}
-				parentView.goPrev(old, true);
+				parentView.goPrev(old, event == null);
 				break;
 				
 			case ACTION_SWIPE_RTL:
@@ -604,7 +604,7 @@ public class MonthView extends AbstractCalendarView {
 					old = (Calendar) firstShownDate.clone();
 					old.add(Calendar.DATE, clickedDayPos);
 				}
-				parentView.goNext(old, true);
+				parentView.goNext(old, event == null);
 				break;
 				
 			case ACTION_CLICK:
