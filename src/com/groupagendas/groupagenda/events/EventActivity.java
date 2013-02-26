@@ -294,9 +294,9 @@ public class EventActivity extends Activity {
 		cityViewBlock.setVisibility(View.VISIBLE);
 		streetViewBlock.setVisibility(View.VISIBLE);
 		zipViewBlock.setVisibility(View.VISIBLE);
-		//address.setVisibility(View.VISIBLE);
+		address.setVisibility(View.VISIBLE);
 		if(cityView.getText().length() > 0 || streetView.getText().length() > 0 || zipView.getText().length() > 0){
-			//save_address.setVisibility(View.VISIBLE);
+			save_address.setVisibility(View.VISIBLE);
 		}
 		
 	}
