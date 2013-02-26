@@ -9,28 +9,73 @@ import java.util.Map;
 import android.annotation.SuppressLint;
 import android.view.LayoutInflater;
 
+import com.groupagendas.groupagenda.CustomAnimator;
 import com.groupagendas.groupagenda.calendar.AbstractCalendarView;
+import com.groupagendas.groupagenda.calendar.month.MonthView;
 
 /**
+ * Allows caching various {@link AbstractCalendarView}s, mainly to allow animations
+ * when performing a transition between dates.<BR><BR>
+ * Currently, caches are only used in conjunction with a {@link CustomAnimator}.
+ * Otherwise, data is updated inside the view that displayed the previous date.
+ * 
+ * @param <E> cached view type
  * @author Tadas
- *
  */
 public abstract class CalendarViewCache<E extends AbstractCalendarView> {
-	private final Map<Integer, Reference<E>> preview;
+	protected final Map<Integer, Reference<E>> preview;
 	
+	/** Creates a cache. */
 	@SuppressLint("UseSparseArrays")
 	protected CalendarViewCache() {
 		preview = new HashMap<Integer, Reference<E>>();
 	}
 	
+	/**
+	 * Returns the layout ID that produces an instance of a cacheable type when inflated.
+	 * 
+	 * @return the layout ID
+	 */
 	public abstract int getLayoutId();
+	/**
+	 * Returns an unique key identifying a cacheable view that displays the specified date.
+	 * 
+	 * @param date a date that is shown in a cacheable view
+	 * @return an unique key
+	 */
+	protected abstract Integer getKey(Calendar date);
+	/**
+	 * Adjusts a date to point to an immediately accessible view.
+	 * 
+	 * @param oldDate date of the old view
+	 * @param date a date that needs to be adjusted
+	 * @param ltr whether a swipe was made from left to right
+	 */
+	public abstract void adjustDate(Calendar oldDate, Calendar date, boolean ltr);
+	/**
+	 * Prepares a cached view before animation.<BR>
+	 * <BR>
+	 * Only used with {@link MonthView}, in order to match the selected day between months
+	 * before an animation starts.
+	 * @param prevDate date of the old view
+	 * @param view the view to be displayed
+	 */
+	protected void prepareCachedView(Calendar prevDate, E view) {
+		// do nothing
+	}
 	
-	public Reference<E> createRef(E view) {
+	protected Reference<E> createRef(E view) {
 		return new SoftReference<E>(view);
 	}
 	
-	protected abstract Integer getKey(Calendar date);
-	
+	/**
+	 * Retrieves a view from cache, [re]adding it to cache, if necessary.<BR>
+	 * <BR>
+	 * The view will be prepared for animation.
+	 * @param id date that identifies the cached view
+	 * @param inflater a layout inflater
+	 * @return a cached view
+	 */
 	@SuppressWarnings("unchecked")
 	public synchronized E getView(Calendar id, LayoutInflater inflater) {
 		E view = null;
@@ -43,18 +88,19 @@ public abstract class CalendarViewCache<E extends AbstractCalendarView> {
 			view.init(id, false);
 			preview.put(key, createRef(view));
 		} else
-			inheritDay(id, view.getSelectedDate());
+			prepareCachedView(id, view);
 		return view;
 	}
 	
-	public abstract void adjustDate(Calendar oldDate, Calendar date, boolean ltr);
-	
-	public void inheritDay(Calendar from, Calendar to) {
-		final int selected = from.get(Calendar.DAY_OF_MONTH);
-		final int max = to.getActualMaximum(Calendar.DAY_OF_MONTH);
-		to.set(Calendar.DAY_OF_MONTH, Math.min(selected, max));
-	}
-	
+	/**
+	 * Stores immediately accessible (previous/next) views to cache.
+	 * Does not recreate views already in cache.<BR>
+	 * <BR>
+	 * <B>Must be called from the UI thread.</B>
+	 * 
+	 * @param selected date that identifies the displayed view
+	 * @param inflater a layout inflater
+	 */
 	public void prefetchInUiThread(Calendar selected, LayoutInflater inflater) {
 		Calendar c = (Calendar) selected.clone();
 		{

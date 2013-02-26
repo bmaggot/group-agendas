@@ -577,6 +577,7 @@ public class MonthView extends AbstractCalendarView {
 		protected void onSwipe(View v, MotionEvent event) {
 			switch (ACTION) {
 			case ACTION_SWIPE_LTR:
+			case ACTION_SWIPE_RTL:
 				Calendar old = parentView.getSelectedDate();
 				if (event == null) {
 					MonthDayFrame frame = (MonthDayFrame) v;
@@ -584,54 +585,47 @@ public class MonthView extends AbstractCalendarView {
 					old = (Calendar) firstShownDate.clone();
 					old.add(Calendar.DATE, clickedDayPos);
 				}
-				parentView.goPrev(old, event == null);
-				break;
-				
-			case ACTION_SWIPE_RTL:
-				old = parentView.getSelectedDate();
-				if (event == null) {
-					MonthDayFrame frame = (MonthDayFrame) v;
-					int clickedDayPos = dayFrames.indexOf(frame);
-					old = (Calendar) firstShownDate.clone();
-					old.add(Calendar.DATE, clickedDayPos);
-				}
-				parentView.goNext(old, event == null);
+				if (ACTION == ACTION_SWIPE_LTR)
+					parentView.goPrev(old, event == null);
+				else
+					parentView.goNext(old, event == null);
 				break;
 				
 			case ACTION_CLICK:
-				if (v instanceof MonthDayFrame) {
-					if (!stillLoading) {
-						MonthDayFrame frame = (MonthDayFrame) v;
-						int clickedDayPos = dayFrames.indexOf(frame);
+				if (!(v instanceof MonthDayFrame))
+					break;
+				if (stillLoading)
+					break;
+				
+				MonthDayFrame frame = (MonthDayFrame) v;
+				int clickedDayPos = dayFrames.indexOf(frame);
 
-						Calendar clickedDate = (Calendar) firstShownDate.clone();
-						clickedDate.add(Calendar.DATE, clickedDayPos);
+				Calendar clickedDate = (Calendar) firstShownDate.clone();
+				clickedDate.add(Calendar.DATE, clickedDayPos);
 
-						if (!frame.isSelected()) {
-							if (frame.isOtherMonth()) {
-								ViewParent parent = parentView.getParent();
-								if (parent instanceof CustomAnimator) {
-									ACTION = (clickedDayPos < 7) ? ACTION_SWIPE_LTR : ACTION_SWIPE_RTL;
-									onSwipe(v, null);
-									return;
-								}
-							}
-
-//							Log.d("MVC", "==== START ==== MV day click (bugless)");
-
-							selectedDate = clickedDate;
-							updateShownDate();
-
-							if (frame.isOtherMonth()) {
-								setTopPanel();
-								repaintTable(selectedDate, dayTable, dayFrames);
-							}
-
-							setDayFrames(dayFrames); // TODO optimize: now all day frames are redrawn
-							// updateEventLists();
-//							Log.d("MVC", "==== END ==== MV day click (bugless)");
+				if (!frame.isSelected()) {
+					if (frame.isOtherMonth()) {
+						ViewParent parent = parentView.getParent();
+						if (parent instanceof CustomAnimator) {
+							ACTION = (clickedDayPos < 7) ? ACTION_SWIPE_LTR : ACTION_SWIPE_RTL;
+							onSwipe(v, null);
+							break;
 						}
 					}
+
+//					Log.d("MVC", "==== START ==== MV day click (bugless)");
+
+					selectedDate = clickedDate;
+					updateShownDate();
+
+					if (frame.isOtherMonth()) {
+						setTopPanel();
+						repaintTable(selectedDate, dayTable, dayFrames);
+					}
+
+					setDayFrames(dayFrames); // TODO optimize: now all day frames are redrawn
+					// updateEventLists();
+//					Log.d("MVC", "==== END ==== MV day click (bugless)");
 				}
 				break;
 				

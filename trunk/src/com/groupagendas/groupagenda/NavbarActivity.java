@@ -22,7 +22,6 @@ import android.content.res.Resources;
 import android.database.Cursor;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.os.Debug;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentTransaction;
@@ -51,6 +50,7 @@ import com.groupagendas.groupagenda.calendar.AbstractCalendarView;
 import com.groupagendas.groupagenda.calendar.agenda.AgendaView;
 import com.groupagendas.groupagenda.calendar.cache.AgendaViewCache;
 import com.groupagendas.groupagenda.calendar.cache.CalendarViewCache;
+import com.groupagendas.groupagenda.calendar.cache.DayWeekViewCache;
 import com.groupagendas.groupagenda.calendar.cache.MiniMonthViewCache;
 import com.groupagendas.groupagenda.calendar.cache.MonthViewCache;
 import com.groupagendas.groupagenda.calendar.dayandweek.DayWeekView;
@@ -420,19 +420,44 @@ public class NavbarActivity extends FragmentActivity {
 
 	private void showWeekView() {
 		calendarContainer.removeAllViews();
-		mInflater.inflate(R.layout.calendar_week, calendarContainer);
-		DayWeekView view = getCurrentView(DayWeekView.class);
-		if (view != null) {
-			int daysToShow = 0; // if we want to resume with default shown days
-			// number we call init with param 0
-			if (this.resumeDayWeekView) {
-				daysToShow = this.dayWeekViewShowDays;
-				resumeDayWeekView = false;
+
+		DayWeekView view;
+		int daysToShow = 0;
+		DayWeekViewCache cache = DayWeekViewCache.getInstance();
+		if (calendarContainer instanceof CustomAnimator) {
+			view = cache.getView(selectedDate, mInflater);
+			ViewParent parent;
+			if ((parent = view.getParent()) != null) {
+				Log.e(getClass().getSimpleName(), "A majestic failure",
+						new RuntimeException("Expected parent: " + calendarContainer + ", actual: " + parent));
 			} else {
-				DayWeekView.setDaysToShow(DayWeekView.DEFAULT_DAYS_SHOWN);
+				calendarContainer.addView(view);
+				view.setupDelegates();
 			}
-			view.init(selectedDate, daysToShow);
+			
+			if (resumeDayWeekView) {
+				resumeDayWeekView = false;
+				if (EventsProvider.OUT_OF_DATE.compareAndSet(true, false))
+					view.refresh(selectedDate);
+				cache.prefetchInUiThread(view.getDateToResume(), mInflater);
+				return;
+			} else
+				daysToShow = DayWeekView.DEFAULT_DAYS_SHOWN;
+		} else {
+			mInflater.inflate(cache.getLayoutId(), calendarContainer);
+			view = getCurrentView(DayWeekView.class);
+			if (view == null)
+				return;
+			if (resumeDayWeekView) {
+				resumeDayWeekView = false;
+				daysToShow = dayWeekViewShowDays;
+			} else
+				daysToShow = DayWeekView.DEFAULT_DAYS_SHOWN;
 		}
+		DayWeekView.setDaysToShow(daysToShow);
+		view.init(selectedDate, daysToShow);
+		if (calendarContainer instanceof CustomAnimator)
+			cache.prefetchInUiThread(view.getDateToResume(), mInflater);
 	}
 
 	private void showMiniMonthView() {
@@ -452,19 +477,39 @@ public class NavbarActivity extends FragmentActivity {
 	}
 
 	private void showDayView() {
-		if (!resumeDayWeekView) { // if there is no need to restore pinching
-									// state we show only one day
-			calendarContainer.removeAllViews();
-			mInflater.inflate(R.layout.calendar_week, calendarContainer);
-			DayWeekView view = getCurrentView(DayWeekView.class);
-			if (view != null) {
-				int daysToShow = 1;
-				DayWeekView.setDaysToShow(daysToShow);
-				view.init(selectedDate, daysToShow);
+		if (resumeDayWeekView) {
+			showWeekView();
+			return;
+		}
+		
+		// we must rebuild the view to show a single day
+		calendarContainer.removeAllViews();
+		
+		DayWeekView view;
+		DayWeekViewCache cache = null;
+		if (calendarContainer instanceof CustomAnimator) {
+			cache = DayWeekViewCache.getInstance();
+			view = cache.getView(selectedDate, mInflater);
+			ViewParent parent;
+			if ((parent = view.getParent()) != null) {
+				Log.e(getClass().getSimpleName(), "A majestic failure",
+						new RuntimeException("Expected parent: " + calendarContainer + ", actual: " + parent));
+			} else {
+				calendarContainer.addView(view);
+				view.setupDelegates();
 			}
-		} else
-			showWeekView(); // else we call show weekView, which shows restored
-							// number of days
+			EventsProvider.OUT_OF_DATE.set(false);
+		} else {
+			mInflater.inflate(R.layout.calendar_week, calendarContainer);
+			view = getCurrentView(DayWeekView.class);
+		}
+		if (view != null) {
+			int daysToShow = 1;
+			DayWeekView.setDaysToShow(daysToShow);
+			view.init(selectedDate, daysToShow);
+			if (cache != null)
+				cache.prefetchInUiThread(view.getDateToResume(), mInflater);
+		}
 	}
 
 	private void showMonthView() {
