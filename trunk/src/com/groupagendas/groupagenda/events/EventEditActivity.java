@@ -249,7 +249,7 @@ public class EventEditActivity extends EventActivity implements AddressMetaData 
 					.getEventFromLocalDb(getApplicationContext(), event_internal_id, EventManagement.ID_INTERNAL).getEvent_id();
 		}
 		// mode event Edit
-		if ((event_internal_id > 0) && (!dataLoaded)) {
+		if ((event_internal_id > 0) && (!dataLoaded) || intent.getBooleanExtra(copy, false)) {
 			new GetEventTask().execute(new Long[] { event_internal_id, event_external_id });
 		} else {
 			if (event.getInvited().size() > 0) {
