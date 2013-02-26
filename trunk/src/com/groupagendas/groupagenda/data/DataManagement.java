@@ -40,6 +40,7 @@ import android.os.Build;
 import android.support.v4.content.LocalBroadcastManager;
 import android.telephony.TelephonyManager;
 import android.util.Log;
+import android.widget.Toast;
 
 import com.bog.calendar.app.model.CEvent;
 import com.bog.calendar.app.model.EventsHelper;
@@ -2101,7 +2102,19 @@ public class DataManagement implements AddressMetaData, AutoColorIconMetaData {
 	}
 
 	// TODO javadoc
-	public static void synchronizeWithServer(Context context, AsyncTask<Void, Integer, Void> dataSyncTask, long latestUpdateUnixTimestamp) {
+	public static void synchronizeWithServer(final Context context, AsyncTask<Void, Integer, Void> dataSyncTask, long latestUpdateUnixTimestamp) {
+		try {
+			Activity activity = (Activity) context;
+			activity.runOnUiThread(new Runnable() {
+
+				@Override
+				public void run() {
+					Toast.makeText(context, context.getResources().getString(R.string.sync), Toast.LENGTH_SHORT).show();
+				}
+			});
+		} catch (Exception e) {
+			Log.e("No", "sync msg");
+		}
 		Log.e("synchronizeWithServer", "synchronizing with timestamp " + new Date(Utils.unixTimestampToMilis(latestUpdateUnixTimestamp)));
 		if (!DataManagement.networkAvailable) {
 			Log.e("synchronizeWithServer", "reason: no network connectivity");
