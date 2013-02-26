@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:gravity="center_horizontal"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
+    android:layout_height="match_parent"
     android:orientation="vertical" >
     <Button
         android:id="@+id/button_repeat_week_select"
@@ -14,7 +14,8 @@
         android:textStyle="bold"
         android:textSize="18sp"
         android:padding="10dp"
-        android:layout_gravity="center_horizontal"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true"
         android:layout_marginTop="10dp"
         android:layout_marginLeft="10dp"
         android:layout_marginRight="10dp"
@@ -23,6 +24,9 @@
         android:layout_height="wrap_content" />
     
     <TextView
+        android:id="@+id/label_repeat_on_text"
+        android:layout_below="@+id/button_repeat_week_select"
+        android:layout_centerHorizontal="true"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginLeft="10dp"
@@ -33,6 +37,8 @@
         android:textColor="@color/darker_gray" />
     
     <Button
+        android:layout_below="@+id/label_repeat_on_text"
+        android:layout_centerHorizontal="true"
         android:id="@+id/button_repeat_each"
         android:background="@drawable/event_invite_people_button_notalone"
         android:gravity="left"
@@ -48,6 +54,8 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content" />
     <Button
+        android:layout_below="@+id/button_repeat_each"
+        android:layout_centerHorizontal="true"
         android:id="@+id/button_repeat_on"
         android:background="@drawable/event_invited_entry_last_background"
         android:gravity="left"
@@ -62,22 +70,9 @@
         android:layout_gravity="center_horizontal"
         android:layout_width="match_parent"
         android:layout_height="wrap_content" />
-    
-    <View
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="1" />
 
     <include layout="@layout/repeat_month_table" />
     
-    <LinearLayout
-        android:visibility="gone"
-        android:baselineAligned="false"
-        android:layout_gravity="bottom"
-        android:background="@drawable/calendar_month_table"
-        android:id="@+id/repeat_onthe_spinners"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content" >
-        
-    </LinearLayout>
-</LinearLayout>
+    <include layout="@layout/repeat_month_wheel" />
+
+</RelativeLayout>
