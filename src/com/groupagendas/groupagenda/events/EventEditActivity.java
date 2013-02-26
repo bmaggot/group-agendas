@@ -80,6 +80,7 @@ import com.groupagendas.groupagenda.utils.Utils;
 
 public class EventEditActivity extends EventActivity implements AddressMetaData {
 	private static boolean dataLoaded = false;
+	private static boolean copyInProgress = false;
 
 	private class GenericTextWatcher implements TextWatcher {
 
@@ -249,7 +250,8 @@ public class EventEditActivity extends EventActivity implements AddressMetaData 
 					.getEventFromLocalDb(getApplicationContext(), event_internal_id, EventManagement.ID_INTERNAL).getEvent_id();
 		}
 		// mode event Edit
-		if ((event_internal_id > 0) && (!dataLoaded) || intent.getBooleanExtra(copy, false)) {
+		if (((event_internal_id > 0) && (!dataLoaded)) || intent.getBooleanExtra(copy, false)) {
+//		if ((event_internal_id > 0) && (!dataLoaded)) {
 			new GetEventTask().execute(new Long[] { event_internal_id, event_external_id });
 		} else {
 			if (event.getInvited().size() > 0) {
@@ -304,8 +306,10 @@ public class EventEditActivity extends EventActivity implements AddressMetaData 
 			@Override
 			public void onClick(View v) {
 				// enableDisableButtons(false);
-				if (intent.getBooleanExtra(copy, false)) {
+				if (copyInProgress) {
 					new CopyEventTask().execute();
+					dataLoaded = false;
+					copyInProgress = false;
 				} else if (!saveButton.getText().toString().equalsIgnoreCase(getResources().getString(R.string.saving))) {
 					new UpdateEventTask().execute();
 					dataLoaded = false;
@@ -1291,6 +1295,11 @@ public class EventEditActivity extends EventActivity implements AddressMetaData 
 			}
 
 			dataLoaded = true;
+			if (intent.getBooleanExtra(copy, false)) {
+				intent.putExtra(copy, false);
+				copyInProgress = true;
+			}
+			
 			startView.addTextChangedListener(watcher);
 			endView.addTextChangedListener(watcher);
 			pd.dismiss();
@@ -1837,4 +1846,5 @@ public class EventEditActivity extends EventActivity implements AddressMetaData 
 	public static boolean getChangesMade() {
 		return changesMade;
 	}
+
 }
