@@ -15,6 +15,7 @@ import android.content.Context;
 import android.database.Cursor;
 import android.util.Log;
 
+import com.groupagendas.groupagenda.LoadProgressHook;
 import com.groupagendas.groupagenda.NavbarActivity;
 import com.groupagendas.groupagenda.data.Data;
 import com.groupagendas.groupagenda.events.EventsProvider;
@@ -36,7 +37,7 @@ public class AlarmsManagement {
 	private static final String ALARM_3_OFFSET = "alarms[2][offset]";
 	private static final String SUCCESS = "success";
 	
-	public static void syncAlarms(Context context, ArrayList<Alarm> newAlarms){
+	public static void syncAlarms(Context context, ArrayList<Alarm> newAlarms, LoadProgressHook lph) {
 		ArrayList<Alarm> oldAlarms = getAllAlarmsFromLocalDB(context);
 		ArrayList<Alarm> goodOldAlarms = new ArrayList<Alarm>();
 		
@@ -58,13 +59,17 @@ public class AlarmsManagement {
 			}
 		}
 		newAlarms.removeAll(goodOldAlarms);
-		for(Alarm alarm : newAlarms){
-			if(!alarm.isSent()){
+		final int l = newAlarms.size();
+		if (lph != null)
+			lph.publish(0, l);
+		for (int i = 0; i < l; i++) {
+			Alarm alarm = newAlarms.get(i);
+			if (!alarm.isSent()) {
 				NavbarActivity.alarmReceiver.SetAlarm(context, alarm.getAlarmTimestamp(), alarm.getEventId());
 			}
-		}
-		for(Alarm alarm : newAlarms){
 			context.getContentResolver().insert(EventsProvider.EMetaData.AlarmsMetaData.CONTENT_URI, createContentValuesFromAlarms(alarm));
+			if (lph != null)
+				lph.publish(i + 1);
 		}
 	}
 	

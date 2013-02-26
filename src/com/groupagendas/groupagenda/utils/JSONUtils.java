@@ -25,8 +25,8 @@ import com.groupagendas.groupagenda.events.Event;
 import com.groupagendas.groupagenda.events.EventsProvider;
 import com.groupagendas.groupagenda.events.EventsProvider.EMetaData.AlarmsMetaData;
 import com.groupagendas.groupagenda.events.Invited;
-import com.groupagendas.groupagenda.metadata.impl.AddressMetaData.AddressTable;
 import com.groupagendas.groupagenda.metadata.MetaUtils;
+import com.groupagendas.groupagenda.metadata.impl.AddressMetaData.AddressTable;
 import com.groupagendas.groupagenda.templates.Template;
 import com.groupagendas.groupagenda.templates.TemplatesProvider.TMetaData.TemplatesMetaData;
 
@@ -314,288 +314,79 @@ public class JSONUtils {
 		return result ;
 	}
 
-	private static Contact createContactFromJSONObject(JSONObject c, Context context) {
+	public static Contact createContactFromJSONObject(JSONObject c, Context context) {
 		Contact contact = new Contact();
-		String temp;
 
+		String lastKey = null;
 		try {
-			contact.contact_id = c.getInt(ContactsProvider.CMetaData.ContactsMetaData.C_ID);
-		} catch (JSONException e) {
-			Log.e("getContactsFromRemoteDb(contactIds)", "Failed getting id.");
-		}
-
-		try {
-			contact.lid = c.getString(ContactsProvider.CMetaData.ContactsMetaData.LID);
-		} catch (JSONException e) {
-			Log.e("getContactsFromRemoteDb(contactIds)", "Failed getting lid.");
-		}
-		
-		try {
-			temp = c.getString(ContactsProvider.CMetaData.ContactsMetaData.NAME);
-			if (temp != null && !temp.equals("null"))
-				contact.name = temp;
-			else
-				contact.name = "";
-		} catch (JSONException e) {
-			Log.e("getContactsFromRemoteDb(contactIds)", "Failed getting name.");
-		}
-
-		try {
-			temp = c.getString(ContactsProvider.CMetaData.ContactsMetaData.LASTNAME);
-			if (temp != null && !temp.equals("null"))
-				contact.lastname = temp;
-			else
-				contact.lastname = "";
-		} catch (JSONException e) {
-			Log.e("getContactsFromRemoteDb(contactIds)", "Failed getting lastname.");
-		}
-		
-		try {
-			temp = c.getString(ContactsProvider.CMetaData.ContactsMetaData.FULLNAME);
-			if (temp != null && !temp.equals("null"))
-				contact.fullname = temp;
-			else
-				contact.fullname = "";
-		} catch (JSONException e) {
-			Log.e("getContactsFromRemoteDb(contactIds)", "Failed getting fulname.");
-		}
-
-		try {
-			temp = c.getString(ContactsProvider.CMetaData.ContactsMetaData.EMAIL);
-			if (temp != null && !temp.equals("null"))
-				contact.email = temp;
-			else
-				contact.email = "";
-		} catch (JSONException e) {
-			Log.e("getContactsFromRemoteDb(contactIds)", "Failed getting email.");
-		}
-
-		try {
-			temp = c.getString(ContactsProvider.CMetaData.ContactsMetaData.PHONE);
-			if (temp != null && !temp.equals("null"))
-				contact.phone1 = temp;
-			else
-				contact.phone1 = "";
-		} catch (JSONException e) {
-			Log.e("getContactsFromRemoteDb(contactIds)", "Failed getting phone number.");
-		}
-
-		try {
-			temp = c.getString(ContactsProvider.CMetaData.ContactsMetaData.PHONE_CODE);
-			if (temp != null && !temp.equals("null"))
-				contact.phone1_code = temp;
-			else
-				contact.phone1_code = "";
-		} catch (JSONException e) {
-			Log.e("getContactsFromRemoteDb(contactIds)", "Failed getting phone code.");
-		}
-
-		try {
-			temp = c.getString(ContactsProvider.CMetaData.ContactsMetaData.BIRTHDATE);
-			if (temp != null && !temp.equals("null"))
-				contact.birthdate = temp;
-			else
-				contact.birthdate = "";
-		} catch (JSONException e) {
-			Log.e("getContactsFromRemoteDb(contactIds)", "Failed getting birthdate.");
-		}
-
-		try {
-			temp = c.getString(ContactsProvider.CMetaData.ContactsMetaData.COUNTRY);
-			if (temp != null && !temp.equals("null"))
-				contact.country = temp;
-			else
-				contact.country = "";
-		} catch (JSONException e) {
-			Log.e("getContactsFromRemoteDb(contactIds)", "Failed getting country.");
-		}
-
-		try {
-			temp = c.getString(ContactsProvider.CMetaData.ContactsMetaData.CITY);
-			if (temp != null && !temp.equals("null"))
-				contact.city = temp;
-			else
-				contact.city = "";
-		} catch (JSONException e) {
-			Log.e("getContactsFromRemoteDb(contactIds)", "Failed getting city.");
-		}
-
-		try {
-			temp = c.getString(ContactsProvider.CMetaData.ContactsMetaData.STREET);
-			if (temp != null && !temp.equals("null"))
-				contact.street = temp;
-			else
-				contact.street = "";
-		} catch (JSONException e) {
-			Log.e("getContactsFromRemoteDb(contactIds)", "Failed getting street.");
-		}
-
-		try {
-			temp = c.getString(ContactsProvider.CMetaData.ContactsMetaData.ZIP);
-			if (temp != null && !temp.equals("null"))
-				contact.zip = temp;
-			else
-				contact.zip = "";
-		} catch (JSONException e) {
-			Log.e("getContactsFromRemoteDb(contactIds)", "Failed getting zip.");
-		}
-
-		try {
-			temp = c.getString(ContactsProvider.CMetaData.ContactsMetaData.VISIBILITY);
-			if (temp != null && !temp.equals("null"))
-				contact.visibility = temp;
-			else
-				contact.visibility = "";
-		} catch (JSONException e) {
-			Log.e("getContactsFromRemoteDb(contactIds)", "Failed getting visibility.");
-		}
-		
-		try {
-			temp = c.getString(ContactsProvider.CMetaData.ContactsMetaData.VISIBILITY2);
-			if (temp != null && !temp.equals("null"))
-				contact.visibility2 = temp;
-			else
-				contact.visibility2 = "";
-		} catch (JSONException e) {
-			Log.e("getContactsFromRemoteDb(contactIds)", "Failed getting visibility2.");
-		}
-
-		try {
-			contact.image = c.getBoolean(ContactsProvider.CMetaData.ContactsMetaData.IMAGE);
-		} catch (JSONException e) {
-			Log.e("getContactsFromRemoteDb(contactIds)", "Failed getting image.");
-		}
-
-		try {
-			temp = c.getString(ContactsProvider.CMetaData.ContactsMetaData.IMAGE_THUMB_URL);
-			if (temp != null && !temp.equals("null"))
-				contact.image_thumb_url = temp;
-			else
-				contact.image_thumb_url = "";
-		} catch (JSONException e) {
-			Log.e("getContactsFromRemoteDb(contactIds)", "Failed getting image_thumb_url.");
-		}
-
-		try {
-			temp = c.getString(ContactsProvider.CMetaData.ContactsMetaData.IMAGE_URL);
-			if (temp != null && !temp.equals("null")) {
-				contact.image_url = temp;
+			contact.contact_id = c.getInt(lastKey = ContactsProvider.CMetaData.ContactsMetaData.C_ID);
+			contact.lid = c.getString(lastKey = ContactsProvider.CMetaData.ContactsMetaData.LID);
+			contact.name = emptyIfNullOrNull(
+					c.getString(lastKey = ContactsProvider.CMetaData.ContactsMetaData.NAME));
+			contact.lastname = emptyIfNullOrNull(
+					c.getString(lastKey = ContactsProvider.CMetaData.ContactsMetaData.LASTNAME));
+			contact.fullname = emptyIfNullOrNull(
+					c.getString(lastKey = ContactsProvider.CMetaData.ContactsMetaData.FULLNAME));
+			contact.email = emptyIfNullOrNull(
+					c.getString(lastKey = ContactsProvider.CMetaData.ContactsMetaData.EMAIL));
+			contact.phone1 = emptyIfNullOrNull(
+					c.getString(lastKey = ContactsProvider.CMetaData.ContactsMetaData.PHONE));
+			contact.phone1_code = emptyIfNullOrNull(
+					c.getString(lastKey = ContactsProvider.CMetaData.ContactsMetaData.PHONE_CODE));
+			contact.birthdate = emptyIfNullOrNull(
+					c.getString(lastKey = ContactsProvider.CMetaData.ContactsMetaData.BIRTHDATE));
+			contact.country = emptyIfNullOrNull(
+					c.getString(lastKey = ContactsProvider.CMetaData.ContactsMetaData.COUNTRY));
+			contact.city = emptyIfNullOrNull(
+					c.getString(lastKey = ContactsProvider.CMetaData.ContactsMetaData.CITY));
+			contact.street = emptyIfNullOrNull(
+					c.getString(lastKey = ContactsProvider.CMetaData.ContactsMetaData.STREET));
+			contact.zip = emptyIfNullOrNull(
+					c.getString(lastKey = ContactsProvider.CMetaData.ContactsMetaData.ZIP));
+			contact.visibility = emptyIfNullOrNull(
+					c.getString(lastKey = ContactsProvider.CMetaData.ContactsMetaData.VISIBILITY));
+			contact.visibility2 = emptyIfNullOrNull(
+					c.getString(lastKey = ContactsProvider.CMetaData.ContactsMetaData.VISIBILITY2));
+			contact.image = c.getBoolean(lastKey = ContactsProvider.CMetaData.ContactsMetaData.IMAGE);
+			contact.image_thumb_url = emptyIfNullOrNull(
+					c.getString(lastKey = ContactsProvider.CMetaData.ContactsMetaData.IMAGE_THUMB_URL));
+			contact.image_url = emptyIfNullOrNull(
+					c.getString(lastKey = ContactsProvider.CMetaData.ContactsMetaData.IMAGE_URL));
+			if (contact.image_url.length() > 0) {
 				try {
 					contact.image_bytes = Utils.imageToBytes(contact.image_url, context);
 				} catch(Exception e) {
 					Log.e("getContactsFromRemoteDb(contactIds)", "Failed getting image_bytes.");
 				}
-			} else
-				contact.image_url = "";
-		} catch (JSONException e) {
-			contact.image = false;
-			Log.e("getContactsFromRemoteDb(contactIds)", "Failed getting image_url and/or image_bytes.");
-		}
+			}
+			contact.created = c.getLong(lastKey = ContactsProvider.CMetaData.ContactsMetaData.CREATED);
+			contact.modified = c.getLong(lastKey = ContactsProvider.CMetaData.ContactsMetaData.MODIFIED);
+			contact.reg_user_id = c.optInt(lastKey = ContactsProvider.CMetaData.ContactsMetaData.REG_USER_ID);
+			contact.agenda_view = emptyIfNullOrNull(
+					c.getString(lastKey = ContactsProvider.CMetaData.ContactsMetaData.AGENDA_VIEW));
+			contact.agenda_view2 = emptyIfNullOrNull(
+					c.getString(lastKey = ContactsProvider.CMetaData.ContactsMetaData.AGENDA_VIEW2));
+			contact.can_add_note = c.getString(lastKey = ContactsProvider.CMetaData.ContactsMetaData.CAN_ADD_NOTE);
+			
+			contact.time_start = c.getString(lastKey = ContactsProvider.CMetaData.ContactsMetaData.TIME_START);
+			contact.time_end = c.getString(lastKey = ContactsProvider.CMetaData.ContactsMetaData.TIME_END);
+			contact.all_day = c.getString(lastKey = ContactsProvider.CMetaData.ContactsMetaData.ALL_DAY);
+			contact.display_time_end = c.getString(lastKey = ContactsProvider.CMetaData.ContactsMetaData.DISPLAY_TIME_END);
+			contact.type = c.getString(lastKey = ContactsProvider.CMetaData.ContactsMetaData.TYPE);
+			contact.title = c.getString(lastKey = ContactsProvider.CMetaData.ContactsMetaData.TITLE);
+			
 
-		try {
-			contact.created = c.getLong(ContactsProvider.CMetaData.ContactsMetaData.CREATED);
-		} catch (JSONException e) {
-			Log.e("getContactsFromRemoteDb(contactIds)", "Failed getting created.");
-		}
-
-		try {
-			contact.modified = c.getLong(ContactsProvider.CMetaData.ContactsMetaData.MODIFIED);
-		} catch (JSONException e) {
-			Log.e("getContactsFromRemoteDb(contactIds)", "Failed getting modified.");
-		}
-		
-		try {
-			contact.reg_user_id = c.getInt(ContactsProvider.CMetaData.ContactsMetaData.REG_USER_ID);
-		} catch (JSONException e) {
-			Log.e("getContactsFromRemoteDb(contactIds)", "Failed getting reg_user_id.");
-		}
-
-		try {
-			temp = c.getString(ContactsProvider.CMetaData.ContactsMetaData.AGENDA_VIEW);
-			if (temp != null && !temp.equals("null"))
-				contact.agenda_view = temp;
-			else
-				contact.agenda_view = "";
-		} catch (JSONException e) {
-			Log.e("getContactsFromRemoteDb(contactIds)", "Failed getting agenda_view.");
-		}
-
-		try {
-			temp = c.getString(ContactsProvider.CMetaData.ContactsMetaData.AGENDA_VIEW2);
-			if (temp != null && !temp.equals("null"))
-				contact.agenda_view2 = temp;
-			else
-				contact.agenda_view2 = "";
-		} catch (JSONException e) {
-			Log.e("getContactsFromRemoteDb(contactIds)", "Failed getting agenda_view2.");
-		}
-
-		try {
-			contact.can_add_note = c.getString(ContactsProvider.CMetaData.ContactsMetaData.CAN_ADD_NOTE);
-		} catch (JSONException e) {
-			Log.e("getContactsFromRemoteDb(contactIds)", "Failed getting can_add_note.");
-		}
-
-		try {
-			contact.time_start = c.getString(ContactsProvider.CMetaData.ContactsMetaData.TIME_START);
-		} catch (JSONException e) {
-			Log.e("getContactsFromRemoteDb(contactIds)", "Failed getting time_start.");
-		}
-
-		try {
-			contact.time_end = c.getString(ContactsProvider.CMetaData.ContactsMetaData.TIME_END);
-		} catch (JSONException e) {
-			Log.e("getContactsFromRemoteDb(contactIds)", "Failed getting time_end.");
-		}
-
-		try {
-			contact.all_day = c.getString(ContactsProvider.CMetaData.ContactsMetaData.ALL_DAY);
-		} catch (JSONException e) {
-			Log.e("getContactsFromRemoteDb(contactIds)", "Failed getting all_day.");
-		}
-
-		try {
-			contact.display_time_end = c.getString(ContactsProvider.CMetaData.ContactsMetaData.DISPLAY_TIME_END);
-		} catch (JSONException e) {
-			Log.e("getContactsFromRemoteDb(contactIds)", "Failed getting display_time_end.");
-		}
-
-		try {
-			contact.type = c.getString(ContactsProvider.CMetaData.ContactsMetaData.TYPE);
-		} catch (JSONException e) {
-			Log.e("getContactsFromRemoteDb(contactIds)", "Failed getting type.");
-		}
-
-		try {
-			contact.title = c.getString(ContactsProvider.CMetaData.ContactsMetaData.TITLE);
-		} catch (JSONException e) {
-			Log.e("getContactsFromRemoteDb(contactIds)", "Failed getting title.");
-		}
-
-		// TODO investigate REGISTERED meaning.
-		try {
-			temp = c.getString("is_reg");
-			if (temp != null && !temp.equals("null"))
-				contact.registered = temp;
-			else
-				contact.registered = "";
-		} catch (JSONException e) {
-			Log.e("getContactsFromRemoteDb(contactIds)", "Failed getting registered.");
-		}
-
-		try {
-			temp = c.getString(ContactsProvider.CMetaData.ContactsMetaData.COLOR);
-			if (temp != null && !temp.equals("null"))
-				contact.setColor(temp);
-			else
-				contact.setColor("000000");
-		} catch (JSONException e) {
-			Log.e("getContactsFromRemoteDb(contactIds)", "Failed getting color.");
-		}
-
-		try {
-			if (!c.getString("groups").equals("null") && c.getString("groups") != null) {
-				try {
+			// TODO investigate REGISTERED meaning.
+			contact.registered = emptyIfNullOrNull(c.getString(lastKey = "is_reg"));
+			{
+				String color = emptyIfNullOrNull(c.getString(lastKey = ContactsProvider.CMetaData.ContactsMetaData.COLOR));
+				if (color.length() == 0)
+					color = "000000";
+				contact.setColor(color);
+			}
+			{
+				String gr = emptyIfNullOrNull(c.getString(lastKey = "groups"));
+				if (gr.length() > 0) {
 					JSONArray groups = c.getJSONArray("groups");
 					if (groups != null) {
 						Map<String, String> set = new HashMap<String, String>();
@@ -604,12 +395,12 @@ public class JSONUtils {
 						}
 						contact.groups = set;
 					}
-				} catch (JSONException e) {
-//					Log.e("getContactsFromRemoteDb(contactIds)", "Groups were null.");
 				}
 			}
 		} catch (JSONException e) {
-//			Log.e("getContactsFromRemoteDb(contactIds)", "Failed getting groups.");
+			Log.e("getContactsFromRemoteDb(contactIds)", "Failed getting " + lastKey);
+			if (lastKey.equals(ContactsProvider.CMetaData.ContactsMetaData.IMAGE_URL))
+				contact.image = false;
 		}
 		return contact;
 	}
@@ -826,4 +617,9 @@ public class JSONUtils {
 		return result;
 	}
 
+	public static String emptyIfNullOrNull(String value) {
+		if (value == null || value.equals("null"))
+			return "";
+		return value;
+	}
 }

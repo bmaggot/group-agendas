@@ -863,14 +863,15 @@ public class NewEventActivity extends EventActivity implements AddressMetaData {
 
 		@Override
 		protected Void doInBackground(Void... params) {
-			ArrayList<Contact> contacts = ContactManagement.getContactsFromLocalDb(NewEventActivity.this, null);
+			List<Contact> contacts = ContactManagement.getContactsFromLocalDb(NewEventActivity.this, null, null);
 			int l = contacts.size();
 			titles = new CharSequence[l];
 			ids = new int[l];
 			selections = new boolean[l];
 			for (int i = 0; i < l; i++) {
-				titles[i] = new StringBuilder(contacts.get(i).name).append(" ").append(contacts.get(i).lastname).toString();
-				ids[i] = contacts.get(i).contact_id;
+				Contact c = contacts.get(i);
+				titles[i] = new StringBuilder(c.name).append(' ').append(c.lastname).toString();
+				ids[i] = c.contact_id;
 				selections[i] = false;
 			}
 

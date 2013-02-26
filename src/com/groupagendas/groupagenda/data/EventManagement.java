@@ -25,6 +25,7 @@ import android.net.Uri;
 import android.provider.BaseColumns;
 import android.util.Log;
 
+import com.groupagendas.groupagenda.LoadProgressHook;
 import com.groupagendas.groupagenda.NavbarActivity;
 import com.groupagendas.groupagenda.SaveDeletedData;
 import com.groupagendas.groupagenda.SaveDeletedData.SDMetaData;
@@ -534,6 +535,7 @@ public class EventManagement {
 		}
 
 		if (eventTimeMode == TM_EVENTS_ON_GIVEN_MONTH) {
+			// TODO: make sure GA events are displayed on other month frames
 			return EventsProvider.mOpenHelper.getReadableDatabase().rawQuery(
 					"SELECT events.event_id, events._id, color, "
 							+ "event_display_color, is_all_day, time_start_utc, time_end_utc, icon, title, status, is_owner, day, day_time_start, day_time_end "
@@ -546,6 +548,10 @@ public class EventManagement {
 
 	}
 
+	public static void getEventsFromRemoteDb(Context context, String eventCategory, long startTimeUnixTimestamp, long endTimeUnixTimestamp) {
+		getEventsFromRemoteDb(context, eventCategory, startTimeUnixTimestamp, endTimeUnixTimestamp, null);
+	}
+
 	/**
 	 * Gets events from remote Database and writes them to local DB.
 	 * 
@@ -555,7 +561,7 @@ public class EventManagement {
 	 * @since 2012-10-09
 	 * @version 1.0
 	 */
-	public static void getEventsFromRemoteDb(Context context, String eventCategory, long startTimeUnixTimestamp, long endTimeUnixTimestamp) {
+	public static void getEventsFromRemoteDb(Context context, String eventCategory, long startTimeUnixTimestamp, long endTimeUnixTimestamp, LoadProgressHook lph) {
 		initUserTimezone(context);
 		boolean success = false;
 		Event event = null;
@@ -566,6 +572,9 @@ public class EventManagement {
 		boolean hasMOreEvents = false;
 
 		do {
+			// better slow on 0% than on 100% (IMO)
+			if (lph != null)
+				lph.nextIt().publish(0, 0);
 			try {
 				int value = 0;
 				WebService webService = new WebService(context);
@@ -585,61 +594,72 @@ public class EventManagement {
 				post.setEntity(reqEntity);
 				HttpResponse rp = webService.getResponseFromHttpPost(post);
 
-				if (rp.getStatusLine().getStatusCode() == HttpStatus.SC_OK) {
-					String resp = EntityUtils.toString(rp.getEntity());
-					if (resp != null) {
-						JSONObject object = new JSONObject(resp);
-						success = object.getBoolean(SUCCESS);
+				if (rp.getStatusLine().getStatusCode() != HttpStatus.SC_OK) {
+					Log.w(EventManagement.class.getSimpleName(), "Could not retrieve events page " + pageNumber + ": " + rp.getStatusLine().getReasonPhrase());
+					break;
+				}
 
-						if (success == false) {
-							// error = object.getString("error");
-						} else {
-							hasMOreEvents = object.getBoolean("has_more");
-							JSONArray es = object.getJSONArray(EVENTS);
-							length = es.length();
-							values = new ContentValues[length];
-							// Log.e("Count", length+"");
-							for (int i = 0; i < es.length(); i++) {
-								try {
-									JSONObject e = es.getJSONObject(i);
-									event = JSONUtils.createEventFromJSON(context, e);
-									// Log.e("Event", "PageNumber: "+pageNumber
-									// +" - EventID "+ event.getEvent_id()+"");
-									if (event != null && !event.isNative()) {
-										event.setUploadedToServer(true);
-										if (event.getType().contentEquals("v") && !event.getPoll().contentEquals("null")) {
-											context.getContentResolver().insert(EventsProvider.EMetaData.EventsMetaData.CONTENT_URI,
-													createCVforEventsTable(event));
-										}
-										if (event.getType().contentEquals("v")
-												|| event.getStatus() == Invited.REJECTED
-												|| (event.getStatus() == Invited.PENDING && event.getStartCalendar().before(
-														Calendar.getInstance()))) {
+				String resp = EntityUtils.toString(rp.getEntity());
+				if (resp == null) {
+					Log.w(EventManagement.class.getSimpleName(), "Could not retrieve events page " + pageNumber + ": no response");
+					break;
+				}
 
-										} else {
-											// insertEventToLocalDB(context,
-											// event);
-											values[value] = createCVforEventsTable(event);
-											value++;
-										}
-									}
-									// }
+				JSONObject object = new JSONObject(resp);
+				success = object.getBoolean(SUCCESS);
 
-								} catch (JSONException ex) {
-									Log.e(CLASS_NAME, "JSON");
-								}
+				if (!success) {
+					// error = object.getString("error");
+					break;
+				}
+
+				hasMOreEvents = object.getBoolean("has_more");
+				JSONArray es = object.getJSONArray(EVENTS);
+				length = es.length();
+				values = new ContentValues[length];
+				// Log.e("Count", length+"");
+				if (lph != null) // moved nextIt before HTTP init
+					lph/*.nextIt()*/.publish(0, length);
+				for (int i = 0; i < length; i++) {
+					try {
+						JSONObject e = es.getJSONObject(i);
+						event = JSONUtils.createEventFromJSON(context, e);
+						// Log.e("Event", "PageNumber: "+pageNumber
+						// +" - EventID "+ event.getEvent_id()+"");
+						if (event != null && !event.isNative()) {
+							event.setUploadedToServer(true);
+							if (event.getType().contentEquals("v") && !event.getPoll().contentEquals("null")) {
+								context.getContentResolver().insert(EventsProvider.EMetaData.EventsMetaData.CONTENT_URI,
+										createCVforEventsTable(event));
 							}
-							if (values.length > 0) {
-								values2 = new ContentValues[value];
-								for (int i = 0; i < value; i++) {
-									values2[i] = values[i];
-								}
-								context.getContentResolver().bulkInsert(EventsProvider.EMetaData.INDEXED_EVENTS_URI, values2);
-								// Log.e("Inserted", insertedCount+"");
-								// Log.e("Inserted", "END");
+							if (event.getType().contentEquals("v")
+									|| event.getStatus() == Invited.REJECTED
+									|| (event.getStatus() == Invited.PENDING && event.getStartCalendar().before(
+											Calendar.getInstance()))) {
+
+							} else {
+								// insertEventToLocalDB(context,
+								// event);
+								values[value] = createCVforEventsTable(event);
+								value++;
 							}
 						}
+						// }
+
+					} catch (JSONException ex) {
+						Log.e(CLASS_NAME, "JSON");
 					}
+					if (lph != null)
+						lph.publish(i + 1);
+				}
+				if (values.length > 0) {
+					values2 = new ContentValues[value];
+					for (int i = 0; i < value; i++) {
+						values2[i] = values[i];
+					}
+					context.getContentResolver().bulkInsert(EventsProvider.EMetaData.INDEXED_EVENTS_URI, values2);
+					// Log.e("Inserted", insertedCount+"");
+					// Log.e("Inserted", "END");
 				}
 			} catch (Exception ex) {
 				Reporter.reportError(context, CLASS_NAME, Thread.currentThread().getStackTrace()[2].getMethodName().toString(),
@@ -1967,16 +1987,19 @@ public class EventManagement {
 		offlineDeletedEvents.clear(3);
 	}
 
-	public static ArrayList<Event> getPollEventsFromLocalDb(Context context) {
+	public static ArrayList<Event> getPollEventsFromLocalDb(Context context, LoadProgressHook lph) {
 		Event item;
 		String where = null;
 
 		where = (EventsProvider.EMetaData.EventsMetaData.TYPE + " = 'v'" + " AND " + EventsProvider.EMetaData.EventsMetaData.STATUS + " != '0'");
 
 		Cursor result = context.getContentResolver().query(EventsProvider.EMetaData.EventsMetaData.CONTENT_URI, null, where, null, null);
-		ArrayList<Event> items = new ArrayList<Event>(result.getCount());
+		final int total = result.getCount();
+		ArrayList<Event> items = new ArrayList<Event>(total);
 
-		while (result.moveToNext()) {
+		if (lph != null)
+			lph.publish(0, total);
+		for (int p = 1; result.moveToNext(); p++) {
 			item = EventManagement.createEventFromCursor(context, result);
 			String jsonArraySelectedTime = item.getSelectedEventPollsTime();
 			try {
@@ -2033,6 +2056,9 @@ public class EventManagement {
 			// } catch (JSONException e) {
 			// e.printStackTrace();
 			// }
+			
+			if (lph != null)
+				lph.publish(p);
 		}
 		result.close();
 

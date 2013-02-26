@@ -1468,7 +1468,7 @@ public class EventEditActivity extends EventActivity implements AddressMetaData 
 						public void onClick(DialogInterface dialog, int id) {
 							ProgressDialog dlg = new ProgressDialog(EventEditActivity.this);
 							dlg.setCancelable(false);
-							dlg.setTitle(R.string.deleting);
+							dlg.setMessage(getString(R.string.deleting));
 							dlg.show();
 							new DeleteEventTask(dlg).execute();
 						}

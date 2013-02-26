@@ -28,6 +28,7 @@ import android.database.sqlite.SQLiteException;
 import android.net.Uri;
 import android.util.Log;
 
+import com.groupagendas.groupagenda.LoadProgressHook;
 import com.groupagendas.groupagenda.R;
 import com.groupagendas.groupagenda.SaveDeletedData;
 import com.groupagendas.groupagenda.SaveDeletedData.SDMetaData;
@@ -39,6 +40,7 @@ import com.groupagendas.groupagenda.contacts.Group;
 import com.groupagendas.groupagenda.contacts.birthdays.Birthday;
 import com.groupagendas.groupagenda.https.WebService;
 import com.groupagendas.groupagenda.utils.CharsetUtils;
+import com.groupagendas.groupagenda.utils.JSONUtils;
 import com.groupagendas.groupagenda.utils.MapUtils;
 import com.groupagendas.groupagenda.utils.StringValueUtils;
 import com.groupagendas.groupagenda.utils.Utils;
@@ -56,10 +58,9 @@ public class ContactManagement {
 	 * @author meska.lt@gmail.com
 	 * @return ArrayList of Contact objects got from response.
 	 * @since 2012-09-28
-	 * @version 0.1
+	 * @version 0.2
 	 */
-	// TODO MESKAI: naudoti metoda JSONUtils'uose kurti kontakta is JSON'o
-	public static void getContactsFromRemoteDb(Context context, HashSet<Integer> groupIds) {
+	public static void getContactsFromRemoteDb(Context context, HashSet<Integer> groupIds, LoadProgressHook lph) {
 		Calendar start = Calendar.getInstance();
 		boolean success = false;
 		String error = null;
@@ -68,6 +69,10 @@ public class ContactManagement {
 		int length = 0;
 		int pageNumber = 1;
 		do {
+			// better slow on 0% than on 100% (IMO)
+			if (lph != null)
+				lph.nextIt().publish(0, 0);
+			
 			HttpPost post = new HttpPost(Data.getServerUrl() + "mobile/contact_list");
 			MultipartEntity reqEntity = new MultipartEntity(HttpMultipartMode.BROWSER_COMPATIBLE);
 			
@@ -85,200 +90,55 @@ public class ContactManagement {
 			ContentValues[] values;
 			try {
 				HttpResponse rp = webService.getResponseFromHttpPost(post);
-	
-				if (rp.getStatusLine().getStatusCode() == HttpStatus.SC_OK) {
-					String resp = EntityUtils.toString(rp.getEntity());
-					if (resp != null) {
-						JSONObject object = new JSONObject(resp);
-						success = object.getBoolean("success");
-	
-						if (success == false) {
-							error = object.getString("error");
-							Log.e("getContactList - error: ", error);
-						} else {
-							JSONArray cs = object.getJSONArray("contacts");
-							length = cs.length();
-							values = new ContentValues[cs.length()];
-							if (length > 0) {
-								for (int i = 0; i < length; i++) {
-									JSONObject c = cs.getJSONObject(i);
-									Contact contact = new Contact();
-									String temp;
-	
-									contact.contact_id = c.optInt(ContactsProvider.CMetaData.ContactsMetaData.C_ID);
-	
-									contact.lid = c.optString(ContactsProvider.CMetaData.ContactsMetaData.LID);
-	
-									temp = c.optString(ContactsProvider.CMetaData.ContactsMetaData.NAME);
-									if (temp != null && !temp.equals("null"))
-										contact.name = temp;
-									else
-										contact.name = "";
-	
-									temp = c.optString(ContactsProvider.CMetaData.ContactsMetaData.LASTNAME);
-									if (temp != null && !temp.equals("null"))
-										contact.lastname = temp;
-									else
-										contact.lastname = "";
-	
-									contact.fullname = c.optString(ContactsProvider.CMetaData.ContactsMetaData.FULLNAME);
-	
-									temp = c.optString(ContactsProvider.CMetaData.ContactsMetaData.EMAIL);
-									if (temp != null && !temp.equals("null"))
-										contact.email = temp;
-									else
-										contact.email = "";
-	
-									temp = c.optString(ContactsProvider.CMetaData.ContactsMetaData.PHONE);
-									if (temp != null && !temp.equals("null"))
-										contact.phone1 = temp;
-									else
-										contact.phone1 = "";
-	
-									temp = c.optString(ContactsProvider.CMetaData.ContactsMetaData.PHONE_CODE);
-									if (temp != null && !temp.equals("null"))
-										contact.phone1_code = temp;
-									else
-										contact.phone1_code = "";
-	
-									temp = c.optString(ContactsProvider.CMetaData.ContactsMetaData.BIRTHDATE);
-									if (temp != null && !temp.equals("null"))
-										contact.birthdate = temp;
-									else
-										contact.birthdate = "";
-	
-									temp = c.optString(ContactsProvider.CMetaData.ContactsMetaData.COUNTRY);
-									if (temp != null && !temp.equals("null"))
-										contact.country = temp;
-									else
-										contact.country = "";
-	
-									temp = c.optString(ContactsProvider.CMetaData.ContactsMetaData.CITY);
-									if (temp != null && !temp.equals("null"))
-										contact.city = temp;
-									else
-										contact.city = "";
-	
-									temp = c.optString(ContactsProvider.CMetaData.ContactsMetaData.STREET);
-									if (temp != null && !temp.equals("null"))
-										contact.street = temp;
-									else
-										contact.street = "";
-	
-									temp = c.optString(ContactsProvider.CMetaData.ContactsMetaData.ZIP);
-									if (temp != null && !temp.equals("null"))
-										contact.zip = temp;
-									else
-										contact.zip = "";
-	
-									temp = c.optString(ContactsProvider.CMetaData.ContactsMetaData.VISIBILITY);
-									if (temp != null && !temp.equals("null"))
-										contact.visibility = temp;
-									else
-										contact.visibility = "";
-	
-									temp = c.optString(ContactsProvider.CMetaData.ContactsMetaData.VISIBILITY2);
-									if (temp != null && !temp.equals("null"))
-										contact.visibility2 = temp;
-									else
-										contact.visibility2 = "";
-	
-									contact.image = c.optBoolean(ContactsProvider.CMetaData.ContactsMetaData.IMAGE);
-	
-									temp = c.optString(ContactsProvider.CMetaData.ContactsMetaData.IMAGE_THUMB_URL);
-									if (temp != null && !temp.equals("null"))
-										contact.image_thumb_url = temp;
-									else
-										contact.image_thumb_url = "";
-	
-									temp = c.optString(ContactsProvider.CMetaData.ContactsMetaData.IMAGE_URL);
-									if (temp != null && !temp.equals("null")) {
-										contact.image_url = temp;
-										try {
-											contact.image_bytes = Utils.imageToBytes(contact.image_url, context);
-										} catch (Exception e) {
-											Log.e("getContactsFromRemoteDb(contactIds)", "Failed getting image_bytes.");
-										}
-									} else
-										contact.image_url = "";
-	
-									contact.created = c.optLong(ContactsProvider.CMetaData.ContactsMetaData.CREATED);
-	
-									contact.modified = c.optLong(ContactsProvider.CMetaData.ContactsMetaData.MODIFIED);
-	
-									contact.reg_user_id = c.optInt(ContactsProvider.CMetaData.ContactsMetaData.REG_USER_ID);
-	
-									temp = c.optString(ContactsProvider.CMetaData.ContactsMetaData.AGENDA_VIEW);
-									if (temp != null && !temp.equals("null"))
-										contact.agenda_view = temp;
-									else
-										contact.agenda_view = "";
-	
-									temp = c.optString(ContactsProvider.CMetaData.ContactsMetaData.AGENDA_VIEW2);
-									if (temp != null && !temp.equals("null"))
-										contact.agenda_view2 = temp;
-									else
-										contact.agenda_view2 = "";
-	
-									contact.can_add_note = c.optString(ContactsProvider.CMetaData.ContactsMetaData.CAN_ADD_NOTE);
-	
-									contact.time_start = c.optString(ContactsProvider.CMetaData.ContactsMetaData.TIME_START);
-	
-									contact.time_end = c.optString(ContactsProvider.CMetaData.ContactsMetaData.TIME_END);
-	
-									contact.all_day = c.optString(ContactsProvider.CMetaData.ContactsMetaData.ALL_DAY);
-	
-									contact.display_time_end = c.optString(ContactsProvider.CMetaData.ContactsMetaData.DISPLAY_TIME_END);
-	
-									contact.type = c.optString(ContactsProvider.CMetaData.ContactsMetaData.TYPE);
-	
-									contact.title = c.optString(ContactsProvider.CMetaData.ContactsMetaData.TITLE);
-	
-									temp = c.optString("is_reg");
-									if (temp != null && !temp.equals("null"))
-										contact.registered = temp;
-									else
-										contact.registered = "";
-	
-									temp = c.optString(ContactsProvider.CMetaData.ContactsMetaData.COLOR);
-									if (temp != null && !temp.equals("null"))
-										contact.setColor(temp);
-									else
-										contact.setColor("000000");
-	
-									if (!c.optString("groups").equals("null") && c.optString("groups") != null) {
-										JSONArray groups = c.optJSONArray("groups");
-										if (groups != null) {
-											Map<String, String> set = new HashMap<String, String>();
-											for (int j = 0, l = groups.length(); j < l; j++) {
-												set.put(StringValueUtils.valueOf(j), groups.optString(j));
-											}
-											contact.groups = set;
-										}
-									}
-									
-									contact.setUploadedToServer(true);
-									values[i] = makeCVforContact(context, contact, 0);
-									if (contact.birthdate != null && contact.birthdate.length() == 10) {
-										Birthday birthday = new Birthday(context, contact);
-										insertBirthdayToLocalDb(context, birthday, contact.contact_id);
-									}
-								}
-								/*if(values != null)*/{
-									context.getContentResolver().bulkInsert(ContactsProvider.CMetaData.ContactsMetaData.CONTENT_URI, values);
-								}
-							}
-						}
-					}
-	
+				
+				if (rp.getStatusLine().getStatusCode() != HttpStatus.SC_OK) {
+					Log.w(ContactManagement.class.getSimpleName(), "Could not retrieve contacts page " + pageNumber + ": " + rp.getStatusLine().getReasonPhrase());
+					break;
 				}
+	
+				String resp = EntityUtils.toString(rp.getEntity());
+				if (resp == null) {
+					Log.w(ContactManagement.class.getSimpleName(), "Could not retrieve contacts page " + pageNumber + ": no response");
+					break;
+				}
+				
+				JSONObject object = new JSONObject(resp);
+				success = object.getBoolean("success");
+				if (!success) {
+					error = object.getString("error");
+					Log.e("getContactList - error: ", error);
+					break;
+				}
+				
+				JSONArray cs = object.getJSONArray("contacts");
+				length = cs.length();
+				if (lph != null) // moved nextIt before HTTP init
+					lph/*.nextIt()*/.publish(0, length);
+				values = new ContentValues[length];
+				for (int i = 0; i < length; i++) {
+					JSONObject c = cs.getJSONObject(i);
+					Contact contact = JSONUtils.createContactFromJSONObject(c, context);
+					contact.setUploadedToServer(true);
+					values[i] = makeCVforContact(context, contact, 0);
+					if (contact.birthdate != null && contact.birthdate.length() == 10) {
+						Birthday birthday = new Birthday(context, contact);
+						insertBirthdayToLocalDb(context, birthday, contact.contact_id);
+					}
+					if (lph != null)
+						lph.publish(i + 1);
+				}
+				context.getContentResolver().bulkInsert(ContactsProvider.CMetaData.ContactsMetaData.CONTENT_URI, values);
 			} catch (Exception ex) {
 				Log.e("getContactsFromRemoteDb(contactIds)", ex.getMessage());
 			}
-		} while(length == contactsInOnePostRetrieveSize);
-		Log.e("Contacts insert time:",  (Calendar.getInstance().getTimeInMillis() - start.getTimeInMillis())+"");
+		} while (length == contactsInOnePostRetrieveSize);
+		Log.e("Contacts insert time:", StringValueUtils.valueOf(Calendar.getInstance().getTimeInMillis() - start.getTimeInMillis()));
 		Data.setLoadContactsData(false);
-		}
+	}
+
+	public static ArrayList<Contact> getContactsFromLocalDb(Context context, String where) {
+		return getContactsFromLocalDb(context, where, null);
+	}
 
 	/**
 	 * Get all contact entries from local database.
@@ -293,83 +153,88 @@ public class ContactManagement {
 	 * @since 2012-09-28
 	 * @version 0.1
 	 */
-	public static ArrayList<Contact> getContactsFromLocalDb(Context context, String where) {
+	public static ArrayList<Contact> getContactsFromLocalDb(Context context, String where, LoadProgressHook lph) {
 		Cursor cur;
 		Contact temp;
 
 		cur = context.getContentResolver().query(ContactsProvider.CMetaData.ContactsMetaData.CONTENT_URI, null, where, null, null);
-		ArrayList<Contact> contacts = new ArrayList<Contact>(cur.getCount());
-
-		if (cur.getCount() > 0) {
-			while (cur.moveToNext()) {
-				temp = new Contact();
-	
-				temp.contact_id = cur.getInt(cur.getColumnIndex(ContactsProvider.CMetaData.ContactsMetaData.C_ID));
-				temp.lid = cur.getString(cur.getColumnIndex(ContactsProvider.CMetaData.ContactsMetaData.LID));
-				temp.name = cur.getString(cur.getColumnIndex(ContactsProvider.CMetaData.ContactsMetaData.NAME));
-				temp.lastname = cur.getString(cur.getColumnIndex(ContactsProvider.CMetaData.ContactsMetaData.LASTNAME));
-				temp.fullname = cur.getString(cur.getColumnIndex(ContactsProvider.CMetaData.ContactsMetaData.FULLNAME));
-	
-				temp.email = cur.getString(cur.getColumnIndex(ContactsProvider.CMetaData.ContactsMetaData.EMAIL));
-				temp.phone1 = cur.getString(cur.getColumnIndex(ContactsProvider.CMetaData.ContactsMetaData.PHONE));
-				temp.phone1_code = cur.getString(cur.getColumnIndex(ContactsProvider.CMetaData.ContactsMetaData.PHONE_CODE));
-	
-				temp.birthdate = cur.getString(cur.getColumnIndex(ContactsProvider.CMetaData.ContactsMetaData.BIRTHDATE));
-	
-				temp.country = cur.getString(cur.getColumnIndex(ContactsProvider.CMetaData.ContactsMetaData.COUNTRY));
-				temp.city = cur.getString(cur.getColumnIndex(ContactsProvider.CMetaData.ContactsMetaData.CITY));
-				temp.street = cur.getString(cur.getColumnIndex(ContactsProvider.CMetaData.ContactsMetaData.STREET));
-				temp.zip = cur.getString(cur.getColumnIndex(ContactsProvider.CMetaData.ContactsMetaData.ZIP));
-	
-				temp.visibility = cur.getString(cur.getColumnIndex(ContactsProvider.CMetaData.ContactsMetaData.VISIBILITY));
-				temp.visibility2 = cur.getString(cur.getColumnIndex(ContactsProvider.CMetaData.ContactsMetaData.VISIBILITY2));
-	
-				String resp = cur.getString(cur.getColumnIndex(ContactsProvider.CMetaData.ContactsMetaData.IMAGE));
-				if (resp != null) {
-					if (resp.equals("1"))
-						temp.image = true;
-					else
-						temp.image = false;
-				} else {
-					temp.image = false;
-				}
-	
-				temp.image_url = cur.getString(cur.getColumnIndex(ContactsProvider.CMetaData.ContactsMetaData.IMAGE_URL));
-				temp.image_thumb_url = cur.getString(cur.getColumnIndex(ContactsProvider.CMetaData.ContactsMetaData.IMAGE_THUMB_URL));
-				temp.image_bytes = cur.getBlob(cur.getColumnIndex(ContactsProvider.CMetaData.ContactsMetaData.IMAGE_BYTES));
-				if (cur.getString(cur.getColumnIndex(ContactsProvider.CMetaData.ContactsMetaData.REMOVE_IMAGE)).equals("1")) {
-					temp.remove_image = true;
-				} else {
-					temp.remove_image = false;
-				}
-	
-				temp.reg_user_id = cur.getInt(cur.getColumnIndex(ContactsProvider.CMetaData.ContactsMetaData.REG_USER_ID));
-				temp.agenda_view = cur.getString(cur.getColumnIndex(ContactsProvider.CMetaData.ContactsMetaData.AGENDA_VIEW));
-				temp.agenda_view2 = cur.getString(cur.getColumnIndex(ContactsProvider.CMetaData.ContactsMetaData.AGENDA_VIEW2));
-				temp.can_add_note = cur.getString(cur.getColumnIndex(ContactsProvider.CMetaData.ContactsMetaData.CAN_ADD_NOTE));
-				temp.time_start = cur.getString(cur.getColumnIndex(ContactsProvider.CMetaData.ContactsMetaData.TIME_START));
-				temp.time_end = cur.getString(cur.getColumnIndex(ContactsProvider.CMetaData.ContactsMetaData.TIME_END));
-				temp.all_day = cur.getString(cur.getColumnIndex(ContactsProvider.CMetaData.ContactsMetaData.ALL_DAY));
-				temp.display_time_end = cur.getString(cur.getColumnIndex(ContactsProvider.CMetaData.ContactsMetaData.DISPLAY_TIME_END));
-				temp.type = cur.getString(cur.getColumnIndex(ContactsProvider.CMetaData.ContactsMetaData.TYPE));
-				temp.title = cur.getString(cur.getColumnIndex(ContactsProvider.CMetaData.ContactsMetaData.TITLE));
-				temp.registered = cur.getString(cur.getColumnIndex(ContactsProvider.CMetaData.ContactsMetaData.REGISTERED));
-	
-				temp.created = cur.getLong(cur.getColumnIndex(ContactsProvider.CMetaData.ContactsMetaData.CREATED));
-				temp.modified = cur.getLong(cur.getColumnIndex(ContactsProvider.CMetaData.ContactsMetaData.MODIFIED));
-				temp.setUploadedToServer(1 == cur.getInt(cur.getColumnIndex(ContactsProvider.CMetaData.ContactsMetaData.UPLOADED_SUCCESSFULLY)));
-	
-				resp = cur.getString(cur.getColumnIndex(ContactsProvider.CMetaData.ContactsMetaData.GROUPS));
-				if (resp != null) {
-					temp.groups = MapUtils.stringToMap(context, resp);
-				}
-	
-				temp.setColor(cur.getString(cur.getColumnIndex(ContactsProvider.CMetaData.ContactsMetaData.COLOR)));
-	
-				contacts.add(temp);
-			}
-		} else {
+		int total = cur.getCount();
+		ArrayList<Contact> contacts = new ArrayList<Contact>(total);
+		
+		if (total == 0) {
 			Log.i("getContactsFromLocalDb()", "Empty or no response from local db.");
+		}
+
+		if (lph != null)
+			lph.publish(0, total);
+		for (int i = 1; cur.moveToNext(); i++) {
+			temp = new Contact();
+	
+			temp.contact_id = cur.getInt(cur.getColumnIndex(ContactsProvider.CMetaData.ContactsMetaData.C_ID));
+			temp.lid = cur.getString(cur.getColumnIndex(ContactsProvider.CMetaData.ContactsMetaData.LID));
+			temp.name = cur.getString(cur.getColumnIndex(ContactsProvider.CMetaData.ContactsMetaData.NAME));
+			temp.lastname = cur.getString(cur.getColumnIndex(ContactsProvider.CMetaData.ContactsMetaData.LASTNAME));
+			temp.fullname = cur.getString(cur.getColumnIndex(ContactsProvider.CMetaData.ContactsMetaData.FULLNAME));
+	
+			temp.email = cur.getString(cur.getColumnIndex(ContactsProvider.CMetaData.ContactsMetaData.EMAIL));
+			temp.phone1 = cur.getString(cur.getColumnIndex(ContactsProvider.CMetaData.ContactsMetaData.PHONE));
+			temp.phone1_code = cur.getString(cur.getColumnIndex(ContactsProvider.CMetaData.ContactsMetaData.PHONE_CODE));
+	
+			temp.birthdate = cur.getString(cur.getColumnIndex(ContactsProvider.CMetaData.ContactsMetaData.BIRTHDATE));
+	
+			temp.country = cur.getString(cur.getColumnIndex(ContactsProvider.CMetaData.ContactsMetaData.COUNTRY));
+			temp.city = cur.getString(cur.getColumnIndex(ContactsProvider.CMetaData.ContactsMetaData.CITY));
+			temp.street = cur.getString(cur.getColumnIndex(ContactsProvider.CMetaData.ContactsMetaData.STREET));
+			temp.zip = cur.getString(cur.getColumnIndex(ContactsProvider.CMetaData.ContactsMetaData.ZIP));
+	
+			temp.visibility = cur.getString(cur.getColumnIndex(ContactsProvider.CMetaData.ContactsMetaData.VISIBILITY));
+			temp.visibility2 = cur.getString(cur.getColumnIndex(ContactsProvider.CMetaData.ContactsMetaData.VISIBILITY2));
+	
+			String resp = cur.getString(cur.getColumnIndex(ContactsProvider.CMetaData.ContactsMetaData.IMAGE));
+			if (resp != null) {
+				if (resp.equals("1"))
+					temp.image = true;
+				else
+					temp.image = false;
+			} else {
+				temp.image = false;
+			}
+	
+			temp.image_url = cur.getString(cur.getColumnIndex(ContactsProvider.CMetaData.ContactsMetaData.IMAGE_URL));
+			temp.image_thumb_url = cur.getString(cur.getColumnIndex(ContactsProvider.CMetaData.ContactsMetaData.IMAGE_THUMB_URL));
+			temp.image_bytes = cur.getBlob(cur.getColumnIndex(ContactsProvider.CMetaData.ContactsMetaData.IMAGE_BYTES));
+			if (cur.getString(cur.getColumnIndex(ContactsProvider.CMetaData.ContactsMetaData.REMOVE_IMAGE)).equals("1")) {
+				temp.remove_image = true;
+			} else {
+				temp.remove_image = false;
+			}
+	
+			temp.reg_user_id = cur.getInt(cur.getColumnIndex(ContactsProvider.CMetaData.ContactsMetaData.REG_USER_ID));
+			temp.agenda_view = cur.getString(cur.getColumnIndex(ContactsProvider.CMetaData.ContactsMetaData.AGENDA_VIEW));
+			temp.agenda_view2 = cur.getString(cur.getColumnIndex(ContactsProvider.CMetaData.ContactsMetaData.AGENDA_VIEW2));
+			temp.can_add_note = cur.getString(cur.getColumnIndex(ContactsProvider.CMetaData.ContactsMetaData.CAN_ADD_NOTE));
+			temp.time_start = cur.getString(cur.getColumnIndex(ContactsProvider.CMetaData.ContactsMetaData.TIME_START));
+			temp.time_end = cur.getString(cur.getColumnIndex(ContactsProvider.CMetaData.ContactsMetaData.TIME_END));
+			temp.all_day = cur.getString(cur.getColumnIndex(ContactsProvider.CMetaData.ContactsMetaData.ALL_DAY));
+			temp.display_time_end = cur.getString(cur.getColumnIndex(ContactsProvider.CMetaData.ContactsMetaData.DISPLAY_TIME_END));
+			temp.type = cur.getString(cur.getColumnIndex(ContactsProvider.CMetaData.ContactsMetaData.TYPE));
+			temp.title = cur.getString(cur.getColumnIndex(ContactsProvider.CMetaData.ContactsMetaData.TITLE));
+			temp.registered = cur.getString(cur.getColumnIndex(ContactsProvider.CMetaData.ContactsMetaData.REGISTERED));
+	
+			temp.created = cur.getLong(cur.getColumnIndex(ContactsProvider.CMetaData.ContactsMetaData.CREATED));
+			temp.modified = cur.getLong(cur.getColumnIndex(ContactsProvider.CMetaData.ContactsMetaData.MODIFIED));
+			temp.setUploadedToServer(1 == cur.getInt(cur.getColumnIndex(ContactsProvider.CMetaData.ContactsMetaData.UPLOADED_SUCCESSFULLY)));
+	
+			resp = cur.getString(cur.getColumnIndex(ContactsProvider.CMetaData.ContactsMetaData.GROUPS));
+			if (resp != null) {
+				temp.groups = MapUtils.stringToMap(context, resp);
+			}
+	
+			temp.setColor(cur.getString(cur.getColumnIndex(ContactsProvider.CMetaData.ContactsMetaData.COLOR)));
+	
+			contacts.add(temp);
+			if (lph != null)
+				lph.publish(i);
 		}
 
 		cur.close();
@@ -778,6 +643,10 @@ public class ContactManagement {
 		return temp;
 	}
 
+	public static ArrayList<Group> getGroupsFromLocalDb(Context context, String where) {
+		return getGroupsFromLocalDb(context, where, null);
+	}
+	
 	/**
 	 * Get all group entries from local database.
 	 * 
@@ -791,59 +660,64 @@ public class ContactManagement {
 	 * @since 2012-09-28
 	 * @version 0.1
 	 */
-	public static ArrayList<Group> getGroupsFromLocalDb(Context context, String where) {
+	public static ArrayList<Group> getGroupsFromLocalDb(Context context, String where, LoadProgressHook lph) {
 		Cursor cur;
 		Group temp;
 
 		cur = context.getContentResolver().query(ContactsProvider.CMetaData.GroupsMetaData.CONTENT_URI, null, where, null, null);
-		ArrayList<Group> contacts = new ArrayList<Group>(cur.getCount());
+		final int total = cur.getCount();
+		ArrayList<Group> contacts = new ArrayList<Group>(total);
 
-		if (cur.getCount() > 0) {
-			while (cur.moveToNext()) {
-				temp = new Group();
+		if (total == 0)
+			Log.i("getGroupsFromLocalDb()", "Empty or no response from local db.");
 
-				temp.group_id = cur.getInt(cur.getColumnIndex(ContactsProvider.CMetaData.GroupsMetaData.G_ID));
-				temp.title = cur.getString(cur.getColumnIndex(ContactsProvider.CMetaData.GroupsMetaData.TITLE));
-				temp.created = cur.getLong(cur.getColumnIndex(ContactsProvider.CMetaData.GroupsMetaData.CREATED));
-				temp.modified = cur.getLong(cur.getColumnIndex(ContactsProvider.CMetaData.GroupsMetaData.MODIFIED));
-				temp.deleted = cur.getString(cur.getColumnIndex(ContactsProvider.CMetaData.GroupsMetaData.DELETED));
+		if (lph != null)
+			lph.publish(0, total);
+		for (int i = 1; cur.moveToNext(); i++) {
+			temp = new Group();
 
-				String resp = cur.getString(cur.getColumnIndex(ContactsProvider.CMetaData.GroupsMetaData.IMAGE));
-				if (resp != null) {
-					if (resp.equals("1"))
-						temp.image = true;
-					else
-						temp.image = false;
-				} else {
+			temp.group_id = cur.getInt(cur.getColumnIndex(ContactsProvider.CMetaData.GroupsMetaData.G_ID));
+			temp.title = cur.getString(cur.getColumnIndex(ContactsProvider.CMetaData.GroupsMetaData.TITLE));
+			temp.created = cur.getLong(cur.getColumnIndex(ContactsProvider.CMetaData.GroupsMetaData.CREATED));
+			temp.modified = cur.getLong(cur.getColumnIndex(ContactsProvider.CMetaData.GroupsMetaData.MODIFIED));
+			temp.deleted = cur.getString(cur.getColumnIndex(ContactsProvider.CMetaData.GroupsMetaData.DELETED));
+
+			String resp = cur.getString(cur.getColumnIndex(ContactsProvider.CMetaData.GroupsMetaData.IMAGE));
+			if (resp != null) {
+				if (resp.equals("1"))
+					temp.image = true;
+				else
 					temp.image = false;
-				}
+			} else {
+				temp.image = false;
+			}
 
-				temp.image_url = cur.getString(cur.getColumnIndex(ContactsProvider.CMetaData.GroupsMetaData.IMAGE_URL));
-				temp.image_thumb_url = cur.getString(cur.getColumnIndex(ContactsProvider.CMetaData.GroupsMetaData.IMAGE_THUMB_URL));
-				temp.image_bytes = cur.getBlob(cur.getColumnIndex(ContactsProvider.CMetaData.GroupsMetaData.IMAGE_BYTES));
+			temp.image_url = cur.getString(cur.getColumnIndex(ContactsProvider.CMetaData.GroupsMetaData.IMAGE_URL));
+			temp.image_thumb_url = cur.getString(cur.getColumnIndex(ContactsProvider.CMetaData.GroupsMetaData.IMAGE_THUMB_URL));
+			temp.image_bytes = cur.getBlob(cur.getColumnIndex(ContactsProvider.CMetaData.GroupsMetaData.IMAGE_BYTES));
 
-				String resp2 = cur.getString(cur.getColumnIndex(ContactsProvider.CMetaData.GroupsMetaData.REMOVE_IMAGE));
-				if (resp2 != null) {
-					if (resp2.equals("1")) {
-						temp.remove_image = true;
-					} else {
-						temp.remove_image = false;
-					}
+			String resp2 = cur.getString(cur.getColumnIndex(ContactsProvider.CMetaData.GroupsMetaData.REMOVE_IMAGE));
+			if (resp2 != null) {
+				if (resp2.equals("1")) {
+					temp.remove_image = true;
 				} else {
 					temp.remove_image = false;
 				}
-
-				temp.contact_count = cur.getInt(cur.getColumnIndex(ContactsProvider.CMetaData.GroupsMetaData.CONTACT_COUNT));
-
-				resp = cur.getString(cur.getColumnIndex(ContactsProvider.CMetaData.GroupsMetaData.CONTACTS));
-				if (resp != null) {
-					temp.contacts = MapUtils.stringToMap(context, resp);
-				}
-
-				contacts.add(temp);
+			} else {
+				temp.remove_image = false;
 			}
-		} else {
-			Log.i("getGroupsFromLocalDb()", "Empty or no response from local db.");
+
+			temp.contact_count = cur.getInt(cur.getColumnIndex(ContactsProvider.CMetaData.GroupsMetaData.CONTACT_COUNT));
+
+			resp = cur.getString(cur.getColumnIndex(ContactsProvider.CMetaData.GroupsMetaData.CONTACTS));
+			if (resp != null) {
+				temp.contacts = MapUtils.stringToMap(context, resp);
+			}
+
+			contacts.add(temp);
+			
+			if (lph != null)
+				lph.publish(i);
 		}
 
 		cur.close();
@@ -1330,8 +1204,7 @@ public class ContactManagement {
 	 * @since 2012-09-28
 	 * @version 0.1
 	 */
-	public static void getGroupsFromRemoteDb(Context context, HashSet<Integer> contactIds) {
-		boolean success = false;
+	public static void getGroupsFromRemoteDb(Context context, HashSet<Integer> contactIds, LoadProgressHook lph) {
 		String error = null;
 		Account account = new Account(context);
 		WebService webService = new WebService(context);
@@ -1348,81 +1221,78 @@ public class ContactManagement {
 		}
 
 		post.setEntity(reqEntity);
-		try {
+		tryMe: try {
 			HttpResponse rp = webService.getResponseFromHttpPost(post);
+			
+			if (rp.getStatusLine().getStatusCode() != HttpStatus.SC_OK)
+				break tryMe;
+			
+			String resp = EntityUtils.toString(rp.getEntity());
+			if (resp == null)
+				break tryMe;
+			
+			JSONObject object = new JSONObject(resp);
+			boolean success = object.getBoolean("success");
+			
+			if (!success) {
+				error = object.optString("error");
+				Log.e("getGroupList - error: ", error);
+				break tryMe;
+			}
+			
+			JSONArray gs = object.getJSONArray("groups");
+			int count = gs.length();
+			if (lph != null)
+				lph.publish(0, count);
+			for (int i = 0; i < count; i++) {
+				JSONObject g = gs.getJSONObject(i);
+				Group group = new Group();
 
-			if (rp.getStatusLine().getStatusCode() == HttpStatus.SC_OK) {
-				String resp = EntityUtils.toString(rp.getEntity());
-				if (resp != null) {
-					JSONObject object = new JSONObject(resp);
-					success = object.getBoolean("success");
+				group.group_id = g.optInt(ContactsProvider.CMetaData.GroupsMetaData.G_ID);
 
-					if (success == false) {
-						error = object.optString("error");
-						Log.e("getGroupList - error: ", error);
-					} else {
-						JSONArray gs = object.getJSONArray("groups");
-						int count = gs.length();
-						for (int i = 0; i < count; i++) {
-							JSONObject g = gs.getJSONObject(i);
-							Group group = new Group();
-							String temp;
+				group.title = JSONUtils.emptyIfNullOrNull(
+						g.optString(ContactsProvider.CMetaData.GroupsMetaData.TITLE));
 
-							group.group_id = g.optInt(ContactsProvider.CMetaData.GroupsMetaData.G_ID);
+				group.created = g.optLong(ContactsProvider.CMetaData.GroupsMetaData.CREATED);
 
-							temp = g.optString(ContactsProvider.CMetaData.GroupsMetaData.TITLE);
-							if (temp != null && !temp.equals("null"))
-								group.title = temp;
-							else
-								group.title = "";
+				group.modified = g.optLong(ContactsProvider.CMetaData.GroupsMetaData.MODIFIED);
 
-							group.created = g.optLong(ContactsProvider.CMetaData.GroupsMetaData.CREATED);
+				group.deleted = JSONUtils.emptyIfNullOrNull(
+						g.optString(ContactsProvider.CMetaData.GroupsMetaData.DELETED));
 
-							group.modified = g.optLong(ContactsProvider.CMetaData.GroupsMetaData.MODIFIED);
+				group.image = g.optBoolean(ContactsProvider.CMetaData.GroupsMetaData.IMAGE);
 
-							temp = g.optString(ContactsProvider.CMetaData.GroupsMetaData.DELETED);
-							if (temp != null && !temp.equals("null"))
-								group.deleted = temp;
-							else
-								group.deleted = "";
+				group.image_thumb_url = JSONUtils.emptyIfNullOrNull(
+						g.optString(ContactsProvider.CMetaData.GroupsMetaData.IMAGE_THUMB_URL));
 
-							group.image = g.optBoolean(ContactsProvider.CMetaData.GroupsMetaData.IMAGE);
-
-							temp = g.optString(ContactsProvider.CMetaData.GroupsMetaData.IMAGE_THUMB_URL);
-							if (temp != null && !temp.equals("null"))
-								group.image_thumb_url = temp;
-							else
-								group.image_thumb_url = "";
-
-							temp = g.optString(ContactsProvider.CMetaData.GroupsMetaData.IMAGE_URL);
-							if (temp != null && !temp.equals("null")) {
-								group.image_url = temp;
-								try {
-									group.image_bytes = Utils.imageToBytes(group.image_url, context);
-								} catch (Exception e) {
-									Log.e("getContactsFromRemoteDb(contactIds)", "Failed getting image_bytes.");
-								}
-							} else
-								group.image_url = "";
-
-							group.contact_count = g.optInt(ContactsProvider.CMetaData.GroupsMetaData.CONTACT_COUNT);
-
-							if (!g.optString("contacts").equals("null") && g.optString("contacts") != null) {
-								JSONArray contacts = g.optJSONArray("contacts");
-								if (contacts != null) {
-									Map<String, String> set = new HashMap<String, String>();
-									for (int j = 0, l = contacts.length(); j < l; j++) {
-										set.put(StringValueUtils.valueOf(j), contacts.optString(j));
-									}
-									group.contacts = set;
-								}
-							}
-
-							insertGroupToLocalDb(context, group, 0);
-						}
+				group.image_url = JSONUtils.emptyIfNullOrNull(
+						g.optString(ContactsProvider.CMetaData.GroupsMetaData.IMAGE_URL));
+				if (group.image_url.length() > 0) {
+					try {
+						group.image_bytes = Utils.imageToBytes(group.image_url, context);
+					} catch (Exception e) {
+						Log.e("getContactsFromRemoteDb(contactIds)", "Failed getting image_bytes.");
 					}
 				}
 
+				group.contact_count = g.optInt(ContactsProvider.CMetaData.GroupsMetaData.CONTACT_COUNT);
+
+				String cnts = JSONUtils.emptyIfNullOrNull(g.optString("contacts"));
+				if (cnts.length() > 0) {
+					JSONArray contacts = g.optJSONArray("contacts");
+					if (contacts != null) {
+						Map<String, String> set = new HashMap<String, String>();
+						for (int j = 0, l = contacts.length(); j < l; j++) {
+							set.put(StringValueUtils.valueOf(j), contacts.optString(j));
+						}
+						group.contacts = set;
+					}
+				}
+				
+				insertGroupToLocalDb(context, group, 0);
+				
+				if (lph != null)
+					lph.publish(i + 1);
 			}
 		} catch (Exception ex) {
 			Log.e("getContactsFromRemoteDb(contactIds)", ex.getMessage());
