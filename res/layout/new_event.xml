@@ -659,7 +659,7 @@
                 android:text="@string/address_book"
                 android:textSize="16sp"
                 android:textStyle="bold" 
-                android:visibility="gone" />
+                android:visibility="visible" />
 
             <LinearLayout
                 android:id="@+id/locationViewBlock"
