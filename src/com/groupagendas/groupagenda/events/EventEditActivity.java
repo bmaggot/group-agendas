@@ -332,7 +332,6 @@ public class EventEditActivity extends EventActivity implements AddressMetaData 
 			}
 		});
 
-
 		endView = (TextView) findViewById(R.id.endView);
 		endView.setOnClickListener(new OnClickListener() {
 			@Override
@@ -752,7 +751,7 @@ public class EventEditActivity extends EventActivity implements AddressMetaData 
 			selectedIcon = event.getIcon();
 
 			if (!event.getStreet().contentEquals("") && !event.getCity().contentEquals("")) {
-				//navigation.setVisibility(View.VISIBLE);
+				navigation.setVisibility(View.VISIBLE);
 			}
 
 			if (event.getType().contentEquals("v") && !intent.getBooleanExtra(copy, false)) {
