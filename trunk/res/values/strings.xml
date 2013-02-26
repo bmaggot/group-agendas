@@ -376,5 +376,6 @@
 	<string name="each">Each</string>
 	<string name="on_the">On the</string>
 	<string name="deleting">Deleting…</string>
+	<string name="sync">Synchronizing with server..</string>
 
 </resources>
