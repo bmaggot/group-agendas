@@ -876,7 +876,7 @@ public class NavbarActivity extends FragmentActivity {
 				//$FALL-THROUGH$
 				case 4: // Load event templates
 					if (DataManagement.networkAvailable) {
-//						DataManagement.getTemplatesFromRemoteDb(NavbarActivity.this);
+						DataManagement.getTemplatesFromRemoteDb(NavbarActivity.this);
 					}
 					
 					if (doUneedSleep) {
@@ -938,7 +938,7 @@ public class NavbarActivity extends FragmentActivity {
 				progressDialog.setMessage(getString(R.string.loading_groups));
 				break;
 			case 50:
-//				progressDialog.setMessage(getString(R.string.loading_templates));
+				progressDialog.setMessage(getString(R.string.loading_templates));
 				break;
 			case 60:
 				progressDialog.setMessage(getString(R.string.loading_events));
