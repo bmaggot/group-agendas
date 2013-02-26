@@ -26,6 +26,17 @@ public final class MonthViewCache extends MonthCache<MonthView> {
 		MonthViewCache.getInstance().inheritDay(oldDate, date);
 	}
 	
+	@Override
+	protected void prepareCachedView(Calendar id, MonthView view) {
+		inheritDay(id, view.getSelectedDate());
+	}
+	
+	public void inheritDay(Calendar from, Calendar to) {
+		final int selected = from.get(Calendar.DAY_OF_MONTH);
+		final int max = to.getActualMaximum(Calendar.DAY_OF_MONTH);
+		to.set(Calendar.DAY_OF_MONTH, Math.min(selected, max));
+	}
+	
 	public static MonthViewCache getInstance() {
 		return SingletonHolder.INSTANCE;
 	}

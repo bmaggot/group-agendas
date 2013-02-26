@@ -14,28 +14,29 @@ import android.view.GestureDetector;
 import android.view.Gravity;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.ViewParent;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.ScrollView;
 import android.widget.TextView;
 
+import com.groupagendas.groupagenda.CustomAnimator;
 import com.groupagendas.groupagenda.EventActivityOnClickListener;
 import com.groupagendas.groupagenda.R;
 import com.groupagendas.groupagenda.calendar.AbstractCalendarView;
+import com.groupagendas.groupagenda.calendar.GenericSwipeAnimator;
+import com.groupagendas.groupagenda.calendar.cache.DayWeekViewCache;
 import com.groupagendas.groupagenda.contacts.birthdays.BirthdayManagement;
 import com.groupagendas.groupagenda.data.EventManagement;
 import com.groupagendas.groupagenda.events.Event;
 import com.groupagendas.groupagenda.events.NativeCalendarReader;
 
-
 public class DayWeekView extends AbstractCalendarView {
-	
 	public DayWeekView(Context context) {
 		this(context, null);
 	}
 
-	public DayWeekView(Context context,
-			AttributeSet attrs) {
+	public DayWeekView(Context context, AttributeSet attrs) {
 		super(context, attrs);
 		if (isInEditMode()) {
 			initDefaultWmNames();
@@ -64,7 +65,8 @@ public class DayWeekView extends AbstractCalendarView {
 	private float deltaX;
 	private boolean deltaSet = false;
 	
-	protected static int daysToShow;
+	private static int DAYS_PER_VIEW;
+	private static boolean FLUSH_PENDING = false;
 	protected boolean showHourEventsIcon = false;
 	protected WeekInstance daysShown;
 
@@ -181,10 +183,10 @@ public class DayWeekView extends AbstractCalendarView {
 					int daysToShow;
 					if (deltaX > this.deltaX){
 						System.out.println("ARTINAM");
-						daysToShow = (int) (scalling * DayWeekView.daysToShow);
+						daysToShow = (int) (scalling * getDaysToShow());
 					}else{
 						System.out.println("TOLINAM");
-						daysToShow = (int) (scalling * DayWeekView.daysToShow);
+						daysToShow = (int) (scalling * getDaysToShow());
 					}
 					this.deltaX = 0;
 					if (daysToShow > MAX_DAYS_SHOWN) daysToShow = MAX_DAYS_SHOWN;
@@ -203,29 +205,25 @@ public class DayWeekView extends AbstractCalendarView {
 
 		return false;
 	}
-/**
- * @author justinas.marcinka@gmail.com
- * @param initDate - Date that will be the first shown day, if not all days of week are displayed.
- * If all days of week are displayed, first shown day will be the first day of week of this date.
- * @param daysToShow indicates how much days should be shown. If 0 is given, it indicates that it is week view and number of shown days will be indicated by DayWeekView.daysToShow field
- * NOTE: if you want to have day View, externally set DayWeekView.daysToShow field to 1, or to DayWeekView.DEFAULT_DAYS_SHOWN for week view accordingly.
- */
-	public synchronized void init(Calendar initDate, int daysToShow) {
-		if (daysToShow != 0) { //if there is custom number of days to be shown
-			setShownDaysCount(daysToShow);
-		} else setShownDaysCount(DayWeekView.daysToShow); // else we use value from static field
-		
+	/**
+	 * @author justinas.marcinka@gmail.com
+	 * @param initDate - Date that will be the first shown day, if not all days of week are displayed.
+	 * If all days of week are displayed, first shown day will be the first day of week of this date.
+	 * @param daysToShow indicates how much days should be shown. If 0 is given, it indicates that it is week view and number of shown days will be indicated by DayWeekView.daysToShow field
+	 * NOTE: if you want to have day View, externally set DayWeekView.daysToShow field to 1, or to DayWeekView.DEFAULT_DAYS_SHOWN for week view accordingly.
+	 */
+	public void init(Calendar initDate, int daysToShow) {
+		setShownDaysCount(daysToShow != 0 ? daysToShow : DEFAULT_DAYS_SHOWN);
+		if (FLUSH_PENDING)
+			DayWeekViewCache.getInstance().flush(this, initDate, mInflater);
 		
 		super.init(initDate);
-		
 	}
-	
-
 
 	private void setShownDaysCount(int daysToShow) {
-		DayWeekView.daysToShow = daysToShow;
+		setDaysToShow(daysToShow);
 		showHourEventsIcon = (daysToShow == 1);	
-}
+	}
 
 	@Override
 	protected void instantiateTopPanelBottomLine() {
@@ -238,63 +236,61 @@ public class DayWeekView extends AbstractCalendarView {
 		getTopPanelBottomLine().addView(calendarTopPanelBottomLine);	
 	}
 	
-		//adjusts top panel title accordingly to shownDate field in WeekInstance class
-		@Override
-		protected void setTopPanel() {
-			Calendar selectedDate = daysShown.getShownDate();
-			String title;
-			LinearLayout bottomBar = (LinearLayout)getTopPanelBottomLine().getChildAt(0);
-			bottomBar.removeAllViews();
+	//adjusts top panel title accordingly to shownDate field in WeekInstance class
+	@Override
+	protected void setTopPanel() {
+		Calendar selectedDate = daysShown.getShownDate();
+		StringBuilder title = new StringBuilder();
+		LinearLayout bottomBar = (LinearLayout)getTopPanelBottomLine().getChildAt(0);
+		bottomBar.removeAllViews();
+		
+		//If there is shown only one day, title must be different
+		if (getDaysToShow() == 1) {
+			title.append(WeekDayNames[selectedDate.get(Calendar.DAY_OF_WEEK) - 1]).append(", ");
+			title.append(MonthNames[selectedDate.get(Calendar.MONTH)]).append(' ');
+			title.append(selectedDate.get(Calendar.DAY_OF_MONTH)).append(", ");
+			title.append(selectedDate.get(Calendar.YEAR));
+		} else {
+			title.append(getResources().getString(R.string.week)).append(' ');
+			title.append(selectedDate.get(Calendar.WEEK_OF_YEAR)).append(", ");
+			title.append(MonthNames[selectedDate.get(Calendar.MONTH)]).append(' ');
+			title.append(selectedDate.get(Calendar.YEAR));
 			
-			//If there is shown only one day, title must be different
-			if (daysToShow == 1){
-				title = WeekDayNames[selectedDate.get(Calendar.DAY_OF_WEEK) - 1];
-				title += ", ";
-				title += MonthNames[selectedDate.get(Calendar.MONTH)] + " " + selectedDate.get(Calendar.DAY_OF_MONTH);
-				title += ", ";
-				title += selectedDate.get(Calendar.YEAR);
-			}else{
-				title = getResources().getString(R.string.week);
-				title += " ";
-				title += selectedDate.get(Calendar.WEEK_OF_YEAR);
-				title += ", ";
-				title += MonthNames[selectedDate.get(Calendar.MONTH)];
-				title += " ";
-				title += selectedDate.get(Calendar.YEAR);
+			// Setting bottom bar
+			TextView entry = new TextView(getContext());
+			LayoutParams eParams = new LayoutParams(Math.round(EVENTS_COLUMN_WIDTH / (float)daysShown.getDaysToShow()), LayoutParams.MATCH_PARENT);
+			eParams.setMargins(0, 0, 0, 0);
+			eParams.gravity = Gravity.TOP;
+//			Add empty space
+			entry.setWidth(Math.round(HOUR_COLUMN_WIDTH));
+			bottomBar.addView(entry);
+			
+			Calendar tmp = (Calendar) daysShown.getShownDate().clone();
+//			add view for every day
+			for (int i = 0; i < daysShown.getDaysToShow(); i++) {
+				StringBuilder text = new StringBuilder();
+				text.append(tmp.get(Calendar.DAY_OF_MONTH)).append(' ');
+				text.append(WeekDayNamesShort[tmp.get(Calendar.DAY_OF_WEEK) - 1]);
 				
-				// Setting bottom bar
-				TextView entry = new TextView(getContext());
-				LayoutParams eParams = new LayoutParams(Math.round(EVENTS_COLUMN_WIDTH / (float)daysShown.getDaysToShow()), LayoutParams.MATCH_PARENT);
-				eParams.setMargins(0, 0, 0, 0);
-				eParams.gravity = Gravity.TOP;
-//				Add empty space
-				entry.setWidth(Math.round(HOUR_COLUMN_WIDTH));
+				entry = new TextView(getContext());
+				tmp.add(Calendar.DATE, 1);
+				entry.setText(text);
+				entry.setGravity(Gravity.CENTER_HORIZONTAL);
+				entry.setTextColor(Color.parseColor("#3B4959"));
+				entry.setTextSize(TypedValue.COMPLEX_UNIT_SP, 9);
+				entry.setIncludeFontPadding(false);
+				entry.setLayoutParams(eParams);
 				bottomBar.addView(entry);
-				
-				Calendar tmp = (Calendar) daysShown.getShownDate().clone();
-//				add view for every day
-				for (int i = 0; i < daysShown.getDaysToShow(); i++){
-					String text = (tmp.get(Calendar.DATE) + " " + WeekDayNamesShort[tmp.get(Calendar.DAY_OF_WEEK) - 1]);
-					
-					entry = new TextView(getContext());
-					tmp.add(Calendar.DATE, 1);
-					entry.setText(text);
-					entry.setGravity(Gravity.CENTER_HORIZONTAL);
-					entry.setTextColor(Color.parseColor("#3B4959"));
-					entry.setTextSize(TypedValue.COMPLEX_UNIT_SP, 9);
-					entry.setIncludeFontPadding(false);
-					entry.setLayoutParams(eParams);
-					bottomBar.addView(entry);
-				}
 			}
-			
-			this.getTopPanelTitle().setText(title);
-			RelativeLayout topBar = (RelativeLayout) findViewById(R.id.calendar_navbar);
-			LayoutParams lParams = (LayoutParams) topBar.getLayoutParams();
-			lParams.setMargins(0, 0, 0, 0);
-			lParams.height = Math.round(45 * densityFactor);
-			topBar.setLayoutParams(lParams);
 		}
+		
+		getTopPanelTitle().setText(title);
+		RelativeLayout topBar = (RelativeLayout) findViewById(R.id.calendar_navbar);
+		LayoutParams lParams = (LayoutParams) topBar.getLayoutParams();
+		lParams.setMargins(0, 0, 0, 0);
+		lParams.height = Math.round(45 * densityFactor);
+		topBar.setLayoutParams(lParams);
+	}
 		
 		@Override
 		public void setupView() {
@@ -382,23 +378,61 @@ public class DayWeekView extends AbstractCalendarView {
 			return child;
 		}
 
-		@Override
-		public void goPrev(){
-			if(!stillLoading){
-				daysShown.prevPage();
-				setTopPanel(); 
-				new UpdateEventsInfoTask().execute();
-			}
+	@Override
+	public void goPrev() {
+		if (stillLoading)
+			return;
+		
+		ViewParent actNavBar = getParent();
+		if (!(actNavBar instanceof CustomAnimator)) {
+			GenericSwipeAnimator.startAnimation(this, false, new Runnable() {
+				@Override
+				public void run() {
+					daysShown.prevPage();
+					setTopPanel(); 
+					new UpdateEventsInfoTask().execute();
+				}
+			});
+			return;
 		}
 		
-		@Override
-		public void goNext(){
-			if(!stillLoading){
-				daysShown.nextPage();
-				setTopPanel();
-				new UpdateEventsInfoTask().execute();
-			}
-		}	
+		CustomAnimator ca = (CustomAnimator) actNavBar;
+		if (!ca.setupAnimator(DayWeekViewCache.getInstance(), daysShown.getShownDate(), mInflater, true)) {
+			// Log.w(getClass().getSimpleName(), "Attempt to setup an active animator?!");
+			return;
+		}
+	}
+	
+	@Override
+	public void goNext() {
+		if (stillLoading)
+			return;
+		
+		ViewParent actNavBar = getParent();
+		if (!(actNavBar instanceof CustomAnimator)) {
+			GenericSwipeAnimator.startAnimation(this, true, new Runnable() {
+				@Override
+				public void run() {
+					daysShown.nextPage();
+					setTopPanel(); 
+					new UpdateEventsInfoTask().execute();
+				}
+			});
+			return;
+		}
+		
+		CustomAnimator ca = (CustomAnimator) actNavBar;
+		if (!ca.setupAnimator(DayWeekViewCache.getInstance(), daysShown.getShownDate(), mInflater, false)) {
+			// Log.w(getClass().getSimpleName(), "Attempt to setup an active animator?!");
+			return;
+		}
+	}
+	
+	@Override
+	public void refresh(Calendar previous) {
+		new UpdateEventsInfoTask().execute();
+	}
+	
 		private void scrollHourPanel() {
 			final float hour = DEFAULT_TIME_TO_SCROLL;
 			
@@ -483,7 +517,7 @@ public class DayWeekView extends AbstractCalendarView {
 
 		@Override
 		protected void setupSelectedDate(Calendar initializationDate) {
-			this.daysShown = new WeekInstance(getContext(), initializationDate, daysToShow);
+			this.daysShown = new WeekInstance(getContext(), initializationDate, getDaysToShow());
 			
 		}
 
@@ -494,11 +528,15 @@ public class DayWeekView extends AbstractCalendarView {
 		}
 
 		public static int getDaysToShow() {
-			return daysToShow;
+			return DAYS_PER_VIEW;
 		}
 		
 		public static void setDaysToShow(int daysToShow) {
-			DayWeekView.daysToShow = daysToShow;
+			if (getDaysToShow() == daysToShow)
+				return;
+			
+			DayWeekView.DAYS_PER_VIEW = daysToShow;
+			DayWeekView.FLUSH_PENDING = true;
 		}
 
 	/**
