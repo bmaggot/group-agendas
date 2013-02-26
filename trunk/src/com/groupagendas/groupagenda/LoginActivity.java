@@ -44,6 +44,8 @@ public class LoginActivity extends Activity {
 	private ProgressBar pb;
 	private String error;
 	private Button loginButton;
+	
+	private LoginTask task;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -89,7 +91,8 @@ public class LoginActivity extends Activity {
 			@Override
 			public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
             if (actionId == EditorInfo.IME_ACTION_DONE) {
-                new LoginTask().execute();
+            	if (task == null)
+            		(task = new LoginTask()).execute();
                 return true;
             }
             return false;
@@ -101,7 +104,8 @@ public class LoginActivity extends Activity {
 			@Override
 			public void onClick(View v) {
 				loginButton.setEnabled(false);
-				new LoginTask().execute();
+				if (task == null)
+            		(task = new LoginTask()).execute();
 			}
 		});
 		
@@ -120,15 +124,12 @@ public class LoginActivity extends Activity {
 			loginText.setText(prefs.getString("email", ""));
 			passwordText.setText(prefs.getString("password", ""));
 
-			new LoginTask().execute();
+        	if (task == null)
+        		(task = new LoginTask()).execute();
 		}
 	}
 	
 	public class LoginTask extends AsyncTask<Void, Void, Boolean> {
-		
-
-		
-
 		@Override
 		protected void onPreExecute() {
 			pb.setVisibility(View.VISIBLE);
@@ -190,6 +191,7 @@ public class LoginActivity extends Activity {
 				
 				showDialog(0);
 			}
+			task = null;
 
 			super.onPostExecute(result);
 		}

@@ -20,6 +20,7 @@ import android.database.sqlite.SQLiteException;
 import android.net.Uri;
 import android.util.Log;
 
+import com.groupagendas.groupagenda.LoadProgressHook;
 import com.groupagendas.groupagenda.account.Account;
 import com.groupagendas.groupagenda.chat.ChatMessageObject;
 import com.groupagendas.groupagenda.chat.ChatProvider;
@@ -406,34 +407,39 @@ public class ChatManagement {
 		return chatMessages;
 	}
 
-	public static void getAllChatMessagesFromRemoteDb(Context context) {
+	public static void getAllChatMessagesFromRemoteDb(Context context, LoadProgressHook lph) {
 		boolean success = false;
 		WebService webService = new WebService(context);
 		HttpPost post = new HttpPost(Data.getServerUrl() + "mobile/chat_get_all");
 		MultipartEntity reqEntity = new MultipartEntity(HttpMultipartMode.BROWSER_COMPATIBLE);
-
 		{
 			Account account = new Account(context);
 			CharsetUtils.addAllParts(reqEntity, ChatManagement.TOKEN, Data.getToken(context), "session", account.getSessionId());
 		}
-
 		post.setEntity(reqEntity);
 		try {
 			HttpResponse rp = webService.getResponseFromHttpPost(post);
-			if (rp.getStatusLine().getStatusCode() == HttpStatus.SC_OK) {
-				String resp = EntityUtils.toString(rp.getEntity());
-				if (resp != null) {
-					JSONObject object = new JSONObject(resp);
-					success = object.getBoolean("success");
-					if (success) {
-						JSONArray JSONchatMessages = object.getJSONArray("items");
-						for (int i = 0, l = JSONchatMessages.length(); i < l; i++) {
-							ChatManagement.insertChatMessageContentValueToLocalDb(context,
-									ChatManagement.makeChatMessageObjectContentValueFromJSON(context, JSONchatMessages.getJSONObject(i)));
-						}
-					}// else {
-					// }
-				}
+			if (rp.getStatusLine().getStatusCode() != HttpStatus.SC_OK)
+				return;
+			
+			String resp = EntityUtils.toString(rp.getEntity());
+			if (resp == null)
+				return;
+			
+			JSONObject object = new JSONObject(resp);
+			success = object.getBoolean("success");
+			if (!success)
+				return;
+			JSONArray JSONchatMessages = object.getJSONArray("items");
+			final int l = JSONchatMessages.length();
+			if (lph != null)
+				lph.publish(0, l);
+			for (int i = 0; i < l; i++) {
+				ChatManagement.insertChatMessageContentValueToLocalDb(context,
+						ChatManagement.makeChatMessageObjectContentValueFromJSON(context,
+								JSONchatMessages.getJSONObject(i)));
+				if (lph != null)
+					lph.publish(i + 1);
 			}
 		} catch (Exception e) {
 			Log.e("getChatMessagesForEventFromRemoteDb(Context context, int eventId )", e.getMessage());

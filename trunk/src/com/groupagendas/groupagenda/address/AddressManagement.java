@@ -18,6 +18,7 @@ import android.database.Cursor;
 import android.net.Uri;
 import android.util.Log;
 
+import com.groupagendas.groupagenda.LoadProgressHook;
 import com.groupagendas.groupagenda.SaveDeletedData;
 import com.groupagendas.groupagenda.SaveDeletedData.SDMetaData;
 import com.groupagendas.groupagenda.account.Account;
@@ -39,7 +40,7 @@ public class AddressManagement implements AddressMetaData {
 	public static final int UPDATE = 1;
 	public static final int DELETE = 2;
 
-	public static void getAddressBookFromRemoteDb(Context context) {
+	public static void getAddressBookFromRemoteDb(Context context, LoadProgressHook lph) {
 		boolean success = false;
 		String error = null;
 		Address address = null;
@@ -53,32 +54,38 @@ public class AddressManagement implements AddressMetaData {
 		post.setEntity(reqEntity);
 		try {
 			HttpResponse rp = webService.getResponseFromHttpPost(post);
+			
+			if (rp.getStatusLine().getStatusCode() != HttpStatus.SC_OK)
+				return;
 
-			if (rp.getStatusLine().getStatusCode() == HttpStatus.SC_OK) {
-				String resp = EntityUtils.toString(rp.getEntity());
-				if (resp != null) {
-					JSONObject object = new JSONObject(resp);
-					success = object.getBoolean("success");
+			String resp = EntityUtils.toString(rp.getEntity());
+			if (resp == null)
+				return;
 
-					if (success == false) {
-						error = object.getString("error");
-						Log.e("getAddressBookList - error: ", error);
-					} else {
-						JSONArray gs = object.getJSONArray(DATA);
-						int count = gs.length();
-						for (int i = 0; i < count; i++) {
-							JSONObject g = gs.getJSONObject(i);
-							address = JSONUtils.createAddressFromJSON(context, g);
-							if (address != null) {
-								address.setUploadedToServer(true);
-								context.getContentResolver().insert(MetaUtils.getContentUri(AddressTable.class),
-										createCVforAddressTable(address));
-							}
-						}
-					}
+				JSONObject object = new JSONObject(resp);
+				success = object.getBoolean("success");
+
+				if (!success) {
+					error = object.getString("error");
+					Log.e("getAddressBookList - error: ", error);
+					return;
 				}
 
-			}
+				JSONArray gs = object.getJSONArray(DATA);
+				final int count = gs.length();
+				if (lph != null)
+					lph.publish(0, count);
+				for (int i = 0; i < count; i++) {
+					JSONObject g = gs.getJSONObject(i);
+					address = JSONUtils.createAddressFromJSON(context, g);
+					if (address != null) {
+						address.setUploadedToServer(true);
+						context.getContentResolver().insert(MetaUtils.getContentUri(AddressTable.class),
+								createCVforAddressTable(address));
+					}
+					if (lph != null)
+						lph.publish(i + 1);
+				}
 		} catch (Exception ex) {
 			Log.e("getAddressBookFromRemoteDb", "er");
 		}

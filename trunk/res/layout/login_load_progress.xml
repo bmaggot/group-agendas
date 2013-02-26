@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+	android:id="@+id/llLoadDialog"
+	android:layout_width="wrap_content"
+	android:layout_height="wrap_content"
+	android:gravity="center"
+	android:orientation="vertical" >
+
+	<TextView
+		android:id="@+id/tvLoadDialogProgressTotal"
+		android:layout_width="match_parent"
+		android:layout_height="wrap_content" />
+
+	<ProgressBar
+		android:id="@+id/pbLoadDialogProgressTotal"
+		style="?android:attr/progressBarStyleHorizontal"
+		android:layout_width="match_parent"
+		android:layout_height="wrap_content" />
+
+	<TextView
+		android:id="@+id/tvLoadDialogProgressCurrent"
+		android:layout_width="match_parent"
+		android:layout_height="wrap_content" />
+
+	<ProgressBar
+		android:id="@+id/pbLoadDialogProgressCurrent"
+		style="?android:attr/progressBarStyleHorizontal"
+		android:layout_width="match_parent"
+		android:layout_height="wrap_content" />
+
+</LinearLayout>

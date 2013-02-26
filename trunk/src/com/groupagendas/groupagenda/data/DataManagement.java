@@ -47,6 +47,7 @@ import com.bog.calendar.app.model.EventsHelper;
 import com.google.android.c2dm.C2DMessaging;
 import com.google.android.gcm.GCMRegistrar;
 import com.groupagendas.groupagenda.C2DMReceiver;
+import com.groupagendas.groupagenda.LoadProgressHook;
 import com.groupagendas.groupagenda.R;
 import com.groupagendas.groupagenda.SaveDeletedData;
 import com.groupagendas.groupagenda.account.Account;
@@ -1830,7 +1831,7 @@ public class DataManagement implements AddressMetaData, AutoColorIconMetaData {
 		return new Address();
 	}
 
-	public ArrayList<Address> getAddressesFromRemoteDb(Context context) {
+	public ArrayList<Address> getAddressesFromRemoteDb(Context context, LoadProgressHook lph) {
 		boolean success = false;
 		ArrayList<Address> addresses = new ArrayList<Address>();
 		Address address = null;
@@ -1858,11 +1859,16 @@ public class DataManagement implements AddressMetaData, AutoColorIconMetaData {
 						JSONArray es = object.getJSONArray("data");
 						int count = es.length();
 						addresses.ensureCapacity(count);
+						if (lph != null)
+							lph.publish(0, count);
 						for (int i = 0; i < count; i++) {
 							JSONObject e = es.getJSONObject(i);
 
 							address = JSONUtils.createAddressFromJSON(context, e);
 							addresses.add(address);
+							
+							if (lph != null)
+								lph.publish(i + 1);
 						}
 					}
 				}
@@ -2152,14 +2158,14 @@ public class DataManagement implements AddressMetaData, AutoColorIconMetaData {
 		context.getContentResolver().delete(TemplatesMetaData.CONTENT_URI, null, null);
 		DataManagement.getTemplatesFromRemoteDb(context);
 		
-		DataManagement.getAlarmsFromServer(context);
+		DataManagement.getAlarmsFromServer(context, null);
 		
 		AddressManagement.deleteAllAddressFromLocalDb(context);
-		AddressManagement.getAddressBookFromRemoteDb(context);
+		AddressManagement.getAddressBookFromRemoteDb(context, null);
 
 	}
 	
-	public static void getAlarmsFromServer(Context context){
+	public static void getAlarmsFromServer(Context context, LoadProgressHook lph) {
 		try{
 			WebService webService = new WebService(context);
 			HttpPost post = new HttpPost(Data.getServerUrl() + "/mobile/alarms/get");
@@ -2174,7 +2180,7 @@ public class DataManagement implements AddressMetaData, AutoColorIconMetaData {
 				String resp = EntityUtils.toString(rp.getEntity());
 				if (resp != null) {
 					JSONArray alarms = new JSONObject(resp).optJSONArray(ALARMS);
-					AlarmsManagement.syncAlarms(context, JSONUtils.JSONArrayToAlarmArray(alarms, context));
+					AlarmsManagement.syncAlarms(context, JSONUtils.JSONArrayToAlarmArray(alarms, context), lph);
 				}
 			} else {
 				// TODO set error code

@@ -36,6 +36,7 @@ import android.view.ViewParent;
 import android.widget.CompoundButton;
 import android.widget.DatePicker;
 import android.widget.FrameLayout;
+import android.widget.ProgressBar;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.TextView;
@@ -81,6 +82,7 @@ public class NavbarActivity extends FragmentActivity {
 	private DataManagement dm;
 
 	private ProgressDialog progressDialog;
+	private DownLoadAllDataTask dlTask;
 
 	private QuickAction qa;
 
@@ -136,7 +138,19 @@ public class NavbarActivity extends FragmentActivity {
 	Calendar start;
 	public static AlarmReceiver alarmReceiver = new AlarmReceiver();
 	
-	public static boolean doUneedSleep = false;
+	public static boolean DO_FAKE_SLEEP = false;
+	public static void doFakeSleep(long ms) {
+		if (!DO_FAKE_SLEEP)
+			return;
+		
+		try {
+			Thread.sleep(ms);
+		} catch (InterruptedException e) {
+			Log.w(NavbarActivity.class.getSimpleName(), "Fake sleep interrupted.");
+		}
+	}
+	
+	private static boolean VERBOSE_LOADING = false;
 	
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -164,8 +178,8 @@ public class NavbarActivity extends FragmentActivity {
 		if (acc.getLatestUpdateUnixTimestamp() > 0) {
 			new DataSyncTask().execute();
 		} else {
-			if (!dataLoaded && (progressDialog == null)){
-				new DownLoadAllDataTask().execute();
+			if (!dataLoaded && (dlTask == null)) {
+				(dlTask = new DownLoadAllDataTask()).execute();
 			}
 		}
 	}
@@ -789,10 +803,39 @@ public class NavbarActivity extends FragmentActivity {
 	}
 
 	private class DownLoadAllDataTask extends AsyncTask<Void, Integer, Void> {
+		AlertDialog proDlg;
+		ProgressBar total;
+		ProgressBar current;
+		TextView curText;
 
 		@Override
 		protected void onPreExecute() {
 			start = Calendar.getInstance();
+			{
+				AlertDialog.Builder builder = new AlertDialog.Builder(NavbarActivity.this);
+				View view = ((LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE)).
+						inflate(R.layout.login_load_progress, null);
+				builder.setView(view);
+				builder.setMessage(getString(R.string.loading_data));
+				builder.setCancelable(false);
+				{
+					total = (ProgressBar) view.findViewById(R.id.pbLoadDialogProgressTotal);
+					total.setMax(100);
+					total.setProgress(0);
+					TextView tvTotal = (TextView) view.findViewById(R.id.tvLoadDialogProgressTotal);
+					tvTotal.setText(R.string.loading);
+				}
+				{
+					current = (ProgressBar) view.findViewById(R.id.pbLoadDialogProgressCurrent);
+					current.setMax(0);
+					current.setProgress(0);
+					curText = (TextView) view.findViewById(R.id.tvLoadDialogProgressCurrent);
+				}
+				if (VERBOSE_LOADING) {
+					proDlg = builder.create();
+					proDlg.show();
+				}
+			}
 			// Create a new progress dialog
 			progressDialog = new ProgressDialog(NavbarActivity.this);
 			// Set the progress dialog to display a horizontal progress bar
@@ -809,15 +852,45 @@ public class NavbarActivity extends FragmentActivity {
 			// Set the current progress to zero
 			progressDialog.setProgress(0);
 			// Display the progress dialog
-			progressDialog.show();
+			if (!VERBOSE_LOADING)
+				progressDialog.show();
 
 		}
-
 		// The code to be executed in a background thread.
 		@Override
 		protected Void doInBackground(Void... params) {
-
 			synchronized (this) {
+
+				// set to null to disable publishing
+				LoadProgressHook lph = VERBOSE_LOADING ? new LoadProgressHook() {
+					@Override
+					public void run() {
+						publishProgress(-1, Integer.valueOf(cur), Integer.valueOf(max));
+					}
+					
+					@Override
+					public void nextIteration() {
+						curText.post(new Runnable() {
+							@Override
+							public void run() {
+								StringBuilder sb = new StringBuilder(curText.getText());
+								if (it++ > 0)
+									sb.setLength(sb.lastIndexOf(" "));
+								sb.append(" (");
+								sb.append(it);
+								sb.append(')');
+								curText.setText(sb);
+							}
+						});
+					}
+				} : new LoadProgressHook() {
+					@Override
+					public void run() {
+					}
+					@Override
+					protected void nextIteration() {
+					}
+				};
 
 				int total = 0;
 
@@ -833,41 +906,40 @@ public class NavbarActivity extends FragmentActivity {
 					Account acc = new Account(NavbarActivity.this);
 	
 					if (DataManagement.networkAvailable) {
+						lph.resetIt().publish(0, 1);
 						String ssid = acc.getSessionId();
 						acc.clearRemoteAccountData();
 						acc.setSessionId(ssid);
 						dm.getAccountFromRemoteDb(NavbarActivity.this);
 						loadPhase++;
 						total = 20;
-						if(doUneedSleep){
-							try{ Thread.sleep(3000); }catch(InterruptedException e){ e.printStackTrace(); }
-						}
-						publishProgress(total);
-					} 
+						doFakeSleep(3000);
+						publishProgress(total, 1);
+					}
+					// otherwise fail it all
 					System.gc();
 				//$FALL-THROUGH$
 				case 2:// Load contacts
-					if (DataManagement.networkAvailable){
-						ContactManagement.getContactsFromRemoteDb(NavbarActivity.this, null);
-						if(doUneedSleep){
-							try{ Thread.sleep(5000); }catch(InterruptedException e){ e.printStackTrace(); }
-						}
-					}else
-						ContactManagement.getContactsFromLocalDb(NavbarActivity.this, null);
+					lph.resetIt();
+					if (DataManagement.networkAvailable) {
+						ContactManagement.getContactsFromRemoteDb(NavbarActivity.this, null, lph);
+						doFakeSleep(5000);
+					} else
+						ContactManagement.getContactsFromLocalDb(NavbarActivity.this, null, lph);
 					loadPhase++;
 					total = 40;
 					publishProgress(total);
 					System.gc();
 				//$FALL-THROUGH$
 				case 3:// Load groups
-					if (DataManagement.networkAvailable){
-						ContactManagement.getGroupsFromRemoteDb(NavbarActivity.this, null);
-						AddressManagement.getAddressBookFromRemoteDb(NavbarActivity.this);
-						if(doUneedSleep){
-							try{ Thread.sleep(3000); }catch(InterruptedException e){ e.printStackTrace(); }
-						}
-					}else
-						ContactManagement.getGroupsFromLocalDb(NavbarActivity.this, null);
+					lph.resetIt();
+					if (DataManagement.networkAvailable) {
+						// perhaps have a different title for each?
+						ContactManagement.getGroupsFromRemoteDb(NavbarActivity.this, null, lph.nextIt());
+						AddressManagement.getAddressBookFromRemoteDb(NavbarActivity.this, lph.nextIt());
+						doFakeSleep(3000);
+					} else
+						ContactManagement.getGroupsFromLocalDb(NavbarActivity.this, null, lph);
 					loadPhase++;
 					total = 50;
 					publishProgress(total);
@@ -879,9 +951,7 @@ public class NavbarActivity extends FragmentActivity {
 						DataManagement.getTemplatesFromRemoteDb(NavbarActivity.this);
 					}
 					
-					if (doUneedSleep) {
-						try { Thread.sleep(3000); } catch(InterruptedException e) { e.printStackTrace(); }
-					}
+					doFakeSleep(3000);
 					
 					loadPhase++;
 					total = 60;
@@ -890,13 +960,11 @@ public class NavbarActivity extends FragmentActivity {
 
 				//$FALL-THROUGH$
 				case 5: // Load events
-					if (DataManagement.networkAvailable){
-						EventManagement.getEventsFromRemoteDb(NavbarActivity.this, "", 0, 0);
-						pollsList = EventManagement.getPollEventsFromLocalDb(NavbarActivity.this);
-						Log.e("Polls length",pollsList.size()+"");
-						if(doUneedSleep){
-							try{ Thread.sleep(120000); }catch(InterruptedException e){ e.printStackTrace(); }
-						}
+					if (DataManagement.networkAvailable) {
+						EventManagement.getEventsFromRemoteDb(NavbarActivity.this, "", 0, 0, lph.resetIt());
+						pollsList = EventManagement.getPollEventsFromLocalDb(NavbarActivity.this, lph.nextIt());
+						Log.e("Polls length", StringValueUtils.valueOf(pollsList.size()));
+						doFakeSleep(120000);
 					}
 					loadPhase++;
 					total = 80;
@@ -906,14 +974,14 @@ public class NavbarActivity extends FragmentActivity {
 				//$FALL-THROUGH$
 				case 6: // Load chat threads if network available
 					if (DataManagement.networkAvailable) {
-						dm.getAddressesFromRemoteDb(getApplicationContext());
-						ChatManagement.getAllChatMessagesFromRemoteDb(NavbarActivity.this);
+						dm.getAddressesFromRemoteDb(getApplicationContext(), lph.resetIt().nextIt());
+						ChatManagement.getAllChatMessagesFromRemoteDb(NavbarActivity.this, lph.nextIt());
 					}
 					loadPhase++;
 					total = 100;
 					publishProgress(total);
 					System.gc();
-					DataManagement.getAlarmsFromServer(getApplicationContext());
+					DataManagement.getAlarmsFromServer(getApplicationContext(), lph.resetIt());
 				}
 			}
 			return null;
@@ -922,34 +990,50 @@ public class NavbarActivity extends FragmentActivity {
 		// Update the progress
 		@Override
 		protected void onProgressUpdate(Integer... values) {
+			if (values.length > 2 && values[2] != -1)
+				current.setMax(values[2]);
+			if (values.length > 1)
+				current.setProgress(values[1]);
+			if (values[0] == -1)
+				return;
 			// set the current progress of the progress dialog
 			progressDialog.setProgress(values[0]);
+			total.setProgress(values[0]);
 			switch (values[0]) {
 			case 0:
 				progressDialog.setMessage(getString(R.string.loading_data));
+				curText.setText(R.string.loading_data);
 				break;
 			case 10:
 				progressDialog.setMessage(getString(R.string.loading_account));
+				curText.setText(R.string.loading_account);
 				break;
 			case 20:
 				progressDialog.setMessage(getString(R.string.loading_contacts));
+				curText.setText(R.string.loading_contacts);
 				break;
 			case 40:
 				progressDialog.setMessage(getString(R.string.loading_groups));
+				curText.setText(R.string.loading_groups);
 				break;
 			case 50:
 				progressDialog.setMessage(getString(R.string.loading_templates));
 				break;
 			case 60:
 				progressDialog.setMessage(getString(R.string.loading_events));
+				curText.setText(R.string.loading_events);
 				break;
 			case 80:
 				progressDialog.setMessage(getString(R.string.loading_chat));
+				curText.setText(R.string.loading_chat);
 				break;
 			case 100:
 				progressDialog.setMessage(getString(R.string.loading_complete));
+				curText.setText(R.string.loading_complete);
 				break;
 			}
+			current.setMax(0);
+			current.setProgress(0);
 		}
 
 		// after executing the code in the thread
@@ -967,8 +1051,12 @@ public class NavbarActivity extends FragmentActivity {
 			}
 			
 			acc.setLatestUpdateTime(Calendar.getInstance());
-			progressDialog.dismiss();
+			if (VERBOSE_LOADING)
+				proDlg.dismiss();
+			else
+				progressDialog.dismiss();
 			dataLoaded = true;
+			dlTask = null;
 			switchToView();
 
 			setAlarmsToAllEvents();
@@ -985,7 +1073,7 @@ public class NavbarActivity extends FragmentActivity {
 			DataManagement.synchronizeWithServer(NavbarActivity.this, this, acc.getLatestUpdateUnixTimestamp());
 			if (DataManagement.networkAvailable)
 				dm.getAccountFromRemoteDb(NavbarActivity.this);
-			pollsList = EventManagement.getPollEventsFromLocalDb(NavbarActivity.this);
+			pollsList = EventManagement.getPollEventsFromLocalDb(NavbarActivity.this, null);
 //			if (DataManagement.networkAvailable){
 //				acc.setResponses(""+EventManagement.getResponsesFromRemoteDb(getApplicationContext()));
 //			}

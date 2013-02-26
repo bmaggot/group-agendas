@@ -522,9 +522,6 @@ public class EventActivity extends Activity {
 		if (selectedContacts == null || selectedContacts.isEmpty())
 			return;
 		
-		Account acc = new Account(this);
-		DateTimeUtils dateTimeUtils = new DateTimeUtils(this);
-		
 		StringBuilder rec = new StringBuilder("smsto:");
 		final int empty = rec.length();
 		for (Contact con : selectedContacts) {
@@ -547,6 +544,9 @@ public class EventActivity extends Activity {
 			// nobody needs a sms
 			return;
 		}
+		
+		Account acc = new Account(this);
+		DateTimeUtils dateTimeUtils = new DateTimeUtils(this);
 		
 		StringBuilder body = new StringBuilder(acc.getFullname());
 		body.append(' ').append(getString(R.string.sms_invited)).append("\n\n");

@@ -39,7 +39,7 @@ public class TreeMapUtils {
 		Calendar event_start = null;
 		Calendar event_end = null;
 		Calendar tmp_event_start = null;
-		ArrayList<Event> pollEvents = EventManagement.getPollEventsFromLocalDb(context);
+		ArrayList<Event> pollEvents = EventManagement.getPollEventsFromLocalDb(context, null);
 		for (Event event : events) {
 			if (event.getStartCalendar() == null || event.getEndCalendar() == null) {
 				putNewEventIntoTreeMap(context, tm, event);

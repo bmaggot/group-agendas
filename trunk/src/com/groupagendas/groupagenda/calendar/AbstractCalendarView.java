@@ -369,9 +369,7 @@ public abstract class AbstractCalendarView extends LinearLayout {
 		 */
 		@Override
 		protected final Void doInBackground(Void... params) {
-			if(NavbarActivity.doUneedSleep){
-				try{ Thread.sleep(1200); }catch(InterruptedException e){ e.printStackTrace(); }
-			}
+			NavbarActivity.doFakeSleep(1200);
 			// Process.setThreadPriority(Process.THREAD_PRIORITY_BACKGROUND + Process.THREAD_PRIORITY_LESS_FAVORABLE);
 			// Calendar calendar = Calendar.getInstance();
 			long start = System.nanoTime();
