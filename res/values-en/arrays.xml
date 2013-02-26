@@ -100,5 +100,13 @@
         <item>10 PM</item>
         <item>11 PM</item>
     </string-array>
-
+	<string-array name="first_last" >
+	    <item>Frist</item>
+	    <item>Second</item>
+	    <item>Third</item>
+	    <item>Fourth</item>
+   	    <item>Fifth</item>
+	    <item>Sixth</item>
+   	</string-array>
+    
 </resources>
