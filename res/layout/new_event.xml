@@ -36,7 +36,7 @@
             android:textColor="@color/white"
             android:textSize="14sp"
             android:textStyle="bold"
-            android:visibility="gone" />
+            android:visibility="visible" />
 
         <TextView
             android:id="@+id/topText"
@@ -980,7 +980,7 @@
                 android:paddingLeft="5dp"
                 android:paddingRight="5dp"
                 android:paddingTop="5dp"
-                android:visibility="gone" >
+                android:visibility="visible" >
 
                 <TextView
                     android:layout_width="95dp"
