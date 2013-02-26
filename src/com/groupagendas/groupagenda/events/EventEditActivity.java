@@ -1087,8 +1087,8 @@ public class EventEditActivity extends EventActivity implements AddressMetaData 
 			// START AND END TIME
 			if (result.getType().contentEquals("v") && intent.getBooleanExtra(copy, false)) {
 				String[] times = intent.getStringExtra("times").split(" - ");
-				result.setStartCalendar(Utils.stringToCalendar(EventEditActivity.this, times[0], "yyyy-MM-dd HH:mm"));
-				result.setEndCalendar(Utils.stringToCalendar(EventEditActivity.this, times[1], "yyyy-MM-dd HH:mm"));
+				result.setStartCalendar(Utils.stringToCalendar(EventEditActivity.this, times[0], new Account(getApplicationContext()).getSetting_date_format() +" HH:mm"));
+				result.setEndCalendar(Utils.stringToCalendar(EventEditActivity.this, times[1], new Account(getApplicationContext()).getSetting_date_format() +" HH:mm"));
 			}
 			if (result.getStartCalendar() != null) {
 				if (!event.is_all_day()) {
