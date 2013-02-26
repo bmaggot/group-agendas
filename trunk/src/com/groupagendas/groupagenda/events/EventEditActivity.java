@@ -100,7 +100,7 @@ public class EventEditActivity extends EventActivity implements AddressMetaData 
 				changesMade = true;
 				saveButton.setEnabled(changesMade);
 				if (cityView.getText().length() > 0 || streetView.getText().length() > 0 || zipView.getText().length() > 0) {
-					//save_address.setVisibility(View.VISIBLE);
+					save_address.setVisibility(View.VISIBLE);
 				}
 				//AddressBookActivity.selectedAddressId = 0;
 			}
