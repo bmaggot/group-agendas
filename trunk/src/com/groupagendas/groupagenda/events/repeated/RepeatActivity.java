@@ -11,10 +11,15 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
 import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.androidqa.ArrayWheelAdapter;
+import com.androidqa.OnWheelChangedListener;
+import com.androidqa.OnWheelScrollListener;
+import com.androidqa.WheelView;
 import com.groupagendas.groupagenda.R;
 
 public class RepeatActivity extends Activity implements OnClickListener {
@@ -32,6 +37,15 @@ public class RepeatActivity extends Activity implements OnClickListener {
 	private ScrollView activityScrollWrapper;
 	private SharedPreferences prefs;
 	private Editor editor;
+	private boolean wheelScrolled;
+	private OnWheelScrollListener scrolledListener;
+	private final OnWheelChangedListener changedListener = new OnWheelChangedListener() {
+		public void onChanged(WheelView wheel, int oldValue, int newValue) {
+			if (!wheelScrolled) {
+//				updateStatus();
+			}
+		}
+	};
 	
 	@Override
 	public void onCreate(Bundle savedInstance) {
@@ -86,11 +100,11 @@ public class RepeatActivity extends Activity implements OnClickListener {
 			break;
 		case R.id.button_repeat_each:
 			((View) findViewById(R.id.repeat_month_table)).setVisibility(View.VISIBLE);
-			((View) findViewById(R.id.repeat_onthe_spinners)).setVisibility(View.GONE);
+			((View) findViewById(R.id.repeat_onthe_wheels)).setVisibility(View.GONE);
 			break;
 		case R.id.button_repeat_on:
 			((View) findViewById(R.id.repeat_month_table)).setVisibility(View.GONE);
-			((View) findViewById(R.id.repeat_onthe_spinners)).setVisibility(View.VISIBLE);
+			((View) findViewById(R.id.repeat_onthe_wheels)).setVisibility(View.VISIBLE);
 			break;
 		default:
 			Toast.makeText(RepeatActivity.this, "Boobs!", Toast.LENGTH_SHORT).show();
@@ -212,14 +226,48 @@ public class RepeatActivity extends Activity implements OnClickListener {
 	}
 	
 	private void loadMonthlyMenu() {
-		activityBody = (LinearLayout) View.inflate(RepeatActivity.this, R.layout.repeat_monthly_menu, null);
-		((TextView) findViewById(R.id.topText)).setText(R.string.monthly); 
+		WheelView firstLastWheel;
+		WheelView weekdayWheel;
+		ArrayWheelAdapter<String> wheel1Adapter;
+		ArrayWheelAdapter<String> wheel2Adapter;
 		
-//		for (int iterator = 0; iterator < activityBody.getChildCount(); iterator++) {
-//			((Button) activityBody.getChildAt(iterator)).setText((iterator+1) + " " + getString(R.string.day));
-//			activityBody.getChildAt(iterator).setTag(""+(iterator+1));
-//		}
-		activityScrollWrapper.addView(activityBody);
+		String[] weekno = getResources().getStringArray(R.array.first_last);
+		String[] weekdays = getResources().getStringArray(R.array.week_days_names);
+		RelativeLayout nuActivityBody = (RelativeLayout) View.inflate(RepeatActivity.this, R.layout.repeat_monthly_menu, null);
+		RelativeLayout.LayoutParams bParams =  new RelativeLayout.LayoutParams(activityScrollWrapper.getWidth(), activityScrollWrapper.getHeight());
+		nuActivityBody.setLayoutParams(bParams);
+		
+		((TextView) findViewById(R.id.topText)).setText(R.string.monthly); 
+		activityScrollWrapper.addView(nuActivityBody);
+		
+		firstLastWheel = (WheelView) findViewById(R.id.repeat_onthe_wheel1);
+		weekdayWheel = (WheelView) findViewById(R.id.repeat_onthe_wheel2);
+		wheel1Adapter = new ArrayWheelAdapter<String>(RepeatActivity.this, weekno);
+		wheel2Adapter = new ArrayWheelAdapter<String>(RepeatActivity.this, weekdays);
+		
+		scrolledListener = new OnWheelScrollListener() {
+
+			@Override
+			public void onScrollingFinished(WheelView view) {
+				// TODO Auto-generated method stub
+			}
+
+			@Override
+			public void onScrollingStarted(WheelView view) {
+				// TODO Auto-generated method stub
+			}
+		};
+		
+		initWheel(firstLastWheel, wheel1Adapter);
+		initWheel(weekdayWheel, wheel2Adapter);
+
 	}
-	
+
+	private void initWheel(WheelView view, ArrayWheelAdapter<String> adapter) {
+		view.setViewAdapter(adapter);
+		view.setVisibleItems(2);
+		view.setCurrentItem(0);
+		view.addChangingListener(changedListener);
+		view.addScrollingListener(scrolledListener);
+	}
 }
