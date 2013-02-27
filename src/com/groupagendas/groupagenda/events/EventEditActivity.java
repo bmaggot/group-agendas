@@ -1847,4 +1847,9 @@ public class EventEditActivity extends EventActivity implements AddressMetaData 
 		return changesMade;
 	}
 
+	@Override
+	public void onDestroy() {
+		copyInProgress = false;
+		super.onDestroy();
+	}
 }
