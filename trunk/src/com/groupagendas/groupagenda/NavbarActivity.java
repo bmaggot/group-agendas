@@ -150,7 +150,7 @@ public class NavbarActivity extends FragmentActivity {
 		}
 	}
 	
-	private static boolean VERBOSE_LOADING = false;
+	private static boolean VERBOSE_LOADING = true;
 	
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -805,7 +805,12 @@ public class NavbarActivity extends FragmentActivity {
 	private class DownLoadAllDataTask extends AsyncTask<Void, Integer, Void> {
 		AlertDialog proDlg;
 		ProgressBar total;
+		TextView totalPercent;
+		TextView totalCount;
 		ProgressBar current;
+		TextView currentPercent;
+		TextView currentCount;
+		TextView currentCountMax;
 		TextView curText;
 
 		@Override
@@ -824,12 +829,17 @@ public class NavbarActivity extends FragmentActivity {
 					total.setProgress(0);
 					TextView tvTotal = (TextView) view.findViewById(R.id.tvLoadDialogProgressTotal);
 					tvTotal.setText(R.string.loading);
+					totalPercent = (TextView) view.findViewById(R.id.tvLoadDialogProgressTotalPercent);
+					totalCount = (TextView) view.findViewById(R.id.tvLoadDialogProgressTotalCount);
 				}
 				{
 					current = (ProgressBar) view.findViewById(R.id.pbLoadDialogProgressCurrent);
 					current.setMax(0);
 					current.setProgress(0);
 					curText = (TextView) view.findViewById(R.id.tvLoadDialogProgressCurrent);
+					currentPercent = (TextView) view.findViewById(R.id.tvLoadDialogProgressCurrentPercent);
+					currentCount = (TextView) view.findViewById(R.id.tvLoadDialogProgressCurrentCount);
+					currentCountMax = (TextView) view.findViewById(R.id.tvLoadDialogProgressCurrentCountMax);
 				}
 				if (VERBOSE_LOADING) {
 					proDlg = builder.create();
@@ -990,15 +1000,26 @@ public class NavbarActivity extends FragmentActivity {
 		// Update the progress
 		@Override
 		protected void onProgressUpdate(Integer... values) {
-			if (values.length > 2 && values[2] != -1)
-				current.setMax(values[2]);
-			if (values.length > 1)
+			if (values.length > 1) {
+				if (values.length > 2 && values[2] != -1) {
+					current.setMax(values[2]);
+					currentCountMax.setText(StringValueUtils.valueOf(values[2]));
+				}
 				current.setProgress(values[1]);
+				currentCount.setText(StringValueUtils.valueOf(values[1]));
+				if (current.getMax() == 0)
+					currentPercent.setText("0%");
+				else
+					currentPercent.setText((current.getProgress() * 100 / current.getMax()) + "%");
+			}
 			if (values[0] == -1)
 				return;
+			
 			// set the current progress of the progress dialog
 			progressDialog.setProgress(values[0]);
 			total.setProgress(values[0]);
+			totalPercent.setText(values[0] + "%");
+			totalCount.setText(StringValueUtils.valueOf(values[0]));
 			switch (values[0]) {
 			case 0:
 				progressDialog.setMessage(getString(R.string.loading_data));
