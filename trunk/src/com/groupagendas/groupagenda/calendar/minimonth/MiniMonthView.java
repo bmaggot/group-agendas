@@ -2,8 +2,6 @@ package com.groupagendas.groupagenda.calendar.minimonth;
 
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Collections;
-import java.util.List;
 
 import android.content.Context;
 import android.content.Intent;
