@@ -17,6 +17,37 @@
 		android:layout_width="match_parent"
 		android:layout_height="wrap_content" />
 
+	<RelativeLayout
+		android:layout_width="match_parent"
+		android:layout_height="wrap_content" >
+
+		<TextView
+			android:id="@+id/tvLoadDialogProgressTotalPercent"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:layout_alignParentLeft="true" />
+
+		<TextView
+			android:id="@+id/tvLoadDialogProgressTotalCount"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:layout_toLeftOf="@+id/tvTotalSlash" />
+
+		<TextView
+			android:id="@+id/tvTotalSlash"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:layout_toLeftOf="@+id/tvLoadDialogProgressTotalCountMax"
+			android:text="/" />
+
+		<TextView
+			android:id="@+id/tvLoadDialogProgressTotalCountMax"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:layout_alignParentRight="true"
+			android:text="100" />
+	</RelativeLayout>
+
 	<TextView
 		android:id="@+id/tvLoadDialogProgressCurrent"
 		android:layout_width="match_parent"
@@ -27,5 +58,35 @@
 		style="?android:attr/progressBarStyleHorizontal"
 		android:layout_width="match_parent"
 		android:layout_height="wrap_content" />
+
+	<RelativeLayout
+		android:layout_width="match_parent"
+		android:layout_height="wrap_content" >
+
+		<TextView
+			android:id="@+id/tvLoadDialogProgressCurrentPercent"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:layout_alignParentLeft="true" />
+
+		<TextView
+			android:id="@+id/tvLoadDialogProgressCurrentCount"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:layout_toLeftOf="@+id/tvCurrentSlash" />
+
+		<TextView
+			android:id="@+id/tvCurrentSlash"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:layout_toLeftOf="@+id/tvLoadDialogProgressCurrentCountMax"
+			android:text="/" />
+
+		<TextView
+			android:id="@+id/tvLoadDialogProgressCurrentCountMax"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:layout_alignParentRight="true" />
+	</RelativeLayout>
 
 </LinearLayout>
