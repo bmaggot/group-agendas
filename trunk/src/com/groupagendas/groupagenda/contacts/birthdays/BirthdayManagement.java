@@ -32,9 +32,9 @@ public class BirthdayManagement {
 		
 
 		ArrayList<Event> birthdayEvents = new ArrayList<Event>();
-		if (cursor != null) {
+		if (cursor != null && cursor.moveToFirst()) {
 			birthdayEvents.ensureCapacity(cursor.getCount());
-			while (cursor.moveToNext()) {
+			do {
 				Event event = new Event();
 				Calendar calendar = Calendar.getInstance();
 				String age = "";
@@ -49,6 +49,8 @@ public class BirthdayManagement {
 				event.setTitle(cursor.getString(1)+" (Age: "+ age +")");
 				if(Integer.parseInt(sdf.format(startTime)) == 12 && Integer.parseInt(date[1]) == 1){
 					calendar.set(Integer.parseInt(sdfy.format(startTime)) + 1, Integer.parseInt(date[1])-1,Integer.parseInt(date[2]));
+				} else if(Integer.parseInt(sdf.format(startTime)) == 1 && Integer.parseInt(date[1]) == 12){
+					calendar.set(Integer.parseInt(sdfy.format(startTime)) - 1, Integer.parseInt(date[1])-1,Integer.parseInt(date[2]));					
 				} else {
 					calendar.set(Integer.parseInt(sdfy.format(startTime)), Integer.parseInt(date[1])-1,Integer.parseInt(date[2]));
 				}
@@ -65,7 +67,7 @@ public class BirthdayManagement {
 				event.setIcon("iconbd");
 				
 				birthdayEvents.add(event);
-			}
+			} while (cursor.moveToNext());
 			cursor.close();
 		}
 		return birthdayEvents;

@@ -536,12 +536,20 @@ public class EventManagement {
 
 		if (eventTimeMode == TM_EVENTS_ON_GIVEN_MONTH) {
 			// TODO: make sure GA events are displayed on other month frames
+			Calendar startDay = (Calendar) date.clone();
+			startDay.set(Calendar.DAY_OF_MONTH, startDay.getMinimum(Calendar.DAY_OF_MONTH));
+			startDay.add(Calendar.WEEK_OF_YEAR, -1);
+			Calendar endDay = (Calendar) date.clone();
+			endDay.set(Calendar.DAY_OF_MONTH, endDay.getMaximum(Calendar.DAY_OF_MONTH));
+			endDay.add(Calendar.WEEK_OF_YEAR, 1);
 			return EventsProvider.mOpenHelper.getReadableDatabase().rawQuery(
 					"SELECT events.event_id, events._id, color, "
 							+ "event_display_color, is_all_day, time_start_utc, time_end_utc, icon, title, status, is_owner, day, day_time_start, day_time_end "
-							+ "FROM events_days LEFT JOIN events USING(event_id) WHERE month = '"
+							+ "FROM events_days LEFT JOIN events USING(event_id) WHERE day BETWEEN '"
 							// TODO: revise this NPE workaround
-							+ month_index_formatter.format(date != null ? date.getTime() : new Date()) + "'  ORDER BY time_start_utc  ", null);
+							+ day_index_formatter.format(startDay != null ? startDay.getTime() : new Date()) + "' AND '" 
+							+ day_index_formatter.format(endDay != null ? endDay.getTime() : new Date()) + "'  ORDER BY time_start_utc  ", null);
+			
 		} else {
 			return context.getContentResolver().query(uri, projection, where, null, sortOrder != null ? sortOrder : "time_start_utc");
 		}
