@@ -983,8 +983,10 @@
                 android:visibility="visible" >
 
                 <TextView
-                    android:layout_width="95dp"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:layout_marginRight="45dp"
+                    android:singleLine="true"
                     android:layout_alignParentLeft="true"
                     android:layout_centerVertical="true"
                     android:text="@string/save_as_template"
