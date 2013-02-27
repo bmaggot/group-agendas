@@ -2,6 +2,7 @@ package com.groupagendas.groupagenda.calendar.minimonth;
 
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.List;
 
 import android.content.Context;
 import android.content.Intent;
@@ -386,12 +387,17 @@ public class MiniMonthView extends AbstractCalendarView {
 			Calendar tmp = (Calendar) firstShownDate.clone();
 
 			for (AgendaFrame frame : daysList) {
-//				if (tmp.get(Calendar.MONTH) == selectedDate.get(Calendar.MONTH)) {
+				if (tmp.get(Calendar.MONTH) == selectedDate.get(Calendar.MONTH)) {
 					frame.setEventList(TreeMapUtils.getEventsFromTreemap(tmp, sortedEvents));
-//				} else {
+				} else {
+					List<Event> nuList = TreeMapUtils.getEventsFromTreemap(tmp, sortedEvents); 
+					for (Event e : nuList) {
+						e.setDisplayColor("44"+e.getDisplayColor());
+					}
+					frame.setEventList(nuList);
 //					List<Event> empty = Collections.emptyList();
 //					frame.setEventList(empty);
-//				}
+				}
 				frame.UpdateList();
 				tmp.add(Calendar.DATE, 1);
 			}
