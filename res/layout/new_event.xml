@@ -346,7 +346,7 @@
                     android:layout_weight="1"
                     android:layout_marginRight="5dp"
                     android:layout_height="match_parent"
-	                android:background="@drawable/account_dropdown_button" >
+	                android:background="@drawable/account_dropdown_button_round" >
 
                     <TextView
                     	android:id="@+id/addressTrigger"
@@ -378,7 +378,7 @@
                     android:layout_weight="1"
                     android:layout_marginLeft="5dp"
                     android:layout_height="match_parent"
-	                android:background="@drawable/account_dropdown_button" >
+	                android:background="@drawable/account_dropdown_button_round" >
 
                     <TextView
                     	android:id="@+id/detailsTrigger"
