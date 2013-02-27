@@ -81,10 +81,10 @@ public class DateTimeSelectActivity extends Activity implements OnClickListener 
 			tmpCal1.add(Calendar.HOUR_OF_DAY, 1);
 			tmpCal2.add(Calendar.HOUR_OF_DAY, 1);
 			
-			if (targetCalendar.equals(endCalendar) && (targetCalendar.before(tmpCal2))) {
+			if ((targetCalendar == endCalendar) && (targetCalendar.before(tmpCal2) || targetCalendar.equals(tmpCal2))) {
 				targetCalendar.setTime(tmpCal2.getTime());
 				endCalendar.setTime(tmpCal2.getTime());
-			} else if (targetCalendar.equals(startCalendar) && (targetCalendar.after(endCalendar))) {
+			} else if ((targetCalendar == startCalendar) && (targetCalendar.after(endCalendar) || targetCalendar.equals(endCalendar))) {
 				endCalendar.setTime(tmpCal1.getTime());
 				endDateView.setText(dtUtils.formatDate(endCalendar.getTime()));
 				endTimeView.setText(dtUtils.formatTime(endCalendar));
@@ -198,13 +198,13 @@ public class DateTimeSelectActivity extends Activity implements OnClickListener 
 			
 		case R.id.endDateView:
 			this.setTargets(endCalendar, endDateView, endTimeView);
-			dateTimeDialog = new StartEndDateTimeSelectDialog(this, StartEndDateTimeSelectDialog.SECTION_DATE, endCalendar, mDateSetListener);
+			dateTimeDialog = new StartEndDateTimeSelectDialog(this, StartEndDateTimeSelectDialog.SECTION_DATE, targetCalendar, mDateSetListener);
 			dateTimeDialog.show();
 			break;
 			
 		case R.id.endTimeView:
 			this.setTargets(endCalendar, endDateView, endTimeView);
-			dateTimeDialog = new StartEndDateTimeSelectDialog(this, StartEndDateTimeSelectDialog.SECTION_TIME, endCalendar, mDateSetListener);
+			dateTimeDialog = new StartEndDateTimeSelectDialog(this, StartEndDateTimeSelectDialog.SECTION_TIME, targetCalendar, mDateSetListener);
 			dateTimeDialog.show();
 			break;
 			
