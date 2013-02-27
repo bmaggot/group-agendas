@@ -532,6 +532,7 @@ public class EventsProvider extends ContentProvider{
 		eventTimeEnd.setTimeInMillis(millisEnd);
 		eventTimeEnd.add(Calendar.MILLISECOND, -1);
 		eventDayStart.setTimeInMillis(millisStart);
+		
 		Calendar eventTimeStart = (Calendar) eventDayStart.clone();
 		eventDayStart.set(Calendar.HOUR_OF_DAY, 0);
 		eventDayStart.set(Calendar.MINUTE, 0);
