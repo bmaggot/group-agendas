@@ -622,7 +622,23 @@ public class EventActivity extends Activity {
 		EventActivity.costView.setText(template.getCost());
 		EventActivity.accomodationView.setText(template.getAccomodation());
 		
-		EventActivity.newInvites = template.getInvited();
+//		EventActivity.newInvites = template.getInvited();
+		
+		for (Invited i : template.getInvited()) {
+			String myName = new Account(context).getFullname();
+			if (i.getName().equals(context.getString(R.string.you)) || i.getName().equalsIgnoreCase(myName)) {
+				template.getInvited().remove(i);
+				break;
+			}
+		}
+		
+		for (Invited i : template.getInvited()) {
+			i.setStatus(Invited.PENDING);
+		}
+		
+		if (newInvites != null) {
+			event.setInvited(template.getInvited());
+		}
 		
 		setTimezone(template.getTimezoneInUse());
 	}

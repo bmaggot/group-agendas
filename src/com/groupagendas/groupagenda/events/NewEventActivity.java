@@ -543,7 +543,7 @@ public class NewEventActivity extends EventActivity implements AddressMetaData {
 		if (selectedGroups == null)
 			selectedGroups = new ArrayList<Group>();
 
-		if (newInvites == null)
+//		if (newInvites == null)
 			newInvites = new ArrayList<Invited>();
 
 		for (Contact temp : EventActivity.selectedContacts) {
@@ -579,7 +579,7 @@ public class NewEventActivity extends EventActivity implements AddressMetaData {
 			}
 		}
 
-		event.setInvited(new ArrayList<Invited>());
+//		event.setInvited(new ArrayList<Invited>());
 
 		showInvitesView(NewEventActivity.this);
 
@@ -625,7 +625,7 @@ public class NewEventActivity extends EventActivity implements AddressMetaData {
 				}
 			}
 		} else {
-			Toast.makeText(NewEventActivity.this, R.string.wait, Toast.LENGTH_SHORT);
+			Toast.makeText(NewEventActivity.this, R.string.wait, Toast.LENGTH_SHORT).show();
 		}
 	}
 
