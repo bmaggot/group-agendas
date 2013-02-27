@@ -43,6 +43,7 @@ import com.groupagendas.groupagenda.events.NativeCalendarReader;
 import com.groupagendas.groupagenda.https.WebService;
 import com.groupagendas.groupagenda.timezone.LatestEventStructure;
 import com.groupagendas.groupagenda.utils.CharsetUtils;
+import com.groupagendas.groupagenda.utils.DateTimeUtils;
 import com.groupagendas.groupagenda.utils.JSONUtils;
 import com.groupagendas.groupagenda.utils.StringValueUtils;
 import com.groupagendas.groupagenda.utils.Utils;
@@ -948,23 +949,14 @@ public class EventManagement {
 
 		resolver.update(uri, cv, null, null);
 
-		if (event.getStartCalendar() != null && event.getEndCalendar() != null) { // to
-																					// prevent
-																					// null
-																					// pointer
-																					// exception:
-																					// that
-																					// hurts
-																					// if
-																					// happens
-																					// :)
+		if (event.getStartCalendar() != null && event.getEndCalendar() != null) {
 
 			eventTimeChanged = oldStart != event.getStartCalendar().getTimeInMillis() || oldEnd != event.getEndCalendar().getTimeInMillis();
 
 			// 3 Renew event data in time indexes
 
 			if (eventTimeChanged) {
-				where = EventsProvider.EMetaData.EventsIndexesMetaData.EVENT_INTERNAL_ID + "=" + internalID;
+				where = EventsProvider.EMetaData.EventsIndexesMetaData.EVENT_EXTERNAL_ID + "=" + event.getEvent_id();
 				resolver.delete(EventsProvider.EMetaData.EventsIndexesMetaData.CONTENT_URI, where, null);
 				if (event.getType().contentEquals("v") || event.getStatus() == Invited.REJECTED
 						|| (event.getStatus() == Invited.PENDING && event.getStartCalendar().before(Calendar.getInstance()))) {
@@ -1014,31 +1006,32 @@ public class EventManagement {
 		eventDayStart.set(Calendar.MINUTE, 0);
 		eventDayStart.set(Calendar.SECOND, 0);
 		eventDayStart.set(Calendar.MILLISECOND, 0);
-
+		
+		Calendar eventTimeStart = (Calendar) event.getStartCalendar().clone();
+		Calendar eventTimeEnd = (Calendar) event.getEndCalendar().clone();
+		DateTimeUtils dateTimeUtils = new DateTimeUtils(context);
+		
+		Calendar eventDayEnd = (Calendar) eventDayStart.clone();
+		eventDayEnd.set(Calendar.HOUR_OF_DAY, eventDayEnd.getActualMaximum(Calendar.HOUR_OF_DAY));
+		eventDayEnd.set(Calendar.MINUTE, eventDayEnd.getActualMaximum(Calendar.MINUTE));
+		eventDayEnd.set(Calendar.SECOND, eventDayEnd.getActualMaximum(Calendar.SECOND));
+		eventDayEnd.set(Calendar.MILLISECOND, eventDayEnd.getActualMaximum(Calendar.MILLISECOND));
+		
 		long event_internal_id = event.getInternalID();
 		long event_external_id = event.getEvent_id();
 		String ext_id = null;
 		if (event_external_id > 0)
 			ext_id = StringValueUtils.valueOf(event_external_id);
-
-		// if (event.is_all_day()) { // only one row is inserted
-		// insertEventDayIndexRow(context, event_internal_id, ext_id,
-		// eventDayStart);
-		// } else
-		while (eventDayStart.before(event.getEndCalendar())) { // rows are
-																// inserted
-																// for each
-																// day that
-																// event
-																// lasts
-			insertEventDayIndexRow(context, event_internal_id, ext_id, eventDayStart);
+		
+		while (eventDayStart.before(event.getEndCalendar())) {
+			insertEventDayIndexRow(context, event_internal_id, ext_id, eventDayStart, eventTimeStart.before(eventDayStart), eventTimeEnd.after(eventDayEnd), eventTimeStart.getTimeInMillis(), eventTimeEnd.getTimeInMillis() , dateTimeUtils);
 			eventDayStart.add(Calendar.DATE, 1);
 
 		}
 	}
 
 	// TODO javadoc
-	private static void insertEventDayIndexRow(Context context, long event_id, String event_external_id, Calendar eventDayStart) {
+	private static void insertEventDayIndexRow(Context context, long event_id, String event_external_id, Calendar eventDayStart, boolean yesterday, boolean tomorrow, long startTime, long endTime, DateTimeUtils dateTimeUtils) {
 		ContentValues cv = new ContentValues(4);
 		cv.put(EventsProvider.EMetaData.EventsIndexesMetaData.EVENT_INTERNAL_ID, event_id);
 		cv.put(EventsProvider.EMetaData.EventsIndexesMetaData.EVENT_EXTERNAL_ID, event_external_id);
@@ -1047,6 +1040,8 @@ public class EventManagement {
 		cv.put(EventsProvider.EMetaData.EventsIndexesMetaData.DAY, day_index_formatter.format(time));
 
 		cv.put(EventsProvider.EMetaData.EventsIndexesMetaData.MONTH, month_index_formatter.format(time));
+		cv.put(EventsProvider.EMetaData.EventsIndexesMetaData.DAY_TIME_START, yesterday ? EventsProvider.EMetaData.EventsIndexesMetaData.NOT_TODAY  : dateTimeUtils.formatTime(startTime));
+		cv.put(EventsProvider.EMetaData.EventsIndexesMetaData.DAY_TIME_END, tomorrow ? EventsProvider.EMetaData.EventsIndexesMetaData.NOT_TODAY : dateTimeUtils.formatTime(endTime));
 		context.getContentResolver().insert(EventsProvider.EMetaData.EventsIndexesMetaData.CONTENT_URI, cv);
 
 	}

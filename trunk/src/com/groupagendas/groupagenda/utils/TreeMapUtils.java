@@ -151,7 +151,7 @@ public class TreeMapUtils {
 		if (event.getEvents_day() != null) {
 			dayStr = event.getEvents_day();
 		} else {
-			Log.e("FUCKED", event.getEvent_id() + "");
+//			Log.e("FUCKED", event.getEvent_id() + "");
 			if(event.getStartCalendar() != null)
 			dayStr = createFormatter().format(event.getStartCalendar().getTime());
 		}
