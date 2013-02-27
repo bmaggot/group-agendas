@@ -1846,10 +1846,4 @@ public class EventEditActivity extends EventActivity implements AddressMetaData 
 	public static boolean getChangesMade() {
 		return changesMade;
 	}
-
-	@Override
-	public void onDestroy() {
-		copyInProgress = false;
-		super.onDestroy();
-	}
 }
