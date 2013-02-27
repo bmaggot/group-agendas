@@ -375,6 +375,19 @@ public abstract class AbstractCalendarView extends LinearLayout {
 			long start = System.nanoTime();
 			Account account = new Account(context);
 			sortedEvents = new TreeMap<String, ArrayList<Event>>();
+			
+			// calendar = Calendar.getInstance();
+			start = System.nanoTime();
+			if (account.getShow_birthdays_calendars()) {
+				ArrayList<Event> birthdayEvents = queryBirthdayEvents();
+				for (Event birthdayEvent : birthdayEvents) {
+					TreeMapUtils.putNewEventIntoTreeMap(context, sortedEvents,
+							birthdayEvent);
+				}
+			}
+			Log.e("End Loading BIRTHDAYS", StringValueUtils.valueOf((System.nanoTime() - start) / 1000000));
+			// Log.e("End Loading BIRTHDAYS", Calendar.getInstance().getTimeInMillis() - calendar.getTimeInMillis()+"");
+			
 			if (account.getShow_ga_calendars()) {
 				ArrayList<Event> events = getEventProjectionsForDisplay(selectedDate);
 				ArrayList<Event> pollEvents = NavbarActivity.pollsList;
@@ -405,17 +418,6 @@ public abstract class AbstractCalendarView extends LinearLayout {
 			}
 			Log.e("End Loading NATIVE", StringValueUtils.valueOf((System.nanoTime() - start) / 1000000));
 			// Log.e("End Loading NATIVE", Calendar.getInstance().getTimeInMillis() - calendar.getTimeInMillis()+"");
-			// calendar = Calendar.getInstance();
-			start = System.nanoTime();
-			if (account.getShow_birthdays_calendars()) {
-				ArrayList<Event> birthdayEvents = queryBirthdayEvents();
-				for (Event birthdayEvent : birthdayEvents) {
-					TreeMapUtils.putNewEventIntoTreeMap(context, sortedEvents,
-							birthdayEvent);
-				}
-			}
-			Log.e("End Loading BIRTHDAYS", StringValueUtils.valueOf((System.nanoTime() - start) / 1000000));
-			// Log.e("End Loading BIRTHDAYS", Calendar.getInstance().getTimeInMillis() - calendar.getTimeInMillis()+"");
 			/*
 			 * if(account.getShow_ga_calendars()){ sortedEvents =
 			 * TreeMapUtils.sortEvents(context,
