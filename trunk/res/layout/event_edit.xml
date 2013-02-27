@@ -350,7 +350,7 @@
                     android:layout_height="match_parent"
                     android:layout_marginRight="5dp"
                     android:layout_weight="1"
-                    android:background="@drawable/account_dropdown_button" >
+                    android:background="@drawable/account_dropdown_button_round" >
 
                     <TextView
                         android:id="@+id/addressTrigger"
@@ -382,7 +382,7 @@
                     android:layout_height="match_parent"
                     android:layout_marginLeft="5dp"
                     android:layout_weight="1"
-                    android:background="@drawable/account_dropdown_button" >
+                    android:background="@drawable/account_dropdown_button_round" >
 
                     <TextView
                         android:id="@+id/detailsTrigger"
@@ -776,7 +776,7 @@
                 android:layout_width="fill_parent"
                 android:layout_height="40dp"
                 android:layout_marginBottom="5dp"
-                android:background="@drawable/account_dropdown_button"
+                android:background="@drawable/account_dropdown_button_round"
                 android:text="@string/save_in_address_book"
                 android:textSize="16sp"
                 android:textStyle="bold"
@@ -788,7 +788,7 @@
                 android:layout_height="40dp"
                 android:layout_marginBottom="5dp"
                 android:layout_marginTop="5dp"
-                android:background="@drawable/account_dropdown_button"
+                android:background="@drawable/account_dropdown_button_round"
                 android:text="@string/address_book"
                 android:textSize="16sp"
                 android:textStyle="bold"
@@ -997,7 +997,7 @@
                 android:layout_width="fill_parent"
                 android:layout_height="40dp"
                 android:layout_marginBottom="5dp"
-                android:background="@drawable/account_dropdown_button"
+                android:background="@drawable/account_dropdown_button_round"
                 android:text="@string/navigation"
                 android:textSize="16sp"
                 android:textStyle="bold"
@@ -1008,7 +1008,7 @@
                 android:layout_width="fill_parent"
                 android:layout_height="40dp"
                 android:layout_marginBottom="5dp"
-                android:background="@drawable/account_dropdown_button"
+                android:background="@drawable/account_dropdown_button_round"
                 android:gravity="center"
                 android:padding="10dp"
                 android:singleLine="true"
@@ -1023,7 +1023,7 @@
                 android:layout_width="fill_parent"
                 android:layout_height="40dp"
                 android:layout_marginBottom="5dp"
-                android:background="@drawable/account_dropdown_button"
+                android:background="@drawable/account_dropdown_button_round"
                 android:text="@string/messenger"
                 android:textSize="16sp"
                 android:textStyle="bold" />
