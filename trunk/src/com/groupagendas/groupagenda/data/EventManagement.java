@@ -589,7 +589,7 @@ public class EventManagement {
 				endDay.add(Calendar.DAY_OF_YEAR, 0);
 				break;
 			default:
-				Log.e("ERROR", "EventManagement.java 566 line");
+				Log.e("ERROR", "EventManagement.java 592 line");
 				break;
 			}
 			return EventsProvider.mOpenHelper.getReadableDatabase().rawQuery(
