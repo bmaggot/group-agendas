@@ -539,10 +539,60 @@ public class EventManagement {
 			// TODO: make sure GA events are displayed on other month frames
 			Calendar startDay = (Calendar) date.clone();
 			startDay.set(Calendar.DAY_OF_MONTH, startDay.getMinimum(Calendar.DAY_OF_MONTH));
-			startDay.add(Calendar.WEEK_OF_YEAR, -1);
+			switch (startDay.get(Calendar.DAY_OF_WEEK)) {
+			case Calendar.MONDAY:
+				startDay.add(Calendar.DAY_OF_YEAR, 0);
+				break;
+			case Calendar.TUESDAY:
+				startDay.add(Calendar.DAY_OF_YEAR, -1);
+				break;
+			case Calendar.WEDNESDAY:
+				startDay.add(Calendar.DAY_OF_YEAR, -2);
+				break;
+			case Calendar.THURSDAY:
+				startDay.add(Calendar.DAY_OF_YEAR, -3);
+				break;
+			case Calendar.FRIDAY:
+				startDay.add(Calendar.DAY_OF_YEAR, -4);
+				break;
+			case Calendar.SATURDAY:
+				startDay.add(Calendar.DAY_OF_YEAR, -5);
+				break;
+			case Calendar.SUNDAY:
+				startDay.add(Calendar.DAY_OF_YEAR, -6);
+				break;
+			default:
+				Log.e("ERROR", "EventManagement.java 566 line");
+				break;
+			}
 			Calendar endDay = (Calendar) date.clone();
 			endDay.set(Calendar.DAY_OF_MONTH, endDay.getMaximum(Calendar.DAY_OF_MONTH));
-			endDay.add(Calendar.WEEK_OF_YEAR, 1);
+			switch (endDay.get(Calendar.DAY_OF_WEEK)) {
+			case Calendar.MONDAY:
+				endDay.add(Calendar.DAY_OF_YEAR, 6);
+				break;
+			case Calendar.TUESDAY:
+				endDay.add(Calendar.DAY_OF_YEAR, 5);
+				break;
+			case Calendar.WEDNESDAY:
+				endDay.add(Calendar.DAY_OF_YEAR, 4);
+				break;
+			case Calendar.THURSDAY:
+				endDay.add(Calendar.DAY_OF_YEAR, 3);
+				break;
+			case Calendar.FRIDAY:
+				endDay.add(Calendar.DAY_OF_YEAR, 2);
+				break;
+			case Calendar.SATURDAY:
+				endDay.add(Calendar.DAY_OF_YEAR, 1);
+				break;
+			case Calendar.SUNDAY:
+				endDay.add(Calendar.DAY_OF_YEAR, 0);
+				break;
+			default:
+				Log.e("ERROR", "EventManagement.java 566 line");
+				break;
+			}
 			return EventsProvider.mOpenHelper.getReadableDatabase().rawQuery(
 					"SELECT events.event_id, events._id, color, "
 							+ "event_display_color, is_all_day, time_start_utc, time_end_utc, icon, title, status, is_owner, day, day_time_start, day_time_end "
