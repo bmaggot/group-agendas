@@ -536,7 +536,6 @@ public class EventManagement {
 		}
 
 		if (eventTimeMode == TM_EVENTS_ON_GIVEN_MONTH) {
-			// TODO: make sure GA events are displayed on other month frames
 			Calendar startDay = (Calendar) date.clone();
 			startDay.set(Calendar.DAY_OF_MONTH, startDay.getMinimum(Calendar.DAY_OF_MONTH));
 			switch (startDay.get(Calendar.DAY_OF_WEEK)) {
