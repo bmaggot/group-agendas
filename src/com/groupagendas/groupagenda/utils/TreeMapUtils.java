@@ -70,11 +70,11 @@ public class TreeMapUtils {
 				String dayStr = formatter.format(event_end.getTime());
 				Calendar eventTmpEnd = Utils.stringToCalendar(context, dayStr + " 00:00:00", SERVER_TIMESTAMP_FORMAT);
 				if (eventTmpEnd.after(eventDay) && event_end.after(eventTmpEnd)) {
-					Log.e("Not", "Fucked sortEvents");
+//					Log.e("Not", "Fucked sortEvents");
 					dayStr = formatter.format(event_start.getTime());
 					putValueIntoTreeMap(tm, dayStr, event);
 				} else {
-					Log.d("Not v2", "sortEvents: eventDay = " + eventDay);
+//					Log.d("Not v2", "sortEvents: eventDay = " + eventDay);
 				}
 			}
 		}
@@ -197,13 +197,13 @@ public class TreeMapUtils {
 			String dayStr = formatter.format(event_end.getTime());
 			Calendar eventTmpEnd = Utils.stringToCalendar(context, dayStr + " 00:00:00", SERVER_TIMESTAMP_FORMAT);
 			if (eventTmpEnd.after(eventDay) && event_end.after(eventTmpEnd)) {
-				Log.e("Not", "Fucked putNewEventPollsIntoTreeMap");
+//				Log.e("Not", "Fucked putNewEventPollsIntoTreeMap");
 				dayStr = formatter.format(event_start.getTime());
 				if (event_start.getTimeInMillis() > nowCal.getTimeInMillis()) {
 					tm = putValueIntoTreeMap(tm, dayStr, event);
 				}
 			} else {
-				Log.d("Not v2", "putNewEventPollsIntoTreeMap: eventDay = " + eventDay);
+//				Log.d("Not v2", "putNewEventPollsIntoTreeMap: eventDay = " + eventDay);
 			}
 		}
 	}
@@ -242,11 +242,11 @@ public class TreeMapUtils {
 			String dayStr = formatter.format(event_end.getTime());
 			Calendar eventTmpEnd = Utils.stringToCalendar(context, dayStr + " 00:00:00", SERVER_TIMESTAMP_FORMAT);
 			if (eventTmpEnd.after(eventDay) && event_end.after(eventTmpEnd)) {
-				Log.e("Not", "Fucked putNativeEventsIntoTreeMap");
+//				Log.e("Not", "Fucked putNativeEventsIntoTreeMap");
 				dayStr = formatter.format(event_start.getTime());
 				tm = putValueIntoTreeMap(tm, dayStr, event);
 			} else {
-				Log.d("Not v2", "putNativeEventsIntoTreeMap: eventDay = " + eventDay);
+//				Log.d("Not v2", "putNativeEventsIntoTreeMap: eventDay = " + eventDay);
 			}
 		}
 	}
