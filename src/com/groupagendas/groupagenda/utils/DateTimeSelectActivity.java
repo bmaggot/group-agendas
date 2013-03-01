@@ -172,6 +172,14 @@ public class DateTimeSelectActivity extends Activity implements OnClickListener 
 	@Override
 	public void onResume() {
 		super.onResume();
+		
+		if (allDayToggleButton.isChecked()) {
+			startTimeView.setVisibility(View.INVISIBLE);
+			endTimeView.setVisibility(View.INVISIBLE);
+		} else {
+			startTimeView.setVisibility(View.VISIBLE);
+			endTimeView.setVisibility(View.VISIBLE);
+		}
 	}
 
 	@Override
@@ -184,6 +192,16 @@ public class DateTimeSelectActivity extends Activity implements OnClickListener 
 
 		final List<StaticTimezone> countriesList = TimezoneUtils.getTimezones(this);
 		switch (id) {
+		case R.id.allDayToggleButton:
+			if (allDayToggleButton.isChecked()) {
+				startTimeView.setVisibility(View.INVISIBLE);
+				endTimeView.setVisibility(View.INVISIBLE);
+			} else {
+				startTimeView.setVisibility(View.VISIBLE);
+				endTimeView.setVisibility(View.VISIBLE);
+			}
+			break;
+			
 		case R.id.startDateView:
 			this.setTargets(startCalendar, startDateView, startTimeView);
 			dateTimeDialog = new StartEndDateTimeSelectDialog(this, StartEndDateTimeSelectDialog.SECTION_DATE, targetCalendar, mDateSetListener);
