@@ -871,6 +871,8 @@ public class AccountActivity extends Activity implements OnClickListener {
 			mAccount.setImage(true);
 			mAccount.setRemove_image(0);
 		}
+		
+		if (notifyByEmail.isChecked())
 
 		new EditAccountTask().execute();
 		
@@ -948,7 +950,7 @@ public class AccountActivity extends Activity implements OnClickListener {
 
 	private void updateBirthdate() {
 //		mMonth++;
-		birthdateView.setText(new StringBuilder().append(mYear).append("-").append(mMonth < 10 ? "0" + (mMonth + 1) : (mMonth + 1)).append("-").append(mDay < 10 ? "0" + mDay : mDay));
+		birthdateView.setText(new StringBuilder().append(mYear).append("-").append(mMonth < 9 ? "0" + (mMonth + 1) : (mMonth + 1)).append("-").append(mDay < 10 ? "0" + mDay : mDay));
 	}
 
 	class EditAccountTask extends AsyncTask<Void, Boolean, Boolean> {
