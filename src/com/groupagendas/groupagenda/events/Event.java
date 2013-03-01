@@ -5,7 +5,9 @@ import java.util.ArrayList;
 import java.util.Calendar;
 
 import android.content.Context;
+import android.util.Log;
 
+import com.groupagendas.groupagenda.account.Account;
 import com.groupagendas.groupagenda.data.DataManagement;
 import com.groupagendas.groupagenda.interfaces.Colored;
 import com.groupagendas.groupagenda.templates.Template;
@@ -980,16 +982,66 @@ public Template toTemplate(Context context) {
 	
 	return template;	
 }
-public String getEvent_day_start() {
-	return event_day_start;
-}
-public void setEvent_day_start(String event_day_start) {
-	this.event_day_start = event_day_start;
-}
-public String getEvent_day_end() {
-	return event_day_end;
-}
-public void setEvent_day_end(String event_day_end) {
-	this.event_day_end = event_day_end;
-}
+
+	public String getEvent_day_start(Context context) {
+		if (new Account(context).getSetting_ampm() == 1 && event_day_start != null && event_day_start.matches("[0-9]*:[0-9]* [P,A]M")) {
+			return event_day_start;
+		} else if (new Account(context).getSetting_ampm() == 0 && event_day_start != null && event_day_start.matches("[0-9]*:[0-9]*")) {
+			return event_day_start;
+		} else {
+			return correctTimeForAMPM(context, event_day_start);
+		}
+	}
+
+	public void setEvent_day_start(String event_day_start) {
+		this.event_day_start = event_day_start;
+	}
+
+	public String getEvent_day_end(Context context) {
+		if (new Account(context).getSetting_ampm() == 1 && event_day_end != null && event_day_end.matches("[0-9]*:[0-9]* [P,A]M")) {
+			return event_day_end;
+		} else if (new Account(context).getSetting_ampm() == 0 && event_day_end != null && event_day_end.matches("[0-9]*:[0-9]*")) {
+			return event_day_end;
+		} else {
+			return correctTimeForAMPM(context, event_day_end);
+		}
+	}
+
+	public void setEvent_day_end(String event_day_end) {
+		this.event_day_end = event_day_end;
+	}
+	
+	public String correctTimeForAMPM(Context context, String time) {
+		if (time != null && !time.equals(EventsProvider.EMetaData.EventsIndexesMetaData.NOT_TODAY)) {
+			String[] times = time.split(":");
+			if (new Account(context).getSetting_ampm() == 1) {
+				if (Integer.valueOf(times[0]) >= 12) {
+					if(Integer.valueOf(times[0]) == 12){
+						return times[0] + ":" + times[1] + " PM";
+					} else {
+						return Integer.valueOf(times[0]) - 12 + ":" + times[1] + " PM";
+					}
+				} else {
+					if(Integer.valueOf(times[0]) == 00){
+						return "12:" + times[1] + " AM";
+					} else {
+						return times[0] + ":" + times[1] + " AM";
+					}
+				}
+			} else {
+				if (times[1].matches("[0-9]* PM")) {
+					if (Integer.valueOf(times[0]) != 12)
+						times[0] = String.valueOf(Integer.valueOf(times[0]) + 12);
+					times[1] = times[1].substring(0, times[1].lastIndexOf('P'));
+				} else if (times[1].matches("[0-9]* AM")) {
+					if (Integer.valueOf(times[0]) == 12)
+						times[0] = "00";
+					times[1] = times[1].substring(0, times[1].lastIndexOf('A'));
+				}
+				return times[0] + ":" + times[1];
+			}
+		} else {
+			return time;
+		}
+	}
 }
