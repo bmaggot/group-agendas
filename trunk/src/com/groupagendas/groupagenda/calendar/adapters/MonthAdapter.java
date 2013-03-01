@@ -132,13 +132,13 @@ public class MonthAdapter extends AbstractAdapter<Event> {
 					}
 				}
 			} else {
-				if (event.getEvent_day_start() != null
-						&& event.getEvent_day_start().equals(EventsProvider.EMetaData.EventsIndexesMetaData.NOT_TODAY)) {
+				if (event.getEvent_day_start(context) != null
+						&& event.getEvent_day_start(context).equals(EventsProvider.EMetaData.EventsIndexesMetaData.NOT_TODAY)) {
 					isYesterday = true;
 				}
 
-				if (event.getEvent_day_end() != null
-						&& event.getEvent_day_end().equals(EventsProvider.EMetaData.EventsIndexesMetaData.NOT_TODAY)) {
+				if (event.getEvent_day_end(getContext()) != null
+						&& event.getEvent_day_end(getContext()).equals(EventsProvider.EMetaData.EventsIndexesMetaData.NOT_TODAY)) {
 					isTomorrow = true;
 				}
 			}
@@ -158,7 +158,7 @@ public class MonthAdapter extends AbstractAdapter<Event> {
 					if (event.getType().equalsIgnoreCase("v") || event.isNative()) {
 						startTime.setText(timeFormat.format(event.getStartCalendar().getTime()));
 					} else {
-						startTime.setText(event.getEvent_day_start());
+						startTime.setText(event.getEvent_day_start(context));
 					}
 				}
 				
@@ -170,7 +170,7 @@ public class MonthAdapter extends AbstractAdapter<Event> {
 					if (event.getType().equalsIgnoreCase("v") || event.isNative()) {
 						endTime.setText(timeFormat.format(event.getEndCalendar().getTime()));
 					} else {
-						endTime.setText(event.getEvent_day_end());
+						endTime.setText(event.getEvent_day_end(getContext()));
 					}
 				}
 			}

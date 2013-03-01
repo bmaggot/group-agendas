@@ -96,7 +96,7 @@ public class EventsAdapter extends BaseAdapter implements Filterable{
 		if (event.isBirthday()) {
 			temp = event.getEvents_day();
 		} else {
-			temp = event.getEvents_day() +" "+ event.getEvent_day_start();
+			temp = event.getEvents_day() +" "+ event.getEvent_day_start(mContext);
 		}
 		holder.date.setText(temp);
 		// type

@@ -201,13 +201,13 @@ public class ListnSearchView extends LinearLayout {
 							}
 						}
 					} else {
-						if (event.getEvent_day_start() != null
-								&& event.getEvent_day_start().equals(EventsProvider.EMetaData.EventsIndexesMetaData.NOT_TODAY)) {
+						if (event.getEvent_day_start(getContext()) != null
+								&& event.getEvent_day_start(getContext()).equals(EventsProvider.EMetaData.EventsIndexesMetaData.NOT_TODAY)) {
 							isYesterday = true;
 						}
 
-						if (event.getEvent_day_end() != null
-								&& event.getEvent_day_end().equals(EventsProvider.EMetaData.EventsIndexesMetaData.NOT_TODAY)) {
+						if (event.getEvent_day_end(getContext()) != null
+								&& event.getEvent_day_end(getContext()).equals(EventsProvider.EMetaData.EventsIndexesMetaData.NOT_TODAY)) {
 							isTomorrow = true;
 						}
 					}
@@ -224,7 +224,7 @@ public class ListnSearchView extends LinearLayout {
 							if (event.getType().equalsIgnoreCase("v") || event.isNative()) {
 								timeStartText.setText(df.format(event.getStartCalendar().getTime()));
 							} else {
-								timeStartText.setText(event.getEvent_day_start());
+								timeStartText.setText(event.getEvent_day_start(getContext()));
 							}
 						}
 						
@@ -236,7 +236,7 @@ public class ListnSearchView extends LinearLayout {
 							if (event.getType().equalsIgnoreCase("v") || event.isNative()) {
 								timeEndText.setText(df.format(event.getEndCalendar().getTime()));
 							} else {
-								timeEndText.setText(event.getEvent_day_end());
+								timeEndText.setText(event.getEvent_day_end(getContext()));
 							}
 						}
 					}
