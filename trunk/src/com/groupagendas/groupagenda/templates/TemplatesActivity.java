@@ -90,8 +90,18 @@ public class TemplatesActivity extends ListActivity implements OnCheckedChangeLi
 
 	@Override
 	public void onCheckedChanged(RadioGroup group, int checkedId) {
+		if (content == null) {
+			content = new ArrayList<Template>();
+		}
+		
 		if (adapter != null) {
 			adapter.notifyDataSetInvalidated();
+		} else {
+			if (content == null) {
+				content = new ArrayList<Template>();
+				adapter.setList(content);
+			}
+			adapter = new TemplatesAdapter(TemplatesActivity.this, content);
 		}
 		
 		switch (checkedId) {
@@ -101,10 +111,17 @@ public class TemplatesActivity extends ListActivity implements OnCheckedChangeLi
 			findViewById(R.id.clear_button).setVisibility(View.VISIBLE);
 			((Button) findViewById(R.id.clear_button)).setText(R.string.edit);
 			
-			content = DataManagement.getTemplateProjectionsFromLocalDb(TemplatesActivity.this);
-			adapter = new TemplatesAdapter(TemplatesActivity.this, content);
+			ArrayList<Template> nuContent = DataManagement.getTemplateProjectionsFromLocalDb(TemplatesActivity.this);
+			if (content == null) {
+				content = new ArrayList<Template>();
+				adapter.setList(content);
+			}
 			
+			content.clear();
+			content.addAll(nuContent);
 			list.setAdapter(adapter);
+			adapter.notifyDataSetChanged();
+			
 			break;
 			
 		case R.id.sectionButton2:
@@ -232,9 +249,9 @@ public class TemplatesActivity extends ListActivity implements OnCheckedChangeLi
 				if (les.clearItems()) {
 					content.clear();
 					adapter.notifyDataSetChanged();
-					Toast.makeText(TemplatesActivity.this, getString(R.string.templates_were_cleared), Toast.LENGTH_SHORT);
+					Toast.makeText(TemplatesActivity.this, getString(R.string.templates_were_cleared), Toast.LENGTH_SHORT).show();
 				} else {
-					Toast.makeText(TemplatesActivity.this, getString(R.string.templates_werent_cleared), Toast.LENGTH_SHORT);
+					Toast.makeText(TemplatesActivity.this, getString(R.string.templates_werent_cleared), Toast.LENGTH_SHORT).show();
 				}
 			}
 			break;
@@ -275,7 +292,7 @@ public class TemplatesActivity extends ListActivity implements OnCheckedChangeLi
 
 		@Override
 		protected void onPreExecute() {
-			Toast.makeText(TemplatesActivity.this, R.string.deleting_template, Toast.LENGTH_SHORT);
+			Toast.makeText(TemplatesActivity.this, R.string.deleting_template, Toast.LENGTH_SHORT).show();
 			super.onPreExecute();
 		}
 		
