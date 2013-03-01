@@ -1533,11 +1533,11 @@ public class DataManagement implements AddressMetaData, AutoColorIconMetaData {
 						JSONObject object = new JSONObject(resp);
 
 						if (object.getBoolean(SUCCESS)) {
-							Log.e("Create template error", object.getJSONObject("error").getString("reason"));
-							return 0;
-						} else {
 							response = object.optInt("template_id");
 							return response;
+						} else {
+							Log.e("Create template error", object.getJSONObject("error").getString("reason"));
+							return 0;
 						}
 					}
 				} else {
@@ -1726,13 +1726,13 @@ public class DataManagement implements AddressMetaData, AutoColorIconMetaData {
 			TemplatesProvider.mOpenHelper = new TemplatesProvider.DatabaseHelper(context);
 		
 		Cursor result = TemplatesProvider.mOpenHelper.getReadableDatabase().rawQuery("SELECT "
-			+ TemplatesProvider.TMetaData.TemplatesMetaData._ID + ", "
-			+ TemplatesProvider.TMetaData.TemplatesMetaData.T_ID + ", "
-			+ TemplatesProvider.TMetaData.TemplatesMetaData.T_TITLE + ", "
-			+ TemplatesProvider.TMetaData.TemplatesMetaData.COLOR + " "
-			+ "FROM "
-			+ TemplatesProvider.TMetaData.TEMPLATES_TABLE
-			, null
+				+ TemplatesProvider.TMetaData.TemplatesMetaData._ID + ", "
+				+ TemplatesProvider.TMetaData.TemplatesMetaData.T_ID + ", "
+				+ TemplatesProvider.TMetaData.TemplatesMetaData.T_TITLE + ", "
+				+ TemplatesProvider.TMetaData.TemplatesMetaData.COLOR + " "
+				+ "FROM "
+				+ TemplatesProvider.TMetaData.TEMPLATES_TABLE
+				, null
 		);
 		
 		ArrayList<Template> list = new ArrayList<Template>(result.getCount());
