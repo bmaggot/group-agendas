@@ -253,7 +253,7 @@ public class EventEditActivity extends EventActivity implements AddressMetaData 
 		if (((event_internal_id > 0) && (!dataLoaded)) || intent.getBooleanExtra(copy, false)) {
 //		if ((event_internal_id > 0) && (!dataLoaded)) {
 			new GetEventTask().execute(new Long[] { event_internal_id, event_external_id });
-		} else {
+		} else if (dataLoaded) {
 			if (event.getInvited().size() > 0) {
 				invitationResponseLine.setVisibility(View.VISIBLE);
 				inviteEditButton.setVisibility(View.VISIBLE);
@@ -264,8 +264,14 @@ public class EventEditActivity extends EventActivity implements AddressMetaData 
 			List<StaticTimezone> countriesList = TimezoneUtils.getTimezones(this);
 			countryView.setText(countriesList.get(timezoneInUse).country2);
 			timezoneView.setText(countriesList.get(timezoneInUse).altname);
-			startView.setText(dtUtils.formatDateTime(startCalendar.getTime()));
-			endView.setText(dtUtils.formatDateTime(endCalendar.getTime()));
+			if (event.is_all_day()) {
+				startView.setText(dtUtils.formatDate(startCalendar.getTime()));
+				endView.setText(dtUtils.formatDate(endCalendar.getTime()));
+			} else {
+				startView.setText(dtUtils.formatDateTime(startCalendar.getTime()));
+				endView.setText(dtUtils.formatDateTime(endCalendar.getTime()));
+			}
+				
 			enableDisableButtons(changesMade);
 			if (AddressBookActivity.selectedAddressId > 0) {
 				String where = AddressTable._ID + " = " + AddressBookActivity.selectedAddressId;
@@ -276,6 +282,9 @@ public class EventEditActivity extends EventActivity implements AddressMetaData 
 				countryView.setText(address.getCountry_name());
 				timezoneView.setText(address.getTimezone());
 			}
+		} else {
+			Toast.makeText(EventEditActivity.this, R.string.error_failed_to_fetch_event, Toast.LENGTH_SHORT).show();
+			EventEditActivity.this.finish();
 		}
 	}
 
@@ -949,6 +958,7 @@ public class EventEditActivity extends EventActivity implements AddressMetaData 
 				topText.setText(getResources().getStringArray(R.array.type_labels)[1]);
 			} else if (tmpTopText.equalsIgnoreCase("p")) {
 				topText.setText(getResources().getStringArray(R.array.type_labels)[0]);
+				chatMessengerButton.setVisibility(View.GONE);
 			} else if (tmpTopText.equalsIgnoreCase("r")) {
 				topText.setText(getResources().getStringArray(R.array.type_labels)[2]);
 			} else if (tmpTopText.equalsIgnoreCase("o")) {
@@ -1393,7 +1403,7 @@ public class EventEditActivity extends EventActivity implements AddressMetaData 
 					if (EventManagement.inviteExtraContacts(EventEditActivity.this, StringValueUtils.valueOf(event.getEvent_id()), selectedContacts)) {
 						return true;
 					} else {
-						errorStr = "Invite wasn't successfull.";
+						errorStr = getString(R.string.error_only_creator_can_add_invited);
 						return false;
 					}
 				} else {
