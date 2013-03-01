@@ -333,7 +333,8 @@
             android:layout_gravity="center_vertical"
             android:padding="0dp"
             android:textOn=""
-            android:textOff="" />
+            android:textOff=""
+            android:onClick="onClick" />
     </LinearLayout>
 
 </LinearLayout>
