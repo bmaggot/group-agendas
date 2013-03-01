@@ -100,6 +100,7 @@ public class NewEventActivity extends EventActivity implements AddressMetaData {
 		// icon
 		final String[] iconsValues = getResources().getStringArray(R.array.icons_values);
 		iconView = (ImageView) findViewById(R.id.iconView);
+		iconView.setImageDrawable(null);
 		iconView.setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View v) {
@@ -130,6 +131,7 @@ public class NewEventActivity extends EventActivity implements AddressMetaData {
 
 		// color
 		final String[] colorsValues = getResources().getStringArray(R.array.colors_values);
+		selectedColor = Event.DEFAULT_COLOR;
 		colorView = (ImageView) findViewById(R.id.colorView);
 		colorView.setBackgroundDrawable(new BitmapDrawable(DrawingUtils.getColoredRoundSquare(this, COLOURED_BUBBLE_SIZE, 5, selectedColor, false)));
 
@@ -602,8 +604,14 @@ public class NewEventActivity extends EventActivity implements AddressMetaData {
 			AddressBookActivity.selectedAddressId = 0;
 		}
 		
-		startView.setText(dtUtils.formatDateTime(startCalendar.getTime()));
-		endView.setText(dtUtils.formatDateTime(endCalendar.getTime()));
+		if (event.is_all_day()) {
+			startView.setText(dtUtils.formatDate(startCalendar.getTime()));
+			endView.setText(dtUtils.formatDate(endCalendar.getTime()));
+		} else {
+			startView.setText(dtUtils.formatDateTime(startCalendar.getTime()));
+			endView.setText(dtUtils.formatDateTime(endCalendar.getTime()));
+		}
+		
 		countryView.setText(countriesList.get(timezoneInUse).country2);
 		timezoneView.setText(countriesList.get(timezoneInUse).altname);
 		event.setCountry(countriesList.get(timezoneInUse).country_code);
@@ -926,6 +934,8 @@ public class NewEventActivity extends EventActivity implements AddressMetaData {
 				template.setTake_with_you(event.getTake_with_you());
 				template.setCost(event.getCost());
 				
+				template.setInvited(newInvites);
+				
 				template.setCreated_millis_utc(Calendar.getInstance().getTimeInMillis());
 				return DataManagement.createTemplate(NewEventActivity.this, template);
 			} else {
@@ -1075,9 +1085,15 @@ public class NewEventActivity extends EventActivity implements AddressMetaData {
 				changesMade = true;
 				saveButton.setEnabled(changesMade);
 				if(cityView.getText().length() > 0 || streetView.getText().length() > 0 || zipView.getText().length() > 0){
-					//save_address.setVisibility(View.VISIBLE);
+					save_address.setVisibility(View.VISIBLE);
 				}
 			}
 		}
+	}
+	
+	@Override
+	public void onDestroy() {
+		event.setIcon(Event.DEFAULT_ICON);
+		super.onDestroy();
 	}
 }
