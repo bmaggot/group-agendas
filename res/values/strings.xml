@@ -377,5 +377,7 @@
 	<string name="on_the">On the</string>
 	<string name="deleting">Deleting…</string>
 	<string name="sync">Synchronizing with server..</string>
+	<string name="error_failed_to_fetch_event">Failed to loading event.</string>
+	<string name="error_only_creator_can_add_invited">Only creators can add new invites.</string>
 
 </resources>

@@ -299,5 +299,7 @@
     <string name="repeat_on">Repeat on</string>
     <string name="each">Each</string>
     <string name="on_the">On the</string>
+	<string name="error_failed_to_fetch_event">Failed to loading event.</string>
+	<string name="error_only_creator_can_add_invited">Only creators can add new invites.</string>
     
 </resources>
