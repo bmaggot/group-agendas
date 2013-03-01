@@ -150,7 +150,7 @@ public class NavbarActivity extends FragmentActivity {
 		}
 	}
 	
-	private static boolean VERBOSE_LOADING = true;
+	private static boolean VERBOSE_LOADING = false;
 	
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
