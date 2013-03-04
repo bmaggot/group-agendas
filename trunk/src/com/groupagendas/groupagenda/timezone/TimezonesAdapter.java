@@ -11,6 +11,7 @@ import android.widget.Filterable;
 import android.widget.TextView;
 
 import com.groupagendas.groupagenda.calendar.adapters.AbstractAdapter;
+import com.groupagendas.groupagenda.utils.TimezoneUtils;
 import com.groupagendas.groupagenda.utils.TimezoneUtils.StaticTimezone;
 
 public class TimezonesAdapter extends AbstractAdapter<StaticTimezone> implements Filterable {
@@ -53,6 +54,11 @@ public class TimezonesAdapter extends AbstractAdapter<StaticTimezone> implements
 		}
 
 		return convertView;
+	}
+	
+	public void updateList(String country_code) {
+		this.list = TimezoneUtils.getTimezonesByCc(getContext(), country_code);
+		notifyDataSetChanged();
 	}
 
 	@Override
