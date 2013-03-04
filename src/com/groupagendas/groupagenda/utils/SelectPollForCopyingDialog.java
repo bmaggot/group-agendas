@@ -21,6 +21,7 @@ public class SelectPollForCopyingDialog extends Dialog {
 		this.setContentView(R.layout.select_poll_for_copying_dialog_layout);
 		this.setTitle(R.string.select_poll_to_copy);
 		LinearLayout layout = (LinearLayout) findViewById(R.id.select_poll_for_copying);
+		layout.setPadding(0, 20, 0, 0);
 		for(final String string : dates_list){
 			Button button = new Button(context);
 			button.setText(string);
