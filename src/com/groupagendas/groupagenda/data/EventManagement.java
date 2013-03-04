@@ -2017,6 +2017,8 @@ public class EventManagement {
 			} else {
 				if (!editEvent(context, e)) {
 					int externalId = createEventInRemoteDb(context, e);
+					where = EventsProvider.EMetaData.EventsIndexesMetaData.EVENT_EXTERNAL_ID + "=" + e.getEvent_id();
+					context.getContentResolver().delete(EventsProvider.EMetaData.EventsIndexesMetaData.CONTENT_URI, where, null);
 					ContentValues values = new ContentValues();
 					values.put(EventsProvider.EMetaData.EventsMetaData.E_ID, externalId);
 					where = EventsProvider.EMetaData.EventsMetaData._ID + "=" + e.getInternalID();
