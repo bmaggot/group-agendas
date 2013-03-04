@@ -244,7 +244,7 @@ public class ListnSearchView extends LinearLayout {
 					eventTitle.setText(event.getTitle());
 					int circlePx = Math.round(15*getResources().getDisplayMetrics().density);
 					
-					bubble.setBackgroundDrawable(new BitmapDrawable(DrawingUtils.getCircleBitmap(getContext(), circlePx, circlePx, event.getColor(), true)));
+					bubble.setBackgroundDrawable(new BitmapDrawable(DrawingUtils.getCircleBitmap(getContext(), circlePx, circlePx, event.getDisplayColor(), true)));
 
 					ImageView icon = (ImageView) view.findViewById(R.id.listnsearch_entry_icon_placeholder);
 					
@@ -290,12 +290,13 @@ public class ListnSearchView extends LinearLayout {
 			String[] projection = {
 					EventsProvider.EMetaData.EventsMetaData._ID,
 					EventsProvider.EMetaData.EventsMetaData.E_ID,
-					EventsProvider.EMetaData.EventsMetaData.COLOR,
+//					EventsProvider.EMetaData.EventsMetaData.COLOR,
 					EventsProvider.EMetaData.EventsMetaData.TIME_START_UTC_MILLISECONDS,
 					EventsProvider.EMetaData.EventsMetaData.TIME_END_UTC_MILLISECONDS,
 					EventsProvider.EMetaData.EventsMetaData.ICON,
 					EventsProvider.EMetaData.EventsMetaData.TITLE,
-					EventsProvider.EMetaData.EventsMetaData.IS_ALL_DAY };
+					EventsProvider.EMetaData.EventsMetaData.IS_ALL_DAY,
+					EventsProvider.EMetaData.EventsMetaData.EVENT_DISPLAY_COLOR};
 			
 			Cursor result = EventManagement.createEventProjectionByDateFromLocalDb(context, projection, date, 0, EventManagement.TM_EVENTS_FROM_GIVEN_DATE, null, true);
 			ArrayList<Event> list = new ArrayList<Event>(result.getCount());
@@ -305,7 +306,7 @@ public class ListnSearchView extends LinearLayout {
 				eventProjection.setEvent_id(result.getInt(result.getColumnIndexOrThrow(EventsProvider.EMetaData.EventsMetaData.E_ID)));
 				eventProjection.setTitle(result.getString(result.getColumnIndexOrThrow(EventsProvider.EMetaData.EventsMetaData.TITLE)));
 				eventProjection.setIcon(result.getString(result.getColumnIndexOrThrow(EventsProvider.EMetaData.EventsMetaData.ICON)));
-				eventProjection.setColor(result.getString(result.getColumnIndexOrThrow(EventsProvider.EMetaData.EventsMetaData.COLOR)));
+//				eventProjection.setColor(result.getString(result.getColumnIndexOrThrow(EventsProvider.EMetaData.EventsMetaData.COLOR)));
 				if (result.getColumnIndex(EventsProvider.EMetaData.EventsIndexesMetaData.DAY) > 0) {
 					eventProjection.setEvents_day(result.getString(result
 							.getColumnIndexOrThrow(EventsProvider.EMetaData.EventsIndexesMetaData.DAY)));
@@ -319,6 +320,8 @@ public class ListnSearchView extends LinearLayout {
 							.getColumnIndexOrThrow(EventsProvider.EMetaData.EventsIndexesMetaData.DAY_TIME_END)));
 				}
 				eventProjection.setIs_all_day(result.getInt(result.getColumnIndexOrThrow(EventsProvider.EMetaData.EventsMetaData.IS_ALL_DAY)) == 1);
+				eventProjection.setDisplayColor(result.getString(result
+							.getColumnIndexOrThrow(EventsProvider.EMetaData.EventsMetaData.EVENT_DISPLAY_COLOR)));
 				
 				list.add(eventProjection);
 			}
