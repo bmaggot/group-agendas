@@ -1093,6 +1093,7 @@ public class NewEventActivity extends EventActivity implements AddressMetaData {
 	
 	@Override
 	public void onDestroy() {
+		selectedIcon = Event.DEFAULT_ICON;
 		event.setIcon(Event.DEFAULT_ICON);
 		super.onDestroy();
 	}
