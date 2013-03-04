@@ -607,6 +607,8 @@ public class EventActivity extends Activity {
 		if (template.getEndCalendar() != null) {
 			endCalendar = template.getEndCalendar();
 		}
+		event.setIs_all_day(template.is_all_day());
+		
 		EventActivity.timezoneView.setText(template.getTimezone());
 		
 		EventActivity.descView.setText(template.getDescription_());

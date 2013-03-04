@@ -58,7 +58,7 @@ public class LatestEventStructure {
 	 * 			false - if overwriting was unsuccessful.
 	 */
 	public boolean setPresentItemCount(int amount) {
-		if ((amount <= MAX_ITEM_AMOUNT) && (amount > 0)) {
+		if ((amount <= MAX_ITEM_AMOUNT) && (amount >= 0)) {
 			editor.putInt(LatestEventMetaData.PRESENT_ITEM_AMOUNT_KEY, amount);
 		}
 		

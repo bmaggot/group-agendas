@@ -126,6 +126,12 @@ public class TemplatesActivity extends ListActivity implements OnCheckedChangeLi
 			
 		case R.id.sectionButton2:
 			activity_mode = ActivityPrefs.ACTIVITY_MODE_RECENT;
+			
+			if (edit_mode == ActivityPrefs.EDIT_MODE_ON) {
+				edit_mode = ActivityPrefs.EDIT_MODE_OFF;
+				adapter.toggleEdit(edit_mode);
+			}
+			
 			((TextView) findViewById(R.id.listTitle)).setText(R.string.recent);
 			findViewById(R.id.clear_button).setVisibility(View.VISIBLE);
 			((Button) findViewById(R.id.clear_button)).setText(R.string.clear);
@@ -193,17 +199,13 @@ public class TemplatesActivity extends ListActivity implements OnCheckedChangeLi
 				
 				Cursor c = EventsProvider.mOpenHelper.getReadableDatabase().rawQuery(query.toString(), null);
 				
-				if (c.moveToFirst()) {
-					while (!c.isAfterLast()) {
-						Template temp = new Template();
-						temp.setInternalID(c.getLong(c.getColumnIndex(TemplatesMetaData._ID)));
-						temp.setTemplate_title(c.getString(c.getColumnIndex(EventsMetaData.TITLE)));
-						temp.setColor(c.getString(c.getColumnIndex(EventsMetaData.COLOR)));
-						
-						eventStack.add(temp);
-						
-						c.moveToNext();
-					}
+				while (c.moveToNext()) {
+					Template temp = new Template();
+					temp.setInternalID(c.getLong(c.getColumnIndex(TemplatesMetaData._ID)));
+					temp.setTemplate_title(c.getString(c.getColumnIndex(EventsMetaData.TITLE)));
+					temp.setColor(c.getString(c.getColumnIndex(EventsMetaData.COLOR)));
+					
+					eventStack.add(temp);
 				}
 				
 				c.close();
