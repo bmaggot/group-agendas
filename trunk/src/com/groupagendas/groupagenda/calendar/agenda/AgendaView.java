@@ -343,7 +343,7 @@ public class AgendaView extends AbstractCalendarView {
 		protected void onPostExecute(Void result) {
 			Calendar tmp = (Calendar) shownDate.clone();
 			for (AgendaFrame frame : daysList) {
-				frame.setEventList(TreeMapUtils.getEventsFromTreemap(tmp, sortedEvents));
+				frame.setEventList(TreeMapUtils.getEventsFromTreemap(getContext(), tmp, sortedEvents, false));
 				tmp.add(Calendar.DATE, 1);
 				frame.UpdateList();
 			}

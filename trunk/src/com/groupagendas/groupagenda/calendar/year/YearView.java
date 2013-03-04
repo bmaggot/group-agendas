@@ -183,7 +183,7 @@ public class YearView extends AbstractCalendarView {
 		Calendar tmp = (Calendar) selectedDate.clone();
 		Utils.setCalendarToFirstDayOfYear(tmp);
 		for (int i = 0; i < months.length; i++){
-			months[i].setNewDate((Calendar) tmp.clone(), sortedEvents);
+			months[i].setNewDate(context, (Calendar) tmp.clone(), sortedEvents);
 			tmp.add(Calendar.MONTH, 1);
 		}
 		selectDate(selectedDate, null);

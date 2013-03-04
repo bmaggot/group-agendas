@@ -106,7 +106,7 @@ public class MonthAdapter extends AbstractAdapter<Event> {
 				Calendar date = Utils.stringToCalendar(context, dayStr + " 00:00:00", SERVER_TIMESTAMP_FORMAT);
 				if (sortedEvents != null) {
 					date.add(Calendar.DAY_OF_YEAR, -1);
-					events = TreeMapUtils.getEventsFromTreemap(date, sortedEvents);
+					events = TreeMapUtils.getEventsFromTreemap(getContext(), date, sortedEvents, false);
 					if (events != null) {
 						for (Event e : events) {
 							if (event.getEvent_id() == e.getEvent_id() && event.getTitle().equals(e.getTitle())
@@ -119,7 +119,7 @@ public class MonthAdapter extends AbstractAdapter<Event> {
 					}
 
 					date.add(Calendar.DAY_OF_YEAR, 2);
-					events = TreeMapUtils.getEventsFromTreemap(date, sortedEvents);
+					events = TreeMapUtils.getEventsFromTreemap(getContext(), date, sortedEvents, false);
 					if (events != null) {
 						for (Event e : events) {
 							if (event.getEvent_id() == e.getEvent_id() && event.getTitle().equals(e.getTitle())

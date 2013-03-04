@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.TreeMap;
 
+import android.content.Context;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnTouchListener;
@@ -46,18 +47,18 @@ public class MonthInstance implements OnTouchListener{
 		Utils.setCalendarToFirstDayOfWeek(firstShownDate);
 	}
 
-	public void setNewDate(Calendar date, TreeMap<String, ArrayList<Event>> tm){
+	public void setNewDate(Context context, Calendar date, TreeMap<String, ArrayList<Event>> tm){
 		this.date = date;
 		Calendar tmp = Calendar.getInstance();
 		this.todayThisMonth = (tmp.get(Calendar.MONTH) == date.get(Calendar.MONTH) 
 				&& tmp.get(Calendar.YEAR) == date.get(Calendar.YEAR)); 
 		setFirstShownDate();
-		refresh(tm);
+		refresh(context, tm);
 	}
 	
-	private void refresh(TreeMap<String, ArrayList<Event>> tm) {
+	private void refresh(Context context, TreeMap<String, ArrayList<Event>> tm) {
 		title.setText(monthNames[date.get(Calendar.MONTH)]);
-		refreshDayCells(tm);
+		refreshDayCells(context, tm);
 		refreshWeekNumberCells();
 		refreshWeekEndCells();
 		if (todayThisMonth) markTodayCell();
@@ -108,7 +109,7 @@ public class MonthInstance implements OnTouchListener{
 	}
 	
 	
-	private void refreshDayCells(TreeMap<String, ArrayList<Event>> tm) {
+	private void refreshDayCells(Context context, TreeMap<String, ArrayList<Event>> tm) {
 		
 		Calendar tmp = (Calendar) date.clone();		
 		//set first few days invisible
@@ -126,7 +127,7 @@ public class MonthInstance implements OnTouchListener{
 			dayCell = (YearViewMonthInnerCell) ((LinearLayout)daysTable.getChildAt(0)).getChildAt(j);
 			dayCell.setDayNum(StringValueUtils.valueOf(day));
 			dayCell.setState(MonthCellState.DEFAULT);
-			dayCell.setHasEvents(!TreeMapUtils.getEventsFromTreemap(tmp, tm).isEmpty() && SHOW_BUBBLES);
+			dayCell.setHasEvents(!TreeMapUtils.getEventsFromTreemap(context, tmp, tm, false).isEmpty() && SHOW_BUBBLES);
 			tmp.add(Calendar.DATE, 1);
 			day++;
 		}
@@ -138,7 +139,7 @@ public class MonthInstance implements OnTouchListener{
 							.getChildAt(i)).getChildAt(j);
 					dayCell.setDayNum(StringValueUtils.valueOf(day));
 					dayCell.setState(MonthCellState.DEFAULT);
-					dayCell.setHasEvents(!TreeMapUtils.getEventsFromTreemap(tmp, tm).isEmpty() && SHOW_BUBBLES);
+					dayCell.setHasEvents(!TreeMapUtils.getEventsFromTreemap(context, tmp, tm, false).isEmpty() && SHOW_BUBBLES);
 					day++;
 					tmp.add(Calendar.DATE, 1);
 					if (day > date.getActualMaximum(Calendar.DAY_OF_MONTH))
