@@ -11,6 +11,7 @@
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:minLines="5"
+        android:layout_margin="10dp"
         android:textColor="@color/black" />
     
     <LinearLayout android:id="@+id/contact_import_button_phone"
