@@ -164,7 +164,7 @@ public class ChatManagement {
 	public static ChatMessageObject getLastMessageForEventFromLocalDb(Context context, int eventId) {
 		ChatMessageObject chatMessageObject = new ChatMessageObject();
 		String selection = ChatProvider.CMMetaData.ChatMetaData.E_ID + "=" + eventId + " AND "
-				+ ChatProvider.CMMetaData.ChatMetaData.DELETED + "=0";
+				+ ChatProvider.CMMetaData.ChatMetaData.DELETED + "='0'";
 		String sortOrder = ChatProvider.CMMetaData.ChatMetaData.CREATED + " DESC ";
 		Cursor cur = context.getContentResolver().query(ChatProvider.CMMetaData.ChatMetaData.CONTENT_URI, null, selection, null, sortOrder);
 		if (cur.moveToFirst()) {
@@ -271,11 +271,14 @@ public class ChatManagement {
 	 * @version 0.1
 	 */
 
-	public static boolean removeChatMessageInLocalDb(Context context, int messageId) {
+	public static boolean removeChatMessageInLocalDb(Context context, int messageId, boolean uploaded) {
 		boolean success = false;
 		try {
 			ContentValues cv = new ContentValues();
-			cv.put(ChatProvider.CMMetaData.ChatMetaData.DELETED, true);
+			cv.put(ChatProvider.CMMetaData.ChatMetaData.DELETED, 1);
+			if(!uploaded){
+				cv.put(ChatProvider.CMMetaData.ChatMetaData.SUCCESSFULLY_UPLOADED, 0);
+			}
 			context.getContentResolver().update(ChatProvider.CMMetaData.ChatMetaData.CONTENT_URI, cv,
 					ChatProvider.CMMetaData.ChatMetaData.M_ID + "=" + messageId, null);
 			success = true;
@@ -309,7 +312,9 @@ public class ChatManagement {
 	public static boolean removeChatMessage(Context context, int messageId) {
 		boolean succcess = false;
 		if (removeChatMessageFromRemoteDb(context, messageId)) {
-			succcess = removeChatMessageInLocalDb(context, messageId);
+			succcess = removeChatMessageInLocalDb(context, messageId, true);
+		} else {
+			succcess = removeChatMessageInLocalDb(context, messageId, false);
 		}
 		return succcess;
 	}
@@ -516,8 +521,16 @@ public class ChatManagement {
 	public static void uploadUnploaded(Context context, ArrayList<ChatMessageObject> messages) {
 		if (messages != null) {
 			for (ChatMessageObject message : messages) {
-				removeChatMessageFromLocalDb(context, message.getMessageId());
-				postChatMessage(message.getEventId(), message.getMessage(), context);
+				if(message.isDeleted()) {
+					if(removeChatMessage(context, message.getMessageId())){
+						
+					} else {
+						removeChatMessage(context, postChatMessage(message.getEventId(), message.getMessage(), context).getMessageId());
+					}
+				} else {
+					removeChatMessageFromLocalDb(context, message.getMessageId());
+					postChatMessage(message.getEventId(), message.getMessage(), context);
+				}
 			}
 		}
 	}
