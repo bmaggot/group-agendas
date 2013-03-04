@@ -463,7 +463,7 @@ public class EventEditActivity extends EventActivity implements AddressMetaData 
 
 				ListView diaList = (ListView) dia1.findViewById(R.id.dialog_list);
 				diaList.setAdapter(timezonesAdapter);
-				timezonesAdapter.notifyDataSetChanged();
+				timezonesAdapter.updateList(event.getCountry());
 
 				EditText searchView = (EditText) dia1.findViewById(R.id.dialog_search);
 
