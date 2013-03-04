@@ -81,7 +81,7 @@ public class YearViewOnClickDialog extends Dialog implements android.view.View.O
 		
 		
 		
-		eventsAdapter = new YearViewEventsAdapter(context, TreeMapUtils.getEventsFromTreemap(selectedDate, tm));
+		eventsAdapter = new YearViewEventsAdapter(context, TreeMapUtils.getEventsFromTreemap(getContext(), selectedDate, tm, false));
 		eventsList.setAdapter(eventsAdapter);
 		eventsAdapter.notifyDataSetChanged();
 		

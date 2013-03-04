@@ -5,7 +5,6 @@ import java.util.ArrayList;
 import java.util.Calendar;
 
 import android.content.Context;
-import android.util.Log;
 
 import com.groupagendas.groupagenda.account.Account;
 import com.groupagendas.groupagenda.data.DataManagement;
@@ -1014,31 +1013,35 @@ public Template toTemplate(Context context) {
 	public String correctTimeForAMPM(Context context, String time) {
 		if (time != null && !time.equals(EventsProvider.EMetaData.EventsIndexesMetaData.NOT_TODAY)) {
 			String[] times = time.split(":");
-			if (new Account(context).getSetting_ampm() == 1) {
-				if (Integer.valueOf(times[0]) >= 12) {
-					if(Integer.valueOf(times[0]) == 12){
-						return times[0] + ":" + times[1] + " PM";
+			if(times.length > 1){
+				if (new Account(context).getSetting_ampm() == 1) {
+					if (Integer.valueOf(times[0]) >= 12) {
+						if(Integer.valueOf(times[0]) == 12){
+							return times[0] + ":" + times[1] + " PM";
+						} else {
+							return Integer.valueOf(times[0]) - 12 + ":" + times[1] + " PM";
+						}
 					} else {
-						return Integer.valueOf(times[0]) - 12 + ":" + times[1] + " PM";
+						if(Integer.valueOf(times[0]) == 00){
+							return "12:" + times[1] + " AM";
+						} else {
+							return times[0] + ":" + times[1] + " AM";
+						}
 					}
 				} else {
-					if(Integer.valueOf(times[0]) == 00){
-						return "12:" + times[1] + " AM";
-					} else {
-						return times[0] + ":" + times[1] + " AM";
+					if (times[1].matches("[0-9]* PM")) {
+						if (Integer.valueOf(times[0]) != 12)
+							times[0] = String.valueOf(Integer.valueOf(times[0]) + 12);
+						times[1] = times[1].substring(0, times[1].lastIndexOf('P'));
+					} else if (times[1].matches("[0-9]* AM")) {
+						if (Integer.valueOf(times[0]) == 12)
+							times[0] = "00";
+						times[1] = times[1].substring(0, times[1].lastIndexOf('A'));
 					}
+					return times[0] + ":" + times[1];
 				}
 			} else {
-				if (times[1].matches("[0-9]* PM")) {
-					if (Integer.valueOf(times[0]) != 12)
-						times[0] = String.valueOf(Integer.valueOf(times[0]) + 12);
-					times[1] = times[1].substring(0, times[1].lastIndexOf('P'));
-				} else if (times[1].matches("[0-9]* AM")) {
-					if (Integer.valueOf(times[0]) == 12)
-						times[0] = "00";
-					times[1] = times[1].substring(0, times[1].lastIndexOf('A'));
-				}
-				return times[0] + ":" + times[1];
+				return time;
 			}
 		} else {
 			return time;

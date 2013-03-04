@@ -388,9 +388,9 @@ public class MiniMonthView extends AbstractCalendarView {
 
 			for (AgendaFrame frame : daysList) {
 				if (tmp.get(Calendar.MONTH) == selectedDate.get(Calendar.MONTH)) {
-					frame.setEventList(TreeMapUtils.getEventsFromTreemap(tmp, sortedEvents));
+					frame.setEventList(TreeMapUtils.getEventsFromTreemap(getContext(), tmp, sortedEvents, false));
 				} else {
-					List<Event> nuList = TreeMapUtils.getEventsFromTreemap(tmp, sortedEvents); 
+					List<Event> nuList = TreeMapUtils.getEventsFromTreemap(getContext(), tmp, sortedEvents, false); 
 					for (Event e : nuList) {
 						e.setDisplayColor("44"+e.getDisplayColor());
 					}

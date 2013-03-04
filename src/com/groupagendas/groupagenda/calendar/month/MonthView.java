@@ -226,7 +226,7 @@ public class MonthView extends AbstractCalendarView {
 		wrapper.setOrientation(LinearLayout.VERTICAL);
 		
 		if ((sortedEvents != null) && (selectedDate != null)) {
-			Collection<Event> evts = TreeMapUtils.getEventsFromTreemap(selectedDate, sortedEvents);
+			Collection<Event> evts = TreeMapUtils.getEventsFromTreemap(getContext(), selectedDate, sortedEvents, false);
 			if (evts != null) {
 				i = i - evts.size();
 			}
@@ -250,8 +250,8 @@ public class MonthView extends AbstractCalendarView {
 
 	@Override
 	protected void updateEventLists() {
-		ArrayList<Event> eventsList = TreeMapUtils.getEventsFromTreemap(
-				selectedDate, sortedEvents);
+		ArrayList<Event> eventsList = TreeMapUtils.getEventsFromTreemap(getContext(),
+				selectedDate, sortedEvents, true);
 		eventsAdapter.setList(eventsList);
 		eventsAdapter.setSelectedDate(selectedDate, sortedEvents);
 		fillBottomSpace();
@@ -429,8 +429,8 @@ public class MonthView extends AbstractCalendarView {
 			for (MonthDayFrame frame : frames) {
 				// Log.d("FRAME", "HAS: " + frame.hasBubbles());
 				//if (!frame.hasBubbles) {
-					frame.DrawColourBubbles(TreeMapUtils.getEventsFromTreemap(
-							tmp, sortedEvents), FRAME_WIDTH);
+					frame.DrawColourBubbles(TreeMapUtils.getEventsFromTreemap(getContext(),
+							tmp, sortedEvents, false), FRAME_WIDTH);
 				//}
 				tmp.add(Calendar.DATE, 1);
 			}

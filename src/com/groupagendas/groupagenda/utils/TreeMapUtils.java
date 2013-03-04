@@ -8,10 +8,10 @@ import java.util.Locale;
 import java.util.TreeMap;
 
 import android.content.Context;
-import android.util.Log;
 
 import com.groupagendas.groupagenda.data.EventManagement;
 import com.groupagendas.groupagenda.events.Event;
+import com.groupagendas.groupagenda.events.EventsProvider;
 
 public class TreeMapUtils {
 	public static final String SERVER_TIMESTAMP_FORMAT = "yyyy-MM-dd HH:mm:ss";
@@ -20,15 +20,16 @@ public class TreeMapUtils {
 		return new SimpleDateFormat("yyyy-MM-dd", Locale.US); // ascii date, so Locale = US
 	}
 	
-	public static ArrayList<Event> getEventsFromTreemap(Calendar date, TreeMap<String, ArrayList<Event>> tm) {
+	public static ArrayList<Event> getEventsFromTreemap(Context context, Calendar date, TreeMap<String, ArrayList<Event>> tm, boolean needToSort) {
 		if (date != null && tm != null) {
 			String key = createFormatter().format(date.getTime());
 			ArrayList<Event> stored = tm.get(key);
-			// Log.d("TMU", "Looking for " + key + " returned " + (stored != null ? stored.size() : -1));
-			// Log.d("TMU", "Date: " + date.getTime().toString());
-			// if it was present inside the map, return it
 			if (stored != null)
-				return stored;
+				if(needToSort){
+					return sortEventsByTimeString(context, stored, date);
+				} else {
+					return stored;
+				}
 		}
 		// otherwise, prevent NPE
 		return new ArrayList<Event>();
@@ -249,5 +250,69 @@ public class TreeMapUtils {
 //				Log.d("Not v2", "putNativeEventsIntoTreeMap: eventDay = " + eventDay);
 			}
 		}
+	}
+	
+	public static String formatTime(String time){
+		if(time.equals(EventsProvider.EMetaData.EventsIndexesMetaData.NOT_TODAY)){
+			return "0001";
+		}
+		if(time != null && time.matches("[0-9]*:[0-9]* [A,P]M")){
+			String[] times = time.split(":");
+			if (times[1].matches("[0-9]* PM")) {
+				if (Integer.valueOf(times[0]) != 12)
+					times[0] = String.valueOf(Integer.valueOf(times[0]) + 12);
+				times[1] = times[1].substring(0, times[1].lastIndexOf('P')-1);
+			} else if (times[1].matches("[0-9]* AM")) {
+				if (Integer.valueOf(times[0]) == 12)
+					times[0] = "00";
+				times[1] = times[1].substring(0, times[1].lastIndexOf('A')-1);
+			}
+			if(times[0].matches("0[0-9]")){
+				times[0] = times[0].substring(1);
+			}
+			if(Integer.valueOf(times[1]) == 00){
+				times[1] = "01";
+			}
+			return times[0]+""+times[1];
+		}
+		time = time.replaceAll(":", "");
+		time = time.replaceAll(" ", "");
+		return time;
+	}
+	
+	public static ArrayList<Event> sortEventsByTimeString(Context context, ArrayList<Event> eventsToSort, Calendar key){
+		boolean continueSorting = true;
+		int listToSortLength = eventsToSort.size();
+		while(continueSorting){
+			continueSorting = false;
+			for(int i = 0; i < (listToSortLength-1); i++){
+				if(eventsToSort.get(i).getStartCalendar() != null){
+					if(eventsToSort.get(i).getStartCalendar().before(key)){
+						eventsToSort.get(i).setEvent_day_start("0001");
+					} else if(eventsToSort.get(i).getStartCalendar().get(Calendar.MINUTE) == 0){
+						eventsToSort.get(i).setEvent_day_start(eventsToSort.get(i).getStartCalendar().get(Calendar.HOUR_OF_DAY)+"00");
+					} else {
+						eventsToSort.get(i).setEvent_day_start(eventsToSort.get(i).getStartCalendar().get(Calendar.HOUR_OF_DAY)+""+eventsToSort.get(i).getStartCalendar().get(Calendar.MINUTE));
+					}
+				}
+				if(eventsToSort.get(i+1).getStartCalendar() != null){
+					if(eventsToSort.get(i+1).getStartCalendar().before(key)){
+						eventsToSort.get(i+1).setEvent_day_start("0001");
+					} else if(eventsToSort.get(i+1).getStartCalendar().get(Calendar.MINUTE) == 0){
+						eventsToSort.get(i+1).setEvent_day_start(eventsToSort.get(i+1).getStartCalendar().get(Calendar.HOUR_OF_DAY)+"00");
+					} else {
+						eventsToSort.get(i+1).setEvent_day_start(eventsToSort.get(i+1).getStartCalendar().get(Calendar.HOUR_OF_DAY)+""+eventsToSort.get(i+1).getStartCalendar().get(Calendar.MINUTE));
+					}
+				}
+				if(Integer.valueOf(formatTime(eventsToSort.get(i).getEvent_day_start(context))) 
+						> Integer.valueOf(formatTime(eventsToSort.get(i+1).getEvent_day_start(context)))){
+					Event tmp = eventsToSort.get(i);
+					eventsToSort.set(i, eventsToSort.get(i+1));
+					eventsToSort.set(i+1, tmp);
+					continueSorting = true;
+				}
+			}
+		}
+		return eventsToSort;
 	}
 }

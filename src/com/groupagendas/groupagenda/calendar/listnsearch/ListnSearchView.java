@@ -179,7 +179,7 @@ public class ListnSearchView extends LinearLayout {
 					if (event.getType().equalsIgnoreCase("v") || event.isNative()) {
 						if (sortedEvents != null) {
 							selectedDate.add(Calendar.DAY_OF_YEAR, -1);
-							events = TreeMapUtils.getEventsFromTreemap(selectedDate, sortedEvents);
+							events = TreeMapUtils.getEventsFromTreemap(getContext(), selectedDate, sortedEvents, false);
 							if (events != null) {
 								for (Event e : events) {
 									if (event.getEvent_id() == e.getEvent_id()) {
@@ -190,7 +190,7 @@ public class ListnSearchView extends LinearLayout {
 							}
 
 							selectedDate.add(Calendar.DAY_OF_YEAR, 2);
-							events = TreeMapUtils.getEventsFromTreemap(selectedDate, sortedEvents);
+							events = TreeMapUtils.getEventsFromTreemap(getContext(), selectedDate, sortedEvents, false);
 							if (events != null) {
 								for (Event e : events) {
 									if (event.getEvent_id() == e.getEvent_id()) {
@@ -345,7 +345,7 @@ public class ListnSearchView extends LinearLayout {
 				do {
 					section = sdf.format(date.getTime());
 
-					ArrayList<Event> evts = TreeMapUtils.getEventsFromTreemap(date, sortedEvents);
+					ArrayList<Event> evts = TreeMapUtils.getEventsFromTreemap(getContext(), date, sortedEvents, false);
 					list.ensureCapacity(list.size() + evts.size());
 					for (Event e : evts) {
 						list.add(new SectionListItem(e, section));
@@ -357,7 +357,7 @@ public class ListnSearchView extends LinearLayout {
 			
 			section = sdf.format(date.getTime());
 			
-			ArrayList<Event> evts = TreeMapUtils.getEventsFromTreemap(date, sortedEvents);
+			ArrayList<Event> evts = TreeMapUtils.getEventsFromTreemap(getContext(), date, sortedEvents, false);
 			list.ensureCapacity(list.size() + evts.size());
 			for (Event e : evts) {
 				list.add(new SectionListItem(e, section));

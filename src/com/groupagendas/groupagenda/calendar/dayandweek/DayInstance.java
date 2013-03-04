@@ -6,6 +6,7 @@ import java.util.Calendar;
 import java.util.List;
 import java.util.TreeMap;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Context;
 
@@ -45,7 +46,7 @@ public class DayInstance  {
 		private void updateEventLists(TreeMap<String, ArrayList<Event>> tm) {
 			selectedDate.clear(Calendar.ZONE_OFFSET);
 			selectedDate.setTimeZone(Calendar.getInstance().getTimeZone());
-			ArrayList<Event> events = TreeMapUtils.getEventsFromTreemap(selectedDate, tm);
+			ArrayList<Event> events = TreeMapUtils.getEventsFromTreemap(getContext(), selectedDate, tm, false);
 			allDayEvents = new ArrayList<Event>();
 			hourEventsList = new ArrayList<Event>();
 			hourEventsTimetable = null;
@@ -65,6 +66,7 @@ public class DayInstance  {
 			}
 		}
 
+		@SuppressLint("SimpleDateFormat")
 		private boolean allDay(Event e) {
 //			return e.is_all_day;
 			if (e.is_all_day()) return true;
