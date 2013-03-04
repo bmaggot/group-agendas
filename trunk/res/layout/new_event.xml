@@ -779,6 +779,7 @@
                     android:layout_width="95dp"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_vertical"
+                    android:singleLine="true"
                     android:text="@string/accomodation"
                     android:textStyle="bold"
                     android:textColor="@color/black" />
