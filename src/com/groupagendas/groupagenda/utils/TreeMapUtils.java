@@ -256,6 +256,12 @@ public class TreeMapUtils {
 		if(time.equals(EventsProvider.EMetaData.EventsIndexesMetaData.NOT_TODAY)){
 			return "0001";
 		}
+		if(time.equals("00:00")){
+			return "0001";
+		}
+		if(time.equals("12:00 AM")){
+			return "0001";
+		}
 		if(time != null && time.matches("[0-9]*:[0-9]* [A,P]M")){
 			String[] times = time.split(":");
 			if (times[1].matches("[0-9]* PM")) {
