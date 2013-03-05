@@ -555,6 +555,7 @@ public class EventsProvider extends ContentProvider{
 			do {
 				insertEventDayIndexRow(db, event_internal_id, ext_id, eventDayStart, eventTimeStart.before(eventDayStart), eventTimeEnd.after(eventDayEnd), millisStart, millisEnd, dateTimeUtils);
 				eventDayStart.add(Calendar.DAY_OF_MONTH, 1);
+				eventDayEnd.add(Calendar.DAY_OF_MONTH, 1);
 			} while (eventDayStart.before(eventTimeEnd));
 		return insUri;
 	}
