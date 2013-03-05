@@ -93,7 +93,7 @@ public class EventsAdapter extends BaseAdapter implements Filterable{
 
 		String temp = "";
 
-		if (event.isBirthday() && event.is_all_day()) {
+		if (event.isBirthday() || event.is_all_day()) {
 			temp = event.getEvents_day();
 		} else {
 			temp = event.getEvents_day() +" "+ event.getEvent_day_start(mContext);
