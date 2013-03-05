@@ -104,11 +104,11 @@ public class TreeMapUtils {
 	}
 
 	public static void putEventIntoTreeMap(Context context, TreeMap<String, ArrayList<Event>> tm,Event event) {
-		if(event.getStartCalendar() != null && !event.getStartCalendar().getTime().toString().equals("Fri Jan 01 00:00:00 EET 2100")){
+		if(event.getStartCalendar() != null){
 			Calendar event_start = (Calendar) event.getStartCalendar().clone();
 			String dayStr = createFormatter().format(event_start.getTime());
 			tm = putValueIntoTreeMap(tm, dayStr, event);
-		} else if(event.getStartCalendar() == null) {
+		} else {
 			tm = putValueIntoTreeMap(tm, event.getEvents_day(), event);
 		}
 	}
