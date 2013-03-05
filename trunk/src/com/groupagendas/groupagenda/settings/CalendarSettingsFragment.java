@@ -12,6 +12,7 @@ import com.groupagendas.groupagenda.R;
 import com.groupagendas.groupagenda.account.Account;
 import com.groupagendas.groupagenda.calendar.adapters.ChatThreadAdapter;
 import com.groupagendas.groupagenda.events.EventsProvider;
+import com.groupagendas.groupagenda.utils.DrawingUtils;
 
 public class CalendarSettingsFragment extends Fragment {
 	ChatThreadAdapter adapter;
@@ -69,6 +70,8 @@ public class CalendarSettingsFragment extends Fragment {
 				gaBirthDayEventsSwitch.setBackgroundResource(account.getShow_birthdays_calendars() ?
 						R.drawable.event_invited_entry_last_background_c :
 							R.drawable.event_invited_entry_last_background);
+				gaBirthDayEventsSwitch.setPadding(DrawingUtils.convertDPtoPX(10), DrawingUtils.convertDPtoPX(10), DrawingUtils.convertDPtoPX(10),
+						DrawingUtils.convertDPtoPX(10));
 				gaBirthDayEventsSwitch.setOnClickListener(new OnClickListener() {
 					@Override
 					public void onClick(View v) {
@@ -76,9 +79,13 @@ public class CalendarSettingsFragment extends Fragment {
 						if (account.getShow_birthdays_calendars()) {
 							account.setShow_birthdays_calendars(false);
 							gaBirthDayEventsSwitch.setBackgroundResource(R.drawable.event_invited_entry_last_background);
+							gaBirthDayEventsSwitch.setPadding(DrawingUtils.convertDPtoPX(10), DrawingUtils.convertDPtoPX(10), DrawingUtils.convertDPtoPX(10),
+									DrawingUtils.convertDPtoPX(10));
 						} else {
 							account.setShow_birthdays_calendars(true);
 							gaBirthDayEventsSwitch.setBackgroundResource(R.drawable.event_invited_entry_last_background_c);
+							gaBirthDayEventsSwitch.setPadding(DrawingUtils.convertDPtoPX(10), DrawingUtils.convertDPtoPX(10), DrawingUtils.convertDPtoPX(10),
+									DrawingUtils.convertDPtoPX(10));
 						}
 					}
 				});
