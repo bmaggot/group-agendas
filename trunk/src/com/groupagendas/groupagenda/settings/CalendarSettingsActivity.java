@@ -193,11 +193,23 @@ public class CalendarSettingsActivity extends Activity implements OnClickListene
 	}
 
 	class SaveTask extends AsyncTask<Void, Boolean, Boolean> implements CalendarElements {
+//		int oldPadLeft;
+//		int oldPadRight;
+		int oldPadTop;
+		int oldPadBottom;
 
 		@Override
 		protected void onPreExecute() {
 			pb.setVisibility(View.VISIBLE);
+			
+//			oldPadLeft = saveButton.getPaddingLeft();
+//			oldPadRight = saveButton.getPaddingRight();
+			oldPadTop = saveButton.getPaddingTop();
+			oldPadBottom = saveButton.getPaddingBottom();
+			
 			saveButton.setText(getString(R.string.saving));
+			saveButton.setPadding(2, oldPadTop, 2, oldPadBottom);
+			
 			super.onPreExecute();
 		}
 
