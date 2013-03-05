@@ -100,7 +100,7 @@ public class MonthAdapter extends AbstractAdapter<Event> {
 			
 			colourBubble.setImageBitmap(DrawingUtils.getCircleBitmap(context, circlePx, circlePx, event.getDisplayColor(), false));
 //			colourBubble.setImageBitmap(DrawingUtils.getColoredRoundRectangle(context, 20, event.getDisplayColor(), true));
-
+			
 			if (event.getType().equalsIgnoreCase("v") || event.isNative()) {
 				String dayStr = new SimpleDateFormat("yyyy-MM-dd").format(selectedDate.getTime());
 				Calendar date = Utils.stringToCalendar(context, dayStr + " 00:00:00", SERVER_TIMESTAMP_FORMAT);
