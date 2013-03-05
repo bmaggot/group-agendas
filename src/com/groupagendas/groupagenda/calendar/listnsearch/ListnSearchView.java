@@ -334,7 +334,17 @@ public class ListnSearchView extends LinearLayout {
 
 		@Override
 		protected Void doInBackground(Void... params) {
-			sortedEvents = TreeMapUtils.sortEvents(context, getEventProjectionsForDisplay(listStartDate));
+			ArrayList<Event> listEvents = getEventProjectionsForDisplay(listStartDate);
+			Log.e("Events", "loaded");
+			sortedEvents = new TreeMap<String, ArrayList<Event>>();
+			for(Event event : listEvents){
+				TreeMapUtils.putEventIntoTreeMap(getContext(), sortedEvents, event);
+			}
+			ArrayList<Event> pollEvents = EventManagement.getPollEventsFromLocalDb(context, null);
+			for(Event event : pollEvents){
+				TreeMapUtils.putEventIntoTreeMap(getContext(), sortedEvents, event);
+			}
+			Log.e("Events", "sorted");
 			ListnSearchView.this.sortedEvents = sortedEvents;
 			return null;
 		}
