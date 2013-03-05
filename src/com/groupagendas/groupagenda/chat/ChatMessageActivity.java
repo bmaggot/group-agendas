@@ -72,7 +72,7 @@ public class ChatMessageActivity extends Activity {
 
 		new GetChatMessagesForEventDb().execute(params);
 
-		final Event event = EventManagement.getEventFromLocalDb(getApplicationContext(), event_id, EventManagement.ID_EXTERNAL);
+		final Event event = EventManagement.getEventFromLocalDb(ChatMessageActivity.this, event_id, EventManagement.ID_EXTERNAL);
 		if (event != null) {
 			title.setText(event.getTitle());
 			Account account = new Account(getApplicationContext());
@@ -96,12 +96,12 @@ public class ChatMessageActivity extends Activity {
 
 				@Override
 				public void onClick(View v) {
-					Intent intent = new Intent(getApplicationContext(), EventEditActivity.class);
+					Intent intent = new Intent(ChatMessageActivity.this, EventEditActivity.class);
 					intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
 					intent.putExtra("event_id", event.getInternalID());
 					intent.putExtra("type", event.getType());
 					intent.putExtra("isNative", event.isNative());
-					getApplicationContext().startActivity(intent);
+					startActivity(intent);
 				}
 			});
 
