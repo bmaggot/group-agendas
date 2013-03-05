@@ -296,19 +296,25 @@ public class TreeMapUtils {
 					if(eventsToSort.get(i).getStartCalendar().before(key)){
 						eventsToSort.get(i).setEvent_day_start("0001");
 					} else if(eventsToSort.get(i).getStartCalendar().get(Calendar.MINUTE) == 0){
-						eventsToSort.get(i).setEvent_day_start(eventsToSort.get(i).getStartCalendar().get(Calendar.HOUR_OF_DAY)+"00");
+						eventsToSort.get(i).setEvent_day_start(eventsToSort.get(i).getStartCalendar().get(Calendar.HOUR_OF_DAY)+"01");
 					} else {
 						eventsToSort.get(i).setEvent_day_start(eventsToSort.get(i).getStartCalendar().get(Calendar.HOUR_OF_DAY)+""+eventsToSort.get(i).getStartCalendar().get(Calendar.MINUTE));
 					}
+				}
+				if(eventsToSort.get(i).is_all_day()){
+					eventsToSort.get(i).setEvent_day_start("0000");
 				}
 				if(eventsToSort.get(i+1).getStartCalendar() != null){
 					if(eventsToSort.get(i+1).getStartCalendar().before(key)){
 						eventsToSort.get(i+1).setEvent_day_start("0001");
 					} else if(eventsToSort.get(i+1).getStartCalendar().get(Calendar.MINUTE) == 0){
-						eventsToSort.get(i+1).setEvent_day_start(eventsToSort.get(i+1).getStartCalendar().get(Calendar.HOUR_OF_DAY)+"00");
+						eventsToSort.get(i+1).setEvent_day_start(eventsToSort.get(i+1).getStartCalendar().get(Calendar.HOUR_OF_DAY)+"01");
 					} else {
 						eventsToSort.get(i+1).setEvent_day_start(eventsToSort.get(i+1).getStartCalendar().get(Calendar.HOUR_OF_DAY)+""+eventsToSort.get(i+1).getStartCalendar().get(Calendar.MINUTE));
 					}
+				}
+				if(eventsToSort.get(i+1).is_all_day()){
+					eventsToSort.get(i+1).setEvent_day_start("0000");
 				}
 				if(Integer.valueOf(formatTime(eventsToSort.get(i).getEvent_day_start(context))) 
 						> Integer.valueOf(formatTime(eventsToSort.get(i+1).getEvent_day_start(context)))){

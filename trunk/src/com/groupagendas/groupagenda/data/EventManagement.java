@@ -1012,7 +1012,9 @@ public class EventManagement {
 					Log.e("Not inserted", event.getTitle() + " id: " + event.getEvent_id());
 				} else {
 					Log.i("Inserted", event.getTitle() + " id: " + event.getEvent_id());
-					insertEventToDayIndexTable(context, event);
+					deleteEventFromLocalDb(context, event.getInternalID(), event.getEvent_id());
+					insertEventToLocalDB(context, event);
+//					insertEventToDayIndexTable(context, event);
 				}
 			}
 		}
@@ -1049,15 +1051,18 @@ public class EventManagement {
 	 * @since 2012-10-09
 	 * @version 1.0
 	 */
+	@SuppressWarnings("unused")
 	private static void insertEventToDayIndexTable(Context context, Event event) {
 		Calendar eventDayStart = (Calendar) event.getStartCalendar().clone();
 		eventDayStart.set(Calendar.HOUR_OF_DAY, 0);
 		eventDayStart.set(Calendar.MINUTE, 0);
 		eventDayStart.set(Calendar.SECOND, 0);
 		eventDayStart.set(Calendar.MILLISECOND, 0);
+		Log.e("Start Day", eventDayStart.getTime().toString());
 		
 		Calendar eventTimeStart = (Calendar) event.getStartCalendar().clone();
 		Calendar eventTimeEnd = (Calendar) event.getEndCalendar().clone();
+		eventTimeEnd.add(Calendar.MILLISECOND, -1);
 		DateTimeUtils dateTimeUtils = new DateTimeUtils(context);
 		
 		Calendar eventDayEnd = (Calendar) eventDayStart.clone();
@@ -1065,6 +1070,7 @@ public class EventManagement {
 		eventDayEnd.set(Calendar.MINUTE, eventDayEnd.getActualMaximum(Calendar.MINUTE));
 		eventDayEnd.set(Calendar.SECOND, eventDayEnd.getActualMaximum(Calendar.SECOND));
 		eventDayEnd.set(Calendar.MILLISECOND, eventDayEnd.getActualMaximum(Calendar.MILLISECOND));
+		Log.e("End Day", eventDayEnd.getTime().toString());
 		
 		long event_internal_id = event.getInternalID();
 		long event_external_id = event.getEvent_id();
@@ -1072,11 +1078,13 @@ public class EventManagement {
 		if (event_external_id > 0)
 			ext_id = StringValueUtils.valueOf(event_external_id);
 		
-		while (eventDayStart.before(event.getEndCalendar())) {
+		do {
 			insertEventDayIndexRow(context, event_internal_id, ext_id, eventDayStart, eventTimeStart.before(eventDayStart), eventTimeEnd.after(eventDayEnd), eventTimeStart.getTimeInMillis(), eventTimeEnd.getTimeInMillis() , dateTimeUtils);
-			eventDayStart.add(Calendar.DATE, 1);
-
-		}
+			eventDayStart.add(Calendar.DAY_OF_MONTH, 1);
+			Log.e("Start Day While loop", eventDayStart.getTime().toString());
+			eventDayEnd.add(Calendar.DAY_OF_MONTH, 1);
+			Log.e("End Day While loop", eventDayEnd.getTime().toString());
+		} while (eventDayStart.before(eventTimeEnd));
 	}
 
 	// TODO javadoc
