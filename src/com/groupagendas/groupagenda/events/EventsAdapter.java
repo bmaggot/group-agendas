@@ -169,7 +169,7 @@ public class EventsAdapter extends BaseAdapter implements Filterable{
 					holder.button_no.setVisibility(View.VISIBLE);
 					holder.status.setText(mContext.getString(R.string.status_attending));
 					event.setStatus(Invited.ACCEPTED);
-					respondToInvite(event);
+					respondToInvite(event, Invited.ACCEPTED);
 				}
 			});
 			
@@ -182,7 +182,7 @@ public class EventsAdapter extends BaseAdapter implements Filterable{
 					holder.button_no.setVisibility(View.VISIBLE);
 					holder.status.setText(mContext.getString(R.string.status_maybe));
 					event.setStatus(Invited.MAYBE);
-					respondToInvite(event);
+					respondToInvite(event, Invited.MAYBE);
 				}
 			});
 			
@@ -195,7 +195,7 @@ public class EventsAdapter extends BaseAdapter implements Filterable{
 					holder.button_no.setVisibility(View.INVISIBLE);
 					holder.status.setText(mContext.getString(R.string.status_not_attending));
 					event.setStatus(Invited.REJECTED);
-					respondToInvite(event);
+					respondToInvite(event, Invited.REJECTED);
 				}
 			});
 		}
@@ -224,7 +224,7 @@ public class EventsAdapter extends BaseAdapter implements Filterable{
 					holder.reject_poll.setVisibility(View.INVISIBLE);
 					holder.rejoin_poll.setVisibility(View.VISIBLE);
 					event.setStatus(Invited.REJECTED);
-					respondToInvite(event);
+					respondToInvite(event, Invited.REJECTED);
 					EventEditActivity.deleteEventFromPollList(event);
 					event.setSelectedEventPollsTime("[]");
 					new RejectPollTask().execute(event);
@@ -242,7 +242,7 @@ public class EventsAdapter extends BaseAdapter implements Filterable{
 					holder.rejoin_poll.setVisibility(View.INVISIBLE);
 					holder.reject_poll.setVisibility(View.VISIBLE);
 					event.setStatus(Invited.ACCEPTED);
-					respondToInvite(event);
+					respondToInvite(event, Invited.ACCEPTED);
 					EventEditActivity.addEventToPollList(mContext, event);
 					new RejoinPollTask().execute(event);
 					//poll_status = Invited.ACCEPTED;
@@ -259,10 +259,14 @@ public class EventsAdapter extends BaseAdapter implements Filterable{
 		return convertView;
 	}
 	
-	private void respondToInvite(Event event){
+	private void respondToInvite(Event event, int status) {
 //		System.out.println("response " + event.getStatus() );
+		event = EventManagement.getEventFromLocalDb(mContext, event.getInternalID(), EventManagement.ID_INTERNAL);
+
+		event.setStatus(status);
+		
 		if(event.getMyInvite() != null){
-			event.getMyInvite().setStatus(event.getStatus());
+			event.getMyInvite().setStatus(status);
 		}
 		
 		if (newInvitesCount > 0) newInvitesCount--;
