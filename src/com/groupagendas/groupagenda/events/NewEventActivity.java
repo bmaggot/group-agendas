@@ -99,6 +99,7 @@ public class NewEventActivity extends EventActivity implements AddressMetaData {
 
 		// icon
 		final String[] iconsValues = getResources().getStringArray(R.array.icons_values);
+		selectedIcon = Event.DEFAULT_ICON;
 		iconView = (ImageView) findViewById(R.id.iconView);
 		iconView.setImageDrawable(null);
 		iconView.setOnClickListener(new OnClickListener() {
