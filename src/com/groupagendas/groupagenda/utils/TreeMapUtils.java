@@ -270,10 +270,10 @@ public class TreeMapUtils {
 			return "0001";
 		}
 		if(time.equals("00:00")){
-			return "0001";
+			return "0002";
 		}
 		if(time.equals("12:00 AM")){
-			return "0001";
+			return "0002";
 		}
 		if(time != null && time.matches("[0-9]*:[0-9]* [A,P]M")){
 			String[] times = time.split(":");
@@ -290,7 +290,7 @@ public class TreeMapUtils {
 				times[0] = times[0].substring(1);
 			}
 			if(Integer.valueOf(times[1]) == 00){
-				times[1] = "01";
+				times[1] = "02";
 			}
 			return times[0]+""+times[1];
 		}
