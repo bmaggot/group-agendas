@@ -4,6 +4,7 @@ import java.util.Collections;
 import java.util.List;
 
 import android.app.Activity;
+import android.app.ProgressDialog;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -39,6 +40,7 @@ public class ChatMessageActivity extends Activity {
 	ListView chat_message_list;
 	List<ChatMessageObject> chatMessages = Collections.emptyList();
 	ChatMessageObject chatMessageObject;
+	private ProgressDialog progressDialog;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -145,7 +147,10 @@ public class ChatMessageActivity extends Activity {
 
 		@Override
 		protected void onPreExecute() {
-			// pb.setVisibility(View.VISIBLE);
+			progressDialog = new ProgressDialog(ChatMessageActivity.this);
+			progressDialog.setMessage(getApplicationContext().getResources().getString(R.string.loading));
+			progressDialog.setCancelable(false);
+			progressDialog.show();
 		}
 
 		@Override
@@ -172,7 +177,7 @@ public class ChatMessageActivity extends Activity {
 			adapter.setList(chatMessages);
 			adapter.notifyDataSetChanged();
 			chat_message_list.setSelection(adapter.getCount() - 1);
-			// pb.setVisibility(View.INVISIBLE);
+			progressDialog.dismiss();
 		}
 
 	}
