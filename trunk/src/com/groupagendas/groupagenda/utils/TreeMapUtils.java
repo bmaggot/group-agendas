@@ -108,6 +108,15 @@ public class TreeMapUtils {
 			Calendar event_start = (Calendar) event.getStartCalendar().clone();
 			String dayStr = createFormatter().format(event_start.getTime());
 			tm = putValueIntoTreeMap(tm, dayStr, event);
+			if(tm.containsKey(dayStr)){
+				ArrayList<Event> eventsFromTreeMap = tm.get(dayStr);
+				tm.remove(dayStr);
+				event_start.set(Calendar.HOUR_OF_DAY, 0);
+				event_start.set(Calendar.MINUTE, 0);
+				event_start.set(Calendar.SECOND, 0);
+				tm.put(dayStr, sortEventsByTimeString(context, eventsFromTreeMap, event_start));
+			}
+			
 		} else {
 			tm = putValueIntoTreeMap(tm, event.getEvents_day(), event);
 		}
