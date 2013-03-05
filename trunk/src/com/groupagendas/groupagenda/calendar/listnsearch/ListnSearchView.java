@@ -326,7 +326,7 @@ public class ListnSearchView extends LinearLayout {
 				list.add(eventProjection);
 			}
 			
-			list.addAll(EventManagement.getPollEventsFromLocalDbForDisplay(context));
+			list.addAll(EventManagement.getPollEventsFromLocalDb(context, null));
 			result.close();
 			return list;
 
@@ -338,10 +338,6 @@ public class ListnSearchView extends LinearLayout {
 			Log.e("Events", "loaded");
 			sortedEvents = new TreeMap<String, ArrayList<Event>>();
 			for(Event event : listEvents){
-				TreeMapUtils.putEventIntoTreeMap(getContext(), sortedEvents, event);
-			}
-			ArrayList<Event> pollEvents = EventManagement.getPollEventsFromLocalDb(context, null);
-			for(Event event : pollEvents){
 				TreeMapUtils.putEventIntoTreeMap(getContext(), sortedEvents, event);
 			}
 			Log.e("Events", "sorted");
