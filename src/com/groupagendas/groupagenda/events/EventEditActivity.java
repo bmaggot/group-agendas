@@ -1231,6 +1231,7 @@ public class EventEditActivity extends EventActivity implements AddressMetaData 
 							Intent intent = new Intent(EventEditActivity.this, ChatMessageActivity.class);
 							intent.putExtra("event_id", event.getEvent_id());
 							startActivity(intent);
+							dataLoaded = false;
 						} else {
 							Toast.makeText(getApplicationContext(), getResources().getString(R.string.chat_on_event_not_created_online),
 									Toast.LENGTH_SHORT).show();
