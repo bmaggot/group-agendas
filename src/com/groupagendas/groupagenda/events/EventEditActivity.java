@@ -259,8 +259,12 @@ public class EventEditActivity extends EventActivity implements AddressMetaData 
 				inviteEditButton.setVisibility(View.VISIBLE);
 			}
 
-			showInvitesView(this);
-
+			if (event.getType().equals(Event.NOTE) || event.getType().equals(Event.SHARED_NOTE)) {
+				
+			} else {
+				showInvitesView(this);
+			}
+			
 			List<StaticTimezone> countriesList = TimezoneUtils.getTimezones(this);
 			countryView.setText(countriesList.get(timezoneInUse).country2);
 			timezoneView.setText(countriesList.get(timezoneInUse).altname);
@@ -1238,11 +1242,15 @@ public class EventEditActivity extends EventActivity implements AddressMetaData 
 			}
 
 			if (!event.isNative()) {
-				showInvitesView(EventEditActivity.this);
-				if (result.getInvited().size() > 0) {
-					invitationResponseLine.setVisibility(View.VISIBLE);
-					inviteEditButton.setVisibility(View.VISIBLE);
-					respondToInvitation(result.getStatus());
+				if (event.getType().equals(Event.NOTE) || event.getType().equals(Event.SHARED_NOTE)) {
+					
+				} else {
+					showInvitesView(EventEditActivity.this);
+					if (result.getInvited().size() > 0) {
+						invitationResponseLine.setVisibility(View.VISIBLE);
+						inviteEditButton.setVisibility(View.VISIBLE);
+						respondToInvitation(result.getStatus());
+					}
 				}
 			} else {
 				inviteButton.setVisibility(View.INVISIBLE);
