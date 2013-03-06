@@ -194,9 +194,21 @@ public class DateTimeSelectActivity extends Activity implements OnClickListener 
 		switch (id) {
 		case R.id.allDayToggleButton:
 			if (allDayToggleButton.isChecked()) {
+				startCalendar.set(Calendar.HOUR_OF_DAY, 0);
+				startCalendar.set(Calendar.MINUTE, 0);
+				endCalendar.set(Calendar.HOUR_OF_DAY, 0);
+				endCalendar.set(Calendar.MINUTE, 0);
 				startTimeView.setVisibility(View.INVISIBLE);
 				endTimeView.setVisibility(View.INVISIBLE);
 			} else {
+				startCalendar.set(Calendar.HOUR_OF_DAY, Calendar.getInstance().get(Calendar.HOUR_OF_DAY));
+				startCalendar.set(Calendar.MINUTE, Calendar.getInstance().get(Calendar.MINUTE));
+				startTimeView.setText(dtUtils.formatTime(startCalendar));
+				
+				endCalendar.set(Calendar.HOUR_OF_DAY, startCalendar.get(Calendar.HOUR_OF_DAY)+1);
+				endCalendar.set(Calendar.MINUTE, startCalendar.get(Calendar.MINUTE));
+				endTimeView.setText(dtUtils.formatTime(endCalendar));
+				
 				startTimeView.setVisibility(View.VISIBLE);
 				endTimeView.setVisibility(View.VISIBLE);
 			}
