@@ -8,6 +8,7 @@ import java.util.concurrent.ExecutionException;
 
 import android.app.AlertDialog;
 import android.app.Dialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.drawable.BitmapDrawable;
@@ -15,9 +16,11 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.Window;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.Button;
@@ -142,6 +145,20 @@ public class NewEventActivity extends EventActivity implements AddressMetaData {
 				final Dialog dialog = new Dialog(NewEventActivity.this);
 				dialog.setContentView(R.layout.list_dialog);
 				dialog.setTitle(R.string.choose_color);
+
+//TODO review Rokas code			
+				Button no_color = (Button) dialog.findViewById(R.id.no_color);
+				no_color.setOnClickListener(new OnClickListener() {
+					
+					@Override
+					public void onClick(View v) {
+						
+						selectedColor = Event.DEFAULT_COLOR;
+						colorView.setBackgroundDrawable(new BitmapDrawable(DrawingUtils.getColoredRoundSquare(NewEventActivity.this, COLOURED_BUBBLE_SIZE, 5, selectedColor, false)));
+						dialog.dismiss();
+						
+					}
+				});
 
 				GridView gridview = (GridView) dialog.findViewById(R.id.gridview);
 				gridview.setAdapter(new ColorsAdapter(NewEventActivity.this, colorsValues));
@@ -754,6 +771,13 @@ public class NewEventActivity extends EventActivity implements AddressMetaData {
 			pb.setVisibility(View.VISIBLE);
 			saveButton.setText(getString(R.string.saving));
 			Toast.makeText(NewEventActivity.this, R.string.saving_new_event, Toast.LENGTH_SHORT).show();
+
+			getApplication();
+		
+			//TODO review Rokas code			
+			InputMethodManager imm = (InputMethodManager) getApplicationContext().getSystemService(Context.INPUT_METHOD_SERVICE);
+			imm.hideSoftInputFromWindow(titleView.getApplicationWindowToken(), 0);
+			
 			super.onPreExecute();
 		}
 
@@ -1096,6 +1120,8 @@ public class NewEventActivity extends EventActivity implements AddressMetaData {
 	public void onDestroy() {
 		selectedIcon = Event.DEFAULT_ICON;
 		event.setIcon(Event.DEFAULT_ICON);
+		
+		Log.e("ON",	"DESTROY");
 		super.onDestroy();
 	}
 }

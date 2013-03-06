@@ -67,8 +67,9 @@ public class ListnSearchView extends LinearLayout {
 		listView.setDivider(getResources().getDrawable(R.drawable.calendar_listnsearch_divider));
 		listView.setDividerHeight(1);
 		searchField = (EditText) findViewById(R.id.listnsearch_search);
+		
 		searchField.addTextChangedListener(new TextWatcher() {
-
+			
 			String prevEntry;
 
 			@Override
@@ -389,7 +390,10 @@ public class ListnSearchView extends LinearLayout {
 	}
 	
 	public static void hideSoftKeyboard (Context context, View view) {
+		//TODO review Rokas code
+        
 		  InputMethodManager imm = (InputMethodManager)context.getSystemService(Context.INPUT_METHOD_SERVICE);
-		  imm.hideSoftInputFromWindow(view.getApplicationWindowToken(), 0);
+		  imm.hideSoftInputFromWindow(view.getApplicationWindowToken(), InputMethodManager.HIDE_IMPLICIT_ONLY);
+		  
 		}
 }

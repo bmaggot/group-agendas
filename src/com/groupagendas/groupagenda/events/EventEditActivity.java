@@ -32,6 +32,7 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.view.inputmethod.InputMethodManager;
 import android.view.Window;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
@@ -734,6 +735,7 @@ public class EventEditActivity extends EventActivity implements AddressMetaData 
 		@Override
 		protected void onPreExecute() {
 			super.onPreExecute();
+			
 			pd.setMessage(getResources().getString(R.string.loading));
 			pd.setCancelable(false);
 			pd.show();
@@ -1033,7 +1035,25 @@ public class EventEditActivity extends EventActivity implements AddressMetaData 
 						final Dialog dialog = new Dialog(EventEditActivity.this);
 						dialog.setContentView(R.layout.list_dialog);
 						dialog.setTitle(R.string.choose_color);
-
+	//TODO review Rokas code					
+						Button no_color = (Button) dialog.findViewById(R.id.no_color);
+						
+						no_color.setOnClickListener(new OnClickListener() {
+							
+							@Override
+							public void onClick(View v) {
+								
+								selectedColor = Event.DEFAULT_COLOR;
+								colorView.setBackgroundDrawable(new BitmapDrawable(DrawingUtils.getColoredRoundSquare(EventEditActivity.this, COLOURED_BUBBLE_SIZE, 5, selectedColor, false)));
+								
+								if (!changesMade) saveButton.setEnabled(true);
+								
+								dialog.dismiss();
+								
+							}
+						});
+//
+						
 						GridView gridview = (GridView) dialog.findViewById(R.id.gridview);
 						gridview.setAdapter(new ColorsAdapter(EventEditActivity.this, colorsValues));
 
@@ -1362,6 +1382,11 @@ public class EventEditActivity extends EventActivity implements AddressMetaData 
 		protected void onPreExecute() {
 			pb.setVisibility(View.VISIBLE);
 			saveButton.setText(getString(R.string.saving));
+			
+		//TODO review Rokas code	
+			  InputMethodManager imm = (InputMethodManager) getApplicationContext().getSystemService(Context.INPUT_METHOD_SERVICE);
+			  imm.hideSoftInputFromWindow(titleView.getApplicationWindowToken(), 0);
+			
 			super.onPreExecute();
 		}
 
@@ -1749,6 +1774,11 @@ public class EventEditActivity extends EventActivity implements AddressMetaData 
 			saveButton.setText(getString(R.string.saving));
 			Toast.makeText(EventEditActivity.this, R.string.copying_new_event, Toast.LENGTH_SHORT).show();
 
+			
+			//TODO review Rokas Code			
+			InputMethodManager imm = (InputMethodManager) getApplicationContext().getSystemService(Context.INPUT_METHOD_SERVICE);
+			imm.hideSoftInputFromWindow(titleView.getApplicationWindowToken(), 0);
+			
 			super.onPreExecute();
 		}
 
