@@ -314,6 +314,11 @@ public class TreeMapUtils {
 						eventsToSort.get(i).setEvent_day_start(eventsToSort.get(i).getStartCalendar().get(Calendar.HOUR_OF_DAY)+""+eventsToSort.get(i).getStartCalendar().get(Calendar.MINUTE));
 					}
 				}
+				if((eventsToSort.get(i).getEvent_day_start(context) !=null && eventsToSort.get(i).getEvent_day_end(context)!=null)
+						&& (eventsToSort.get(i).getEvent_day_start(context).equals(EventsProvider.EMetaData.EventsIndexesMetaData.NOT_TODAY) 
+								&& eventsToSort.get(i).getEvent_day_end(context).equals(EventsProvider.EMetaData.EventsIndexesMetaData.NOT_TODAY))){
+					eventsToSort.get(i).setIs_all_day(true);
+				}
 				if(eventsToSort.get(i).is_all_day()){
 					eventsToSort.get(i).setEvent_day_start("0000");
 				}
@@ -326,7 +331,12 @@ public class TreeMapUtils {
 						eventsToSort.get(i+1).setEvent_day_start(eventsToSort.get(i+1).getStartCalendar().get(Calendar.HOUR_OF_DAY)+""+eventsToSort.get(i+1).getStartCalendar().get(Calendar.MINUTE));
 					}
 				}
-				if(eventsToSort.get(i+1).is_all_day()){
+				if((eventsToSort.get(i+1).getEvent_day_start(context) !=null && eventsToSort.get(i+1).getEvent_day_end(context)!=null)
+						&& (eventsToSort.get(i+1).getEvent_day_start(context).equals(EventsProvider.EMetaData.EventsIndexesMetaData.NOT_TODAY) 
+								&& eventsToSort.get(i+1).getEvent_day_end(context).equals(EventsProvider.EMetaData.EventsIndexesMetaData.NOT_TODAY))){
+					eventsToSort.get(i+1).setIs_all_day(true);
+				}
+				if(eventsToSort.get(i+1).is_all_day()){	
 					eventsToSort.get(i+1).setEvent_day_start("0000");
 				}
 				if(Integer.valueOf(formatTime(eventsToSort.get(i).getEvent_day_start(context))) 
