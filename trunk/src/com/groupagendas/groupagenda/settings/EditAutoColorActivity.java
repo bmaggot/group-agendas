@@ -18,6 +18,7 @@ import android.widget.EditText;
 import android.widget.GridView;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
+import android.widget.Toast;
 
 import com.groupagendas.groupagenda.R;
 import com.groupagendas.groupagenda.events.ColorsAdapter;
@@ -105,7 +106,22 @@ public class EditAutoColorActivity extends Activity implements AutoColorIconMeta
 			@Override
 			public void onClick(View arg0) {
 				mItem.keyword = keywordView.getText().toString();
-				new SaveAutoColor().execute();
+	
+				//TODO review Rokas code
+				
+				if(!mItem.keyword.matches("") && mItem.color != null){
+				
+					new SaveAutoColor().execute();
+				
+				}
+				else{
+					
+					
+					Toast.makeText(EditAutoColorActivity.this, "Please set Color and Title Description!", Toast.LENGTH_LONG).show();
+					
+					
+				}
+				
 			}
 		});
 	}

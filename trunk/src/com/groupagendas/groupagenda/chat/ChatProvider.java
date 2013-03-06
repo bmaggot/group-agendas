@@ -76,19 +76,26 @@ public class ChatProvider extends ContentProvider {
 	public int delete(Uri uri, String where, String[] whereArgs) {
 		int count;
 		SQLiteDatabase db = mOpenHelper.getWritableDatabase();
+		
 		switch(mUriMatcher.match(uri)){
-			case CHAT_ALL:
+			
+		case CHAT_ALL:
 				count = db.delete(CMMetaData.CHAT_TABLE, where, whereArgs);
 				break;
-			case CHAT_ONE:
+			
+		case CHAT_ONE:
 				where = CMMetaData.ChatMetaData.M_ID + "=" + uri.getPathSegments().get(1);
 				count = db.delete(CMMetaData.CHAT_TABLE, where, whereArgs);
 				break;
 			
-			default:
+				
+		
+		default:
 				throw new IllegalArgumentException("Unknow URI "+uri);
 		}
+		
 		getContext().getContentResolver().notifyChange(uri, null);
+		
 		return count;
 	}
 

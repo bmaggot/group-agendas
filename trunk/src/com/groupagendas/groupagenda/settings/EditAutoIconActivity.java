@@ -19,6 +19,7 @@ import android.widget.EditText;
 import android.widget.GridView;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
+import android.widget.Toast;
 
 import com.groupagendas.groupagenda.R;
 import com.groupagendas.groupagenda.events.IconsAdapter;
@@ -89,7 +90,22 @@ public class EditAutoIconActivity extends Activity implements AutoColorIconMetaD
 			@Override
 			public void onClick(View arg0) {
 				mItem.keyword = keywordView.getText().toString();
-				new SaveAutoIcon().execute();
+				
+				
+				//TODO review Rokas code
+				if(!mItem.keyword.matches("") && mItem.icon != null){
+					
+					new SaveAutoIcon().execute();
+				
+				}
+				else{
+					
+					
+					Toast.makeText(EditAutoIconActivity.this, "Please set Icon and Title Description!", Toast.LENGTH_LONG).show();
+					
+					
+				}
+				
 			}
 		});
 	}

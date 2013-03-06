@@ -79,7 +79,7 @@ public class DataManagement implements AddressMetaData, AutoColorIconMetaData {
 	public static final int ID_INTERNAL = 0;
 	public static final int ID_EXTERNAL = 1;
 	
-	public static boolean networkAvailable = true;
+	public static boolean networkAvailable = false;
 	public static boolean eventStatusChanged = false;
 	public static boolean monthViewRunning = false;
 	public static ArrayList<Event> contactsBirthdays = new ArrayList<Event>();
