@@ -494,7 +494,8 @@ public class EventManagement {
 				} else {
 					return EventsProvider.mOpenHelper.getReadableDatabase().rawQuery(
 							"SELECT events.event_id, events._id, color, event_display_color, is_all_day, time_start_utc, time_end_utc, icon, title, status, is_owner, day, day_time_start, day_time_end" +
-							" FROM events_days LEFT JOIN events USING(event_id) WHERE "+ EventsProvider.EMetaData.EventsMetaData.TIME_END_UTC_MILLISECONDS + ">" + date.getTimeInMillis() + " ORDER BY time_start_utc ", null);
+							" FROM events_days LEFT JOIN events USING(event_id) WHERE "+ EventsProvider.EMetaData.EventsMetaData.TIME_END_UTC_MILLISECONDS + ">" + date.getTimeInMillis() + " ORDER BY day ASC, is_all_day DESC, time_start_utc ASC, time_end_utc ASC ",
+							null);
 				}
 
 			case TM_EVENTS_ON_GIVEN_DAY:
