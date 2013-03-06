@@ -6,7 +6,6 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.net.ConnectivityManager;
-import android.net.NetworkInfo;
 import android.os.AsyncTask;
 import android.util.Log;
 
@@ -27,18 +26,10 @@ public class ConnectReceiver extends BroadcastReceiver {
 		ConnectivityManager conn = (ConnectivityManager) context
 				.getSystemService(Context.CONNECTIVITY_SERVICE);
 
-		if (intent.getExtras() != null) {
-			NetworkInfo ni = (NetworkInfo) intent.getExtras().get(
-					ConnectivityManager.EXTRA_NETWORK_INFO);
-			if (ni != null && ni.getState() == NetworkInfo.State.CONNECTED) {
-				Log.i("app", "Network " + ni.getTypeName() + " connected");
-			}
-		}
-
 		Account account = new Account(context);
 
-		if (conn.getNetworkInfo(0).getState() == NetworkInfo.State.CONNECTED
-				|| conn.getNetworkInfo(1).getState() == NetworkInfo.State.CONNECTED) {
+		if (conn.getActiveNetworkInfo() != null && conn.getActiveNetworkInfo().isConnected()) {
+			Log.i("app", "Network " + conn.getActiveNetworkInfo().getTypeName() + " connected");
 			DataManagement.networkAvailable = true;
 			if(account.getLastTimeConnectedToWeb() != 0){
 				new ExecuteOfflineChats().execute();

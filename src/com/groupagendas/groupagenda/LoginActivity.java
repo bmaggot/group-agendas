@@ -13,8 +13,6 @@ import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
 import android.content.res.Configuration;
 import android.content.res.Resources;
-import android.net.ConnectivityManager;
-import android.net.NetworkInfo;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.DisplayMetrics;
@@ -30,7 +28,6 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.groupagendas.groupagenda.account.Account;
-import com.groupagendas.groupagenda.data.Data;
 import com.groupagendas.groupagenda.data.DataManagement;
 import com.groupagendas.groupagenda.registration.RegistrationActivity;
 import com.groupagendas.groupagenda.utils.LanguageCodeGetter;
@@ -50,6 +47,7 @@ public class LoginActivity extends Activity {
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+		getApplicationContext().sendBroadcast(new Intent(getApplicationContext(), ConnectReceiver.class));
 		//language
 		Account account = new Account(this);
 		/*if(account != null)*/{
@@ -64,14 +62,6 @@ public class LoginActivity extends Activity {
 			res.updateConfiguration(config, dm);
 		}
 		setContentView(R.layout.login);
-
-		ConnectivityManager conn = (ConnectivityManager) getApplicationContext().getSystemService(Context.CONNECTIVITY_SERVICE);
-		if (conn.getNetworkInfo(0).getState() == NetworkInfo.State.CONNECTED || conn.getNetworkInfo(1).getState() == NetworkInfo.State.CONNECTED) {
-			DataManagement.networkAvailable = true;
-		} else {
-			DataManagement.networkAvailable = false;
-			Data.needToClearData = false;
-		}
       
         findViewById(R.id.forgot_pass).setOnClickListener(new OnClickListener() {
             @Override
