@@ -1,8 +1,11 @@
 package com.groupagendas.groupagenda.settings;
 
+import java.util.regex.Pattern;
+
 public class AutoColorItem {
 	public int id;
 	public String keyword;
+	public Pattern keyPattern;
 	public String context;
 	public String color;
 	
@@ -17,6 +20,7 @@ public class AutoColorItem {
 	}
 	public void setKeyword(String keyword) {
 		this.keyword = keyword;
+		this.keyPattern = Pattern.compile(keyword, Pattern.LITERAL | Pattern.CASE_INSENSITIVE);
 	}
 	public String getContext() {
 		return context;

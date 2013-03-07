@@ -3,6 +3,7 @@ package com.groupagendas.groupagenda.events;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
+import java.util.regex.Matcher;
 
 import android.app.Activity;
 import android.app.DatePickerDialog;
@@ -499,7 +500,8 @@ public class EventActivity extends Activity {
 		ArrayList<AutoIconItem> autoIcons = DataManagement.getAutoIcons(context);
 
 		for (AutoIconItem autoIcon : autoIcons) {
-			if (event.getTitle().contains(autoIcon.keyword)) {
+			final Matcher m = autoIcon.keyPattern.matcher(event.getTitle());
+			if (m.find()) {
 				event.setIcon(autoIcon.icon);
 				break;
 			}
@@ -510,7 +512,8 @@ public class EventActivity extends Activity {
 		ArrayList<AutoColorItem> autoColors = DataManagement.getAutoColors(context);
 
 		for (AutoColorItem autoColor : autoColors) {
-			if (event.getTitle().contains(autoColor.keyword)) {
+			final Matcher m = autoColor.keyPattern.matcher(event.getTitle());
+			if (m.find()) {
 				event.setColor(autoColor.color);
 				event.setDisplayColor(autoColor.color);
 				break;
