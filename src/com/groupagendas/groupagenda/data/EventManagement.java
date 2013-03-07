@@ -1152,6 +1152,13 @@ public class EventManagement {
 		if (event.getMyInvite() != null) {
 			event.getMyInvite().setStatus(event.getStatus());
 		}
+		if(event.getStatus()== Invited.REJECTED){
+			String where = EventsProvider.EMetaData.EventsIndexesMetaData.EVENT_EXTERNAL_ID + "=" + event.getEvent_id();
+			context.getContentResolver().delete(EventsProvider.EMetaData.EventsIndexesMetaData.CONTENT_URI, where, null);
+		} else {
+			deleteEventFromLocalDb(context, event.getInternalID(), event.getEvent_id());
+			insertEventToLocalDB(context, event);
+		}
 		ContentValues cv = new ContentValues(4);
 		cv.put(EventsProvider.EMetaData.EventsMetaData.STATUS, event.getStatus());
 		cv.put(EventsProvider.EMetaData.EventsMetaData.EVENT_DISPLAY_COLOR, event.getDisplayColor());
