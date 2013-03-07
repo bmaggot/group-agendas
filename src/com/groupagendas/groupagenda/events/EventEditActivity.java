@@ -258,6 +258,7 @@ public class EventEditActivity extends EventActivity implements AddressMetaData 
 			if (event.getInvited().size() > 0) {
 				invitationResponseLine.setVisibility(View.VISIBLE);
 				inviteEditButton.setVisibility(View.VISIBLE);
+				event.setType(Event.SHARED_EVENT);
 			}
 
 			if (event.getType().equals(Event.NOTE) || event.getType().equals(Event.SHARED_NOTE)) {
