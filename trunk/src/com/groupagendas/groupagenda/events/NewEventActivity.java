@@ -771,8 +771,6 @@ public class NewEventActivity extends EventActivity implements AddressMetaData {
 			pb.setVisibility(View.VISIBLE);
 			saveButton.setText(getString(R.string.saving));
 			Toast.makeText(NewEventActivity.this, R.string.saving_new_event, Toast.LENGTH_SHORT).show();
-
-			getApplication();
 		
 			//TODO review Rokas code			
 			InputMethodManager imm = (InputMethodManager) getApplicationContext().getSystemService(Context.INPUT_METHOD_SERVICE);

@@ -93,15 +93,22 @@ public class EditAutoIconActivity extends Activity implements AutoColorIconMetaD
 				
 				
 				//TODO review Rokas code
-				if(!mItem.keyword.matches("") && mItem.icon != null){
+				if(!mItem.keyword.matches("")){
+					
+					if(mItem.icon != null){
+				
 					
 					new SaveAutoIcon().execute();
+					
+					}else{
+						
+						Toast.makeText(EditAutoIconActivity.this, "Please set Icon !", Toast.LENGTH_LONG).show();	
+						
+					}
 				
-				}
-				else{
+				}else{
 					
-					
-					Toast.makeText(EditAutoIconActivity.this, "Please set Icon and Title Description!", Toast.LENGTH_LONG).show();
+						Toast.makeText(EditAutoIconActivity.this, "Please set Title Description!", Toast.LENGTH_LONG).show();
 					
 					
 				}
