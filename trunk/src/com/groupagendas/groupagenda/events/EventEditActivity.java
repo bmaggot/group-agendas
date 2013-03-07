@@ -806,7 +806,7 @@ public class EventEditActivity extends EventActivity implements AddressMetaData 
 				timezoneSpinnerBlock.setEnabled(false);
 				countrySpinnerBlock.setEnabled(false);
 				
-				//see_results.setVisibility(View.VISIBLE);
+				see_results.setVisibility(View.VISIBLE);
 				
 				poll_status = event.getStatus();
 
