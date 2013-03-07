@@ -21,7 +21,6 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.inputmethod.InputMethodManager;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -91,8 +90,6 @@ public class ListnSearchView extends LinearLayout {
 				}
 			}
 		});
-		hideSoftKeyboard(getContext(), this);
-
 	}
 
 	private SectionListItem[] filterEvents(String filterString,
@@ -388,12 +385,4 @@ public class ListnSearchView extends LinearLayout {
 		}
 
 	}
-	
-	public static void hideSoftKeyboard (Context context, View view) {
-		//TODO review Rokas code
-        
-		  InputMethodManager imm = (InputMethodManager)context.getSystemService(Context.INPUT_METHOD_SERVICE);
-		  imm.hideSoftInputFromWindow(view.getApplicationWindowToken(), InputMethodManager.HIDE_IMPLICIT_ONLY);
-		  
-		}
 }

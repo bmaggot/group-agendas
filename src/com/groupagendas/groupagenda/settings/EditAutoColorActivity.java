@@ -61,6 +61,10 @@ public class EditAutoColorActivity extends Activity implements AutoColorIconMeta
 				final Dialog dialog = new Dialog(EditAutoColorActivity.this);
 				dialog.setContentView(R.layout.list_dialog);
 				dialog.setTitle(R.string.choose_color);
+				
+				//TODO review Rokas code
+				Button noColor = (Button) dialog.findViewById(R.id.no_color);
+				noColor.setVisibility(View.GONE);
 
 				GridView gridview = (GridView) dialog.findViewById(R.id.gridview);
 				gridview.setAdapter(new ColorsAdapter(EditAutoColorActivity.this, colorsValues));
@@ -109,15 +113,23 @@ public class EditAutoColorActivity extends Activity implements AutoColorIconMeta
 	
 				//TODO review Rokas code
 				
-				if(!mItem.keyword.matches("") && mItem.color != null){
+				if(!mItem.keyword.matches("")){
+					
+					if(mItem.color != null){
+				
 				
 					new SaveAutoColor().execute();
+					
+					}else{
+						
+						Toast.makeText(EditAutoColorActivity.this, "Please set Color!", Toast.LENGTH_LONG).show();
+						
+					}
 				
-				}
-				else{
+				}else{
 					
 					
-					Toast.makeText(EditAutoColorActivity.this, "Please set Color and Title Description!", Toast.LENGTH_LONG).show();
+						Toast.makeText(EditAutoColorActivity.this, "Please set Title Description!", Toast.LENGTH_LONG).show();
 					
 					
 				}

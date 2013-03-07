@@ -9,6 +9,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
+import android.net.ConnectivityManager;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.v4.content.LocalBroadcastManager;
@@ -39,7 +40,6 @@ import com.groupagendas.groupagenda.R;
 import com.groupagendas.groupagenda.contacts.importer.ImportActivity;
 import com.groupagendas.groupagenda.data.ContactManagement;
 import com.groupagendas.groupagenda.data.Data;
-import com.groupagendas.groupagenda.data.DataManagement;
 import com.groupagendas.groupagenda.events.EventActivity;
 import com.makeramen.segmented.SegmentedRadioGroup;
 
@@ -295,7 +295,12 @@ public class ContactsActivity extends ListActivity implements OnCheckedChangeLis
 
 				@Override
 				public void onClick(View v) {
-					if(DataManagement.networkAvailable){
+			
+					//TODO review Rokas code
+					ConnectivityManager conn = (ConnectivityManager) getApplicationContext()
+											 .getSystemService(Context.CONNECTIVITY_SERVICE);
+					
+					if(conn.getActiveNetworkInfo() != null && conn.getActiveNetworkInfo().isConnected()){
 						startActivity(new Intent(ContactsActivity.this, ImportActivity.class));
 					} else {
 						showToast(getResources().getString(R.string.internet_connection_required), Toast.LENGTH_LONG);

@@ -1384,8 +1384,7 @@ public class EventEditActivity extends EventActivity implements AddressMetaData 
 			saveButton.setText(getString(R.string.saving));
 			
 		//TODO review Rokas code	
-			  InputMethodManager imm = (InputMethodManager) getApplicationContext().getSystemService(Context.INPUT_METHOD_SERVICE);
-			  imm.hideSoftInputFromWindow(titleView.getApplicationWindowToken(), 0);
+			  hideSoftKeyboard();
 			
 			super.onPreExecute();
 		}
@@ -1776,8 +1775,7 @@ public class EventEditActivity extends EventActivity implements AddressMetaData 
 
 			
 			//TODO review Rokas Code			
-			InputMethodManager imm = (InputMethodManager) getApplicationContext().getSystemService(Context.INPUT_METHOD_SERVICE);
-			imm.hideSoftInputFromWindow(titleView.getApplicationWindowToken(), 0);
+			hideSoftKeyboard();
 			
 			super.onPreExecute();
 		}
@@ -1895,4 +1893,13 @@ public class EventEditActivity extends EventActivity implements AddressMetaData 
 	public static boolean getChangesMade() {
 		return changesMade;
 	}
+	
+	public void hideSoftKeyboard () {
+		
+		//TODO review Rokas code
+		
+		  InputMethodManager imm = (InputMethodManager)getApplicationContext().getSystemService(Context.INPUT_METHOD_SERVICE);
+		  imm.hideSoftInputFromWindow(titleView.getApplicationWindowToken(), 0);
+		  
+		}
 }
