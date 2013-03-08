@@ -19,11 +19,13 @@ import android.app.Dialog;
 import android.content.ActivityNotFoundException;
 import android.content.ComponentName;
 import android.content.ContentValues;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.ResolveInfo;
 import android.graphics.Bitmap;
 import android.graphics.Bitmap.CompressFormat;
+import android.net.ConnectivityManager;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -90,10 +92,9 @@ public class GroupEditActivity extends Activity implements OnClickListener {
 
 		pb = (ProgressBar) findViewById(R.id.progress);
 
-		Intent intent = getIntent();
+		
 
-		// Views
-		TextView titleView = (TextView) findViewById(R.id.title);
+
 
 		sendButton = (Button) findViewById(R.id.sendbutton);
 		sendButton.setOnClickListener(this);
@@ -108,69 +109,79 @@ public class GroupEditActivity extends Activity implements OnClickListener {
 		//
 		// removeImage = (CheckBox) findViewById(R.id.remove_image);
 
-		// GET ACTION
-		ACTION_EDIT = intent.getBooleanExtra("action", true);
-
-		if (ACTION_EDIT) {
-			group_name = intent.getStringExtra("group_name");
-			try {
-				new GetGroupTask().execute(intent.getIntExtra("group_id", 0)).get();
-			} catch (InterruptedException e1) {
-				// TODO Auto-generated catch block
-				e1.printStackTrace();
-			} catch (ExecutionException e1) {
-				// TODO Auto-generated catch block
-				e1.printStackTrace();
-			}
-
-			titleView.setText(group_name);
-			groupNameView.setText(group_name);
-			groupNameView.addTextChangedListener(new TextWatcher() {
-
-				private String oldText = null;
-
-				@Override
-				public void onTextChanged(CharSequence s, int start, int before, int count) {
-
-				}
-
-				@Override
-				public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-					oldText = s.toString();
-				}
-
-				@Override
-				public void afterTextChanged(Editable s) {
-					if (!s.toString().equalsIgnoreCase(oldText)) {
-						changesMade = true;
-						// saveButton.setEnabled(changesMade);
-					}
-				}
-			});
-			try {
-				selectedContacts = new GetContactsTask().execute().get();
-			} catch (InterruptedException e) {
-				e.printStackTrace();
-			} catch (ExecutionException e) {
-				e.printStackTrace();
-			}
-		} else {
-			// TableRow RIRow = (TableRow) findViewById(R.id.remove_image_row);
-			// RIRow.setVisibility(View.GONE);
-			// View RIView = findViewById(R.id.remove_image_line);
-			// RIView.setVisibility(View.GONE);
-
-			editedGroup = new Group();
-
-			titleView.setText(getString(R.string.add_group));
-			// imageView.setImageResource(R.drawable.group_icon);
-		}
+		
 
 	}
 
 	@Override
 	public void onResume() {
 		super.onResume();
+		
+		Intent intent = getIntent();
+		
+		// Views
+		TextView titleView = (TextView) findViewById(R.id.title);
+		
+		// GET ACTION
+				ACTION_EDIT = intent.getBooleanExtra("action", true);
+
+				if (ACTION_EDIT) {
+					group_name = intent.getStringExtra("group_name");
+					try {
+						new GetGroupTask().execute(intent.getIntExtra("group_id", 0)).get();
+					} catch (InterruptedException e1) {
+						// TODO Auto-generated catch block
+						e1.printStackTrace();
+					} catch (ExecutionException e1) {
+						// TODO Auto-generated catch block
+						e1.printStackTrace();
+					}
+
+					titleView.setText(group_name);
+					groupNameView.setText(group_name);
+					groupNameView.addTextChangedListener(new TextWatcher() {
+
+						private String oldText = null;
+
+						@Override
+						public void onTextChanged(CharSequence s, int start, int before, int count) {
+
+						}
+
+						@Override
+						public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+							oldText = s.toString();
+						}
+
+						@Override
+						public void afterTextChanged(Editable s) {
+							if (!s.toString().equalsIgnoreCase(oldText)) {
+								changesMade = true;
+								// saveButton.setEnabled(changesMade);
+							}
+						}
+					});
+					try {
+						selectedContacts = new GetContactsTask().execute().get();
+					} catch (InterruptedException e) {
+						e.printStackTrace();
+					} catch (ExecutionException e) {
+						e.printStackTrace();
+					}
+				} else {
+					// TableRow RIRow = (TableRow) findViewById(R.id.remove_image_row);
+					// RIRow.setVisibility(View.GONE);
+					// View RIView = findViewById(R.id.remove_image_line);
+					// RIView.setVisibility(View.GONE);
+
+					editedGroup = new Group();
+
+					titleView.setText(getString(R.string.add_group));
+					// imageView.setImageResource(R.drawable.group_icon);
+				}
+		
+		
+		
 		displaySelectedContacts();
 	}
 
@@ -232,7 +243,18 @@ public class GroupEditActivity extends Activity implements OnClickListener {
 			cv.put(ContactsProvider.CMetaData.GroupsMetaData.CONTACTS, MapUtils.mapToString(getApplicationContext(), editedGroup.contacts));
 			cv.put(ContactsProvider.CMetaData.GroupsMetaData.CONTACT_COUNT, editedGroup.contacts.size());
 
-			editedGroup.group_id = ((int) Calendar.getInstance().getTimeInMillis()) * -1;
+			int tempGroupId = (int) Calendar.getInstance().getTimeInMillis();
+			
+			if(tempGroupId < 0){
+				
+			    editedGroup.group_id = tempGroupId * -1;
+				
+			}else{
+				
+				editedGroup.group_id = tempGroupId;
+				
+			}
+			
 			editedGroup.created = Calendar.getInstance().getTimeInMillis();
 			cv.put(ContactsProvider.CMetaData.GroupsMetaData.CREATED, editedGroup.created);
 			editedGroup.modified = editedGroup.created;
@@ -320,7 +342,11 @@ public class GroupEditActivity extends Activity implements OnClickListener {
 				Uri uri = Uri.parse(ContactsProvider.CMetaData.GroupsMetaData.CONTENT_URI + "/" + editedGroup.group_id);
 				getContentResolver().update(uri, cv, null, null);
 				// check = dm.editGroup(getApplicationContext(), editedGroup);
-				if (DataManagement.networkAvailable) {
+				
+				
+				ConnectivityManager conn = (ConnectivityManager) getApplicationContext().getSystemService(Context.CONNECTIVITY_SERVICE);
+				
+				if (conn.getActiveNetworkInfo() != null && conn.getActiveNetworkInfo().isConnected()) {
 					check = ContactManagement.editGroupOnRemoteDb(getApplicationContext(), editedGroup, 0, true);
 				}
 
@@ -471,7 +497,7 @@ public class GroupEditActivity extends Activity implements OnClickListener {
 			Contact c = contacts.get(i);
 			titles[i] = new StringBuilder(c.name).append(" ").append(c.lastname).toString();
 			ids[i] = c.contact_id;
-			if (isFalse || editedGroup.contacts == null) {
+			if (isFalse || editedGroup == null || editedGroup.contacts == null ) {
 				selections[i] = false;
 			} else {
 				selections[i] = editedGroup.contacts.containsValue(StringValueUtils.valueOf(c.contact_id));
