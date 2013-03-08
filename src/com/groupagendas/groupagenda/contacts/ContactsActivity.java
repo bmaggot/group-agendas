@@ -537,6 +537,10 @@ public class ContactsActivity extends ListActivity implements OnCheckedChangeLis
 				
 				groups = ContactManagement.getGroupsFromLocalDb(ContactsActivity.this, null);
 				gAdapter = new GroupsAdapter(groups, this, selectedGroups);
+				
+				if (contactList == null) {
+					contactList = (ListView) findViewById(android.R.id.list);
+				}
 				contactList.setAdapter(gAdapter);
 				gAdapter.notifyDataSetChanged();
 

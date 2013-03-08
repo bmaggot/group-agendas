@@ -263,7 +263,7 @@ public class EventsAdapter extends BaseAdapter implements Filterable{
 //		System.out.println("response " + event.getStatus() );
 		event = EventManagement.getEventFromLocalDb(mContext, event.getInternalID(), EventManagement.ID_INTERNAL);
 
-		event.setStatus(status);
+		if(event != null) { event.setStatus(status);
 		
 		if(event.getMyInvite() != null){
 			event.getMyInvite().setStatus(status);
@@ -272,6 +272,7 @@ public class EventsAdapter extends BaseAdapter implements Filterable{
 		if (newInvitesCount > 0) newInvitesCount--;
 		EventManagement.respondToInvitation(mContext, event);
 		notifyDataSetChanged();
+	}
 	}
 	
 	static class ViewHolder {

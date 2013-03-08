@@ -23,11 +23,13 @@ import org.json.JSONObject;
 
 import android.content.ContentValues;
 import android.content.Context;
+import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteException;
 import android.net.Uri;
 import android.util.Log;
 
+import com.groupagendas.groupagenda.ConnectReceiver;
 import com.groupagendas.groupagenda.LoadProgressHook;
 import com.groupagendas.groupagenda.R;
 import com.groupagendas.groupagenda.SaveDeletedData;
@@ -1128,9 +1130,13 @@ public class ContactManagement {
 			Log.e("editGroupOnRemoteDb(group, " + group.group_id + ")", "Failed adding image_bytes to entity.");
 		}
 		*/
-
+		
+		
 		post.setEntity(reqEntity);
 		try {
+			
+			context.sendBroadcast(new Intent(context, ConnectReceiver.class));
+			
 			if (DataManagement.networkAvailable) {
 				HttpResponse rp = webService.getResponseFromHttpPost(post);
 
